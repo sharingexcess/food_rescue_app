@@ -1,5 +1,6 @@
 import { FIREBASE_CONFIG } from './constants'
 import firebase from 'firebase/app'
+import 'firebase/auth'
 
 export function initializeFirebase() {
   if (!firebase.apps.length) {
