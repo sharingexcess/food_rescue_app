@@ -47,7 +47,7 @@ async function handleLogin(storeAPI, next, action) {
 // redirect to root url
 async function handleLogout(storeAPI, next, action) {
   const auth = firebase.auth()
-  const res = await auth.signOut()
+  await auth.signOut()
   window.history.pushState({}, null, '/') // redirect to root url
   return next(action)
 }
