@@ -1,0 +1,26 @@
+@import '../../styles/imports.scss';
+
+#Loading {
+  position: fixed;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  opacity: 0;
+  animation: fade-in 1s forwards ease 0.5s;
+
+  img {
+    width: 200px;
+    animation: pulse 2s infinite ease 0.5s;
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}

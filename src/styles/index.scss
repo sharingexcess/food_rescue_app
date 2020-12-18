@@ -1,0 +1,17 @@
+/* use this file for all browser default overrides and styles non-specific to the app's styles */
+/* font imports should happen in index.html using <link> tags */
+@import './reset.scss';
+@import './global.scss';
+@import './animations.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,28 @@
+@import '../../styles/imports.scss';
+
+#Schedule {
+  padding: 120px 16px 0 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  #ScheduleHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    h1 {
+      font-size: 16px;
+      color: $green;
+      margin: 0;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    padding: 64px 32px;
+    text-align: center;
+    width: 100%;
+  }
+}

@@ -1,0 +1,142 @@
+@import '../../styles/imports.scss';
+
+#Menu {
+  position: fixed;
+  top: 0;
+  right: -204px;
+  width: 284px;
+  height: 100vh;
+  padding: 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.32);
+  z-index: 2;
+  transition: transform 0.32s ease, box-shadow 0.32s ease, background 0.32s ease;
+  animation: fade-in 0.32s ease forwards;
+
+  &.open {
+    transform: translateX(-204px);
+    background: $darkgrey;
+    pointer-events: all;
+    box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.16);
+  }
+
+  &.closed {
+    transform: translateX(0);
+    background: transparent;
+    pointer-events: none;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    transition: transform 0.32s ease, box-shadow 0.32s ease,
+      background 0s ease 0.32s;
+    #UserName,
+    #UserEmail,
+    #MenuContent {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s ease;
+    }
+    #ProfileImg {
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          transform: translate(-1px, -1px);
+          box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.48);
+        }
+      }
+    }
+  }
+
+  #UserProfile {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    #ProfileImg {
+      opacity: 1;
+      pointer-events: all;
+      border-radius: 50%;
+      height: 48px;
+      width: 48px;
+      object-fit: cover;
+      border: 2px solid $white;
+    }
+    div {
+      display: flex;
+      margin-left: 8px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      overflow: hidden;
+
+      #UserName {
+        max-width: 100%;
+        font-size: 16px;
+        transition: opacity 0.32s ease;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      #UserEmail {
+        max-width: 100%;
+        margin: 3px 0 0 1px;
+        font-size: 10px;
+        font-weight: 600;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: $green;
+        transition: opacity 0.32s ease;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+    #Close {
+      cursor: pointer;
+      color: $white;
+      font-size: 24px;
+      padding-left: 8px;
+      margin-left: auto;
+    }
+  }
+
+  #MenuContent {
+    padding: 32px 8px 16px 8px;
+    ul {
+      li {
+        font-size: 20px;
+        font-weight: 600;
+        transition: color 0.16s ease;
+        @media (hover: hover) and (pointer: fine) {
+          &:hover {
+            cursor: pointer;
+            color: $blue;
+          }
+        }
+      }
+    }
+  }
+}
+
+#MenuBackground {
+  position: fixed;
+  top: 0;
+  opacity: 1;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.32);
+  z-index: 1;
+  transition: opacity 0.32s ease;
+
+  &.closed {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

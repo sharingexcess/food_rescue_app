@@ -1,0 +1,86 @@
+/* use this file for all global app styles, should not be specific to components, pages, or views */
+@import './imports.scss';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: $darkgrey;
+  color: $white;
+}
+
+button {
+  position: relative;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  border: none;
+
+  img,
+  svg,
+  i {
+    display: inline;
+    height: 24px;
+    width: 24px;
+    object-fit: cover;
+    padding: 4px;
+    margin-right: 8px;
+    background: $white;
+    border-radius: 4px;
+  }
+
+  &.secondary {
+    background: transparent;
+    padding: 0;
+    font-size: 14px;
+    color: $blue;
+    text-decoration: underline;
+    margin: 0;
+    font-weight: 600;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+  &:not(.secondary) {
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 32px;
+    margin: 8px;
+    background: $green;
+    color: $white;
+    font-weight: 900;
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+
+    &:active {
+      transform: translate(1px, 1px);
+      box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.48);
+      }
+    }
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 900;
+}
+
+h1 {
+  font-size: 48px;
+}
+
+p {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}

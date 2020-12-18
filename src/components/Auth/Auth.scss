@@ -1,0 +1,35 @@
+@import '../../styles/imports.scss';
+
+#Login {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 96px 32px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+
+  h1 {
+    font-size: 64px;
+    line-height: 0.8;
+    margin-bottom: 32px;
+    .green {
+      color: $green;
+    }
+  }
+
+  .background {
+    position: fixed;
+    bottom: -64px;
+    right: -64px;
+    width: 100vw;
+    opacity: 0.12;
+    max-width: 600px;
+  }
+
+  button {
+    background: $blue;
+    margin: 8px 0;
+  }
+}
