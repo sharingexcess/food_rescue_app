@@ -1,0 +1,16 @@
+{
+  "parser": "babel-eslint",
+  "plugins": ["prettier", "react-hooks"],
+  "rules": {
+    "prettier/prettier": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "no-var": "error",
+    "prefer-const": "error"
+  },
+  "extends": [
+    "react-app",
+    "plugin:prettier/recommended",
+    "prettier",
+    "prettier/react"
+  ]
+}
