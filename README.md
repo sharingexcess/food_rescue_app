@@ -2,7 +2,63 @@
 
 ![Sharing Excess Logo](public/logo192.png)
 
+## Tech Stack 🤖
+
+The Rescue Web App is built using React, Redux, and Sass on the frontend, and Google Cloud Platform Firebase on the backend.\
+React Hooks and Redux Toolkit provide a lightweight and scalable client side app, and Firebase bundles authentication, storage, and API services for a minimal management solution.
+
 This project was created using [Create React App](https://github.com/facebook/create-react-app).
+
+## Getting Started 🏁
+
+_In order to run the application locally, you'll need **[node](https://nodejs.org/en/download/)** and **[npm](https://www.npmjs.com/get-npm)** installed on your computer._
+
+1. Open the terminal on your computer.
+2. Clone this git repo wherever you want the code to live in your file system by running:
+   `git clone git@github.com:sharingexcess/rescue.git`
+3. Move into the newly cloned directory by running:
+   `cd rescue`
+4. Install the application's dependencies from NPM by running:
+   `npm install` _(or `npm i` for short)_
+5. Start the application locally by running:
+   `npm run dev`
+   This should open your browser automatically to `localhost:3000`, where you'll see the application running.
+
+## Best Practices We Like 👍
+
+### `React/JS ⚙️`
+
+- We use function-based React components with Hooks throughout the client side application.
+- Components are kept in the `src/components` directory
+- Each component has a directory with it's name, containing a `.js` and `.scss` file sharing the same name
+  ```
+  - components
+    - MyComponent
+      - MyComponent.js
+      - MyComponent.scss
+    - AnotherComponent
+      - AnotherComponent.js
+      - AnotherComponent.scss
+  ```
+- Shared JS logic (custom hooks, global helper functions, constants, etc.) can be found in the `/src/helpers` directory
+- **[FontAwesome](https://fontawesome.com/icons?d=gallery)** is setup to be used for icons, which can be used like this: `<i className='fa fa-[your icon name]/>`
+- Images that need to be publicly available (favicons, app icons, logos, etc.) should be stored in the `/public` directory, while images used inside the UI can be stored in `src/assets`.
+- **SVG images are always preferred**. They're smaller, load faster, and scale without pixelation. Win win!
+
+### `Styling (sass/scss) 🎨`
+
+- `SCSS` files are kept in two locations: global styles in `src/styles`, and component specific styles in their respective component directories (see above for details).
+- **`index.scss`** is used for basic global styles and browser overrides. It also handles imports for all other global `.scss` files.
+- **`reset.scss`** is an imported stylesheet that handles normalizing behavior on legacy browsers. Leave it be. It's happy.
+- **`global.scss`** handles global styles for the application as a whole. Think: how buttons look across the entire app.
+- **`animations.scss`** contains any and all `keyframes` definitions so they're not duplicated around the app.
+- And _finally_ **`imports.scss`** contains all SASS variable definitions. This file should be imported at the top of all component `.scss` files to have access to any predefined colors, sizes, etc.
+
+### `Environments 🌍`
+
+- There are currently 2 environments set up, **development** and **production**.
+- `.env` files are stored in `/environments`, and should be named `.env.[enviroment name]`.
+- We use the scripts `npm run dev` and `npm run prod` to copy the correct `.env` file to `.env.local`, which will then be used to start the local development environment.
 
 ## Available Scripts
 
@@ -31,9 +87,3 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## Learn More about Create React App:
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
