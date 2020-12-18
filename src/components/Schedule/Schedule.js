@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import Loading from '../Loading/Loading'
 import './Schedule.scss'
 
-export default function Schedule() {
+function Schedule() {
   const [rescues, setRescues] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -29,3 +29,5 @@ export default function Schedule() {
     </main>
   )
 }
+
+export default memo(Schedule)
