@@ -1,7 +1,7 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useContext } from 'react'
 import Tile from '../Tile/Tile'
 import './Home.scss'
+import { AuthContext } from '../Auth/Auth'
 
 const tiles = [
   {
@@ -27,21 +27,30 @@ const tiles = [
 ]
 
 export default function Home() {
-  const displayName = useSelector(store => store.auth.displayName)
+  const { user } = useContext(AuthContext)
 
   function generateGreeting() {
     const today = new Date()
     const curHr = today.getHours()
-    const formattedName = displayName.includes(' ')
-      ? displayName.split(' ')[0]
-      : displayName
+    const formattedName = user.displayName
+      ? user.displayName.includes(' ')
+        ? user.displayName.split(' ')[0]
+        : user.displayName
+      : null
+    let prefix, suffix
     if (curHr < 12) {
-      return `Good Morning, ${formattedName} ☀️`
+      prefix = 'Good Morning'
+      suffix = `☀️`
     } else if (curHr < 18) {
-      return `Good Afternoon, ${formattedName} 😊`
+      prefix = 'Good Afternoon'
+      suffix = `😊`
     } else {
-      return `Good Evening, ${formattedName} 🌙`
+      prefix = 'Good Evening'
+      suffix = `🌙`
     }
+    return formattedName
+      ? `${prefix}, ${formattedName} ${suffix}`
+      : `${prefix} ${suffix}`
   }
   return (
     <main id="Home">
