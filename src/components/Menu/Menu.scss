@@ -48,6 +48,11 @@
           box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.48);
         }
       }
+
+      &:active {
+        transform: translate(1px, 1px);
+        box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
+      }
     }
   }
 

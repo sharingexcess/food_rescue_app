@@ -11,7 +11,7 @@ const tiles = [
   },
   {
     name: 'View All Rescues',
-    icon: 'fa-calendar',
+    icon: 'fa-truck',
     link: '/rescues',
   },
   {
