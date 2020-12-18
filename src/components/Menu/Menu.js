@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
+import React, { memo, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
 import { AuthContext } from '../Auth/Auth'
 import './Menu.scss'
 
-export default function Menu() {
+function Menu() {
   const isOpen = useSelector(store => store.app.menu)
   const { user, handleLogout } = useContext(AuthContext)
   const dispatch = useDispatch()
@@ -50,3 +50,5 @@ export default function Menu() {
     </>
   )
 }
+
+export default memo(Menu)
