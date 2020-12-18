@@ -1,23 +1,27 @@
-import React, { useEffect, useState } from 'react'
+import React, { createContext } from 'react'
 import firebase from 'firebase/app'
-import { useDispatch, useSelector } from 'react-redux'
-import { login, updateAuth } from '../../redux/auth/authReducer'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import Google from '../../assets/google.svg'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import './Auth.scss'
 
-export default function Auth({ children }) {
-  const auth = useSelector(store => store.auth)
-  const [loading, setLoading] = useState(true)
-  const dispatch = useDispatch()
+const AuthContext = createContext()
+AuthContext.displayName = 'Auth'
 
-  useEffect(() => {
-    return firebase.auth().onAuthStateChanged(data => {
-      dispatch(updateAuth(data))
-      setLoading(false)
-    })
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+function Auth({ children }) {
+  // NOTE: adding any event listeners (including useEffect functions)
+  // to these state values WILL BREAK EVERYTHING. Hate to see it :(
+  const [user, loading, error] = useAuthState(firebase.auth())
+
+  function handleLogin() {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    firebase.auth().signInWithPopup(provider)
+  }
+
+  function handleLogout() {
+    firebase.auth().signOut()
+  }
 
   function Login() {
     return (
@@ -26,7 +30,7 @@ export default function Auth({ children }) {
           <span className="green">Sharing</span> Excess
         </h1>
         <img className="background" src={Logo} alt="Sharing Excess Logo" />
-        <button onClick={() => dispatch(login())}>
+        <button onClick={handleLogin}>
           <img src={Google} alt="Google Logo" />
           Sign in with Google
         </button>
@@ -34,11 +38,31 @@ export default function Auth({ children }) {
     )
   }
 
+  function Error() {
+    return (
+      <main id="Login">
+        <h1>
+          <span className="green">Sharing</span> Excess
+        </h1>
+        <p>Looks like there was an error logging in.</p>
+        <img className="background" src={Logo} alt="Sharing Excess Logo" />
+        <button onClick={window.location.reload()}>try again</button>
+      </main>
+    )
+  }
+
   return loading ? (
     <Loading text={'Signing in'} />
-  ) : auth.uid ? (
-    <>{children}</>
+  ) : error ? (
+    <Error />
+  ) : user ? (
+    <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>
+      {children}
+    </AuthContext.Provider>
   ) : (
     <Login />
   )
 }
+
+export { AuthContext }
+export default Auth
