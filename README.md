@@ -1,6 +1,6 @@
 # Sharing Excess Food Rescue Web Application
 
-![alt text](https://github.com/sharingexcess/rescues/blob/master/public/logo192.png?raw=true)
+![Sharing Excess Logo](public/logo192.png)
 
 This project was created using [Create React App](https://github.com/facebook/create-react-app).
 
