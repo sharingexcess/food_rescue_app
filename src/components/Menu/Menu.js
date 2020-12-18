@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
 import { logout } from '../../redux/auth/authReducer'
 import './Menu.scss'
@@ -36,6 +37,12 @@ export default function Menu() {
         </div>
         <div id="MenuContent">
           <ul>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/">Home</Link>
+            </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/schedule">Schedule</Link>
+            </li>
             <li onClick={() => dispatch(logout())}>Logout</li>
           </ul>
         </div>

@@ -1,7 +1,7 @@
 @import '../../styles/imports.scss';
 
 #Home {
-  padding: 120px 16px 0 16px;
+  padding: 108px 16px 0 16px;
   max-width: 800px;
   margin: auto;
   animation: fade-in 0.32s ease forwards;
@@ -10,5 +10,12 @@
     font-size: 24px;
     width: 100%;
     text-align: center;
+  }
+
+  #Tiles {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-gap: 16px;
   }
 }

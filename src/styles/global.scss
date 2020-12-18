@@ -38,7 +38,6 @@ button {
     text-decoration: underline;
     margin: 0;
     font-weight: 600;
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
   }
   &:not(.secondary) {
     font-size: 16px;
@@ -52,6 +51,7 @@ button {
     font-weight: 900;
     border-radius: 8px;
     box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
 
     &:active {
       transform: translate(1px, 1px);
@@ -83,4 +83,9 @@ p {
   font-size: 16px;
   font-weight: 600;
   line-height: 1.2;
+}
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
 }
