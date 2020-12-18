@@ -7,7 +7,10 @@ export default function Schedule() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 2000)
+    setTimeout(() => {
+      setRescues([])
+      setLoading(false)
+    }, 2000)
   }, [])
 
   return (
