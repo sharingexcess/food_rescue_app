@@ -30,8 +30,8 @@ export default function Home() {
   const displayName = useSelector(store => store.auth.displayName)
 
   function generateGreeting() {
-    var today = new Date()
-    var curHr = today.getHours()
+    const today = new Date()
+    const curHr = today.getHours()
     const formattedName = displayName.includes(' ')
       ? displayName.split(' ')[0]
       : displayName

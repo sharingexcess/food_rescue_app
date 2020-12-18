@@ -6,6 +6,12 @@ import { MOBILE_THRESHOLD } from '../../helpers/constants'
 // Learn more about Redux Slices:
 // https://redux.js.org/tutorials/fundamentals/part-8-modern-redux#writing-slices
 
+const initialState = {
+  menu: false,
+  modal: false,
+  mobile: window.innerWidth < MOBILE_THRESHOLD,
+}
+
 const app = createSlice({
   // name of slice of global state
   name: 'app',
@@ -39,12 +45,6 @@ const app = createSlice({
     },
   },
 })
-
-const initialState = {
-  menu: false,
-  modal: false,
-  mobile: window.innerWidth < MOBILE_THRESHOLD,
-}
 
 export const { setMenu, setModal, resize } = app.actions
 

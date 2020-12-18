@@ -17,7 +17,7 @@ export default function Auth({ children }) {
       dispatch(updateAuth(data))
       setLoading(false)
     })
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function Login() {
     return (
