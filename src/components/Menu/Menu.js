@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
-import { logout } from '../../redux/auth/authReducer'
+import { AuthContext } from '../Auth/Auth'
 import './Menu.scss'
 
 export default function Menu() {
   const isOpen = useSelector(store => store.app.menu)
-  const { photoURL, displayName, email } = useSelector(store => store.auth)
+  const { user, handleLogout } = useContext(AuthContext)
   const dispatch = useDispatch()
 
   function close() {
@@ -24,14 +24,14 @@ export default function Menu() {
       <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
         <div id="UserProfile">
           <img
-            src={photoURL}
+            src={user.photoURL}
             id="ProfileImg"
             alt="User"
             onClick={() => dispatch(setMenu(true))}
           />
           <div>
-            <h2 id="UserName">{displayName}</h2>
-            <h3 id="UserEmail">{email}</h3>
+            <h2 id="UserName">{user.displayName}</h2>
+            <h3 id="UserEmail">{user.email}</h3>
           </div>
           <i id="Close" className="fa fa-times" onClick={close} />
         </div>
@@ -43,7 +43,7 @@ export default function Menu() {
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/schedule">Schedule</Link>
             </li>
-            <li onClick={() => dispatch(logout())}>Logout</li>
+            <li onClick={handleLogout}>Logout</li>
           </ul>
         </div>
       </aside>
