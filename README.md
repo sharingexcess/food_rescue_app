@@ -11,7 +11,9 @@ This project was created using [Create React App](https://github.com/facebook/cr
 
 ## Getting Started 🏁
 
-_In order to run the application locally, you'll need **[node](https://nodejs.org/en/download/)** and **[npm](https://www.npmjs.com/get-npm)** installed on your computer._
+_\* In order to run the application locally, you'll need **[node](https://nodejs.org/en/download/)** and **[npm](https://www.npmjs.com/get-npm)** installed on your computer._
+
+_\* You'll also need to request environment files from an admin to connect to the Firebase API._
 
 1. Open the terminal on your computer.
 2. Clone this git repo wherever you want the code to live in your file system by running:
@@ -58,6 +60,7 @@ _In order to run the application locally, you'll need **[node](https://nodejs.or
 
 - There are currently 2 environments set up, **development** and **production**.
 - `.env` files are stored in `/environments`, and should be named `.env.[enviroment name]`.
+- **_`.env` FILES ARE NOT STORED IN THE GIT REPO._** This is an obviously huge security risk. The `/environments` directory and all `.env` files are already protected in the `.gitignore` file, but be sure not to share those files. You'll need to contact an admin to get any `.env` files you don't already have.
 - We use the scripts `npm run dev` and `npm run prod` to copy the correct `.env` file to `.env.local`, which will then be used to start the local development environment.
 
 ## Available Scripts
