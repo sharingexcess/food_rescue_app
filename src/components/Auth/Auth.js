@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
@@ -13,6 +13,16 @@ function Auth({ children }) {
   // NOTE: adding any event listeners (including useEffect functions)
   // to these state values WILL BREAK EVERYTHING. Hate to see it :(
   const [user, loading, error] = useAuthState(firebase.auth())
+  const [admin, setAdmin] = useState()
+
+  useEffect(() => {
+    user &&
+      user.getIdTokenResult().then(token => {
+        if (token && token.claims) {
+          setAdmin(token.claims.admin)
+        }
+      })
+  }, [user])
 
   function handleLogin() {
     const provider = new firebase.auth.GoogleAuthProvider()
@@ -56,7 +66,7 @@ function Auth({ children }) {
   ) : error ? (
     <Error />
   ) : user ? (
-    <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>
+    <AuthContext.Provider value={{ user, admin, handleLogin, handleLogout }}>
       {children}
     </AuthContext.Provider>
   ) : (

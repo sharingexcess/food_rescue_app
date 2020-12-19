@@ -32,6 +32,7 @@
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     #UserName,
     #UserEmail,
+    #UserIsAdmin,
     #MenuContent {
       opacity: 0;
       pointer-events: none;
@@ -98,6 +99,23 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+      #UserIsAdmin {
+        max-width: 100%;
+        margin: 3px 0 0 1px;
+        font-size: 10px;
+        font-weight: 600;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: rgb(236, 193, 51);
+        transition: opacity 0.32s ease;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        i {
+          margin-right: 4px;
+        }
       }
     }
     #Close {

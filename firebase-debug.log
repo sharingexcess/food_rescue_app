@@ -1,0 +1,219 @@
+[debug] [2020-12-19T04:16:02.674Z] ----------------------------------------------------------------------
+[debug] [2020-12-19T04:16:02.675Z] Command:       /Users/rmchenry/.nvm/versions/node/v12.20.0/bin/node /Users/rmchenry/.nvm/versions/node/v12.20.0/bin/firebase deploy --debug
+[debug] [2020-12-19T04:16:02.676Z] CLI Version:   9.0.1
+[debug] [2020-12-19T04:16:02.676Z] Platform:      darwin
+[debug] [2020-12-19T04:16:02.676Z] Node Version:  v12.20.0
+[debug] [2020-12-19T04:16:02.676Z] Time:          Fri Dec 18 2020 23:16:02 GMT-0500 (Eastern Standard Time)
+[debug] [2020-12-19T04:16:02.676Z] ----------------------------------------------------------------------
+[debug] [2020-12-19T04:16:02.676Z] 
+[debug] [2020-12-19T04:16:02.680Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-12-19T04:16:02.681Z] > authorizing via signed-in user
+[debug] [2020-12-19T04:16:02.681Z] [iam] checking project sharing-excess-7e887 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2020-12-19T04:16:02.683Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/sharing-excess-7e887:testIamPermissions  
+ {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2020-12-19T04:16:02.925Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:02 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=155","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:02.927Z] >>> HTTP REQUEST POST https://iam.googleapis.com/v1/projects/sharing-excess-7e887/serviceAccounts/sharing-excess-7e887@appspot.gserviceaccount.com:testIamPermissions  
+ {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2020-12-19T04:16:03.304Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:03 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:03.305Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/sharing-excess-7e887  
+ 
+[debug] [2020-12-19T04:16:03.631Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:03 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] 
+[info] === Deploying to 'sharing-excess-7e887'...
+[info] 
+[info] i  deploying functions, hosting 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run lint
+[info] ✔  functions: Finished running predeploy script. 
+[debug] [2020-12-19T04:16:06.021Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "12"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^9.4.2",
+    "firebase-functions": "^3.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "firebase-functions-test": "^0.2.0"
+  },
+  "private": true
+}
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2020-12-19T04:16:06.631Z] >>> HTTP REQUEST GET https://serviceusage.googleapis.com/v1/projects/sharing-excess-7e887/services/cloudfunctions.googleapis.com  
+ 
+[debug] [2020-12-19T04:16:06.631Z] >>> HTTP REQUEST GET https://serviceusage.googleapis.com/v1/projects/sharing-excess-7e887/services/runtimeconfig.googleapis.com  
+ 
+[debug] [2020-12-19T04:16:06.631Z] >>> HTTP REQUEST GET https://serviceusage.googleapis.com/v1/projects/sharing-excess-7e887/services/cloudbuild.googleapis.com  
+ 
+[debug] [2020-12-19T04:16:07.108Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:07 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:07.109Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:07 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2020-12-19T04:16:07.129Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:07 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2020-12-19T04:16:07.130Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/sharing-excess-7e887/adminSdkConfig  
+ 
+[debug] [2020-12-19T04:16:07.334Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:07 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:07.337Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/sharing-excess-7e887/versions  
+ {"config":{"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2020-12-19T04:16:08.110Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:08 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] i  functions: preparing functions directory for uploading... 
+[debug] [2020-12-19T04:16:08.111Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/sharing-excess-7e887/configs  
+ 
+[debug] [2020-12-19T04:16:08.237Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:08 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] i  functions: packaged functions (24.13 KB) for uploading 
+[debug] [2020-12-19T04:16:08.344Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/projects/sharing-excess-7e887/locations/-/functions  
+ 
+[debug] [2020-12-19T04:16:09.036Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:08 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:09.038Z] [functions] found 1 new HTTP functions, testing setIamPolicy permission...
+[debug] [2020-12-19T04:16:09.039Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/sharing-excess-7e887:testIamPermissions  
+ {"permissions":["cloudfunctions.functions.setIamPolicy"]}
+[debug] [2020-12-19T04:16:09.253Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:09 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=163","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:09.254Z] [functions] found setIamPolicy permission, proceeding with deploy
+[debug] [2020-12-19T04:16:09.254Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/sharing-excess-7e887/locations/us-central1/functions:generateUploadUrl  
+ 
+[debug] [2020-12-19T04:16:09.854Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:09 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:09.855Z] >>> HTTP REQUEST PUT https://storage.googleapis.com/gcf-upload-us-central1-5c22f650-9a9c-411e-99ba-f26536841310/6c7d9b22-6804-46db-a620-aaa9eead107b.zip?GoogleAccessId=service-976205755082@gcf-admin-robot.iam.gserviceaccount.com&Expires=1608353169&Signature=SQ8%2F%2BCoV8pNn2VNA4P%2F3aydoQmlrchVPaHBTRXA991vahvI1GDTJII31LBGOvXWIAuQ6fwYpHb6CQY0TE0vNkVYYAaPVjd39fSV7kdFWFlGv5tlHh%2BkNAaPk4mrH9U06raDQJwAZcZ3coI%2B3i6mmQrJiUM3Jyzp%2BC2dneSg2YpPHBoZDNVarYopaanCP4rvsWwi6kdXFaB9gRCUBaaSy1ozbXUIxDmmmlr%2FmTbG4NWP9QcDuN18t6wNq4KzLq4Yq9sVGEEKIS5JM5SBX%2FN1wxp9zQnus1u4lkKFyBk0hJ4UPqNZvGZcM%2Fh2%2BPZd3L55DJrqDEdTcnmzc%2Bcvkc%2BWzdg%3D%3D  
+ <request body omitted>
+[debug] [2020-12-19T04:16:10.032Z] <<< HTTP RESPONSE 200 {"x-guploader-uploadid":"ABg5-UxZG5Vwkkj0VJR9Sz-EUvE74GLGe7GerU03yT4fsFzBYWDuNIe8g8X1d2vZWcaghKaZSxIj6sVj3oaG2DfAv3c","etag":"\"d193ad7a0d1b4aa97bb662022663d42f\"","x-goog-generation":"1608351370004086","x-goog-metageneration":"1","x-goog-hash":"crc32c=b2k+7g==, md5=0ZOteg0bSql7tmICJmPULw==","x-goog-stored-content-length":"24704","x-goog-stored-content-encoding":"identity","vary":"Origin","content-length":"0","date":"Sat, 19 Dec 2020 04:16:10 GMT","server":"UploadServer","content-type":"text/html; charset=UTF-8","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\""}
+[info] ✔  functions: functions folder uploaded successfully 
+[info] i  hosting[sharing-excess-7e887]: beginning deploy... 
+[info] i  hosting[sharing-excess-7e887]: found 5 files in build 
+[debug] [2020-12-19T04:16:10.043Z] [hosting] hash cache [YnVpbGQ] not populated
+[debug] [2020-12-19T04:16:10.207Z] > refreshing access token with scopes: []
+[debug] [2020-12-19T04:16:10.207Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-12-19T04:16:10.209Z] [hosting] hash cache [YnVpbGQ] stored for 5 files
+[debug] [2020-12-19T04:16:10.209Z] [hosting][hash queue][FINAL] {"max":162,"min":3,"avg":40,"active":0,"complete":5,"success":5,"errored":0,"retried":0,"total":5,"elapsed":166}
+[debug] [2020-12-19T04:16:10.327Z] <<< HTTP RESPONSE 200 {"expires":"Mon, 01 Jan 1990 00:00:00 GMT","pragma":"no-cache","date":"Sat, 19 Dec 2020 04:16:10 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:10.343Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/sites/sharing-excess-7e887/versions/38b2a022133500ab:populateFiles [none]
+[debug] [2020-12-19T04:16:10.343Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/sites/sharing-excess-7e887/versions/38b2a022133500ab:populateFiles {"files":{"/static/js/main.0cf367bc.chunk.js":"b96fe5b74921b82c6fa99c76f9ab303cbf3094d4c7e27a1956e300b116535031","/static/js/2.2852d8f1.chunk.js.LICENSE.txt":"cad073643ef138f849ccaefc02b4df4ffbeb5ba72a777bad5b57eea4610d8d14","/static/js/main.0cf367bc.chunk.js.map":"9ac09ea3c63fbe61749a9fdb24e92ce1dbd97c80a336581df251f7e913937dbd","/static/js/2.2852d8f1.chunk.js":"6704610ff7554644ae9c752bbcd5deaa21b24f936cac16db9bad10255f19a670","/static/js/2.2852d8f1.chunk.js.map":"18adbe440e7dc38d876cfe629ca3471517a4bf6a32a7f5a13c98595fb1857b13"}}
+[debug] [2020-12-19T04:16:10.885Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/sites/sharing-excess-7e887/versions/38b2a022133500ab:populateFiles 200
+[debug] [2020-12-19T04:16:10.886Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/sites/sharing-excess-7e887/versions/38b2a022133500ab:populateFiles {"uploadRequiredHashes":["9ac09ea3c63fbe61749a9fdb24e92ce1dbd97c80a336581df251f7e913937dbd","6704610ff7554644ae9c752bbcd5deaa21b24f936cac16db9bad10255f19a670","18adbe440e7dc38d876cfe629ca3471517a4bf6a32a7f5a13c98595fb1857b13","b96fe5b74921b82c6fa99c76f9ab303cbf3094d4c7e27a1956e300b116535031","cad073643ef138f849ccaefc02b4df4ffbeb5ba72a777bad5b57eea4610d8d14"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files"}
+[debug] [2020-12-19T04:16:10.888Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/9ac09ea3c63fbe61749a9fdb24e92ce1dbd97c80a336581df251f7e913937dbd [none]
+[debug] [2020-12-19T04:16:10.888Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/9ac09ea3c63fbe61749a9fdb24e92ce1dbd97c80a336581df251f7e913937dbd [stream]
+[debug] [2020-12-19T04:16:10.889Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/6704610ff7554644ae9c752bbcd5deaa21b24f936cac16db9bad10255f19a670 [none]
+[debug] [2020-12-19T04:16:10.889Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/6704610ff7554644ae9c752bbcd5deaa21b24f936cac16db9bad10255f19a670 [stream]
+[debug] [2020-12-19T04:16:10.890Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/18adbe440e7dc38d876cfe629ca3471517a4bf6a32a7f5a13c98595fb1857b13 [none]
+[debug] [2020-12-19T04:16:10.890Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/18adbe440e7dc38d876cfe629ca3471517a4bf6a32a7f5a13c98595fb1857b13 [stream]
+[debug] [2020-12-19T04:16:10.891Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/b96fe5b74921b82c6fa99c76f9ab303cbf3094d4c7e27a1956e300b116535031 [none]
+[debug] [2020-12-19T04:16:10.891Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/b96fe5b74921b82c6fa99c76f9ab303cbf3094d4c7e27a1956e300b116535031 [stream]
+[debug] [2020-12-19T04:16:10.892Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/cad073643ef138f849ccaefc02b4df4ffbeb5ba72a777bad5b57eea4610d8d14 [none]
+[debug] [2020-12-19T04:16:10.893Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/cad073643ef138f849ccaefc02b4df4ffbeb5ba72a777bad5b57eea4610d8d14 [stream]
+[debug] [2020-12-19T04:16:10.893Z] [hosting][populate queue][FINAL] {"max":681,"min":681,"avg":681,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":686}
+[debug] [2020-12-19T04:16:10.894Z] [hosting] uploads queued: 5
+[debug] [2020-12-19T04:16:12.026Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/9ac09ea3c63fbe61749a9fdb24e92ce1dbd97c80a336581df251f7e913937dbd 200
+[debug] [2020-12-19T04:16:12.026Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/9ac09ea3c63fbe61749a9fdb24e92ce1dbd97c80a336581df251f7e913937dbd [stream]
+[info] i  hosting: uploading new files [1/5] (20%) 
+[debug] [2020-12-19T04:16:12.047Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/6704610ff7554644ae9c752bbcd5deaa21b24f936cac16db9bad10255f19a670 200
+[debug] [2020-12-19T04:16:12.047Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/6704610ff7554644ae9c752bbcd5deaa21b24f936cac16db9bad10255f19a670 [stream]
+[debug] [2020-12-19T04:16:12.079Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/b96fe5b74921b82c6fa99c76f9ab303cbf3094d4c7e27a1956e300b116535031 200
+[debug] [2020-12-19T04:16:12.079Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/b96fe5b74921b82c6fa99c76f9ab303cbf3094d4c7e27a1956e300b116535031 [stream]
+[debug] [2020-12-19T04:16:12.159Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/cad073643ef138f849ccaefc02b4df4ffbeb5ba72a777bad5b57eea4610d8d14 200
+[debug] [2020-12-19T04:16:12.159Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/cad073643ef138f849ccaefc02b4df4ffbeb5ba72a777bad5b57eea4610d8d14 [stream]
+[debug] [2020-12-19T04:16:13.127Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/18adbe440e7dc38d876cfe629ca3471517a4bf6a32a7f5a13c98595fb1857b13 200
+[debug] [2020-12-19T04:16:13.128Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/sharing-excess-7e887/versions/38b2a022133500ab/files/18adbe440e7dc38d876cfe629ca3471517a4bf6a32a7f5a13c98595fb1857b13 [stream]
+[debug] [2020-12-19T04:16:13.128Z] [hosting][upload queue][FINAL] {"max":2241,"min":1141,"avg":1401.2,"active":0,"complete":5,"success":5,"errored":0,"retried":0,"total":5,"elapsed":2242}
+[info] ✔  hosting[sharing-excess-7e887]: file upload complete 
+[debug] [2020-12-19T04:16:13.129Z] [hosting] deploy completed after 3095ms
+[info] i  functions: creating Node.js 12 function addAdminRole(us-central1)... 
+[debug] [2020-12-19T04:16:13.202Z] Trigger is:  {"httpsTrigger":{}}
+[debug] [2020-12-19T04:16:13.203Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-12-19T04:16:13.203Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-12-19T04:16:13.320Z] <<< HTTP RESPONSE 200 {"pragma":"no-cache","expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","date":"Sat, 19 Dec 2020 04:16:13 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:13.336Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/sharing-excess-7e887/locations/us-central1/functions  
+ {"sourceUploadUrl":"https://storage.googleapis.com/gcf-upload-us-central1-5c22f650-9a9c-411e-99ba-f26536841310/6c7d9b22-6804-46db-a620-aaa9eead107b.zip?GoogleAccessId=service-976205755082@gcf-admin-robot.iam.gserviceaccount.com&Expires=1608353169&Signature=SQ8%2F%2BCoV8pNn2VNA4P%2F3aydoQmlrchVPaHBTRXA991vahvI1GDTJII31LBGOvXWIAuQ6fwYpHb6CQY0TE0vNkVYYAaPVjd39fSV7kdFWFlGv5tlHh%2BkNAaPk4mrH9U06raDQJwAZcZ3coI%2B3i6mmQrJiUM3Jyzp%2BC2dneSg2YpPHBoZDNVarYopaanCP4rvsWwi6kdXFaB9gRCUBaaSy1ozbXUIxDmmmlr%2FmTbG4NWP9QcDuN18t6wNq4KzLq4Yq9sVGEEKIS5JM5SBX%2FN1wxp9zQnus1u4lkKFyBk0hJ4UPqNZvGZcM%2Fh2%2BPZd3L55DJrqDEdTcnmzc%2Bcvkc%2BWzdg%3D%3D","name":"projects/sharing-excess-7e887/locations/us-central1/functions/addAdminRole","entryPoint":"addAdminRole","labels":{"deployment-tool":"cli-firebase","deployment-callable":"true"},"runtime":"nodejs12","environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"sharing-excess-7e887\",\"storageBucket\":\"sharing-excess-7e887.appspot.com\",\"locationId\":\"us-central\"}"},"httpsTrigger":{}}
+[debug] [2020-12-19T04:16:14.257Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:14 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:14.257Z] Setting public policy for function addAdminRole
+[debug] [2020-12-19T04:16:14.258Z] >>> HTTP REQUEST POST https://cloudfunctions.googleapis.com/v1/projects/sharing-excess-7e887/locations/us-central1/functions/addAdminRole:setIamPolicy  
+ {"policy":{"version":3,"bindings":[{"role":"roles/cloudfunctions.invoker","members":["allUsers"]}]},"updateMask":"version,bindings"}
+[debug] [2020-12-19T04:16:14.783Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:14 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:14.785Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/projects/sharing-excess-7e887/locations/-/functions  
+ 
+[debug] [2020-12-19T04:16:15.692Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:15 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:15.694Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:16.106Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:15 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:18.109Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:18.424Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:18 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:20.428Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:20.816Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:20 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:22.819Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:23.118Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:23 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:25.123Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:25.940Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:25 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:27.942Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:28.229Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:28 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:30.235Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:30.534Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:30 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:32.539Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:33.844Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:33 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:35.846Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:37.192Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:37 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:39.197Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:39.401Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:39 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:41.405Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:41.705Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:41 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:43.710Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:44.082Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:44 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:46.085Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:46.414Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:46 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:48.419Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:48.768Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:48 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:50.772Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:51.136Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:51 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-12-19T04:16:53.142Z] >>> HTTP REQUEST GET https://cloudfunctions.googleapis.com/v1/operations/c2hhcmluZy1leGNlc3MtN2U4ODcvdXMtY2VudHJhbDEvYWRkQWRtaW5Sb2xlL0hhbm1DeVljSnVV  
+ 
+[debug] [2020-12-19T04:16:53.600Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 19 Dec 2020 04:16:53 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[warn] ⚠  functions[addAdminRole(us-central1)]: Deployment error. 
+[info] Build failed: npm ERR! cipm can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
+npm ERR! 
+npm ERR! 
+npm ERR! Missing: eslint@^5.12.0
+npm ERR! Missing: eslint-plugin-promise@^4.0.1
+npm ERR! Missing: firebase-functions-test@^0.2.0
+npm ERR! 
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /builder/home/.npm/_logs/2020-12-19T04_16_45_718Z-debug.log; Error ID: beaf8772
+[info] 
+
+Functions deploy had errors with the following functions:
+[info] 	addAdminRole
+[info] 
+
+To try redeploying those functions, run:
+[info]     firebase deploy --only "functions:addAdminRole"
+[info] 
+
+To continue deploying other features (such as database), run:
+[info]     firebase deploy --except functions
+[error] 
+[error] Error: Functions did not deploy properly.
