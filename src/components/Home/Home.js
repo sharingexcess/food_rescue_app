@@ -38,7 +38,13 @@ export default function Home() {
         : user.displayName
       : null
     let prefix, suffix
-    if (curHr < 12) {
+    if (curHr < 4) {
+      prefix = 'Get some sleep'
+      suffix = '😴'
+    } else if (curHr < 7) {
+      prefix = "You're up early"
+      suffix = '☕️'
+    } else if (curHr < 12) {
       prefix = 'Good Morning'
       suffix = `☀️`
     } else if (curHr < 18) {
