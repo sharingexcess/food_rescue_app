@@ -108,13 +108,17 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        color: rgb(236, 193, 51);
+        color: $yellow;
         transition: opacity 0.32s ease;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
         i {
           margin-right: 4px;
+          font-size: 8px;
         }
       }
     }
