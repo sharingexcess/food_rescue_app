@@ -7,7 +7,7 @@ import './Menu.scss'
 
 function Menu() {
   const isOpen = useSelector(store => store.app.menu)
-  const { user, handleLogout } = useContext(AuthContext)
+  const { user, admin, handleLogout } = useContext(AuthContext)
   const dispatch = useDispatch()
 
   function close() {
@@ -32,6 +32,12 @@ function Menu() {
           <div>
             <h2 id="UserName">{user.displayName}</h2>
             <h3 id="UserEmail">{user.email}</h3>
+            {admin && (
+              <h4 id="UserIsAdmin">
+                <i className="fa fa-crown" />
+                Sharing Excess Admin
+              </h4>
+            )}
           </div>
           <i id="Close" className="fa fa-times" onClick={close} />
         </div>
