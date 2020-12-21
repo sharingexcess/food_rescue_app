@@ -1,28 +1,21 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useContext } from 'react'
 import Loading from '../Loading/Loading'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './Schedule.scss'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../Auth/Auth'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
+import moment from 'moment'
+import './Schedule.scss'
 
 function Schedule() {
-  const [rescues, setRescues] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
+  const { user } = useContext(AuthContext)
+  const [rescues = [], loading] = useCollectionData(
     firebase
       .firestore()
       .collection('Rescues')
-      .get()
-      .then(querySnapshot => {
-        const updated_rescues = []
-        querySnapshot.forEach(doc =>
-          updated_rescues.push({ id: doc.id, ...doc.data() })
-        )
-        setRescues(updated_rescues)
-        setLoading(false)
-      })
-  }, [])
+      .where('driver_id', '==', user.uid)
+  )
 
   return (
     <main id="Schedule">
@@ -49,8 +42,12 @@ function Schedule() {
                 <td>
                   <Link to={`rescues/${r.id}`}>{r.id}</Link>
                 </td>
-                <td>{r.pickup_timestamp.toString()}</td>
-                <td>{r.delivery_timestamp.toString()}</td>
+                <td>
+                  {moment(r.pickup_timestamp).format('ddd, MMM Do, h:mm a')}
+                </td>
+                <td>
+                  {moment(r.delivery_timestamp).format('ddd, MMM Do, h:mm a')}
+                </td>
               </tr>
             ))}
           </tbody>

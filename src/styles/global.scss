@@ -53,6 +53,12 @@ button {
     box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
     transition: transform 0.16s ease, box-shadow 0.16s ease;
 
+    @media (max-width: $mobile) {
+      width: 100%;
+      padding: 16px 0;
+      margin: 8px 0;
+    }
+
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         transform: translate(-2px, -2px);

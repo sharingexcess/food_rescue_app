@@ -1,28 +1,16 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo } from 'react'
 import Loading from '../Loading/Loading'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './Rescues.scss'
 import { Link } from 'react-router-dom'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
+import moment from 'moment'
+import './Rescues.scss'
 
 function Rescues() {
-  const [rescues, setRescues] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection('Rescues')
-      .get()
-      .then(querySnapshot => {
-        const updated_rescues = []
-        querySnapshot.forEach(doc =>
-          updated_rescues.push({ id: doc.id, ...doc.data() })
-        )
-        setRescues(updated_rescues)
-        setLoading(false)
-      })
-  }, [])
+  const [rescues = [], loading] = useCollectionData(
+    firebase.firestore().collection('Rescues').orderBy('pickup_timestamp')
+  )
 
   return (
     <main id="Rescues">
@@ -49,8 +37,12 @@ function Rescues() {
                 <td>
                   <Link to={`rescues/${r.id}`}>{r.id}</Link>
                 </td>
-                <td>{r.pickup_timestamp.toString()}</td>
-                <td>{r.delivery_timestamp.toString()}</td>
+                <td>
+                  {moment(r.pickup_timestamp).format('ddd, MMM Do, h:mm a')}
+                </td>
+                <td>
+                  {moment(r.delivery_timestamp).format('ddd, MMM Do, h:mm a')}
+                </td>
               </tr>
             ))}
           </tbody>

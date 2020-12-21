@@ -49,6 +49,12 @@ function Menu() {
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/schedule">Schedule</Link>
             </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/rescues">All Rescues</Link>
+            </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/create">New Rescue</Link>
+            </li>
             <li onClick={handleLogout}>Logout</li>
           </ul>
         </div>
