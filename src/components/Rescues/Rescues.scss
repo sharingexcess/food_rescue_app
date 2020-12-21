@@ -1,12 +1,12 @@
 @import '../../styles/imports.scss';
 
-#Schedule {
+#Rescues {
   padding: 120px 16px 0 16px;
   max-width: 800px;
   margin: auto;
   animation: fade-in 0.32s ease forwards;
 
-  #ScheduleHeader {
+  #RescuesHeader {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -26,7 +26,7 @@
     width: 100%;
   }
 
-  #ScheduleTable {
+  #RescuesTable {
     margin: 64px 0;
     width: 100%;
     * {
