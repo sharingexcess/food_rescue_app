@@ -10,6 +10,7 @@ export default function Rescue() {
   const [rescue, setRescue] = useState({})
   const [pickupOrg, setPickupOrg] = useState({})
   const [deliveryOrg, setDeliveryOrg] = useState({})
+  const [driver, setDriver] = useState({})
   const [loading, setLoading] = useState()
 
   useEffect(() => {
@@ -43,7 +44,16 @@ export default function Rescue() {
         .then(doc => {
           doc.exists && setDeliveryOrg(doc.data())
         })
-  }, [rescue.pickup_org_id, rescue.delivery_org_id])
+    rescue.driver_id &&
+      firebase
+        .firestore()
+        .collection('Users')
+        .doc(rescue.driver_id)
+        .get()
+        .then(doc => {
+          doc.exists && setDriver(doc.data())
+        })
+  }, [rescue.pickup_org_id, rescue.delivery_org_id, rescue.driver_id])
 
   return rescue.id ? (
     <div id="Rescue">
@@ -66,6 +76,19 @@ export default function Rescue() {
         <div key={field}>
           <p>{field}: </p>
           <p style={{ color: '#fff' }}>{deliveryOrg[field].toString()}</p>
+        </div>
+      ))}
+      <h3>Driver Info</h3>
+      {Object.keys(driver).map(field => (
+        <div key={field}>
+          <p>{field}: </p>
+          <p style={{ color: '#fff' }}>
+            {field === 'icon' ? (
+              <img src={driver[field]} alt="driver" />
+            ) : (
+              driver[field]
+            )}
+          </p>
         </div>
       ))}
     </div>

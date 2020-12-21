@@ -81,6 +81,22 @@ const formFields = [
     pre_req: 'pickup_timestamp',
     type: 'datetime-local',
   },
+  {
+    label: 'Driver',
+    id: 'driver_name',
+    pre_req: 'delivery_timestamp',
+    type: 'text',
+    suggestion_query: name =>
+      firebase
+        .firestore()
+        .collection('Users')
+        .where('name', '>=', name)
+        .where('name', '<=', name + '\uf8ff'),
+    handle_select: user => ({
+      driver_name: user.name,
+      driver_id: user.id,
+    }),
+  },
 ]
 
 function CreateRescue() {
@@ -94,6 +110,8 @@ function CreateRescue() {
     delivery_location_id: '',
     pickup_timestamp: '',
     delivery_timestamp: '',
+    driver_name: '',
+    driver_id: null,
   })
   const [suggestions, setSuggestions] = useState({
     pickup_org_name: [],
@@ -104,6 +122,8 @@ function CreateRescue() {
     delivery_location_id: [],
     pickup_timestamp: [],
     delivery_timestamp: [],
+    driver_name: '',
+    driver_id: null,
   })
 
   function handleChange(event, field) {
@@ -142,6 +162,7 @@ function CreateRescue() {
         delivery_location_id: formData.delivery_location_id,
         pickup_timestamp: formData.pickup_timestamp,
         delivery_timestamp: formData.delivery_timestamp,
+        driver_id: formData.driver_id,
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
         updated_at: firebase.firestore.FieldValue.serverTimestamp(),
       })
