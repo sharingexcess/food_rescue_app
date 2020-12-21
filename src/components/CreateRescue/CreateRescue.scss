@@ -15,6 +15,10 @@
   form {
     button {
       margin: auto;
+      @media (max-width: $mobile) {
+        width: 100%;
+        padding: 20px;
+      }
     }
   }
 }

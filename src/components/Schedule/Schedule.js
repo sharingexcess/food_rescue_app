@@ -46,7 +46,9 @@ function Schedule() {
           <tbody>
             {rescues.map(r => (
               <tr key={r.id}>
-                <td>{r.id}</td>
+                <td>
+                  <Link to={`rescues/${r.id}`}>{r.id}</Link>
+                </td>
                 <td>{r.pickup_timestamp.toString()}</td>
                 <td>{r.delivery_timestamp.toString()}</td>
               </tr>

@@ -16,15 +16,21 @@
     justify-content: space-between;
     align-items: flex-start;
     padding: 24px 8px;
+    overflow: hidden;
     &:not(:last-child) {
       border-bottom: 1px solid $blue;
     }
   }
 
   p {
-    width: 50%;
     font-weight: 600;
+    font-size: 12px;
     color: $green;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &:first-child {
+      flex-shrink: 0;
+    }
     &:last-child {
       text-align: right;
     }
