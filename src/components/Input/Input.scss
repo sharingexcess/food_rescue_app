@@ -1,0 +1,81 @@
+@import '../../styles/imports.scss';
+
+.Input {
+  position: relative;
+  width: 100%;
+  margin: 32px 0;
+  background: $white;
+  border-radius: 8px;
+  overflow: hidden;
+
+  label {
+    color: $blue;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: 700;
+    pointer-events: none;
+
+    padding: 14px 16px;
+    position: absolute;
+    transition: padding 0.16s ease, font-size 0.16s ease;
+
+    &.focused {
+      padding: 6px 16px;
+      font-size: 10px;
+    }
+  }
+
+  select {
+    font-size: 18px;
+    font-weight: 700;
+    color: $darkgrey;
+    width: calc(100% - 16px);
+    font-family: 'Montserrat', san-serif;
+    border: 0;
+    padding: 20px 16px 8px 16px;
+  }
+
+  input,
+  textarea {
+    height: 50px;
+    position: relative;
+    border: 0;
+    padding: 20px 16px 8px 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: $darkgrey;
+    width: 100%;
+    z-index: 1;
+    transition: border 0.16s ease;
+    &:focus {
+      border: 4px solid $blue;
+    }
+  }
+}
+
+.InputSuggestions {
+  position: relative;
+  width: 100%;
+  margin: -28px 0 0 0;
+  background: $white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 8px 8px 0 rgba(0, 0, 0, 0.32);
+
+  li {
+    cursor: pointer;
+    z-index: 2;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: $blue;
+    transition: background 0.16s ease;
+    background: #eee;
+    &:hover {
+      background: rgba($blue, 0.16);
+    }
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba($blue, 0.32);
+    }
+  }
+}

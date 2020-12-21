@@ -90,3 +90,11 @@ a {
   text-decoration: none;
   color: inherit;
 }
+img {
+  user-select: none;
+}
+
+input {
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}

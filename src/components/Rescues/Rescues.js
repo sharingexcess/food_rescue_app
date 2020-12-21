@@ -2,10 +2,10 @@ import React, { memo, useEffect, useState } from 'react'
 import Loading from '../Loading/Loading'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './Schedule.scss'
+import './Rescues.scss'
 import { Link } from 'react-router-dom'
 
-function Schedule() {
+function Rescues() {
   const [rescues, setRescues] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -25,17 +25,17 @@ function Schedule() {
   }, [])
 
   return (
-    <main id="Schedule">
-      <section id="ScheduleHeader">
-        <h1>My Scheduled Rescues</h1>
-        <Link to="/rescues">
-          <button className="secondary">View All Rescues</button>
+    <main id="Rescues">
+      <section id="RescuesHeader">
+        <h1>All Rescues</h1>
+        <Link to="/schedule">
+          <button className="secondary">View Your Schedule</button>
         </Link>
       </section>
       {loading ? (
         <Loading text="Loading your rescues" />
       ) : rescues.length ? (
-        <table id="ScheduleTable">
+        <table id="RescuesTable">
           <thead>
             <tr>
               <th>Rescue Id</th>
@@ -60,4 +60,4 @@ function Schedule() {
   )
 }
 
-export default memo(Schedule)
+export default memo(Rescues)

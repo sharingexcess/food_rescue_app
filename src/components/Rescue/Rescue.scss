@@ -1,0 +1,32 @@
+@import '../../styles/imports.scss';
+
+#Rescue {
+  padding: 108px 16px 64px 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  h3 {
+    font-size: 24px;
+    margin: 16px 0;
+  }
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px 8px;
+    &:not(:last-child) {
+      border-bottom: 1px solid $blue;
+    }
+  }
+
+  p {
+    width: 50%;
+    font-weight: 600;
+    color: $green;
+    &:last-child {
+      text-align: right;
+    }
+  }
+}
