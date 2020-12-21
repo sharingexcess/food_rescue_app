@@ -47,11 +47,17 @@
     }
     td {
       padding: 16px 0;
+      font-size: 12px;
       &:first-child {
         width: 50%;
       }
       &:not(:first-child) {
         width: 25%;
+      }
+      a {
+        color: $blue;
+        font-weight: 800;
+        text-decoration: underline;
       }
     }
   }
