@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import { resize } from './redux/app/appReducer'
+import CreateRescue from './components/CreateRescue/CreateRescue'
 import Schedule from './components/Schedule/Schedule'
 import Header from './components/Header/Header'
 import Error from './components/Error/Error'
@@ -15,6 +16,8 @@ import { Provider } from 'react-redux'
 import store from './redux/store'
 import './styles/index.scss'
 import { FIREBASE_CONFIG } from './helpers/constants'
+import Rescue from './components/Rescue/Rescue'
+import Rescues from './components/Rescues/Rescues'
 
 firebase.initializeApp(FIREBASE_CONFIG)
 
@@ -42,6 +45,15 @@ function App() {
             </Route>
             <Route exact path="/schedule">
               <Schedule />
+            </Route>
+            <Route exact path="/create">
+              <CreateRescue />
+            </Route>
+            <Route exact path="/rescues">
+              <Rescues />
+            </Route>
+            <Route exact path="/rescues/:id">
+              <Rescue />
             </Route>
             {/* This route has no path, and therefore will be the 'catch all' */}
             <Route>
