@@ -6,6 +6,19 @@
   margin: auto;
   animation: fade-in 0.32s ease forwards;
 
+  a {
+    font-size: 14px;
+    font-weight: 700;
+    color: $blue;
+    margin-bottom: 16px;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
   h1 {
     font-size: 28px;
   }
