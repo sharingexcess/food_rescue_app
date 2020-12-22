@@ -15,4 +15,25 @@
     opacity: 0;
     animation: fade-in 0.32s ease forwards 0.32s;
   }
+
+  section {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    img {
+      width: 96px;
+      height: 96px;
+      flex-shrink: 0;
+      background: $white;
+      padding: 4px;
+      border-radius: 50%;
+      object-fit: contain;
+      margin-right: 24px;
+    }
+    input {
+      color: $white;
+      font-size: 12px;
+    }
+  }
 }

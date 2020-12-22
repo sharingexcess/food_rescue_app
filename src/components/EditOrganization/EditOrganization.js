@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/storage'
 import { Input } from '../Input/Input'
 import { v4 as generateUniqueId } from 'uuid'
-import './EditOrganization.scss'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
+import UserIcon from '../../assets/user.svg'
+import './EditOrganization.scss'
+import { getImageFromStorage } from '../../helpers/helpers'
 
 export default function EditOrganization() {
   const { id } = useParams()
@@ -17,6 +20,8 @@ export default function EditOrganization() {
     default_contact_phone: '',
     org_type: 'donor',
   })
+  const [file, setFile] = useState()
+  const [orgIcon, setOrgIcon] = useState()
   const [org = {}] = useDocumentData(
     id ? firebase.firestore().collection('Organizations').doc(id) : null
   )
@@ -33,19 +38,37 @@ export default function EditOrganization() {
     }
   }, [org, formData])
 
+  useEffect(() => {
+    org.icon && getImageFromStorage(org.icon).then(image => setOrgIcon(image))
+  }, [org.icon])
+
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
-  function handleSubmit() {
-    const new_id = id || generateUniqueId()
+  async function handleSubmit() {
+    const org_id = id || generateUniqueId()
+    const icon = await handleFileUpload(org_id)
     firebase
       .firestore()
       .collection('Organizations')
-      .doc(new_id)
-      .set({ ...formData, new_id }, { merge: true })
+      .doc(org_id)
+      .set({ ...formData, id: org_id, icon: icon || org.icon }, { merge: true })
       .then(() => history.push(`/admin/organizations/${id}`))
       .catch(e => console.error('Error writing document: ', e))
+  }
+
+  function handleFileChange(e) {
+    setFile(e.target.files[0])
+  }
+
+  async function handleFileUpload(org_id = id) {
+    if (file) {
+      const ref = firebase.storage().ref()
+      const path = `/Organizations/${org_id}/assets/${file.name}`
+      await ref.child(path).put(file, { contentType: file.type })
+      return path
+    } else return null
   }
 
   return (
@@ -57,6 +80,13 @@ export default function EditOrganization() {
         {'< '} back
       </Link>
       <h1>{id ? 'Edit Organization' : 'Create Organization'}</h1>
+      <section>
+        <img
+          src={file ? URL.createObjectURL(file) : orgIcon || UserIcon}
+          alt="org_icon"
+        />
+        <input type="file" onChange={handleFileChange} accept="image/*" />
+      </section>
       <Input
         type="text"
         label="Organization Name"
