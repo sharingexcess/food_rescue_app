@@ -33,7 +33,8 @@ export default function Report() {
   }, [rescue.report])
 
   function handleChange(e) {
-    setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) })
+    console.log('handling change', e.target.id, e.target.value)
+    setFormData({ ...formData, [e.target.id]: e.target.value })
     setChanged(true)
   }
 
@@ -54,7 +55,16 @@ export default function Report() {
       .collection('Rescues')
       .doc(id)
       .set(
-        { report: formData, status: Math.max(rescue.status, 6) },
+        {
+          report: {
+            dairy: parseInt(formData.dairy),
+            produce: parseInt(formData.produce),
+            meat: parseInt(formData.meat),
+            grains: parseInt(formData.grains),
+            weight: parseInt(formData.weight),
+          },
+          status: Math.max(rescue.status, 6),
+        },
         { merge: true }
       )
       .then(() => history.push(`/rescues/${id}`))
@@ -83,7 +93,7 @@ export default function Report() {
               </button>
               <input
                 readOnly
-                id="weight"
+                id={field}
                 type="tel"
                 value={formData[field]}
                 onChange={handleChange}
