@@ -10,6 +10,7 @@ export function Input({
   suggestions = [],
   onSuggestionClick,
   style,
+  animation = true,
 }) {
   const [isUsed, setIsUsed] = useState(false)
   const isDate = () => type === 'datetime-local'
@@ -20,7 +21,7 @@ export function Input({
 
   return (
     <>
-      <div className="Input" style={style}>
+      <div className={`Input ${animation ? 'animation' : ''}`} style={style}>
         <label className={isUsed || isDate() ? 'focused' : ''}>{label}</label>
         {type === 'textarea' ? (
           <textarea
@@ -44,8 +45,10 @@ export function Input({
           >
             <option value={null}></option>
             {suggestions.map(s => (
-              <option key={s.id} id={s.id} value={s.id}>
-                {s.name} ({s.address1}, {s.city}, {s.state}, {s.zip_code})
+              <option key={s.id || s} id={s.id || s} value={s.id || s}>
+                {s.address1
+                  ? `${s.name} (${s.address1}, ${s.city}, ${s.state}, ${s.zip_code})`
+                  : s}
               </option>
             ))}
           </select>

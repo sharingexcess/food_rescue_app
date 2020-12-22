@@ -45,7 +45,7 @@ button {
     justify-content: center;
     align-items: center;
     padding: 12px 32px;
-    margin: 8px;
+    margin: 8px auto;
     background: $green;
     color: $white;
     font-weight: 900;
@@ -95,9 +95,23 @@ a {
   display: inline-block;
   text-decoration: none;
   color: inherit;
+  &.back {
+    font-size: 14px;
+    font-weight: 700;
+    color: $blue;
+    margin-bottom: 16px;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 }
 img {
   user-select: none;
+  font-size: 10px;
+  overflow: hidden;
 }
 
 input {

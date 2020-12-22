@@ -100,6 +100,7 @@ export default function Rescue() {
             href={pickup_directions_url}
             target="_blank"
             rel="noopener noreferrer"
+            className="back"
           >
             Get Directions{' >'}
           </a>
@@ -119,6 +120,7 @@ export default function Rescue() {
             href={delivery_directions_url}
             target="_blank"
             rel="noopener noreferrer"
+            className="back"
           >
             Get Directions{' >'}
           </a>
@@ -129,7 +131,9 @@ export default function Rescue() {
 
   return Object.keys(rescue).length ? ( // if rescue object is populated, render
     <div id="Rescue">
-      <Link to="/schedule">{'< '}back to schedule</Link>
+      <Link className="back" to="/schedule">
+        {'< '}back to schedule
+      </Link>
       <h1>{RESCUE_STATUSES[rescue.status]} Rescue</h1>
       <Driver />
       <br />

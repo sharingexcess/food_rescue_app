@@ -11,7 +11,7 @@ const tiles = [
     link: '/schedule',
   },
   {
-    name: 'View All Rescues',
+    name: 'All Rescues',
     icon: 'fa-truck',
     link: '/rescues',
   },
@@ -21,14 +21,14 @@ const tiles = [
     link: '/profile',
   },
   {
-    name: 'Create New Rescue',
+    name: 'New Rescue',
     icon: 'fa-plus',
     link: '/create',
   },
 ]
 
 export default function Home() {
-  const { user } = useContext(AuthContext)
+  const { user, admin } = useContext(AuthContext)
   return (
     <main id="Home">
       <h1>{generateGreeting(user.displayName)}</h1>
@@ -36,6 +36,9 @@ export default function Home() {
         {tiles.map(t => (
           <Tile key={t.name} {...t} />
         ))}
+        {admin ? (
+          <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
+        ) : null}
       </section>
     </main>
   )

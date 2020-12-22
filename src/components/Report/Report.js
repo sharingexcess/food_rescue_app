@@ -65,7 +65,9 @@ export default function Report() {
     <Loading text="Loading report" />
   ) : (
     <main id="Report">
-      <Link to={`/rescues/${id}`}>{'< '} back to rescue</Link>
+      <Link className="back" to={`/rescues/${id}`}>
+        {'< '} back to rescue
+      </Link>
       <h1>Rescue Report</h1>
       <h3>
         {pickup_org.name} <Spacer direction="horizontal" /> {delivery_org.name}
