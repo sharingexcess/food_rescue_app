@@ -5,6 +5,7 @@ import firebase from 'firebase/app'
 import './Profile.scss'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
+import { Link } from 'react-router-dom'
 
 export default function Profile() {
   const { user } = useContext(AuthContext)
@@ -49,6 +50,7 @@ export default function Profile() {
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
+      <Link to="/">{'< '} back to home</Link>
       <h1>User Profile</h1>
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>
