@@ -21,6 +21,7 @@
   h1 {
     margin-top: 16px;
     font-size: 32px;
+    text-transform: capitalize;
   }
 
   h3 {
@@ -28,12 +29,24 @@
     font-size: 14px;
     color: $green;
     font-weight: 700;
+    img {
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
   }
 
   a {
     width: 100%;
-    button {
-      margin-top: 32px;
+  }
+
+  button {
+    &.delete {
+      background: $red;
+    }
+    &.complete {
+      background: $blue;
     }
   }
 
@@ -44,7 +57,7 @@
     background: $mediumgrey;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.16);
     border-radius: 8px;
-    margin: 16px 0;
+    margin: 8px 0;
     h4 {
       padding-right: 60px;
       font-size: 18px;
@@ -72,18 +85,6 @@
     a {
       margin-top: 8px;
       text-decoration: underline;
-    }
-  }
-
-  .Spacer {
-    width: 100%;
-    margin: 4px 0;
-    div {
-      height: 5px;
-      width: 5px;
-      border-radius: 50%;
-      margin: 6px auto;
-      background: $blue;
     }
   }
 }

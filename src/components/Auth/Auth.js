@@ -62,7 +62,7 @@ function Auth({ children }) {
   }
 
   return loading ? (
-    <Loading text={'Signing in'} />
+    <Loading text="Signing in" />
   ) : error ? (
     <Error />
   ) : user ? (

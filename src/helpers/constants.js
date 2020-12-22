@@ -10,4 +10,20 @@ export const FIREBASE_CONFIG = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 }
 
+// 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
 export const MOBILE_THRESHOLD = 600
+
+// these values map a rescue's 'status' property to a literal meaning.
+// 0, 3, 6, and 9 are currently used, with the other number remaining open for future use cases
+export const RESCUE_STATUSES = {
+  0: 'scheduled',
+  1: 'UNDEFINED_STATUS',
+  2: 'UNDEFINED_STATUS',
+  3: 'assigned',
+  4: 'UNDEFINED_STATUS',
+  5: 'UNDEFINED_STATUS',
+  6: 'reported',
+  7: 'UNDEFINED_STATUS',
+  8: 'UNDEFINED_STATUS',
+  9: 'completed',
+}

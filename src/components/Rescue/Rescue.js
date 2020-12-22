@@ -1,15 +1,18 @@
-import React from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import Loading from '../Loading/Loading'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import moment from 'moment'
 import './Rescue.scss'
-import { generateDirectionsLink, Spacer } from './utils'
+import { generateDirectionsLink } from './utils'
+import Spacer from '../Spacer/Spacer'
+import { RESCUE_STATUSES } from '../../helpers/constants'
 
 export default function Rescue() {
   const { id } = useParams()
+  const history = useHistory()
   // Using the useDocument hook from react-firebase-hooks. Reference:
   // https://github.com/csfrequency/react-firebase-hooks/tree/316301a128a9c5fbe41ac2c4fd393c972baf64da/firestore#usedocument
   const [rescue = {}, loading] = useDocumentData(
@@ -40,6 +43,28 @@ export default function Rescue() {
       .collection('Locations')
       .doc(rescue.delivery_location_id)
   )
+  const [willDelete, setWillDelete] = useState()
+  const [willComplete, setWillComplete] = useState()
+
+  function handleDelete() {
+    firebase
+      .firestore()
+      .collection('Rescues')
+      .doc(id)
+      .delete()
+      .then(() => history.push('/schedule'))
+      .catch(e => console.error('Error removing document: ', e))
+  }
+
+  function handleComplete() {
+    firebase
+      .firestore()
+      .collection('Rescues')
+      .doc(id)
+      .set({ status: 9 }, { merge: true })
+      .then(() => history.push('/schedule'))
+      .catch(e => console.error('Error removing document: ', e))
+  }
 
   function Driver() {
     const name = driver.name
@@ -50,6 +75,7 @@ export default function Rescue() {
     const time = moment(rescue.pickup_timestamp).format('ddd, MMM Do, h:mm a')
     return (
       <h3>
+        <img src={driver.icon} alt={driver.name} />
         {name} - {time}
       </h3>
     )
@@ -104,17 +130,38 @@ export default function Rescue() {
   return Object.keys(rescue).length ? ( // if rescue object is populated, render
     <div id="Rescue">
       <Link to="/schedule">{'< '}back to schedule</Link>
-      <h1>Scheduled Rescue</h1>
+      <h1>{RESCUE_STATUSES[rescue.status]} Rescue</h1>
       <Driver />
       <br />
       <Locations />
+      <br />
+      {rescue.status === 6 ? (
+        willComplete ? (
+          <button className="complete" onClick={handleComplete}>
+            are you sure?
+          </button>
+        ) : (
+          <button className="complete" onClick={() => setWillComplete(true)}>
+            make rescue completed
+          </button>
+        )
+      ) : null}
       <Link to={`/rescues/${id}/report`}>
-        <button>start food rescue report</button>
+        <button>open food rescue report</button>
       </Link>
+      {willDelete ? (
+        <button className="delete" onClick={handleDelete}>
+          are you sure?
+        </button>
+      ) : (
+        <button className="delete" onClick={() => setWillDelete(true)}>
+          delete rescue
+        </button>
+      )}
     </div>
   ) : loading ? (
-    <Loading text="Loading rescue info..." />
+    <Loading text="Loading rescue info" />
   ) : (
-    <Loading text="Error fetching rescue!" />
+    <Loading text="Error fetching rescue" />
   )
 }
