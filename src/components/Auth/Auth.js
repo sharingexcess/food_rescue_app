@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
+import 'firebase/auth'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import Google from '../../assets/google.svg'

@@ -20,13 +20,17 @@ export default function Profile() {
   const [button, setButton] = useState()
 
   useEffect(() => {
-    profile &&
+    // update formData only once by checking name population
+    if (!formData.name && profile.name) {
       setFormData({
         name: profile.name,
         phone: profile.phone,
         pronouns: profile.pronouns,
       })
-  }, [profile])
+    }
+  }, [profile, formData])
+
+  // useEffect(() => console.log(formData), [formData])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -50,7 +54,9 @@ export default function Profile() {
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
-      <Link to="/">{'< '} back to home</Link>
+      <Link className="back" to="/">
+        {'< '} back to home
+      </Link>
       <h1>User Profile</h1>
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>

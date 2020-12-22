@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react'
 import firebase from 'firebase/app'
-import './RescueEditor.scss'
+import './EditRescue.scss'
 import { Input } from '../Input/Input'
 import { useHistory } from 'react-router-dom'
 import { v4 as generateUniqueId } from 'uuid'
@@ -83,7 +83,7 @@ const formFields = [
     type: 'datetime-local',
   },
   {
-    label: 'Driver',
+    label: 'Driver (optional)',
     id: 'driver_name',
     pre_req: 'delivery_timestamp',
     type: 'text',
@@ -100,7 +100,7 @@ const formFields = [
   },
 ]
 
-function RescueEditor() {
+function EditRescue() {
   const history = useHistory()
   const [formData, setFormData] = useState({
     pickup_org_name: '',
@@ -217,7 +217,7 @@ function RescueEditor() {
   }
 
   return (
-    <div id="RescueEditor">
+    <div id="EditRescue">
       <h1>New Rescue</h1>
       <p>Use this form to create a new rescue assignment.</p>
       <form onSubmit={handleSubmit}>
@@ -230,4 +230,4 @@ function RescueEditor() {
   )
 }
 
-export default memo(RescueEditor)
+export default memo(EditRescue)

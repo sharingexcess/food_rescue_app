@@ -1,0 +1,33 @@
+@import '../../styles/imports.scss';
+
+#EditLocation {
+  padding: 92px 16px 64px 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .is_primary {
+    width: 100%;
+    position: relative;
+    padding: 24px 0 48px 16px;
+    p {
+      font-size: 16px;
+      font-weight: 900;
+      color: $yellow;
+      text-align: center;
+    }
+
+    input {
+      position: absolute;
+      top: 36px;
+      left: 16px;
+      transform: scale(2.5);
+      margin: auto;
+    }
+  }
+}
