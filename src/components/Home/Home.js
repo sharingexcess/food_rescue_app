@@ -16,9 +16,9 @@ const tiles = [
     link: '/rescues',
   },
   {
-    name: 'Account',
+    name: 'User Profile',
     icon: 'fa-user',
-    link: '/account',
+    link: '/profile',
   },
   {
     name: 'Create New Rescue',

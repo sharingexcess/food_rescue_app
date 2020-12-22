@@ -1,8 +1,9 @@
 import React, { memo, useState } from 'react'
 import firebase from 'firebase/app'
-import './CreateRescue.scss'
+import './RescueEditor.scss'
 import { Input } from '../Input/Input'
 import { useHistory } from 'react-router-dom'
+import { v4 as generateUniqueId } from 'uuid'
 
 const formFields = [
   {
@@ -99,7 +100,7 @@ const formFields = [
   },
 ]
 
-function CreateRescue() {
+function RescueEditor() {
   const history = useHistory()
   const [formData, setFormData] = useState({
     pickup_org_name: '',
@@ -152,10 +153,13 @@ function CreateRescue() {
 
   function handleSubmit(event) {
     event.preventDefault()
+    const id = generateUniqueId()
     firebase
       .firestore()
       .collection('Rescues')
-      .add({
+      .doc(id)
+      .set({
+        id,
         pickup_org_id: formData.pickup_org_id,
         pickup_location_id: formData.pickup_location_id,
         delivery_org_id: formData.delivery_org_id,
@@ -165,13 +169,10 @@ function CreateRescue() {
         driver_id: formData.driver_id,
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
         updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+        status: formData.driver_id ? 3 : 0,
       })
-      .then(docRef => {
-        history.push(`/rescues/${docRef.id}`)
-      })
-      .catch(function (error) {
-        console.error('Error writing document: ', error)
-      })
+      .then(() => history.push(`/rescues/${id}`))
+      .catch(e => console.error('Error writing document: ', e))
   }
 
   function renderFieldInput(field) {
@@ -216,7 +217,7 @@ function CreateRescue() {
   }
 
   return (
-    <div id="CreateRescue">
+    <div id="RescueEditor">
       <h1>New Rescue</h1>
       <p>Use this form to create a new rescue assignment.</p>
       <form onSubmit={handleSubmit}>
@@ -229,4 +230,4 @@ function CreateRescue() {
   )
 }
 
-export default memo(CreateRescue)
+export default memo(RescueEditor)

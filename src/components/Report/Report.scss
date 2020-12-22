@@ -1,0 +1,94 @@
+@import '../../styles/imports.scss';
+
+#Report {
+  padding: 92px 16px 64px 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  a {
+    font-size: 14px;
+    font-weight: 700;
+    color: $blue;
+    margin-bottom: 16px;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    color: $green;
+  }
+
+  section {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 12px 0;
+    h5 {
+      margin-right: auto;
+      font-size: 18px;
+      text-transform: capitalize;
+    }
+    button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &.decrement {
+        font-size: 24px;
+        background-color: $red;
+        padding: 0 1px 1px 0;
+      }
+      &.increment {
+        font-size: 18px;
+      }
+    }
+    input {
+      width: 48px;
+      height: 48px;
+      font-size: 18px;
+      font-weight: 900;
+      color: $darkgrey;
+      display: flex;
+      justify-content: center;
+      border-radius: 8px;
+      align-items: center;
+      text-align: center;
+      margin: 0 8px;
+    }
+
+    &.weight {
+      justify-content: space-between;
+      margin-top: 16px;
+      h4 {
+        font-size: 20px;
+        color: $yellow;
+      }
+      input {
+        width: 96px;
+        height: 48px;
+        font-size: 24px;
+        margin-left: 0;
+      }
+    }
+  }
+}

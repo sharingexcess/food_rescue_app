@@ -1,100 +1,167 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './Rescue.scss'
 import Loading from '../Loading/Loading'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
+import moment from 'moment'
+import './Rescue.scss'
+import { generateDirectionsLink } from './utils'
+import Spacer from '../Spacer/Spacer'
+import { RESCUE_STATUSES } from '../../helpers/constants'
 
 export default function Rescue() {
   const { id } = useParams()
-  const [rescue, setRescue] = useState({})
-  const [pickupOrg, setPickupOrg] = useState({})
-  const [deliveryOrg, setDeliveryOrg] = useState({})
-  const [driver, setDriver] = useState({})
-  const [loading, setLoading] = useState()
+  const history = useHistory()
+  // Using the useDocument hook from react-firebase-hooks. Reference:
+  // https://github.com/csfrequency/react-firebase-hooks/tree/316301a128a9c5fbe41ac2c4fd393c972baf64da/firestore#usedocument
+  const [rescue = {}, loading] = useDocumentData(
+    firebase.firestore().collection('Rescues').doc(id)
+  )
+  const [driver = {}, loading_driver] = useDocumentData(
+    firebase.firestore().collection('Users').doc(rescue.driver_id)
+  )
+  const [pickup_org = {}] = useDocumentData(
+    firebase.firestore().collection('Organizations').doc(rescue.pickup_org_id)
+  )
+  const [delivery_org = {}] = useDocumentData(
+    firebase.firestore().collection('Organizations').doc(rescue.delivery_org_id)
+  )
+  const [pickup_location = {}] = useDocumentData(
+    firebase
+      .firestore()
+      .collection('Organizations')
+      .doc(rescue.pickup_org_id)
+      .collection('Locations')
+      .doc(rescue.pickup_location_id)
+  )
+  const [delivery_location = {}] = useDocumentData(
+    firebase
+      .firestore()
+      .collection('Organizations')
+      .doc(rescue.delivery_org_id)
+      .collection('Locations')
+      .doc(rescue.delivery_location_id)
+  )
+  const [willDelete, setWillDelete] = useState()
+  const [willComplete, setWillComplete] = useState()
 
-  useEffect(() => {
+  function handleDelete() {
     firebase
       .firestore()
       .collection('Rescues')
       .doc(id)
-      .get()
-      .then(doc => {
-        doc.exists && setRescue({ id, ...doc.data() })
-        setLoading(false)
-      })
-  }, [id])
+      .delete()
+      .then(() => history.push('/schedule'))
+      .catch(e => console.error('Error removing document: ', e))
+  }
 
-  useEffect(() => {
-    rescue.pickup_org_id &&
-      firebase
-        .firestore()
-        .collection('Organizations')
-        .doc(rescue.pickup_org_id)
-        .get()
-        .then(doc => {
-          doc.exists && setPickupOrg(doc.data())
-        })
-    rescue.pickup_org_id &&
-      firebase
-        .firestore()
-        .collection('Organizations')
-        .doc(rescue.delivery_org_id)
-        .get()
-        .then(doc => {
-          doc.exists && setDeliveryOrg(doc.data())
-        })
-    rescue.driver_id &&
-      firebase
-        .firestore()
-        .collection('Users')
-        .doc(rescue.driver_id)
-        .get()
-        .then(doc => {
-          doc.exists && setDriver(doc.data())
-        })
-  }, [rescue.pickup_org_id, rescue.delivery_org_id, rescue.driver_id])
+  function handleComplete() {
+    firebase
+      .firestore()
+      .collection('Rescues')
+      .doc(id)
+      .set({ status: 9 }, { merge: true })
+      .then(() => history.push('/schedule'))
+      .catch(e => console.error('Error removing document: ', e))
+  }
 
-  return rescue.id ? (
-    <div id="Rescue">
-      <h3>Scheduled Rescue</h3>
-      {Object.keys(rescue).map(field => (
-        <div key={field}>
-          <p>{field}: </p>
-          <p style={{ color: '#fff' }}>{rescue[field].toString()}</p>
-        </div>
-      ))}
-      <h3>Pickup Organization</h3>
-      {Object.keys(pickupOrg).map(field => (
-        <div key={field}>
-          <p>{field}: </p>
-          <p style={{ color: '#fff' }}>{pickupOrg[field].toString()}</p>
-        </div>
-      ))}
-      <h3>Delivery Organization</h3>
-      {Object.keys(deliveryOrg).map(field => (
-        <div key={field}>
-          <p>{field}: </p>
-          <p style={{ color: '#fff' }}>{deliveryOrg[field].toString()}</p>
-        </div>
-      ))}
-      <h3>Driver Info</h3>
-      {Object.keys(driver).map(field => (
-        <div key={field}>
-          <p>{field}: </p>
-          <p style={{ color: '#fff' }}>
-            {field === 'icon' ? (
-              <img src={driver[field]} alt="driver" />
-            ) : (
-              driver[field]
-            )}
+  function Driver() {
+    const name = driver.name
+      ? driver.name
+      : loading_driver
+      ? 'Loading driver info...'
+      : 'No Driver Assigned'
+    const time = moment(rescue.pickup_timestamp).format('ddd, MMM Do, h:mm a')
+    return (
+      <h3>
+        <img src={driver.icon} alt={driver.name} />
+        {name} - {time}
+      </h3>
+    )
+  }
+
+  function Locations() {
+    const pickup_directions_url = generateDirectionsLink(pickup_location)
+    const delivery_directions_url = generateDirectionsLink(delivery_location)
+    return (
+      <>
+        <div className="Location">
+          <h4>
+            {pickup_org.name}{' '}
+            {pickup_location.name && <span>({pickup_location.name})</span>}
+          </h4>
+          <h6>{moment(rescue.pickup_timestamp).format('h:mm a')}</h6>
+          <p>
+            {pickup_location.address1}, {pickup_location.city},{' '}
+            {pickup_location.state} {pickup_location.zip_code}
           </p>
+          <a
+            href={pickup_directions_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get Directions{' >'}
+          </a>
         </div>
-      ))}
+        <Spacer />
+        <div className="Location">
+          <h4>
+            {delivery_org.name}
+            {delivery_location.name && <span>({delivery_location.name})</span>}
+          </h4>
+          <h6>{moment(rescue.delivery_timestamp).format('h:mm a')}</h6>
+          <p>
+            {delivery_location.address1}, {delivery_location.city},{' '}
+            {delivery_location.state} {delivery_location.zip_code}
+          </p>
+          <a
+            href={delivery_directions_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get Directions{' >'}
+          </a>
+        </div>
+      </>
+    )
+  }
+
+  return Object.keys(rescue).length ? ( // if rescue object is populated, render
+    <div id="Rescue">
+      <Link to="/schedule">{'< '}back to schedule</Link>
+      <h1>{RESCUE_STATUSES[rescue.status]} Rescue</h1>
+      <Driver />
+      <br />
+      <Locations />
+      <br />
+      {rescue.status === 6 ? (
+        willComplete ? (
+          <button className="complete" onClick={handleComplete}>
+            are you sure?
+          </button>
+        ) : (
+          <button className="complete" onClick={() => setWillComplete(true)}>
+            make rescue completed
+          </button>
+        )
+      ) : null}
+      <Link to={`/rescues/${id}/report`}>
+        <button>open food rescue report</button>
+      </Link>
+      {willDelete ? (
+        <button className="delete" onClick={handleDelete}>
+          are you sure?
+        </button>
+      ) : (
+        <button className="delete" onClick={() => setWillDelete(true)}>
+          delete rescue
+        </button>
+      )}
     </div>
   ) : loading ? (
-    <Loading text="Loading rescue info..." />
+    <Loading text="Loading rescue info" />
   ) : (
-    <Loading text="Error fetching rescue!" />
+    <Loading text="Error fetching rescue" />
   )
 }
