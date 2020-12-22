@@ -15,7 +15,6 @@ import './styles/index.scss'
 import AdminRoutes from './routes/AdminRoutes'
 import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
-import Schedule from './components/Schedule/Schedule'
 import EditRescue from './components/EditRescue/EditRescue'
 import Rescues from './components/Rescues/Rescues'
 import Rescue from './components/Rescue/Rescue'
@@ -46,9 +45,6 @@ function App() {
             <Switch>
               <Route exact path="/">
                 <Home />
-              </Route>
-              <Route exact path="/schedule">
-                <Schedule />
               </Route>
               <Route exact path="/create">
                 <EditRescue />

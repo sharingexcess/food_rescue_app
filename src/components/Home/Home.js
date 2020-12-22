@@ -6,24 +6,19 @@ import { generateGreeting } from './utils'
 
 const tiles = [
   {
-    name: 'My Schedule',
-    icon: 'fa-calendar',
-    link: '/schedule',
-  },
-  {
-    name: 'All Rescues',
+    name: 'View Rescues',
     icon: 'fa-truck',
     link: '/rescues',
-  },
-  {
-    name: 'User Profile',
-    icon: 'fa-user',
-    link: '/profile',
   },
   {
     name: 'New Rescue',
     icon: 'fa-plus',
     link: '/create',
+  },
+  {
+    name: 'User Profile',
+    icon: 'fa-user',
+    link: '/profile',
   },
 ]
 

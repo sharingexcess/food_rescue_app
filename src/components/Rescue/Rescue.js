@@ -19,7 +19,9 @@ export default function Rescue() {
     firebase.firestore().collection('Rescues').doc(id)
   )
   const [driver = {}, loading_driver] = useDocumentData(
-    firebase.firestore().collection('Users').doc(rescue.driver_id)
+    rescue.driver_id
+      ? firebase.firestore().collection('Users').doc(rescue.driver_id)
+      : null
   )
   const [pickup_org = {}] = useDocumentData(
     firebase.firestore().collection('Organizations').doc(rescue.pickup_org_id)
@@ -75,7 +77,7 @@ export default function Rescue() {
     const time = moment(rescue.pickup_timestamp).format('ddd, MMM Do, h:mm a')
     return (
       <h3>
-        <img src={driver.icon} alt={driver.name} />
+        {driver.icon && <img src={driver.icon} alt={driver.name} />}
         {name} - {time}
       </h3>
     )
@@ -131,8 +133,8 @@ export default function Rescue() {
 
   return Object.keys(rescue).length ? ( // if rescue object is populated, render
     <div id="Rescue">
-      <Link className="back" to="/schedule">
-        {'< '}back to schedule
+      <Link className="back" to="/rescues">
+        {'< '}back to rescues
       </Link>
       <h1>{RESCUE_STATUSES[rescue.status]} Rescue</h1>
       <Driver />
