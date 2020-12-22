@@ -12,6 +12,8 @@
   }
 
   .is_primary {
+    opacity: 0;
+    animation: slide-in 0.48s ease forwards;
     width: 100%;
     position: relative;
     padding: 24px 0 48px 16px;
@@ -29,5 +31,10 @@
       transform: scale(2.5);
       margin: auto;
     }
+  }
+
+  button {
+    opacity: 0;
+    animation: fade-in 0.32s ease forwards 0.32s;
   }
 }
