@@ -10,4 +10,9 @@
     font-size: 24px;
     margin-bottom: 8px;
   }
+
+  button {
+    opacity: 0;
+    animation: fade-in 0.32s ease forwards 0.32s;
+  }
 }
