@@ -50,20 +50,19 @@ function Menu() {
         <div id="MenuContent">
           <ul>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/">Home</Link>
+              <Link to="/rescues">View Rescues</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/schedule">Schedule</Link>
-            </li>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/rescues">All Rescues</Link>
-            </li>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/create">New Rescue</Link>
+              <Link to="/create">Create Rescue</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/profile">User Profile</Link>
             </li>
+            {admin ? (
+              <li onClick={() => dispatch(setMenu(false))}>
+                <Link to="/admin/organizations">Organizations</Link>
+              </li>
+            ) : null}
             <li onClick={handleLogout}>Logout</li>
           </ul>
         </div>

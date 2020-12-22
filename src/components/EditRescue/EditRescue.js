@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react'
 import firebase from 'firebase/app'
 import './EditRescue.scss'
 import { Input } from '../Input/Input'
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { v4 as generateUniqueId } from 'uuid'
 
 const formFields = [
@@ -218,6 +218,9 @@ function EditRescue() {
 
   return (
     <div id="EditRescue">
+      <Link className="back" to="/rescues">
+        {'< '} back to rescues
+      </Link>
       <h1>New Rescue</h1>
       <p>Use this form to create a new rescue assignment.</p>
       <form onSubmit={handleSubmit}>

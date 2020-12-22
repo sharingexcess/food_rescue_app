@@ -1,7 +1,7 @@
 @import '../../styles/imports.scss';
 
 #Rescues {
-  padding: 120px 16px 0 16px;
+  padding: 92px 16px 0 16px;
   max-width: 800px;
   margin: auto;
   animation: fade-in 0.32s ease forwards;
@@ -11,54 +11,54 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    padding-top: 16px;
 
     h1 {
-      font-size: 16px;
-      color: $green;
-      margin: 0;
+      font-size: 24px;
+    }
+    a {
+      width: auto;
     }
   }
-
-  p {
-    font-size: 16px;
-    padding: 64px 32px;
-    text-align: center;
+  a {
     width: 100%;
+    display: inline;
   }
 
-  #RescuesTable {
-    margin: 64px 0;
+  .Rescue {
+    position: relative;
     width: 100%;
-    * {
+    background: $mediumgrey;
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    margin: 16px 0;
+    padding: 24px 64px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    h3 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+      padding: 4px 0;
+      color: $green;
       text-align: left;
     }
-    tr {
-      width: 100%;
-    }
-    th {
-      font-weight: 900;
-      font-size: 18px;
-      &:first-child {
-        width: 50%;
-      }
-      &:not(:first-child) {
-        width: 25%;
-      }
-    }
-    td {
-      padding: 16px 0;
-      font-size: 12px;
-      &:first-child {
-        width: 50%;
-      }
-      &:not(:first-child) {
-        width: 25%;
-      }
-      a {
-        color: $blue;
-        font-weight: 800;
-        text-decoration: underline;
-      }
+
+    img {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 12px;
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      padding: 2px;
+      background: $white;
+      border-radius: 50%;
     }
   }
 }
