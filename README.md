@@ -63,6 +63,24 @@ _\* You'll also need to request environment files from an admin to connect to th
 - **_`.env` FILES ARE NOT STORED IN THE GIT REPO._** This is an obviously huge security risk. The `/environments` directory and all `.env` files are already protected in the `.gitignore` file, but be sure not to share those files. You'll need to contact an admin to get any `.env` files you don't already have.
 - We use the scripts `npm run dev` and `npm run prod` to copy the correct `.env` file to `.env.local`, which will then be used to start the local development environment.
 
+## Admin Access 💪
+
+We use Firebase Auth's built-in `custom-claims` configuration to add Admin level permissions to user accounts. Inside the `Auth.js` React component, we provide stateful data on whether or not the current authenticated user is an admin in the `AuthContext`. That boolean state can be accessed in any component using:
+
+`const { admin } = useContext(AuthContext)`
+
+To protect admin level access inside the web app, we use `React lazy` to dynamically import all Admin level components. We also separate Admin routes into their own file, `routes/AdminRoutes.js`.
+
+These protections ensure that if the authenticated user is not an admin, the front-end admin code will never be accessible to the browser.
+
+## Deployment (CI/CD) ⚙️
+
+All of the app's hosting and deployment processes are run through Firebase. Using **`Github Actions`**, we continuously deploy to the development endpoint any time a Pull Request is merged into the `master` branch. For more information on that process, checkout the scripts in the `/.github` directory.
+
+Production deploys must be done manually so as to avoid any accidental breaking changes going out unintentionally. In order to do this, use the script `npm run deploy:prod` (see below for more info). That script is password protected, so contact an admin if you need to use it.
+
+All of our CI/CD pipeline is auto-generated using Firebase CLI tools, and the scripts shouldn't need to be altered by hand.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -78,7 +96,6 @@ You will also see any lint errors in the console.
 ### `npm run prod`
 
 Runs the app in the PRODUCTION mode (using prod API and database).\
-\_production database has not yet been configured.\*
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### `npm run build`
@@ -88,5 +105,20 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
+
+### `npm deploy:prod`
+
+This is the big one. The terminal command is a attached to a node script `scripts/prod_deploy.js`. This script will run a series of commands to (as safely as possible) deploy your local version of the web app to the production endpoint. The script will do the following
+
+1.  Check your current git state to ensure that you are on the `master` branch with no local changes.
+2.  Request a pass code confirmation to ensure that not just anyone can run a prod deploy (the sha256 hash of the pass code is saved in the script).
+3.  Move the production environment vars file into the root directory temporarily.
+4.  Delete your current `/build` and `node_modules` directories to ensure that a fresh build is created.
+5.  Install all npm dependencies using `npm ci`
+6.  Build the application in a minified, production ready form using `npm run build`
+7.  Remove the temporary production environment variables file from the root directory
+8.  Assume the `prod` role through the Firebase CLI
+9.  Deploy the app to the firebase prod endpoint
+10. Restore the `default` role through the Firebase CLI
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
