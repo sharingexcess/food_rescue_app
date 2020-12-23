@@ -33,7 +33,6 @@ export default function Report() {
   }, [rescue.report])
 
   function handleChange(e) {
-    console.log('handling change', e.target.id, e.target.value)
     setFormData({ ...formData, [e.target.id]: e.target.value })
     setChanged(true)
   }

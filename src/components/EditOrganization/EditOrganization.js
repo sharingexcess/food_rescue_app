@@ -54,7 +54,7 @@ export default function EditOrganization() {
       .collection('Organizations')
       .doc(org_id)
       .set({ ...formData, id: org_id, icon: icon || org.icon }, { merge: true })
-      .then(() => history.push(`/admin/organizations/${id}`))
+      .then(() => history.push(`/admin/organizations/${org_id}`))
       .catch(e => console.error('Error writing document: ', e))
   }
 

@@ -54,7 +54,7 @@ export default function Rescue() {
       .collection('Rescues')
       .doc(id)
       .delete()
-      .then(() => history.push('/schedule'))
+      .then(() => history.push('/rescues'))
       .catch(e => console.error('Error removing document: ', e))
   }
 

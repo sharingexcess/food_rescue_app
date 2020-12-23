@@ -19,7 +19,9 @@
   "scripts": {
     "dev": "cp environments/.env.dev .env.local && react-scripts start",
     "prod": "cp environments/.env.prod .env.local && react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "build:dev": "cp environments/.env.dev .env.local && npm ci && react-scripts build",
+    "build:prod": "cp environments/.env.prod .env && npm ci && react-scripts build && rm .env"
   },
   "browserslist": {
     "production": [

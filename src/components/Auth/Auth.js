@@ -25,9 +25,34 @@ function Auth({ children }) {
       })
   }, [user])
 
-  function handleLogin() {
+  async function handleLogin() {
     const provider = new firebase.auth.GoogleAuthProvider()
-    firebase.auth().signInWithPopup(provider)
+    const { user } = await firebase.auth().signInWithPopup(provider)
+    const existing_user_ref = await firebase
+      .firestore()
+      .collection('Users')
+      .doc(user.uid)
+      .get()
+    const existing_user = existing_user_ref.data() || {}
+    firebase
+      .firestore()
+      .collection('Users')
+      .doc(user.uid)
+      .set(
+        {
+          ...existing_user,
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+          icon: existing_user.icon ? existing_user.icon : user.photoURL,
+          created_at: existing_user.created_at
+            ? existing_user.created_at
+            : firebase.firestore.FieldValue.serverTimestamp(),
+          last_login: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
+      .catch(e => console.error(e))
   }
 
   function handleLogout() {

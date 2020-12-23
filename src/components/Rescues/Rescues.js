@@ -5,8 +5,10 @@ import 'firebase/firestore'
 import { Link } from 'react-router-dom'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import moment from 'moment'
-import './Rescues.scss'
+import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import './Rescues.scss'
+import { RESCUE_STATUSES } from '../../helpers/constants'
 
 function Rescues() {
   const [raw_rescue_data = []] = useCollectionData(
@@ -43,7 +45,7 @@ function Rescues() {
             .doc(r.driver_id)
             .get()
           const driver = driver_ref.data()
-          if (!isValidURL(driver.icon)) {
+          if (driver.icon && !isValidURL(driver.icon)) {
             driver.icon = await getImageFromStorage(driver.icon)
           }
           rescue.driver = driver
@@ -73,9 +75,13 @@ function Rescues() {
         rescues.map(r => (
           <Link key={r.id} className="wrapper" to={`rescues/${r.id}`}>
             <div className="Rescue">
+              <h6>ID: {r.id.split('-')[0]}</h6>
               <h3>{r.pickup_org.name}</h3>
+              <p className="status">{RESCUE_STATUSES[r.status]}</p>
               <p>{moment(r.pickup_timestamp).format('ddd, MMM Do, h:mm a')}</p>
-              {r.driver && <img src={r.driver.icon} alt={r.driver.name} />}
+              {r.driver && (
+                <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
+              )}
             </div>
           </Link>
         ))
