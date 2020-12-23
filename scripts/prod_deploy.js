@@ -27,9 +27,9 @@ async function requestPassCodeAuthorization() {
 }
 
 async function runCommand(command, callback) {
-  console.log(colors.cyan('\n\nRUNNING:', command))
+  console.log(colors.yellow('\n\nRUNNING:', command))
   const process = exec(command, error => {
-    console.log('completed process', command, ':', error)
+    console.log(colors.green('\n\nCOMPLETED:', command))
     if (error) console.error(error)
     else callback()
   })
@@ -43,7 +43,16 @@ async function main() {
   if (approved) {
     series(
       [
-        callback => runCommand('npm run build:prod', callback),
+        callback =>
+          runCommand(
+            'cp environments/.env.prod .env.production.local',
+            callback
+          ),
+        callback => runCommand('rm -rf build', callback),
+        callback => runCommand('rm -rf node_modules', callback),
+        callback => runCommand('npm ci', callback),
+        callback => runCommand('npm run build', callback),
+        callback => runCommand('rm .env.production.local', callback),
         callback => runCommand('firebase use prod', callback),
         callback => runCommand('firebase deploy --only hosting', callback),
         callback => runCommand('firebase use default', callback),
@@ -51,7 +60,7 @@ async function main() {
       err => {
         err
           ? console.error('Error in deployment:', err)
-          : console.log(colors.green.bold('DEPLOYMENT SUCCESSFUL!'))
+          : console.log(colors.green.bold('\n\nDEPLOYMENT SUCCESSFUL!\n'))
       }
     )
   } else console.log('Invalid pass code. Exiting...')
