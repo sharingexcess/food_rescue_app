@@ -21,7 +21,8 @@
     "prod": "cp environments/.env.prod .env.local && react-scripts start",
     "build": "react-scripts build",
     "build:dev": "cp environments/.env.dev .env.local && npm ci && react-scripts build",
-    "build:prod": "cp environments/.env.prod .env && npm ci && react-scripts build && rm .env"
+    "build:prod": "cp environments/.env.prod .env && npm ci && react-scripts build && rm .env",
+    "deploy:prod": "node scripts/prod_deploy.js"
   },
   "browserslist": {
     "production": [
@@ -36,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "colors": "^1.4.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.3.0",
     "prettier": "2.2.1"
