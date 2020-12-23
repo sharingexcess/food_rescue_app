@@ -21,6 +21,7 @@ import Rescue from './components/Rescue/Rescue'
 import Report from './components/Report/Report'
 import Profile from './components/Profile/Profile'
 
+console.log('INITIALIZING FIREBASE CONFIG', process.env.REACT_APP_FIREBASE_ENV)
 firebase.initializeApp(FIREBASE_CONFIG)
 
 function App() {
