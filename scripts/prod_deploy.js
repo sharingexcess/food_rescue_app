@@ -6,37 +6,39 @@ const git = require('git-state')
 const ENCODED_PASS_CODE =
   '10a35f32b13f533407ce443ab0d4aa5d734db37586c95e1e3bd116227b695ca1'
 
-function validateGitState() {
-  git.isGit('.', function (exists) {
-    if (!exists) return false
-    git.check('.', (err, result) => {
-      if (err) throw err
-      console.log(colors.yellow.bold('Validating Git State:\n'), result, '\n')
-      if (result.branch !== 'master') {
-        console.error(
-          colors.red.bold(
-            'Cannot deploy to production from branch other than master. Exiting...\n'
+async function validateGitState() {
+  return new Promise(res => {
+    git.isGit('.', function (exists) {
+      if (!exists) return false
+      git.check('.', (err, result) => {
+        if (err) throw err
+        console.log(colors.yellow.bold('Validating Git State:\n'), result, '\n')
+        if (result.branch !== 'master') {
+          console.error(
+            colors.red.bold(
+              'Cannot deploy to production from branch other than master. Exiting...\n'
+            )
           )
-        )
-        return false
-      } else if (result.ahead > 0) {
-        console.error(
-          colors.red.bold(
-            'Cannot deploy to production with un-pushed commits. Exiting...\n'
+          res(false)
+        } else if (result.ahead > 0) {
+          console.error(
+            colors.red.bold(
+              'Cannot deploy to production with un-pushed commits. Exiting...\n'
+            )
           )
-        )
-        return false
-      } else if (result.dirty > 0) {
-        console.error(
-          colors.red.bold(
-            'Cannot deploy to production with un-committed changes. Exiting...\n'
+          res(false)
+        } else if (result.dirty > 0) {
+          console.error(
+            colors.red.bold(
+              'Cannot deploy to production with un-committed changes. Exiting...\n'
+            )
           )
-        )
-        return false
-      } else {
-        console.log(colors.green('\nGit state validated.'))
-        return true
-      }
+          res(false)
+        } else {
+          console.log(colors.green('\nGit state validated.'))
+          res(true)
+        }
+      })
     })
   })
 }
@@ -75,7 +77,7 @@ async function runCommand(command, callback) {
 }
 
 async function main() {
-  const valid_git_state = validateGitState()
+  const valid_git_state = await validateGitState()
   if (!valid_git_state) return
   const approved = await requestPassCodeAuthorization()
   if (approved) {
