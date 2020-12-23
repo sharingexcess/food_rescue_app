@@ -32,7 +32,14 @@ export default function Home() {
           <Tile key={t.name} {...t} />
         ))}
         {admin ? (
-          <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
+          <>
+            <Tile
+              name="Manage Orgs"
+              icon="fa-gear"
+              link="/admin/organizations"
+            />
+            <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
+          </>
         ) : null}
       </section>
     </main>

@@ -27,3 +27,8 @@ export const RESCUE_STATUSES = {
   8: 'UNDEFINED_STATUS',
   9: 'completed',
 }
+
+export const CLOUD_FUNCTION_URLS = {
+  isUserAdmin: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'isUserAdmin',
+  setUserAdmin: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'setUserAdmin',
+}

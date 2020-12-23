@@ -1,0 +1,65 @@
+@import '../../styles/imports.scss';
+
+#User {
+  padding: 92px 16px 0 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  .wrapper {
+    width: 100%;
+    display: inline;
+  }
+
+  div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px 0;
+    img {
+      width: 96px;
+      height: 96px;
+      flex-shrink: 0;
+      background: $white;
+      padding: 4px;
+      border-radius: 50%;
+      object-fit: contain;
+      margin-right: 24px;
+    }
+    div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      a {
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      button {
+        margin-top: 8px;
+      }
+      p {
+        font-size: 12px;
+        font-weight: 500;
+        padding: 2px;
+        color: $yellow;
+        i {
+          color: $white;
+          width: 20px;
+        }
+      }
+    }
+  }
+
+  #isAdmin {
+    text-align: center;
+    margin: 32px 0;
+  }
+
+  .revoke {
+    background: $red;
+  }
+}
