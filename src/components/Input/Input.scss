@@ -62,12 +62,13 @@
 .InputSuggestions {
   position: relative;
   width: 100%;
-  margin: -28px 0 0 0;
+  margin: -20px 0 20px 0;
   background: $white;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0px 8px 8px 0 rgba(0, 0, 0, 0.32);
   animation: grow-in 0.48s ease forwards;
+  z-index: 9;
 
   li {
     cursor: pointer;

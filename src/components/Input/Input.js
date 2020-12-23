@@ -55,9 +55,10 @@ export function Input({
         ) : (
           <input
             id={element_id}
-            autoComplete="new-password" //prevent autoComplete
+            autoComplete="off" //prevent autoComplete
             name="no" //prevent autoComplete
             type={type}
+            // type="search"
             onChange={onChange}
             value={value}
             onFocus={!isDate() ? () => setIsUsed(true) : null}

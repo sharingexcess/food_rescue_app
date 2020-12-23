@@ -1,0 +1,54 @@
+@import '../../styles/imports.scss';
+
+#Users {
+  padding: 92px 16px 32px 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  .wrapper {
+    width: 100%;
+    display: inline;
+  }
+
+  h1 {
+    font-size: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .User {
+    width: 100%;
+    background: $mediumgrey;
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    margin: 16px 0;
+    padding: 16px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    div {
+      h3 {
+        font-size: 18px;
+      }
+      p {
+        color: $blue;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+    }
+
+    img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: contain;
+      margin-right: 16px;
+      background: $white;
+      padding: 3px;
+    }
+  }
+}

@@ -9,6 +9,7 @@ import './Rescue.scss'
 import { generateDirectionsLink } from './utils'
 import Spacer from '../Spacer/Spacer'
 import { RESCUE_STATUSES } from '../../helpers/constants'
+import { Input } from '../Input/Input'
 
 export default function Rescue() {
   const { id } = useParams()
@@ -83,6 +84,71 @@ export default function Rescue() {
     )
   }
 
+  function UpdateDriver() {
+    const [input, setInput] = useState('')
+    const [suggestions, setSuggestions] = useState('')
+    const [willUpdate, setWillUpdate] = useState(false)
+
+    function handleChange(e) {
+      setInput(e.target.value)
+      firebase
+        .firestore()
+        .collection('Users')
+        .where('name', '>=', e.target.value)
+        .where('name', '<=', e.target.value + '\uf8ff')
+        .get()
+        .then(querySnapshot => {
+          const updatedSuggestions = []
+          querySnapshot.forEach(doc => {
+            updatedSuggestions.push({ id: doc.id, ...doc.data() })
+          })
+          if (suggestions.length !== updatedSuggestions.length) {
+            setSuggestions(updatedSuggestions)
+          }
+        })
+    }
+
+    function handleSelect(new_driver_id) {
+      firebase
+        .firestore()
+        .collection('Rescues')
+        .doc(id)
+        .set(
+          {
+            driver_id: new_driver_id,
+          },
+          { merge: true }
+        )
+        .then(() => setWillUpdate(false))
+        .catch(e => console.error('Error updating driver_id:', e))
+    }
+
+    return willUpdate ? (
+      <>
+        <Input
+          label="Driver Name..."
+          type="text"
+          value={input}
+          onChange={handleChange}
+          suggestions={suggestions}
+          onSuggestionClick={e => handleSelect(e.target.id)}
+        />
+        <div id="updateDriverButtons">
+          <button className="clear" onClick={() => handleSelect(null)}>
+            clear
+          </button>
+          <button className="cancel" onClick={() => setWillUpdate(false)}>
+            cancel
+          </button>
+        </div>
+      </>
+    ) : (
+      <button className="updateDriver" onClick={() => setWillUpdate(true)}>
+        {rescue.driver_id ? 'change driver assignment' : 'assign to driver'}
+      </button>
+    )
+  }
+
   function Locations() {
     const pickup_directions_url = generateDirectionsLink(pickup_location)
     const delivery_directions_url = generateDirectionsLink(delivery_location)
@@ -152,6 +218,7 @@ export default function Rescue() {
           </button>
         )
       ) : null}
+      {rescue.status < 6 && <UpdateDriver />}
       <Link to={`/rescues/${id}/report`}>
         <button>open food rescue report</button>
       </Link>

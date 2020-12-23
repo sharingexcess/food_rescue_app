@@ -1,47 +1,48 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
+const express = require('express')
+const cors = require('cors')
 admin.initializeApp()
+const backend_routes = express()
+backend_routes.use(cors({ origin: true }))
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-exports.addAdminRole = functions.https.onRequest((req, res) => {
-  console.log('\nGOT REQ:\n', req.query.email)
+backend_routes.get('/isUserAdmin', isUserAdmin)
+backend_routes.post('/setUserAdmin', setUserAdmin)
+
+function setUserAdmin(req, res) {
+  console.log(
+    '\nReceived request to setUserAdmin:\n',
+    req.query.id,
+    req.query.admin
+  )
+  const new_admin_value = req.query.admin === 'true' ? true : false
   return admin
     .auth()
-    .getUserByEmail(req.query.email)
+    .getUser(req.query.id)
     .then(user => {
       console.log('got user')
       return admin
         .auth()
         .setCustomUserClaims(user.uid, {
-          admin: true,
+          admin: new_admin_value,
         })
-        .then(data => console.log('successfully created new admin'))
-        .catch(e => console.log('error creating new admin:', e))
+        .then(data => {
+          console.log('successfully created new admin', data)
+          res.send({ id: req.query.id, admin: new_admin_value })
+        })
+        .catch(e => {
+          console.log('error creating new admin:', e)
+          res.send({ error: e })
+        })
     })
     .catch(e => console.log('could not find user:', e))
-    .then(() => {
-      console.log('returning success')
-      res.json({
-        message: `created new admin user: ${req.email}`,
-      })
-    })
-    .catch(e => {
-      console.log('returning error')
-      res.send(e)
-    })
-})
+}
 
-exports.isUserAdminByEmail = functions.https.onRequest((req, res) => {
-  console.log('\nGOT REQ:\n', req.query.email)
+function isUserAdmin(req, res) {
+  console.log('\nReceived request to isUserAdmin:\n', req.query.id)
   admin
     .auth()
-    .getUserByEmail(req.query.email)
+    .getUser(req.query.id)
     .then(userRecord => {
       // See the UserRecord reference doc for the contents of userRecord.
       console.log(
@@ -49,10 +50,12 @@ exports.isUserAdminByEmail = functions.https.onRequest((req, res) => {
         userRecord,
         userRecord.customClaims
       )
-      res.json(userRecord.toJSON())
+      res.send(userRecord.customClaims ? userRecord.customClaims.admin : false)
     })
     .catch(error => {
       console.log('Error fetching user data:', error)
       res.send('could not find user')
     })
-})
+}
+
+exports.backend = functions.https.onRequest(backend_routes)

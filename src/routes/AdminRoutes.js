@@ -21,6 +21,12 @@ export default function AdminRoutes() {
   const EditLocation = lazy(() => {
     return admin ? import('../components/EditLocation/EditLocation') : null
   })
+  const Users = lazy(() => {
+    return admin ? import('../components/Users/Users') : null
+  })
+  const User = lazy(() => {
+    return admin ? import('../components/User/User') : null
+  })
 
   // AdminRoute is a wrapper function around Route to ensure that no admin components
   // can render if the user is not authenticated as an admin
@@ -53,6 +59,12 @@ export default function AdminRoutes() {
       </AdminRoute>
       <AdminRoute exact path="/admin/organizations/:id/location/:loc_id">
         <EditLocation />
+      </AdminRoute>
+      <AdminRoute exact path="/admin/users">
+        <Users />
+      </AdminRoute>
+      <AdminRoute exact path="/admin/users/:id">
+        <User />
       </AdminRoute>
     </Switch>
   )
