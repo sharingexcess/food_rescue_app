@@ -73,6 +73,18 @@ To protect admin level access inside the web app, we use `React lazy` to dynamic
 
 These protections ensure that if the authenticated user is not an admin, the front-end admin code will never be accessible to the browser.
 
+## Version Control Practices 🌳
+
+Surprise! We use **GitHub** for all of our version control excitement.
+
+In order to avoid merge conflicts, we use the following patterns to work together as seamlessly as possible:
+
+- Always develop on a branch. Always.
+- To start a new branch, ensure you have the latest version of the `master` branch with `git checkout master` and `git pull origin master`, then run `git checkout -b myNewBranch`
+- If you need to continue working on a branch while master is updated, use `rebase` to move your branch up to the latest version. First, checkout and pull the latest version of `master`. Then, checkout your branch, and run `git rebase master`. Follow the prompts to resolve any conflicts, and after the rebase is complete, use `git push origin myBranchName -f` to force update your branch remotely.
+- When your branch is ready for prime time, open a `Pull Request`.
+- **Never merge a branch directly into master without a pull request.** Committing or merging directly to master will automatically deploy code to the development endpoint, and should never occur without a reviewed pull request with approval.
+
 ## Deployment (CI/CD) ⚙️
 
 All of the app's hosting and deployment processes are run through Firebase. Using **`Github Actions`**, we continuously deploy to the development endpoint any time a Pull Request is merged into the `master` branch. For more information on that process, checkout the scripts in the `/.github` directory.
