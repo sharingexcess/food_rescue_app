@@ -42,7 +42,6 @@ export default function EditLocation() {
 
   useEffect(() => {
     if (location.name && !formData.name) {
-      console.log(location)
       setFormData({
         name: location.name,
         address1: location.address1,
@@ -56,7 +55,6 @@ export default function EditLocation() {
   }, [location, formData])
 
   function handleChange(e) {
-    console.log(e.target.id, e.target.value)
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 

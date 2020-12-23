@@ -24,13 +24,11 @@ export default function Profile() {
     if (!formData.name && profile.name) {
       setFormData({
         name: profile.name,
-        phone: profile.phone,
-        pronouns: profile.pronouns,
+        phone: profile.phone || '',
+        pronouns: profile.pronouns || '',
       })
     }
   }, [profile, formData])
-
-  // useEffect(() => console.log(formData), [formData])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
