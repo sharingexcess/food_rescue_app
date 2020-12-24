@@ -117,4 +117,9 @@ img {
 input {
   font-family: 'Montserrat', sans-serif;
   box-sizing: border-box;
+
+  &[type='checkbox'] {
+    border: none;
+    background: $white;
+  }
 }

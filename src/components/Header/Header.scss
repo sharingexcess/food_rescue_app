@@ -11,7 +11,8 @@ header#Header {
   align-items: center;
   animation: fade-in 0.32s ease forwards;
   z-index: 10;
-  background: linear-gradient(to bottom, $darkgrey, transparent);
+  // background-color: $darkgrey;
+  background: linear-gradient(to bottom, $darkgrey, rgba($darkgrey, 0));
 
   #Logo {
     height: 48px;

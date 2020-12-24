@@ -7,6 +7,13 @@
   background: $white;
   border-radius: 8px;
   overflow: hidden;
+  height: 50px;
+
+  * {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
   &.animation {
     animation: slide-in 0.48s forwards ease;
@@ -30,19 +37,21 @@
   }
 
   select {
+    height: 100%;
     font-size: 18px;
     font-weight: 700;
     color: $darkgrey;
     background: $white;
-    width: calc(100% - 16px);
+    width: 100%;
     font-family: 'Montserrat', san-serif;
     border: 0;
     padding: 20px 16px 8px 16px;
+    -webkit-appearance: none;
   }
 
   input,
   textarea {
-    height: 50px;
+    height: 100%;
     position: relative;
     border: 0;
     padding: 20px 16px 8px 16px;
@@ -50,9 +59,11 @@
     font-weight: 700;
     color: $darkgrey;
     width: 100%;
+    min-width: 100%;
     border-radius: 8px;
     z-index: 1;
     transition: border 0.16s ease;
+    -webkit-appearance: none;
     &:focus {
       border: 4px solid $blue;
     }

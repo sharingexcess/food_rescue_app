@@ -7,7 +7,7 @@ export function Input({
   label,
   value,
   onChange,
-  suggestions = [],
+  suggestions,
   onSuggestionClick,
   style,
   animation = true,
@@ -44,13 +44,15 @@ export function Input({
             onClick={() => setIsUsed(true)}
           >
             <option value={null}></option>
-            {suggestions.map(s => (
-              <option key={s.id || s} id={s.id || s} value={s.id || s}>
-                {s.address1
-                  ? `${s.name} (${s.address1}, ${s.city}, ${s.state}, ${s.zip_code})`
-                  : s}
-              </option>
-            ))}
+            {suggestions
+              ? suggestions.map(s => (
+                  <option key={s.id || s} id={s.id || s} value={s.id || s}>
+                    {s.address1
+                      ? `${s.name} (${s.address1}, ${s.city}, ${s.state}, ${s.zip_code})`
+                      : s}
+                  </option>
+                ))
+              : null}
           </select>
         ) : (
           <input
@@ -72,13 +74,19 @@ export function Input({
           />
         )}
       </div>
-      {type === 'text' && suggestions.length ? (
+      {type === 'text' && suggestions ? (
         <ul className="InputSuggestions">
-          {suggestions.map(s => (
-            <li key={s.id} id={s.id} onClick={e => onSuggestionClick(e, s)}>
-              {s.name}
+          {suggestions.length && value.length ? (
+            suggestions.map(s => (
+              <li key={s.id} id={s.id} onClick={e => onSuggestionClick(e, s)}>
+                {s.name}
+              </li>
+            ))
+          ) : value.length ? (
+            <li style={{ pointerEvents: 'none' }}>
+              No results, try a different prefix!
             </li>
-          ))}
+          ) : null}
         </ul>
       ) : null}
     </>
