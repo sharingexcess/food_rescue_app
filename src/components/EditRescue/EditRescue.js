@@ -147,7 +147,7 @@ function EditRescue() {
 
   function handleSelect(event, selected, field) {
     field.type !== 'select' &&
-      setSuggestions({ ...suggestions, [field.id]: [] })
+      setSuggestions({ ...suggestions, [field.id]: null })
     setFormData({ ...formData, ...field.handle_select(selected) })
   }
 
