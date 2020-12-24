@@ -9,6 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          if [ "$REACT_APP_FIREBASE_ENV" -eq "dev" ]
+          then
+            echo "Building with DEV env vars set"
+          elif [ "$REACT_APP_FIREBASE_ENV" -eq "prod" ]
+          then
+            echo "Building with PROD env vars set"
+          else
+            echo "env vars are improperly set, not DEV or PROD."
+          fi
+        env:
+          REACT_APP_FIREBASE_ENV: ${{secrets.REACT_APP_FIREBASE_ENV}}
       - run: npm ci && npm run build
         env:
           REACT_APP_FIREBASE_API_KEY: ${{secrets.REACT_APP_FIREBASE_API_KEY}}
