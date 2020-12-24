@@ -10,10 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          if [ "$REACT_APP_FIREBASE_ENV" -eq "dev" ]
+          if [ "$REACT_APP_FIREBASE_ENV" == "dev" ]
           then
             echo "Building with DEV env vars set"
-          elif [ "$REACT_APP_FIREBASE_ENV" -eq "prod" ]
+          elif [ "$REACT_APP_FIREBASE_ENV" == "prod" ]
           then
             echo "Building with PROD env vars set"
           else
