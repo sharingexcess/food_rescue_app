@@ -1,3 +1,21 @@
+export const tiles = [
+  {
+    name: 'View Rescues',
+    icon: 'fa-truck',
+    link: '/rescues',
+  },
+  {
+    name: 'New Rescue',
+    icon: 'fa-plus',
+    link: '/create',
+  },
+  {
+    name: 'User Profile',
+    icon: 'fa-user',
+    link: '/profile',
+  },
+]
+
 export function generateGreeting(name) {
   const today = new Date()
   const curHr = today.getHours()

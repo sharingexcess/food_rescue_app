@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { AuthContext } from '../Auth/Auth'
+import { useAuthContext } from '../Auth/Auth'
 import firebase from 'firebase/app'
 import './Profile.scss'
 import Loading from '../Loading/Loading'
@@ -8,7 +8,7 @@ import { Input } from '../Input/Input'
 import { Link } from 'react-router-dom'
 
 export default function Profile() {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuthContext()
   const [profile = {}, loading] = useDocumentData(
     firebase.firestore().collection('Users').doc(user.uid)
   )
