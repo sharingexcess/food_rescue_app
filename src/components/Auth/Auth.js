@@ -1,58 +1,41 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import Google from '../../assets/google.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import {
+  getAuthenticatedUser,
+  updatePublicUserProfile,
+  updateUserAdminPermissions,
+} from './utils'
 import './Auth.scss'
 
+// We create a Context to allow Auth state to be accessed from any component in the tree
+// without passing the data directly as a prop
+// Read more about Contexts in React: https://reactjs.org/docs/context.html
 const AuthContext = createContext()
 AuthContext.displayName = 'Auth'
 
 function Auth({ children }) {
-  // NOTE: adding any event listeners (including useEffect functions)
-  // to these state values WILL BREAK EVERYTHING. Hate to see it :(
+  // use an imported React Hook create state variables
+  // user defines the current auth state,
+  // loading defines whether a request is currently running
+  // error defines whether we received a bad response from firebase
   const [user, loading, error] = useAuthState(firebase.auth())
-  const [admin, setAdmin] = useState()
+  // we create our own state variable to define whether the current user is an admin
+  // the default is 'false' so as not to give any accidental permissions
+  const [admin, setAdmin] = useState(false)
 
   useEffect(() => {
-    user &&
-      user.getIdTokenResult().then(token => {
-        if (token && token.claims) {
-          setAdmin(token.claims.admin)
-        }
-      })
+    // check and update the user's admin permission
+    if (user) updateUserAdminPermissions(user, setAdmin)
   }, [user])
 
   async function handleLogin() {
-    const provider = new firebase.auth.GoogleAuthProvider()
-    const { user } = await firebase.auth().signInWithPopup(provider)
-    const existing_user_ref = await firebase
-      .firestore()
-      .collection('Users')
-      .doc(user.uid)
-      .get()
-    const existing_user = existing_user_ref.data() || {}
-    firebase
-      .firestore()
-      .collection('Users')
-      .doc(user.uid)
-      .set(
-        {
-          ...existing_user,
-          id: user.uid,
-          name: user.displayName,
-          email: user.email,
-          icon: existing_user.icon ? existing_user.icon : user.photoURL,
-          created_at: existing_user.created_at
-            ? existing_user.created_at
-            : firebase.firestore.FieldValue.serverTimestamp(),
-          last_login: firebase.firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      )
-      .catch(e => console.error(e))
+    const user = await getAuthenticatedUser()
+    updatePublicUserProfile(user)
   }
 
   function handleLogout() {
@@ -92,7 +75,11 @@ function Auth({ children }) {
   ) : error ? (
     <Error />
   ) : user ? (
-    <AuthContext.Provider value={{ user, admin, handleLogin, handleLogout }}>
+    <AuthContext.Provider value={{ user, admin, handleLogout }}>
+      {/* 
+        All children will now be able to access user, admin, and handleLogout by calling:
+        const { user, admin, handleLogout } = useContext(AuthContext) or using the useAuthContext() function below
+      */}
       {children}
     </AuthContext.Provider>
   ) : (
@@ -100,5 +87,13 @@ function Auth({ children }) {
   )
 }
 
-export { AuthContext }
-export default Auth
+// useAuth let's child component access the AuthContext more simply and cleanly
+// and ensures that we can set safe defaults
+const useAuthContext = () =>
+  useContext(AuthContext) || {
+    user: null,
+    admin: false,
+    handleLogout: () => null,
+  }
+
+export { Auth as default, useAuthContext }

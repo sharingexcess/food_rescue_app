@@ -10,6 +10,7 @@ import { generateDirectionsLink } from './utils'
 import Spacer from '../Spacer/Spacer'
 import { RESCUE_STATUSES } from '../../helpers/constants'
 import { Input } from '../Input/Input'
+import { ExternalLink } from '../../helpers/components'
 
 export default function Rescue() {
   const { id } = useParams()
@@ -164,14 +165,9 @@ export default function Rescue() {
             {pickup_location.address1}, {pickup_location.city},{' '}
             {pickup_location.state} {pickup_location.zip_code}
           </p>
-          <a
-            href={pickup_directions_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="back"
-          >
+          <ExternalLink url={pickup_directions_url}>
             Get Directions{' >'}
-          </a>
+          </ExternalLink>
         </div>
         <Spacer />
         <div className="Location">
@@ -184,14 +180,9 @@ export default function Rescue() {
             {delivery_location.address1}, {delivery_location.city},{' '}
             {delivery_location.state} {delivery_location.zip_code}
           </p>
-          <a
-            href={delivery_directions_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="back"
-          >
+          <ExternalLink url={delivery_directions_url}>
             Get Directions{' >'}
-          </a>
+          </ExternalLink>
         </div>
       </>
     )
