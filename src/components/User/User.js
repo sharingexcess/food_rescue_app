@@ -3,12 +3,7 @@ import { useDocumentData } from 'react-firebase-hooks/firestore'
 import Loading from '../Loading/Loading'
 import { useParams } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import {
-  getCollection,
-  getImageFromStorage,
-  isValidURL,
-} from '../../helpers/helpers'
-import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
+import { getCollection } from '../../helpers/helpers'
 import {
   UserPronouns,
   UserPhone,
