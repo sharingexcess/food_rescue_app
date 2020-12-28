@@ -6,7 +6,8 @@
   margin: 24px 0;
   overflow: hidden;
   height: 50px;
-
+  border-radius: 0;
+  border: 0;
   * {
     overflow: hidden;
     white-space: nowrap;
@@ -43,6 +44,7 @@
     width: 100%;
     font-family: 'Source Sans Pro', san-serif;
     border: 0;
+    border-radius: 0;
     border-bottom: 1px solid $blue;
     padding: 20px 0 8px 0;
     -webkit-appearance: none;
@@ -57,6 +59,7 @@
     height: 100%;
     position: relative;
     border: 0;
+    border-radius: 0;
     border-bottom: 1px solid $blue;
     padding: 20px 0 8px 0;
     font-size: 18px;
@@ -96,6 +99,7 @@
     color: $blue;
     transition: background 0.16s ease;
     background: $mediumgrey;
+    border-radius: 0;
     &:hover {
       background: rgba($blue, 0.16);
     }

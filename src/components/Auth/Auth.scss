@@ -29,7 +29,12 @@
   }
 
   button {
-    background: $blue;
+    font-size: 18px;
+    color: $white;
+    border: 0;
+    background: #4284f4;
+    font-weight: 600;
+    line-height: 1;
     margin: 8px 0;
   }
 }
