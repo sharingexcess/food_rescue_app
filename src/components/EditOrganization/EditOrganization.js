@@ -7,8 +7,9 @@ import { Input } from '../Input/Input'
 import { v4 as generateUniqueId } from 'uuid'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import UserIcon from '../../assets/user.svg'
+import { handleOrgIcon, initializeFormData } from './utils'
 import './EditOrganization.scss'
-import { getImageFromStorage } from '../../helpers/helpers'
+import { getCollection } from '../../helpers/helpers'
 
 export default function EditOrganization() {
   const { id } = useParams()
@@ -20,26 +21,20 @@ export default function EditOrganization() {
     default_contact_phone: '',
     org_type: 'donor',
   })
-  const [file, setFile] = useState()
-  const [orgIcon, setOrgIcon] = useState()
   const [org = {}] = useDocumentData(
-    id ? firebase.firestore().collection('Organizations').doc(id) : null
+    id ? getCollection('Organizations').doc(id) : null
   )
+  const [orgIconFullUrl, setOrgIconFullUrl] = useState()
+  const [file, setFile] = useState()
 
   useEffect(() => {
     if (org.name && !formData.name) {
-      setFormData({
-        name: org.name,
-        default_contact_name: org.default_contact_name,
-        default_contact_email: org.default_contact_email,
-        default_contact_phone: org.default_contact_phone,
-        org_type: org.org_type,
-      })
+      initializeFormData(org, setFormData)
     }
   }, [org, formData])
 
   useEffect(() => {
-    org.icon && getImageFromStorage(org.icon).then(image => setOrgIcon(image))
+    handleOrgIcon(org.icon, setOrgIconFullUrl)
   }, [org.icon])
 
   function handleChange(e) {
@@ -49,9 +44,7 @@ export default function EditOrganization() {
   async function handleSubmit() {
     const org_id = id || generateUniqueId()
     const icon = await handleFileUpload(org_id)
-    firebase
-      .firestore()
-      .collection('Organizations')
+    getCollection('Organizations')
       .doc(org_id)
       .set({ ...formData, id: org_id, icon: icon || org.icon }, { merge: true })
       .then(() => history.push(`/admin/organizations/${org_id}`))
@@ -82,7 +75,7 @@ export default function EditOrganization() {
       <h1>{id ? 'Edit Organization' : 'Create Organization'}</h1>
       <section>
         <img
-          src={file ? URL.createObjectURL(file) : orgIcon || UserIcon}
+          src={file ? URL.createObjectURL(file) : orgIconFullUrl || UserIcon}
           alt="org_icon"
         />
         <input type="file" onChange={handleFileChange} accept="image/*" />

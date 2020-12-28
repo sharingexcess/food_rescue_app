@@ -10,7 +10,7 @@ import { generateDirectionsLink } from './utils'
 import Spacer from '../Spacer/Spacer'
 import { RESCUE_STATUSES } from '../../helpers/constants'
 import { Input } from '../Input/Input'
-import { ExternalLink } from '../../helpers/components'
+import { ExternalLink, GoBack } from '../../helpers/components'
 
 export default function Rescue() {
   const { id } = useParams()
@@ -191,9 +191,7 @@ export default function Rescue() {
 
   return Object.keys(rescue).length ? ( // if rescue object is populated, render
     <div id="Rescue">
-      <Link className="back" to="/rescues">
-        {'< '}back to rescues
-      </Link>
+      <GoBack url="/rescues" label="back to rescues" />
       <h1>{RESCUE_STATUSES[rescue.status]} Rescue</h1>
       <Driver />
       <br />

@@ -7,6 +7,7 @@ import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import './Users.scss'
 import { Input } from '../Input/Input'
+import { GoBack } from '../../helpers/components'
 
 const user_icon_urls = {}
 
@@ -44,9 +45,7 @@ function Users() {
     <Loading text="Loading users" />
   ) : (
     <main id="Users">
-      <Link className="back" to="/">
-        {'< '} back to home
-      </Link>
+      <GoBack url="/" label="back to home" />
       <h1>Users</h1>
       <Input
         label="Search..."

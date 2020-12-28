@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import './Report.scss'
 import Spacer from '../Spacer/Spacer'
 import Loading from '../Loading/Loading'
+import { GoBack } from '../../helpers/components'
 
 export default function Report() {
   const { id } = useParams()
@@ -69,14 +70,10 @@ export default function Report() {
       .then(() => history.push(`/rescues/${id}`))
       .catch(e => console.error('Error writing document: ', e))
   }
-
-  return loading ? (
-    <Loading text="Loading report" />
-  ) : (
+  if (loading) return <Loading text="Loading report" />
+  return (
     <main id="Report">
-      <Link className="back" to={`/rescues/${id}`}>
-        {'< '} back to rescue
-      </Link>
+      <GoBack url={`/rescues/${id}`} label="back to rescue" />
       <h1>Rescue Report</h1>
       <h3>
         {pickup_org.name} <Spacer direction="horizontal" /> {delivery_org.name}

@@ -1,7 +1,7 @@
 import React from 'react'
 import './Loading.scss'
 import Logo from '../../assets/logo.svg'
-import Ellipsis from '../Ellipsis/Ellipsis'
+import Ellipsis from '../../helpers/components'
 
 export default function Loading({ text = 'Loading' }) {
   return (
