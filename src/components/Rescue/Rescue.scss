@@ -30,19 +30,24 @@
 
   button {
     &.delete {
-      background: $red;
+      color: $red;
+      border-color: $red;
     }
     &.complete {
-      background: $blue;
+      color: $blue;
+      border-color: $blue;
     }
     &.updateDriver {
-      background: $yellow;
+      color: $yellow;
+      border-color: $yellow;
     }
     &.clear {
-      background: $blue;
+      color: $blue;
+      border-color: $blue;
     }
     &.cancel {
-      background: $yellow;
+      color: $yellow;
+      border-color: $yellow;
     }
   }
 
@@ -61,8 +66,9 @@
   .Location {
     position: relative;
     width: 100%;
-    padding: 16px 8px;
+    padding: 16px 12px;
     background: $mediumgrey;
+    border: 1px solid rgba($blue, 0.24);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.16);
     border-radius: 8px;
     margin: 8px 0;

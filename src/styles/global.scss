@@ -13,7 +13,7 @@ body {
 button {
   position: relative;
   cursor: pointer;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
   border: none;
 
@@ -46,9 +46,10 @@ button {
     align-items: center;
     padding: 12px 32px;
     margin: 8px auto;
-    background: $green;
-    color: $white;
-    font-weight: 900;
+    background: none;
+    border: 2px solid $green;
+    color: $green;
+    font-weight: 400;
     border-radius: 8px;
     box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
     transition: transform 0.16s ease, box-shadow 0.16s ease;
@@ -115,7 +116,7 @@ img {
 }
 
 input {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   box-sizing: border-box;
 
   &[type='checkbox'] {
