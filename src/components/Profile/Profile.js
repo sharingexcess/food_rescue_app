@@ -21,14 +21,14 @@ export default function Profile() {
 
   useEffect(() => {
     // update formData only once by checking name population
-    if (!formData.name && profile.name) {
+    if (!button && !formData.name && profile.name) {
       setFormData({
         name: profile.name,
         phone: profile.phone || '',
         pronouns: profile.pronouns || '',
       })
     }
-  }, [profile, formData])
+  }, [profile, formData, button])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })

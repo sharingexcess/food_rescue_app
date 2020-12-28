@@ -133,6 +133,7 @@ export default function Rescue() {
           onChange={handleChange}
           suggestions={suggestions}
           onSuggestionClick={e => handleSelect(e.target.id)}
+          animation={false}
         />
         <div id="updateDriverButtons">
           <button className="clear" onClick={() => handleSelect(null)}>

@@ -226,7 +226,7 @@ function EditRescue() {
       <form onSubmit={handleSubmit}>
         {formFields.map(f => renderFieldInput(f))}
         {formData['delivery_timestamp'] && (
-          <button type="submit">Create New Rescue</button>
+          <button type="submit">create new rescue</button>
         )}
       </form>
     </div>
