@@ -1,5 +1,5 @@
 {
-  "short_name": "Rescue",
+  "short_name": "Sharing Excess",
   "name": "Sharing Excess | Food Rescue",
   "icons": [
     {
@@ -15,6 +15,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#4FA528",
-  "background_color": "#000000"
+  "theme_color": "#020d1a",
+  "background_color": "#020d1a"
 }
