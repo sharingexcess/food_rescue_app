@@ -6,11 +6,16 @@ import { Link } from 'react-router-dom'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import {
+  getCollection,
+  getImageFromStorage,
+  isValidURL,
+} from '../../helpers/helpers'
 import './Rescues.scss'
 import { RESCUE_STATUSES } from '../../helpers/constants'
 
 function Rescues() {
+  const [showCompleted, setShowCompleted] = useState(false)
   const [raw_rescue_data = []] = useCollectionData(
     firebase
       .firestore()
@@ -26,24 +31,16 @@ function Rescues() {
       const full_data = []
       for (const r of raw_rescue_data) {
         const rescue = JSON.parse(JSON.stringify(r))
-        const pickup_org_ref = await firebase
-          .firestore()
-          .collection('Organizations')
+        const pickup_org_ref = await await getCollection('Organizations')
           .doc(r.pickup_org_id)
           .get()
         rescue.pickup_org = pickup_org_ref.data()
-        const delivery_org_ref = await firebase
-          .firestore()
-          .collection('Organizations')
+        const delivery_org_ref = await getCollection('Organizations')
           .doc(r.delivery_org_id)
           .get()
         rescue.delivery_org = delivery_org_ref.data()
         if (r.driver_id) {
-          const driver_ref = await firebase
-            .firestore()
-            .collection('Users')
-            .doc(r.driver_id)
-            .get()
+          const driver_ref = await getCollection('Users').doc(r.driver_id).get()
           const driver = driver_ref.data()
           if (driver.icon && !isValidURL(driver.icon)) {
             driver.icon = await getImageFromStorage(driver.icon)
@@ -58,6 +55,11 @@ function Rescues() {
     raw_rescue_data.length && addData()
   }, [raw_rescue_data])
 
+  function filterByCompleted(array) {
+    const status_limit = showCompleted ? 10 : 8
+    return array.filter(i => i.status < status_limit)
+  }
+
   return (
     <main id="Rescues">
       <Link className="back" to="/">
@@ -65,14 +67,17 @@ function Rescues() {
       </Link>
       <section id="RescuesHeader">
         <h1>All Rescues</h1>
-        <Link to="/create">
-          <button className="secondary">+ New Rescue</button>
-        </Link>
+        <button
+          className="secondary"
+          onClick={() => setShowCompleted(!showCompleted)}
+        >
+          {showCompleted ? 'Hide Completed' : 'Show Completed'}
+        </button>
       </section>
       {loading ? (
         <Loading text="Loading your rescues" />
       ) : (
-        rescues.map(r => (
+        filterByCompleted(rescues).map(r => (
           <Link key={r.id} className="wrapper" to={`rescues/${r.id}`}>
             <div className="Rescue">
               <h6>ID: {r.id.split('-')[0]}</h6>

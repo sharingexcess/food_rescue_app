@@ -38,6 +38,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
+    animation: fade-in 0.32s ease forwards;
     h3 {
       font-size: 20px;
     }
