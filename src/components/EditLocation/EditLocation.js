@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory, useParams } from 'react-router-dom'
-import firebase from 'firebase/app'
+import { useHistory, useParams } from 'react-router-dom'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
 import { v4 as generateUniqueId } from 'uuid'
@@ -9,22 +8,19 @@ import {
   useCollectionData,
   useDocumentData,
 } from 'react-firebase-hooks/firestore'
+import { getCollection } from '../../helpers/helpers'
+import { initializeFormData } from './utils'
+import { GoBack } from '../../helpers/components'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
   const history = useHistory()
   const [locations = []] = useCollectionData(
-    firebase
-      .firestore()
-      .collection('Organizations')
-      .doc(id)
-      .collection('Locations')
+    getCollection('Organizations').doc(id).collection('Locations')
   )
   const [location = {}] = useDocumentData(
     loc_id
-      ? firebase
-          .firestore()
-          .collection('Organizations')
+      ? getCollection('Organizations')
           .doc(id)
           .collection('Locations')
           .doc(loc_id)
@@ -42,17 +38,9 @@ export default function EditLocation() {
 
   useEffect(() => {
     if (location.name && !formData.name) {
-      setFormData({
-        name: location.name,
-        address1: location.address1,
-        address2: location.address2,
-        city: location.city,
-        state: location.state,
-        zip_code: location.zip_code,
-        is_primary: location.is_primary,
-      })
+      initializeFormData(location, setFormData)
     }
-  }, [location, formData])
+  }, [location, formData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -60,9 +48,7 @@ export default function EditLocation() {
 
   function handleSubmit() {
     const new_loc_id = loc_id || generateUniqueId()
-    firebase
-      .firestore()
-      .collection('Organizations')
+    getCollection('Organizations')
       .doc(id)
       .collection('Locations')
       .doc(new_loc_id)
@@ -80,9 +66,7 @@ export default function EditLocation() {
 
   return (
     <main id="EditLocation">
-      <Link className="back" to={`/admin/organizations/${id}`}>
-        {'< '} back to organization
-      </Link>
+      <GoBack label="back to organization" url={`/admin/organizations/${id}`} />
       <h1>{loc_id ? 'Edit Location' : 'Add Location'}</h1>
       <Input
         type="text"

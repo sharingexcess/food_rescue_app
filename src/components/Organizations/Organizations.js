@@ -7,6 +7,7 @@ import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage } from '../../helpers/helpers'
 import './Organizations.scss'
 import { Input } from '../Input/Input'
+import { GoBack } from '../../helpers/components'
 
 const org_icon_urls = {}
 
@@ -37,14 +38,10 @@ function Organizations() {
       i.name.toLowerCase().includes(search.toLowerCase())
     )
   }
-
-  return loading ? (
-    <Loading text="Loading Organizations" />
-  ) : (
+  if (loading) return <Loading text="Loading organizations" />
+  return (
     <main id="Organizations">
-      <Link className="back" to="/">
-        {'< '} back to home
-      </Link>
+      <GoBack label="back" url="/" />
       <h1>
         Organizations
         <Link to="/admin/create-organization">

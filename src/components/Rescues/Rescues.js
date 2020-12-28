@@ -13,6 +13,7 @@ import {
 } from '../../helpers/helpers'
 import './Rescues.scss'
 import { RESCUE_STATUSES } from '../../helpers/constants'
+import { GoBack } from '../../helpers/components'
 
 function Rescues() {
   const [showCompleted, setShowCompleted] = useState(false)
@@ -62,9 +63,7 @@ function Rescues() {
 
   return (
     <main id="Rescues">
-      <Link className="back" to="/">
-        {'< '}back to home
-      </Link>
+      <GoBack url="/" label="back to home" />
       <section id="RescuesHeader">
         <h1>All Rescues</h1>
         <button

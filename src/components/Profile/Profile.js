@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useAuthContext } from '../Auth/Auth'
 import firebase from 'firebase/app'
-import './Profile.scss'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
-import { Link } from 'react-router-dom'
+import { GoBack } from '../../helpers/components'
+import './Profile.scss'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -52,9 +52,7 @@ export default function Profile() {
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
-      <Link className="back" to="/">
-        {'< '} back to home
-      </Link>
+      <GoBack label="back to home" url="/" />
       <h1>User Profile</h1>
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>
