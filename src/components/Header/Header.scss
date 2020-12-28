@@ -11,11 +11,12 @@ header#Header {
   align-items: center;
   animation: fade-in 0.32s ease forwards;
   z-index: 10;
-  // background-color: $darkgrey;
+  pointer-events: none;
   background: linear-gradient(to bottom, $darkgrey, rgba($darkgrey, 0));
 
   #Logo {
     height: 48px;
+    pointer-events: all;
     border-radius: 50%;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     transition: transform 0.16s ease, box-shadow 0.16s ease;

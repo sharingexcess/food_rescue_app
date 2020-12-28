@@ -1,12 +1,23 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { useAuthContext } from '../Auth/Auth'
-import Tile from '../Tile/Tile'
 import './Home.scss'
 import { generateGreeting, tiles } from './utils'
 
 export default function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin } = useAuthContext()
+
+  function Tile({ name, icon, link }) {
+    return (
+      <Link className="Tile" to={link}>
+        <div>
+          <i className={`fa ${icon}`} />
+          <h4>{name}</h4>
+        </div>
+      </Link>
+    )
+  }
 
   function Tiles() {
     return tiles.map(t => <Tile key={t.name} {...t} />)

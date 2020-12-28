@@ -18,5 +18,59 @@
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     grid-gap: 16px;
     padding-bottom: 32px;
+
+    .Tile {
+      div {
+        width: 100%;
+        height: 200px;
+        background: $mediumgrey;
+        color: $white;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 16px;
+        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+        @media (hover: hover) and (pointer: fine) {
+          &:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.48);
+          }
+        }
+
+        &:active {
+          transform: translate(1px, 1px);
+          box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
+        }
+
+        i {
+          font-size: 64px;
+          margin: 32px;
+          &.fa-truck {
+            color: $blue;
+          }
+          &.fa-plus {
+            color: $green;
+          }
+          &.fa-user {
+            color: $yellow;
+          }
+          &.fa-gear {
+            color: $red;
+          }
+          &.fa-users {
+            color: $red;
+          }
+        }
+
+        h4 {
+          font-size: 18px;
+          text-align: center;
+          width: 100%;
+        }
+      }
+    }
   }
 }
