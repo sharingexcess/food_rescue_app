@@ -66,7 +66,7 @@ export default function Rescue() {
       .collection('Rescues')
       .doc(id)
       .set({ status: 9 }, { merge: true })
-      .then(() => history.push('/schedule'))
+      .then(() => history.push('/rescues'))
       .catch(e => console.error('Error removing document: ', e))
   }
 

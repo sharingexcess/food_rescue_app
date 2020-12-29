@@ -23,14 +23,17 @@ export default function Report() {
   const [formData, setFormData] = useState({
     dairy: 0,
     produce: 0,
-    meat: 0,
-    grains: 0,
+    'meat/Fish': 0,
+    'non-perishable': 0,
+    'prepared/Frozen': 0,
     weight: 0,
   })
   const [changed, setChanged] = useState(false)
 
   useEffect(() => {
-    rescue.report ? setFormData(rescue.report) : setChanged(true)
+    rescue.report
+      ? setFormData(formData => ({ ...formData, ...rescue.report }))
+      : setChanged(true)
   }, [rescue.report])
 
   function handleChange(e) {
@@ -59,8 +62,9 @@ export default function Report() {
           report: {
             dairy: parseInt(formData.dairy),
             produce: parseInt(formData.produce),
-            meat: parseInt(formData.meat),
-            grains: parseInt(formData.grains),
+            'meat/Fish': parseInt(formData['meat/Fish']),
+            'non-perishable': parseInt(formData['non-perishable']),
+            'prepared/Frozen': parseInt(formData['prepared/Frozen']),
             weight: parseInt(formData.weight),
           },
           status: Math.max(rescue.status, 6),

@@ -75,7 +75,7 @@ function Rescues() {
       </section>
       {loading ? (
         <Loading text="Loading your rescues" />
-      ) : (
+      ) : filterByCompleted(rescues).length ? (
         filterByCompleted(rescues).map(r => (
           <Link key={r.id} className="wrapper" to={`rescues/${r.id}`}>
             <div className="Rescue">
@@ -89,6 +89,13 @@ function Rescues() {
             </div>
           </Link>
         ))
+      ) : (
+        <>
+          <p id="no-rescues">No currently scheduled rescues!</p>
+          <Link to="/create">
+            <button>create new rescue</button>
+          </Link>
+        </>
       )}
     </main>
   )
