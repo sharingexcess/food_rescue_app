@@ -39,7 +39,6 @@ export function updateFieldSuggestions(
         querySnapshot.forEach(doc => {
           updatedSuggestions.push({ id: doc.id, ...doc.data() })
         })
-        console.log(field.id, suggestions[field.id], updatedSuggestions)
         if (
           !suggestions[field.id] ||
           suggestions[field.id].length !== updatedSuggestions.length
