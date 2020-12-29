@@ -9,7 +9,7 @@ import {
   useDocumentData,
 } from 'react-firebase-hooks/firestore'
 import { getCollection } from '../../helpers/helpers'
-import { initializeFormData } from './utils'
+import { initializeFormData, required_fields } from './utils'
 import { GoBack } from '../../helpers/components'
 
 export default function EditLocation() {
@@ -35,6 +35,7 @@ export default function EditLocation() {
     zip_code: '',
     is_primary: false,
   })
+  const [error, setError] = useState()
 
   useEffect(() => {
     if (location.name && !formData.name) {
@@ -43,25 +44,54 @@ export default function EditLocation() {
   }, [location, formData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleChange(e) {
+    setError(false)
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
+  function validateFormData() {
+    for (const field of required_fields) {
+      if (!formData[field].length) {
+        return false
+      }
+    }
+    return true
+  }
+
   function handleSubmit() {
-    const new_loc_id = loc_id || generateUniqueId()
-    getCollection('Organizations')
-      .doc(id)
-      .collection('Locations')
-      .doc(new_loc_id)
-      .set(
-        {
-          id: new_loc_id,
-          ...formData,
-          is_primary: !locations.length ? true : formData.is_primary, // default to primary if first location
-        },
-        { merge: true }
+    const is_valid = validateFormData()
+    if (is_valid) {
+      const new_loc_id = loc_id || generateUniqueId()
+      getCollection('Organizations')
+        .doc(id)
+        .collection('Locations')
+        .doc(new_loc_id)
+        .set(
+          {
+            id: new_loc_id,
+            ...formData,
+            is_primary: !locations.length ? true : formData.is_primary, // default to primary if first location
+          },
+          { merge: true }
+        )
+        .then(() => history.push(`/admin/organizations/${id}`))
+        .catch(e => console.error('Error writing document: ', e))
+    } else {
+      setError(true)
+    }
+  }
+
+  function FormError() {
+    if (error)
+      return (
+        <p id="FormError">
+          Missing in form data:{' '}
+          {required_fields
+            .map(i => (formData[i] ? null : i))
+            .filter(Boolean)
+            .join(', ')}{' '}
+        </p>
       )
-      .then(() => history.push(`/admin/organizations/${id}`))
-      .catch(e => console.error('Error writing document: ', e))
+    else return null
   }
 
   return (
@@ -126,6 +156,7 @@ export default function EditLocation() {
           Primary Address
         </p>
       </div>
+      <FormError />
       <button onClick={handleSubmit}>
         {loc_id ? 'update location' : 'add location'}
       </button>

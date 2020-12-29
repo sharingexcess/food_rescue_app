@@ -9,3 +9,5 @@ export function initializeFormData(location, callback) {
     is_primary: location.is_primary,
   })
 }
+
+export const required_fields = ['name', 'address1', 'city', 'state', 'zip_code']

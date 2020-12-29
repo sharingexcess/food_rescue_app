@@ -91,6 +91,13 @@ p {
   font-size: 16px;
   font-weight: 600;
   line-height: 1.2;
+
+  &#FormError {
+    color: $red;
+    width: 100%;
+    text-align: center;
+    margin: 32px 0;
+  }
 }
 a {
   display: inline-block;
