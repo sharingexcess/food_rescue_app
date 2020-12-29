@@ -30,7 +30,9 @@ function Rescues() {
   useEffect(() => {
     async function addData() {
       const full_data = []
-      for (const r of raw_rescue_data) {
+      for (const r of raw_rescue_data.filter(
+        r => r.id && r.pickup_org_id && r.delivery_org_id
+      )) {
         const rescue = JSON.parse(JSON.stringify(r))
         const pickup_org_ref = await await getCollection('Organizations')
           .doc(r.pickup_org_id)
