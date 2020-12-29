@@ -14,6 +14,7 @@ import {
 import './Rescues.scss'
 import { RESCUE_STATUSES } from '../../helpers/constants'
 import { GoBack } from '../../helpers/components'
+import { isValidRescue } from './utils'
 
 function Rescues() {
   const [showCompleted, setShowCompleted] = useState(false)
@@ -30,9 +31,7 @@ function Rescues() {
   useEffect(() => {
     async function addData() {
       const full_data = []
-      for (const r of raw_rescue_data.filter(
-        r => r.id && r.pickup_org_id && r.delivery_org_id
-      )) {
+      for (const r of raw_rescue_data.filter(r => isValidRescue(r))) {
         const rescue = JSON.parse(JSON.stringify(r))
         const pickup_org_ref = await await getCollection('Organizations')
           .doc(r.pickup_org_id)
@@ -50,7 +49,9 @@ function Rescues() {
           }
           rescue.driver = driver
         }
-        full_data.push(rescue)
+        if (rescue.pickup_org && rescue.delivery_org) {
+          full_data.push(rescue)
+        }
       }
       setRescues(full_data)
       setLoading(false)
