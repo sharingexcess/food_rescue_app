@@ -43,10 +43,14 @@ export default function EditOrganization() {
 
   async function handleSubmit() {
     const org_id = id || generateUniqueId()
+    console.log('org id is', org_id)
     const icon = await handleFileUpload(org_id)
     getCollection('Organizations')
       .doc(org_id)
-      .set({ ...formData, id: org_id, icon: icon || org.icon }, { merge: true })
+      .set(
+        { ...formData, id: org_id, icon: icon || org.icon || null },
+        { merge: true }
+      )
       .then(() => history.push(`/admin/organizations/${org_id}`))
       .catch(e => console.error('Error writing document: ', e))
   }

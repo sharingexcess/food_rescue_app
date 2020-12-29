@@ -24,8 +24,10 @@ function EditRescue() {
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
     pickup_org_name: [],
+    pickup_org_id: [],
     pickup_location_id: [],
     delivery_org_name: [],
+    delivery_org_id: [],
     delivery_location_id: [],
     driver_name: '',
   })
@@ -41,7 +43,8 @@ function EditRescue() {
     if (field.type !== 'select') {
       setSuggestions({ ...suggestions, [field.id]: null })
     }
-    setFormData({ ...formData, ...field.handleSelect(selected) })
+    const updated_fields = field.handleSelect(selected)
+    updated_fields && setFormData({ ...formData, ...updated_fields })
   }
 
   function renderFieldInput(field) {

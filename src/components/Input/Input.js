@@ -12,8 +12,8 @@ export function Input({
   style,
   animation = true,
 }) {
-  const [isUsed, setIsUsed] = useState(false)
-  const isDate = () => type === 'datetime-local'
+  const [isUsed, setIsUsed] = useState(type === 'select' ? true : false)
+  const shouldNotMoveLabel = () => ['datetime-local', 'select'].includes(type)
 
   useEffect(() => {
     setIsUsed(!!value)
@@ -22,7 +22,9 @@ export function Input({
   return (
     <>
       <div className={`Input ${animation ? 'animation' : ''}`} style={style}>
-        <label className={isUsed || isDate() ? 'focused' : ''}>{label}</label>
+        <label className={isUsed || shouldNotMoveLabel() ? 'focused' : ''}>
+          {label}
+        </label>
         {type === 'textarea' ? (
           <textarea
             id={element_id}
@@ -63,9 +65,9 @@ export function Input({
             // type="search"
             onChange={onChange}
             value={value}
-            onFocus={!isDate() ? () => setIsUsed(true) : null}
+            onFocus={!shouldNotMoveLabel() ? () => setIsUsed(true) : null}
             onBlur={
-              !isDate()
+              !shouldNotMoveLabel()
                 ? e => {
                     setIsUsed(e.target.value.length ? true : false)
                   }

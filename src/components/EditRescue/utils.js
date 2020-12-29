@@ -39,7 +39,11 @@ export function updateFieldSuggestions(
         querySnapshot.forEach(doc => {
           updatedSuggestions.push({ id: doc.id, ...doc.data() })
         })
-        if (suggestions[field.id].length !== updatedSuggestions.length) {
+        console.log(field.id, suggestions[field.id], updatedSuggestions)
+        if (
+          !suggestions[field.id] ||
+          suggestions[field.id].length !== updatedSuggestions.length
+        ) {
           callback({ ...suggestions, [field.id]: updatedSuggestions })
         }
       })
@@ -66,6 +70,9 @@ export const formFields = [
     handleSelect: org => ({
       pickup_org_name: org.name,
       pickup_org_id: org.id,
+      delivery_org_name: '',
+      delivery_org_id: '',
+      pickup_location_id: '',
     }),
     loadSuggestionsOnInit: false,
   },
@@ -76,9 +83,7 @@ export const formFields = [
     type: 'select',
     suggestionQuery: org_id =>
       getCollection('Organizations').doc(org_id).collection('Locations'),
-    handleSelect: loc => ({
-      pickup_location_id: loc.id,
-    }),
+    handleSelect: loc => (loc ? { pickup_location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },
   {
@@ -93,6 +98,7 @@ export const formFields = [
     handleSelect: org => ({
       delivery_org_name: org.name,
       delivery_org_id: org.id,
+      delivery_location_id: '',
     }),
     loadSuggestionsOnInit: false,
   },
@@ -103,9 +109,7 @@ export const formFields = [
     type: 'select',
     suggestionQuery: org_id =>
       getCollection('Organizations').doc(org_id).collection('Locations'),
-    handleSelect: loc => ({
-      delivery_location_id: loc.id,
-    }),
+    handleSelect: loc => (loc ? { delivery_location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },
   {
