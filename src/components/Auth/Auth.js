@@ -48,6 +48,7 @@ function Auth({ children }) {
         <h1>
           <span className="green">Sharing</span> Excess
         </h1>
+        <p>Let's free food!</p>
         <img className="background" src={Logo} alt="Sharing Excess Logo" />
         <button onClick={handleLogin}>
           <img src={Google} alt="Google Logo" />
