@@ -43,7 +43,6 @@ export default function EditOrganization() {
 
   async function handleSubmit() {
     const org_id = id || generateUniqueId()
-    console.log('org id is', org_id)
     const icon = await handleFileUpload(org_id)
     getCollection('Organizations')
       .doc(org_id)
