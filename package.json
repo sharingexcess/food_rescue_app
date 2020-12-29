@@ -17,6 +17,7 @@
     "redux": "^4.0.5"
   },
   "scripts": {
+    "start": "react-scripts start",
     "dev": "cp environments/.env.dev .env.local && react-scripts start",
     "prod": "cp environments/.env.prod .env.local && react-scripts start",
     "build": "react-scripts build",
