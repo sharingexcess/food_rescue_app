@@ -26,6 +26,7 @@ export default function EditOrganization() {
   )
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
   const [file, setFile] = useState()
+  const [error, setError] = useState()
 
   useEffect(() => {
     if (org.name && !formData.name) {
@@ -38,20 +39,32 @@ export default function EditOrganization() {
   }, [org.icon])
 
   function handleChange(e) {
+    setError(false)
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
+  function validateFormData() {
+    if (formData.name.length) {
+      return true
+    }
+    setError(true)
+    return false
+  }
+
   async function handleSubmit() {
-    const org_id = id || generateUniqueId()
-    const icon = await handleFileUpload(org_id)
-    getCollection('Organizations')
-      .doc(org_id)
-      .set(
-        { ...formData, id: org_id, icon: icon || org.icon || null },
-        { merge: true }
-      )
-      .then(() => history.push(`/admin/organizations/${org_id}`))
-      .catch(e => console.error('Error writing document: ', e))
+    const is_valid = validateFormData()
+    if (is_valid) {
+      const org_id = id || generateUniqueId()
+      const icon = await handleFileUpload(org_id)
+      getCollection('Organizations')
+        .doc(org_id)
+        .set(
+          { ...formData, id: org_id, icon: icon || org.icon || null },
+          { merge: true }
+        )
+        .then(() => history.push(`/admin/organizations/${org_id}`))
+        .catch(e => console.error('Error writing document: ', e))
+    }
   }
 
   function handleFileChange(e) {
@@ -65,6 +78,12 @@ export default function EditOrganization() {
       await ref.child(path).put(file, { contentType: file.type })
       return path
     } else return null
+  }
+
+  function FormError() {
+    if (error)
+      return <p id="FormError">Missing in form data: Organization Name</p>
+    else return null
   }
 
   return (
@@ -119,6 +138,7 @@ export default function EditOrganization() {
         suggestions={['donor', 'recipient']}
         onSuggestionClick={handleChange}
       />
+      <FormError />
       <button onClick={handleSubmit}>
         {id ? 'update organization' : 'create organization'}
       </button>
