@@ -3,7 +3,7 @@
   "plugins": ["prettier", "react-hooks"],
   "rules": {
     "prettier/prettier": [
-      "error",
+      "warn",
       {
         "endOfLine": "auto"
       }
