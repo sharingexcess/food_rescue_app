@@ -192,7 +192,10 @@ export default function Rescue() {
   return Object.keys(rescue).length ? ( // if rescue object is populated, render
     <div id="Rescue">
       <GoBack url="/rescues" label="back to rescues" />
-      <h1>{RESCUE_STATUSES[rescue.status]} Rescue</h1>
+      <h1>
+        Rescue #{rescue.id.split('-')[0].toUpperCase()}
+        <span className="status"> ({RESCUE_STATUSES[rescue.status]})</span>
+      </h1>
       <Driver />
       <br />
       <Locations />

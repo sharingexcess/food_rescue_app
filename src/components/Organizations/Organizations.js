@@ -4,7 +4,7 @@ import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import { getImageFromStorage } from '../../helpers/helpers'
+import { getCollection, getImageFromStorage } from '../../helpers/helpers'
 import './Organizations.scss'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
@@ -13,7 +13,7 @@ const org_icon_urls = {}
 
 function Organizations() {
   const [organizations = [], loading] = useCollectionData(
-    firebase.firestore().collection('Organizations')
+    getCollection('Organizations').orderBy('name')
   )
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')

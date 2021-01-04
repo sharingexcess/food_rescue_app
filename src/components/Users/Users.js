@@ -4,7 +4,11 @@ import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import {
+  getCollection,
+  getImageFromStorage,
+  isValidURL,
+} from '../../helpers/helpers'
 import './Users.scss'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
@@ -13,7 +17,7 @@ const user_icon_urls = {}
 
 function Users() {
   const [users = [], loading] = useCollectionData(
-    firebase.firestore().collection('Users')
+    getCollection('Users').orderBy('name')
   )
   const [search, setSearch] = useState('')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
