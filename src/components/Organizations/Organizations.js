@@ -16,6 +16,7 @@ function Organizations() {
     firebase.firestore().collection('Organizations')
   )
   const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('all')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
   useEffect(() => {
@@ -34,9 +35,13 @@ function Organizations() {
   }
 
   function filterBySearch(array) {
-    return array.filter(i =>
+    const filtered_by_search = array.filter(i =>
       i.name.toLowerCase().includes(search.toLowerCase())
     )
+    if (filter !== 'all') {
+      console.log(filter)
+      return filtered_by_search.filter(i => i.org_type === filter)
+    } else return filtered_by_search
   }
   if (loading) return <Loading text="Loading organizations" />
   return (
@@ -44,6 +49,15 @@ function Organizations() {
       <GoBack label="back" url="/" />
       <h1>
         Organizations
+        <select value={filter} onChange={e => setFilter(e.target.value)}>
+          <option value="all">View{filter === 'all' ? 'ing' : ''} All</option>
+          <option value="donor">
+            View{filter === 'donor' ? 'ing' : ''} Donors
+          </option>
+          <option value="recipient">
+            View{filter === 'recipient' ? 'ing' : ''} Recipients
+          </option>
+        </select>
         <Link to="/admin/create-organization">
           <button className="secondary">+ New Org</button>
         </Link>

@@ -1,4 +1,4 @@
-import { ExternalLink } from '../../helpers/components'
+import Ellipsis, { ExternalLink } from '../../helpers/components'
 import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
 import {
   formatPhoneNumber,
@@ -78,6 +78,14 @@ export function UserAdminPermissions({ id, isAdmin }) {
 
   if (user.uid === id) {
     return <p id="isAdmin">You are currently logged in as this user.</p>
+  } else if (isAdmin === undefined) {
+    // handle if we haven't received a response on if this user is admin
+    return (
+      <p id="isAdmin">
+        Checking admin permission status
+        <Ellipsis />
+      </p>
+    )
   } else if (isAdmin) {
     return (
       <>
