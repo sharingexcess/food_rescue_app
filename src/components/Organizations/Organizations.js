@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
