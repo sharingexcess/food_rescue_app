@@ -18,6 +18,18 @@
     align-items: flex-end;
   }
 
+  select {
+    -webkit-appearance: none;
+    background: none;
+    background-color: none;
+    border: none;
+    color: $blue;
+    font-size: 16px;
+    padding-left: 16px;
+    margin-right: auto;
+    text-decoration: underline;
+  }
+
   .Organization {
     width: 100%;
     background: $mediumgrey;
@@ -42,6 +54,7 @@
       margin-right: 16px;
       background: $white;
       padding: 3px;
+      flex-shrink: 0;
     }
   }
 }

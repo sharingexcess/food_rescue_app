@@ -19,18 +19,20 @@ export function OrganizationContact({ org }) {
   return (
     <p>
       <i className="fa fa-user" />
-      Contact: {org.default_contact_name || 'no default contact'}
+      {org.default_contact_name
+        ? `Contact: ${org.default_contact_name}`
+        : 'no default contact'}
     </p>
   )
 }
 
 export function OrganizationPhone({ org }) {
-  if (org.phone) {
+  if (org.default_contact_phone) {
     return (
       <p>
         <i className="fa fa-phone" />
-        <ExternalLink url={`tel:${org.phone}`}>
-          {formatPhoneNumber(org.phone)}
+        <ExternalLink url={`tel:${org.default_contact_phone}`}>
+          {formatPhoneNumber(org.default_contact_phone)}
         </ExternalLink>
       </p>
     )
@@ -43,11 +45,13 @@ export function OrganizationPhone({ org }) {
 }
 
 export function OrganizationEmail({ org }) {
-  if (org.email) {
+  if (org.default_contact_email) {
     return (
       <p>
         <i className="fa fa-envelope" />
-        <ExternalLink url={`mailto:${org.email}`}>{org.email}</ExternalLink>
+        <ExternalLink url={`mailto:${org.default_contact_email}`}>
+          {org.default_contact_email}
+        </ExternalLink>
       </p>
     )
   } else
