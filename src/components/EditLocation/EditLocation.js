@@ -28,6 +28,7 @@ export default function EditLocation() {
   )
   const [formData, setFormData] = useState({
     name: '',
+    upon_arrival_instructions: '',
     address1: '',
     address2: '',
     city: '',
@@ -103,6 +104,13 @@ export default function EditLocation() {
         label="Location Nickname *"
         element_id="name"
         value={formData.name}
+        onChange={handleChange}
+      />
+      <Input
+        type="text"
+        label="Upon Arrival Instructions *"
+        element_id="upon_arrival_instructions"
+        value={formData.upon_arrival_instructions}
         onChange={handleChange}
       />
       <Input
