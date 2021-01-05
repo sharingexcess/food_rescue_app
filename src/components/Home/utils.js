@@ -1,13 +1,18 @@
 export const tiles = [
   {
-    name: 'View Rescues',
+    name: 'Routes',
     icon: 'fa-truck',
-    link: '/rescues',
+    link: '/routes',
   },
   {
-    name: 'New Rescue',
-    icon: 'fa-plus',
-    link: '/create',
+    name: 'New Route',
+    icon: 'fa-route',
+    link: '/new-route',
+  },
+  {
+    name: 'New Pickup',
+    icon: 'fa-building',
+    link: '/new-route',
   },
   {
     name: 'User Profile',

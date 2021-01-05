@@ -4,21 +4,19 @@ import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import './Report.scss'
-import Spacer from '../Spacer/Spacer'
 import Loading from '../Loading/Loading'
+import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
+import { getCollection } from '../../helpers/helpers'
 
 export default function Report() {
-  const { id } = useParams()
+  const { pickup_id, route_id } = useParams()
   const history = useHistory()
-  const [rescue = {}, loading] = useDocumentData(
-    firebase.firestore().collection('Rescues').doc(id)
+  const [pickup = {}, loading] = useDocumentData(
+    getCollection('Pickups').doc(pickup_id)
   )
   const [pickup_org = {}] = useDocumentData(
-    firebase.firestore().collection('Organizations').doc(rescue.pickup_org_id)
-  )
-  const [delivery_org = {}] = useDocumentData(
-    firebase.firestore().collection('Organizations').doc(rescue.delivery_org_id)
+    pickup.org_id ? getCollection('Organizations').doc(pickup.org_id) : null
   )
   const [formData, setFormData] = useState({
     dairy: 0,
@@ -29,14 +27,15 @@ export default function Report() {
     'prepared/Frozen': 0,
     other: 0,
     weight: 0,
+    notes: '',
   })
   const [changed, setChanged] = useState(false)
 
   useEffect(() => {
-    rescue.report
-      ? setFormData(formData => ({ ...formData, ...rescue.report }))
+    pickup.report
+      ? setFormData(formData => ({ ...formData, ...pickup.report }))
       : setChanged(true)
-  }, [rescue.report])
+  }, [pickup])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -57,8 +56,8 @@ export default function Report() {
     event.preventDefault()
     firebase
       .firestore()
-      .collection('Rescues')
-      .doc(id)
+      .collection('Pickups')
+      .doc(pickup_id)
       .set(
         {
           report: {
@@ -70,26 +69,28 @@ export default function Report() {
             'prepared/Frozen': parseInt(formData['prepared/Frozen']),
             other: parseInt(formData.other),
             weight: parseInt(formData.weight),
+            notes: formData.notes,
+            completed_at:
+              pickup.completed_at ||
+              firebase.firestore.FieldValue.serverTimestamp(),
           },
-          status: Math.max(rescue.status, 6),
+          status: Math.max(pickup.status, 6),
         },
         { merge: true }
       )
-      .then(() => history.push(`/rescues/${id}`))
+      .then(() => history.push(`/routes/${route_id}`))
       .catch(e => console.error('Error writing document: ', e))
   }
   if (loading) return <Loading text="Loading report" />
   return (
     <main id="Report">
-      <GoBack url={`/rescues/${id}`} label="back to rescue" />
+      <GoBack url={`/routes/${route_id}`} label="back to rescue" />
       <h1>Rescue Report</h1>
-      <h3>
-        {pickup_org.name} <Spacer direction="horizontal" /> {delivery_org.name}
-      </h3>
+      <h3>{pickup_org.name}</h3>
       {Object.keys(formData)
         .sort()
         .map(field =>
-          field !== 'weight' ? (
+          !['weight', 'notes'].includes(field) ? (
             <section key={field}>
               <h5>{field}</h5>
               <button className="decrement" onClick={() => decrement(field)}>
@@ -117,9 +118,17 @@ export default function Report() {
           onChange={handleChange}
         />
       </section>
+      <Input
+        type="textarea"
+        label="Notes..."
+        element_id="notes"
+        row={3}
+        value={formData.notes}
+        onChange={handleChange}
+      />
       {changed ? (
         <button onClick={handleSubmit}>
-          {rescue.report ? 'update report' : 'submit report'}
+          {pickup.report ? 'update report' : 'submit report'}
         </button>
       ) : null}
     </main>

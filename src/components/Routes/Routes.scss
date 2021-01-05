@@ -1,0 +1,76 @@
+@import '../../styles/imports.scss';
+
+#Routes {
+  padding: 92px 16px 0 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  h1 {
+    font-size: 24px;
+  }
+
+  a {
+    width: 100%;
+  }
+
+  .Route {
+    position: relative;
+    width: 100%;
+    background: $mediumgrey;
+    border: 1px solid rgba($blue, 0.24);
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    margin: 16px 0;
+    padding: 16px 64px 24px 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    animation: fade-in 0.32s ease forwards;
+
+    h3 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    h4 {
+      color: $blue;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    h5 {
+      color: $blue;
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin-bottom: 4px;
+
+      i {
+        margin-right: 8px;
+      }
+    }
+
+    .pickups {
+      color: $green;
+    }
+    .deliveries {
+      color: $red;
+    }
+
+    img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      flex-shrink: 0;
+      padding: 2px;
+      background: $white;
+      border-radius: 50%;
+      margin-right: 16px;
+    }
+  }
+}

@@ -1,0 +1,117 @@
+@import '../../styles/imports.scss';
+
+#Route {
+  padding: 92px 16px 0 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  h1 {
+    font-size: 24px;
+  }
+
+  a {
+    width: 100%;
+  }
+
+  #Driver {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 32px 0;
+
+    h3 {
+      font-size: 20px;
+    }
+
+    h4 {
+      color: $blue;
+    }
+
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      flex-shrink: 0;
+      padding: 2px;
+      background: $white;
+      border-radius: 50%;
+      margin-right: 16px;
+    }
+  }
+
+  .Stop {
+    position: relative;
+    width: 100%;
+    background: $mediumgrey;
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    margin: 16px 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    animation: fade-in 0.32s ease forwards;
+
+    &.pickup {
+      border: 2px solid $green;
+
+      h4 {
+        color: $green;
+      }
+    }
+    &.delivery {
+      border: 2px solid $red;
+
+      h4 {
+        color: $red;
+      }
+    }
+
+    h4 {
+      text-transform: capitalize;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      i {
+        font-size: 12px;
+        margin-right: 4px;
+      }
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    p {
+      color: $blue;
+      font-weight: 500;
+      text-decoration: underline;
+    }
+
+    a {
+      margin: 0;
+      width: auto;
+    }
+
+    button {
+      color: $white;
+      background: $blue;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      i {
+        margin: 0;
+        font-size: 16px;
+        background: none;
+      }
+    }
+  }
+}

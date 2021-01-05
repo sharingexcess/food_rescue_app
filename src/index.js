@@ -11,7 +11,6 @@ import useWidth from './hooks/useWidth'
 import { Provider } from 'react-redux'
 import { resize } from './redux/app/appReducer'
 import store from './redux/store'
-import './styles/index.scss'
 import AdminRoutes from './routes/AdminRoutes'
 import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
@@ -20,6 +19,9 @@ import Rescues from './components/Rescues/Rescues'
 import Rescue from './components/Rescue/Rescue'
 import Report from './components/Report/Report'
 import Profile from './components/Profile/Profile'
+import './styles/index.scss'
+import Routes from './components/Routes/Routes'
+import { Route as DriverRoute } from './components/Route/Route'
 
 // We leave this log in place so that we can check to see
 // that the correct backend env is loaded after deployment
@@ -66,6 +68,15 @@ function App() {
               <Route exact path="/rescues">
                 <Rescues />
               </Route>
+              <Route exact path="/routes">
+                <Routes />
+              </Route>
+              <Route exact path="/routes/:route_id">
+                <DriverRoute />
+              </Route>
+              <Route exact path="/routes/:route_id/pickup/:pickup_id/report">
+                <Report />
+              </Route>
               <Route exact path="/rescues/:id">
                 {/* adding a colon creates a variable url parameter */}
                 {/* we can access that variable using const { id } = useParams() */}
@@ -78,7 +89,9 @@ function App() {
                 <Profile />
               </Route>
               {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
-              <AdminRoutes />
+              <Route path="/admin">
+                <AdminRoutes />
+              </Route>
               <Route>
                 {/* This route has no path, and therefore will be the 'catch all' */}
                 <Error />

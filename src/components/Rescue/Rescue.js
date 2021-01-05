@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
 import Loading from '../Loading/Loading'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import moment from 'moment'
@@ -11,6 +9,7 @@ import Spacer from '../Spacer/Spacer'
 import { RESCUE_STATUSES } from '../../helpers/constants'
 import { Input } from '../Input/Input'
 import { ExternalLink, GoBack } from '../../helpers/components'
+import { getCollection } from '../../helpers/helpers'
 
 export default function Rescue() {
   const { id } = useParams()
@@ -18,31 +17,25 @@ export default function Rescue() {
   // Using the useDocument hook from react-firebase-hooks. Reference:
   // https://github.com/csfrequency/react-firebase-hooks/tree/316301a128a9c5fbe41ac2c4fd393c972baf64da/firestore#usedocument
   const [rescue = {}, loading] = useDocumentData(
-    firebase.firestore().collection('Rescues').doc(id)
+    getCollection('Rescues').doc(id)
   )
   const [driver = {}, loading_driver] = useDocumentData(
-    rescue.driver_id
-      ? firebase.firestore().collection('Users').doc(rescue.driver_id)
-      : null
+    rescue.driver_id ? getCollection('Users').doc(rescue.driver_id) : null
   )
   const [pickup_org = {}] = useDocumentData(
-    firebase.firestore().collection('Organizations').doc(rescue.pickup_org_id)
+    getCollection('Organizations').doc(rescue.pickup_org_id)
   )
   const [delivery_org = {}] = useDocumentData(
-    firebase.firestore().collection('Organizations').doc(rescue.delivery_org_id)
+    getCollection('Organizations').doc(rescue.delivery_org_id)
   )
   const [pickup_location = {}] = useDocumentData(
-    firebase
-      .firestore()
-      .collection('Organizations')
+    getCollection('Organizations')
       .doc(rescue.pickup_org_id)
       .collection('Locations')
       .doc(rescue.pickup_location_id)
   )
   const [delivery_location = {}] = useDocumentData(
-    firebase
-      .firestore()
-      .collection('Organizations')
+    getCollection('Organizations')
       .doc(rescue.delivery_org_id)
       .collection('Locations')
       .doc(rescue.delivery_location_id)
@@ -51,9 +44,7 @@ export default function Rescue() {
   const [willComplete, setWillComplete] = useState()
 
   function handleDelete() {
-    firebase
-      .firestore()
-      .collection('Rescues')
+    getCollection('Rescues')
       .doc(id)
       .delete()
       .then(() => history.push('/rescues'))
@@ -61,9 +52,7 @@ export default function Rescue() {
   }
 
   function handleComplete() {
-    firebase
-      .firestore()
-      .collection('Rescues')
+    getCollection('Rescues')
       .doc(id)
       .set({ status: 9 }, { merge: true })
       .then(() => history.push('/rescues'))
@@ -92,9 +81,7 @@ export default function Rescue() {
 
     function handleChange(e) {
       setInput(e.target.value)
-      firebase
-        .firestore()
-        .collection('Users')
+      getCollection('Users')
         .where('name', '>=', e.target.value)
         .where('name', '<=', e.target.value + '\uf8ff')
         .get()
@@ -110,9 +97,7 @@ export default function Rescue() {
     }
 
     function handleSelect(new_driver_id) {
-      firebase
-        .firestore()
-        .collection('Rescues')
+      getCollection('Rescues')
         .doc(id)
         .set(
           {
