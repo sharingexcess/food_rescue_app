@@ -22,6 +22,9 @@ import Profile from './components/Profile/Profile'
 import './styles/index.scss'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
+import Calendar from './components/Calendar/Calendar'
+import EditPickup from './components/EditPickup/EditPickup'
+import EditRoute from './components/EditRoute/EditRoute'
 
 // We leave this log in place so that we can check to see
 // that the correct backend env is loaded after deployment
@@ -62,6 +65,9 @@ function App() {
               <Route exact path="/">
                 <Home />
               </Route>
+              <Route exact path="/calendar">
+                <Calendar />
+              </Route>
               <Route exact path="/create">
                 <EditRescue />
               </Route>
@@ -70,6 +76,12 @@ function App() {
               </Route>
               <Route exact path="/routes">
                 <Routes />
+              </Route>
+              <Route exact path="/create-pickup">
+                <EditPickup />
+              </Route>
+              <Route exact path="/create-route">
+                <EditRoute />
               </Route>
               <Route exact path="/routes/:route_id">
                 <DriverRoute />

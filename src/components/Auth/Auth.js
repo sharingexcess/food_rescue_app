@@ -5,12 +5,16 @@ import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import Google from '../../assets/google.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import {
-  getAuthenticatedUser,
-  updatePublicUserProfile,
-  updateUserAdminPermissions,
-} from './utils'
+import { updatePublicUserProfile, updateUserAdminPermissions } from './utils'
 import './Auth.scss'
+
+const GoogleApi = window.gapi
+const CLIENT_ID = process.env.REACT_APP_FIREBASE_OAUTH_CLIENT_ID
+const API_KEY = process.env.REACT_APP_FIREBASE_API_KEY
+const SCOPES = 'https://www.googleapis.com/auth/calendar.events'
+const DISCOVERY_DOCS = [
+  'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
+]
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -28,13 +32,32 @@ function Auth({ children }) {
   // the default is 'false' so as not to give any accidental permissions
   const [admin, setAdmin] = useState(false)
 
+  useEffect(initGoogleApi, [])
+
   useEffect(() => {
     // check and update the user's admin permission
     if (user) updateUserAdminPermissions(user, setAdmin)
   }, [user])
 
+  function initGoogleApi() {
+    GoogleApi.load('client:auth2', () => {
+      GoogleApi.client.load('calendar', 'v3', () => {
+        GoogleApi.client.init({
+          apiKey: API_KEY,
+          clientId: CLIENT_ID,
+          discoveryDocs: DISCOVERY_DOCS,
+          scope: SCOPES,
+        })
+      })
+    })
+  }
+
   async function handleLogin() {
-    const user = await getAuthenticatedUser()
+    const googleAuth = GoogleApi.auth2.getAuthInstance()
+    const googleUser = await googleAuth.signIn()
+    const token = googleUser.getAuthResponse().id_token
+    const credential = firebase.auth.GoogleAuthProvider.credential(token)
+    const { user } = await firebase.auth().signInWithCredential(credential)
     updatePublicUserProfile(user)
   }
 
@@ -71,6 +94,7 @@ function Auth({ children }) {
     )
   }
 
+  // return <Calendar />
   return loading ? (
     <Loading text="Signing in" />
   ) : error ? (

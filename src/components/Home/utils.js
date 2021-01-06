@@ -7,12 +7,17 @@ export const tiles = [
   {
     name: 'New Route',
     icon: 'fa-route',
-    link: '/new-route',
+    link: '/create-route',
   },
   {
     name: 'New Pickup',
     icon: 'fa-building',
-    link: '/new-route',
+    link: '/create-pickup',
+  },
+  {
+    name: 'Rescue Calendar',
+    icon: 'fa-calendar',
+    link: '/calendar',
   },
   {
     name: 'User Profile',

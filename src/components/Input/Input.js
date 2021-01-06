@@ -65,7 +65,6 @@ export function Input({
             autoComplete="off" //prevent autoComplete
             name="no" //prevent autoComplete
             type={type}
-            // type="search"
             onChange={onChange}
             value={value}
             onFocus={!shouldNotMoveLabel() ? () => setIsUsed(true) : null}
