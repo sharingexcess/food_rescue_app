@@ -169,7 +169,7 @@ export default function Rescue() {
           <ExternalLink url={pickup_directions_url}>
             Get Directions{' >'}
           </ExternalLink>
-          <p style={{marginTop: "1em"}}>
+          <p style={{ marginTop: '1em' }}>
             Pickup Instruction: {pickup_location.upon_arrival_instructions}
           </p>
         </div>
@@ -187,7 +187,7 @@ export default function Rescue() {
           <ExternalLink url={delivery_directions_url}>
             Get Directions{' >'}
           </ExternalLink>
-          <p style={{marginTop: "1em"}}>
+          <p style={{ marginTop: '1em' }}>
             Dropoff Instruction: {delivery_location.upon_arrival_instructions}
           </p>
         </div>
