@@ -108,13 +108,6 @@ export default function EditLocation() {
       />
       <Input
         type="text"
-        label="Upon Arrival Instructions *"
-        element_id="upon_arrival_instructions"
-        value={formData.upon_arrival_instructions}
-        onChange={handleChange}
-      />
-      <Input
-        type="text"
         label="Address Line 1 *"
         element_id="address1"
         value={formData.address1}
@@ -146,6 +139,13 @@ export default function EditLocation() {
         label="Zip Code *"
         element_id="zip_code"
         value={formData.zip_code}
+        onChange={handleChange}
+      />
+      <Input
+        type="text"
+        label="Upon Arrival Instructions *"
+        element_id="upon_arrival_instructions"
+        value={formData.upon_arrival_instructions}
         onChange={handleChange}
       />
       <div className="is_primary">
