@@ -8,9 +8,10 @@
         "endOfLine": "auto"
       }
     ],
-    "react-hooks/rules-of-hooks": "error",
-    "no-var": "error",
-    "prefer-const": "error"
+    "react-hooks/rules-of-hooks": "warn",
+    "no-var": "warn",
+    "prefer-const": "warn",
+    "no-console": "warn"
   },
   "extends": [
     "react-app",

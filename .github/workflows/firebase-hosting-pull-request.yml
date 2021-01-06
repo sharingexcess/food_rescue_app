@@ -21,7 +21,7 @@ jobs:
           fi
         env:
           REACT_APP_FIREBASE_ENV: ${{secrets.REACT_APP_FIREBASE_ENV}}
-      - run: npm ci && npm run build
+      - run: npm ci && CI=false npm run build
         env:
           REACT_APP_FIREBASE_API_KEY: ${{secrets.REACT_APP_FIREBASE_API_KEY}}
           REACT_APP_FIREBASE_AUTH_DOMAIN: ${{secrets.REACT_APP_FIREBASE_AUTH_DOMAIN}}
