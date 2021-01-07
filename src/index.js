@@ -16,13 +16,13 @@ import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
 import PickupReport from './components/PickupReport/PickupReport'
 import Profile from './components/Profile/Profile'
-import './styles/index.scss'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
+import './styles/index.scss'
 
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
@@ -49,12 +49,12 @@ function App() {
       */}
       <Provider store={store}>
         {/* This Provider component wraps our app in a component that gives access to the Redux store */}
-        <Auth>
-          {/* Auth component handles login and will show a login page if no user is authenticated */}
-          <BrowserRouter>
-            {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+        <BrowserRouter>
+          <Auth>
             <Header />
             <Menu />
+            {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+            {/* Auth component handles login and will show a login page if no user is authenticated */}
             {/* Switch will only allows the first matching route to be rendered */}
             <Switch>
               <Route exact path="/">
@@ -97,8 +97,8 @@ function App() {
                 {/* this 404 page component will render if the url does not match any other routes */}
               </Route>
             </Switch>
-          </BrowserRouter>
-        </Auth>
+          </Auth>
+        </BrowserRouter>
       </Provider>
     </Suspense>
   )

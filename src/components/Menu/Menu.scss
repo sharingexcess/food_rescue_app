@@ -55,6 +55,15 @@
     }
   }
 
+  .login {
+    pointer-events: all;
+    transform: translateX(-16px);
+    button {
+      padding: 8px 12px;
+      color: $white;
+    }
+  }
+
   #UserProfile {
     position: relative;
     width: 100%;
@@ -147,6 +156,17 @@
           }
         }
       }
+    }
+  }
+  footer {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    a {
+      font-size: 12px;
+      color: $blue;
     }
   }
 }
