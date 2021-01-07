@@ -27,12 +27,14 @@ export default function EditLocation() {
   )
   const [formData, setFormData] = useState({
     name: '',
-    upon_arrival_instructions: '',
+    contact_name: '',
+    contact_phone: '',
     address1: '',
     address2: '',
     city: '',
     state: '',
     zip_code: '',
+    upon_arrival_instructions: '',
     is_primary: false,
   })
   const [error, setError] = useState()
@@ -117,6 +119,20 @@ export default function EditLocation() {
         label="Location Nickname *"
         element_id="name"
         value={formData.name}
+        onChange={handleChange}
+      />
+      <Input
+        type="text"
+        label="Contact Name"
+        element_id="contact_name"
+        value={formData.contact_name}
+        onChange={handleChange}
+      />
+      <Input
+        type="tel"
+        label="Contact Phone"
+        element_id="contact_phone"
+        value={formData.contact_phone}
         onChange={handleChange}
       />
       <Input
