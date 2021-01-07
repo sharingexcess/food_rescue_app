@@ -21,6 +21,8 @@ import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
+import Privacy from './components/Privacy/Privacy'
+import Terms from './components/Terms/Terms'
 
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
@@ -82,6 +84,12 @@ function App() {
               {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
               <Route path="/admin">
                 <AdminRoutes />
+              </Route>
+              <Route exact path="/privacy">
+                <Privacy />
+              </Route>
+              <Route exact path="/tos">
+                <Terms />
               </Route>
               <Route>
                 {/* This route has no path, and therefore will be the 'catch all' */}

@@ -59,6 +59,7 @@ function User() {
       </div>
       <UserAdminPermissions
         id={id}
+        email={profile.email}
         isAdmin={isAdmin}
         basicAccess={basicAccess}
       />

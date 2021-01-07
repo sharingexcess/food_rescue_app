@@ -10,8 +10,7 @@
     ],
     "react-hooks/rules-of-hooks": "warn",
     "no-var": "warn",
-    "prefer-const": "warn",
-    "no-console": "warn"
+    "prefer-const": "warn"
   },
   "extends": [
     "react-app",

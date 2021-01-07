@@ -56,11 +56,11 @@ function Route() {
       setStops(updated_stops)
     }
     route.stops && updateStops()
-  }, [route.stops])
+  }, [route.stops]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleDeleteRoute() {
     const request = window.gapi.client.calendar.events.delete({
-      calendarId: 'rn2umgc8h8bmapgi0cr60agmsc@group.calendar.google.com',
+      calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
       eventId: route.google_calendar_event_id,
     })
     request.execute()
