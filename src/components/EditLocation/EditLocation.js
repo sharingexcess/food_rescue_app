@@ -28,6 +28,7 @@ export default function EditLocation() {
   )
   const [formData, setFormData] = useState({
     name: '',
+    upon_arrival_instructions: '',
     address1: '',
     address2: '',
     city: '',
@@ -138,6 +139,13 @@ export default function EditLocation() {
         label="Zip Code *"
         element_id="zip_code"
         value={formData.zip_code}
+        onChange={handleChange}
+      />
+      <Input
+        type="text"
+        label="Upon Arrival Instructions *"
+        element_id="upon_arrival_instructions"
+        value={formData.upon_arrival_instructions}
         onChange={handleChange}
       />
       <div className="is_primary">

@@ -1,6 +1,7 @@
 export function initializeFormData(location, callback) {
   callback({
     name: location.name,
+    upon_arrival_instructions: location.upon_arrival_instructions,
     address1: location.address1,
     address2: location.address2,
     city: location.city,
