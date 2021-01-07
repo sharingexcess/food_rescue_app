@@ -123,14 +123,14 @@ export default function EditLocation() {
       />
       <Input
         type="text"
-        label="Contact Name"
+        label="Contact Name *"
         element_id="contact_name"
         value={formData.contact_name}
         onChange={handleChange}
       />
       <Input
         type="tel"
-        label="Contact Phone"
+        label="Contact Phone *"
         element_id="contact_phone"
         value={formData.contact_phone}
         onChange={handleChange}
