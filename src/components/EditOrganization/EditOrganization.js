@@ -26,7 +26,7 @@ export default function EditOrganization() {
   )
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
   const [file, setFile] = useState()
-  const [error, setError] = useState()
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (org.name && !formData.name) {
@@ -37,18 +37,35 @@ export default function EditOrganization() {
   useEffect(() => {
     handleOrgIcon(org.icon, setOrgIconFullUrl)
   }, [org.icon])
+  console.log(formData.name.length)
 
   function handleChange(e) {
-    setError(false)
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
-
   function validateFormData() {
-    if (formData.name.length) {
-      return true
+    if (formData.name === ' ') {
+      setError('Missing Org Name')
+      return false
     }
-    setError(true)
-    return false
+    if (
+      !formData.default_contact_email.includes('@') &&
+      formData.default_contact_email !== ''
+    ) {
+      setError('Invalid Email')
+      return false
+    }
+    if (
+      formData.default_contact_phone.length < 10 &&
+      formData.default_contact_phone.length !== 0
+    ) {
+      setError('Short Phone Number')
+      return false
+    }
+    if (isNaN(formData.default_contact_phone)) {
+      setError('Invalid Phone Number')
+      return false
+    }
+    return true
   }
 
   async function handleSubmit() {
@@ -81,9 +98,25 @@ export default function EditOrganization() {
   }
 
   function FormError() {
-    if (error)
+    if (error === 'Missing Org Name')
       return <p id="FormError">Missing in form data: Organization Name</p>
-    else return null
+    if (error === 'Invalid Email')
+      return (
+        <p id="FormError">Invalid Data Input: Contact Email is incorrect</p>
+      )
+    if (error === 'Invalid Phone Number')
+      return (
+        <p id="FormError">
+          Invalid Data Input: Contact Phone Number is too short{' '}
+        </p>
+      )
+    if (error === 'Short Phone Number') {
+      return (
+        <p id="FormError">
+          Invalid Data Input: Contact Phone Number is invalid{' '}
+        </p>
+      )
+    } else return null
   }
 
   return (
