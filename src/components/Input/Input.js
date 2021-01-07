@@ -21,7 +21,10 @@ export function Input({
 
   return (
     <>
-      <div className={`Input ${animation ? 'animation' : ''}`} style={style}>
+      <div
+        className={`Input ${animation ? 'animation' : ''} ${type}`}
+        style={style}
+      >
         <label className={isUsed || shouldNotMoveLabel() ? 'focused' : ''}>
           {label}
         </label>
@@ -30,7 +33,8 @@ export function Input({
             id={element_id}
             autoComplete="new-password" //prevent autoComplete
             name="no" //prevent autoComplete
-            rows={10}
+            rows={3}
+            wrap="hard"
             onChange={onChange}
             value={value}
             onFocus={() => setIsUsed(true)}
@@ -62,7 +66,6 @@ export function Input({
             autoComplete="off" //prevent autoComplete
             name="no" //prevent autoComplete
             type={type}
-            // type="search"
             onChange={onChange}
             value={value}
             onFocus={!shouldNotMoveLabel() ? () => setIsUsed(true) : null}

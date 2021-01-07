@@ -27,6 +27,7 @@ export default function Home() {
     if (!admin) return null
     return (
       <>
+        <Tile name="New Route" icon="fa-route" link="/admin/create-route" />
         <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
       </>

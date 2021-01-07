@@ -8,7 +8,6 @@ import { MOBILE_THRESHOLD } from '../../helpers/constants'
 
 const initialState = {
   menu: false,
-  modal: false,
   mobile: window.innerWidth < MOBILE_THRESHOLD,
 }
 
@@ -22,12 +21,6 @@ const app = createSlice({
       return {
         ...state,
         menu: action.payload,
-      }
-    },
-    setModal(state, action) {
-      return {
-        ...state,
-        modal: action.payload,
       }
     },
     resize(state, action) {
@@ -46,6 +39,6 @@ const app = createSlice({
   },
 })
 
-export const { setMenu, setModal, resize } = app.actions
+export const { setMenu, resize } = app.actions
 
 export default app.reducer

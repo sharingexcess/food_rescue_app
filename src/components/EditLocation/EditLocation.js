@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
-import { v4 as generateUniqueId } from 'uuid'
 import './EditLocation.scss'
 import {
   useCollectionData,
@@ -58,27 +57,41 @@ export default function EditLocation() {
     return true
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const is_valid = validateFormData()
     if (is_valid) {
-      const new_loc_id = loc_id || generateUniqueId()
-      getCollection('Organizations')
-        .doc(id)
-        .collection('Locations')
-        .doc(new_loc_id)
-        .set(
-          {
-            id: new_loc_id,
-            ...formData,
-            is_primary: !locations.length ? true : formData.is_primary, // default to primary if first location
-          },
-          { merge: true }
-        )
-        .then(() => history.push(`/admin/organizations/${id}`))
-        .catch(e => console.error('Error writing document: ', e))
+      const new_loc_id = loc_id || (await generateLocationId(formData.address1))
+      if (new_loc_id) {
+        getCollection('Organizations')
+          .doc(id)
+          .collection('Locations')
+          .doc(new_loc_id)
+          .set(
+            {
+              id: new_loc_id,
+              ...formData,
+              is_primary: !locations.length ? true : formData.is_primary, // default to primary if first location
+            },
+            { merge: true }
+          )
+          .then(() => history.push(`/admin/organizations/${id}`))
+          .catch(e => console.error('Error writing document: ', e))
+      }
     } else {
       setError(true)
     }
+  }
+
+  async function generateLocationId(addressString) {
+    const uniq_id = addressString.replace(/[^A-Z0-9]/gi, '_').toLowerCase()
+    const exists = await getCollection('Organizations')
+      .doc(uniq_id)
+      .get()
+      .then(res => res.data())
+    if (exists) {
+      alert('A location at this address already exists!')
+      return null
+    } else return uniq_id
   }
 
   function FormError() {

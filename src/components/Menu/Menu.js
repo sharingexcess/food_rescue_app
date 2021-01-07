@@ -63,13 +63,16 @@ function Menu() {
         <div id="MenuContent">
           <ul>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/rescues">View Rescues</Link>
+              <Link to="/">Home</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/create">Create Rescue</Link>
+              <Link to="/routes">Routes</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/profile">User Profile</Link>
+              <Link to="/calendar">Calendar</Link>
+            </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/profile">Profile</Link>
             </li>
             <li onClick={handleLogout}>Logout</li>
           </ul>

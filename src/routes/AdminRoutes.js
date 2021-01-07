@@ -10,6 +10,9 @@ export default function AdminRoutes() {
   // We dynamically import all admin routes for security (this practice is called Code Splitting)
   // React lazy lets us load the admin component code only if the user is authenticated
   // Read more about lazy loading components: https://reactjs.org/docs/code-splitting.html#reactlazy
+  const EditRoute = lazy(() => {
+    return admin ? import('../components/EditRoute/EditRoute') : null
+  })
   const Organizations = lazy(() => {
     return admin ? import('../components/Organizations/Organizations') : null
   })
@@ -46,6 +49,9 @@ export default function AdminRoutes() {
   return (
     <Switch>
       {/* Wrap in a switch so that only one route can render at a time */}
+      <AdminRoute exact path="/admin/create-route">
+        <EditRoute />
+      </AdminRoute>
       <AdminRoute exact path="/admin/create-organization">
         <EditOrganization />
       </AdminRoute>
@@ -72,6 +78,11 @@ export default function AdminRoutes() {
       <AdminRoute exact path="/admin/users/:id">
         <User />
       </AdminRoute>
+      <Route>
+        {/* This route has no path, and therefore will be the 'catch all' */}
+        <Error />
+        {/* this 404 page component will render if the url does not match any other routes */}
+      </Route>
     </Switch>
   )
 }

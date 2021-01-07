@@ -1,0 +1,157 @@
+@import '../../styles/imports.scss';
+
+#EditRoute {
+  padding: 108px 16px 0 16px;
+  max-width: 800px;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+
+  h1 {
+    font-size: 24px;
+  }
+
+  p {
+    color: $blue;
+    margin-top: 8px;
+  }
+
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 32px;
+
+    button {
+      margin: 4px;
+    }
+
+    .delivery {
+      border-color: $red;
+      color: $red;
+    }
+    .complete {
+      border-color: $blue;
+      color: $blue;
+    }
+    .cancel {
+      border-color: $yellow;
+      color: $yellow;
+    }
+  }
+
+  #Driver {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 24px 0;
+
+    h3 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    h4 {
+      color: $blue;
+      font-weight: 600;
+    }
+    h5 {
+      color: $blue;
+      font-weight: 600;
+    }
+
+    img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      flex-shrink: 0;
+      padding: 2px;
+      background: $white;
+      border-radius: 50%;
+      margin-right: 16px;
+    }
+  }
+
+  #AddStop {
+    background: $mediumgrey;
+    padding: 16px;
+    margin: 32px 0;
+    border-radius: 8px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    border: 1px solid $blue;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .Stop {
+    position: relative;
+    width: 100%;
+    background: $mediumgrey;
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    margin: 16px 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .fa-times {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      color: $blue;
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.16s ease;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          color: $white;
+        }
+      }
+    }
+
+    &.pickup {
+      border: 2px solid $green;
+
+      h4 {
+        color: $green;
+      }
+    }
+    &.delivery {
+      border: 2px solid $red;
+
+      h4 {
+        color: $red;
+      }
+    }
+
+    h4 {
+      text-transform: capitalize;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      i {
+        font-size: 12px;
+        margin-right: 4px;
+      }
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    p {
+      color: $blue;
+      font-weight: 500;
+      text-decoration: underline;
+    }
+  }
+}

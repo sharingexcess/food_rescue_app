@@ -1,36 +1,28 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
-import { GoBack } from '../../helpers/components'
-import { useHistory } from 'react-router-dom'
-import { createRescue, updateFieldSuggestions, formFields } from './utils'
-import './EditRescue.scss'
+import { updateFieldSuggestions, formFields } from './utils'
+import './EditDelivery.scss'
 
-function EditRescue() {
-  const history = useHistory()
+function EditDelivery({ handleSubmit }) {
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
-    pickup_org_name: '',
-    pickup_org_id: null,
-    pickup_location_id: '',
-    delivery_org_name: '',
-    delivery_org_id: null,
-    delivery_location_id: '',
-    pickup_timestamp: '',
-    delivery_timestamp: '',
-    driver_name: '',
-    driver_id: null,
+    org_name: '',
+    org_id: null,
+    location_id: '',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
-    pickup_org_name: [],
-    pickup_org_id: [],
-    pickup_location_id: [],
-    delivery_org_name: [],
-    delivery_org_id: [],
-    delivery_location_id: [],
-    driver_name: '',
+    org_name: [],
+    org_id: [],
+    location_id: [],
   })
+
+  useEffect(() => {
+    if (formData.org_id && formData.location_id) {
+      handleSubmit(formData)
+    }
+  }, [formData, handleSubmit])
 
   function handleChange(e, field) {
     if (field.suggestionQuery) {
@@ -86,18 +78,11 @@ function EditRescue() {
   }
 
   return (
-    <div id="EditRescue">
-      <GoBack label="back to rescues" url="/rescues" />
-      <h1>New Rescue</h1>
-      <p>Use this form to create a new rescue assignment.</p>
-      <form onSubmit={e => createRescue(e, formData, history)}>
-        {formFields.map(f => renderFieldInput(f))}
-        {formData['delivery_timestamp'] && (
-          <button type="submit">create new rescue</button>
-        )}
-      </form>
+    <div id="EditDelivery">
+      <h3>New Delivery</h3>
+      {formFields.map(f => renderFieldInput(f))}
     </div>
   )
 }
 
-export default memo(EditRescue)
+export default memo(EditDelivery)

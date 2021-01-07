@@ -52,10 +52,10 @@
           &.fa-truck {
             color: $blue;
           }
-          &.fa-plus {
-            color: $green;
+          &.fa-route {
+            color: $red;
           }
-          &.fa-user {
+          &.fa-calendar {
             color: $yellow;
           }
           &.fa-gear {
@@ -63,6 +63,9 @@
           }
           &.fa-users {
             color: $red;
+          }
+          &.fa-user {
+            color: $green;
           }
         }
 
