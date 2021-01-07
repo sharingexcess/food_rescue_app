@@ -1,10 +1,10 @@
 @import '../../styles/imports.scss';
 
-#Login {
+#Auth {
   position: relative;
   width: 100vw;
   height: 100vh;
-  padding: 96px 32px;
+  padding: 120px 16px;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -42,15 +42,5 @@
       background: none;
       color: $green;
     }
-  }
-
-  .google {
-    font-size: 18px;
-    color: $white;
-    border: 0;
-    background: #4284f4;
-    font-weight: 600;
-    line-height: 1;
-    margin: 8px 0;
   }
 }

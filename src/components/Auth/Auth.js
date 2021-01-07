@@ -3,10 +3,12 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
-import Google from '../../assets/google.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { updatePublicUserProfile, updateUserPermissions } from './utils'
+import { updateUserPermissions } from './utils'
 import './Auth.scss'
+import { useLocation } from 'react-router-dom'
+import Landing from '../Landing/Landing'
+import Login from '../Login/Login'
 
 const GoogleApi = window.gapi
 const CLIENT_ID = process.env.REACT_APP_FIREBASE_OAUTH_CLIENT_ID
@@ -23,6 +25,7 @@ const AuthContext = createContext()
 AuthContext.displayName = 'Auth'
 
 function Auth({ children }) {
+  const location = useLocation()
   // use an imported React Hook create state variables
   // user defines the current auth state,
   // loading defines whether a request is currently running
@@ -57,38 +60,13 @@ function Auth({ children }) {
     })
   }
 
-  async function handleLogin() {
-    const googleAuth = GoogleApi.auth2.getAuthInstance()
-    const googleUser = await googleAuth.signIn()
-    const token = googleUser.getAuthResponse().id_token
-    const credential = firebase.auth.GoogleAuthProvider.credential(token)
-    const { user } = await firebase.auth().signInWithCredential(credential)
-    updatePublicUserProfile(user)
-  }
-
   function handleLogout() {
     firebase.auth().signOut()
   }
 
-  function Login() {
-    return (
-      <main id="Login">
-        <h1>
-          <span className="green">Sharing</span> Excess
-        </h1>
-        <p>Let's free food!</p>
-        <img className="background" src={Logo} alt="Sharing Excess Logo" />
-        <button className="google" onClick={handleLogin}>
-          <img src={Google} alt="Google Logo" />
-          Sign in with Google
-        </button>
-      </main>
-    )
-  }
-
   function Error() {
     return (
-      <main id="Login">
+      <main id="Auth">
         <h1>
           <span className="green">Sharing</span> Excess
         </h1>
@@ -101,7 +79,7 @@ function Auth({ children }) {
 
   function RequestAccess() {
     return (
-      <main id="Login" className="request-access">
+      <main id="Auth" className="request-access">
         <h1>
           <span className="green">Sharing</span> Excess
         </h1>
@@ -124,7 +102,6 @@ function Auth({ children }) {
     )
   }
 
-  // return <Calendar />
   return loading ? (
     <Loading text="Signing in" />
   ) : error ? (
@@ -142,7 +119,9 @@ function Auth({ children }) {
       </AuthContext.Provider>
     )
   ) : (
-    <Login />
+    <AuthContext.Provider value={{ user, admin, handleLogout }}>
+      {location.pathname === '/login' ? <Login /> : <Landing />}
+    </AuthContext.Provider>
   )
 }
 

@@ -21,15 +21,7 @@ export default function Privacy() {
             <p>
               We use Your Personal data to provide and improve the Service. By
               using the Service, You agree to the collection and use of
-              information in accordance with this Privacy Policy. This Privacy
-              Policy has been created with the help of the{' '}
-              <a
-                href="https://www.privacypolicies.com/privacy-policy-generator/"
-                target="_blank"
-              >
-                Privacy Policy Generator
-              </a>
-              .
+              information in accordance with this Privacy Policy.
             </p>
             <h1>Interpretation and Definitions</h1>
             <h2>Interpretation</h2>
@@ -118,7 +110,7 @@ export default function Privacy() {
                   from{' '}
                   <a
                     href="http://sharing-excess-prod.web.app"
-                    rel="external nofollow noopener"
+                    rel="external nofollow noopener noreferrer"
                     target="_blank"
                   >
                     http://sharing-excess-prod.web.app
@@ -233,7 +225,7 @@ export default function Privacy() {
                 objects?&quot; available at{' '}
                 <a
                   href="https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_"
-                  rel="external nofollow noopener"
+                  rel="external nofollow noopener noreferrer"
                   target="_blank"
                 >
                   https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_
@@ -259,6 +251,7 @@ export default function Privacy() {
               <a
                 href="https://www.privacypolicies.com/blog/cookies/"
                 target="_blank"
+                rel=" noreferrer"
               >
                 What Are Cookies?
               </a>
@@ -548,16 +541,7 @@ export default function Privacy() {
               contact us:
             </p>
             <ul>
-              <li>
-                By email:{' '}
-                <a
-                  href="/cdn-cgi/l/email-protection"
-                  className="__cf_email__"
-                  data-cfemail="196a71786b70777e7c617a7c6a6a7c777e597e74787075377a7674"
-                >
-                  sharingexcesseng@gmail.com
-                </a>
-              </li>
+              <li>By email: sharingexcesseng@gmail.com</li>
             </ul>
           </div>
           <div id="out_en" className="agreement_output"></div>
