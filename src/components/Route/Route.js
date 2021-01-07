@@ -126,6 +126,12 @@ function Route() {
                         {s.location.zip_code}
                       </p>
                     </ExternalLink>
+                    {s.location.upon_arrival_instructions ? (
+                      <h6>
+                        <span>Arrival Instructions: </span>
+                        {s.location.upon_arrival_instructions}
+                      </h6>
+                    ) : null}
                   </div>
                   {i === 0 ||
                   (stops[i - 1].report &&

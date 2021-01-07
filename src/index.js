@@ -20,12 +20,8 @@ import './styles/index.scss'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
-import EditRoute from './components/EditRoute/EditRoute'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 
-// We leave this log in place so that we can check to see
-// that the correct backend env is loaded after deployment
-console.log('INITIALIZING FIREBASE CONFIG', process.env.REACT_APP_FIREBASE_ENV)
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
@@ -67,9 +63,6 @@ function App() {
               </Route>
               <Route exact path="/routes">
                 <Routes />
-              </Route>
-              <Route exact path="/create-route">
-                <EditRoute />
               </Route>
               <Route exact path="/routes/:route_id">
                 <DriverRoute />

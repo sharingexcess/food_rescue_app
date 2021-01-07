@@ -25,6 +25,7 @@ function Calendar() {
         title="cal"
         src="https://calendar.google.com/calendar/embed?src=rn2umgc8h8bmapgi0cr60agmsc%40group.calendar.google.com&ctz=America%2FNew_York"
         scrolling="no"
+        width={window.innerWidth - 32}
       />
     </div>
   )

@@ -5,7 +5,7 @@ import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import Google from '../../assets/google.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { updatePublicUserProfile, updateUserAdminPermissions } from './utils'
+import { updatePublicUserProfile, updateUserPermissions } from './utils'
 import './Auth.scss'
 
 const GoogleApi = window.gapi
@@ -31,12 +31,17 @@ function Auth({ children }) {
   // we create our own state variable to define whether the current user is an admin
   // the default is 'false' so as not to give any accidental permissions
   const [admin, setAdmin] = useState(false)
+  const [basicAccess, setBasicAccess] = useState(false)
 
   useEffect(initGoogleApi, [])
 
   useEffect(() => {
     // check and update the user's admin permission
-    if (user) updateUserAdminPermissions(user, setAdmin)
+    if (user)
+      updateUserPermissions(user, permissions => {
+        setAdmin(permissions.admin)
+        setBasicAccess(permissions.basicAccess)
+      })
   }, [user])
 
   function initGoogleApi() {
@@ -73,7 +78,7 @@ function Auth({ children }) {
         </h1>
         <p>Let's free food!</p>
         <img className="background" src={Logo} alt="Sharing Excess Logo" />
-        <button onClick={handleLogin}>
+        <button className="google" onClick={handleLogin}>
           <img src={Google} alt="Google Logo" />
           Sign in with Google
         </button>
@@ -89,7 +94,32 @@ function Auth({ children }) {
         </h1>
         <p>Looks like there was an error logging in.</p>
         <img className="background" src={Logo} alt="Sharing Excess Logo" />
-        <button onClick={window.location.reload()}>try again</button>
+        <button onClick={() => window.location.reload()}>try again</button>
+      </main>
+    )
+  }
+
+  function RequestAccess() {
+    return (
+      <main id="Login" className="request-access">
+        <h1>
+          <span className="green">Sharing</span> Excess
+        </h1>
+        <p>Hi, {user.displayName}!</p>
+        <div>
+          You've logged in successfully with Google. Before you gain access to
+          rescue data, you'll need to be given permission by an admin.
+          <br />
+          <br />
+          Updating your permissions requires logging out and back in again. Once
+          you've been granted permissions, log back in to gain access!
+        </div>
+        <br />
+        <img className="background" src={Logo} alt="Sharing Excess Logo" />
+        <button onClick={handleLogout}>
+          <i className="fas fa-sign-out-alt" />
+          logout
+        </button>
       </main>
     )
   }
@@ -100,13 +130,17 @@ function Auth({ children }) {
   ) : error ? (
     <Error />
   ) : user ? (
-    <AuthContext.Provider value={{ user, admin, handleLogout }}>
-      {/* 
+    !(basicAccess || admin) ? (
+      <RequestAccess />
+    ) : (
+      <AuthContext.Provider value={{ user, admin, handleLogout }}>
+        {/* 
         All children will now be able to access user, admin, and handleLogout by calling:
         const { user, admin, handleLogout } = useContext(AuthContext) or using the useAuthContext() function below
       */}
-      {children}
-    </AuthContext.Provider>
+        {children}
+      </AuthContext.Provider>
+    )
   ) : (
     <Login />
   )

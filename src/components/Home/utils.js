@@ -5,12 +5,7 @@ export const tiles = [
     link: '/routes',
   },
   {
-    name: 'New Route',
-    icon: 'fa-route',
-    link: '/create-route',
-  },
-  {
-    name: 'Rescue Calendar',
+    name: 'Calendar',
     icon: 'fa-calendar',
     link: '/calendar',
   },

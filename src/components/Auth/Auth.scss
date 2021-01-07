@@ -9,6 +9,10 @@
   justify-content: flex-start;
   align-items: flex-start;
   flex-direction: column;
+  &.request-access {
+    opacity: 0;
+    animation: fade-in 0.32s ease forwards 0.64s;
+  }
 
   h1 {
     font-size: 64px;
@@ -34,6 +38,13 @@
   }
 
   button {
+    i {
+      background: none;
+      color: $green;
+    }
+  }
+
+  .google {
     font-size: 18px;
     color: $white;
     border: 0;

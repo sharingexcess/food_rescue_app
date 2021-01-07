@@ -38,7 +38,6 @@ function Organizations() {
       i.name.toLowerCase().includes(search.toLowerCase())
     )
     if (filter !== 'all') {
-      console.log(filter)
       return filtered_by_search.filter(i => i.org_type === filter)
     } else return filtered_by_search
   }

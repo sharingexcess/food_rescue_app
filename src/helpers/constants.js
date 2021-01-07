@@ -31,4 +31,8 @@ export const RESCUE_STATUSES = {
 export const CLOUD_FUNCTION_URLS = {
   isUserAdmin: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'isUserAdmin',
   setUserAdmin: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'setUserAdmin',
+  isUserBasicAccess:
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'isUserBasicAccess',
+  setUserBasicAccess:
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'setUserBasicAccess',
 }

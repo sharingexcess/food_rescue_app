@@ -19,6 +19,12 @@ export async function checkUserAdminPermissions(id, callback) {
   callback(response === 'true' ? true : false)
 }
 
+export async function checkUserBasicAccess(id, callback) {
+  const check_admin_url = `${CLOUD_FUNCTION_URLS.isUserBasicAccess}?id=${id}`
+  const response = await fetch(check_admin_url).then(data => data.text())
+  callback(response === 'true' ? true : false)
+}
+
 export function UserPronouns({ profile }) {
   return (
     <p>
@@ -64,11 +70,20 @@ export function UserEmail({ profile }) {
     )
 }
 
-export function UserAdminPermissions({ id, isAdmin }) {
+export function UserAdminPermissions({ id, isAdmin, basicAccess }) {
   const { user } = useAuthContext()
 
   async function updateIsAdmin(newIsAdmin) {
     const url = `${CLOUD_FUNCTION_URLS.setUserAdmin}?id=${id}&admin=${newIsAdmin}`
+    try {
+      fetch(url, { method: 'POST' }).then(() => window.location.reload())
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function updateBasicAccess(new_basic_access) {
+    const url = `${CLOUD_FUNCTION_URLS.setUserBasicAccess}?id=${id}&basic_access=${new_basic_access}`
     try {
       fetch(url, { method: 'POST' }).then(() => window.location.reload())
     } catch (e) {
@@ -81,10 +96,10 @@ export function UserAdminPermissions({ id, isAdmin }) {
   } else if (isAdmin === undefined) {
     // handle if we haven't received a response on if this user is admin
     return (
-      <p id="isAdmin">
+      <div id="isAdmin">
         Checking admin permission status
         <Ellipsis />
-      </p>
+      </div>
     )
   } else if (isAdmin) {
     return (
@@ -95,12 +110,24 @@ export function UserAdminPermissions({ id, isAdmin }) {
         </button>
       </>
     )
+  } else if (basicAccess) {
+    return (
+      <>
+        <p id="isAdmin">This user has basic access.</p>
+        <button className="grant" onClick={() => updateIsAdmin(true)}>
+          Grant Admin Access
+        </button>
+        <button className="revoke" onClick={() => updateBasicAccess(false)}>
+          Revoke Basic Access
+        </button>
+      </>
+    )
   } else
     return (
       <>
-        <p id="isAdmin">This user does not have admin access.</p>
-        <button className="grant" onClick={() => updateIsAdmin(true)}>
-          Grant Admin Access
+        <p id="isAdmin">This user does not have any access.</p>
+        <button className="grant" onClick={() => updateBasicAccess(true)}>
+          Grant Basic Access
         </button>
       </>
     )

@@ -11,6 +11,7 @@ import {
   UserAdminPermissions,
   handleUserIcon,
   checkUserAdminPermissions,
+  checkUserBasicAccess,
 } from './utils'
 import { GoBack } from '../../helpers/components'
 import './User.scss'
@@ -26,10 +27,12 @@ function User() {
   const [profileIconFullUrl, setProfileIconFullUrl] = useState()
   // isAdmin defines whether the user being viewed has admin permissions
   const [isAdmin, setIsAdmin] = useState()
+  const [basicAccess, setBasicAccess] = useState()
 
   useEffect(() => {
     // check is user is an admin on load
     checkUserAdminPermissions(id, setIsAdmin)
+    checkUserBasicAccess(id, setBasicAccess)
   }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -54,7 +57,11 @@ function User() {
           <UserEmail profile={profile} />
         </div>
       </div>
-      <UserAdminPermissions id={id} isAdmin={isAdmin} />
+      <UserAdminPermissions
+        id={id}
+        isAdmin={isAdmin}
+        basicAccess={basicAccess}
+      />
     </main>
   )
 }

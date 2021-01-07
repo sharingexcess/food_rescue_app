@@ -242,6 +242,10 @@ function EditRoute() {
     <div id="EditRoute">
       <GoBack label="back" url="/" />
       <h1>New Route</h1>
+      <p>
+        Use this form to assign a new rescue to a driver. Routes are
+        automatically added to Google Calendar.
+      </p>
       {confirmedDriver ? (
         <div id="Driver">
           <img

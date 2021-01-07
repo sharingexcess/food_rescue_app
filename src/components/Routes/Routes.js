@@ -11,11 +11,14 @@ import UserIcon from '../../assets/user.svg'
 import './Routes.scss'
 import { Link } from 'react-router-dom'
 import { GoBack } from '../../helpers/components'
+import { useAuthContext } from '../Auth/Auth'
 
 export default function Routes() {
-  const [raw_routes] = useCollectionData(getCollection('Routes'))
+  const { user } = useAuthContext()
+  const [raw_routes] = useCollectionData(getCollection('Routes').limit(100))
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState(true)
 
   useEffect(() => {
     async function addData() {
@@ -23,28 +26,15 @@ export default function Routes() {
       for (const route of raw_routes) {
         for (const s of route.stops) {
           const collection = s.type === 'pickup' ? 'Pickups' : 'Deliveries'
-          const stop_ref = await getCollection(collection).doc(s.id).get()
-          const stop = stop_ref.data()
+          const stop = await getCollection(collection)
+            .doc(s.id)
+            .get()
+            .then(res => res.data())
           Object.keys(stop).forEach(key => (s[key] = stop[key]))
-
-          if (s.type === 'pickup') {
-            if (
-              !route.start_time ||
-              route.start_time.toMillis() > s.time_start.toMillis()
-            ) {
-              route.start_time = s.time_start
-            }
-            if (
-              !route.end_time ||
-              route.end_time.toMillis() < s.time_end.toMillis()
-            ) {
-              route.end_time = s.time_end
-            }
-          }
-          const org_ref = await getCollection('Organizations')
+          s.org = await getCollection('Organizations')
             .doc(stop.org_id)
             .get()
-          s.org = org_ref.data()
+            .then(res => res.data())
         }
         if (route.driver_id) {
           const driver_ref = await getCollection('Users')
@@ -64,16 +54,29 @@ export default function Routes() {
     raw_routes && addData()
   }, [raw_routes])
 
+  function filterAndSortRoutes(routes) {
+    return filter
+      ? routes
+          .filter(r => r.driver_id === user.uid)
+          .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+      : routes.sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+  }
+
   return (
     <main id="Routes">
       <GoBack label="back" url="/" />
-      <h1>Routes</h1>
+      <h1>
+        Routes
+        <button className="secondary" onClick={() => setFilter(!filter)}>
+          {filter ? 'Show All Routes' : 'Show My Routes'}
+        </button>
+      </h1>
       {loading ? (
         <Loading text="Loading routes" />
       ) : !routes.length ? (
         <p className="no-routes">No routes scheduled.</p>
       ) : (
-        routes.map(r => (
+        filterAndSortRoutes(routes).map(r => (
           <Link to={`/routes/${r.id}`} key={r.id}>
             <div className="Route">
               {r.driver && (
@@ -81,10 +84,10 @@ export default function Routes() {
               )}
               <div>
                 <h3>{r.driver.name}</h3>
-                <h4>{moment(r.start_time).format('ddd, MMMM Do YYYY')}</h4>
+                <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                 <h5>
-                  {moment(r.start_time).format('h:mma')} -{' '}
-                  {moment(r.end_time).format('h:mma')}{' '}
+                  {moment(r.time_start).format('h:mma')} -{' '}
+                  {moment(r.time_end).format('h:mma')}{' '}
                 </h5>
                 <p className="pickups">
                   <i className="fa fa-arrow-up" />

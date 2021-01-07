@@ -23,10 +23,13 @@ export async function updatePublicUserProfile(user) {
     .catch(e => console.error(e))
 }
 
-export function updateUserAdminPermissions(user, callback) {
+export function updateUserPermissions(user, callback) {
   user.getIdTokenResult().then(token => {
     if (token && token.claims) {
-      callback(token.claims.admin)
+      callback({
+        admin: token.claims.admin,
+        basicAccess: token.claims.basic_access,
+      })
     }
   })
 }

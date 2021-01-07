@@ -53,7 +53,7 @@
             color: $blue;
           }
           &.fa-route {
-            color: $green;
+            color: $red;
           }
           &.fa-calendar {
             color: $yellow;
@@ -63,6 +63,9 @@
           }
           &.fa-users {
             color: $red;
+          }
+          &.fa-user {
+            color: $green;
           }
         }
 
