@@ -33,7 +33,8 @@
     #UserName,
     #UserEmail,
     #UserIsAdmin,
-    #MenuContent {
+    #MenuContent,
+    footer {
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.32s ease;
@@ -52,6 +53,16 @@
         transform: translate(1px, 1px);
         box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
       }
+    }
+  }
+
+  .login {
+    pointer-events: all;
+    transform: translateX(-12px);
+    button {
+      padding: 8px 12px;
+      font-weight: 900;
+      color: $white;
     }
   }
 
@@ -147,6 +158,18 @@
           }
         }
       }
+    }
+  }
+  footer {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 4px;
+    a {
+      font-size: 12px;
+      color: $blue;
     }
   }
 }

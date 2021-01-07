@@ -1,20 +1,24 @@
 import React, { memo } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
 import { useAuthContext } from '../Auth/Auth'
 import UserIcon from '../../assets/user.svg'
 import { getCollection } from '../../helpers/helpers'
 import './Menu.scss'
+import { ExternalLink } from '../../helpers/components'
 
 function Menu() {
+  const location = useLocation()
   // get state from Redux Store to determine whether menu is open
   const isOpen = useSelector(store => store.app.menu)
   // get current user state from AuthContext
   const { user, admin, handleLogout } = useAuthContext()
   // get public user profile state
-  const [profile = {}] = useDocumentData(getCollection('Users').doc(user.uid))
+  const [profile = {}] = useDocumentData(
+    user ? getCollection('Users').doc(user.uid) : null
+  )
   // get access to the Redux update state function 'dispatch'
   const dispatch = useDispatch()
 
@@ -33,7 +37,7 @@ function Menu() {
       )
     }
 
-    return (
+    return user ? (
       <div id="UserProfile">
         <img
           src={user.photoURL || UserIcon}
@@ -48,7 +52,11 @@ function Menu() {
         </div>
         <i id="Close" className="fa fa-times" onClick={closeMenu} />
       </div>
-    )
+    ) : location.pathname !== '/login' ? (
+      <Link to="/login" className="login">
+        <button>login</button>
+      </Link>
+    ) : null
   }
 
   return (
@@ -63,17 +71,32 @@ function Menu() {
         <div id="MenuContent">
           <ul>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/rescues">View Rescues</Link>
+              <Link to="/">Home</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/create">Create Rescue</Link>
+              <Link to="/routes">Routes</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/profile">User Profile</Link>
+              <Link to="/calendar">Calendar</Link>
             </li>
-            <li onClick={handleLogout}>Logout</li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/profile">Profile</Link>
+            </li>
+
+            <li
+              onClick={() => {
+                dispatch(setMenu(false))
+                handleLogout()
+              }}
+            >
+              Logout
+            </li>
           </ul>
         </div>
+        <footer>
+          <ExternalLink url="/privacy">privacy policy</ExternalLink>
+          <ExternalLink url="/tos">terms of service</ExternalLink>
+        </footer>
       </aside>
     </>
   )

@@ -4,7 +4,6 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/storage'
 import { Input } from '../Input/Input'
-import { v4 as generateUniqueId } from 'uuid'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import UserIcon from '../../assets/user.svg'
 import { handleOrgIcon, initializeFormData } from './utils'
@@ -71,17 +70,33 @@ export default function EditOrganization() {
   async function handleSubmit() {
     const is_valid = validateFormData()
     if (is_valid) {
-      const org_id = id || generateUniqueId()
-      const icon = await handleFileUpload(org_id)
-      getCollection('Organizations')
-        .doc(org_id)
-        .set(
-          { ...formData, id: org_id, icon: icon || org.icon || null },
-          { merge: true }
-        )
-        .then(() => history.push(`/admin/organizations/${org_id}`))
-        .catch(e => console.error('Error writing document: ', e))
+      const org_id = id || (await generateOrgId(formData.name))
+      if (org_id) {
+        const icon = await handleFileUpload(org_id)
+        getCollection('Organizations')
+          .doc(org_id)
+          .set(
+            { ...formData, id: org_id, icon: icon || org.icon || null },
+            { merge: true }
+          )
+          .then(() => history.push(`/admin/organizations/${org_id}`))
+          .catch(e => console.error('Error writing document: ', e))
+      }
     }
+  }
+
+  async function generateOrgId(name) {
+    const uniq_id = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase()
+    const exists = await getCollection('Organizations')
+      .doc(uniq_id)
+      .get()
+      .then(res => res.data())
+    if (exists) {
+      alert(
+        'An organization with this name already exists, please use a different name.'
+      )
+      return null
+    } else return uniq_id
   }
 
   function handleFileChange(e) {

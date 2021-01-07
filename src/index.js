@@ -11,19 +11,19 @@ import useWidth from './hooks/useWidth'
 import { Provider } from 'react-redux'
 import { resize } from './redux/app/appReducer'
 import store from './redux/store'
-import './styles/index.scss'
 import AdminRoutes from './routes/AdminRoutes'
 import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
-import EditRescue from './components/EditRescue/EditRescue'
-import Rescues from './components/Rescues/Rescues'
-import Rescue from './components/Rescue/Rescue'
-import Report from './components/Report/Report'
+import PickupReport from './components/PickupReport/PickupReport'
 import Profile from './components/Profile/Profile'
+import Routes from './components/Routes/Routes'
+import { Route as DriverRoute } from './components/Route/Route'
+import Calendar from './components/Calendar/Calendar'
+import DeliveryReport from './components/DeliveryReport/DeliveryReport'
+import Privacy from './components/Privacy/Privacy'
+import Terms from './components/Terms/Terms'
+import './styles/index.scss'
 
-// We leave this log in place so that we can check to see
-// that the correct backend env is loaded after deployment
-console.log('INITIALIZING FIREBASE CONFIG', process.env.REACT_APP_FIREBASE_ENV)
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
@@ -49,44 +49,56 @@ function App() {
       */}
       <Provider store={store}>
         {/* This Provider component wraps our app in a component that gives access to the Redux store */}
-        <Auth>
-          {/* Auth component handles login and will show a login page if no user is authenticated */}
-          <BrowserRouter>
-            {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+        <BrowserRouter>
+          <Auth>
             <Header />
             <Menu />
+            {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+            {/* Auth component handles login and will show a login page if no user is authenticated */}
             {/* Switch will only allows the first matching route to be rendered */}
             <Switch>
               <Route exact path="/">
                 <Home />
               </Route>
-              <Route exact path="/create">
-                <EditRescue />
+              <Route exact path="/calendar">
+                <Calendar />
               </Route>
-              <Route exact path="/rescues">
-                <Rescues />
+              <Route exact path="/routes">
+                <Routes />
               </Route>
-              <Route exact path="/rescues/:id">
-                {/* adding a colon creates a variable url parameter */}
-                {/* we can access that variable using const { id } = useParams() */}
-                <Rescue />
+              <Route exact path="/routes/:route_id">
+                <DriverRoute />
               </Route>
-              <Route exact path="/rescues/:id/report">
-                <Report />
+              <Route exact path="/routes/:route_id/pickup/:pickup_id/report">
+                <PickupReport />
+              </Route>
+              <Route
+                exact
+                path="/routes/:route_id/delivery/:delivery_id/report"
+              >
+                <DeliveryReport />
               </Route>
               <Route exact path="/profile">
                 <Profile />
               </Route>
               {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
-              <AdminRoutes />
+              <Route path="/admin">
+                <AdminRoutes />
+              </Route>
+              <Route exact path="/privacy">
+                <Privacy />
+              </Route>
+              <Route exact path="/tos">
+                <Terms />
+              </Route>
               <Route>
                 {/* This route has no path, and therefore will be the 'catch all' */}
                 <Error />
                 {/* this 404 page component will render if the url does not match any other routes */}
               </Route>
             </Switch>
-          </BrowserRouter>
-        </Auth>
+          </Auth>
+        </BrowserRouter>
       </Provider>
     </Suspense>
   )

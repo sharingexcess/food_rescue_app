@@ -1,14 +1,18 @@
 @import '../../styles/imports.scss';
 
-#Login {
+#Auth {
   position: relative;
   width: 100vw;
   height: 100vh;
-  padding: 96px 32px;
+  padding: 120px 16px;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
   flex-direction: column;
+  &.request-access {
+    opacity: 0;
+    animation: fade-in 0.32s ease forwards 0.64s;
+  }
 
   h1 {
     font-size: 64px;
@@ -34,12 +38,9 @@
   }
 
   button {
-    font-size: 18px;
-    color: $white;
-    border: 0;
-    background: #4284f4;
-    font-weight: 600;
-    line-height: 1;
-    margin: 8px 0;
+    i {
+      background: none;
+      color: $green;
+    }
   }
 }

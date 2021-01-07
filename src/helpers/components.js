@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 
 export function ExternalLink({ url, children }) {
   return (
-    <a target="_blank" rel="noopener noreferrer" href={url}>
+    <a target="_blank" rel="noreferrer" href={url}>
       {children}
     </a>
   )
 }
 
-export function GoBack({ url, label }) {
+export function GoBack({ url = '/', label = 'go back' }) {
   return (
     <Link className="back" to={url}>
       {'< '}

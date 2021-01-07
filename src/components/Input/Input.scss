@@ -18,6 +18,23 @@
     animation: slide-in 0.48s forwards ease;
   }
 
+  &.textarea {
+    background: $mediumgrey;
+    height: unset;
+    border-radius: 8px;
+    border: 1px solid $blue;
+    padding: 0 16px 12px 16px;
+
+    textarea {
+      white-space: pre-wrap;
+      font-size: 20px;
+    }
+
+    label {
+      color: #4284f4;
+    }
+  }
+
   label {
     color: $blue;
     z-index: 2;

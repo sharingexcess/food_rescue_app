@@ -1,0 +1,35 @@
+@import '../../styles/imports.scss';
+
+#Login {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 96px 16px 192px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  > img {
+    width: 92%;
+    max-width: 240px;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .google {
+    font-size: 18px;
+    color: $white;
+    border: 0;
+    background: #4284f4;
+    font-weight: 600;
+    line-height: 1;
+    margin: 8px 0;
+  }
+}
