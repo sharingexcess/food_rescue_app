@@ -14,17 +14,14 @@ import store from './redux/store'
 import AdminRoutes from './routes/AdminRoutes'
 import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
-import EditRescue from './components/EditRescue/EditRescue'
-import Rescues from './components/Rescues/Rescues'
-import Rescue from './components/Rescue/Rescue'
-import Report from './components/Report/Report'
+import PickupReport from './components/PickupReport/PickupReport'
 import Profile from './components/Profile/Profile'
 import './styles/index.scss'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
-import EditPickup from './components/EditPickup/EditPickup'
 import EditRoute from './components/EditRoute/EditRoute'
+import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 
 // We leave this log in place so that we can check to see
 // that the correct backend env is loaded after deployment
@@ -68,17 +65,8 @@ function App() {
               <Route exact path="/calendar">
                 <Calendar />
               </Route>
-              <Route exact path="/create">
-                <EditRescue />
-              </Route>
-              <Route exact path="/rescues">
-                <Rescues />
-              </Route>
               <Route exact path="/routes">
                 <Routes />
-              </Route>
-              <Route exact path="/create-pickup">
-                <EditPickup />
               </Route>
               <Route exact path="/create-route">
                 <EditRoute />
@@ -87,15 +75,13 @@ function App() {
                 <DriverRoute />
               </Route>
               <Route exact path="/routes/:route_id/pickup/:pickup_id/report">
-                <Report />
+                <PickupReport />
               </Route>
-              <Route exact path="/rescues/:id">
-                {/* adding a colon creates a variable url parameter */}
-                {/* we can access that variable using const { id } = useParams() */}
-                <Rescue />
-              </Route>
-              <Route exact path="/rescues/:id/report">
-                <Report />
+              <Route
+                exact
+                path="/routes/:route_id/delivery/:delivery_id/report"
+              >
+                <DeliveryReport />
               </Route>
               <Route exact path="/profile">
                 <Profile />

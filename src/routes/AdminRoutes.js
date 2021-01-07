@@ -72,6 +72,11 @@ export default function AdminRoutes() {
       <AdminRoute exact path="/admin/users/:id">
         <User />
       </AdminRoute>
+      <Route>
+        {/* This route has no path, and therefore will be the 'catch all' */}
+        <Error />
+        {/* this 404 page component will render if the url does not match any other routes */}
+      </Route>
     </Switch>
   )
 }

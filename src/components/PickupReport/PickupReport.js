@@ -3,13 +3,13 @@ import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './Report.scss'
+import './PickupReport.scss'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
 import { getCollection } from '../../helpers/helpers'
 
-export default function Report() {
+export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
   const history = useHistory()
   const [pickup = {}, loading] = useDocumentData(
@@ -70,9 +70,10 @@ export default function Report() {
             other: parseInt(formData.other),
             weight: parseInt(formData.weight),
             notes: formData.notes,
-            completed_at:
+            created_at:
               pickup.completed_at ||
               firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
           },
           status: Math.max(pickup.status, 6),
         },
@@ -83,14 +84,14 @@ export default function Report() {
   }
   if (loading) return <Loading text="Loading report" />
   return (
-    <main id="Report">
+    <main id="PickupReport">
       <GoBack url={`/routes/${route_id}`} label="back to rescue" />
       <h1>Rescue Report</h1>
       <h3>{pickup_org.name}</h3>
       {Object.keys(formData)
         .sort()
         .map(field =>
-          !['weight', 'notes'].includes(field) ? (
+          !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
             <section key={field}>
               <h5>{field}</h5>
               <button className="decrement" onClick={() => decrement(field)}>

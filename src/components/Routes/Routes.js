@@ -10,10 +10,11 @@ import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import './Routes.scss'
 import { Link } from 'react-router-dom'
+import { GoBack } from '../../helpers/components'
 
 export default function Routes() {
-  const [raw_routes = []] = useCollectionData(getCollection('Routes'))
-  const [routes, setRoutes] = useState([])
+  const [raw_routes] = useCollectionData(getCollection('Routes'))
+  const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -60,14 +61,17 @@ export default function Routes() {
       setRoutes(full_data)
       setLoading(false)
     }
-    raw_routes.length && addData()
+    raw_routes && addData()
   }, [raw_routes])
 
   return (
     <main id="Routes">
+      <GoBack label="back" url="/" />
       <h1>Routes</h1>
       {loading ? (
         <Loading text="Loading routes" />
+      ) : !routes.length ? (
+        <p className="no-routes">No routes scheduled.</p>
       ) : (
         routes.map(r => (
           <Link to={`/routes/${r.id}`} key={r.id}>
@@ -77,12 +81,10 @@ export default function Routes() {
               )}
               <div>
                 <h3>{r.driver.name}</h3>
-                <h4>
-                  {moment(r.start_time.toDate()).format('ddd, MMMM Do YYYY')}
-                </h4>
+                <h4>{moment(r.start_time).format('ddd, MMMM Do YYYY')}</h4>
                 <h5>
-                  {moment(r.start_time.toDate()).format('h:mma')} -{' '}
-                  {moment(r.end_time.toDate()).format('h:mma')}{' '}
+                  {moment(r.start_time).format('h:mma')} -{' '}
+                  {moment(r.end_time).format('h:mma')}{' '}
                 </h5>
                 <p className="pickups">
                   <i className="fa fa-arrow-up" />

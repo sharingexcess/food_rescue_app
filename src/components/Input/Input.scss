@@ -19,13 +19,14 @@
   }
 
   &.textarea {
-    background: $white;
+    background: $mediumgrey;
     height: unset;
     border-radius: 8px;
-    padding: 0 8px 8px 8px;
+    border: 1px solid $blue;
+    padding: 0 16px 12px 16px;
 
     textarea {
-      color: $darkgrey;
+      white-space: pre-wrap;
       font-size: 20px;
     }
 

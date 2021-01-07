@@ -14,23 +14,34 @@
     width: 100%;
   }
 
+  .delete {
+    border-color: $red;
+    color: $red;
+  }
+
   #Driver {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 32px 0;
+    padding: 24px 0;
 
     h3 {
-      font-size: 20px;
+      font-size: 24px;
+      margin-bottom: 4px;
     }
 
     h4 {
       color: $blue;
+      font-weight: 600;
+    }
+    h5 {
+      color: $blue;
+      font-weight: 600;
     }
 
     img {
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
       object-fit: contain;
       flex-shrink: 0;
       padding: 2px;
@@ -111,6 +122,10 @@
         margin: 0;
         font-size: 16px;
         background: none;
+        color: $white;
+      }
+      &.complete {
+        background: $green;
       }
     }
   }

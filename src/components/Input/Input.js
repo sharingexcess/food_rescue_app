@@ -34,6 +34,7 @@ export function Input({
             autoComplete="new-password" //prevent autoComplete
             name="no" //prevent autoComplete
             rows={3}
+            wrap="hard"
             onChange={onChange}
             value={value}
             onFocus={() => setIsUsed(true)}
