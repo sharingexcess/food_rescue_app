@@ -36,7 +36,6 @@ export default function EditOrganization() {
   useEffect(() => {
     handleOrgIcon(org.icon, setOrgIconFullUrl)
   }, [org.icon])
-  console.log(formData.name.length)
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
