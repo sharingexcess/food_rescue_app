@@ -132,6 +132,18 @@ function Route() {
                         {s.location.upon_arrival_instructions}
                       </h6>
                     ) : null}
+                    {s.location.contact_name ? (
+                      <h6>
+                        <span>Contact Name: </span>
+                        {s.location.contact_name}
+                      </h6>
+                    ) : null}
+                    {s.location.contact_phone ? (
+                      <h6>
+                        <span>Contact Phone: </span>
+                        {s.location.contact_phone}
+                      </h6>
+                    ) : null}
                   </div>
                   {i === 0 ||
                   (stops[i - 1].report &&
