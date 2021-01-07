@@ -2,9 +2,7 @@ import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
 import Ellipsis, { GoBack } from '../../helpers/components'
 import { useHistory } from 'react-router-dom'
-import { createPickup, updateFieldSuggestions, formFields } from './utils'
-import './EditRoute.scss'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { updateFieldSuggestions, formFields } from './utils'
 import UserIcon from '../../assets/user.svg'
 import { getCollection } from '../../helpers/helpers'
 import moment from 'moment'
@@ -12,6 +10,7 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import { v4 as generateUniqueId } from 'uuid'
 import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
+import './EditRoute.scss'
 
 function EditRoute() {
   const history = useHistory()
@@ -42,7 +41,7 @@ function EditRoute() {
           const driver = res.data()
           setFormData({ ...formData, driver })
         })
-  }, [formData.driver_id])
+  }, [formData.driver_id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -117,10 +116,16 @@ function EditRoute() {
       }
 
       const request = window.gapi.client.calendar.events.insert({
-        calendarId: 'rn2umgc8h8bmapgi0cr60agmsc@group.calendar.google.com',
+        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
         resource: event,
       })
       request.execute(event => {
+        if (!event.id) {
+          alert(
+            'You do not have Google Calendar access configured. Please contact an admin for support.'
+          )
+          return
+        }
         getCollection('Routes')
           .doc(route_id)
           .set({
@@ -135,6 +140,7 @@ function EditRoute() {
           })
           .then(() => history.push('/routes'))
       })
+      setWorking(false)
     }
   }
 
@@ -326,7 +332,7 @@ function EditRoute() {
                         <Ellipsis />
                       </>
                     ) : (
-                      'complete route'
+                      'complete'
                     )}
                   </button>
                 )}

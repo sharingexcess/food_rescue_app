@@ -9,7 +9,7 @@ export function ExternalLink({ url, children }) {
   )
 }
 
-export function GoBack({ url, label = 'go back' }) {
+export function GoBack({ url = '/', label = 'go back' }) {
   return (
     <Link className="back" to={url}>
       {'< '}

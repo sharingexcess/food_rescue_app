@@ -11,7 +11,7 @@ import './Auth.scss'
 const GoogleApi = window.gapi
 const CLIENT_ID = process.env.REACT_APP_FIREBASE_OAUTH_CLIENT_ID
 const API_KEY = process.env.REACT_APP_FIREBASE_API_KEY
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events'
+const SCOPES = 'https://www.googleapis.com/auth/calendar'
 const DISCOVERY_DOCS = [
   'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
 ]

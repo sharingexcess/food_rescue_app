@@ -36,6 +36,7 @@ jobs:
           REACT_APP_FIREBASE_MEASUREMENT_ID: ${{secrets.REACT_APP_FIREBASE_MEASUREMENT_ID}}
           REACT_APP_FIREBASE_ENV: ${{secrets.REACT_APP_FIREBASE_ENV}}
           REACT_APP_CLOUD_FUNCTION_BASE_URL: ${{secrets.REACT_APP_CLOUD_FUNCTION_BASE_URL}}
+          REACT_APP_GOOGLE_CALENDAR_ID: ${{secrets.REACT_APP_GOOGLE_CALENDAR_ID}}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
