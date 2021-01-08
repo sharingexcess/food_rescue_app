@@ -9,7 +9,7 @@ import Auth from './components/Auth/Auth'
 import Menu from './components/Menu/Menu'
 import useWidth from './hooks/useWidth'
 import { Provider } from 'react-redux'
-import { resize } from './redux/app/appReducer'
+import { resize, setDarkMode } from './redux/app/appReducer'
 import store from './redux/store'
 import AdminRoutes from './routes/AdminRoutes'
 import Loading from './components/Loading/Loading'
@@ -36,6 +36,16 @@ function App() {
   // The first argument is the function to run on change, and the second is an array of dependencies.
   // If the second argument is present, useEffect will only run when those values change, not all state.
   // Read more: https://reactjs.org/docs/hooks-effect.html
+  useEffect(() => {
+    const savedDarkModePreference = localStorage.getItem('darkMode')
+    console.log('saved pref is', savedDarkModePreference)
+    if (savedDarkModePreference !== null) {
+      store.dispatch(
+        setDarkMode(savedDarkModePreference === 'true' ? true : false)
+      )
+    }
+  }, [])
+
   useEffect(() => {
     // any time the screen width changes, handle the resize with this dispatch call
     store.dispatch(resize({ width }))

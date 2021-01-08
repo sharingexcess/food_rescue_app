@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #EditRoute {
   padding: 108px 16px 0 16px;
   max-width: 800px;
@@ -11,7 +9,7 @@
   }
 
   p {
-    color: $blue;
+    color: var(--blue);
     margin-top: 8px;
   }
 
@@ -26,16 +24,16 @@
     }
 
     .delivery {
-      border-color: $red;
-      color: $red;
+      border-color: var(--red);
+      color: var(--red);
     }
     .complete {
-      border-color: $blue;
-      color: $blue;
+      border-color: var(--blue);
+      color: var(--blue);
     }
     .cancel {
-      border-color: $yellow;
-      color: $yellow;
+      border-color: var(--yellow);
+      color: var(--yellow);
     }
   }
 
@@ -51,11 +49,11 @@
     }
 
     h4 {
-      color: $blue;
+      color: var(--blue);
       font-weight: 600;
     }
     h5 {
-      color: $blue;
+      color: var(--blue);
       font-weight: 600;
     }
 
@@ -65,14 +63,14 @@
       object-fit: contain;
       flex-shrink: 0;
       padding: 2px;
-      background: $white;
+      background: var(--white);
       border-radius: 50%;
       margin-right: 16px;
     }
   }
 
   #AddStop {
-    background: $mediumgrey;
+    background: var(--mediumgrey);
     padding: 16px;
     margin: 32px 0;
     border-radius: 8px;
@@ -81,7 +79,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    border: 1px solid $blue;
+    border: 1px solid var(--blue);
 
     &:empty {
       display: none;
@@ -91,7 +89,7 @@
   .Stop {
     position: relative;
     width: 100%;
-    background: $mediumgrey;
+    background: var(--mediumgrey);
     border-radius: 8px;
     box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
     margin: 16px 0;
@@ -105,30 +103,30 @@
       position: absolute;
       top: 16px;
       right: 16px;
-      color: $blue;
+      color: var(--blue);
       font-size: 20px;
       cursor: pointer;
       transition: color 0.16s ease;
 
       @media (hover: hover) and (pointer: fine) {
         &:hover {
-          color: $white;
+          color: var(--white);
         }
       }
     }
 
     &.pickup {
-      border: 2px solid $green;
+      border: 2px solid var(--green);
 
       h4 {
-        color: $green;
+        color: var(--green);
       }
     }
     &.delivery {
-      border: 2px solid $red;
+      border: 2px solid var(--red);
 
       h4 {
-        color: $red;
+        color: var(--red);
       }
     }
 
@@ -149,7 +147,7 @@
     }
 
     p {
-      color: $blue;
+      color: var(--blue);
       font-weight: 500;
       text-decoration: underline;
     }

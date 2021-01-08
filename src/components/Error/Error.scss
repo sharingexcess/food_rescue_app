@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #Error {
   padding: 108px 16px 108px 16px;
   height: 100vh;
@@ -25,7 +23,7 @@
   p {
     margin-top: 8px;
     margin-bottom: 32px;
-    color: $lightgrey;
+    color: var(--lightgrey);
     width: 100%;
     text-align: center;
   }

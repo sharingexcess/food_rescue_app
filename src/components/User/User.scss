@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #User {
   padding: 92px 16px 0 16px;
   max-width: 800px;
@@ -20,7 +18,7 @@
       width: 96px;
       height: 96px;
       flex-shrink: 0;
-      background: $white;
+      background: var(--white);
       padding: 4px;
       border-radius: 50%;
       object-fit: contain;
@@ -45,9 +43,9 @@
         font-size: 12px;
         font-weight: 500;
         padding: 2px;
-        color: $blue;
+        color: var(--blue);
         i {
-          color: $white;
+          color: var(--white);
           width: 20px;
         }
       }
@@ -60,7 +58,7 @@
   }
 
   .revoke {
-    color: $red;
-    border-color: $red;
+    color: var(--red);
+    border-color: var(--red);
   }
 }

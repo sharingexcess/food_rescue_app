@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #Landing {
   padding: 108px 16px 0 16px;
   max-width: 600px;
@@ -8,11 +6,11 @@
   text-align: center;
 
   .green {
-    color: $green;
+    color: var(--green);
   }
 
   .blue {
-    color: $blue;
+    color: var(--blue);
   }
 
   h1 {

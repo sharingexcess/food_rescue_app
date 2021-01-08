@@ -8,6 +8,7 @@ import { MOBILE_THRESHOLD } from '../../helpers/constants'
 
 const initialState = {
   menu: false,
+  darkMode: true,
   mobile: window.innerWidth < MOBILE_THRESHOLD,
 }
 
@@ -21,6 +22,12 @@ const app = createSlice({
       return {
         ...state,
         menu: action.payload,
+      }
+    },
+    setDarkMode(state, action) {
+      return {
+        ...state,
+        darkMode: action.payload,
       }
     },
     resize(state, action) {
@@ -39,6 +46,6 @@ const app = createSlice({
   },
 })
 
-export const { setMenu, resize } = app.actions
+export const { setMenu, setDarkMode, resize } = app.actions
 
 export default app.reducer
