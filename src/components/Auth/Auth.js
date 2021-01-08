@@ -5,18 +5,10 @@ import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { updateUserPermissions } from './utils'
-import './Auth.scss'
 import { useLocation } from 'react-router-dom'
 import Landing from '../Landing/Landing'
 import Login from '../Login/Login'
-
-const GoogleApi = window.gapi
-const CLIENT_ID = process.env.REACT_APP_FIREBASE_OAUTH_CLIENT_ID
-const API_KEY = process.env.REACT_APP_FIREBASE_API_KEY
-const SCOPES = 'https://www.googleapis.com/auth/calendar'
-const DISCOVERY_DOCS = [
-  'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-]
+import './Auth.scss'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -36,8 +28,6 @@ function Auth({ children }) {
   const [admin, setAdmin] = useState(false)
   const [basicAccess, setBasicAccess] = useState(false)
 
-  useEffect(initGoogleApi, [])
-
   useEffect(() => {
     // check and update the user's admin permission
     if (user)
@@ -46,19 +36,6 @@ function Auth({ children }) {
         setBasicAccess(permissions.basicAccess)
       })
   }, [user])
-
-  function initGoogleApi() {
-    GoogleApi.load('client:auth2', () => {
-      GoogleApi.client.load('calendar', 'v3', () => {
-        GoogleApi.client.init({
-          apiKey: API_KEY,
-          clientId: CLIENT_ID,
-          discoveryDocs: DISCOVERY_DOCS,
-          scope: SCOPES,
-        })
-      })
-    })
-  }
 
   function handleLogout() {
     firebase.auth().signOut()

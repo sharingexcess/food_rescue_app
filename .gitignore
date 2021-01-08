@@ -6,3 +6,4 @@ environments
 package-lock.json
 .firebase/*.cache
 .DS_Store
+*credentials*

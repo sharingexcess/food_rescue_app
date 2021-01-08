@@ -2,6 +2,12 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import { getCollection } from '../../helpers/helpers'
 
+export async function getAuthenticatedUser() {
+  const provider = new firebase.auth.GoogleAuthProvider()
+  const { user } = await firebase.auth().signInWithPopup(provider)
+  return user
+}
+
 export async function updatePublicUserProfile(user) {
   // fetch existing data matching this user id
   const existing_user_ref = await getCollection('Users').doc(user.uid).get()

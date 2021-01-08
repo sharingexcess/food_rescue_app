@@ -8,6 +8,7 @@ import './Route.scss'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import { ExternalLink, GoBack } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
+import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
 
 function Route() {
   const history = useHistory()
@@ -59,11 +60,13 @@ function Route() {
   }, [route.stops]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleDeleteRoute() {
-    const request = window.gapi.client.calendar.events.delete({
-      calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-      eventId: route.google_calendar_event_id,
-    })
-    request.execute()
+    await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+      method: 'POST',
+      body: JSON.stringify({
+        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+        eventId: route.google_calendar_event_id,
+      }),
+    }).catch(e => console.error('Error deleting calendar event:', e))
     for (const stop of route.stops) {
       if (stop.type === 'pickup') {
         await getCollection('Pickups').doc(stop.id).delete()

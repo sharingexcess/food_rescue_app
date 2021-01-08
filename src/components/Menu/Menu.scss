@@ -60,9 +60,9 @@
     pointer-events: all;
     transform: translateX(-12px);
     button {
+      color: $blue;
+      font-size: 18px;
       padding: 8px 12px;
-      font-weight: 900;
-      color: $white;
     }
   }
 
