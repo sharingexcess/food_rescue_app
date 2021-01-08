@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection, formatPhoneNumber } from '../../helpers/helpers'
 import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
@@ -130,6 +130,20 @@ function Route() {
                       <h6>
                         <span>Arrival Instructions: </span>
                         {s.location.upon_arrival_instructions}
+                      </h6>
+                    ) : null}
+                    {s.location.contact_name ? (
+                      <h6>
+                        <span>Contact Name: </span>
+                        {s.location.contact_name}
+                      </h6>
+                    ) : null}
+                    {formatPhoneNumber(s.location.contact_phone) ? (
+                      <h6>
+                        <span>Contact Phone:</span>
+                        <ExternalLink url={'tel:' + s.location.contact_phone}>
+                          <p>{formatPhoneNumber(s.location.contact_phone)}</p>
+                        </ExternalLink>
                       </h6>
                     ) : null}
                   </div>
