@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #Route {
   padding: 92px 16px 0 16px;
   max-width: 800px;
@@ -15,8 +13,8 @@
   }
 
   .delete {
-    border-color: $red;
-    color: $red;
+    border-color: var(--red);
+    color: var(--red);
   }
 
   #Driver {
@@ -31,11 +29,11 @@
     }
 
     h4 {
-      color: $blue;
+      color: var(--blue);
       font-weight: 600;
     }
     h5 {
-      color: $blue;
+      color: var(--blue);
       font-weight: 600;
     }
 
@@ -45,7 +43,7 @@
       object-fit: contain;
       flex-shrink: 0;
       padding: 2px;
-      background: $white;
+      background: var(--white);
       border-radius: 50%;
       margin-right: 16px;
     }
@@ -54,7 +52,7 @@
   .Stop {
     position: relative;
     width: 100%;
-    background: $mediumgrey;
+    background: var(--mediumgrey);
     border-radius: 8px;
     box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
     margin: 16px 0;
@@ -66,17 +64,17 @@
     animation: fade-in 0.32s ease forwards;
 
     &.pickup {
-      border: 2px solid $green;
+      border: 2px solid var(--green);
 
       h4 {
-        color: $green;
+        color: var(--green);
       }
     }
     &.delivery {
-      border: 2px solid $red;
+      border: 2px solid var(--red);
 
       h4 {
-        color: $red;
+        color: var(--red);
       }
     }
 
@@ -101,12 +99,12 @@
       margin-top: 12px;
       span {
         font-weight: 900;
-        color: $yellow;
+        color: var(--yellow);
       }
     }
 
     p {
-      color: $blue;
+      color: var(--blue);
       font-weight: 500;
       text-decoration: underline;
     }
@@ -117,8 +115,8 @@
     }
 
     button {
-      color: $white;
-      background: $blue;
+      color: var(--white);
+      background: var(--blue);
       border: none;
       border-radius: 50%;
       width: 48px;
@@ -131,10 +129,10 @@
         margin: 0;
         font-size: 16px;
         background: none;
-        color: $white;
+        color: var(--white);
       }
       &.complete {
-        background: $green;
+        background: var(--green);
       }
     }
   }

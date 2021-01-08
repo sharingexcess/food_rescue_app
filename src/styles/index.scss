@@ -4,6 +4,30 @@
 @import './global.scss';
 @import './animations.scss';
 
+body.light-theme {
+  --green: #059705;
+  --yellow: #ecc133;
+  --red: #a03623;
+  --blue: #0062ff;
+  --white: #0b2342;
+  --darkgrey: #ffffff;
+  --mediumgrey: #d2e4f8;
+  --lightgrey: #cccccc;
+  --mobile: 600px;
+}
+
+body.dark-theme {
+  --green: #00ff00;
+  --yellow: #ecc133;
+  --red: #ec4f33;
+  --blue: #69a8fa;
+  --white: #ffffff;
+  --darkgrey: #020d1a;
+  --mediumgrey: #041428;
+  --lightgrey: #cccccc;
+  --mobile: 600px;
+}
+
 body {
   margin: 0;
   padding: 0;

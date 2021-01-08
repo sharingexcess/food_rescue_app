@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #Login {
   position: relative;
   width: 100vw;
@@ -25,7 +23,7 @@
 
   .google {
     font-size: 18px;
-    color: $white;
+    color: var(--white);
     border: 0;
     background: #4284f4;
     font-weight: 600;
