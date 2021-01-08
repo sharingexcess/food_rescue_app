@@ -10,6 +10,7 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import { v4 as generateUniqueId } from 'uuid'
 import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
+import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
 import './EditRoute.scss'
 
 function EditRoute() {
@@ -98,11 +99,21 @@ function EditRoute() {
           )
         }
       }
-      const event = {
+      const resource = {
+        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
         summary: `Food Rescue: ${formData.driver.name}`,
         location: `${formData.stops[0].location.address1}, ${formData.stops[0].location.city}, ${formData.stops[0].location.state} ${formData.stops[0].location.zip_code}`,
         description: `Stops on Route: ${formData.stops
-          .map(s => s.org.name + ' (' + s.type + ')')
+          .map(
+            s =>
+              s.org.name +
+              `${
+                s.location.name !== s.org.name ? ': ' + s.location.name : ''
+              }` +
+              ' (' +
+              s.type +
+              ')'
+          )
           .join(', ')}`,
         start: {
           dateTime: new Date(formData.time_start).toISOString(),
@@ -115,31 +126,28 @@ function EditRoute() {
         attendees: [{ email: formData.driver.email }],
       }
 
-      const request = window.gapi.client.calendar.events.insert({
-        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-        resource: event,
-      })
-      request.execute(event => {
-        if (!event.id) {
-          alert(
-            'You do not have Google Calendar access configured. Please contact an admin for support.'
-          )
-          return
-        }
-        getCollection('Routes')
-          .doc(route_id)
-          .set({
-            id: route_id,
-            google_calendar_event_id: event.id,
-            driver_id: formData.driver_id,
-            time_start: formData.time_start,
-            time_end: formData.time_end,
-            stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          })
-          .then(() => history.push('/routes'))
-      })
+      const event = await fetch(CLOUD_FUNCTION_URLS.addCalendarEvent, {
+        method: 'POST',
+        body: JSON.stringify(resource),
+      }).then(res => res.json())
+
+      if (!event.id) {
+        alert('Error creating Google Calendar event. Please contact support!')
+        return
+      }
+      getCollection('Routes')
+        .doc(route_id)
+        .set({
+          id: route_id,
+          google_calendar_event_id: event.id,
+          driver_id: formData.driver_id,
+          time_start: formData.time_start,
+          time_end: formData.time_end,
+          stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+        .then(() => history.push('/routes'))
       setWorking(false)
     }
   }

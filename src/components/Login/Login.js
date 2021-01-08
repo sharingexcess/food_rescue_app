@@ -1,13 +1,13 @@
 import { memo, useEffect } from 'react'
 import { updatePublicUserProfile } from '../Auth/utils'
-import firebase from 'firebase/app'
 import Google from '../../assets/google.svg'
 import Logo from '../../assets/logo.svg'
 import { useHistory } from 'react-router-dom'
 import { useAuthContext } from '../Auth/Auth'
-import './Login.scss'
 import Header from '../Header/Header'
 import Menu from '../Menu/Menu'
+import { getAuthenticatedUser } from '../Auth/utils'
+import './Login.scss'
 
 function Login() {
   const history = useHistory()
@@ -18,11 +18,7 @@ function Login() {
   }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleLogin() {
-    const googleAuth = window.gapi.auth2.getAuthInstance()
-    const googleUser = await googleAuth.signIn()
-    const token = googleUser.getAuthResponse().id_token
-    const credential = firebase.auth.GoogleAuthProvider.credential(token)
-    const { user } = await firebase.auth().signInWithCredential(credential)
+    const user = await getAuthenticatedUser()
     updatePublicUserProfile(user)
     history.push('/')
   }
