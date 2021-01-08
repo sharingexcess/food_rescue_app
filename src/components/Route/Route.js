@@ -9,10 +9,12 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import { ExternalLink, GoBack } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
 import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
+import { useAuthContext } from '../Auth/Auth'
 
 function Route() {
   const history = useHistory()
   const { route_id } = useParams()
+  const { user, admin } = useAuthContext()
   const [route = {}, loading] = useDocumentData(
     getCollection('Routes').doc(route_id)
   )
@@ -76,6 +78,17 @@ function Route() {
     }
     await getCollection('Routes').doc(route.id).delete()
     history.push('/routes')
+  }
+
+  function isNextIncompleteStop(index) {
+    return (
+      index === 0 ||
+      (stops[index - 1].report && Object.keys(stops[index - 1].report).length)
+    )
+  }
+
+  function hasEditPermissions() {
+    return admin || user.uid === route.driver_id
   }
 
   function Driver() {
@@ -150,9 +163,7 @@ function Route() {
                       </h6>
                     ) : null}
                   </div>
-                  {i === 0 ||
-                  (stops[i - 1].report &&
-                    Object.keys(stops[i - 1].report).length) ? (
+                  {isNextIncompleteStop(i) && hasEditPermissions() ? (
                     <Link to={`/routes/${route_id}/${s.type}/${s.id}/report`}>
                       <button
                         className={
