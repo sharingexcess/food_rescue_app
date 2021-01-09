@@ -38,7 +38,6 @@ function App() {
   // Read more: https://reactjs.org/docs/hooks-effect.html
   useEffect(() => {
     const savedDarkModePreference = localStorage.getItem('darkMode')
-    console.log('saved pref is', savedDarkModePreference)
     if (savedDarkModePreference !== null) {
       store.dispatch(
         setDarkMode(savedDarkModePreference === 'true' ? true : false)
