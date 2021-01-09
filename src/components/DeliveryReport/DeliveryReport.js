@@ -33,20 +33,16 @@ export default function DeliveryReport() {
 
   useEffect(() => {
     async function calculateWeight() {
-      console.log(delivery.pickup_ids)
       let updated_weight = 0
       for (const id of delivery.pickup_ids) {
-        console.log('getting pickup', id)
         const pickup = await getCollection('Pickups')
           .doc(id)
           .get()
           .then(res => res.data())
         if (pickup.report && pickup.report.weight) {
-          console.log('adding', pickup.report.weight)
           updated_weight += parseInt(pickup.report.weight)
         }
       }
-      console.log('updated weight is ', updated_weight)
       setWeight(updated_weight)
     }
     delivery.pickup_ids && delivery.pickup_ids.length && calculateWeight()
@@ -64,11 +60,6 @@ export default function DeliveryReport() {
   }
 
   function handleSubmit(event) {
-    console.log(
-      weight,
-      formData.percent_of_total_dropped,
-      (weight * formData.percent_of_total_dropped) / 100
-    )
     event.preventDefault()
     firebase
       .firestore()

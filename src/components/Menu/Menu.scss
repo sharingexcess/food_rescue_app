@@ -12,7 +12,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.32);
-  z-index: 12;
+  z-index: 22;
   transition: transform 0.32s ease, box-shadow 0.32s ease, background 0.32s ease;
   animation: fade-in 0.32s ease forwards;
 
@@ -180,7 +180,7 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.64);
-  z-index: 11;
+  z-index: 21;
   transition: opacity 0.32s ease;
 
   &.closed {
