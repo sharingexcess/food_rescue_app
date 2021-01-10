@@ -6,25 +6,41 @@
 
 body.light-theme {
   --green: #059705;
-  --yellow: #ecc133;
-  --red: #a03623;
+  --green-rgb: 5, 151, 5;
+  --yellow: #fbac00;
+  --yellow-rgb: 236, 193, 51;
+  --red: #ec4f33;
+  --red-rgb: 160, 54, 35;
   --blue: #0062ff;
+  --blue-rgb: 0, 98, 255;
   --white: #0b2342;
+  --white-rgb: 11, 35, 66;
   --darkgrey: #ffffff;
+  --darkgrey-rgb: 255, 255, 255;
   --mediumgrey: #d2e4f8;
+  --mediumgrey-rgb: 210, 228, 248;
   --lightgrey: #cccccc;
+  --lightgrey-rgb: 204, 204, 204;
   --mobile: 600px;
 }
 
 body.dark-theme {
   --green: #00ff00;
+  --green-rgb: 0, 255, 0;
   --yellow: #ecc133;
+  --yellow-rgb: 236, 193, 51;
   --red: #ec4f33;
+  --red-rgb: 236, 79, 51;
   --blue: #69a8fa;
+  --blue-rgb: 105, 168, 250;
   --white: #ffffff;
+  --white-rgb: 255, 255, 255;
   --darkgrey: #020d1a;
+  --darkgrey-rgb: 2, 13, 26;
   --mediumgrey: #041428;
+  --mediumgrey-rgb: 4, 20, 40;
   --lightgrey: #cccccc;
+  --lightgrey-rgb: 204, 204, 204;
   --mobile: 600px;
 }
 

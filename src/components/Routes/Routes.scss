@@ -30,7 +30,7 @@
     position: relative;
     width: 100%;
     background: var(--mediumgrey);
-    border: 1px solid rgba(var(--blue), 0.24);
+    border: 1px solid rgba(var(--blue-rgb), 0.24);
     border-radius: 8px;
     box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
     margin: 16px 0;
@@ -39,6 +39,10 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+
+    &.complete {
+      opacity: 0.5;
+    }
 
     h3 {
       font-size: 24px;
@@ -56,6 +60,16 @@
       font-size: 16px;
       font-weight: 500;
       margin-bottom: 8px;
+    }
+
+    h6 {
+      margin-top: 8px;
+      color: var(--yellow);
+      font-weight: 500;
+      text-transform: capitalize;
+      span {
+        font-weight: 900;
+      }
     }
 
     p {
