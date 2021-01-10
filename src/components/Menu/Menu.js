@@ -6,8 +6,8 @@ import { setMenu } from '../../redux/app/appReducer'
 import { useAuthContext } from '../Auth/Auth'
 import UserIcon from '../../assets/user.svg'
 import { getCollection } from '../../helpers/helpers'
-import './Menu.scss'
 import { ExternalLink } from '../../helpers/components'
+import './Menu.scss'
 
 function Menu() {
   const location = useLocation()

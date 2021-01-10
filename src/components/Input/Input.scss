@@ -117,10 +117,10 @@
     background: var(--mediumgrey);
     border-radius: 0;
     &:hover {
-      background: rgba(var(--blue), 0.16);
+      background: rgba(var(--blue-rgb), 0.16);
     }
     &:not(:last-child) {
-      border-bottom: 1px solid rgba(var(--blue), 0.32);
+      border-bottom: 1px solid rgba(var(--blue-rgb), 0.32);
     }
   }
 }

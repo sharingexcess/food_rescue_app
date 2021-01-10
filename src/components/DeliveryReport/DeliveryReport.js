@@ -80,7 +80,7 @@ export default function DeliveryReport() {
               firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
           },
-          status: Math.max(delivery.status, 6),
+          status: 9,
         },
         { merge: true }
       )

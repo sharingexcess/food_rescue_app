@@ -76,7 +76,7 @@ function EditRoute() {
               created_at: firebase.firestore.FieldValue.serverTimestamp(),
               updated_at: firebase.firestore.FieldValue.serverTimestamp(),
               report: {},
-              status: 0,
+              status: 1,
               route_id,
             },
             { merge: true }
@@ -91,7 +91,7 @@ function EditRoute() {
               created_at: firebase.firestore.FieldValue.serverTimestamp(),
               updated_at: firebase.firestore.FieldValue.serverTimestamp(),
               weight: 0,
-              status: 0,
+              status: 1,
               pickup_ids,
               route_id,
             },
@@ -146,8 +146,9 @@ function EditRoute() {
           stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
           created_at: firebase.firestore.FieldValue.serverTimestamp(),
           updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 1,
         })
-        .then(() => history.push('/routes'))
+        .then(() => history.push(`/routes/${route_id}`))
       setWorking(false)
     }
   }

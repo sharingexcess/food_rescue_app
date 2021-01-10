@@ -5,11 +5,12 @@ import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import './Route.scss'
-import { Link, useHistory, useParams } from 'react-router-dom'
-import { ExternalLink, GoBack } from '../../helpers/components'
+import { useHistory, useParams } from 'react-router-dom'
+import Ellipsis, { ExternalLink, GoBack } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
-import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
+import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
+import { Input } from '../Input/Input'
 
 function Route() {
   const history = useHistory()
@@ -24,6 +25,8 @@ function Route() {
   const [driver = {}] = useDocumentData(
     route.driver_id ? getCollection('Users').doc(route.driver_id) : null
   )
+  const [willCancel, setWillCancel] = useState()
+  const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
 
   useEffect(() => {
@@ -61,30 +64,30 @@ function Route() {
     route.stops && updateStops()
   }, [route.stops]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function handleDeleteRoute() {
-    await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
-      method: 'POST',
-      body: JSON.stringify({
-        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-        eventId: route.google_calendar_event_id,
-      }),
-    }).catch(e => console.error('Error deleting calendar event:', e))
-    for (const stop of route.stops) {
-      if (stop.type === 'pickup') {
-        await getCollection('Pickups').doc(stop.id).delete()
-      } else if (stop.type === 'delivery') {
-        await getCollection('Deliveries').doc(stop.id).delete()
-      }
-    }
-    await getCollection('Routes').doc(route.id).delete()
-    history.push('/routes')
-  }
-
   function isNextIncompleteStop(index) {
+    if (
+      stops[index].status === 9 ||
+      stops[index].status === 0 ||
+      route.status < 3
+    )
+      return false
     return (
       index === 0 ||
-      (stops[index - 1].report && Object.keys(stops[index - 1].report).length)
+      stops[index - 1].status === 9 ||
+      stops[index - 1].status === 0
     )
+  }
+
+  function areAllStopsCompleted() {
+    let completed = true
+    for (const s of stops) {
+      // if stop is not completed or cancelled
+      if (![0, 9].includes(s.status)) {
+        completed = false
+        break
+      }
+    }
+    return completed
   }
 
   function hasEditPermissions() {
@@ -102,15 +105,269 @@ function Route() {
             {moment(route.time_start).format('h:mma')} -{' '}
             {moment(route.time_end).format('h:mma')}
           </h5>
+          {route.notes ? <p>Notes: "{route.notes}"</p> : null}
         </div>
       </div>
+    ) : null
+  }
+
+  function StatusButton() {
+    const [notes, setNotes] = useState('')
+
+    function handleBegin() {
+      getCollection('Routes').doc(route.id).set({ status: 3 }, { merge: true })
+    }
+
+    function handleComplete() {
+      getCollection('Routes')
+        .doc(route.id)
+        .set({ status: 9, notes }, { merge: true })
+    }
+
+    if (willCancel || willDelete) return null
+    if (route.status === 1) {
+      return (
+        <button className="blue" onClick={handleBegin}>
+          begin route
+        </button>
+      )
+    } else if (route.status === 3 && areAllStopsCompleted()) {
+      return willComplete ? (
+        <>
+          <Input
+            label="Route notes..."
+            animation={false}
+            type="textarea"
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+          />
+          <section className="buttons">
+            <button
+              className="yellow small"
+              onClick={() => setWillComplete(false)}
+            >
+              back
+            </button>
+            <button onClick={handleComplete}>complete route</button>
+          </section>
+        </>
+      ) : (
+        <button className="blue" onClick={() => setWillComplete(true)}>
+          finish route
+        </button>
+      )
+    } else return null
+  }
+
+  function CancelButton() {
+    const [notes, setNotes] = useState('')
+
+    function handleCancel() {
+      setWillCancel(false)
+      getCollection('Routes')
+        .doc(route.id)
+        .set({ status: 0, notes }, { merge: true })
+    }
+
+    if (willComplete || willDelete || route.status === 0) return null
+    return willCancel ? (
+      <>
+        <Input
+          label="Why are you cancelling the route?"
+          animation={false}
+          type="textarea"
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+        />
+        <section className="buttons">
+          <button className="yellow small" onClick={() => setWillCancel(false)}>
+            back
+          </button>
+          <button className="red" onClick={handleCancel}>
+            cancel route
+          </button>
+        </section>
+      </>
+    ) : (
+      <button className="yellow" onClick={() => setWillCancel(true)}>
+        cancel route
+      </button>
+    )
+  }
+
+  function DeleteButton() {
+    async function handleDeleteRoute() {
+      await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+        method: 'POST',
+        body: JSON.stringify({
+          calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+          eventId: route.google_calendar_event_id,
+        }),
+      }).catch(e => console.error('Error deleting calendar event:', e))
+      for (const stop of route.stops) {
+        if (stop.type === 'pickup') {
+          await getCollection('Pickups').doc(stop.id).delete()
+        } else if (stop.type === 'delivery') {
+          await getCollection('Deliveries').doc(stop.id).delete()
+        }
+      }
+      await getCollection('Routes').doc(route.id).delete()
+      history.push('/routes')
+    }
+
+    if (willCancel || willComplete) return null
+    return willDelete ? (
+      <section className="buttons">
+        <button className="yellow small" onClick={() => setWillDelete(false)}>
+          back
+        </button>
+        <button className="red" onClick={handleDeleteRoute}>
+          confirm delete
+        </button>
+      </section>
+    ) : (
+      <button className="red" onClick={() => setWillDelete(true)}>
+        delete route
+      </button>
+    )
+  }
+
+  function UpdateStop({ stop }) {
+    function handleOnTheWay() {
+      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+      getCollection(collection)
+        .doc(stop.id)
+        .set({ status: 3 }, { merge: true })
+        .then(() => {
+          window.open(generateDirectionsLink(stop.location), '_blank')
+          window.location.reload()
+        })
+    }
+
+    function handleOpenReport() {
+      history.push(`/routes/${route_id}/${stop.type}/${stop.id}/report`)
+    }
+
+    if (route.status < 3) return null
+    if (stop.status === 1) {
+      return (
+        <button className="update-stop" onClick={handleOnTheWay}>
+          I'm on my way!
+        </button>
+      )
+    }
+    if (stop.status === 3) {
+      return (
+        <button className="update-stop" onClick={handleOpenReport}>
+          Fill out {stop.type} report
+        </button>
+      )
+    } else return null
+  }
+
+  function CancelStop({ stop }) {
+    const [cancelStop, setCancelStop] = useState()
+    const [cancelNotes, setCancelNotes] = useState('')
+
+    function handleCancel() {
+      setCancelStop(false)
+      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+      getCollection(collection)
+        .doc(stop.id)
+        .set(
+          {
+            status: 0,
+            report: stop.report
+              ? { ...stop.report, notes: cancelNotes }
+              : { notes: cancelNotes },
+          },
+          { merge: true }
+        )
+        .then(() => window.location.reload())
+    }
+
+    return cancelStop ? (
+      <>
+        <Input
+          label="Why are you cancelling this stop?"
+          animation={false}
+          type="textarea"
+          value={cancelNotes}
+          onChange={e => setCancelNotes(e.target.value)}
+        />
+        <section className="cancel-buttons">
+          <button className="yellow small" onClick={() => setCancelStop(false)}>
+            back
+          </button>
+          <button className="red" onClick={handleCancel}>
+            cancel stop
+          </button>
+        </section>
+      </>
+    ) : (
+      <button className="secondary" onClick={() => setCancelStop(true)}>
+        cancel stop
+      </button>
+    )
+  }
+
+  function StatusIndicator({ stop }) {
+    if (stop.status === 9) {
+      return <i id="StatusIndicator" className="fa fa-check" />
+    } else if (stop.status === 0) {
+      return <i id="StatusIndicator" className="fa fa-times" />
+    } else if (stop.status === 3) {
+      return <i id="StatusIndicator" className="fa fa-clock-o" />
+    } else return null
+  }
+
+  function generateStatusHeader() {
+    if (route.status === null || route.status === undefined) {
+      return (
+        <>
+          Loading route
+          <Ellipsis />
+        </>
+      )
+    } else return `Route ${ROUTE_STATUSES[route.status].replace('_', ' ')}`
+  }
+
+  function StopNotes({ stop }) {
+    return [1, 3].includes(stop.status) ? (
+      <>
+        {stop.location.upon_arrival_instructions ? (
+          <h6>
+            <span>Instructions: </span>
+            {stop.location.upon_arrival_instructions}
+          </h6>
+        ) : null}
+        {stop.location.contact_name ? (
+          <h6>
+            <span>Contact Name: </span>
+            {stop.location.contact_name}
+          </h6>
+        ) : null}
+        {stop.location.contact_phone ? (
+          <h6>
+            <span>Contact Phone:</span>
+            <ExternalLink url={'tel:' + stop.location.contact_phone}>
+              <p>{formatPhoneNumber(stop.location.contact_phone)}</p>
+            </ExternalLink>
+          </h6>
+        ) : null}
+      </>
+    ) : [0, 9].includes(stop.status) && stop.report && stop.report.notes ? (
+      <h6>
+        <span>Notes: </span>
+        {stop.report.notes}
+      </h6>
     ) : null
   }
 
   return (
     <main id="Route">
       <GoBack url="/routes" label="back to routes" />
-      <h1>Scheduled Route</h1>
+      <h1>{generateStatusHeader()}</h1>
       {loading ? (
         <Loading />
       ) : (
@@ -118,9 +375,15 @@ function Route() {
           <Driver />
           {stops.length ? (
             <>
-              {stops.map((s, i) => (
-                <div className={`Stop ${s.type}`} key={i}>
-                  <div>
+              <section className="Stops">
+                {stops.map((s, i) => (
+                  <div
+                    className={`Stop ${s.type} ${
+                      isNextIncompleteStop(i) ? 'active' : ''
+                    }${areAllStopsCompleted(i) ? 'complete' : ''}`}
+                    key={i}
+                  >
+                    <StatusIndicator stop={s} />
                     <h4>
                       <i
                         className={
@@ -142,57 +405,24 @@ function Route() {
                         {s.location.zip_code}
                       </p>
                     </ExternalLink>
-                    {s.location.upon_arrival_instructions ? (
-                      <h6>
-                        <span>Arrival Instructions: </span>
-                        {s.location.upon_arrival_instructions}
-                      </h6>
-                    ) : null}
-                    {s.location.contact_name ? (
-                      <h6>
-                        <span>Contact Name: </span>
-                        {s.location.contact_name}
-                      </h6>
-                    ) : null}
-                    {formatPhoneNumber(s.location.contact_phone) ? (
-                      <h6>
-                        <span>Contact Phone:</span>
-                        <ExternalLink url={'tel:' + s.location.contact_phone}>
-                          <p>{formatPhoneNumber(s.location.contact_phone)}</p>
-                        </ExternalLink>
-                      </h6>
+                    <StopNotes stop={s} />
+                    {hasEditPermissions() ? (
+                      <>
+                        {isNextIncompleteStop(i) ? (
+                          <>
+                            <UpdateStop stop={s} />
+                            {s.status < 9 ? <CancelStop stop={s} /> : null}
+                          </>
+                        ) : null}
+                      </>
                     ) : null}
                   </div>
-                  {isNextIncompleteStop(i) && hasEditPermissions() ? (
-                    <Link to={`/routes/${route_id}/${s.type}/${s.id}/report`}>
-                      <button
-                        className={
-                          s.report && Object.keys(s.report).length
-                            ? 'complete'
-                            : 'incomplete'
-                        }
-                      >
-                        <i
-                          className={
-                            s.report && Object.keys(s.report).length
-                              ? 'fa fa-check'
-                              : 'fa fa-file'
-                          }
-                        />
-                      </button>
-                    </Link>
-                  ) : null}
-                </div>
-              ))}
-              {willDelete ? (
-                <button className="delete" onClick={handleDeleteRoute}>
-                  are you sure you want to delete?
-                </button>
-              ) : (
-                <button className="delete" onClick={() => setWillDelete(true)}>
-                  delete route
-                </button>
-              )}
+                ))}
+              </section>
+
+              <StatusButton />
+              <CancelButton />
+              <DeleteButton />
             </>
           ) : (
             <Loading text="Loading stops on route" relative />
