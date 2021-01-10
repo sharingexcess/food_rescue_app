@@ -19,6 +19,10 @@
 // we'll keep this logic here in case we want to add functionality like we do in authHandler later.
 const appHandler = storeAPI => next => action => {
   switch (action.type) {
+    case 'app/setDarkMode':
+      document.body.className = action.payload ? 'dark-theme' : 'light-theme'
+      localStorage.setItem('darkMode', action.payload)
+      return next(action)
     default:
       return next(action)
   }

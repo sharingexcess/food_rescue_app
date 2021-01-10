@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Logo from '../../assets/logo.svg'
+import ModeToggle from '../ModeToggle/ModeToggle'
 import './Header.scss'
 
 export default function Header() {
@@ -9,6 +10,7 @@ export default function Header() {
       <Link to="/">
         <img id="Logo" src={Logo} alt="Sharing Excess Logo" />
       </Link>
+      <ModeToggle />
     </header>
   )
 }

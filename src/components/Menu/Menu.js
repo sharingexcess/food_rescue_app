@@ -6,8 +6,8 @@ import { setMenu } from '../../redux/app/appReducer'
 import { useAuthContext } from '../Auth/Auth'
 import UserIcon from '../../assets/user.svg'
 import { getCollection } from '../../helpers/helpers'
-import './Menu.scss'
 import { ExternalLink } from '../../helpers/components'
+import './Menu.scss'
 
 function Menu() {
   const location = useLocation()
@@ -54,7 +54,7 @@ function Menu() {
       </div>
     ) : location.pathname !== '/login' ? (
       <Link to="/login" className="login">
-        <button>login</button>
+        <button className="secondary">login</button>
       </Link>
     ) : null
   }

@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #EditLocation {
   padding: 92px 16px 64px 16px;
   max-width: 800px;
@@ -20,7 +18,7 @@
     p {
       font-size: 16px;
       font-weight: 900;
-      color: $yellow;
+      color: var(--yellow);
       text-align: center;
     }
 

@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #Menu {
   position: fixed;
   top: 0;
@@ -14,20 +12,20 @@
   justify-content: flex-start;
   align-items: flex-start;
   box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.32);
-  z-index: 12;
+  z-index: 22;
   transition: transform 0.32s ease, box-shadow 0.32s ease, background 0.32s ease;
   animation: fade-in 0.32s ease forwards;
 
   &.open {
     transform: translateX(-204px);
-    background: $mediumgrey;
+    background: var(--mediumgrey);
     pointer-events: all;
     box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.16);
   }
 
   &.closed {
     transform: translateX(0);
-    background: rgba($mediumgrey, 0);
+    background: rgba(var(--mediumgrey-rgb), 0);
     pointer-events: none;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     #UserName,
@@ -60,9 +58,9 @@
     pointer-events: all;
     transform: translateX(-12px);
     button {
+      color: var(--blue);
+      font-size: 18px;
       padding: 8px 12px;
-      font-weight: 900;
-      color: $white;
     }
   }
 
@@ -79,8 +77,8 @@
       height: 48px;
       width: 48px;
       object-fit: cover;
-      border: 2px solid $white;
-      background: $blue;
+      border: 2px solid var(--white);
+      background: var(--blue);
     }
     div {
       display: flex;
@@ -106,7 +104,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        color: $green;
+        color: var(--green);
         transition: opacity 0.32s ease;
         overflow: hidden;
         white-space: nowrap;
@@ -120,7 +118,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        color: $yellow;
+        color: var(--yellow);
         transition: opacity 0.32s ease;
         overflow: hidden;
         white-space: nowrap;
@@ -136,7 +134,7 @@
     }
     #Close {
       cursor: pointer;
-      color: $white;
+      color: var(--white);
       font-size: 24px;
       padding-left: 8px;
       margin-left: auto;
@@ -154,7 +152,7 @@
         @media (hover: hover) and (pointer: fine) {
           &:hover {
             cursor: pointer;
-            color: $blue;
+            color: var(--blue);
           }
         }
       }
@@ -169,7 +167,7 @@
     padding: 8px 4px;
     a {
       font-size: 12px;
-      color: $blue;
+      color: var(--blue);
     }
   }
 }
@@ -182,7 +180,7 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.64);
-  z-index: 11;
+  z-index: 21;
   transition: opacity 0.32s ease;
 
   &.closed {

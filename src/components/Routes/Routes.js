@@ -12,6 +12,7 @@ import './Routes.scss'
 import { Link } from 'react-router-dom'
 import { GoBack } from '../../helpers/components'
 import { useAuthContext } from '../Auth/Auth'
+import { ROUTE_STATUSES } from '../../helpers/constants'
 
 export default function Routes() {
   const { user } = useAuthContext()
@@ -73,17 +74,25 @@ export default function Routes() {
       </h1>
       {loading ? (
         <Loading text="Loading routes" />
-      ) : !routes.length ? (
+      ) : !filterAndSortRoutes(routes).length ? (
         <p className="no-routes">No routes scheduled.</p>
       ) : (
         filterAndSortRoutes(routes).map(r => (
           <Link to={`/routes/${r.id}`} key={r.id}>
-            <div className="Route">
+            <div
+              className={`Route${[0, 9].includes(r.status) ? ' complete' : ''}`}
+            >
               {r.driver && (
                 <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
               )}
               <div>
                 <h3>{r.driver.name}</h3>
+                {r.status !== null && r.status !== undefined ? (
+                  <h6>
+                    <span>Status:</span>{' '}
+                    {ROUTE_STATUSES[r.status].replace('_', ' ')}
+                  </h6>
+                ) : null}
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                 <h5>
                   {moment(r.time_start).format('h:mma')} -{' '}
