@@ -4,16 +4,19 @@ import Ellipsis, { GoBack } from '../../helpers/components'
 import { useHistory } from 'react-router-dom'
 import { updateFieldSuggestions, formFields } from './utils'
 import UserIcon from '../../assets/user.svg'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection, setFirestoreData } from '../../helpers/helpers'
 import moment from 'moment'
 import EditDelivery from '../EditDelivery/EditDelivery'
 import { v4 as generateUniqueId } from 'uuid'
 import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
+import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
 import './EditRoute.scss'
+import useUserData from '../../hooks/useUserData'
 
 function EditRoute() {
   const history = useHistory()
+  const drivers = useUserData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -34,14 +37,11 @@ function EditRoute() {
 
   useEffect(() => {
     formData.driver_id &&
-      getCollection('Users')
-        .doc(formData.driver_id)
-        .get()
-        .then(res => {
-          const driver = res.data()
-          setFormData({ ...formData, driver })
-        })
-  }, [formData.driver_id]) // eslint-disable-line react-hooks/exhaustive-deps
+      setFormData({
+        ...formData,
+        driver: drivers.find(i => i.id === formData.driver_id),
+      })
+  }, [formData.driver_id, drivers]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -67,42 +67,48 @@ function EditRoute() {
     if (route_id) {
       for (const [index, stop] of formData.stops.entries()) {
         if (stop.type === 'pickup') {
-          await getCollection('Pickups').doc(stop.id).set(
-            {
-              id: stop.id,
-              org_id: stop.org_id,
-              location_id: stop.location_id,
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-              report: {},
-              status: 0,
-              route_id,
-            },
-            { merge: true }
-          )
+          await setFirestoreData(['Pickups', stop.id], {
+            id: stop.id,
+            org_id: stop.org_id,
+            location_id: stop.location_id,
+            driver_id: formData.driver_id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            report: {},
+            status: 1,
+            route_id,
+          })
         } else if (stop.type === 'delivery') {
           const pickup_ids = getPickupsInDelivery(index)
-          await getCollection('Deliveries').doc(stop.id).set(
-            {
-              id: stop.id,
-              org_id: stop.org_id,
-              location_id: stop.location_id,
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-              weight: 0,
-              status: 0,
-              pickup_ids,
-              route_id,
-            },
-            { merge: true }
-          )
+          await setFirestoreData(['Deliveries', stop.id], {
+            id: stop.id,
+            org_id: stop.org_id,
+            location_id: stop.location_id,
+            driver_id: formData.driver_id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            weight: 0,
+            status: 1,
+            pickup_ids,
+            route_id,
+          })
         }
       }
-      const event = {
+      const resource = {
+        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
         summary: `Food Rescue: ${formData.driver.name}`,
         location: `${formData.stops[0].location.address1}, ${formData.stops[0].location.city}, ${formData.stops[0].location.state} ${formData.stops[0].location.zip_code}`,
         description: `Stops on Route: ${formData.stops
-          .map(s => s.org.name + ' (' + s.type + ')')
+          .map(
+            s =>
+              s.org.name +
+              `${
+                s.location.name !== s.org.name ? ': ' + s.location.name : ''
+              }` +
+              ' (' +
+              s.type +
+              ')'
+          )
           .join(', ')}`,
         start: {
           dateTime: new Date(formData.time_start).toISOString(),
@@ -115,31 +121,29 @@ function EditRoute() {
         attendees: [{ email: formData.driver.email }],
       }
 
-      const request = window.gapi.client.calendar.events.insert({
-        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-        resource: event,
-      })
-      request.execute(event => {
-        if (!event.id) {
-          alert(
-            'You do not have Google Calendar access configured. Please contact an admin for support.'
-          )
-          return
-        }
-        getCollection('Routes')
-          .doc(route_id)
-          .set({
-            id: route_id,
-            google_calendar_event_id: event.id,
-            driver_id: formData.driver_id,
-            time_start: formData.time_start,
-            time_end: formData.time_end,
-            stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          })
-          .then(() => history.push('/routes'))
-      })
+      const event = await fetch(CLOUD_FUNCTION_URLS.addCalendarEvent, {
+        method: 'POST',
+        body: JSON.stringify(resource),
+      }).then(res => res.json())
+
+      if (!event.id) {
+        alert('Error creating Google Calendar event. Please contact support!')
+        return
+      }
+      getCollection('Routes')
+        .doc(route_id)
+        .set({
+          id: route_id,
+          google_calendar_event_id: event.id,
+          driver_id: formData.driver_id,
+          time_start: formData.time_start,
+          time_end: formData.time_end,
+          stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 1,
+        })
+        .then(() => history.push(`/routes/${route_id}`))
       setWorking(false)
     }
   }
@@ -246,7 +250,7 @@ function EditRoute() {
 
   return (
     <div id="EditRoute">
-      <GoBack label="back" url="/" />
+      <GoBack />
       <h1>New Route</h1>
       <p>
         Use this form to assign a new rescue to a driver. Routes are

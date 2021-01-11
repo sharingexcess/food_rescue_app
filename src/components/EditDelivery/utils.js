@@ -56,7 +56,7 @@ export const formFields = [
     preReq: 'org_id',
     type: 'select',
     suggestionQuery: org_id =>
-      getCollection('Organizations').doc(org_id).collection('Locations'),
+      getCollection('Locations').where('org_id', '==', org_id),
     handleSelect: loc => (loc ? { location: loc, location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },

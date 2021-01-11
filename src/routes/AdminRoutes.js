@@ -1,38 +1,18 @@
-import React, { lazy } from 'react'
+import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { useAuthContext } from '../components/Auth/Auth'
 import Error from '../components/Error/Error'
+import EditRoute from '../components/EditRoute/EditRoute'
+import EditOrganization from '../components/EditOrganization/EditOrganization'
+import Organizations from '../components/Organizations/Organizations'
+import EditLocation from '../components/EditLocation/EditLocation'
+import Users from '../components/Users/Users'
+import User from '../components/User/User'
+import Organization from '../components/Organization/Organization'
 
 export default function AdminRoutes() {
   // the AuthContext contains a value 'admin' which tells us if the current authenticated user is an admin or not
   const { admin } = useAuthContext()
-
-  // We dynamically import all admin routes for security (this practice is called Code Splitting)
-  // React lazy lets us load the admin component code only if the user is authenticated
-  // Read more about lazy loading components: https://reactjs.org/docs/code-splitting.html#reactlazy
-  const EditRoute = lazy(() => {
-    return admin ? import('../components/EditRoute/EditRoute') : null
-  })
-  const Organizations = lazy(() => {
-    return admin ? import('../components/Organizations/Organizations') : null
-  })
-  const Organization = lazy(() => {
-    return admin ? import('../components/Organization/Organization') : null
-  })
-  const EditOrganization = lazy(() => {
-    return admin
-      ? import('../components/EditOrganization/EditOrganization')
-      : null
-  })
-  const EditLocation = lazy(() => {
-    return admin ? import('../components/EditLocation/EditLocation') : null
-  })
-  const Users = lazy(() => {
-    return admin ? import('../components/Users/Users') : null
-  })
-  const User = lazy(() => {
-    return admin ? import('../components/User/User') : null
-  })
 
   // AdminRoute is a wrapper function around Route to ensure that no admin components
   // can render if the user is not authenticated as an admin

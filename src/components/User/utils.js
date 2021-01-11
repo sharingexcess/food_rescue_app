@@ -75,42 +75,16 @@ export function UserAdminPermissions({ id, email, isAdmin, basicAccess }) {
 
   async function updateIsAdmin(newIsAdmin) {
     const url = `${CLOUD_FUNCTION_URLS.setUserAdmin}?id=${id}&admin=${newIsAdmin}`
-    try {
-      fetch(url, { method: 'POST' }).then(() => {
-        if (newIsAdmin) {
-          const req = {
-            calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-            resource: {
-              role: 'owner',
-              scope: {
-                type: 'user',
-                value: email,
-              },
-            },
-          }
-          const request = window.gapi.client.calendar.acl.insert(req)
-          request.execute(() => window.location.reload())
-        } else {
-          const req = {
-            calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-            ruleId: `user:${email}`,
-          }
-          const request = window.gapi.client.calendar.acl.delete(req)
-          request.execute(() => window.location.reload())
-        }
-      })
-    } catch (e) {
-      console.error(e)
-    }
+    fetch(url, { method: 'POST' })
+      .then(() => window.location.reload())
+      .catch(e => console.error(e))
   }
 
   async function updateBasicAccess(new_basic_access) {
     const url = `${CLOUD_FUNCTION_URLS.setUserBasicAccess}?id=${id}&basic_access=${new_basic_access}`
-    try {
-      fetch(url, { method: 'POST' }).then(() => window.location.reload())
-    } catch (e) {
-      console.error(e)
-    }
+    fetch(url, { method: 'POST' })
+      .then(() => window.location.reload())
+      .catch(e => console.error(e))
   }
 
   if (user.uid === id) {

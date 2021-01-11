@@ -1,13 +1,11 @@
 /* use this file for all global app styles, should not be specific to components, pages, or views */
-@import './imports.scss';
-
 * {
   box-sizing: border-box;
 }
 
 body {
-  background: $darkgrey;
-  color: $white;
+  background: var(--darkgrey);
+  color: var(--white);
 }
 
 button {
@@ -26,7 +24,7 @@ button {
     object-fit: cover;
     padding: 4px;
     margin-right: 8px;
-    background: $white;
+    background: var(--white);
     border-radius: 4px;
   }
 
@@ -34,7 +32,7 @@ button {
     background: transparent;
     padding: 0;
     font-size: 14px;
-    color: $green;
+    color: var(--green);
     text-decoration: underline;
     margin: 0;
     font-weight: 600;
@@ -47,14 +45,14 @@ button {
     padding: 12px 32px;
     margin: 8px auto;
     background: none;
-    border: 2px solid $green;
-    color: $green;
+    border: 2px solid var(--green);
+    color: var(--green);
     font-weight: 400;
     border-radius: 8px;
-    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
     transition: transform 0.16s ease, box-shadow 0.16s ease;
 
-    @media (max-width: $mobile) {
+    @media (max-width: var(--mobile)) {
       width: 100%;
       padding: 16px 0;
       margin: 8px 0;
@@ -93,7 +91,7 @@ p {
   line-height: 1.2;
 
   &#FormError {
-    color: $red;
+    color: var(--red);
     width: 100%;
     text-align: center;
     margin: 32px 0;
@@ -103,19 +101,22 @@ a {
   display: inline-block;
   text-decoration: none;
   color: inherit;
-  &.back {
-    font-size: 14px;
-    font-weight: 700;
-    color: $blue;
-    margin-bottom: 16px;
+}
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        text-decoration: underline;
-      }
+.back {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 16px;
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      text-decoration: underline;
     }
   }
 }
+
 img {
   user-select: none;
   font-size: 10px;
@@ -128,7 +129,7 @@ input {
 
   &[type='checkbox'] {
     border: none;
-    background: $white;
+    background: var(--white);
   }
 }
 

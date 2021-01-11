@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useAuthContext } from '../Auth/Auth'
 import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
+import useUserData from '../../hooks/useUserData'
 import './Profile.scss'
 
 export default function Profile() {
   const { user } = useAuthContext()
-  const [profile = {}, loading] = useDocumentData(
-    firebase.firestore().collection('Users').doc(user.uid)
-  )
+  const profile = useUserData(user.uid)
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -21,7 +19,7 @@ export default function Profile() {
 
   useEffect(() => {
     // update formData only once by checking name population
-    if (!button && !formData.name && profile.name) {
+    if (!button && !formData.name && profile && profile.name) {
       setFormData({
         name: profile.name,
         phone: profile.phone || '',
@@ -48,11 +46,11 @@ export default function Profile() {
       .catch(e => console.error('Error updating profile: ', e))
   }
 
-  return loading ? (
+  return !profile ? (
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
-      <GoBack label="back to home" url="/" />
+      <GoBack />
       <h1>User Profile</h1>
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>

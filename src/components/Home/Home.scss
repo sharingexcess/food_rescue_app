@@ -1,5 +1,3 @@
-@import '../../styles/imports.scss';
-
 #Home {
   padding: 108px 16px 0 16px;
   max-width: 800px;
@@ -10,6 +8,19 @@
     font-size: 24px;
     width: 100%;
     text-align: center;
+  }
+
+  h3 {
+    font-size: 16px;
+    color: var(--blue);
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+    font-weight: 700;
+    span {
+      font-weight: 900;
+      color: var(--green);
+    }
   }
 
   #Tiles {
@@ -23,16 +34,16 @@
       div {
         width: 100%;
         height: 200px;
-        background: $mediumgrey;
-        color: $white;
-        border: 1px solid rgba($blue, 0.32);
+        background: var(--tile-background);
+        color: var(--white);
+        border: var(--tile-border);
         border-radius: 8px;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         padding: 16px;
-        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
         transition: transform 0.16s ease, box-shadow 0.16s ease;
         @media (hover: hover) and (pointer: fine) {
           &:hover {
@@ -50,22 +61,22 @@
           font-size: 64px;
           margin: 32px;
           &.fa-truck {
-            color: $blue;
+            color: var(--blue);
           }
           &.fa-route {
-            color: $red;
+            color: var(--red);
           }
           &.fa-calendar {
-            color: $yellow;
+            color: var(--yellow);
           }
           &.fa-gear {
-            color: $red;
+            color: var(--red);
           }
           &.fa-users {
-            color: $red;
+            color: var(--red);
           }
           &.fa-user {
-            color: $green;
+            color: var(--green);
           }
         }
 
