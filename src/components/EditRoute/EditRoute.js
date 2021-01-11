@@ -12,9 +12,11 @@ import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
 import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
 import './EditRoute.scss'
+import useUserData from '../../hooks/useUserData'
 
 function EditRoute() {
   const history = useHistory()
+  const drivers = useUserData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -35,14 +37,11 @@ function EditRoute() {
 
   useEffect(() => {
     formData.driver_id &&
-      getCollection('Users')
-        .doc(formData.driver_id)
-        .get()
-        .then(res => {
-          const driver = res.data()
-          setFormData({ ...formData, driver })
-        })
-  }, [formData.driver_id]) // eslint-disable-line react-hooks/exhaustive-deps
+      setFormData({
+        ...formData,
+        driver: drivers.find(i => i.id === formData.driver_id),
+      })
+  }, [formData.driver_id, drivers]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleAddPickup(pickup) {
     setList(false)

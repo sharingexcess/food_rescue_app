@@ -1,9 +1,11 @@
 import { memo } from 'react'
+import { GoBack } from '../../helpers/components'
 import './Calendar.scss'
 
 function Calendar() {
   return (
     <div id="Calendar">
+      <GoBack />
       <h1>Rescue Calendar</h1>
       <iframe
         title="cal"

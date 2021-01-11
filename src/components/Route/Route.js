@@ -1,68 +1,60 @@
 import React, { useEffect, useState } from 'react'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { getCollection, formatPhoneNumber } from '../../helpers/helpers'
 import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
-import './Route.scss'
-import { useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink, GoBack } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
+import useRouteData from '../../hooks/useRouteData'
+import usePickupData from '../../hooks/usePickupData'
+import useDeliveryData from '../../hooks/useDeliveryData'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import useUserData from '../../hooks/useUserData'
+import useLocationData from '../../hooks/useLocationData'
+import './Route.scss'
 
 function Route() {
   const history = useHistory()
   const { route_id } = useParams()
   const { user, admin } = useAuthContext()
-  const [route = {}, loading] = useDocumentData(
-    getCollection('Routes').doc(route_id)
-  )
+  const route = useRouteData(route_id)
+  const drivers = useUserData()
+  const pickups = usePickupData()
+  const deliveries = useDeliveryData()
+  const organizations = useOrganizationData()
+  const locations = useLocationData()
   const [stops, setStops] = useState([])
-  const [startTime, setStartTime] = useState()
-  const [endTime, setEndTime] = useState()
-  const [driver = {}] = useDocumentData(
-    route.driver_id ? getCollection('Users').doc(route.driver_id) : null
-  )
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
 
   useEffect(() => {
+    if (drivers && route) {
+      route.driver = drivers.find(d => d.id === route.driver_id)
+    }
+  }, [drivers, route])
+
+  useEffect(() => {
     async function updateStops() {
       const updated_stops = []
       for (const s of route.stops) {
-        const collection = s.type === 'pickup' ? 'Pickups' : 'Deliveries'
-        let stop = await getCollection(collection)
-          .doc(s.id)
-          .get()
-          .then(res => res.data())
+        let stop =
+          s.type === 'pickup'
+            ? pickups.find(p => p.id === s.id)
+            : deliveries.find(d => d.id === s.id)
         stop = { ...s, ...stop }
-        stop.org = await getCollection('Organizations')
-          .doc(stop.org_id)
-          .get()
-          .then(res => res.data())
-        stop.location = await getCollection('Organizations')
-          .doc(stop.org.id)
-          .collection('Locations')
-          .doc(stop.location_id)
-          .get()
-          .then(res => res.data())
-        if (stop.type === 'pickup') {
-          if (!startTime || startTime.toMillis() > stop.time_start.toMillis()) {
-            setStartTime(stop.time_start)
-          }
-          if (!endTime || endTime.toMillis() < stop.time_end.toMillis()) {
-            setEndTime(stop.time_end)
-          }
-        }
+        stop.org = organizations.find(o => o.id === stop.org_id) || {}
+        stop.location = locations.find(l => l.id === stop.location_id) || {}
         updated_stops.push(stop)
       }
       setStops(updated_stops)
     }
-    route.stops && updateStops()
-  }, [route.stops]) // eslint-disable-line react-hooks/exhaustive-deps
+    route && route.stops && updateStops()
+  }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function isNextIncompleteStop(index) {
     if (
@@ -95,11 +87,11 @@ function Route() {
   }
 
   function Driver() {
-    return driver ? (
+    return route.driver ? (
       <div id="Driver">
-        <img src={driver.icon || UserIcon} alt={driver.name} />
+        <img src={route.driver.icon || UserIcon} alt={route.driver.name} />
         <div>
-          <h3>{driver.name}</h3>
+          <h3>{route.driver.name}</h3>
           <h4>{moment(route.time_start).format('dddd, MMMM D')}</h4>
           <h5>
             {moment(route.time_start).format('h:mma')} -{' '}
@@ -169,7 +161,7 @@ function Route() {
         .set({ status: 0, notes }, { merge: true })
     }
 
-    if (willComplete || willDelete || route.status === 0) return null
+    if (willComplete || willDelete || [0, 9].includes(route.status)) return null
     return willCancel ? (
       <>
         <Input
@@ -240,7 +232,6 @@ function Route() {
         .set({ status: 3 }, { merge: true })
         .then(() => {
           window.open(generateDirectionsLink(stop.location), '_blank')
-          window.location.reload()
         })
     }
 
@@ -312,17 +303,23 @@ function Route() {
   }
 
   function StatusIndicator({ stop }) {
+    let icon
     if (stop.status === 9) {
-      return <i id="StatusIndicator" className="fa fa-check" />
+      icon = <i id="StatusIndicator" className="fa fa-check" />
     } else if (stop.status === 0) {
-      return <i id="StatusIndicator" className="fa fa-times" />
+      icon = <i id="StatusIndicator" className="fa fa-times" />
     } else if (stop.status === 3) {
-      return <i id="StatusIndicator" className="fa fa-clock-o" />
-    } else return null
+      icon = <i id="StatusIndicator" className="fa fa-clock-o" />
+    }
+    return icon ? (
+      <Link to={`/routes/${route_id}/${stop.type}/${stop.id}/report`}>
+        {icon}
+      </Link>
+    ) : null
   }
 
   function generateStatusHeader() {
-    if (route.status === null || route.status === undefined) {
+    if (!route || route.status === null || route.status === undefined) {
       return (
         <>
           Loading route
@@ -368,7 +365,7 @@ function Route() {
     <main id="Route">
       <GoBack url="/routes" label="back to routes" />
       <h1>{generateStatusHeader()}</h1>
-      {loading ? (
+      {!route ? (
         <Loading />
       ) : (
         <>

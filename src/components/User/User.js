@@ -1,9 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import Loading from '../Loading/Loading'
 import { useParams } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import { getCollection } from '../../helpers/helpers'
 import {
   UserPronouns,
   UserPhone,
@@ -15,14 +13,13 @@ import {
 } from './utils'
 import { GoBack } from '../../helpers/components'
 import './User.scss'
+import useUserData from '../../hooks/useUserData'
 
 function User() {
   // get the user id from the current url parameters
   const { id } = useParams()
   // get that users profile from the users collection in firestore
-  const [profile = {}, loading] = useDocumentData(
-    getCollection('Users').doc(id)
-  )
+  const profile = useUserData(id)
   // profileIconFullUrl will be used to store the full path URL to the user's profile photo
   const [profileIconFullUrl, setProfileIconFullUrl] = useState()
   // isAdmin defines whether the user being viewed has admin permissions
@@ -37,10 +34,12 @@ function User() {
 
   useEffect(() => {
     // handle loading full image url when profile.icon changes
-    handleUserIcon(profile.icon, setProfileIconFullUrl)
-  }, [profile.icon])
+    if (profile && profile.icon) {
+      handleUserIcon(profile.icon, setProfileIconFullUrl)
+    }
+  }, [profile])
 
-  if (loading) return <Loading text="Loading user" />
+  if (!profile) return <Loading text="Loading user" />
   return (
     <main id="User">
       <GoBack url="/admin/users" label="back to users" />
