@@ -15,7 +15,7 @@ function Menu() {
   // get current user state from AuthContext
   const { user, admin, handleLogout } = useAuthContext()
   // get public user profile state
-  const profile = useUserData(user.uid)
+  const profile = useUserData(user ? user.uid : {})
   // get access to the Redux update state function 'dispatch'
   const dispatch = useDispatch()
 
