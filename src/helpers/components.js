@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 export function ExternalLink({ url, children }) {
   return (
@@ -9,12 +9,18 @@ export function ExternalLink({ url, children }) {
   )
 }
 
-export function GoBack({ url = '/', label = 'go back' }) {
-  return (
+export function GoBack({ url, label = 'go back' }) {
+  const history = useHistory()
+  return url ? (
     <Link className="back" to={url}>
       {'< '}
       {label}
     </Link>
+  ) : (
+    <div className="back" onClick={() => history.goBack()}>
+      {'< '}
+      {label}
+    </div>
   )
 }
 

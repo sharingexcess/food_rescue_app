@@ -363,7 +363,7 @@ function Route() {
 
   return (
     <main id="Route">
-      <GoBack url="/routes" label="back to routes" />
+      <GoBack />
       <h1>{generateStatusHeader()}</h1>
       {!route ? (
         <Loading />

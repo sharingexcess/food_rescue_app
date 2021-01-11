@@ -3,20 +3,21 @@ import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { GoBack } from '../../helpers/components'
 import { useAuthContext } from '../Auth/Auth'
 import { ROUTE_STATUSES } from '../../helpers/constants'
 import useRouteData from '../../hooks/useRouteData'
-import './Routes.scss'
 import usePickupData from '../../hooks/usePickupData'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useUserData from '../../hooks/useUserData'
+import './Routes.scss'
 
-export default function Routes() {
+export default function Routes({ initial_filter }) {
   const { user } = useAuthContext()
-  const raw_routes = useRouteData()
+  const location = useLocation()
+  const raw_routes = useRouteData(initial_filter)
   const pickups = usePickupData()
   const deliveries = useDeliveryData()
   const organizations = useOrganizationData()
@@ -61,7 +62,7 @@ export default function Routes() {
     <main id="Routes">
       <GoBack label="back" url="/" />
       <h1>
-        Routes
+        {location.pathname === '/routes' ? 'Routes' : 'History'}
         <button className="secondary" onClick={() => setFilter(!filter)}>
           {filter ? 'Show All Routes' : 'Show My Routes'}
         </button>
@@ -74,7 +75,11 @@ export default function Routes() {
         filterAndSortRoutes(routes).map(r => (
           <Link to={`/routes/${r.id}`} key={r.id}>
             <div
-              className={`Route${[0, 9].includes(r.status) ? ' complete' : ''}`}
+              className={`Route${
+                [0, 9].includes(r.status) && location.pathname === '/routes'
+                  ? ' complete'
+                  : ''
+              }`}
             >
               {r.driver && (
                 <img src={r.driver.icon || UserIcon} alt={r.driver.name} />

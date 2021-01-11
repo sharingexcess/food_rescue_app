@@ -75,7 +75,10 @@ function App() {
                   <Calendar />
                 </Route>
                 <Route exact path="/routes">
-                  <Routes />
+                  <Routes initial_filter={r => ![0, 9].includes(r.status)} />
+                </Route>
+                <Route exact path="/history">
+                  <Routes initial_filter={r => [0, 9].includes(r.status)} />
                 </Route>
                 <Route exact path="/routes/:route_id">
                   <DriverRoute />
