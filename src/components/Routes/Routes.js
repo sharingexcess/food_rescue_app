@@ -58,6 +58,16 @@ export default function Routes({ initial_filter }) {
       : routes.sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
   }
 
+  function StatusIndicator({ route }) {
+    if (route.status === 9) {
+      return <i id="StatusIndicator" className="fa fa-check" />
+    } else if (route.status === 0) {
+      return <i id="StatusIndicator" className="fa fa-times" />
+    } else if (route.status === 3) {
+      return <i id="StatusIndicator" className="fa fa-clock-o" />
+    } else return null
+  }
+
   return (
     <main id="Routes">
       <GoBack label="back" url="/" />
@@ -85,14 +95,8 @@ export default function Routes({ initial_filter }) {
                 <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
               )}
               <div>
+                <StatusIndicator route={r} />
                 <h3>{r.driver.name}</h3>
-                {r.status !== null && r.status !== undefined ? (
-                  <h6>
-                    <span>Status:</span>{' '}
-                    {ROUTE_STATUSES[r.status].replace('_', ' ')}
-                    {r.notes ? ` "${r.notes}"` : ''}
-                  </h6>
-                ) : null}
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                 <h5>
                   {moment(r.time_start).format('h:mma')} -{' '}
@@ -112,6 +116,11 @@ export default function Routes({ initial_filter }) {
                     .map(s => s.org.name)
                     .join(', ')}
                 </p>
+                {r.notes ? (
+                  <h6>
+                    <span>Notes:</span>"{r.notes}"
+                  </h6>
+                ) : null}
               </div>
             </div>
           </Link>
