@@ -83,13 +83,10 @@ function App() {
                 <Route exact path="/routes/:route_id">
                   <DriverRoute />
                 </Route>
-                <Route exact path="/routes/:route_id/pickup/:pickup_id/report">
+                <Route exact path="/routes/:route_id/pickup/:pickup_id">
                   <PickupReport />
                 </Route>
-                <Route
-                  exact
-                  path="/routes/:route_id/delivery/:delivery_id/report"
-                >
+                <Route exact path="/routes/:route_id/delivery/:delivery_id">
                   <DeliveryReport />
                 </Route>
                 <Route exact path="/profile">

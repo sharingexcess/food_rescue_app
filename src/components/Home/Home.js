@@ -10,10 +10,10 @@ export default function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin } = useAuthContext()
   const my_routes = useRouteData(
-    r => r.driver_id === user.uid && r.status !== 0
+    r => r.driver_id === user.uid && r.status === 9
   )
   const my_deliveries = useDeliveryData(
-    d => d.driver_id === user.uid && d.status !== 0
+    d => d.driver_id === user.uid && d.status === 9
   )
   const stats = generateDriverStats(my_routes, my_deliveries)
 

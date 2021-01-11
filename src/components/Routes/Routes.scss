@@ -97,5 +97,31 @@
       border-radius: 50%;
       margin-right: 16px;
     }
+
+    #StatusIndicator {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1px;
+
+      &.fa-times {
+        background: var(--red);
+      }
+
+      &.fa-clock-o {
+        background: var(--blue);
+      }
+
+      &.fa-check {
+        background: var(--green);
+      }
+    }
   }
 }

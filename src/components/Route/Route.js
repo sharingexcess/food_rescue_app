@@ -236,7 +236,7 @@ function Route() {
     }
 
     function handleOpenReport() {
-      history.push(`/routes/${route_id}/${stop.type}/${stop.id}/report`)
+      history.push(`/routes/${route_id}/${stop.type}/${stop.id}`)
     }
 
     if (route.status < 3) return null
@@ -312,9 +312,7 @@ function Route() {
       icon = <i id="StatusIndicator" className="fa fa-clock-o" />
     }
     return icon ? (
-      <Link to={`/routes/${route_id}/${stop.type}/${stop.id}/report`}>
-        {icon}
-      </Link>
+      <Link to={`/routes/${route_id}/${stop.type}/${stop.id}`}>{icon}</Link>
     ) : null
   }
 
