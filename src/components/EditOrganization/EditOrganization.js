@@ -26,7 +26,8 @@ export default function EditOrganization() {
   )
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
   const [file, setFile] = useState()
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState([])
+  const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
     if (org.name && !formData.name) {
@@ -40,29 +41,31 @@ export default function EditOrganization() {
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
+    setErrors([])
+    setShowErrors(false)
   }
+
   function validateFormData() {
     if (formData.name === ' ') {
-      setError('Missing Org Name')
-      return false
+      errors.push('Missing in form data: Organization Name')
     }
     if (
       !validator.isEmail(formData.default_contact_email) &&
       !!formData.default_contact_email
     ) {
-      setError('Invalid Email')
-      return false
+      errors.push('Invalid Data Input: Contact Email is incorrect')
     }
     if (
       !validator.isMobilePhone(formData.default_contact_phone) &&
       !!formData.default_contact_phone.length
     ) {
-      setError('Invalid Phone Number')
-      return false
+      errors.push('Invalid Data Input: Contact Phone Number is invalid')
     }
-    return true
+    if (errors.length === 0) {
+      return true
+    }
+    return false
   }
-
   async function handleSubmit() {
     const is_valid = validateFormData()
     if (is_valid) {
@@ -109,19 +112,9 @@ export default function EditOrganization() {
   }
 
   function FormError() {
-    if (error === 'Missing Org Name')
-      return <p id="FormError">Missing in form data: Organization Name</p>
-    if (error === 'Invalid Email')
-      return (
-        <p id="FormError">Invalid Data Input: Contact Email is incorrect</p>
-      )
-    if (error === 'Invalid Phone Number')
-      return (
-        <p id="FormError">
-          Invalid Data Input: Contact Phone Number is invalid{' '}
-        </p>
-      )
-    else return null
+    if (showErrors === true) {
+      return errors.map(error => <p id="FormError">{error}</p>)
+    } else return null
   }
 
   return (
@@ -177,7 +170,12 @@ export default function EditOrganization() {
         onSuggestionClick={handleChange}
       />
       <FormError />
-      <button onClick={handleSubmit}>
+      <button
+        onClick={() => {
+          handleSubmit()
+          setShowErrors(true)
+        }}
+      >
         {id ? 'update organization' : 'create organization'}
       </button>
     </main>
