@@ -4,7 +4,7 @@ import Ellipsis, { GoBack } from '../../helpers/components'
 import { useHistory } from 'react-router-dom'
 import { updateFieldSuggestions, formFields } from './utils'
 import UserIcon from '../../assets/user.svg'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection, setFirestoreData } from '../../helpers/helpers'
 import moment from 'moment'
 import EditDelivery from '../EditDelivery/EditDelivery'
 import { v4 as generateUniqueId } from 'uuid'
@@ -12,9 +12,11 @@ import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
 import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
 import './EditRoute.scss'
+import useUserData from '../../hooks/useUserData'
 
 function EditRoute() {
   const history = useHistory()
+  const drivers = useUserData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -35,14 +37,11 @@ function EditRoute() {
 
   useEffect(() => {
     formData.driver_id &&
-      getCollection('Users')
-        .doc(formData.driver_id)
-        .get()
-        .then(res => {
-          const driver = res.data()
-          setFormData({ ...formData, driver })
-        })
-  }, [formData.driver_id]) // eslint-disable-line react-hooks/exhaustive-deps
+      setFormData({
+        ...formData,
+        driver: drivers.find(i => i.id === formData.driver_id),
+      })
+  }, [formData.driver_id, drivers]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -68,35 +67,31 @@ function EditRoute() {
     if (route_id) {
       for (const [index, stop] of formData.stops.entries()) {
         if (stop.type === 'pickup') {
-          await getCollection('Pickups').doc(stop.id).set(
-            {
-              id: stop.id,
-              org_id: stop.org_id,
-              location_id: stop.location_id,
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-              report: {},
-              status: 1,
-              route_id,
-            },
-            { merge: true }
-          )
+          await setFirestoreData(['Pickups', stop.id], {
+            id: stop.id,
+            org_id: stop.org_id,
+            location_id: stop.location_id,
+            driver_id: formData.driver_id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            report: {},
+            status: 1,
+            route_id,
+          })
         } else if (stop.type === 'delivery') {
           const pickup_ids = getPickupsInDelivery(index)
-          await getCollection('Deliveries').doc(stop.id).set(
-            {
-              id: stop.id,
-              org_id: stop.org_id,
-              location_id: stop.location_id,
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-              weight: 0,
-              status: 1,
-              pickup_ids,
-              route_id,
-            },
-            { merge: true }
-          )
+          await setFirestoreData(['Deliveries', stop.id], {
+            id: stop.id,
+            org_id: stop.org_id,
+            location_id: stop.location_id,
+            driver_id: formData.driver_id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            weight: 0,
+            status: 1,
+            pickup_ids,
+            route_id,
+          })
         }
       }
       const resource = {
@@ -255,7 +250,7 @@ function EditRoute() {
 
   return (
     <div id="EditRoute">
-      <GoBack label="back" url="/" />
+      <GoBack />
       <h1>New Route</h1>
       <p>
         Use this form to assign a new rescue to a driver. Routes are

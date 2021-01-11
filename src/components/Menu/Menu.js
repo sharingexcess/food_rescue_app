@@ -1,13 +1,12 @@
 import React, { memo } from 'react'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
 import { useAuthContext } from '../Auth/Auth'
 import UserIcon from '../../assets/user.svg'
-import { getCollection } from '../../helpers/helpers'
 import { ExternalLink } from '../../helpers/components'
 import './Menu.scss'
+import useUserData from '../../hooks/useUserData'
 
 function Menu() {
   const location = useLocation()
@@ -16,9 +15,7 @@ function Menu() {
   // get current user state from AuthContext
   const { user, admin, handleLogout } = useAuthContext()
   // get public user profile state
-  const [profile = {}] = useDocumentData(
-    user ? getCollection('Users').doc(user.uid) : null
-  )
+  const profile = useUserData(user ? user.uid : {})
   // get access to the Redux update state function 'dispatch'
   const dispatch = useDispatch()
 
@@ -46,7 +43,9 @@ function Menu() {
           onClick={() => dispatch(setMenu(true))}
         />
         <div>
-          <h2 id="UserName">{profile.name || user.displayName}</h2>
+          <h2 id="UserName">
+            {profile && profile.name ? profile.name : user.displayName}
+          </h2>
           <h3 id="UserEmail">{user.email}</h3>
           <AdminIndicator />
         </div>
@@ -78,6 +77,9 @@ function Menu() {
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/calendar">Calendar</Link>
+            </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/history">History</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/profile">Profile</Link>

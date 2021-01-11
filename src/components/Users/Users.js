@@ -1,23 +1,17 @@
 import React, { memo, useEffect, useState } from 'react'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
 import Loading from '../Loading/Loading'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import {
-  getCollection,
-  getImageFromStorage,
-  isValidURL,
-} from '../../helpers/helpers'
-import './Users.scss'
+import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
+import useUserData from '../../hooks/useUserData'
+import './Users.scss'
 
 const user_icon_urls = {}
 
 function Users() {
-  const [users = [], loading] = useCollectionData(
-    getCollection('Users').orderBy('name')
-  )
+  const users = useUserData()
   const [search, setSearch] = useState('')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
@@ -44,11 +38,11 @@ function Users() {
     )
   }
 
-  return loading ? (
+  return !users.length ? (
     <Loading text="Loading users" />
   ) : (
     <main id="Users">
-      <GoBack url="/" label="back to home" />
+      <GoBack />
       <h1>Users</h1>
       <Input
         label="Search..."

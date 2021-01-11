@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './PickupReport.scss'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
-import { getCollection } from '../../helpers/helpers'
+import { setFirestoreData } from '../../helpers/helpers'
+import usePickupData from '../../hooks/usePickupData'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import './PickupReport.scss'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
   const history = useHistory()
-  const [pickup = {}, loading] = useDocumentData(
-    getCollection('Pickups').doc(pickup_id)
-  )
-  const [pickup_org = {}] = useDocumentData(
-    pickup.org_id ? getCollection('Organizations').doc(pickup.org_id) : null
-  )
+  const pickup = usePickupData(pickup_id)
+  const pickup_org = useOrganizationData(pickup ? pickup.org_id : {}) || {}
   const [formData, setFormData] = useState({
     dairy: 0,
     bakery: 0,
@@ -32,7 +29,7 @@ export default function PickupReport() {
   const [changed, setChanged] = useState(false)
 
   useEffect(() => {
-    pickup.report
+    pickup && pickup.report
       ? setFormData(formData => ({ ...formData, ...pickup.report }))
       : setChanged(true)
   }, [pickup])
@@ -54,38 +51,31 @@ export default function PickupReport() {
 
   function handleSubmit(event) {
     event.preventDefault()
-    firebase
-      .firestore()
-      .collection('Pickups')
-      .doc(pickup_id)
-      .set(
-        {
-          report: {
-            dairy: parseInt(formData.dairy),
-            bakery: parseInt(formData.bakery),
-            produce: parseInt(formData.produce),
-            'meat/Fish': parseInt(formData['meat/Fish']),
-            'non-perishable': parseInt(formData['non-perishable']),
-            'prepared/Frozen': parseInt(formData['prepared/Frozen']),
-            other: parseInt(formData.other),
-            weight: parseInt(formData.weight),
-            notes: formData.notes,
-            created_at:
-              pickup.completed_at ||
-              firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          },
-          status: 9,
-        },
-        { merge: true }
-      )
+    setFirestoreData(['Pickups', pickup_id], {
+      report: {
+        dairy: parseInt(formData.dairy),
+        bakery: parseInt(formData.bakery),
+        produce: parseInt(formData.produce),
+        'meat/Fish': parseInt(formData['meat/Fish']),
+        'non-perishable': parseInt(formData['non-perishable']),
+        'prepared/Frozen': parseInt(formData['prepared/Frozen']),
+        other: parseInt(formData.other),
+        weight: parseInt(formData.weight),
+        notes: formData.notes,
+        created_at:
+          pickup.completed_at ||
+          firebase.firestore.FieldValue.serverTimestamp(),
+        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      status: 9,
+    })
       .then(() => history.push(`/routes/${route_id}`))
       .catch(e => console.error('Error writing document: ', e))
   }
-  if (loading) return <Loading text="Loading report" />
+  if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
-      <GoBack url={`/routes/${route_id}`} label="back to rescue" />
+      <GoBack />
       <h1>Rescue Report</h1>
       <h3>{pickup_org.name}</h3>
       {Object.keys(formData)

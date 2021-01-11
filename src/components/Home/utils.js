@@ -10,7 +10,12 @@ export const tiles = [
     link: '/calendar',
   },
   {
-    name: 'User Profile',
+    name: 'History',
+    icon: 'fa-clock',
+    link: '/history',
+  },
+  {
+    name: 'Profile',
     icon: 'fa-user',
     link: '/profile',
   },
@@ -44,4 +49,12 @@ export function generateGreeting(name) {
   return formattedName
     ? `${prefix}, ${formattedName} ${suffix}`
     : `${prefix} ${suffix}`
+}
+
+export function generateDriverStats(my_routes, my_deliveries) {
+  const routes = my_routes.length
+  const weight = my_deliveries
+    .map(d => (d.report ? d.report.weight : 0))
+    .reduce((a, b) => a + b, 0)
+  return { routes, weight }
 }

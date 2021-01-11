@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import './DeliveryReport.scss'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
-import { getCollection } from '../../helpers/helpers'
+import { setFirestoreData } from '../../helpers/helpers'
+import useDeliveryData from '../../hooks/useDeliveryData'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import './DeliveryReport.scss'
+import usePickupData from '../../hooks/usePickupData'
 
 export default function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
   const history = useHistory()
-  const [delivery = {}, loading] = useDocumentData(
-    getCollection('Deliveries').doc(delivery_id)
-  )
-  const [delivery_org = {}] = useDocumentData(
-    delivery.org_id ? getCollection('Organizations').doc(delivery.org_id) : null
-  )
+  const delivery = useDeliveryData(delivery_id)
+  const delivery_org =
+    useOrganizationData(delivery ? delivery.org_id : {}) || {}
+  const pickups = usePickupData()
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',
@@ -26,7 +26,7 @@ export default function DeliveryReport() {
   const [weight, setWeight] = useState()
 
   useEffect(() => {
-    delivery.report
+    delivery && delivery.report
       ? setFormData(formData => ({ ...formData, ...delivery.report }))
       : setChanged(true)
   }, [delivery])
@@ -35,18 +35,17 @@ export default function DeliveryReport() {
     async function calculateWeight() {
       let updated_weight = 0
       for (const id of delivery.pickup_ids) {
-        const pickup = await getCollection('Pickups')
-          .doc(id)
-          .get()
-          .then(res => res.data())
+        const pickup = pickups.find(i => i.id === id) || {}
         if (pickup.report && pickup.report.weight) {
           updated_weight += parseInt(pickup.report.weight)
         }
       }
       setWeight(updated_weight)
     }
-    delivery.pickup_ids && delivery.pickup_ids.length && calculateWeight()
-  }, [delivery])
+    if (delivery && delivery.pickup_ids && delivery.pickup_ids.length) {
+      calculateWeight()
+    }
+  }, [delivery, pickups])
 
   function handleChange(e) {
     setFormData({
@@ -61,36 +60,25 @@ export default function DeliveryReport() {
 
   function handleSubmit(event) {
     event.preventDefault()
-    firebase
-      .firestore()
-      .collection('Deliveries')
-      .doc(delivery_id)
-      .set(
-        {
-          report: {
-            percent_of_total_dropped: parseInt(
-              formData.percent_of_total_dropped
-            ),
-            weight: parseInt(
-              (weight * formData.percent_of_total_dropped) / 100
-            ),
-            notes: formData.notes,
-            created_at:
-              delivery.completed_at ||
-              firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          },
-          status: 9,
-        },
-        { merge: true }
-      )
+    setFirestoreData(['Deliveries', delivery_id], {
+      report: {
+        percent_of_total_dropped: parseInt(formData.percent_of_total_dropped),
+        weight: parseInt((weight * formData.percent_of_total_dropped) / 100),
+        notes: formData.notes,
+        created_at:
+          delivery.completed_at ||
+          firebase.firestore.FieldValue.serverTimestamp(),
+        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      status: 9,
+    })
       .then(() => history.push(`/routes/${route_id}`))
       .catch(e => console.error('Error writing document: ', e))
   }
-  if (loading) return <Loading text="Loading report" />
+  if (!delivery) return <Loading text="Loading report" />
   return (
     <main id="DeliveryReport">
-      <GoBack url={`/routes/${route_id}`} label="back to rescue" />
+      <GoBack />
       <h1>Delivery Report</h1>
       <h3>{delivery_org.name}</h3>
       <h4>

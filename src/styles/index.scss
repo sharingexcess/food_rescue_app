@@ -17,11 +17,14 @@ body.light-theme {
   --white-rgb: 11, 35, 66;
   --darkgrey: #ffffff;
   --darkgrey-rgb: 255, 255, 255;
-  --mediumgrey: #d2e4f8;
+  --mediumgrey: #e0ebf8;
   --mediumgrey-rgb: 210, 228, 248;
-  --lightgrey: #cccccc;
-  --lightgrey-rgb: 204, 204, 204;
+  --lightgrey: #d6dce6;
+  --lightgrey-rgb: 192, 198, 207;
   --mobile: 600px;
+  --tile-border: 1px solid var(--lightgrey);
+  --tile-background: #ffffff;
+  --tile-background-rgb: 255, 255, 255;
 }
 
 body.dark-theme {
@@ -42,6 +45,9 @@ body.dark-theme {
   --lightgrey: #cccccc;
   --lightgrey-rgb: 204, 204, 204;
   --mobile: 600px;
+  --tile-border: 1px solid rgba(var(--blue-rgb), 0.32);
+  --tile-background: #041428;
+  --tile-background-rgb: 4, 20, 40;
 }
 
 body {

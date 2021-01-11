@@ -34,3 +34,37 @@ export function isValidURL(str) {
 export function getCollection(name) {
   return firebase.firestore().collection(name)
 }
+
+export async function getFirestoreData(identifier) {
+  let next = 'doc'
+  let query = getCollection(identifier.shift())
+  while (identifier.length) {
+    if (next === 'doc') {
+      query = query.doc(identifier.shift())
+      next = 'collection'
+    } else {
+      query = query.collection(identifier.shift())
+      next = 'doc'
+    }
+  }
+  return await query
+    .get()
+    .then(res =>
+      res.data ? res.data() : res.docs ? res.docs.map(doc => doc.data()) : res
+    )
+}
+
+export async function setFirestoreData(identifier, value) {
+  let next = 'doc'
+  let query = getCollection(identifier.shift())
+  while (identifier.length) {
+    if (next === 'doc') {
+      query = query.doc(identifier.shift())
+      next = 'collection'
+    } else {
+      query = query.collection(identifier.shift())
+      next = 'doc'
+    }
+  }
+  return await query.set(value, { merge: true })
+}

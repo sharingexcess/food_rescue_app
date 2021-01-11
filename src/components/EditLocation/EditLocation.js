@@ -2,29 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
-import './EditLocation.scss'
-import {
-  useCollectionData,
-  useDocumentData,
-} from 'react-firebase-hooks/firestore'
 import { getCollection } from '../../helpers/helpers'
 import { initializeFormData, required_fields } from './utils'
 import { GoBack } from '../../helpers/components'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import useLocationData from '../../hooks/useLocationData'
+import Loading from '../Loading/Loading'
+import './EditLocation.scss'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
   const history = useHistory()
-  const [locations = []] = useCollectionData(
-    getCollection('Organizations').doc(id).collection('Locations')
-  )
-  const [location = {}] = useDocumentData(
-    loc_id
-      ? getCollection('Organizations')
-          .doc(id)
-          .collection('Locations')
-          .doc(loc_id)
-      : null
-  )
+  const organization = useOrganizationData(id)
+  const location = useLocationData(loc_id)
   const [formData, setFormData] = useState({
     name: '',
     contact_name: '',
@@ -35,12 +25,14 @@ export default function EditLocation() {
     state: '',
     zip_code: '',
     upon_arrival_instructions: '',
-    is_primary: false,
   })
+  const [isPrimary, setIsPrimary] = useState(
+    loc_id && organization ? organization.primary_location === loc_id : false
+  )
   const [error, setError] = useState()
 
   useEffect(() => {
-    if (location.name && !formData.name) {
+    if (location && location.name && !formData.name) {
       initializeFormData(location, setFormData)
     }
   }, [location, formData]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -62,17 +54,19 @@ export default function EditLocation() {
   async function handleSubmit() {
     const is_valid = validateFormData()
     if (is_valid) {
-      const new_loc_id = loc_id || (await generateLocationId(formData.address1))
+      const new_loc_id = loc_id || (await generateLocationId())
       if (new_loc_id) {
-        getCollection('Organizations')
-          .doc(id)
-          .collection('Locations')
+        if (isPrimary || !organization.primary_location) {
+          getCollection('Organizations')
+            .doc(id)
+            .set({ primary_location: new_loc_id }, { merge: true })
+        }
+        getCollection('Locations')
           .doc(new_loc_id)
           .set(
             {
               id: new_loc_id,
               ...formData,
-              is_primary: !locations.length ? true : formData.is_primary, // default to primary if first location
             },
             { merge: true }
           )
@@ -84,8 +78,12 @@ export default function EditLocation() {
     }
   }
 
-  async function generateLocationId(addressString) {
-    const uniq_id = addressString.replace(/[^A-Z0-9]/gi, '_').toLowerCase()
+  async function generateLocationId() {
+    const uniq_id = `${organization.name
+      .toLowerCase()
+      .replace(/[^A-Z0-9]/gi, '_')}_${formData.address1
+      .replace(/[^A-Z0-9]/gi, '_')
+      .toLowerCase()}`
     const exists = await getCollection('Organizations')
       .doc(uniq_id)
       .get()
@@ -110,9 +108,11 @@ export default function EditLocation() {
     else return null
   }
 
-  return (
+  return !location ? (
+    <Loading text="Loading location data..." />
+  ) : (
     <main id="EditLocation">
-      <GoBack label="back to organization" url={`/admin/organizations/${id}`} />
+      <GoBack />
       <h1>{loc_id ? 'Edit Location' : 'Add Location'}</h1>
       <Input
         type="text"
@@ -123,14 +123,14 @@ export default function EditLocation() {
       />
       <Input
         type="text"
-        label="Contact Name *"
+        label="Contact Name"
         element_id="contact_name"
         value={formData.contact_name}
         onChange={handleChange}
       />
       <Input
         type="tel"
-        label="Contact Phone *"
+        label="Contact Phone"
         element_id="contact_phone"
         value={formData.contact_phone}
         onChange={handleChange}
@@ -182,10 +182,8 @@ export default function EditLocation() {
           type="checkbox"
           id="is_primary"
           name="is_primary"
-          checked={formData.is_primary}
-          onChange={() =>
-            setFormData({ ...formData, is_primary: !formData.is_primary })
-          }
+          checked={isPrimary}
+          onChange={() => setIsPrimary(!isPrimary)}
         />
         <p>
           Make this the Organization's
