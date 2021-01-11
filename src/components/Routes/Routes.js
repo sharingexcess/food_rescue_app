@@ -6,7 +6,6 @@ import UserIcon from '../../assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
 import { GoBack } from '../../helpers/components'
 import { useAuthContext } from '../Auth/Auth'
-import { ROUTE_STATUSES } from '../../helpers/constants'
 import useRouteData from '../../hooks/useRouteData'
 import usePickupData from '../../hooks/usePickupData'
 import useDeliveryData from '../../hooks/useDeliveryData'
@@ -70,7 +69,7 @@ export default function Routes({ initial_filter }) {
 
   return (
     <main id="Routes">
-      <GoBack label="back" url="/" />
+      <GoBack />
       <h1>
         {location.pathname === '/routes' ? 'Routes' : 'History'}
         <button className="secondary" onClick={() => setFilter(!filter)}>

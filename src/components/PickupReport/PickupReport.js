@@ -75,7 +75,7 @@ export default function PickupReport() {
   if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
-      <GoBack url={`/routes/${route_id}`} label="back to rescue" />
+      <GoBack />
       <h1>Rescue Report</h1>
       <h3>{pickup_org.name}</h3>
       {Object.keys(formData)

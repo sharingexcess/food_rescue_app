@@ -43,7 +43,7 @@ function Organizations() {
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
-      <GoBack label="back" url="/" />
+      <GoBack />
       <h1>
         Organizations
         <select value={filter} onChange={e => setFilter(e.target.value)}>

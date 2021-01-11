@@ -18,14 +18,14 @@
 
   &.open {
     transform: translateX(-204px);
-    background: var(--mediumgrey);
+    background: var(--tile-background);
     pointer-events: all;
     box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.16);
   }
 
   &.closed {
     transform: translateX(0);
-    background: rgba(var(--mediumgrey-rgb), 0);
+    background: rgba(var(--tile-background-rgb), 0);
     pointer-events: none;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
     #UserName,

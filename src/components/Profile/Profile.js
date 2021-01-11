@@ -50,7 +50,7 @@ export default function Profile() {
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
-      <GoBack label="back to home" url="/" />
+      <GoBack />
       <h1>User Profile</h1>
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>

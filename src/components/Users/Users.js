@@ -42,7 +42,7 @@ function Users() {
     <Loading text="Loading users" />
   ) : (
     <main id="Users">
-      <GoBack url="/" label="back to home" />
+      <GoBack />
       <h1>Users</h1>
       <Input
         label="Search..."
