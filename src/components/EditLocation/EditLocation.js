@@ -10,6 +10,7 @@ import {
 import { getCollection } from '../../helpers/helpers'
 import { initializeFormData, required_fields } from './utils'
 import { GoBack } from '../../helpers/components'
+import StatesDropDown from '../StatesDropDown/StatesDropDown'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -147,6 +148,7 @@ export default function EditLocation() {
         value={formData.state}
         onChange={handleChange}
       />
+      {/* <StatesDropDown /> */}
       <Input
         type="text"
         label="Zip Code *"
