@@ -9,6 +9,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
 import './EditLocation.scss'
+import StatesDropDown from '../StatesDropDown/StatesDropDown'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -156,12 +157,17 @@ export default function EditLocation() {
         value={formData.city}
         onChange={handleChange}
       />
-      <Input
+      {/* <Input
         type="text"
         label="State *"
         element_id="state"
         value={formData.state}
         onChange={handleChange}
+      /> */}
+      <StatesDropDown
+        onChange={handleChange}
+        element_id="state"
+        value={formData.state}
       />
       <Input
         type="text"

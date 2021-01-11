@@ -1,4 +1,4 @@
-export const usstates = [
+export const usStates = [
   {
     name: 'Alabama',
     abbreviation: 'AL',
