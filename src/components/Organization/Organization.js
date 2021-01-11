@@ -1,11 +1,6 @@
 import React, { memo, useEffect, useState } from 'react'
-import {
-  useCollectionData,
-  useDocumentData,
-} from 'react-firebase-hooks/firestore'
 import { Link, useParams } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import { getCollection } from '../../helpers/helpers'
 import { GoBack } from '../../helpers/components'
 import Loading from '../Loading/Loading'
 import {
@@ -15,19 +10,17 @@ import {
   OrganizationEmail,
   OrganizationPhone,
 } from './utils'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import useLocationData from '../../hooks/useLocationData'
 import './Organization.scss'
 
 function Organization() {
   // get org id from url parameters
   const { id } = useParams()
   // get org data using id from firestore data
-  const [org = {}, loading] = useDocumentData(
-    getCollection('Organizations').doc(id)
-  )
+  const org = useOrganizationData(id) || {}
   // get org's locations from firestore data
-  const [locations = []] = useCollectionData(
-    getCollection('Organizations').doc(id).collection('Locations')
-  )
+  const locations = useLocationData(i => i.org_id === id) || []
   // orgIconFullUrl defines the URL we build based on the path stored in org.icon
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
 
@@ -52,7 +45,9 @@ function Organization() {
           >
             <section className="Location">
               <h5>{loc.name}</h5>
-              {loc.is_primary && <i className="primary fa fa-star" />}
+              {loc.id === org.primary_location && (
+                <i className="primary fa fa-star" />
+              )}
               <p>{loc.address1}</p>
               {loc.address2 && <p>{loc.address2}</p>}
               <p>
@@ -65,7 +60,7 @@ function Organization() {
     )
   }
 
-  if (loading) return <Loading text="Loading your organization" />
+  if (!org) return <Loading text="Loading your organization" />
   return (
     <main id="Organization">
       <GoBack url="/admin/organizations" label="back to organizations" />

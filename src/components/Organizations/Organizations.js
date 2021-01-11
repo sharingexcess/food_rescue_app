@@ -1,19 +1,17 @@
 import React, { memo, useEffect, useState } from 'react'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
 import Loading from '../Loading/Loading'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import { getCollection, getImageFromStorage } from '../../helpers/helpers'
+import { getImageFromStorage } from '../../helpers/helpers'
 import './Organizations.scss'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
+import useOrganizationData from '../../hooks/useOrganizationData'
 
 const org_icon_urls = {}
 
 function Organizations() {
-  const [organizations = [], loading] = useCollectionData(
-    getCollection('Organizations').orderBy('name')
-  )
+  const organizations = useOrganizationData()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
@@ -41,7 +39,8 @@ function Organizations() {
       return filtered_by_search.filter(i => i.org_type === filter)
     } else return filtered_by_search
   }
-  if (loading) return <Loading text="Loading organizations" />
+
+  if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
       <GoBack label="back" url="/" />

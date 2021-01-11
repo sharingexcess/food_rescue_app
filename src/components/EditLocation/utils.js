@@ -11,16 +11,7 @@ export function initializeFormData(location, callback) {
     upon_arrival_instructions: location.upon_arrival_instructions
       ? location.upon_arrival_instructions
       : '',
-    is_primary: location.is_primary,
   })
 }
 
-export const required_fields = [
-  'name',
-  'contact_name',
-  'contact_phone',
-  'address1',
-  'city',
-  'state',
-  'zip_code',
-]
+export const required_fields = ['name', 'address1', 'city', 'state', 'zip_code']

@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
-import {
-  getCollection,
-  getImageFromStorage,
-  isValidURL,
-} from '../../helpers/helpers'
+import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
-import './Routes.scss'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { GoBack } from '../../helpers/components'
 import { useAuthContext } from '../Auth/Auth'
 import { ROUTE_STATUSES } from '../../helpers/constants'
+import useRouteData from '../../hooks/useRouteData'
+import usePickupData from '../../hooks/usePickupData'
+import useDeliveryData from '../../hooks/useDeliveryData'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import useUserData from '../../hooks/useUserData'
+import './Routes.scss'
 
-export default function Routes() {
+export default function Routes({ initial_filter }) {
   const { user } = useAuthContext()
-  const [raw_routes] = useCollectionData(getCollection('Routes').limit(100))
+  const location = useLocation()
+  const raw_routes = useRouteData(initial_filter)
+  const pickups = usePickupData()
+  const deliveries = useDeliveryData()
+  const organizations = useOrganizationData()
+  const users = useUserData()
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState(true)
@@ -26,26 +31,16 @@ export default function Routes() {
       const full_data = []
       for (const route of raw_routes) {
         for (const s of route.stops) {
-          const collection = s.type === 'pickup' ? 'Pickups' : 'Deliveries'
-          const stop = await getCollection(collection)
-            .doc(s.id)
-            .get()
-            .then(res => res.data())
+          const stop =
+            s.type === 'pickup'
+              ? pickups.find(p => p.id === s.id) || {}
+              : deliveries.find(d => d.id === s.id) || {}
           Object.keys(stop).forEach(key => (s[key] = stop[key]))
-          s.org = await getCollection('Organizations')
-            .doc(stop.org_id)
-            .get()
-            .then(res => res.data())
+          s.org = organizations.find(o => o.id === s.org_id) || {}
         }
-        if (route.driver_id) {
-          const driver_ref = await getCollection('Users')
-            .doc(route.driver_id)
-            .get()
-          const driver = driver_ref.data()
-          if (driver.icon && !isValidURL(driver.icon)) {
-            driver.icon = await getImageFromStorage(driver.icon)
-          }
-          route.driver = driver
+        route.driver = users.find(u => u.id === route.driver_id) || {}
+        if (route.driver.icon && !isValidURL(route.driver.icon)) {
+          route.driver.icon = await getImageFromStorage(route.driver.icon)
         }
         full_data.push(route)
       }
@@ -53,7 +48,7 @@ export default function Routes() {
       setLoading(false)
     }
     raw_routes && addData()
-  }, [raw_routes])
+  }, [raw_routes, pickups, deliveries, organizations, users]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function filterAndSortRoutes(routes) {
     return filter
@@ -67,7 +62,7 @@ export default function Routes() {
     <main id="Routes">
       <GoBack label="back" url="/" />
       <h1>
-        Routes
+        {location.pathname === '/routes' ? 'Routes' : 'History'}
         <button className="secondary" onClick={() => setFilter(!filter)}>
           {filter ? 'Show All Routes' : 'Show My Routes'}
         </button>
@@ -80,7 +75,11 @@ export default function Routes() {
         filterAndSortRoutes(routes).map(r => (
           <Link to={`/routes/${r.id}`} key={r.id}>
             <div
-              className={`Route${[0, 9].includes(r.status) ? ' complete' : ''}`}
+              className={`Route${
+                [0, 9].includes(r.status) && location.pathname === '/routes'
+                  ? ' complete'
+                  : ''
+              }`}
             >
               {r.driver && (
                 <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
@@ -91,6 +90,7 @@ export default function Routes() {
                   <h6>
                     <span>Status:</span>{' '}
                     {ROUTE_STATUSES[r.status].replace('_', ' ')}
+                    {r.notes ? ` "${r.notes}"` : ''}
                   </h6>
                 ) : null}
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>

@@ -101,19 +101,22 @@ a {
   display: inline-block;
   text-decoration: none;
   color: inherit;
-  &.back {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--blue);
-    margin-bottom: 16px;
+}
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        text-decoration: underline;
-      }
+.back {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 16px;
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      text-decoration: underline;
     }
   }
 }
+
 img {
   user-select: none;
   font-size: 10px;

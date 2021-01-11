@@ -1,12 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import useDeliveryData from '../../hooks/useDeliveryData'
+import useRouteData from '../../hooks/useRouteData'
 import { useAuthContext } from '../Auth/Auth'
 import './Home.scss'
-import { generateGreeting, tiles } from './utils'
+import { generateDriverStats, generateGreeting, tiles } from './utils'
 
 export default function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin } = useAuthContext()
+  const my_routes = useRouteData(
+    r => r.driver_id === user.uid && r.status !== 0
+  )
+  const my_deliveries = useDeliveryData(
+    d => d.driver_id === user.uid && d.status !== 0
+  )
+  const stats = generateDriverStats(my_routes, my_deliveries)
 
   function Tile({ name, icon, link }) {
     return (
@@ -34,11 +43,17 @@ export default function Home() {
     )
   }
 
-  const header = generateGreeting(user.displayName)
+  const header = generateGreeting(user.displayName, my_routes, my_deliveries)
 
   return (
     <main id="Home">
       <h1>{header}</h1>
+      {stats ? (
+        <h3>
+          <span>{stats.routes}</span> route{stats.routes === 1 ? '' : 's'}{' '}
+          driven, <span>{stats.weight}</span> lbs. rescued
+        </h3>
+      ) : null}
       <section id="Tiles">
         <Tiles />
         <AdminTiles />
