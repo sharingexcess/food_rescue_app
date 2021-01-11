@@ -9,6 +9,7 @@ import UserIcon from '../../assets/user.svg'
 import { handleOrgIcon, initializeFormData } from './utils'
 import './EditOrganization.scss'
 import { getCollection } from '../../helpers/helpers'
+import validator from 'validator'
 
 export default function EditOrganization() {
   const { id } = useParams()
@@ -46,20 +47,16 @@ export default function EditOrganization() {
       return false
     }
     if (
-      !formData.default_contact_email.includes('@') &&
-      formData.default_contact_email !== ''
+      !validator.isEmail(formData.default_contact_email) &&
+      !!formData.default_contact_email
     ) {
       setError('Invalid Email')
       return false
     }
     if (
-      formData.default_contact_phone.length < 10 &&
-      formData.default_contact_phone.length !== 0
+      !validator.isMobilePhone(formData.default_contact_phone) &&
+      !!formData.default_contact_phone.length
     ) {
-      setError('Short Phone Number')
-      return false
-    }
-    if (isNaN(formData.default_contact_phone)) {
       setError('Invalid Phone Number')
       return false
     }
@@ -121,16 +118,10 @@ export default function EditOrganization() {
     if (error === 'Invalid Phone Number')
       return (
         <p id="FormError">
-          Invalid Data Input: Contact Phone Number is too short{' '}
-        </p>
-      )
-    if (error === 'Short Phone Number') {
-      return (
-        <p id="FormError">
           Invalid Data Input: Contact Phone Number is invalid{' '}
         </p>
       )
-    } else return null
+    else return null
   }
 
   return (
