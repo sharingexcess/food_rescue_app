@@ -29,10 +29,10 @@
   .Route {
     position: relative;
     width: 100%;
-    background: var(--mediumgrey);
-    border: 1px solid rgba(var(--blue-rgb), 0.24);
+    background: var(--tile-background);
+    border: var(--tile-border);
     border-radius: 8px;
-    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.24);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
     margin: 16px 0;
     padding: 16px 64px 24px 16px;
     display: flex;

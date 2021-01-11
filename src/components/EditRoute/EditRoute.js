@@ -250,7 +250,7 @@ function EditRoute() {
 
   return (
     <div id="EditRoute">
-      <GoBack label="back" url="/" />
+      <GoBack />
       <h1>New Route</h1>
       <p>
         Use this form to assign a new rescue to a driver. Routes are

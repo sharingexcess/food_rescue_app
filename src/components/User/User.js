@@ -42,7 +42,7 @@ function User() {
   if (!profile) return <Loading text="Loading user" />
   return (
     <main id="User">
-      <GoBack url="/admin/users" label="back to users" />
+      <GoBack />
       <div>
         <img
           src={profileIconFullUrl || profile.icon || UserIcon}

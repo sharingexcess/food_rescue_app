@@ -159,6 +159,15 @@ function Route() {
       getCollection('Routes')
         .doc(route.id)
         .set({ status: 0, notes }, { merge: true })
+        .then(() => {
+          fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+            method: 'POST',
+            body: JSON.stringify({
+              calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+              eventId: route.google_calendar_event_id,
+            }),
+          }).catch(e => console.error('Error deleting calendar event:', e))
+        })
     }
 
     if (willComplete || willDelete || [0, 9].includes(route.status)) return null

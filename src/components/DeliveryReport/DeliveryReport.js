@@ -78,7 +78,7 @@ export default function DeliveryReport() {
   if (!delivery) return <Loading text="Loading report" />
   return (
     <main id="DeliveryReport">
-      <GoBack url={`/routes/${route_id}`} label="back to rescue" />
+      <GoBack />
       <h1>Delivery Report</h1>
       <h3>{delivery_org.name}</h3>
       <h4>

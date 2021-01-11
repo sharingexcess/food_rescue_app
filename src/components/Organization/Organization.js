@@ -63,7 +63,7 @@ function Organization() {
   if (!org) return <Loading text="Loading your organization" />
   return (
     <main id="Organization">
-      <GoBack url="/admin/organizations" label="back to organizations" />
+      <GoBack />
       <div>
         <img src={orgIconFullUrl || UserIcon} id="org-icon" alt={org.name} />
         <div>

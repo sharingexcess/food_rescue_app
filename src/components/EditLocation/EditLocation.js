@@ -112,7 +112,7 @@ export default function EditLocation() {
     <Loading text="Loading location data..." />
   ) : (
     <main id="EditLocation">
-      <GoBack label="back to organization" url={`/admin/organizations/${id}`} />
+      <GoBack />
       <h1>{loc_id ? 'Edit Location' : 'Add Location'}</h1>
       <Input
         type="text"
