@@ -44,15 +44,15 @@ export function updateFieldSuggestions(
 export function getDefaultStartTime() {
   return moment(new Date())
     .startOf('hour')
-    .add(1, 'hour')
-    .format('yyyy-MM-DDThh:mm')
+    .add(2, 'hour')
+    .format('yyyy-MM-DDTkk:mm')
 }
 
 export function getDefaultEndTime() {
   return moment(new Date())
     .startOf('hour')
-    .add(3, 'hour')
-    .format('yyyy-MM-DDThh:mm')
+    .add(4, 'hour')
+    .format('yyyy-MM-DDTkk:mm')
 }
 
 // formFields defines the input form fields used on the EditRescue page
@@ -81,7 +81,7 @@ export const formFields = [
     preReq: 'time_end',
     type: 'text',
     suggestionQuery: (name, drivers) =>
-      drivers.filter(d => d.name.toLowerCase().startsWith(name)),
+      drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
     handleSelect: user => ({
       driver_name: user.name,
       driver_id: user.id,
