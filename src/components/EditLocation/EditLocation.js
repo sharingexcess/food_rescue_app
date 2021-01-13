@@ -67,6 +67,7 @@ export default function EditLocation() {
           .set(
             {
               id: new_loc_id,
+              org_id: id,
               ...formData,
             },
             { merge: true }
