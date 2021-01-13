@@ -3,12 +3,13 @@ import { useHistory, useParams } from 'react-router-dom'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
 import { getCollection } from '../../helpers/helpers'
-import { initializeFormData, required_fields } from './utils'
+import { initializeFormData } from './utils'
 import { GoBack } from '../../helpers/components'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
 import './EditLocation.scss'
+import validator from 'validator'
 import StatesDropDown from '../StatesDropDown/StatesDropDown'
 
 export default function EditLocation() {
@@ -30,7 +31,8 @@ export default function EditLocation() {
   const [isPrimary, setIsPrimary] = useState(
     loc_id && organization ? organization.primary_location === loc_id : false
   )
-  const [error, setError] = useState()
+  const [errors, setErrors] = useState([])
+  const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
     if (location && location.name && !formData.name) {
@@ -39,17 +41,46 @@ export default function EditLocation() {
   }, [location, formData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleChange(e) {
-    setError(false)
     setFormData({ ...formData, [e.target.id]: e.target.value })
+    setErrors([])
+    setShowErrors(false)
   }
 
   function validateFormData() {
-    for (const field of required_fields) {
-      if (!formData[field].length) {
-        return false
-      }
+    if (!formData.name.length) {
+      errors.push('Missing Location Name')
     }
-    return true
+    if (!formData.address1.length) {
+      errors.push('Invalid Address')
+    }
+    if (!formData.city.length || !validator.isAlpha(formData.city)) {
+      errors.push('Invalid City')
+    }
+    if (!formData.state.length || !validator.isAlpha(formData.state)) {
+      errors.push('Invalid State')
+    }
+    if (!validator.isPostalCode(formData.zip_code, 'US')) {
+      errors.push('Invalid Zip Code')
+    }
+    if (!formData.upon_arrival_instructions.length) {
+      errors.push('Missing Upon Arrival Instructions')
+    }
+    if (
+      formData.contact_name.length &&
+      !validator.isAlpha(formData.contact_name)
+    ) {
+      errors.push('Invalid Contact name')
+    }
+    if (
+      formData.contact_phone.length &&
+      !validator.isMobilePhone(formData.contact_phone)
+    ) {
+      errors.push('Invalid Contact phone')
+    }
+    if (errors.length === 0) {
+      return true
+    }
+    return false
   }
 
   async function handleSubmit() {
@@ -75,8 +106,6 @@ export default function EditLocation() {
           .then(() => history.push(`/admin/organizations/${id}`))
           .catch(e => console.error('Error writing document: ', e))
       }
-    } else {
-      setError(true)
     }
   }
 
@@ -97,17 +126,13 @@ export default function EditLocation() {
   }
 
   function FormError() {
-    if (error)
-      return (
-        <p id="FormError">
-          Missing in form data:{' '}
-          {required_fields
-            .map(i => (formData[i] ? null : i))
-            .filter(Boolean)
-            .join(', ')}{' '}
+    if (showErrors === true) {
+      return errors.map(error => (
+        <p id="FormError" key={error}>
+          {error}
         </p>
-      )
-    else return null
+      ))
+    } else return null
   }
 
   return !location ? (
@@ -200,7 +225,12 @@ export default function EditLocation() {
         </p>
       </div>
       <FormError />
-      <button onClick={handleSubmit}>
+      <button
+        onClick={() => {
+          handleSubmit()
+          setShowErrors(true)
+        }}
+      >
         {loc_id ? 'update location' : 'add location'}
       </button>
     </main>
