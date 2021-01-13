@@ -53,6 +53,7 @@ export default function DeliveryReport() {
           updated_weight -= delivery.report.weight
         } else break
       }
+      if (isNaN(updated_weight)) updated_weight = 0
       setWeight(updated_weight)
     }
     if (delivery && delivery.pickup_ids && delivery.pickup_ids.length) {
@@ -77,10 +78,13 @@ export default function DeliveryReport() {
 
   function handleSubmit(event) {
     event.preventDefault()
+    const calculated_weight = parseInt(
+      (weight * formData.percent_of_total_dropped) / 100
+    )
     setFirestoreData(['Deliveries', delivery_id], {
       report: {
         percent_of_total_dropped: parseInt(formData.percent_of_total_dropped),
-        weight: parseInt((weight * formData.percent_of_total_dropped) / 100),
+        weight: isNaN(calculated_weight) ? 0 : calculated_weight,
         notes: formData.notes,
         created_at:
           delivery.completed_at ||

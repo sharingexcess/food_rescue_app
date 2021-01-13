@@ -513,6 +513,7 @@ function Route() {
             {willFind ? (
               <>
                 <EditDelivery handleSubmit={addBackupDelivery} />
+                <br />
                 <button
                   className="yellow small"
                   onClick={() => setWillFind(false)}
