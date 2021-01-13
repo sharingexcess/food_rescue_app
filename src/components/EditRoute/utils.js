@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import { v4 as generateUniqueId } from 'uuid'
 import { getCollection } from '../../helpers/helpers'
+import moment from 'moment'
 
 export function createPickup(event, formData, history) {
   event.preventDefault()
@@ -23,26 +24,35 @@ export function createPickup(event, formData, history) {
 
 export function updateFieldSuggestions(
   queryValue,
+  drivers,
   field,
   suggestions,
   callback
 ) {
-  field.suggestionQuery &&
-    field
-      .suggestionQuery(queryValue)
-      .get()
-      .then(querySnapshot => {
-        const updatedSuggestions = []
-        querySnapshot.forEach(doc => {
-          updatedSuggestions.push({ id: doc.id, ...doc.data() })
-        })
-        if (
-          !suggestions[field.id] ||
-          suggestions[field.id].length !== updatedSuggestions.length
-        ) {
-          callback({ ...suggestions, [field.id]: updatedSuggestions })
-        }
-      })
+  if (field.suggestionQuery) {
+    const updatedSuggestions = field.suggestionQuery(queryValue, drivers)
+    if (
+      !suggestions[field.id] ||
+      suggestions[field.id].length !== updatedSuggestions.length
+    ) {
+      callback({ ...suggestions, [field.id]: updatedSuggestions })
+      return updatedSuggestions
+    }
+  }
+}
+
+export function getDefaultStartTime() {
+  return moment(new Date())
+    .startOf('hour')
+    .add(1, 'hour')
+    .format('yyyy-MM-DDThh:mm')
+}
+
+export function getDefaultEndTime() {
+  return moment(new Date())
+    .startOf('hour')
+    .add(3, 'hour')
+    .format('yyyy-MM-DDThh:mm')
 }
 
 // formFields defines the input form fields used on the EditRescue page
@@ -55,22 +65,8 @@ export function updateFieldSuggestions(
 // loadSuggestionsOnInit: a boolean defining whether the suggestionQuery should be run before the user enters any input
 export const formFields = [
   {
-    label: 'Select a driver...',
-    id: 'driver_name',
-    type: 'text',
-    suggestionQuery: name =>
-      getCollection('Users')
-        .where('name', '>=', name)
-        .where('name', '<=', name + '\uf8ff'),
-    handleSelect: user => ({
-      driver_name: user.name,
-      driver_id: user.id,
-    }),
-  },
-  {
     label: 'Start Time',
     id: 'time_start',
-    preReq: 'driver_id',
     type: 'datetime-local',
   },
   {
@@ -78,5 +74,17 @@ export const formFields = [
     id: 'time_end',
     preReq: 'time_start',
     type: 'datetime-local',
+  },
+  {
+    label: 'Select a driver...',
+    id: 'driver_name',
+    preReq: 'time_end',
+    type: 'text',
+    suggestionQuery: (name, drivers) =>
+      drivers.filter(d => d.name.toLowerCase().startsWith(name)),
+    handleSelect: user => ({
+      driver_name: user.name,
+      driver_id: user.id,
+    }),
   },
 ]

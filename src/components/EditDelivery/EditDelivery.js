@@ -1,9 +1,13 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
 import { updateFieldSuggestions, formFields } from './utils'
+import useOrganizationData from '../../hooks/useOrganizationData'
+import useLocationData from '../../hooks/useLocationData'
 import './EditDelivery.scss'
 
 function EditDelivery({ handleSubmit }) {
+  const organizations = useOrganizationData()
+  const locations = useLocationData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -26,7 +30,13 @@ function EditDelivery({ handleSubmit }) {
 
   function handleChange(e, field) {
     if (field.suggestionQuery) {
-      updateFieldSuggestions(e.target.value, field, suggestions, setSuggestions)
+      updateFieldSuggestions(
+        e.target.value,
+        field.id === 'org_name' ? organizations : locations,
+        field,
+        suggestions,
+        setSuggestions
+      )
     }
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
@@ -42,12 +52,16 @@ function EditDelivery({ handleSubmit }) {
   function renderFieldInput(field) {
     if (!field.preReq || formData[field.preReq]) {
       if (field.loadSuggestionsOnInit && !formData[field.id]) {
-        updateFieldSuggestions(
+        const updatedSuggestions = updateFieldSuggestions(
           formData[field.preReq],
+          field.id === 'org_name' ? organizations : locations,
           field,
           suggestions,
           setSuggestions
         )
+        if (updatedSuggestions && updatedSuggestions.length === 1) {
+          handleSelect(null, updatedSuggestions[0], field)
+        }
       }
 
       function handleDropdownSelect(e) {

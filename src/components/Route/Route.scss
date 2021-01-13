@@ -177,7 +177,20 @@
       p {
         color: var(--blue);
         font-weight: 500;
-        text-decoration: underline;
+        // text-decoration: underline;
+        i {
+          font-size: 12px;
+          margin-right: 4px;
+          margin-bottom: 2px;
+        }
+        span {
+          text-decoration: none;
+          color: var(--yellow);
+          margin-left: 4px;
+        }
+        a {
+          text-decoration: underline;
+        }
       }
 
       a {
@@ -195,7 +208,7 @@
         text-transform: capitalize;
       }
 
-      .cancel-buttons {
+      .buttons {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -206,6 +219,33 @@
           flex-grow: 1;
         }
       }
+    }
+  }
+
+  #BackupDelivery {
+    width: 100%;
+    padding: 32px 16px;
+    margin: 24px 0;
+    border-radius: 8px;
+    background: var(--mediumgrey);
+
+    > h4 {
+      width: 100%;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    > p {
+      width: 100%;
+      font-size: 14px;
+      color: var(--blue);
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 16px;
+      width: auto;
     }
   }
 }

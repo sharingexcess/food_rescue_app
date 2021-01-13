@@ -24,6 +24,7 @@ import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
 import './styles/index.scss'
+import CompletedRoute from './components/CompletedRoute/CompletedRoute'
 
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
@@ -88,6 +89,9 @@ function App() {
                 </Route>
                 <Route exact path="/routes/:route_id/delivery/:delivery_id">
                   <DeliveryReport />
+                </Route>
+                <Route exact path="/routes/:route_id/completed">
+                  <CompletedRoute />
                 </Route>
                 <Route exact path="/profile">
                   <Profile />
