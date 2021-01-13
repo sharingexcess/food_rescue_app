@@ -216,7 +216,12 @@ function EditRoute() {
             />
             {s.type}
           </h4>
-          <h2>{s.org.name}</h2>
+          <h2>
+            {s.org.name}{' '}
+            {s.location.name && s.location.name !== s.org.name
+              ? `(${s.location.name})`
+              : ''}
+          </h2>
           <p>
             {s.location.address1}
             {s.location.address2 && ` - ${s.location.address2}`}
