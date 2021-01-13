@@ -24,26 +24,21 @@ export function createPickup(event, formData, history) {
 
 export function updateFieldSuggestions(
   queryValue,
+  data,
   field,
   suggestions,
   callback
 ) {
-  field.suggestionQuery &&
-    field
-      .suggestionQuery(queryValue)
-      .get()
-      .then(querySnapshot => {
-        const updatedSuggestions = []
-        querySnapshot.forEach(doc => {
-          updatedSuggestions.push({ id: doc.id, ...doc.data() })
-        })
-        if (
-          !suggestions[field.id] ||
-          suggestions[field.id].length !== updatedSuggestions.length
-        ) {
-          callback({ ...suggestions, [field.id]: updatedSuggestions })
-        }
-      })
+  if (field.suggestionQuery) {
+    const updatedSuggestions = field.suggestionQuery(queryValue, data)
+    if (
+      !suggestions[field.id] ||
+      suggestions[field.id].length !== updatedSuggestions.length
+    ) {
+      callback({ ...suggestions, [field.id]: updatedSuggestions })
+      return updatedSuggestions
+    }
+  }
 }
 
 // formFields defines the input form fields used on the EditRescue page
@@ -60,10 +55,10 @@ export const formFields = [
     id: 'org_name',
     preReq: null,
     type: 'text',
-    suggestionQuery: name =>
-      getCollection('Organizations')
-        .where('name', '>=', name)
-        .where('name', '<=', name + '\uf8ff'),
+    suggestionQuery: (name, organizations) =>
+      organizations.filter(o =>
+        o.name.toLowerCase().startsWith(name.toLowerCase())
+      ),
     handleSelect: org => ({
       org,
       org_name: org.name,
@@ -77,8 +72,8 @@ export const formFields = [
     id: 'location_id',
     preReq: 'org_id',
     type: 'select',
-    suggestionQuery: org_id =>
-      getCollection('Locations').where('org_id', '==', org_id),
+    suggestionQuery: (org_id, locations) =>
+      locations.filter(l => l.org_id === org_id),
     handleSelect: loc => (loc ? { location: loc, location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },

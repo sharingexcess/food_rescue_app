@@ -10,6 +10,7 @@ export function Input({
   suggestions,
   onSuggestionClick,
   style,
+  readOnly,
   animation = true,
 }) {
   const [isUsed, setIsUsed] = useState(type === 'select' ? true : false)
@@ -41,6 +42,7 @@ export function Input({
             onBlur={e => {
               setIsUsed(e.target.value.length ? true : false)
             }}
+            readOnly={readOnly}
           />
         ) : type === 'select' ? (
           <select
@@ -48,6 +50,7 @@ export function Input({
             value={value}
             onChange={onSuggestionClick}
             onClick={() => setIsUsed(true)}
+            readOnly={readOnly}
           >
             <option value={null}></option>
             {suggestions
@@ -67,6 +70,7 @@ export function Input({
             name="no" //prevent autoComplete
             type={type}
             onChange={onChange}
+            readOnly={readOnly}
             value={value}
             onFocus={!shouldNotMoveLabel() ? () => setIsUsed(true) : null}
             onBlur={
