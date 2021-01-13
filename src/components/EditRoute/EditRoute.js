@@ -83,7 +83,6 @@ function EditRoute() {
             driver_id: formData.driver_id,
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            report: {},
             status: 1,
             route_id,
           })
@@ -96,7 +95,6 @@ function EditRoute() {
             driver_id: formData.driver_id,
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            weight: 0,
             status: 1,
             pickup_ids,
             route_id,
@@ -273,6 +271,7 @@ function EditRoute() {
               />
             ) : null
           )}
+          <br />
           {formData.time_end && (
             <button onClick={() => setConfirmedTime(true)}>add pickups</button>
           )}
