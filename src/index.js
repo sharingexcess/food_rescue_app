@@ -24,6 +24,18 @@ import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
 import './styles/index.scss'
+import LogRocket from 'logrocket'
+import setupLogRocketReact from 'logrocket-react'
+
+LogRocket.init('zyxomt/test-project')
+setupLogRocketReact(LogRocket)
+LogRocket.identify('THE_USER_ID_IN_YOUR_APP', {
+  name: 'Nom Phan',
+  email: 'nomiephan1504@gmail.com',
+
+  // Add your own custom user variables here, ie:
+  subscriptionType: 'pro',
+})
 
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
