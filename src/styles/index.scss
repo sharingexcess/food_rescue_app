@@ -4,6 +4,29 @@
 @import './global.scss';
 @import './animations.scss';
 
+body.dark-theme {
+  --green: #00ff00;
+  --green-rgb: 0, 255, 0;
+  --yellow: #ecc133;
+  --yellow-rgb: 236, 193, 51;
+  --red: #ec4f33;
+  --red-rgb: 236, 79, 51;
+  --blue: #69a8fa;
+  --blue-rgb: 105, 168, 250;
+  --white: #ffffff;
+  --white-rgb: 255, 255, 255;
+  --darkgrey: #020d1a;
+  --darkgrey-rgb: 2, 13, 26;
+  --mediumgrey: #041428;
+  --mediumgrey-rgb: 4, 20, 40;
+  --lightgrey: #cccccc;
+  --lightgrey-rgb: 204, 204, 204;
+  --mobile: 600px;
+  --tile-border: 1px solid rgba(var(--blue-rgb), 0.32);
+  --tile-background: #041428;
+  --tile-background-rgb: 4, 20, 40;
+}
+
 body.light-theme {
   --green: #059705;
   --green-rgb: 5, 151, 5;
@@ -27,27 +50,8 @@ body.light-theme {
   --tile-background-rgb: 255, 255, 255;
 }
 
-body.dark-theme {
-  --green: #00ff00;
-  --green-rgb: 0, 255, 0;
-  --yellow: #ecc133;
-  --yellow-rgb: 236, 193, 51;
-  --red: #ec4f33;
-  --red-rgb: 236, 79, 51;
-  --blue: #69a8fa;
-  --blue-rgb: 105, 168, 250;
-  --white: #ffffff;
-  --white-rgb: 255, 255, 255;
-  --darkgrey: #020d1a;
-  --darkgrey-rgb: 2, 13, 26;
-  --mediumgrey: #041428;
-  --mediumgrey-rgb: 4, 20, 40;
-  --lightgrey: #cccccc;
-  --lightgrey-rgb: 204, 204, 204;
-  --mobile: 600px;
-  --tile-border: 1px solid rgba(var(--blue-rgb), 0.32);
-  --tile-background: #041428;
-  --tile-background-rgb: 4, 20, 40;
+body.light-theme ::-webkit-calendar-picker-indicator {
+  filter: invert(0) !important;
 }
 
 body {

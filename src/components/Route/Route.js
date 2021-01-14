@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { getCollection, formatPhoneNumber } from '../../helpers/helpers'
+import {
+  getCollection,
+  formatPhoneNumber,
+  setFirestoreData,
+  updateGoogleCalendarEvent,
+  generateStopId,
+} from '../../helpers/helpers'
 import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
@@ -15,6 +21,8 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useUserData from '../../hooks/useUserData'
 import useLocationData from '../../hooks/useLocationData'
+import firebase from 'firebase/app'
+import EditDelivery from '../EditDelivery/EditDelivery'
 import './Route.scss'
 
 function Route() {
@@ -87,42 +95,160 @@ function Route() {
   }
 
   function Driver() {
-    return route.driver ? (
+    return (
       <div id="Driver">
-        <img src={route.driver.icon || UserIcon} alt={route.driver.name} />
+        <img
+          src={route.driver ? route.driver.icon : UserIcon}
+          alt={route.driver ? route.driver.name : 'No assigned driver'}
+        />
         <div>
-          <h3>{route.driver.name}</h3>
+          <h3>{route.driver ? route.driver.name : 'No assigned driver'}</h3>
           <h4>{moment(route.time_start).format('dddd, MMMM D')}</h4>
           <h5>
             {moment(route.time_start).format('h:mma')} -{' '}
             {moment(route.time_end).format('h:mma')}
           </h5>
-          {route.notes ? <p>Notes: "{route.notes}"</p> : null}
+          {route.notes ? <p>Notes: {route.notes}</p> : null}
         </div>
       </div>
-    ) : null
+    )
   }
 
   function StatusButton() {
     const [notes, setNotes] = useState('')
+    const [willAssign, setWillAssign] = useState()
 
     function handleBegin() {
-      getCollection('Routes').doc(route.id).set({ status: 3 }, { merge: true })
+      setFirestoreData(['Routes', route.id], { status: 3 })
     }
 
-    function handleComplete() {
-      getCollection('Routes')
-        .doc(route.id)
-        .set({ status: 9, notes }, { merge: true })
+    async function handleComplete() {
+      await setFirestoreData(['Routes', route.id], { status: 9, notes })
+      history.push(`/routes/${route_id}/completed`)
     }
 
-    if (willCancel || willDelete) return null
+    async function handleClaim() {
+      const event = await updateGoogleCalendarEvent({
+        ...route,
+        stops,
+        notes: null,
+        driver: drivers.find(d => d.id === user.uid),
+      })
+      setFirestoreData(['Routes', route.id], {
+        driver_id: user.uid,
+        google_calendar_event_id: event.id,
+        notes: null,
+      })
+    }
+
+    async function handleUnassign() {
+      const event = await updateGoogleCalendarEvent({
+        ...route,
+        stops,
+        driver: null,
+        notes: `Route dropped by ${route.driver.name}: "${notes}"`,
+      })
+      await setFirestoreData(['Routes', route.id], {
+        driver_id: null,
+        google_calendar_event_id: event.id,
+        notes: `Route dropped by ${route.driver.name}: "${notes}"`,
+      })
+    }
+
+    async function handleAssign(e) {
+      const val = e.target.value
+      const email = val.substring(val.indexOf('(') + 1, val.length - 1)
+      const driver = drivers.find(d => d.email === email)
+
+      const event = await updateGoogleCalendarEvent({
+        ...route,
+        stops,
+        driver,
+        notes: null,
+      })
+      setFirestoreData(['Routes', route.id], {
+        driver_id: driver.id,
+        google_calendar_event_id: event.id,
+        notes: null,
+      })
+    }
+
+    if (
+      willCancel ||
+      willDelete ||
+      (!admin && route.driver_id && route.driver_id !== user.uid)
+    )
+      return null
     if (route.status === 1) {
-      return (
-        <button className="blue" onClick={handleBegin}>
-          begin route
-        </button>
-      )
+      if (route.driver) {
+        return (
+          <div className={admin ? 'buttons' : ''}>
+            {!willAssign ? (
+              <button className="blue" onClick={handleBegin}>
+                begin route
+                {admin && route.driver_id !== user.uid ? ' as admin' : ''}
+              </button>
+            ) : null}
+            {admin ? (
+              willAssign ? (
+                <Input
+                  type="select"
+                  label="Select Driver"
+                  suggestions={drivers.map(d => `${d.name} (${d.email})`)}
+                  onSuggestionClick={handleAssign}
+                />
+              ) : (
+                <button className="green" onClick={() => setWillAssign(true)}>
+                  re-assign route
+                </button>
+              )
+            ) : willAssign ? (
+              <>
+                <Input
+                  label="Why can't you complete this route?"
+                  animation={false}
+                  type="textarea"
+                  value={notes}
+                  onChange={e => setNotes(e.target.value)}
+                />
+                <div className="buttons">
+                  <button
+                    className="red small"
+                    onClick={() => setWillAssign(false)}
+                  >
+                    cancel
+                  </button>
+                  <button className="blue" onClick={handleUnassign}>
+                    drop route
+                  </button>
+                </div>
+              </>
+            ) : (
+              <button className="red" onClick={() => setWillAssign(true)}>
+                drop route
+              </button>
+            )}
+          </div>
+        )
+      } else if (admin) {
+        return willAssign ? (
+          <Input
+            type="select"
+            label="Select Driver"
+            suggestions={drivers.map(d => `${d.name} (${d.email})`)}
+            onSuggestionClick={handleAssign}
+          />
+        ) : (
+          <button className="blue" onClick={() => setWillAssign(true)}>
+            assign route
+          </button>
+        )
+      } else
+        return (
+          <button className="blue" onClick={handleClaim}>
+            claim route
+          </button>
+        )
     } else if (route.status === 3 && areAllStopsCompleted()) {
       return willComplete ? (
         <>
@@ -170,7 +296,13 @@ function Route() {
         })
     }
 
-    if (willComplete || willDelete || [0, 9].includes(route.status)) return null
+    if (
+      willComplete ||
+      willDelete ||
+      [0, 9].includes(route.status) ||
+      (!admin && route.driver_id !== user.uid)
+    )
+      return null
     return willCancel ? (
       <>
         <Input
@@ -236,12 +368,8 @@ function Route() {
   function UpdateStop({ stop }) {
     function handleOnTheWay() {
       const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-      getCollection(collection)
-        .doc(stop.id)
-        .set({ status: 3 }, { merge: true })
-        .then(() => {
-          window.open(generateDirectionsLink(stop.location), '_blank')
-        })
+      setFirestoreData([collection, stop.id], { status: 3 })
+      window.open(generateDirectionsLink(stop.location), '_blank')
     }
 
     function handleOpenReport() {
@@ -259,7 +387,7 @@ function Route() {
     if (stop.status === 3) {
       return (
         <button className="update-stop" onClick={handleOpenReport}>
-          Fill out {stop.type} report
+          Complete {stop.type} report
         </button>
       )
     } else return null
@@ -295,7 +423,7 @@ function Route() {
           value={cancelNotes}
           onChange={e => setCancelNotes(e.target.value)}
         />
-        <section className="cancel-buttons">
+        <section className="buttons">
           <button className="yellow small" onClick={() => setCancelStop(false)}>
             back
           </button>
@@ -345,20 +473,6 @@ function Route() {
             {stop.location.upon_arrival_instructions}
           </h6>
         ) : null}
-        {stop.location.contact_name ? (
-          <h6>
-            <span>Contact Name: </span>
-            {stop.location.contact_name}
-          </h6>
-        ) : null}
-        {stop.location.contact_phone ? (
-          <h6>
-            <span>Contact Phone:</span>
-            <ExternalLink url={'tel:' + stop.location.contact_phone}>
-              <p>{formatPhoneNumber(stop.location.contact_phone)}</p>
-            </ExternalLink>
-          </h6>
-        ) : null}
       </>
     ) : [0, 9].includes(stop.status) && stop.report && stop.report.notes ? (
       <h6>
@@ -366,6 +480,61 @@ function Route() {
         {stop.report.notes}
       </h6>
     ) : null
+  }
+
+  function BackupDelivery() {
+    const [willFind, setWillFind] = useState()
+    if (areAllStopsCompleted()) {
+      const lastStop = stops[stops.length - 1]
+      if (
+        !lastStop.report.weight ||
+        lastStop.report.percent_of_total_dropped < 100
+      ) {
+        async function addBackupDelivery(stop) {
+          const stop_id = generateStopId(stop)
+          await setFirestoreData(['Deliveries', stop_id], {
+            id: stop_id,
+            org_id: stop.org_id,
+            location_id: stop.location_id,
+            driver_id: route.driver_id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            weight: 0,
+            status: 1,
+            pickup_ids: lastStop.pickup_ids,
+            route_id,
+          })
+          await setFirestoreData(['Routes', route.id], {
+            stops: [...route.stops, { type: 'delivery', id: stop_id }],
+          })
+        }
+        return (
+          <div id="BackupDelivery">
+            {willFind ? (
+              <>
+                <EditDelivery handleSubmit={addBackupDelivery} />
+                <br />
+                <button
+                  className="yellow small"
+                  onClick={() => setWillFind(false)}
+                >
+                  cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <h4>Looks like you have left over food!</h4>
+                <p>Add another delivery location to finish your route.</p>
+                <button onClick={() => setWillFind(true)}>
+                  add another delivery
+                </button>
+              </>
+            )}
+          </div>
+        )
+      }
+    }
+    return null
   }
 
   return (
@@ -384,7 +553,7 @@ function Route() {
                   <div
                     className={`Stop ${s.type} ${
                       isNextIncompleteStop(i) ? 'active' : ''
-                    }${areAllStopsCompleted(i) ? 'complete' : ''}`}
+                    }${areAllStopsCompleted() ? 'complete' : ''}`}
                     key={i}
                   >
                     <StatusIndicator stop={s} />
@@ -398,7 +567,12 @@ function Route() {
                       />
                       {s.type}
                     </h4>
-                    <h2>{s.org.name}</h2>
+                    <h2>
+                      {s.org.name}
+                      {s.location.name && s.location.name !== s.org.name
+                        ? ` (${s.location.name})`
+                        : ''}
+                    </h2>
                     <ExternalLink url={generateDirectionsLink(s.location)}>
                       <p>
                         {s.location.address1}
@@ -409,6 +583,33 @@ function Route() {
                         {s.location.zip_code}
                       </p>
                     </ExternalLink>
+                    {s.location.contact_phone || s.org.default_contact_phone ? (
+                      <p>
+                        <i className="fa fa-phone" />
+                        <a
+                          href={`tel:${
+                            s.location.contact_phone ||
+                            s.org.default_contact_phone
+                          }`}
+                        >
+                          {formatPhoneNumber(
+                            s.location.contact_phone ||
+                              s.org.default_contact_phone
+                          )}
+                        </a>
+                        {s.location.contact_name ||
+                        s.org.default_contact_name ? (
+                          <span>
+                            (ask for{' '}
+                            {s.location.contact_name ||
+                              s.org.default_contact_name}
+                            )
+                          </span>
+                        ) : (
+                          ''
+                        )}
+                      </p>
+                    ) : null}
                     <StopNotes stop={s} />
                     {hasEditPermissions() ? (
                       <>
@@ -423,10 +624,10 @@ function Route() {
                   </div>
                 ))}
               </section>
-
+              <BackupDelivery />
               <StatusButton />
               <CancelButton />
-              <DeleteButton />
+              {admin && <DeleteButton />}
             </>
           ) : (
             <Loading text="Loading stops on route" relative />

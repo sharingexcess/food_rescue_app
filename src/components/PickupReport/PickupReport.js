@@ -8,10 +8,12 @@ import { GoBack } from '../../helpers/components'
 import { setFirestoreData } from '../../helpers/helpers'
 import usePickupData from '../../hooks/usePickupData'
 import useOrganizationData from '../../hooks/useOrganizationData'
+import { useAuthContext } from '../Auth/Auth'
 import './PickupReport.scss'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
+  const { admin } = useAuthContext()
   const history = useHistory()
   const pickup = usePickupData(pickup_id)
   const pickup_org = useOrganizationData(pickup ? pickup.org_id : {}) || {}
@@ -33,6 +35,10 @@ export default function PickupReport() {
       ? setFormData(formData => ({ ...formData, ...pickup.report }))
       : setChanged(true)
   }, [pickup])
+
+  function canEdit() {
+    return [1, 3].includes(pickup.status) || admin
+  }
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -84,9 +90,11 @@ export default function PickupReport() {
           !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
             <section key={field}>
               <h5>{field}</h5>
-              <button className="decrement" onClick={() => decrement(field)}>
-                -
-              </button>
+              {canEdit() ? (
+                <button className="decrement" onClick={() => decrement(field)}>
+                  -
+                </button>
+              ) : null}
               <input
                 readOnly
                 id={field}
@@ -94,9 +102,11 @@ export default function PickupReport() {
                 value={formData[field]}
                 onChange={handleChange}
               />
-              <button className="increment" onClick={() => increment(field)}>
-                +
-              </button>
+              {canEdit() ? (
+                <button className="increment" onClick={() => increment(field)}>
+                  +
+                </button>
+              ) : null}
             </section>
           ) : null
         )}
@@ -107,6 +117,7 @@ export default function PickupReport() {
           type="tel"
           value={formData.weight}
           onChange={handleChange}
+          readOnly={!canEdit()}
         />
       </section>
       <Input
@@ -116,8 +127,9 @@ export default function PickupReport() {
         row={3}
         value={formData.notes}
         onChange={handleChange}
+        readOnly={!canEdit()}
       />
-      {changed ? (
+      {changed && canEdit() ? (
         <button onClick={handleSubmit}>
           {pickup.report ? 'update report' : 'submit report'}
         </button>

@@ -4,6 +4,6 @@ environments
 *.env*
 .eslintcache
 package-lock.json
-.firebase/*.cache
+.firebase
 .DS_Store
 *credentials*
