@@ -47,11 +47,11 @@ export default function EditLocation() {
   }
 
   function validateFormData() {
-    if (!formData.name.length) {
+    if (formData.name === '') {
       errors.push('Missing Location Name')
     }
     if (!formData.address1.length) {
-      errors.push('Invalid Address')
+      errors.push('Missing Address')
     }
     if (!formData.city.length || !validator.isAlpha(formData.city)) {
       errors.push('Invalid City')
