@@ -9,6 +9,7 @@ import UserIcon from '../../assets/user.svg'
 import { handleOrgIcon, initializeFormData } from './utils'
 import './EditOrganization.scss'
 import { getCollection } from '../../helpers/helpers'
+import validator from 'validator'
 
 export default function EditOrganization() {
   const { id } = useParams()
@@ -25,7 +26,8 @@ export default function EditOrganization() {
   )
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
   const [file, setFile] = useState()
-  const [error, setError] = useState()
+  const [errors, setErrors] = useState([])
+  const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
     if (org.name && !formData.name) {
@@ -38,18 +40,32 @@ export default function EditOrganization() {
   }, [org.icon])
 
   function handleChange(e) {
-    setError(false)
     setFormData({ ...formData, [e.target.id]: e.target.value })
+    setErrors([])
+    setShowErrors(false)
   }
 
   function validateFormData() {
-    if (formData.name.length) {
+    if (formData.name === ' ') {
+      errors.push('Missing in form data: Organization Name')
+    }
+    if (
+      !validator.isEmail(formData.default_contact_email) &&
+      !!formData.default_contact_email
+    ) {
+      errors.push('Invalid Data Input: Contact Email is incorrect')
+    }
+    if (
+      !validator.isMobilePhone(formData.default_contact_phone) &&
+      !!formData.default_contact_phone.length
+    ) {
+      errors.push('Invalid Data Input: Contact Phone Number is invalid')
+    }
+    if (errors.length === 0) {
       return true
     }
-    setError(true)
     return false
   }
-
   async function handleSubmit() {
     const is_valid = validateFormData()
     if (is_valid) {
@@ -96,9 +112,9 @@ export default function EditOrganization() {
   }
 
   function FormError() {
-    if (error)
-      return <p id="FormError">Missing in form data: Organization Name</p>
-    else return null
+    if (showErrors === true) {
+      return errors.map(error => <p id="FormError">{error}</p>)
+    } else return null
   }
 
   return (
@@ -154,7 +170,12 @@ export default function EditOrganization() {
         onSuggestionClick={handleChange}
       />
       <FormError />
-      <button onClick={handleSubmit}>
+      <button
+        onClick={() => {
+          handleSubmit()
+          setShowErrors(true)
+        }}
+      >
         {id ? 'update organization' : 'create organization'}
       </button>
     </main>
