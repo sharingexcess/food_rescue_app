@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { usStates } from './usstates'
+import { usStates } from '../../helpers/usStates'
 import './StatesDropDown.scss'
 export default function StatesDropDown({
   element_id,
