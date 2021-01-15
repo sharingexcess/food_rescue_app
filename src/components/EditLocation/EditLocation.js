@@ -47,7 +47,7 @@ export default function EditLocation() {
   }
 
   function validateFormData() {
-    if (formData.name === '') {
+    if (!formData.name.length) {
       errors.push('Missing Location Name')
     }
     if (!formData.address1.length) {
@@ -55,9 +55,6 @@ export default function EditLocation() {
     }
     if (!formData.city.length || !validator.isAlpha(formData.city)) {
       errors.push('Invalid City')
-    }
-    if (!formData.state.length || !validator.isAlpha(formData.state)) {
-      errors.push('Invalid State')
     }
     if (!validator.isPostalCode(formData.zip_code, 'US')) {
       errors.push('Invalid Zip Code')
