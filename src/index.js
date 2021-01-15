@@ -23,18 +23,19 @@ import Calendar from './components/Calendar/Calendar'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
 import './styles/index.scss'
-import LogRocket from 'logrocket'
-import setupLogRocketReact from 'logrocket-react'
 
-LogRocket.init('zyxomt/test-project')
-setupLogRocketReact(LogRocket)
-LogRocket.identify('THE_USER_ID_IN_YOUR_APP', {
-  name: 'Nom Phan',
-  email: 'nomiephan1504@gmail.com',
+Sentry.init({
+  dsn:
+    'https://9c92966a21c74b588364a8ccbcec318a@o503946.ingest.sentry.io/5589778',
+  autoSessionTracking: true,
+  integrations: [new Integrations.BrowserTracing()],
 
-  // Add your own custom user variables here, ie:
-  subscriptionType: 'pro',
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0,
 })
 
 // This function call connects us to Firebase and initializes all of our API access
