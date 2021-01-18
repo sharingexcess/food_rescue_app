@@ -47,29 +47,30 @@ export default function EditLocation() {
   }
 
   function validateFormData() {
-    if (!formData.name.length) {
+    if (formData.name === '') {
       errors.push('Missing Location Name')
     }
-    if (!formData.address1.length) {
+    if (formData.address1 === '') {
       errors.push('Missing Address')
     }
-    if (!formData.city.length || !validator.isAlpha(formData.city)) {
+    if (!validator.isAlpha(formData.city)) {
       errors.push('Invalid City')
     }
     if (!validator.isPostalCode(formData.zip_code, 'US')) {
       errors.push('Invalid Zip Code')
     }
-    if (!formData.upon_arrival_instructions.length) {
+    if (formData.upon_arrival_instructions === '') {
       errors.push('Missing Upon Arrival Instructions')
     }
+    // OPTIONAL FIELDS: check if they're empty, if not, they'll be validated
     if (
-      formData.contact_name.length &&
+      !formData.contact_name === '' &&
       !validator.isAlpha(formData.contact_name)
     ) {
       errors.push('Invalid Contact name')
     }
     if (
-      formData.contact_phone.length &&
+      !formData.contact_phone.length === '' &&
       !validator.isMobilePhone(formData.contact_phone)
     ) {
       errors.push('Invalid Contact phone')
