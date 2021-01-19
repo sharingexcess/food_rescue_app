@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import { FIREBASE_CONFIG } from './helpers/constants'
+import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
 import firebase from 'firebase/app'
 import Firestore from './components/Firestore/Firestore'
 import Header from './components/Header/Header'
@@ -28,8 +28,7 @@ import { Integrations } from '@sentry/tracing'
 import './styles/index.scss'
 
 Sentry.init({
-  dsn:
-    'https://9c92966a21c74b588364a8ccbcec318a@o503946.ingest.sentry.io/5589778',
+  dsn: SENTRY_DSN,
   autoSessionTracking: true,
   integrations: [new Integrations.BrowserTracing()],
 
