@@ -39,19 +39,17 @@ export default function DeliveryReport() {
   useEffect(() => {
     async function calculateWeight() {
       let updated_weight = 0
-      for (const id of delivery.pickup_ids) {
-        const pickup = pickups.find(i => i.id === id) || {}
-        if (pickup.report && pickup.report.weight) {
-          updated_weight += parseInt(pickup.report.weight)
-        }
-      }
       const route = routes.find(r => r.id === delivery.route_id)
       const stop_index = route.stops.findIndex(stop => stop.id === delivery_id)
-      for (let i = stop_index - 1; i > 0; i--) {
-        if (route.stops[i].type === 'delivery') {
-          const delivery = deliveries.find(d => d.id === route.stops[i].id)
+      for (let i = stop_index - 1; i >= 0; i--) {
+        const stop = route.stops[i]
+        if (stop.type === 'pickup') {
+          const pickup = pickups.find(p => p.id === stop.id)
+          updated_weight += pickup.report.weight
+        } else if (stop.type === 'delivery') {
+          const delivery = deliveries.find(d => d.id === stop.id)
           updated_weight -= delivery.report.weight
-        } else break
+        }
       }
       if (isNaN(updated_weight)) updated_weight = 0
       setWeight(updated_weight)

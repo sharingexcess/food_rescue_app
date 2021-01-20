@@ -8,6 +8,8 @@ export function initializeFormData(location, callback) {
     city: location.city,
     state: location.state,
     zip_code: location.zip_code,
+    lat: location.lat,
+    lng: location.lng,
     upon_arrival_instructions: location.upon_arrival_instructions
       ? location.upon_arrival_instructions
       : '',

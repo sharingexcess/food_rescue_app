@@ -166,7 +166,8 @@ function EditRoute() {
   function isValidRoute() {
     if (
       formData.stops.find(s => s.type === 'pickup') &&
-      formData.stops.find(s => s.type === 'delivery')
+      formData.stops.find(s => s.type === 'delivery') &&
+      formData.stops[formData.stops.length - 1].type === 'delivery'
     ) {
       return true
     }
@@ -258,6 +259,9 @@ function EditRoute() {
               {moment(formData.time_end).format('h:mma')}
             </h5>
           </div>
+          <button onClick={() => setConfirmedTime(false)}>
+            update route info
+          </button>
         </div>
       ) : (
         <>
@@ -278,15 +282,17 @@ function EditRoute() {
           )}
           <br />
           {formData.time_end && (
-            <button onClick={() => setConfirmedTime(true)}>add pickups</button>
+            <button onClick={() => setConfirmedTime(true)}>
+              {formData.stops.length ? 'confirm' : 'add pickups'}
+            </button>
           )}
         </>
       )}
-      {formData.stops.map(s => (
-        <Stop s={s} key={s.id} />
-      ))}
       {confirmedTimes ? (
         <>
+          {formData.stops.map(s => (
+            <Stop s={s} key={s.id} />
+          ))}
           <section id="AddStop">
             {list === 'pickups' ? (
               <EditPickup handleSubmit={handleAddPickup} />

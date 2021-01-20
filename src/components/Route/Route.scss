@@ -248,4 +248,12 @@
       width: auto;
     }
   }
+
+  .Directions {
+    text-indent: -6px;
+    padding-left: 14px;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

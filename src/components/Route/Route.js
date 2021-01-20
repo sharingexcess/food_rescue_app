@@ -24,6 +24,7 @@ import useLocationData from '../../hooks/useLocationData'
 import firebase from 'firebase/app'
 import EditDelivery from '../EditDelivery/EditDelivery'
 import './Route.scss'
+import GoogleMap from '../GoogleMap/GoogleMap'
 
 function Route() {
   const history = useHistory()
@@ -499,7 +500,6 @@ function Route() {
             driver_id: route.driver_id,
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            weight: 0,
             status: 1,
             pickup_ids: lastStop.pickup_ids,
             route_id,
@@ -574,11 +574,11 @@ function Route() {
                         : ''}
                     </h2>
                     <ExternalLink url={generateDirectionsLink(s.location)}>
-                      <p>
+                      <p className="Directions">
+                        <i className="fa fa-map-marker" />
                         {s.location.address1}
                         {s.location.address2 && ` - ${s.location.address2}`}
-                      </p>
-                      <p>
+                        <br />
                         {s.location.city}, {s.location.state}{' '}
                         {s.location.zip_code}
                       </p>
@@ -615,6 +615,15 @@ function Route() {
                       <>
                         {isNextIncompleteStop(i) ? (
                           <>
+                            {s.location.lat &&
+                            s.location.lng &&
+                            [1, 3].includes(s.status) ? (
+                              <GoogleMap
+                                address={s.location}
+                                style={{ height: 200, marginTop: 8 }}
+                                zoom={14}
+                              />
+                            ) : null}
                             <UpdateStop stop={s} />
                             {s.status < 9 ? <CancelStop stop={s} /> : null}
                           </>
