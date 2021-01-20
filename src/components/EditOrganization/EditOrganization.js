@@ -28,12 +28,14 @@ export default function EditOrganization() {
   const [file, setFile] = useState()
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
+  const [reloadForm, setReloadForm] = useState(true)
 
   useEffect(() => {
-    if (org.name && !formData.name) {
+    if (org.name && !formData.name && reloadForm) {
       initializeFormData(org, setFormData)
+      setReloadForm(false)
     }
-  }, [org, formData])
+  }, [org, formData, reloadForm])
 
   useEffect(() => {
     handleOrgIcon(org.icon, setOrgIconFullUrl)
@@ -46,7 +48,10 @@ export default function EditOrganization() {
   }
 
   function validateFormData() {
-    if (formData.name === ' ') {
+    if (
+      !formData.name ||
+      !validator.isAlphanumeric(formData.name.split(' ')[0])
+    ) {
       errors.push('Missing in form data: Organization Name')
     }
     if (
@@ -174,6 +179,7 @@ export default function EditOrganization() {
         onClick={() => {
           handleSubmit()
           setShowErrors(true)
+          showErrors ? setReloadForm(true) : setReloadForm(false)
         }}
       >
         {id ? 'update organization' : 'create organization'}
