@@ -20,6 +20,7 @@ import Profile from './components/Profile/Profile'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
+import ContactUs from './components/ContactUs/ContactUs'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
@@ -80,6 +81,9 @@ function App() {
                 </Route>
                 <Route exact path="/history">
                   <Routes initial_filter={r => [0, 9].includes(r.status)} />
+                </Route>
+                <Route exact path="/contact-us">
+                  <ContactUs />
                 </Route>
                 <Route exact path="/routes/:route_id">
                   <DriverRoute />
