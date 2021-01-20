@@ -101,6 +101,9 @@ function App() {
               <Route exact path="/tos">
                 <Terms />
               </Route>
+              <Route exact path="/contact">
+                <ContactUs />
+              </Route>
               <Route>
                 {/* This route has no path, and therefore will be the 'catch all' */}
                 <Error />

@@ -22,7 +22,7 @@ export const tiles = [
   {
     name: 'Contact Us',
     icon: 'fa-question-circle',
-    link: '/contact-us',
+    link: '/contact',
   },
 ]
 
