@@ -10,20 +10,25 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import './DeliveryReport.scss'
 import usePickupData from '../../hooks/usePickupData'
+import useRouteData from '../../hooks/useRouteData'
+import { useAuthContext } from '../Auth/Auth'
 
 export default function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
   const history = useHistory()
   const delivery = useDeliveryData(delivery_id)
+  const deliveries = useDeliveryData()
   const delivery_org =
     useOrganizationData(delivery ? delivery.org_id : {}) || {}
   const pickups = usePickupData()
+  const routes = useRouteData()
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',
   })
   const [changed, setChanged] = useState(false)
   const [weight, setWeight] = useState()
+  const { admin } = useAuthContext()
 
   useEffect(() => {
     delivery && delivery.report
@@ -34,18 +39,29 @@ export default function DeliveryReport() {
   useEffect(() => {
     async function calculateWeight() {
       let updated_weight = 0
-      for (const id of delivery.pickup_ids) {
-        const pickup = pickups.find(i => i.id === id) || {}
-        if (pickup.report && pickup.report.weight) {
-          updated_weight += parseInt(pickup.report.weight)
+      const route = routes.find(r => r.id === delivery.route_id)
+      const stop_index = route.stops.findIndex(stop => stop.id === delivery_id)
+      for (let i = stop_index - 1; i >= 0; i--) {
+        const stop = route.stops[i]
+        if (stop.type === 'pickup') {
+          const pickup = pickups.find(p => p.id === stop.id)
+          updated_weight += pickup.report.weight
+        } else if (stop.type === 'delivery') {
+          const delivery = deliveries.find(d => d.id === stop.id)
+          updated_weight -= delivery.report.weight
         }
       }
+      if (isNaN(updated_weight)) updated_weight = 0
       setWeight(updated_weight)
     }
     if (delivery && delivery.pickup_ids && delivery.pickup_ids.length) {
       calculateWeight()
     }
-  }, [delivery, pickups])
+  }, [delivery, delivery_id, routes, pickups]) //eslint-disable-line react-hooks/exhaustive-deps
+
+  function canEdit() {
+    return [1, 3].includes(delivery.status) || admin
+  }
 
   function handleChange(e) {
     setFormData({
@@ -60,10 +76,13 @@ export default function DeliveryReport() {
 
   function handleSubmit(event) {
     event.preventDefault()
+    const calculated_weight = parseInt(
+      (weight * formData.percent_of_total_dropped) / 100
+    )
     setFirestoreData(['Deliveries', delivery_id], {
       report: {
         percent_of_total_dropped: parseInt(formData.percent_of_total_dropped),
-        weight: parseInt((weight * formData.percent_of_total_dropped) / 100),
+        weight: isNaN(calculated_weight) ? 0 : calculated_weight,
         notes: formData.notes,
         created_at:
           delivery.completed_at ||
@@ -96,6 +115,7 @@ export default function DeliveryReport() {
         label="How much of the load was dropped here?"
         value={formData.percent_of_total_dropped}
         onChange={handleChange}
+        disabled={!canEdit()}
       />
       <Input
         type="textarea"
@@ -104,8 +124,9 @@ export default function DeliveryReport() {
         row={3}
         value={formData.notes}
         onChange={handleChange}
+        readOnly={!canEdit()}
       />
-      {changed ? (
+      {changed && canEdit() ? (
         <button onClick={handleSubmit}>
           {delivery.report ? 'update report' : 'submit report'}
         </button>

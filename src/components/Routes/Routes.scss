@@ -22,8 +22,16 @@
   .no-routes {
     width: 100%;
     padding: 64px 16px;
-    color: var(--blue);
     text-align: center;
+    i {
+      font-size: 96px;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
   }
 
   .Route {

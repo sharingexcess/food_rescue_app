@@ -1,0 +1,85 @@
+.Input {
+    position: relative;
+    width: 100%;
+    margin: 24px 0;
+    overflow: hidden;
+    height: 50px;
+    border-radius: 0;
+    border: 0;
+    * {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  
+    &.animation {
+      animation: slide-in 0.48s forwards ease;
+    }
+  
+    label {
+      color: var(--blue);
+      z-index: 2;
+      font-size: 18px;
+      font-weight: 700;
+      pointer-events: none;
+  
+      padding: 14px 0;
+      position: absolute;
+      transition: padding 0.16s ease, font-size 0.16s ease;
+  
+      &.focused {
+        padding: 6px 0;
+        font-size: 10px;
+      }
+    }
+  
+    select {
+      height: 100%;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      overflow-y: visible;
+      background: none;
+      width: 100%;
+      font-family: 'Source Sans Pro', san-serif;
+      border: 0;
+      border-radius: 0;
+      border-bottom: 1px solid var(--blue);
+      padding: 20px 0 8px 0;
+      -webkit-appearance: none;
+      &:focus {
+        border-bottom: 4px solid var(--green);
+      }
+    }
+  }
+  
+  .InputSuggestions {
+    position: relative;
+    width: 100%;
+    margin: -24px 0 20px 0;
+    overflow: hidden;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0px 8px 8px 0 rgba(0, 0, 0, 0.32);
+    animation: grow-in 0.48s ease forwards;
+    z-index: 9;
+  
+    li {
+      cursor: pointer;
+      z-index: 2;
+      padding: 14px 16px;
+      background: none;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--blue);
+      transition: background 0.16s ease;
+      background: var(--mediumgrey);
+      border-radius: 0;
+      &:hover {
+        background: rgba(var(--blue-rgb), 0.16);
+      }
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba(var(--blue-rgb), 0.32);
+      }
+    }
+  }
+  

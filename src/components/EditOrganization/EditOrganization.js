@@ -12,7 +12,6 @@ import { getCollection } from '../../helpers/helpers'
 import validator from 'validator'
 
 export default function EditOrganization() {
-  // const handleButton = handleButton()
   const { id } = useParams()
   const history = useHistory()
   const [formData, setFormData] = useState({
@@ -175,7 +174,6 @@ export default function EditOrganization() {
         onClick={() => {
           handleSubmit()
           setShowErrors(true)
-          // handleButton()
         }}
       >
         {id ? 'update organization' : 'create organization'}

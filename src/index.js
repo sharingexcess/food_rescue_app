@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
@@ -13,18 +13,19 @@ import { Provider } from 'react-redux'
 import { resize, setDarkMode } from './redux/app/appReducer'
 import store from './redux/store'
 import AdminRoutes from './routes/AdminRoutes'
-import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
 import PickupReport from './components/PickupReport/PickupReport'
 import Profile from './components/Profile/Profile'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
+import ContactUs from './components/ContactUs/ContactUs'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
+import CompletedRoute from './components/CompletedRoute/CompletedRoute'
 import './styles/index.scss'
 
 Sentry.init({
@@ -64,11 +65,7 @@ function App() {
   }, [width])
 
   return (
-    <Suspense fallback={<Loading />}>
-      {/* 
-        Suspense component provides a fallback for any dynamically loaded components (see AdminRoutes.js) that aren't loaded yet
-        This follows the practice of Code Splitting. Read more here: https://reactjs.org/docs/code-splitting.html
-      */}
+    <Sentry.ErrorBoundary fallback={'An error has occurred'}>
       <Provider store={store}>
         {/* This Provider component wraps our app in a component that gives access to the Redux store */}
         <BrowserRouter>
@@ -101,6 +98,9 @@ function App() {
                 <Route exact path="/routes/:route_id/delivery/:delivery_id">
                   <DeliveryReport />
                 </Route>
+                <Route exact path="/routes/:route_id/completed">
+                  <CompletedRoute />
+                </Route>
                 <Route exact path="/profile">
                   <Profile />
                 </Route>
@@ -114,6 +114,9 @@ function App() {
                 <Route exact path="/tos">
                   <Terms />
                 </Route>
+                <Route exact path="/contact">
+                  <ContactUs />
+                </Route>
                 <Route>
                   {/* This route has no path, and therefore will be the 'catch all' */}
                   <Error />
@@ -124,7 +127,7 @@ function App() {
           </Auth>
         </BrowserRouter>
       </Provider>
-    </Suspense>
+    </Sentry.ErrorBoundary>
   )
 }
 

@@ -1,10 +1,14 @@
 {
     "cSpell.ignoreWords": [
+        "datetime",
+        "default",
         "gapi",
+        "get",
         "mediumgrey",
         "millis",
         "org",
         "orgs",
+        "sharingexcess",
         "to"
     ]
 }

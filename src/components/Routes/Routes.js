@@ -14,7 +14,7 @@ import useUserData from '../../hooks/useUserData'
 import './Routes.scss'
 
 export default function Routes({ initial_filter }) {
-  const { user } = useAuthContext()
+  const { user, admin } = useAuthContext()
   const location = useLocation()
   const raw_routes = useRouteData(initial_filter)
   const pickups = usePickupData()
@@ -79,7 +79,19 @@ export default function Routes({ initial_filter }) {
       {loading ? (
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (
-        <p className="no-routes">No routes scheduled.</p>
+        <div className="no-routes">
+          <i className="fa fa-check" />
+          <p>
+            {location.pathname === '/routes'
+              ? 'Schedule is clear!'
+              : 'History is empty!'}
+          </p>
+          {admin ? (
+            <Link to="/admin/create-route">
+              <button>schedule a new route</button>
+            </Link>
+          ) : null}
+        </div>
       ) : (
         filterAndSortRoutes(routes).map(r => (
           <Link to={`/routes/${r.id}`} key={r.id}>
@@ -95,7 +107,7 @@ export default function Routes({ initial_filter }) {
               )}
               <div>
                 <StatusIndicator route={r} />
-                <h3>{r.driver.name}</h3>
+                <h3>{r.driver.name || 'Unassigned Route'}</h3>
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                 <h5>
                   {moment(r.time_start).format('h:mma')} -{' '}
@@ -117,7 +129,8 @@ export default function Routes({ initial_filter }) {
                 </p>
                 {r.notes ? (
                   <h6>
-                    <span>Notes:</span>"{r.notes}"
+                    <span>Notes: </span>
+                    {r.notes}
                   </h6>
                 ) : null}
               </div>

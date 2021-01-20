@@ -2,17 +2,26 @@ import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
 import Ellipsis, { GoBack } from '../../helpers/components'
 import { useHistory } from 'react-router-dom'
-import { updateFieldSuggestions, formFields } from './utils'
+import {
+  updateFieldSuggestions,
+  formFields,
+  getDefaultStartTime,
+  getDefaultEndTime,
+} from './utils'
 import UserIcon from '../../assets/user.svg'
-import { getCollection, setFirestoreData } from '../../helpers/helpers'
+import {
+  generateStopId,
+  getCollection,
+  setFirestoreData,
+  updateGoogleCalendarEvent,
+} from '../../helpers/helpers'
 import moment from 'moment'
 import EditDelivery from '../EditDelivery/EditDelivery'
-import { v4 as generateUniqueId } from 'uuid'
 import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
-import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
-import './EditRoute.scss'
 import useUserData from '../../hooks/useUserData'
+import { v4 as generateUUID } from 'uuid'
+import './EditRoute.scss'
 
 function EditRoute() {
   const history = useHistory()
@@ -22,8 +31,8 @@ function EditRoute() {
     // others can and should be initialized as null
     driver_name: '',
     driver_id: null,
-    time_start: '',
-    time_end: '',
+    time_start: getDefaultStartTime(),
+    time_end: getDefaultEndTime(),
     stops: [],
   })
   const [suggestions, setSuggestions] = useState({
@@ -33,7 +42,7 @@ function EditRoute() {
   })
   const [list, setList] = useState('pickups')
   const [working, setWorking] = useState()
-  const [confirmedDriver, setConfirmedDriver] = useState()
+  const [confirmedTimes, setConfirmedTime] = useState()
 
   useEffect(() => {
     formData.driver_id &&
@@ -74,7 +83,6 @@ function EditRoute() {
             driver_id: formData.driver_id,
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            report: {},
             status: 1,
             route_id,
           })
@@ -87,44 +95,13 @@ function EditRoute() {
             driver_id: formData.driver_id,
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            weight: 0,
             status: 1,
             pickup_ids,
             route_id,
           })
         }
       }
-      const resource = {
-        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-        summary: `Food Rescue: ${formData.driver.name}`,
-        location: `${formData.stops[0].location.address1}, ${formData.stops[0].location.city}, ${formData.stops[0].location.state} ${formData.stops[0].location.zip_code}`,
-        description: `Stops on Route: ${formData.stops
-          .map(
-            s =>
-              s.org.name +
-              `${
-                s.location.name !== s.org.name ? ': ' + s.location.name : ''
-              }` +
-              ' (' +
-              s.type +
-              ')'
-          )
-          .join(', ')}`,
-        start: {
-          dateTime: new Date(formData.time_start).toISOString(),
-          timeZone: 'America/New_York',
-        },
-        end: {
-          dateTime: new Date(formData.time_end).toISOString(),
-          timeZone: 'America/New_York',
-        },
-        attendees: [{ email: formData.driver.email }],
-      }
-
-      const event = await fetch(CLOUD_FUNCTION_URLS.addCalendarEvent, {
-        method: 'POST',
-        body: JSON.stringify(resource),
-      }).then(res => res.json())
+      const event = await updateGoogleCalendarEvent(formData)
 
       if (!event.id) {
         alert('Error creating Google Calendar event. Please contact support!')
@@ -149,7 +126,11 @@ function EditRoute() {
   }
 
   async function generateRouteId() {
-    const uniq_id = `${formData.driver.name}_${formData.time_start.toString()}`
+    const uniq_id = `${
+      formData.driver ? formData.driver.name + '_' : ''
+    }${formData.time_start.toString()}${
+      formData.driver ? '' : '_' + generateUUID()
+    }`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
     const exists = await getCollection('Routes')
@@ -160,12 +141,6 @@ function EditRoute() {
       alert('This driver is already scheduled for a delivery at this time.')
       return null
     } else return uniq_id
-  }
-
-  function generateStopId(stop) {
-    return `${stop.org.name}_${generateUniqueId()}`
-      .replace(/[^A-Z0-9]/gi, '_')
-      .toLowerCase()
   }
 
   function getPickupsInDelivery(index) {
@@ -191,7 +166,8 @@ function EditRoute() {
   function isValidRoute() {
     if (
       formData.stops.find(s => s.type === 'pickup') &&
-      formData.stops.find(s => s.type === 'delivery')
+      formData.stops.find(s => s.type === 'delivery') &&
+      formData.stops[formData.stops.length - 1].type === 'delivery'
     ) {
       return true
     }
@@ -200,7 +176,13 @@ function EditRoute() {
 
   function handleChange(e, field) {
     if (field.suggestionQuery) {
-      updateFieldSuggestions(e.target.value, field, suggestions, setSuggestions)
+      updateFieldSuggestions(
+        e.target.value,
+        drivers,
+        field,
+        suggestions,
+        setSuggestions
+      )
     }
     if (field.id === 'time_start') {
       // automatically set time end 2 hrs later
@@ -235,7 +217,12 @@ function EditRoute() {
             />
             {s.type}
           </h4>
-          <h2>{s.org.name}</h2>
+          <h2>
+            {s.org.name}{' '}
+            {s.location.name && s.location.name !== s.org.name
+              ? `(${s.location.name})`
+              : ''}
+          </h2>
           <p>
             {s.location.address1}
             {s.location.address2 && ` - ${s.location.address2}`}
@@ -249,27 +236,32 @@ function EditRoute() {
   }
 
   return (
-    <div id="EditRoute">
+    <main id="EditRoute">
       <GoBack />
       <h1>New Route</h1>
       <p>
         Use this form to assign a new rescue to a driver. Routes are
         automatically added to Google Calendar.
       </p>
-      {confirmedDriver ? (
+      {confirmedTimes ? (
         <div id="Driver">
           <img
-            src={formData.driver.icon || UserIcon}
-            alt={formData.driver.name}
+            src={formData.driver ? formData.driver.icon : UserIcon}
+            alt={formData.driver ? formData.driver.name : 'Unassigned Route'}
           />
           <div>
-            <h3>{formData.driver.name}</h3>
+            <h3>
+              {formData.driver ? formData.driver.name : 'Unassigned Route'}
+            </h3>
             <h4>{moment(formData.time_start).format('dddd, MMMM D')}</h4>
             <h5>
               {moment(formData.time_start).format('h:mma')} -{' '}
               {moment(formData.time_end).format('h:mma')}
             </h5>
           </div>
+          <button onClick={() => setConfirmedTime(false)}>
+            update route info
+          </button>
         </div>
       ) : (
         <>
@@ -288,18 +280,19 @@ function EditRoute() {
               />
             ) : null
           )}
+          <br />
           {formData.time_end && (
-            <button onClick={() => setConfirmedDriver(true)}>
-              add pickups
+            <button onClick={() => setConfirmedTime(true)}>
+              {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
           )}
         </>
       )}
-      {formData.stops.map(s => (
-        <Stop s={s} key={s.id} />
-      ))}
-      {confirmedDriver ? (
+      {confirmedTimes ? (
         <>
+          {formData.stops.map(s => (
+            <Stop s={s} key={s.id} />
+          ))}
           <section id="AddStop">
             {list === 'pickups' ? (
               <EditPickup handleSubmit={handleAddPickup} />
@@ -345,7 +338,7 @@ function EditRoute() {
           </div>
         </>
       ) : null}
-    </div>
+    </main>
   )
 }
 

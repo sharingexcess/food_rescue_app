@@ -24,7 +24,7 @@ button {
     object-fit: cover;
     padding: 4px;
     margin-right: 8px;
-    background: var(--white);
+    background: #fff;
     border-radius: 4px;
   }
 
@@ -109,6 +109,7 @@ a {
   color: var(--blue);
   margin-bottom: 16px;
   cursor: pointer;
+  display: inline-block;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -135,4 +136,10 @@ input {
 
 textarea {
   font-family: 'Source Sans Pro', sans-serif;
+}
+
+input:read-only,
+textarea:read-only,
+*:disabled {
+  cursor: not-allowed;
 }
