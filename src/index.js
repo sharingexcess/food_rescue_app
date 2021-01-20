@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { FIREBASE_CONFIG } from './helpers/constants'
@@ -13,7 +13,6 @@ import { Provider } from 'react-redux'
 import { resize, setDarkMode } from './redux/app/appReducer'
 import store from './redux/store'
 import AdminRoutes from './routes/AdminRoutes'
-import Loading from './components/Loading/Loading'
 import Home from './components/Home/Home'
 import PickupReport from './components/PickupReport/PickupReport'
 import Profile from './components/Profile/Profile'
@@ -24,8 +23,8 @@ import ContactUs from './components/ContactUs/ContactUs'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
-import './styles/index.scss'
 import CompletedRoute from './components/CompletedRoute/CompletedRoute'
+import './styles/index.scss'
 
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
@@ -54,73 +53,64 @@ function App() {
   }, [width])
 
   return (
-    <Suspense fallback={<Loading />}>
-      {/* 
-        Suspense component provides a fallback for any dynamically loaded components (see AdminRoutes.js) that aren't loaded yet
-        This follows the practice of Code Splitting. Read more here: https://reactjs.org/docs/code-splitting.html
-      */}
-      <Provider store={store}>
-        {/* This Provider component wraps our app in a component that gives access to the Redux store */}
-        <BrowserRouter>
-          <Auth>
-            <Firestore>
-              <Header />
-              <Menu />
-              {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
-              {/* Auth component handles login and will show a login page if no user is authenticated */}
-              {/* Switch will only allows the first matching route to be rendered */}
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <Route exact path="/calendar">
-                  <Calendar />
-                </Route>
-                <Route exact path="/routes">
-                  <Routes initial_filter={r => ![0, 9].includes(r.status)} />
-                </Route>
-                <Route exact path="/history">
-                  <Routes initial_filter={r => [0, 9].includes(r.status)} />
-                </Route>
-                <Route exact path="/contact-us">
-                  <ContactUs />
-                </Route>
-                <Route exact path="/routes/:route_id">
-                  <DriverRoute />
-                </Route>
-                <Route exact path="/routes/:route_id/pickup/:pickup_id">
-                  <PickupReport />
-                </Route>
-                <Route exact path="/routes/:route_id/delivery/:delivery_id">
-                  <DeliveryReport />
-                </Route>
-                <Route exact path="/routes/:route_id/completed">
-                  <CompletedRoute />
-                </Route>
-                <Route exact path="/profile">
-                  <Profile />
-                </Route>
-                {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
-                <Route path="/admin">
-                  <AdminRoutes />
-                </Route>
-                <Route exact path="/privacy">
-                  <Privacy />
-                </Route>
-                <Route exact path="/tos">
-                  <Terms />
-                </Route>
-                <Route>
-                  {/* This route has no path, and therefore will be the 'catch all' */}
-                  <Error />
-                  {/* this 404 page component will render if the url does not match any other routes */}
-                </Route>
-              </Switch>
-            </Firestore>
-          </Auth>
-        </BrowserRouter>
-      </Provider>
-    </Suspense>
+    <Provider store={store}>
+      {/* This Provider component wraps our app in a component that gives access to the Redux store */}
+      <BrowserRouter>
+        <Auth>
+          <Firestore>
+            <Header />
+            <Menu />
+            {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+            {/* Auth component handles login and will show a login page if no user is authenticated */}
+            {/* Switch will only allows the first matching route to be rendered */}
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route exact path="/calendar">
+                <Calendar />
+              </Route>
+              <Route exact path="/routes">
+                <Routes initial_filter={r => ![0, 9].includes(r.status)} />
+              </Route>
+              <Route exact path="/history">
+                <Routes initial_filter={r => [0, 9].includes(r.status)} />
+              </Route>
+              <Route exact path="/routes/:route_id">
+                <DriverRoute />
+              </Route>
+              <Route exact path="/routes/:route_id/pickup/:pickup_id">
+                <PickupReport />
+              </Route>
+              <Route exact path="/routes/:route_id/delivery/:delivery_id">
+                <DeliveryReport />
+              </Route>
+              <Route exact path="/routes/:route_id/completed">
+                <CompletedRoute />
+              </Route>
+              <Route exact path="/profile">
+                <Profile />
+              </Route>
+              {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
+              <Route path="/admin">
+                <AdminRoutes />
+              </Route>
+              <Route exact path="/privacy">
+                <Privacy />
+              </Route>
+              <Route exact path="/tos">
+                <Terms />
+              </Route>
+              <Route>
+                {/* This route has no path, and therefore will be the 'catch all' */}
+                <Error />
+                {/* this 404 page component will render if the url does not match any other routes */}
+              </Route>
+            </Switch>
+          </Firestore>
+        </Auth>
+      </BrowserRouter>
+    </Provider>
   )
 }
 

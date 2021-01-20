@@ -31,6 +31,28 @@
     }
   }
 
+  #Address {
+    margin: 16px 0;
+    font-size: 18px;
+    display: flex;
+    justify-content: flex-start;
+    opacity: 0;
+    animation: slide-in 0.48s ease forwards;
+    i {
+      color: var(--red);
+      display: block;
+      margin-right: 8px;
+      font-size: 32px;
+    }
+    button {
+      margin: 0;
+      margin-left: auto;
+      padding: 8px;
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+  }
+
   button {
     opacity: 0;
     animation: fade-in 0.32s ease forwards 0.32s;
