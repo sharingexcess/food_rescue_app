@@ -28,14 +28,14 @@ export default function EditOrganization() {
   const [file, setFile] = useState()
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
-  const [reloadForm, setReloadForm] = useState(true)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   useEffect(() => {
-    if (org.name && !formData.name && reloadForm) {
+    if (org.name && !formData.name && isInitialLoad) {
+      setIsInitialLoad(false)
       initializeFormData(org, setFormData)
-      setReloadForm(false)
     }
-  }, [org, formData, reloadForm])
+  }, [org, formData, isInitialLoad])
 
   useEffect(() => {
     handleOrgIcon(org.icon, setOrgIconFullUrl)
@@ -179,7 +179,6 @@ export default function EditOrganization() {
         onClick={() => {
           handleSubmit()
           setShowErrors(true)
-          setReloadForm(false)
         }}
       >
         {id ? 'update organization' : 'create organization'}
