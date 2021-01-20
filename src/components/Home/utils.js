@@ -19,6 +19,11 @@ export const tiles = [
     icon: 'fa-user',
     link: '/profile',
   },
+  {
+    name: 'Contact Us',
+    icon: 'fa-question-circle',
+    link: '/contact',
+  },
 ]
 
 export function generateGreeting(name) {
