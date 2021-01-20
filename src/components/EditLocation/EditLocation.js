@@ -8,9 +8,9 @@ import { GoBack } from '../../helpers/components'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
-import './EditLocation.scss'
 import validator from 'validator'
 import StatesDropDown from '../StatesDropDown/StatesDropDown'
+import './EditLocation.scss'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -47,38 +47,34 @@ export default function EditLocation() {
   }
 
   function validateFormData() {
+    const updatedErrors = [...errors]
     if (formData.name === '') {
-      errors.push('Missing Location Name')
+      updatedErrors.push('Missing Location Name')
     }
     if (formData.address1 === '') {
-      errors.push('Missing Address')
+      updatedErrors.push('Missing Address')
     }
     if (!validator.isAlpha(formData.city)) {
-      errors.push('Invalid City')
+      updatedErrors.push('Invalid City')
     }
     if (!validator.isPostalCode(formData.zip_code, 'US')) {
-      errors.push('Invalid Zip Code')
-    }
-    if (formData.upon_arrival_instructions === '') {
-      errors.push('Missing Upon Arrival Instructions')
+      updatedErrors.push('Invalid Zip Code')
     }
     // OPTIONAL FIELDS: check if they're empty, if not, they'll be validated
     if (
-      !formData.contact_name === '' &&
+      formData.contact_name !== '' &&
       !validator.isAlpha(formData.contact_name)
     ) {
-      errors.push('Invalid Contact name')
+      updatedErrors.push('Invalid Contact name')
     }
     if (
-      !formData.contact_phone.length === '' &&
+      formData.contact_phone !== '' &&
       !validator.isMobilePhone(formData.contact_phone)
     ) {
-      errors.push('Invalid Contact phone')
+      updatedErrors.push('Invalid Contact phone')
     }
-    if (errors.length === 0) {
-      return true
-    }
-    return false
+    setErrors(updatedErrors)
+    return updatedErrors.length === 0
   }
 
   async function handleSubmit() {
@@ -181,13 +177,6 @@ export default function EditLocation() {
         value={formData.city}
         onChange={handleChange}
       />
-      {/* <Input
-        type="text"
-        label="State *"
-        element_id="state"
-        value={formData.state}
-        onChange={handleChange}
-      /> */}
       <StatesDropDown
         onChange={handleChange}
         element_id="state"
@@ -203,7 +192,7 @@ export default function EditLocation() {
       />
       <Input
         type="text"
-        label="Upon Arrival Instructions *"
+        label="Arrival Instructions"
         element_id="upon_arrival_instructions"
         value={formData.upon_arrival_instructions}
         onChange={handleChange}
