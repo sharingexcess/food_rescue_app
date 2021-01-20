@@ -179,7 +179,7 @@ export default function EditOrganization() {
         onClick={() => {
           handleSubmit()
           setShowErrors(true)
-          showErrors ? setReloadForm(true) : setReloadForm(false)
+          setReloadForm(false)
         }}
       >
         {id ? 'update organization' : 'create organization'}
