@@ -48,6 +48,9 @@ function Organization() {
               {loc.id === org.primary_location && (
                 <i className="primary fa fa-star" />
               )}
+              {loc.is_philabundance_partner === true && (
+                <p className="philabundance">Philabundance Partner</p>
+              )}
               <p>{loc.address1}</p>
               {loc.address2 && <p>{loc.address2}</p>}
               <p>
