@@ -13,6 +13,9 @@ export function initializeFormData(location, callback) {
     upon_arrival_instructions: location.upon_arrival_instructions
       ? location.upon_arrival_instructions
       : '',
+    is_philabundance_partner: location.is_philabundance_partner
+      ? location.is_philabundance_partner
+      : '',
   })
 }
 
