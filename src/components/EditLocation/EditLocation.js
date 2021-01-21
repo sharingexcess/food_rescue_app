@@ -28,6 +28,7 @@ export default function EditLocation() {
     contact_name: '',
     contact_phone: '',
     upon_arrival_instructions: '',
+    is_philabundance_partner: '',
   })
   const [isPrimary, setIsPrimary] = useState(
     loc_id && organization ? organization.primary_location === loc_id : false
@@ -206,6 +207,24 @@ export default function EditLocation() {
               Make this the Organization's
               <br />
               Primary Address
+            </p>
+          </div>
+          <div className="is_philabundance_partner">
+            <input
+              type="checkbox"
+              id="is_philabundance_partner"
+              name="is_philabundance_partner"
+              checked={formData.is_philabundance_partner}
+              onChange={() =>
+                setFormData({
+                  ...formData,
+                  is_philabundance_partner: !formData.is_philabundance_partner,
+                })
+              }
+            />
+            <p>
+              Make this the Organization
+              <br />a Philabundance Partner
             </p>
           </div>
           <FormError />
