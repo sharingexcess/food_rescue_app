@@ -2,5 +2,21 @@
   "projects": {
     "default": "sharing-excess-7e887",
     "prod": "sharing-excess-prod"
+  },
+  "targets": {
+    "sharing-excess-prod": {
+      "hosting": {
+        "sharingexcess": [
+          "sharingexcess"
+        ]
+      }
+    },
+    "sharing-excess-7e887": {
+      "hosting": {
+        "sharingexcess-dev": [
+          "sharingexcess-dev"
+        ]
+      }
+    }
   }
 }

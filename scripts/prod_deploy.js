@@ -93,8 +93,19 @@ async function main() {
         callback => runCommand('npm ci', callback),
         callback => runCommand('npm run build', callback),
         callback => runCommand('rm .env.production.local', callback),
+        callback =>
+          runCommand(
+            'cp environments/firebase.prod.json firebase.json',
+            callback
+          ),
         callback => runCommand('firebase use prod', callback),
-        callback => runCommand('firebase deploy --only hosting', callback),
+        callback =>
+          runCommand('firebase deploy --only hosting:sharingexcess', callback),
+        callback =>
+          runCommand(
+            'cp environments/firebase.dev.json firebase.json',
+            callback
+          ),
         callback => runCommand('firebase use default', callback),
       ],
       err => {
