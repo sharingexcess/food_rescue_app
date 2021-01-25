@@ -9,6 +9,9 @@ export const FIREBASE_CONFIG = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 }
+
+export const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN_KEY
+
 // 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
 export const MOBILE_THRESHOLD = 600
 
