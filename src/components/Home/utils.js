@@ -24,6 +24,11 @@ export const tiles = [
     icon: 'fa-question-circle',
     link: '/contact',
   },
+  {
+    name: 'Food Safety Guidelines',
+    icon: 'fa-utensils',
+    link: '/foodsafety',
+  },
 ]
 
 export function generateGreeting(name) {
