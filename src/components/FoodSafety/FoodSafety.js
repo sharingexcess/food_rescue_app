@@ -52,7 +52,7 @@ export default function FoodSafety() {
         <h3>Meat</h3>
         <div className="row">
           <div className="column-50">
-            <h4>We Accept:</h4>
+            <h4 className="green">We Accept:</h4>
             <ol>
               <li>Frozen meat</li>
               <li>Poultry</li>
@@ -61,7 +61,7 @@ export default function FoodSafety() {
             <p>In sealed or undamaged packaging (unless frozen before date)</p>
           </div>
           <div className="column-50">
-            <h4>We don't accept:</h4>
+            <h4 className="red">We don't accept:</h4>
             <ol>
               <li>Raw meat</li>
               <li>Damaged or opened packaging</li>
@@ -72,7 +72,7 @@ export default function FoodSafety() {
         <h3>Bakery</h3>
         <div className="row">
           <div className="column-50">
-            <h4>We Accept:</h4>
+            <h4 className="green">We Accept:</h4>
             <ol>
               <li>Fresh bakery items</li>
               <li>Day-old items</li>
@@ -80,7 +80,7 @@ export default function FoodSafety() {
             <p>(in proper storage or packaging)</p>
           </div>
           <div className="column-50">
-            <h4>We don't accept:</h4>
+            <h4 className="red">We don't accept:</h4>
             <ol>
               <li>Moldy or stale bakery items</li>
               <li>Damaged/opened packaging</li>
@@ -91,14 +91,14 @@ export default function FoodSafety() {
         <h3>Produce</h3>
         <div className="row">
           <div className="column-50">
-            <h4>We Accept:</h4>
+            <h4 className="green">We Accept:</h4>
             <ol>
               <li>Whole or chopped fruits and vegetables</li>
               <li>Mis-shapen or bruised produce</li>
             </ol>
           </div>
           <div className="column-50">
-            <h4>We don't accept:</h4>
+            <h4 className="red">We don't accept:</h4>
             <ol>
               <li>Moldy or rotten produce</li>
               <li>Peeled or dirty exterior</li>
@@ -109,7 +109,7 @@ export default function FoodSafety() {
         <h3>Dairy</h3>
         <div className="row">
           <div className="column-50">
-            <h4>We Accept:</h4>
+            <h4 className="green">We Accept:</h4>
             <ol>
               <li>Milk</li>
               <li>Yogurt</li>
@@ -119,7 +119,7 @@ export default function FoodSafety() {
             <p>(properly stored below 41*F)</p>
           </div>
           <div className="column-50">
-            <h4>We don't accept:</h4>
+            <h4 className="red">We don't accept:</h4>
             <ol>
               <li>Discolored, bloated, or moldy items</li>
               <li>Damaged/opened packaging</li>
@@ -130,7 +130,7 @@ export default function FoodSafety() {
       </section>
       <section id="nonperishables">
         <h2>Non-Perishables and Groceries</h2>
-        <h4>We accept:</h4>
+        <h4 className="green">We accept:</h4>
         <ol>
           <li>Dented or imperfect cans</li>
           <li>Slightly damaged packaging</li>
@@ -140,7 +140,7 @@ export default function FoodSafety() {
           <li>Body care/toiletries</li>
           <li>Household items and appliances</li>
         </ol>
-        <h4>We don't accept:</h4>
+        <h4 className="red">We don't accept:</h4>
         <ol>
           <li>Items with opened seals</li>
           <li>Partially consumed or used items</li>
@@ -155,7 +155,7 @@ export default function FoodSafety() {
           Prepared trays of food should be properly labeled with the
           description/cook date and stored at the proper temperature.
         </p>
-        <h4>We accept:</h4>
+        <h3 className="green">We accept:</h3>
         <ol>
           <li>Prepared food that has not left the kitchen or staging area</li>
           <li>
@@ -166,7 +166,7 @@ export default function FoodSafety() {
           <li>Individually packaged sandwiches, salads, and deli items</li>
           <li>Unopened bottles, chips, and snacks</li>
         </ol>
-        <h4>We don't accept:</h4>
+        <h3 className="red">We don't accept:</h3>
         <ol>
           <li>Any food that has already been served for public consumption</li>
           <li>
