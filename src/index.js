@@ -5,6 +5,7 @@ import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
 import firebase from 'firebase/app'
 import Firestore from './components/Firestore/Firestore'
 import Header from './components/Header/Header'
+import Footer from './components/Footer/Footer'
 import Error from './components/Error/Error'
 import Auth from './components/Auth/Auth'
 import Menu from './components/Menu/Menu'
@@ -123,6 +124,7 @@ function App() {
                   {/* this 404 page component will render if the url does not match any other routes */}
                 </Route>
               </Switch>
+              <Footer />
             </Firestore>
           </Auth>
         </BrowserRouter>

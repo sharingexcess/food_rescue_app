@@ -600,7 +600,7 @@ function Route() {
                         {s.location.contact_name ||
                         s.org.default_contact_name ? (
                           <span>
-                            (ask for{' '}
+                            (Contact location manager:{' '}
                             {s.location.contact_name ||
                               s.org.default_contact_name}
                             )
