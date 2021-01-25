@@ -3,8 +3,8 @@ import { useAuthContext } from '../Auth/Auth'
 import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
-import { GoBack } from '../../helpers/components'
 import useUserData from '../../hooks/useUserData'
+import Header from '../Header/Header'
 import './Profile.scss'
 
 export default function Profile() {
@@ -50,8 +50,7 @@ export default function Profile() {
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
-      <GoBack />
-      <h1>User Profile</h1>
+      <Header text="Profile" />
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>
       <Input

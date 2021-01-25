@@ -12,6 +12,7 @@ import './DeliveryReport.scss'
 import usePickupData from '../../hooks/usePickupData'
 import useRouteData from '../../hooks/useRouteData'
 import { useAuthContext } from '../Auth/Auth'
+import Header from '../Header/Header'
 
 export default function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
@@ -97,8 +98,7 @@ export default function DeliveryReport() {
   if (!delivery) return <Loading text="Loading report" />
   return (
     <main id="DeliveryReport">
-      <GoBack />
-      <h1>Delivery Report</h1>
+      <Header text="Delivery Report" />
       <h3>{delivery_org.name}</h3>
       <h4>
         You're carrying <span>{weight}lbs.</span> of food.

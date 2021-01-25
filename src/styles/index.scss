@@ -4,56 +4,6 @@
 @import './global.scss';
 @import './animations.scss';
 
-body.dark-theme {
-  --green: #00ff00;
-  --green-rgb: 0, 255, 0;
-  --yellow: #ecc133;
-  --yellow-rgb: 236, 193, 51;
-  --red: #ec4f33;
-  --red-rgb: 236, 79, 51;
-  --blue: #69a8fa;
-  --blue-rgb: 105, 168, 250;
-  --white: #ffffff;
-  --white-rgb: 255, 255, 255;
-  --darkgrey: #020d1a;
-  --darkgrey-rgb: 2, 13, 26;
-  --mediumgrey: #041428;
-  --mediumgrey-rgb: 4, 20, 40;
-  --lightgrey: #cccccc;
-  --lightgrey-rgb: 204, 204, 204;
-  --mobile: 600px;
-  --tile-border: 1px solid rgba(var(--blue-rgb), 0.32);
-  --tile-background: #041428;
-  --tile-background-rgb: 4, 20, 40;
-}
-
-body.light-theme {
-  --green: #059705;
-  --green-rgb: 5, 151, 5;
-  --yellow: #fbac00;
-  --yellow-rgb: 236, 193, 51;
-  --red: #ec4f33;
-  --red-rgb: 160, 54, 35;
-  --blue: #0062ff;
-  --blue-rgb: 0, 98, 255;
-  --white: #0b2342;
-  --white-rgb: 11, 35, 66;
-  --darkgrey: #ffffff;
-  --darkgrey-rgb: 255, 255, 255;
-  --mediumgrey: #e0ebf8;
-  --mediumgrey-rgb: 210, 228, 248;
-  --lightgrey: #d6dce6;
-  --lightgrey-rgb: 192, 198, 207;
-  --mobile: 600px;
-  --tile-border: 1px solid var(--lightgrey);
-  --tile-background: #ffffff;
-  --tile-background-rgb: 255, 255, 255;
-}
-
-body.light-theme ::-webkit-calendar-picker-indicator {
-  filter: invert(0) !important;
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -64,4 +14,69 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --green: rgb(102, 205, 159);
+  --green-rgb: 102, 205, 159;
+  --yellow: rgb(253, 205, 102);
+  --yellow-rgb: 253, 205, 102;
+  --blue: rgb(105, 168, 250);
+  --blue-rgb: 105, 168, 250;
+  --red: rgb(231, 111, 90);
+  --red-rgb: 231, 111, 90;
+
+  --black: rgb(18, 18, 18);
+  --black-rgb: 18, 18, 18;
+  --grey: rgb(192, 200, 192);
+  --grey-rgb: 192, 200, 192;
+  --lightgrey: rgb(216, 224, 216);
+  --lightgrey-rgb: 216, 224, 216;
+  --white: rgb(255, 255, 255);
+  --white-rgb: 255, 255, 255;
+}
+
+body.dark-theme {
+  --primary: rgb(102, 205, 159);
+  --primary-rgb: 114, 222, 179;
+  --secondary: rgb(133, 219, 187);
+  --secondary-rgb: 133, 219, 187;
+  --tertiary: rgb(228, 241, 236);
+  --tertiary-rgb: 228, 241, 236;
+  --dark: rgb(69, 112, 92);
+  --dark-rgb: 67, 136, 105;
+
+  --background: rgb(28, 33, 41);
+  --background-rgb: 33, 33, 33;
+  --middleground: rgb(44, 52, 65);
+  --middleground-rgb: 49, 49, 49;
+  --foreground: rgb(44, 52, 65);
+  --foreground-rgb: 49, 49, 49;
+  --shadow: rgb(32, 32, 32);
+  --shadow-rgb: 49, 49, 49;
+  --text: rgb(255, 255, 255);
+  --text-rgb: 255, 255, 255;
+}
+
+body.light-theme {
+  --primary: rgb(102, 205, 159);
+  --primary-rgb: 114, 222, 179;
+  --secondary: rgb(133, 219, 187);
+  --secondary-rgb: 133, 219, 187;
+  --tertiary: rgb(228, 241, 236);
+  --tertiary-rgb: 228, 241, 236;
+  --dark: rgb(69, 112, 92);
+  --dark-rgb: 67, 136, 105;
+
+  --background: rgb(228, 241, 236);
+  --background-rgb: 228, 241, 236;
+  --middleground: rgb(133, 219, 187);
+  --middleground-rgb: 133, 219, 187;
+  --foreground: rgb(255, 255, 255);
+  --foreground-rgb: 255, 255, 255;
+  --shadow: rgb(216, 224, 216);
+  --shadow-rgb: 216, 224, 216;
+  --text: rgb(18, 18, 18);
+  --text-rgb: 18, 18, 18;
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(0) !important;
+  }
 }

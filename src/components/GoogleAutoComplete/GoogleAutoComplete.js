@@ -14,7 +14,6 @@ function GoogleAutoComplete({ handleSelect }) {
     autoComplete.addListener('place_changed', () => {
       try {
         const addressObject = autoComplete.getPlace()
-        console.log(addressObject)
         const query = addressObject.formatted_address
         setQuery(query)
         const parsedAddressObject = {

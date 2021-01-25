@@ -1,23 +1,13 @@
+@import '../../styles/global.scss';
+
 #EditRoute {
-  padding: 108px 16px 0 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
-
-  h1 {
-    font-size: 24px;
-  }
-
-  p {
-    color: var(--blue);
-    margin-top: 8px;
-  }
+  @include page;
 
   .add {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 32px;
+    margin-top: 16px;
     flex-wrap: wrap;
 
     button {
@@ -26,16 +16,14 @@
     }
 
     .delivery {
-      border-color: var(--red);
-      color: var(--red);
+      background: var(--red);
     }
     .complete {
-      border-color: var(--blue);
-      color: var(--blue);
+      background: var(--blue);
     }
     .cancel {
-      border-color: var(--yellow);
-      color: var(--yellow);
+      background: var(--yellow);
+      flex-grow: 0;
     }
   }
 
@@ -89,16 +77,14 @@
   }
 
   #AddStop {
-    background: var(--mediumgrey);
-    padding: 16px;
-    margin: 32px 0;
+    background: var(--background);
+    padding: 16px 16px 0 16px;
     border-radius: 8px;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    border: 1px solid var(--blue);
 
     &:empty {
       display: none;
@@ -106,17 +92,7 @@
   }
 
   .Stop {
-    position: relative;
-    width: 100%;
-    background: var(--tile-background);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-    margin: 16px 0;
-    padding: 16px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    @include card;
 
     .fa-times {
       position: absolute;
@@ -135,15 +111,13 @@
     }
 
     &.pickup {
-      border: 2px solid var(--green);
-
+      h2,
       h4 {
         color: var(--green);
       }
     }
     &.delivery {
-      border: 2px solid var(--red);
-
+      h2,
       h4 {
         color: var(--red);
       }

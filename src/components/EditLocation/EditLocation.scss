@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #EditLocation {
-  padding: 92px 16px 64px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   h1 {
     font-size: 24px;
@@ -49,8 +48,7 @@
       margin: 0;
       margin-left: auto;
       padding: 8px;
-      border-color: var(--yellow);
-      color: var(--yellow);
+      background: var(--yellow);
     }
   }
 

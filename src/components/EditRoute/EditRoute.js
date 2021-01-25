@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
-import Ellipsis, { GoBack } from '../../helpers/components'
+import Ellipsis from '../../helpers/components'
 import { useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
@@ -22,6 +22,7 @@ import firebase from 'firebase/app'
 import useUserData from '../../hooks/useUserData'
 import { v4 as generateUUID } from 'uuid'
 import './EditRoute.scss'
+import Header from '../Header/Header'
 
 function EditRoute() {
   const history = useHistory()
@@ -240,12 +241,7 @@ function EditRoute() {
 
   return (
     <main id="EditRoute">
-      <GoBack />
-      <h1>New Route</h1>
-      <p>
-        Use this form to assign a new rescue to a driver. Routes are
-        automatically added to Google Calendar.
-      </p>
+      <Header text="New Route" />
       {confirmedTimes ? (
         <div id="Driver">
           <img
