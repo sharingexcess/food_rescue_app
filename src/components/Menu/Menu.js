@@ -7,6 +7,7 @@ import UserIcon from '../../assets/user.svg'
 import { ExternalLink } from '../../helpers/components'
 import './Menu.scss'
 import useUserData from '../../hooks/useUserData'
+import ModeToggle from '../ModeToggle/ModeToggle'
 
 function Menu() {
   const location = useLocation()
@@ -68,18 +69,19 @@ function Menu() {
       <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
         <UserProfile />
         <div id="MenuContent">
+          <div id="ToggleContainer">
+            Color Scheme:
+            <ModeToggle />
+          </div>
           <ul>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/">Home</Link>
-            </li>
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/routes">Routes</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/calendar">Calendar</Link>
+              <Link to="/history">History</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/history">History</Link>
+              <Link to="/calendar">Calendar</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/profile">Profile</Link>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import { useAuthContext } from '../Auth/Auth'
@@ -45,7 +45,9 @@ export default function Home() {
 
   const header = generateGreeting(user.displayName, my_routes, my_deliveries)
 
-  return (
+  return !admin ? (
+    <Redirect to="/routes" />
+  ) : (
     <main id="Home">
       <h1>{header}</h1>
       {stats ? (

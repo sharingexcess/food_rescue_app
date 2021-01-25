@@ -7,6 +7,7 @@ import './Organizations.scss'
 import { Input } from '../Input/Input'
 import { GoBack } from '../../helpers/components'
 import useOrganizationData from '../../hooks/useOrganizationData'
+import Header from '../Header/Header'
 
 const org_icon_urls = {}
 
@@ -43,9 +44,8 @@ function Organizations() {
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
-      <GoBack />
-      <h1>
-        Organizations
+      <Header text="Organizations" />
+      <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="all">View{filter === 'all' ? 'ing' : ''} All</option>
           <option value="donor">
@@ -58,7 +58,7 @@ function Organizations() {
         <Link to="/admin/create-organization">
           <button className="secondary">+ New Org</button>
         </Link>
-      </h1>
+      </section>
       <Input
         label="Search..."
         onChange={handleSearch}
@@ -73,7 +73,7 @@ function Organizations() {
         >
           <section className="Organization">
             <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-            <h3>{org.name}</h3>
+            <h2>{org.name}</h2>
           </section>
         </Link>
       ))}

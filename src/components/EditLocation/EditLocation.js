@@ -4,13 +4,13 @@ import 'firebase/firestore'
 import { Input } from '../Input/Input'
 import { getCollection } from '../../helpers/helpers'
 import { initializeFormData } from './utils'
-import { GoBack } from '../../helpers/components'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
 import validator from 'validator'
 import GoogleAutoComplete from '../GoogleAutoComplete/GoogleAutoComplete'
 import GoogleMap from '../GoogleMap/GoogleMap'
+import Header from '../Header/Header'
 import './EditLocation.scss'
 
 export default function EditLocation() {
@@ -141,8 +141,7 @@ export default function EditLocation() {
     <Loading text="Loading location data..." />
   ) : (
     <main id="EditLocation">
-      <GoBack />
-      <h1>{loc_id ? 'Edit Location' : 'Add Location'}</h1>
+      <Header text={loc_id ? 'Edit Location' : 'Add Location'} />
 
       <Input
         type="text"
