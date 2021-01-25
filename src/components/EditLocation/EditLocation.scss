@@ -9,7 +9,8 @@
     margin-bottom: 8px;
   }
 
-  .is_primary {
+  .is_primary,
+  .is_philabundance_partner {
     opacity: 0;
     animation: slide-in 0.48s ease forwards;
     width: 100%;

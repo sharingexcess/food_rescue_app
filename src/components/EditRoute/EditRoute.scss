@@ -169,6 +169,11 @@
       color: var(--blue);
       font-weight: 500;
       text-decoration: underline;
+
+      &.philabundance {
+        color: var(--yellow);
+        text-decoration: none;
+      }
     }
   }
 }

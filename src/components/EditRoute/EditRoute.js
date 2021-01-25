@@ -223,6 +223,9 @@ function EditRoute() {
               ? `(${s.location.name})`
               : ''}
           </h2>
+          <p class="philabundance">
+            {s.location.is_philabundance_partner ? 'Philabundance Partner' : ''}
+          </p>
           <p>
             {s.location.address1}
             {s.location.address2 && ` - ${s.location.address2}`}
