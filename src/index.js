@@ -124,7 +124,9 @@ function App() {
                   {/* this 404 page component will render if the url does not match any other routes */}
                 </Route>
               </Switch>
-              <Footer />
+              <Footer
+                text={'Have any questions? Call us at 1-833-7424-7397 '}
+              />
             </Firestore>
           </Auth>
         </BrowserRouter>
