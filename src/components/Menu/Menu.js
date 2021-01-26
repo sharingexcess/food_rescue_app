@@ -86,6 +86,9 @@ function Menu() {
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/profile">Profile</Link>
             </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/foodsafety">Safety</Link>
+            </li>
 
             <li
               onClick={() => {

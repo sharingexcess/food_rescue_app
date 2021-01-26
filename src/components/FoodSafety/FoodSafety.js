@@ -1,12 +1,11 @@
 import React from 'react'
-import { GoBack } from '../../helpers/components'
+import Header from '../Header/Header'
 import './FoodSafety.scss'
 
 export default function FoodSafety() {
   return (
     <main id="FoodSafety">
-      <GoBack />
-      <h1>Food Safety</h1>
+      <Header text="Safety Guidelines" />
       <section id="intro">
         <h2>Food safety is our priority</h2>
         <p>
