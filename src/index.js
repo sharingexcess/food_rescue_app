@@ -20,6 +20,7 @@ import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
 import ContactUs from './components/ContactUs/ContactUs'
+import FoodSafety from './components/FoodSafety/FoodSafety'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
@@ -116,6 +117,9 @@ function App() {
                 </Route>
                 <Route exact path="/contact">
                   <ContactUs />
+                </Route>
+                <Route exact path="/foodsafety">
+                  <FoodSafety />
                 </Route>
                 <Route>
                   {/* This route has no path, and therefore will be the 'catch all' */}

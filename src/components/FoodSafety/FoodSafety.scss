@@ -1,0 +1,56 @@
+#FoodSafety {
+  width: 100%;
+  margin: auto;
+  padding: 92px 16px;
+  max-width: 800px;
+
+  p {
+    font-weight: normal;
+  }
+
+  h1 {
+    font-size: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  h2 {
+    font-size: 20px;
+    color: var(--green);
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    margin-top: 8px;
+  }
+
+  section {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid var(--lightgrey);
+    border-radius: 10px;
+  }
+
+  ol {
+    list-style-type: decimal;
+    margin-left: 24px;
+  }
+
+  .green {
+    color: var(--green);
+  }
+
+  .red {
+    color: var(--red);
+  }
+
+  .row {
+    display: flex;
+
+    .column-50 {
+      flex: 50%;
+    }
+  }
+}
