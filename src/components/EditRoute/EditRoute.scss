@@ -78,7 +78,6 @@
 
   #AddStop {
     background: var(--background);
-    padding: 16px 16px 0 16px;
     border-radius: 8px;
     width: 100%;
     display: flex;
@@ -111,7 +110,10 @@
     }
 
     &.pickup {
-      h2,
+      h2 {
+        color: var(--strong);
+      }
+
       h4 {
         color: var(--green);
       }

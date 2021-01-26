@@ -15,6 +15,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  // brand colors
+  --strong: rgb(57, 143, 104);
+  --strong-rgb: 57, 143, 104;
+  --primary: rgb(102, 205, 159);
+  --primary-rgb: 114, 222, 179;
+  --secondary: rgb(133, 219, 187);
+  --secondary-rgb: 133, 219, 187;
+  --tertiary: rgb(228, 241, 236);
+  --tertiary-rgb: 228, 241, 236;
+
+  // basic colors
   --green: rgb(102, 205, 159);
   --green-rgb: 102, 205, 159;
   --yellow: rgb(253, 205, 102);
@@ -24,9 +35,10 @@ body {
   --red: rgb(231, 111, 90);
   --red-rgb: 231, 111, 90;
 
+  // grayscale values
   --black: rgb(18, 18, 18);
   --black-rgb: 18, 18, 18;
-  --grey: rgb(192, 200, 192);
+  --grey: rgb(160, 170, 160);
   --grey-rgb: 192, 200, 192;
   --lightgrey: rgb(216, 224, 216);
   --lightgrey-rgb: 216, 224, 216;
@@ -35,48 +47,27 @@ body {
 }
 
 body.dark-theme {
-  --primary: rgb(102, 205, 159);
-  --primary-rgb: 114, 222, 179;
-  --secondary: rgb(133, 219, 187);
-  --secondary-rgb: 133, 219, 187;
-  --tertiary: rgb(228, 241, 236);
-  --tertiary-rgb: 228, 241, 236;
-  --dark: rgb(69, 112, 92);
-  --dark-rgb: 67, 136, 105;
-
   --background: rgb(28, 33, 41);
   --background-rgb: 33, 33, 33;
-  --middleground: rgb(44, 52, 65);
-  --middleground-rgb: 49, 49, 49;
   --foreground: rgb(44, 52, 65);
   --foreground-rgb: 49, 49, 49;
-  --shadow: rgb(32, 32, 32);
-  --shadow-rgb: 49, 49, 49;
+  --shadow: rgb(0, 0, 0);
+  --shadow-rgb: 0, 0, 0;
   --text: rgb(255, 255, 255);
   --text-rgb: 255, 255, 255;
 }
 
 body.light-theme {
-  --primary: rgb(102, 205, 159);
-  --primary-rgb: 114, 222, 179;
-  --secondary: rgb(133, 219, 187);
-  --secondary-rgb: 133, 219, 187;
-  --tertiary: rgb(228, 241, 236);
-  --tertiary-rgb: 228, 241, 236;
-  --dark: rgb(69, 112, 92);
-  --dark-rgb: 67, 136, 105;
-
   --background: rgb(228, 241, 236);
   --background-rgb: 228, 241, 236;
-  --middleground: rgb(133, 219, 187);
-  --middleground-rgb: 133, 219, 187;
   --foreground: rgb(255, 255, 255);
   --foreground-rgb: 255, 255, 255;
-  --shadow: rgb(216, 224, 216);
-  --shadow-rgb: 216, 224, 216;
+  --shadow: rgb(56, 56, 56);
+  --shadow-rgb: 56, 56, 56;
   --text: rgb(18, 18, 18);
   --text-rgb: 18, 18, 18;
-  &::-webkit-calendar-picker-indicator {
-    filter: invert(0) !important;
-  }
+}
+
+body.light-theme ::-webkit-calendar-picker-indicator {
+  filter: invert(0) !important;
 }

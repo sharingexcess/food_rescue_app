@@ -17,18 +17,22 @@ header#Header {
   );
 
   h1 {
-    font-size: 32px;
+    font-size: 28px;
     text-align: left;
-    color: var(--primary);
-
+    color: var(--text);
     a {
-      font-size: 24px;
+      font-size: 20px;
+      vertical-align: 10%;
       pointer-events: all;
       display: inline;
       margin-right: 8px;
       transition: color 0.16s ease;
-      &:hover {
-        color: var(--white);
+      color: var(--blue);
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          color: var(--green);
+        }
       }
     }
   }

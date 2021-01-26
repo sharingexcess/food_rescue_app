@@ -5,7 +5,6 @@ import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage } from '../../helpers/helpers'
 import './Organizations.scss'
 import { Input } from '../Input/Input'
-import { GoBack } from '../../helpers/components'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
 
