@@ -8,10 +8,10 @@ import { GoBack } from '../../helpers/components'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
-import validator from 'validator'
 import GoogleAutoComplete from '../GoogleAutoComplete/GoogleAutoComplete'
 import GoogleMap from '../GoogleMap/GoogleMap'
 import './EditLocation.scss'
+import validator from 'validator'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -58,19 +58,7 @@ export default function EditLocation() {
     if (formData.address1 === '') {
       updatedErrors.push('Missing Address')
     }
-    if (!validator.isAlpha(formData.city)) {
-      updatedErrors.push('Invalid City')
-    }
-    if (!validator.isPostalCode(formData.zip_code, 'US')) {
-      updatedErrors.push('Invalid Zip Code')
-    }
     // OPTIONAL FIELDS: check if they're empty, if not, they'll be validated
-    if (
-      formData.contact_name !== '' &&
-      !validator.isAlpha(formData.contact_name)
-    ) {
-      updatedErrors.push('Invalid Contact name')
-    }
     if (
       formData.contact_phone !== '' &&
       !validator.isMobilePhone(formData.contact_phone)
