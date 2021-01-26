@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #Users {
-  padding: 92px 16px 32px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   .wrapper {
     width: 100%;
@@ -17,25 +16,18 @@
   }
 
   .User {
-    width: 100%;
-    background: var(--tile-background);
-    border-radius: 8px;
-    border: var(--tile-border);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-    margin: 16px 0;
-    padding: 16px;
-    display: flex;
+    @include card;
     justify-content: flex-start;
     align-items: center;
+    flex-direction: row;
 
     div {
-      h3 {
-        font-size: 18px;
-      }
-      p {
-        color: var(--blue);
-        font-size: 12px;
-        margin-top: 4px;
+      width: 100%;
+      overflow: hidden;
+      * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
 
@@ -47,7 +39,7 @@
       object-fit: contain;
       margin-right: 16px;
       background: var(--white);
-      padding: 3px;
+      padding: 2px;
     }
   }
 }

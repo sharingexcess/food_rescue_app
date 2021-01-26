@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #EditLocation {
-  padding: 92px 16px 64px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   h1 {
     font-size: 24px;
@@ -15,17 +14,18 @@
     animation: slide-in 0.48s ease forwards;
     width: 100%;
     position: relative;
-    padding: 24px 0 48px 16px;
+    padding: 16px 0 16px 16px;
     p {
       font-size: 16px;
       font-weight: 900;
-      color: var(--yellow);
-      text-align: center;
+      color: var(--strong);
+      text-align: left;
+      padding-left: 32px;
     }
 
     input {
       position: absolute;
-      top: 36px;
+      top: 28px;
       left: 16px;
       transform: scale(2.5);
       margin: auto;
@@ -49,8 +49,7 @@
       margin: 0;
       margin-left: auto;
       padding: 8px;
-      border-color: var(--yellow);
-      color: var(--yellow);
+      background: var(--yellow);
     }
   }
 

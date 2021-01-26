@@ -1,0 +1,61 @@
+@import '../../styles/global.scss';
+
+footer#Footer {
+  @media (max-width: 600px) {
+    @include card;
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    width: calc(100% - 32px);
+    padding: 6px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    animation: fade-in 0.32s ease forwards;
+    z-index: 20;
+    background: var(--primary);
+
+    i {
+      font-size: 24px;
+      color: var(--white);
+      padding: 12px;
+      transition: background 0.16s ease;
+      height: 48px;
+      width: 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(var(--white-rgb), 0);
+      border-radius: 16px;
+      &#active {
+        color: var(--primary);
+        background: rgba(var(--white-rgb), 1);
+      }
+    }
+  }
+
+  @media (min-width: 600px) {
+    position: fixed;
+    top: 16px;
+    right: 84px;
+    z-index: 20;
+
+    i {
+      font-size: 24px;
+      color: var(--primary);
+      padding: 12px;
+      transition: background 0.16s ease;
+      height: 48px;
+      width: 64px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(var(--primary-rgb), 0);
+      border-radius: 16px;
+      &#active {
+        color: var(--white);
+        background: rgba(var(--primary-rgb), 1);
+      }
+    }
+  }
+}

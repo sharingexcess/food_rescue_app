@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #Route {
-  padding: 92px 16px 32px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   h1 {
     font-size: 24px;
@@ -16,18 +15,15 @@
     width: 100%;
     margin-top: 12px;
     &.red {
-      border-color: var(--red);
-      color: var(--red);
+      background: var(--red);
     }
 
     &.yellow {
-      border-color: var(--yellow);
-      color: var(--yellow);
+      background: var(--yellow);
     }
 
     &.blue {
-      border-color: var(--blue);
-      color: var(--blue);
+      background: var(--blue);
     }
     &.small {
       width: unset !important;
@@ -54,19 +50,24 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 24px 0;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: var(--strong);
+    @include shadow;
 
     h3 {
       font-size: 20px;
       margin-bottom: 2px;
+      color: var(--white);
     }
 
     h4 {
-      color: var(--blue);
+      color: var(--lightgrey);
       font-weight: 600;
     }
     h5 {
-      color: var(--blue);
+      color: var(--lightgrey);
       font-weight: 600;
     }
 
@@ -90,34 +91,24 @@
   .Stops {
     margin-bottom: 32px;
     .Stop {
-      position: relative;
-      width: 100%;
-      background: var(--tile-background);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-      margin: 16px 0;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      opacity: 0.6;
+      @include card;
+      opacity: 0.4;
+      pointer-events: none;
 
       &.active,
       &.complete {
         opacity: 1;
+        pointer-events: all;
       }
 
       &.pickup {
-        border: 2px solid var(--green);
-
+        h2,
         h4 {
-          color: var(--green);
+          color: var(--strong);
         }
       }
       &.delivery {
-        border: 2px solid var(--red);
-
+        h2,
         h4 {
           color: var(--red);
         }
@@ -167,10 +158,15 @@
 
       h6 {
         font-weight: 500;
+        font-style: italic;
         margin-top: 12px;
+        color: var(--grey);
+        text-indent: -12px;
+        padding-left: 12px;
         span {
           font-weight: 900;
-          color: var(--yellow);
+          color: var(--red);
+          font-style: normal;
         }
       }
 
@@ -185,7 +181,7 @@
         }
         span {
           text-decoration: none;
-          color: var(--yellow);
+          color: var(--text);
           margin-left: 4px;
         }
         a {
@@ -227,18 +223,19 @@
     padding: 32px 16px;
     margin: 24px 0;
     border-radius: 8px;
-    background: var(--mediumgrey);
+    background: var(--foreground);
 
     > h4 {
       width: 100%;
       font-size: 18px;
       text-align: center;
+      color: var(--white);
     }
 
     > p {
       width: 100%;
       font-size: 14px;
-      color: var(--blue);
+      color: var(--white);
       margin-top: 4px;
       text-align: center;
     }
@@ -246,6 +243,8 @@
     button {
       margin-top: 16px;
       width: auto;
+      box-shadow: none;
+      background: var(--yellow);
     }
   }
 

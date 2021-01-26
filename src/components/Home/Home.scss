@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #Home {
-  padding: 108px 16px 0 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   h1 {
     font-size: 24px;
@@ -12,14 +11,13 @@
 
   h3 {
     font-size: 16px;
-    color: var(--blue);
+    color: var(--strong);
     width: 100%;
     text-align: center;
     margin: 8px 0;
-    font-weight: 700;
+    font-weight: 500;
     span {
       font-weight: 900;
-      color: var(--green);
     }
   }
 
@@ -34,56 +32,20 @@
       div {
         width: 100%;
         height: 200px;
-        background: var(--tile-background);
-        color: var(--white);
-        border: var(--tile-border);
+        background: var(--foreground);
         border-radius: 8px;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         padding: 16px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-        transition: transform 0.16s ease, box-shadow 0.16s ease;
-        @media (hover: hover) and (pointer: fine) {
-          &:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.48);
-          }
-        }
-
-        &:active {
-          transform: translate(1px, 1px);
-          box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
-        }
+        @include shadow;
+        @include hover;
 
         i {
           font-size: 64px;
           margin: 32px;
-          &.fa-truck {
-            color: var(--blue);
-          }
-          &.fa-route {
-            color: var(--red);
-          }
-          &.fa-calendar {
-            color: var(--yellow);
-          }
-          &.fa-gear {
-            color: var(--red);
-          }
-          &.fa-users {
-            color: var(--red);
-          }
-          &.fa-user {
-            color: var(--green);
-          }
-          &.fa-question-circle {
-            color: var(--lightgrey);
-          }
-          &.fa-utensils {
-            color: var(--lightgrey);
-          }
+          color: var(--primary);
         }
 
         h4 {

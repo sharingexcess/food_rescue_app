@@ -1,36 +1,3 @@
-export const tiles = [
-  {
-    name: 'Routes',
-    icon: 'fa-truck',
-    link: '/routes',
-  },
-  {
-    name: 'Calendar',
-    icon: 'fa-calendar',
-    link: '/calendar',
-  },
-  {
-    name: 'History',
-    icon: 'fa-clock',
-    link: '/history',
-  },
-  {
-    name: 'Profile',
-    icon: 'fa-user',
-    link: '/profile',
-  },
-  {
-    name: 'Contact Us',
-    icon: 'fa-question-circle',
-    link: '/contact',
-  },
-  {
-    name: 'Food Safety Guidelines',
-    icon: 'fa-utensils',
-    link: '/foodsafety',
-  },
-]
-
 export function generateGreeting(name) {
   const today = new Date()
   const curHr = today.getHours()

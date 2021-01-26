@@ -1,5 +1,5 @@
+@import '../../styles/global.scss';
+
 #Terms {
-  width: 100%;
-  padding: 92px 16px;
-  max-width: 800px;
+  @include page;
 }

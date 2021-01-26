@@ -1,13 +1,11 @@
+@import '../../styles/global.scss';
+
 #CompletedRoute {
-  padding: 92px 16px 64px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
-  height: 92vh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  @include page;
 
   .primary {
     font-size: 96px;
