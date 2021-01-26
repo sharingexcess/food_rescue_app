@@ -16,8 +16,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   // brand colors
-  --strong: rgb(57, 143, 104);
-  --strong-rgb: 57, 143, 104;
   --primary: rgb(102, 205, 159);
   --primary-rgb: 114, 222, 179;
   --secondary: rgb(133, 219, 187);
@@ -47,8 +45,10 @@ body {
 }
 
 body.dark-theme {
+  --strong: rgb(47, 181, 120);
+  --strong-rgb: 57, 143, 104;
   --background: rgb(28, 33, 41);
-  --background-rgb: 33, 33, 33;
+  --background-rgb: 28, 33, 41;
   --foreground: rgb(44, 52, 65);
   --foreground-rgb: 49, 49, 49;
   --shadow: rgb(0, 0, 0);
@@ -58,6 +58,8 @@ body.dark-theme {
 }
 
 body.light-theme {
+  --strong: rgb(57, 143, 104);
+  --strong-rgb: 57, 143, 104;
   --background: rgb(228, 241, 236);
   --background-rgb: 228, 241, 236;
   --foreground: rgb(255, 255, 255);
