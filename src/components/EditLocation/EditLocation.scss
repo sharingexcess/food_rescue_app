@@ -14,17 +14,18 @@
     animation: slide-in 0.48s ease forwards;
     width: 100%;
     position: relative;
-    padding: 24px 0 48px 16px;
+    padding: 16px 0 16px 16px;
     p {
       font-size: 16px;
       font-weight: 900;
-      color: var(--yellow);
-      text-align: center;
+      color: var(--strong);
+      text-align: left;
+      padding-left: 32px;
     }
 
     input {
       position: absolute;
-      top: 36px;
+      top: 28px;
       left: 16px;
       transform: scale(2.5);
       margin: auto;

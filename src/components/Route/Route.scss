@@ -53,7 +53,7 @@
     padding: 8px;
     border-radius: 8px;
     margin-bottom: 16px;
-    background: var(--primary);
+    background: var(--strong);
     @include shadow;
 
     h3 {
@@ -92,17 +92,19 @@
     margin-bottom: 32px;
     .Stop {
       @include card;
-      opacity: 0.6;
+      opacity: 0.4;
+      pointer-events: none;
 
       &.active,
       &.complete {
         opacity: 1;
+        pointer-events: all;
       }
 
       &.pickup {
         h2,
         h4 {
-          color: var(--primary);
+          color: var(--strong);
         }
       }
       &.delivery {
@@ -156,10 +158,15 @@
 
       h6 {
         font-weight: 500;
+        font-style: italic;
         margin-top: 12px;
+        color: var(--grey);
+        text-indent: -12px;
+        padding-left: 12px;
         span {
           font-weight: 900;
-          color: var(--yellow);
+          color: var(--red);
+          font-style: normal;
         }
       }
 
@@ -174,7 +181,7 @@
         }
         span {
           text-decoration: none;
-          color: var(--grey);
+          color: var(--text);
           margin-left: 4px;
         }
         a {

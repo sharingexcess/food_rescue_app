@@ -14,11 +14,9 @@ export default function Footer() {
 
   return (
     <footer id="Footer">
-      {admin ? (
-        <Link to="/">
-          <i className="fa fa-home" id={handleIsActive('')} />
-        </Link>
-      ) : null}
+      <Link to="/">
+        <i className="fa fa-home" id={handleIsActive('')} />
+      </Link>
       <Link to="/routes">
         <i className="fa fa-route" id={handleIsActive('routes')} />
       </Link>

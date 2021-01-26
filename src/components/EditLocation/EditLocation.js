@@ -215,6 +215,7 @@ export default function EditLocation() {
             </p>
           </div>
           <FormError />
+          <br />
           <button
             onClick={() => {
               handleSubmit()

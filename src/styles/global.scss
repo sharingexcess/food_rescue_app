@@ -4,6 +4,7 @@
   padding: 96px 16px 108px 16px;
   width: 100%;
   max-width: 800px;
+  min-height: 100vh;
   margin: auto;
   animation: fade-in 0.32s ease forwards;
 }
@@ -33,7 +34,7 @@
   h5,
   h6 {
     color: var(--grey);
-    font-weight: 500;
+    font-weight: 700;
     margin-bottom: 4px;
   }
 
@@ -49,7 +50,21 @@
 }
 
 @mixin shadow {
-  box-shadow: 0 12px 32px 0px var(--shadow);
+  box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.16);
+}
+
+@mixin hover {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.32);
+    }
+  }
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0 0px 2px 0 rgba(var(--shadow-rgb), 0.16);
+  }
 }
 
 * {
@@ -85,7 +100,7 @@ button {
     background: transparent;
     padding: 0;
     font-size: 14px;
-    color: var(--secondary);
+    color: var(--strong);
     text-decoration: underline;
     margin: 0;
     font-weight: 600;
@@ -103,19 +118,12 @@ button {
     font-weight: 600;
     border-radius: 8px;
     @include shadow;
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    @include hover;
 
     @media (max-width: var(--mobile)) {
       width: 100%;
       padding: 16px 0;
       margin: 8px 0;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.48);
-      }
     }
 
     &:active {

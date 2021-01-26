@@ -11,7 +11,7 @@
 
   h3 {
     font-size: 16px;
-    color: var(--primary);
+    color: var(--strong);
     width: 100%;
     text-align: center;
     margin: 8px 0;
@@ -40,18 +40,7 @@
         flex-direction: column;
         padding: 16px;
         @include shadow;
-        transition: transform 0.16s ease, box-shadow 0.16s ease;
-        @media (hover: hover) and (pointer: fine) {
-          &:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.48);
-          }
-        }
-
-        &:active {
-          transform: translate(1px, 1px);
-          box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
-        }
+        @include hover;
 
         i {
           font-size: 64px;

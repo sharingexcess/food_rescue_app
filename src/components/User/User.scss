@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #User {
-  padding: 92px 16px 0 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   .wrapper {
     width: 100%;
