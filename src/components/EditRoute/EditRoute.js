@@ -43,6 +43,8 @@ function EditRoute() {
   const [list, setList] = useState('pickups')
   const [working, setWorking] = useState()
   const [confirmedTimes, setConfirmedTime] = useState()
+  const [errors, setErrors] = useState([])
+  const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
     formData.driver_id &&
@@ -175,6 +177,8 @@ function EditRoute() {
   }
 
   function handleChange(e, field) {
+    setErrors([])
+    setShowErrors(false)
     if (field.suggestionQuery) {
       updateFieldSuggestions(
         e.target.value,
@@ -238,6 +242,25 @@ function EditRoute() {
     )
   }
 
+  function validateFormData() {
+    if (!moment(formData.time_start).isValid()) {
+      errors.push('Invalid Data Input: Start Time is invalid')
+    }
+    if (!moment(formData.time_end).isValid()) {
+      errors.push('Invalid Data Input: End Time is invalid')
+    }
+    if (errors.length === 0) {
+      return true
+    }
+    return false
+  }
+
+  function FormError() {
+    if (showErrors === true) {
+      return errors.map(error => <p id="FormError">{error}</p>)
+    } else return null
+  }
+
   return (
     <main id="EditRoute">
       <GoBack />
@@ -283,9 +306,9 @@ function EditRoute() {
               />
             ) : null
           )}
-          <br />
+          <FormError />
           {formData.time_end && (
-            <button onClick={() => setConfirmedTime(true)}>
+            <button onClick={() => {validateFormData() ? setConfirmedTime(true) : setShowErrors(true)}}>
               {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
           )}
