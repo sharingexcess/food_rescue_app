@@ -42,5 +42,18 @@
       padding: 3px;
       flex-shrink: 0;
     }
+    h3 {
+      font-size: 18px;
+      color: var(--black);
+    }
+
+    h2 {
+      border: content-box;
+      background-color: var(--limegreen);
+      border: 4px solid var(--limegreen);
+      border-radius: 10px 10px;
+      margin-left: 10px;
+      font-size: 13px;
+    }
   }
 }
