@@ -1,8 +1,9 @@
+@import '../../styles/global.scss';
+
 #ContactUs {
-  padding: 92px 16px 16px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
+  height: 1260px;
+  z-index: -1;
 
   h1 {
     font-size: 28px;
@@ -11,6 +12,7 @@
   iframe {
     width: 100%;
     margin-top: 16px;
-    height: calc(100vh - 186px);
+    z-index: -1;
+    height: 100%;
   }
 }

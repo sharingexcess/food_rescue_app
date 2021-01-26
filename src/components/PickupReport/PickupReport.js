@@ -4,12 +4,12 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
-import { GoBack } from '../../helpers/components'
 import { setFirestoreData } from '../../helpers/helpers'
 import usePickupData from '../../hooks/usePickupData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import { useAuthContext } from '../Auth/Auth'
 import './PickupReport.scss'
+import Header from '../Header/Header'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
@@ -81,8 +81,7 @@ export default function PickupReport() {
   if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
-      <GoBack />
-      <h1>Rescue Report</h1>
+      <Header text="Rescue Report" />
       <h3>{pickup_org.name}</h3>
       {Object.keys(formData)
         .sort()

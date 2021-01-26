@@ -4,19 +4,19 @@ import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
-import { GoBack } from '../../helpers/components'
 import { useAuthContext } from '../Auth/Auth'
 import useRouteData from '../../hooks/useRouteData'
 import usePickupData from '../../hooks/usePickupData'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useUserData from '../../hooks/useUserData'
+import Header from '../Header/Header'
 import './Routes.scss'
 
 export default function Routes({ initial_filter }) {
   const { user, admin } = useAuthContext()
   const location = useLocation()
-  const raw_routes = useRouteData(initial_filter)
+  const raw_routes = useRouteData()
   const pickups = usePickupData()
   const deliveries = useDeliveryData()
   const organizations = useOrganizationData()
@@ -28,7 +28,7 @@ export default function Routes({ initial_filter }) {
   useEffect(() => {
     async function addData() {
       const full_data = []
-      for (const route of raw_routes) {
+      for (const route of raw_routes.filter(initial_filter)) {
         for (const s of route.stops) {
           const stop =
             s.type === 'pickup'
@@ -47,7 +47,7 @@ export default function Routes({ initial_filter }) {
       setLoading(false)
     }
     raw_routes && addData()
-  }, [raw_routes, pickups, deliveries, organizations, users]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function filterAndSortRoutes(routes) {
     return filter
@@ -69,13 +69,10 @@ export default function Routes({ initial_filter }) {
 
   return (
     <main id="Routes">
-      <GoBack />
-      <h1>
-        {location.pathname === '/routes' ? 'Routes' : 'History'}
-        <button className="secondary" onClick={() => setFilter(!filter)}>
-          {filter ? 'Show All Routes' : 'Show My Routes'}
-        </button>
-      </h1>
+      <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
+      <button className="secondary" onClick={() => setFilter(!filter)}>
+        {filter ? 'Show All Routes' : 'Show My Routes'}
+      </button>
       {loading ? (
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (
@@ -107,7 +104,7 @@ export default function Routes({ initial_filter }) {
               )}
               <div>
                 <StatusIndicator route={r} />
-                <h3>{r.driver.name || 'Unassigned Route'}</h3>
+                <h2>{r.driver.name || 'Unassigned Route'}</h2>
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                 <h5>
                   {moment(r.time_start).format('h:mma')} -{' '}

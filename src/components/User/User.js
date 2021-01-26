@@ -11,9 +11,9 @@ import {
   checkUserAdminPermissions,
   checkUserBasicAccess,
 } from './utils'
-import { GoBack } from '../../helpers/components'
-import './User.scss'
 import useUserData from '../../hooks/useUserData'
+import './User.scss'
+import Header from '../Header/Header'
 
 function User() {
   // get the user id from the current url parameters
@@ -42,7 +42,7 @@ function User() {
   if (!profile) return <Loading text="Loading user" />
   return (
     <main id="User">
-      <GoBack />
+      <Header text="Manage User" />
       <div>
         <img
           src={profileIconFullUrl || profile.icon || UserIcon}

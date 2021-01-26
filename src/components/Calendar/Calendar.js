@@ -1,12 +1,11 @@
 import { memo } from 'react'
-import { GoBack } from '../../helpers/components'
+import Header from '../Header/Header'
 import './Calendar.scss'
 
 function Calendar() {
   return (
     <div id="Calendar">
-      <GoBack />
-      <h1>Rescue Calendar</h1>
+      <Header text="Calendar" />
       <iframe
         title="cal"
         src={`https://calendar.google.com/calendar/embed?src=${process.env.REACT_APP_GOOGLE_CALENDAR_ID}&ctz=America%2FNew_York`}

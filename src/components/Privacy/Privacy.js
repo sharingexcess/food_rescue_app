@@ -1,16 +1,15 @@
 import React from 'react'
-import { GoBack } from '../../helpers/components'
+
+import Header from '../Header/Header'
 import './Privacy.scss'
 
 export default function Privacy() {
   return (
     <main id="Privacy">
-      <GoBack />
-
+      <Header text="Privacy Policy" />
       <section>
         <div className="en section_container" section-language="en">
           <div id="md_en" data-target="out_en" className="agreement_md">
-            <h1>Privacy Policy</h1>
             <p>Last updated: January 07, 2021</p>
             <p>
               This Privacy Policy describes Our policies and procedures on the
@@ -23,15 +22,15 @@ export default function Privacy() {
               using the Service, You agree to the collection and use of
               information in accordance with this Privacy Policy.
             </p>
-            <h1>Interpretation and Definitions</h1>
-            <h2>Interpretation</h2>
+            <h3>Interpretation and Definitions</h3>
+            <h3>Interpretation</h3>
             <p>
               The words of which the initial letter is capitalized have meanings
               defined under the following conditions. The following definitions
               shall have the same meaning regardless of whether they appear in
               singular or in plural.
             </p>
-            <h2>Definitions</h2>
+            <h3>Definitions</h3>
             <p>For the purposes of this Privacy Policy:</p>
             <ul>
               <li>
@@ -126,8 +125,8 @@ export default function Privacy() {
                 </p>
               </li>
             </ul>
-            <h1>Collecting and Using Your Personal Data</h1>
-            <h2>Types of Data Collected</h2>
+            <h3>Collecting and Using Your Personal Data</h3>
+            <h3>Types of Data Collected</h3>
             <h3>Personal Data</h3>
             <p>
               While using Our Service, We may ask You to provide Us with certain
@@ -310,7 +309,7 @@ export default function Privacy() {
               regarding cookies, please visit our Cookies Policy or the Cookies
               section of our Privacy Policy.
             </p>
-            <h2>Use of Your Personal Data</h2>
+            <h3>Use of Your Personal Data</h3>
             <p>The Company may use Personal Data for the following purposes:</p>
             <ul>
               <li>
@@ -429,7 +428,7 @@ export default function Privacy() {
                 personal information for any other purpose with Your consent.
               </li>
             </ul>
-            <h2>Retention of Your Personal Data</h2>
+            <h3>Retention of Your Personal Data</h3>
             <p>
               The Company will retain Your Personal Data only for as long as is
               necessary for the purposes set out in this Privacy Policy. We will
@@ -445,7 +444,7 @@ export default function Privacy() {
               to improve the functionality of Our Service, or We are legally
               obligated to retain this data for longer time periods.
             </p>
-            <h2>Transfer of Your Personal Data</h2>
+            <h3>Transfer of Your Personal Data</h3>
             <p>
               Your information, including Personal Data, is processed at the
               Company's operating offices and in any other places where the
@@ -467,7 +466,7 @@ export default function Privacy() {
               controls in place including the security of Your data and other
               personal information.
             </p>
-            <h2>Disclosure of Your Personal Data</h2>
+            <h3>Disclosure of Your Personal Data</h3>
             <h3>Business Transactions</h3>
             <p>
               If the Company is involved in a merger, acquisition or asset sale,
@@ -500,7 +499,7 @@ export default function Privacy() {
               </li>
               <li>Protect against legal liability</li>
             </ul>
-            <h2>Security of Your Personal Data</h2>
+            <h3>Security of Your Personal Data</h3>
             <p>
               The security of Your Personal Data is important to Us, but
               remember that no method of transmission over the Internet, or
@@ -508,7 +507,7 @@ export default function Privacy() {
               use commercially acceptable means to protect Your Personal Data,
               We cannot guarantee its absolute security.
             </p>
-            <h1>Links to Other Websites</h1>
+            <h3>Links to Other Websites</h3>
             <p>
               Our Service may contain links to other websites that are not
               operated by Us. If You click on a third party link, You will be
@@ -520,7 +519,7 @@ export default function Privacy() {
               content, privacy policies or practices of any third party sites or
               services.
             </p>
-            <h1>Changes to this Privacy Policy</h1>
+            <h3>Changes to this Privacy Policy</h3>
             <p>
               We may update Our Privacy Policy from time to time. We will notify
               You of any changes by posting the new Privacy Policy on this page.
@@ -535,7 +534,7 @@ export default function Privacy() {
               changes. Changes to this Privacy Policy are effective when they
               are posted on this page.
             </p>
-            <h1>Contact Us</h1>
+            <h3>Contact Us</h3>
             <p>
               If you have any questions about this Privacy Policy, You can
               contact us:

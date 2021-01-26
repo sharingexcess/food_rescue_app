@@ -4,7 +4,7 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import { useAuthContext } from '../Auth/Auth'
 import './Home.scss'
-import { generateDriverStats, generateGreeting, tiles } from './utils'
+import { generateDriverStats, generateGreeting } from './utils'
 
 export default function Home() {
   // access current user and admin state from the Auth Context in Auth.js
@@ -28,14 +28,22 @@ export default function Home() {
     )
   }
 
-  function Tiles() {
-    return tiles.map(t => <Tile key={t.name} {...t} />)
+  function DriverTiles() {
+    return (
+      <>
+        <Tile name="Routes" icon="fa-calendar" link="/routes" />
+        <Tile name="History" icon="fa-route" link="/history" />
+        <Tile name="Contact" icon="fa-question" link="/contact-us" />
+        <Tile name="Profile" icon="fa-user" link="/profile" />
+      </>
+    )
   }
 
   function AdminTiles() {
     if (!admin) return null
     return (
       <>
+        <Tile name="Calendar" icon="fa-calendar" link="/calendar" />
         <Tile name="New Route" icon="fa-route" link="/admin/create-route" />
         <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
@@ -54,10 +62,7 @@ export default function Home() {
           driven, <span>{stats.weight}</span> lbs. rescued
         </h3>
       ) : null}
-      <section id="Tiles">
-        <Tiles />
-        <AdminTiles />
-      </section>
+      <section id="Tiles">{admin ? <AdminTiles /> : <DriverTiles />}</section>
     </main>
   )
 }
