@@ -125,7 +125,7 @@ function App() {
                 </Route>
               </Switch>
               <AdminPhoneNumber
-                text={'Have any questions? Call us at 1-833-7424-7397 '}
+                text={'Have any questions? Call us at 1-833-7424-7397'}
               />
             </Firestore>
           </Auth>
