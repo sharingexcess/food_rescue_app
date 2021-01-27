@@ -1,0 +1,40 @@
+@import '../../styles/global.scss';
+
+#FoodSafety {
+  @include page;
+
+  h2 {
+    font-size: 20px;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    margin-top: 8px;
+  }
+
+  section {
+    @include card;
+  }
+
+  ol {
+    list-style-type: decimal;
+    margin-left: 24px;
+  }
+
+  .green {
+    color: var(--green);
+  }
+
+  .red {
+    color: var(--red);
+  }
+
+  .row {
+    display: flex;
+
+    .column-50 {
+      flex: 50%;
+    }
+  }
+}

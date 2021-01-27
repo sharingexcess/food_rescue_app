@@ -81,10 +81,13 @@ function Menu() {
               <Link to="/history">History</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/calendar">Calendar</Link>
+              <Link to="/history">History</Link>
             </li>
             <li onClick={() => dispatch(setMenu(false))}>
               <Link to="/profile">Profile</Link>
+            </li>
+            <li onClick={() => dispatch(setMenu(false))}>
+              <Link to="/foodsafety">Safety</Link>
             </li>
 
             <li

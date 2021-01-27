@@ -3,10 +3,12 @@
 #ContactUs {
   @include page;
   height: 1260px;
+  padding-top: 72px;
   z-index: -1;
 
-  h1 {
-    font-size: 28px;
+  a {
+    color: var(--blue);
+    text-decoration: underline;
   }
 
   iframe {

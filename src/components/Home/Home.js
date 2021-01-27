@@ -33,7 +33,7 @@ export default function Home() {
       <>
         <Tile name="Routes" icon="fa-calendar" link="/routes" />
         <Tile name="History" icon="fa-route" link="/history" />
-        <Tile name="Contact" icon="fa-question" link="/contact-us" />
+        <Tile name="Contact" icon="fa-question" link="/contact" />
         <Tile name="Profile" icon="fa-user" link="/profile" />
       </>
     )
