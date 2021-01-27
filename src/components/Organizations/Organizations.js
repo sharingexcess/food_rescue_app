@@ -47,11 +47,11 @@ function Organizations() {
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="all">View{filter === 'all' ? 'ing' : ''} All</option>
-          <option value="Donor">
-            View{filter === 'Donor' ? 'ing' : ''} Donors
+          <option value="donor">
+            View{filter === 'donor' ? 'ing' : ''} Donors
           </option>
-          <option value="Recipient">
-            View{filter === 'Recipient' ? 'ing' : ''} Recipients
+          <option value="recipient">
+            View{filter === 'recipient' ? 'ing' : ''} Recipients
           </option>
         </select>
         <Link to="/admin/create-organization">
@@ -73,7 +73,9 @@ function Organizations() {
           <section className="Organization">
             <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
             <h3>{org.name}</h3>
-            <h2>{org.org_type}</h2>
+            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+              {org.org_type}
+            </h2>
           </section>
         </Link>
       ))}

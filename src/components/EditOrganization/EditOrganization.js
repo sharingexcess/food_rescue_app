@@ -166,7 +166,7 @@ export default function EditOrganization() {
         label="Organization Type"
         element_id="org_type"
         value={formData.org_type}
-        suggestions={['Donor', 'Recipient']}
+        suggestions={['donor', 'recipient']}
         onSuggestionClick={handleChange}
       />
       <FormError />
