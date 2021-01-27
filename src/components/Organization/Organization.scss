@@ -41,12 +41,13 @@
           font-size: 16px;
           color: var(--white);
           text-transform: capitalize;
-        }
-        h2.donor {
-          background-color: var(--red);
-        }
-        h2.recipient {
-          background-color: var(--green);
+          
+          &.donor {
+            background-color: var(--red);
+          }
+          &.recipient {
+            background-color: var(--green);
+          }
         }
         }
       }
