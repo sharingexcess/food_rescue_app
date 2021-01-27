@@ -42,5 +42,25 @@
       padding: 3px;
       flex-shrink: 0;
     }
+    h3 {
+      font-size: 18px;
+      color: var(--black);
+    }
+
+    h2 {
+      padding: 4px;
+      border-radius: 16px;
+      margin-left: 8px;
+      font-size: 13px;
+      color: var(--white);
+      text-transform: capitalize;
+    
+      &.donor {
+        background-color: var(--red);
+      }
+      &.recipient {
+        background-color: var(--green);
+      }
+    }
   }
 }

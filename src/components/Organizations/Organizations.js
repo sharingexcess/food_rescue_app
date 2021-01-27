@@ -72,7 +72,10 @@ function Organizations() {
         >
           <section className="Organization">
             <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-            <h2>{org.name}</h2>
+            <h3>{org.name}</h3>
+            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+              {org.org_type}
+            </h2>
           </section>
         </Link>
       ))}

@@ -28,12 +28,31 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
+      div {
+        flex-direction: row;
+        h3 {
+          font-size: 24px;
+          margin-bottom: 8px;
+        }
+        h2 {
+          padding: 4px;
+          border-radius: 16px;
+          margin-left: 8px;
+          font-size: 16px;
+          color: var(--white);
+          text-transform: capitalize;
+          
+          &.donor {
+            background-color: var(--red);
+          }
+          &.recipient {
+            background-color: var(--green);
+          }
+        }
+        }
+      }
       a {
         text-decoration: underline;
-      }
-      h1 {
-        font-size: 24px;
-        margin-bottom: 8px;
       }
       button {
         margin-top: 8px;
@@ -87,4 +106,3 @@
       color: var(--green);
     }
   }
-}

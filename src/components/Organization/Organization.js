@@ -70,7 +70,12 @@ function Organization() {
       <div>
         <img src={orgIconFullUrl || UserIcon} id="org-icon" alt={org.name} />
         <div>
-          <h1>{org.name}</h1>
+          <div>
+            <h3>{org.name}</h3>
+            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+              {org.org_type}
+            </h2>
+          </div>
           <OrganizationContact org={org} />
           <OrganizationPhone org={org} />
           <OrganizationEmail org={org} />
