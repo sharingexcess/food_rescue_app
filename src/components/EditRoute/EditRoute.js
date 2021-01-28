@@ -249,6 +249,15 @@ function EditRoute() {
     if (!moment(formData.time_end).isValid()) {
       errors.push('Invalid Data Input: End Time is invalid')
     }
+    if (moment(formData.time_start).isBefore()) {
+      errors.push('Invalid Data Input: Start Time is in the past')
+    }
+    if (moment(formData.time_end).isBefore()) {
+      errors.push('Invalid Data Input: End Time is in the past')
+    }
+    if (moment(formData.time_end).isSameOrBefore(formData.time_start)) {
+      errors.push('Invalid Data Input: End Time is before Start Time')
+    }
     if (errors.length === 0) {
       return true
     }
