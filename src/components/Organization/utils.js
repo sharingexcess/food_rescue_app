@@ -73,10 +73,17 @@ export function OrganizationHours({ org }) {
           moment(org.time_open, 'hh:mm'),
           moment(org.time_close, 'hh:mm')
         ) ? (
-          <span className="open">Openning</span>
+          <span className="open">Open Now</span>
         ) : (
-          <span className="close">Closed</span>
+          <span className="close">Closed Now</span>
         )}
+        {org.org_type === 'recipient' ? (
+          org.receive_start ? (
+            <p>
+              Receive interval: {org.receive_start} - {org.receive_end}
+            </p>
+          ) : null
+        ) : null}
       </p>
     )
   }

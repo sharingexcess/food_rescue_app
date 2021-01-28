@@ -15,5 +15,7 @@ export function initializeFormData(org, callback) {
     org_type: org.org_type,
     time_open: org.time_open,
     time_close: org.time_close,
+    receive_start: org.receive_start,
+    receive_end: org.receive_end,
   })
 }

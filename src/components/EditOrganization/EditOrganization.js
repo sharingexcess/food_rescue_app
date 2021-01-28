@@ -23,6 +23,8 @@ export default function EditOrganization() {
     org_type: 'donor',
     time_open: '',
     time_close: '',
+    receive_start: '',
+    receive_end: '',
   })
   const [org = {}] = useDocumentData(
     id ? getCollection('Organizations').doc(id) : null
@@ -183,6 +185,23 @@ export default function EditOrganization() {
         label="Close"
         element_id="time_close"
         value={formData.time_close}
+        onChange={handleChange}
+      />
+      <h4>
+        {formData.org_type === 'recipient' ? 'Receive' : 'Pickup'} Interval
+      </h4>
+      <Input
+        type="time"
+        label="Start"
+        element_id="receive_start"
+        value={formData.receive_start}
+        onChange={handleChange}
+      />
+      <Input
+        type="time"
+        label="End"
+        element_id="receive_end"
+        value={formData.receive_end}
         onChange={handleChange}
       />
       <FormError />
