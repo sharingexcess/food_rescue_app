@@ -23,7 +23,7 @@ import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
 import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
+import { Integrations as TracingIntegrations } from '@sentry/tracing'
 import CompletedRoute from './components/CompletedRoute/CompletedRoute'
 import Footer from './components/Footer/Footer'
 import Home from './components/Home/Home'
@@ -32,11 +32,11 @@ import './styles/index.scss'
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,
-  integrations: [new Integrations.BrowserTracing()],
+  integrations: [new TracingIntegrations.BrowserTracing()],
 
   // We recommend adjusting this value in production, or using tracesSampler
   // for finer control
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.2,
 })
 
 // This function call connects us to Firebase and initializes all of our API access
