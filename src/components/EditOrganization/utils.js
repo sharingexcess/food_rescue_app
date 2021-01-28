@@ -13,5 +13,7 @@ export function initializeFormData(org, callback) {
     default_contact_email: org.default_contact_email,
     default_contact_phone: org.default_contact_phone,
     org_type: org.org_type,
+    time_open: org.time_open,
+    time_close: org.time_close,
   })
 }
