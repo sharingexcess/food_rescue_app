@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import { Input } from '../Input/Input'
-import { GoBack } from '../../helpers/components'
 import useUserData from '../../hooks/useUserData'
+import Header from '../Header/Header'
 import './Users.scss'
 
 const user_icon_urls = {}
@@ -42,8 +42,7 @@ function Users() {
     <Loading text="Loading users" />
   ) : (
     <main id="Users">
-      <GoBack />
-      <h1>Users</h1>
+      <Header text="Users" />
       <Input
         label="Search..."
         onChange={handleSearch}
@@ -58,7 +57,7 @@ function Users() {
               alt={user.name}
             />
             <div>
-              <h3>{user.name}</h3>
+              <h2>{user.name}</h2>
               <p>{user.email}</p>
             </div>
           </section>

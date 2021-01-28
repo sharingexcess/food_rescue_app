@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #Organization {
-  padding: 92px 16px 0 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   .wrapper {
     width: 100%;
@@ -29,12 +28,31 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
+      div {
+        flex-direction: row;
+        h3 {
+          font-size: 24px;
+          margin-bottom: 8px;
+        }
+        h2 {
+          padding: 4px;
+          border-radius: 16px;
+          margin-left: 8px;
+          font-size: 16px;
+          color: var(--white);
+          text-transform: capitalize;
+          
+          &.donor {
+            background-color: var(--red);
+          }
+          &.recipient {
+            background-color: var(--green);
+          }
+        }
+        }
+      }
       a {
         text-decoration: underline;
-      }
-      h1 {
-        font-size: 24px;
-        margin-bottom: 8px;
       }
       button {
         margin-top: 8px;
@@ -63,18 +81,7 @@
   }
 
   .Location {
-    position: relative;
-    width: 100%;
-    background: var(--tile-background);
-    border-radius: 8px;
-    border: var(--tile-border);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-    margin: 16px 0;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+    @include card;
 
     .primary {
       position: absolute;
@@ -99,4 +106,3 @@
       color: var(--green);
     }
   }
-}

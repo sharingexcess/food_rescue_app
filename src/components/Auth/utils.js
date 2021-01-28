@@ -18,10 +18,7 @@ export async function updatePublicUserProfile(user) {
   const update_payload = {
     id: user.uid,
     email: user.email,
-    name:
-      existing_user !== undefined
-        ? existing_user.displayName
-        : user.displayName,
+    name: existing_user !== undefined ? existing_user.name : user.displayName,
     icon: existing_user !== undefined ? existing_user.icon : user.photoURL,
     created_at:
       existing_user !== undefined

@@ -1,16 +1,20 @@
-#ContactUs {
-  padding: 92px 16px 16px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+@import '../../styles/global.scss';
 
-  h1 {
-    font-size: 28px;
+#ContactUs {
+  @include page;
+  height: 1260px;
+  padding-top: 72px;
+  z-index: -1;
+
+  a {
+    color: var(--blue);
+    text-decoration: underline;
   }
 
   iframe {
     width: 100%;
     margin-top: 16px;
-    height: calc(100vh - 186px);
+    z-index: -1;
+    height: 100%;
   }
 }

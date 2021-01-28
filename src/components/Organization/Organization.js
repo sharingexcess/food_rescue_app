@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import { GoBack } from '../../helpers/components'
 import Loading from '../Loading/Loading'
 import {
   handleOrgIcon,
@@ -12,6 +11,7 @@ import {
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
+import Header from '../Header/Header'
 import './Organization.scss'
 
 function Organization() {
@@ -44,7 +44,7 @@ function Organization() {
             to={`/admin/organizations/${id}/location/${loc.id}`}
           >
             <section className="Location">
-              <h5>{loc.name}</h5>
+              <h2>{loc.name}</h2>
               {loc.id === org.primary_location && (
                 <i className="primary fa fa-star" />
               )}
@@ -66,11 +66,16 @@ function Organization() {
   if (!org) return <Loading text="Loading your organization" />
   return (
     <main id="Organization">
-      <GoBack />
+      <Header text="Manage Org" />
       <div>
         <img src={orgIconFullUrl || UserIcon} id="org-icon" alt={org.name} />
         <div>
-          <h1>{org.name}</h1>
+          <div>
+            <h3>{org.name}</h3>
+            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+              {org.org_type}
+            </h2>
+          </div>
           <OrganizationContact org={org} />
           <OrganizationPhone org={org} />
           <OrganizationEmail org={org} />

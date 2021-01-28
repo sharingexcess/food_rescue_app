@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
 import firebase from 'firebase/app'
 import Firestore from './components/Firestore/Firestore'
-import Header from './components/Header/Header'
 import Error from './components/Error/Error'
 import Auth from './components/Auth/Auth'
 import Menu from './components/Menu/Menu'
@@ -13,19 +12,22 @@ import { Provider } from 'react-redux'
 import { resize, setDarkMode } from './redux/app/appReducer'
 import store from './redux/store'
 import AdminRoutes from './routes/AdminRoutes'
-import Home from './components/Home/Home'
 import PickupReport from './components/PickupReport/PickupReport'
 import Profile from './components/Profile/Profile'
 import Routes from './components/Routes/Routes'
 import { Route as DriverRoute } from './components/Route/Route'
 import Calendar from './components/Calendar/Calendar'
 import ContactUs from './components/ContactUs/ContactUs'
+import FoodSafety from './components/FoodSafety/FoodSafety'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
+import AdminPhoneNumber from './components/AdminPhoneNumber/AdminPhoneNumber'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import CompletedRoute from './components/CompletedRoute/CompletedRoute'
+import Footer from './components/Footer/Footer'
+import Home from './components/Home/Home'
 import './styles/index.scss'
 
 Sentry.init({
@@ -65,14 +67,14 @@ function App() {
   }, [width])
 
   return (
-    <Sentry.ErrorBoundary fallback={'An error has occurred'}>
+    <Sentry.ErrorBoundary fallback={<Error crash />}>
       <Provider store={store}>
         {/* This Provider component wraps our app in a component that gives access to the Redux store */}
         <BrowserRouter>
           <Auth>
             <Firestore>
-              <Header />
               <Menu />
+              <Footer />
               {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
               {/* Auth component handles login and will show a login page if no user is authenticated */}
               {/* Switch will only allows the first matching route to be rendered */}
@@ -84,7 +86,7 @@ function App() {
                   <Calendar />
                 </Route>
                 <Route exact path="/routes">
-                  <Routes initial_filter={r => ![0, 9].includes(r.status)} />
+                  <Routes initial_filter={r => [1, 3].includes(r.status)} />
                 </Route>
                 <Route exact path="/history">
                   <Routes initial_filter={r => [0, 9].includes(r.status)} />
@@ -117,12 +119,18 @@ function App() {
                 <Route exact path="/contact">
                   <ContactUs />
                 </Route>
+                <Route exact path="/foodsafety">
+                  <FoodSafety />
+                </Route>
                 <Route>
                   {/* This route has no path, and therefore will be the 'catch all' */}
                   <Error />
                   {/* this 404 page component will render if the url does not match any other routes */}
                 </Route>
               </Switch>
+              <AdminPhoneNumber
+                text={'Have any questions? Call us at 1-833-7424-7397'}
+              />
             </Firestore>
           </Auth>
         </BrowserRouter>
