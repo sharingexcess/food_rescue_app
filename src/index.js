@@ -22,6 +22,7 @@ import FoodSafety from './components/FoodSafety/FoodSafety'
 import DeliveryReport from './components/DeliveryReport/DeliveryReport'
 import Privacy from './components/Privacy/Privacy'
 import Terms from './components/Terms/Terms'
+import AdminPhoneNumber from './components/AdminPhoneNumber/AdminPhoneNumber'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import CompletedRoute from './components/CompletedRoute/CompletedRoute'
@@ -127,6 +128,9 @@ function App() {
                   {/* this 404 page component will render if the url does not match any other routes */}
                 </Route>
               </Switch>
+              <AdminPhoneNumber
+                text={'Have any questions? Call us at 1-833-7424-7397'}
+              />
             </Firestore>
           </Auth>
         </BrowserRouter>
