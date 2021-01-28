@@ -4,6 +4,7 @@ import {
   getImageFromStorage,
   isValidURL,
 } from '../../helpers/helpers'
+import moment from 'moment'
 
 export function handleOrgIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
@@ -60,4 +61,28 @@ export function OrganizationEmail({ org }) {
         <i className="fa fa-envelope" /> no contact email
       </p>
     )
+}
+
+export function OrganizationHours({ org }) {
+  if (org.time_open) {
+    return (
+      <p>
+        <i className="fa fa-clock-o" /> Operation hours: {org.time_open} -{' '}
+        {org.time_close}
+        {moment().isBetween(
+          moment(org.time_open, 'hh:mm'),
+          moment(org.time_close, 'hh:mm')
+        ) ? (
+          <span className="open">Openning</span>
+        ) : (
+          <span className="close">Closed</span>
+        )}
+      </p>
+    )
+  }
+  return (
+    <p>
+      <i className="fa fa-clock-o" /> no operation hours
+    </p>
+  )
 }

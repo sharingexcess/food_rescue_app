@@ -15,7 +15,8 @@ export function Input({
   animation = true,
 }) {
   const [isUsed, setIsUsed] = useState(type === 'select' ? true : false)
-  const shouldNotMoveLabel = () => ['datetime-local', 'select'].includes(type)
+  const shouldNotMoveLabel = () =>
+    ['time', 'datetime-local', 'select'].includes(type)
 
   useEffect(() => {
     setIsUsed(!!value)

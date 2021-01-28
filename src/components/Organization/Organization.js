@@ -9,6 +9,7 @@ import {
   OrganizationContact,
   OrganizationEmail,
   OrganizationPhone,
+  OrganizationHours,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
@@ -74,6 +75,7 @@ function Organization() {
           <OrganizationContact org={org} />
           <OrganizationPhone org={org} />
           <OrganizationEmail org={org} />
+          <OrganizationHours org={org} />
           <Link to={`/admin/organizations/${id}/edit`}>
             <button className="secondary">Edit Org Details{' >'}</button>
           </Link>
