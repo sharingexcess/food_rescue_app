@@ -187,9 +187,7 @@ export default function EditOrganization() {
         value={formData.time_close}
         onChange={handleChange}
       />
-      <h4>
-        {formData.org_type === 'recipient' ? 'Receive' : 'Pickup'} Interval
-      </h4>
+      <h4>{formData.org_type === 'recipient' ? 'Receive' : 'Pickup'} Hours</h4>
       <Input
         type="time"
         label="Start"

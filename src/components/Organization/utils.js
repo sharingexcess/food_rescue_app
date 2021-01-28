@@ -65,24 +65,23 @@ export function OrganizationEmail({ org }) {
 
 export function OrganizationHours({ org }) {
   if (org.time_open) {
+    const open_time = moment(org.time_open, 'hh:mm')
+    const close_time = moment(org.time_close, 'hh:mm')
     return (
       <p>
-        <i className="fa fa-clock-o" /> Operation hours: {org.time_open} -{' '}
-        {org.time_close}
-        {moment().isBetween(
-          moment(org.time_open, 'hh:mm'),
-          moment(org.time_close, 'hh:mm')
-        ) ? (
+        <i className="fa fa-clock-o" /> Operation hours:{' '}
+        {open_time.format('LT')} - {close_time.format('LT')}
+        {moment().isBetween(open_time, close_time) ? (
           <span className="open">Open Now</span>
         ) : (
           <span className="close">Closed Now</span>
         )}
-        {org.org_type === 'recipient' ? (
-          org.receive_start ? (
-            <p>
-              Receive interval: {org.receive_start} - {org.receive_end}
-            </p>
-          ) : null
+        {org.receive_start ? (
+          <p>
+            {org.org_type === 'recipient' ? 'Receive' : 'Pickup'} hours:{' '}
+            {moment(org.receive_start, 'hh:mm').format('LT')} -{' '}
+            {moment(org.receive_end, 'hh:mm').format('LT')}
+          </p>
         ) : null}
       </p>
     )
