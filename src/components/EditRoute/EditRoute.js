@@ -317,7 +317,13 @@ function EditRoute() {
           )}
           <FormError />
           {formData.time_end && (
-            <button onClick={() => {validateFormData() ? setConfirmedTime(true) : setShowErrors(true)}}>
+            <button
+              onClick={() => {
+                validateFormData()
+                  ? setConfirmedTime(true)
+                  : setShowErrors(true)
+              }}
+            >
               {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
           )}
