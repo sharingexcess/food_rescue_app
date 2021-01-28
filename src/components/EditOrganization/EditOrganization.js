@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/storage'
@@ -10,6 +10,7 @@ import { handleOrgIcon, initializeFormData } from './utils'
 import './EditOrganization.scss'
 import { getCollection } from '../../helpers/helpers'
 import validator from 'validator'
+import Header from '../Header/Header'
 
 export default function EditOrganization() {
   const { id } = useParams()
@@ -126,13 +127,7 @@ export default function EditOrganization() {
 
   return (
     <main id="EditOrganization">
-      <Link
-        className="back"
-        to={id ? `/admin/organizations/${id}` : `/admin/organizations`}
-      >
-        {'< '} back
-      </Link>
-      <h1>{id ? 'Edit Organization' : 'Create Organization'}</h1>
+      <Header text={id ? 'Edit Organization' : 'Create Organization'} />
       <section>
         <img
           src={file ? URL.createObjectURL(file) : orgIconFullUrl || UserIcon}

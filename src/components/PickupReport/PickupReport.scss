@@ -1,8 +1,7 @@
+@import '../../styles/global.scss';
+
 #PickupReport {
-  padding: 92px 16px 64px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   h1 {
     font-size: 24px;
@@ -62,7 +61,7 @@
       font-size: 18px;
       font-weight: 900;
       background: var(--white);
-      color: var(--darkgrey);
+      color: var(--black);
       display: flex;
       justify-content: center;
       border-radius: 8px;

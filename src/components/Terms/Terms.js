@@ -1,12 +1,11 @@
 import React from 'react'
-import { GoBack } from '../../helpers/components'
+import Header from '../Header/Header'
 import './Terms.scss'
 
 export default function Terms() {
   return (
     <main id="Terms">
-      <GoBack />
-      <h3>Terms of Service</h3>
+      <Header text="Terms of Service" />
       <br />
       Please read these terms of service ("terms of service", "terms") carefully
       before using SharingExcess website (“website”, "service") operated by

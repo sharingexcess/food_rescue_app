@@ -2,8 +2,8 @@ header#Header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  padding: 16px;
+  width: 100%;
+  padding: 24px 16px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -12,35 +12,28 @@ header#Header {
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    var(--darkgrey),
-    rgba(var(--darkgrey-rgb), 0)
+    var(--background),
+    rgba(var(--background-rgb), 0)
   );
 
-  * {
-    pointer-events: all;
-  }
+  h1 {
+    font-size: 28px;
+    text-align: left;
+    color: var(--text);
+    a {
+      font-size: 20px;
+      vertical-align: 10%;
+      pointer-events: all;
+      display: inline;
+      margin-right: 8px;
+      transition: color 0.16s ease;
+      color: var(--blue);
 
-  #Logo {
-    height: 48px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: translate(-1px, -1px);
-        box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.48);
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          color: var(--green);
+        }
       }
     }
-    &:active {
-      transform: translate(1px, 1px);
-      box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
-    }
-  }
-  #User {
-    height: 48px;
-    width: 48px;
-    border: 2px solid var(--white);
-    border-radius: 50%;
-    object-fit: cover;
   }
 }

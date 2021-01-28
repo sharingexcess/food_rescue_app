@@ -1,48 +1,36 @@
+@import '../../styles/global.scss';
+
 #Organizations {
-  padding: 92px 16px 32px 16px;
-  max-width: 800px;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
+  @include page;
 
   .wrapper {
     width: 100%;
     display: inline;
   }
 
-  h1 {
-    font-size: 24px;
+  #Filters {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-  }
+    align-items: center;
+    width: 100%;
 
-  select {
-    -webkit-appearance: none;
-    background: none;
-    background-color: none;
-    border: none;
-    color: var(--blue);
-    font-size: 16px;
-    padding-left: 16px;
-    margin-right: auto;
-    text-decoration: underline;
+    select {
+      -webkit-appearance: none;
+      background: none;
+      background-color: none;
+      border: none;
+      color: var(--blue);
+      font-size: 16px;
+      margin-right: auto;
+      text-decoration: underline;
+    }
   }
 
   .Organization {
-    width: 100%;
-    background: var(--tile-background);
-    border: var(--tile-border);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-    margin: 16px 0;
-    padding: 16px;
-    display: flex;
+    @include card;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-
-    h3 {
-      font-size: 18px;
-    }
 
     img {
       width: 64px;
@@ -53,6 +41,26 @@
       background: var(--white);
       padding: 3px;
       flex-shrink: 0;
+    }
+    h3 {
+      font-size: 18px;
+      color: var(--black);
+    }
+
+    h2 {
+      padding: 4px;
+      border-radius: 16px;
+      margin-left: 8px;
+      font-size: 13px;
+      color: var(--white);
+      text-transform: capitalize;
+    
+      &.donor {
+        background-color: var(--red);
+      }
+      &.recipient {
+        background-color: var(--green);
+      }
     }
   }
 }

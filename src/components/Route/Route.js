@@ -10,7 +10,7 @@ import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useParams } from 'react-router-dom'
-import Ellipsis, { ExternalLink, GoBack } from '../../helpers/components'
+import Ellipsis, { ExternalLink } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
@@ -25,6 +25,7 @@ import firebase from 'firebase/app'
 import EditDelivery from '../EditDelivery/EditDelivery'
 import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
+import Header from '../Header/Header'
 
 function Route() {
   const history = useHistory()
@@ -539,12 +540,11 @@ function Route() {
 
   return (
     <main id="Route">
-      <GoBack />
-      <h1>{generateStatusHeader()}</h1>
       {!route ? (
         <Loading />
       ) : (
         <>
+          <Header text={generateStatusHeader()} />
           <Driver />
           {stops.length ? (
             <>
@@ -600,7 +600,7 @@ function Route() {
                         {s.location.contact_name ||
                         s.org.default_contact_name ? (
                           <span>
-                            (ask for{' '}
+                            (Contact location manager:{' '}
                             {s.location.contact_name ||
                               s.org.default_contact_name}
                             )

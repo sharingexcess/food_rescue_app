@@ -1,11 +1,79 @@
 /* use this file for all global app styles, should not be specific to components, pages, or views */
+
+@mixin page {
+  padding: 96px 16px 108px 16px;
+  width: 100%;
+  max-width: 800px;
+  min-height: 100vh;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+}
+
+@mixin card {
+  width: 100%;
+  position: relative;
+  border: none;
+  border-radius: 16px;
+  margin: 12px 0;
+  padding: 16px;
+  background: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  @include shadow;
+
+  h2 {
+    color: var(--text);
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--grey);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  p,
+  div,
+  span {
+    color: var(--secondary);
+  }
+
+  p {
+    margin-bottom: 4px;
+  }
+}
+
+@mixin shadow {
+  box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.16);
+}
+
+@mixin hover {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.32);
+    }
+  }
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0 0px 2px 0 rgba(var(--shadow-rgb), 0.16);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  background: var(--darkgrey);
-  color: var(--white);
+  background: var(--background);
+  color: var(--text);
 }
 
 button {
@@ -32,7 +100,7 @@ button {
     background: transparent;
     padding: 0;
     font-size: 14px;
-    color: var(--green);
+    color: var(--strong);
     text-decoration: underline;
     margin: 0;
     font-weight: 600;
@@ -44,25 +112,18 @@ button {
     align-items: center;
     padding: 12px 32px;
     margin: 8px auto;
-    background: none;
-    border: 2px solid var(--green);
-    color: var(--green);
-    font-weight: 400;
+    background: var(--primary);
+    border: none;
+    color: var(--white);
+    font-weight: 600;
     border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    @include shadow;
+    @include hover;
 
     @media (max-width: var(--mobile)) {
       width: 100%;
       padding: 16px 0;
       margin: 8px 0;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.48);
-      }
     }
 
     &:active {
