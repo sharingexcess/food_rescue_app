@@ -57,6 +57,7 @@ function Organization() {
               <p>
                 {loc.city}, {loc.state} {loc.zip_code}
               </p>
+              <OrganizationHours org={loc} org_type={org.org_type} />
             </section>
           </Link>
         ))}
@@ -80,7 +81,6 @@ function Organization() {
           <OrganizationContact org={org} />
           <OrganizationPhone org={org} />
           <OrganizationEmail org={org} />
-          <OrganizationHours org={org} />
           <Link to={`/admin/organizations/${id}/edit`}>
             <button className="secondary">Edit Org Details{' >'}</button>
           </Link>

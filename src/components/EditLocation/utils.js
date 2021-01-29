@@ -16,6 +16,10 @@ export function initializeFormData(location, callback) {
     is_philabundance_partner: location.is_philabundance_partner
       ? location.is_philabundance_partner
       : '',
+    time_open: location.time_open ? location.time_open : '',
+    time_close: location.time_close ? location.time_close : '',
+    receive_start: location.receive_start ? location.receive_start : '',
+    receive_end: location.receive_end ? location.receive_end : '',
   })
 }
 

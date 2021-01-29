@@ -21,10 +21,6 @@ export default function EditOrganization() {
     default_contact_email: '',
     default_contact_phone: '',
     org_type: 'donor',
-    time_open: '',
-    time_close: '',
-    receive_start: '',
-    receive_end: '',
   })
   const [org = {}] = useDocumentData(
     id ? getCollection('Organizations').doc(id) : null
@@ -172,35 +168,6 @@ export default function EditOrganization() {
         value={formData.org_type}
         suggestions={['donor', 'recipient']}
         onSuggestionClick={handleChange}
-      />
-      <Input
-        type="time"
-        label="Open"
-        element_id="time_open"
-        value={formData.time_open}
-        onChange={handleChange}
-      />
-      <Input
-        type="time"
-        label="Close"
-        element_id="time_close"
-        value={formData.time_close}
-        onChange={handleChange}
-      />
-      <h4>{formData.org_type === 'recipient' ? 'Receive' : 'Pickup'} Hours</h4>
-      <Input
-        type="time"
-        label="Start"
-        element_id="receive_start"
-        value={formData.receive_start}
-        onChange={handleChange}
-      />
-      <Input
-        type="time"
-        label="End"
-        element_id="receive_end"
-        value={formData.receive_end}
-        onChange={handleChange}
       />
       <FormError />
       <button
