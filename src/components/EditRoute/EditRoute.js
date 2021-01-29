@@ -23,6 +23,7 @@ import useUserData from '../../hooks/useUserData'
 import { v4 as generateUUID } from 'uuid'
 import './EditRoute.scss'
 import Header from '../Header/Header'
+import { OrganizationHours } from '../Organization/utils'
 
 function EditRoute() {
   const history = useHistory()
@@ -234,6 +235,7 @@ function EditRoute() {
           <p>
             {s.location.city}, {s.location.state} {s.location.zip_code}
           </p>
+          <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
       </div>
     )

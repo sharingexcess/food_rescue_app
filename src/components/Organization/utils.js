@@ -4,6 +4,7 @@ import {
   getImageFromStorage,
   isValidURL,
 } from '../../helpers/helpers'
+import moment from 'moment'
 
 export function handleOrgIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
@@ -60,4 +61,33 @@ export function OrganizationEmail({ org }) {
         <i className="fa fa-envelope" /> no contact email
       </p>
     )
+}
+
+export function OrganizationHours({ org, org_type }) {
+  if (org.time_open || org.receive_start) {
+    const open_time = moment(org.time_open, 'hh:mm')
+    const close_time = moment(org.time_close, 'hh:mm')
+    return (
+      <p className="org_hours">
+        {org.time_open ? (
+          <p>
+            Hours: {open_time.format('LT')} - {close_time.format('LT')}
+            {moment().isBetween(open_time, close_time) ? (
+              <span className="open">Open now</span>
+            ) : (
+              <span className="close">Closed now</span>
+            )}
+          </p>
+        ) : null}
+        {org.receive_start ? (
+          <p>
+            {org_type === 'recipient' ? 'Receive' : 'Pickup'} hours:{' '}
+            {moment(org.receive_start, 'hh:mm').format('LT')} -{' '}
+            {moment(org.receive_end, 'hh:mm').format('LT')}
+          </p>
+        ) : null}
+      </p>
+    )
+  }
+  return <p className="org_hours">Hours: N/A</p>
 }
