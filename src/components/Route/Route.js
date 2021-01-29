@@ -610,6 +610,15 @@ function Route() {
                         )}
                       </p>
                     ) : null}
+                    {s.location.secondary_contact_phone ? (
+                      <p>
+                        <i className="fa fa-phone" />
+                        <a href={`tel:${s.location.secondary_contact_phone}`}>
+                          {formatPhoneNumber(s.location.contact_phone)}
+                        </a>
+                        <span>(Secondary)</span>
+                      </p>
+                    ) : null}
                     <StopNotes stop={s} />
                     {hasEditPermissions() ? (
                       <>

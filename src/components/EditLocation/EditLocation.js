@@ -27,6 +27,7 @@ export default function EditLocation() {
     zip_code: '',
     contact_name: '',
     contact_phone: '',
+    secondary_contact_phone: '',
     upon_arrival_instructions: '',
     is_philabundance_partner: '',
   })
@@ -173,6 +174,13 @@ export default function EditLocation() {
             label="Contact Phone"
             element_id="contact_phone"
             value={formData.contact_phone}
+            onChange={handleChange}
+          />
+          <Input
+            type="tel"
+            label="Secondary Contact Phone"
+            element_id="secondary_contact_phone"
+            value={formData.secondary_contact_phone}
             onChange={handleChange}
           />
           <Input
