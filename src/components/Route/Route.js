@@ -610,6 +610,31 @@ function Route() {
                         )}
                       </p>
                     ) : null}
+                    {s.location.time_open ? (
+                      <p>
+                        <i className="fa fa-clock-o" />
+                        {moment(s.location.time_open, 'hh:mm').format(
+                          'LT'
+                        )} -{' '}
+                        {moment(s.location.time_close, 'hh:mm').format('LT')}
+                        {moment().isBetween(
+                          moment(s.location.time_open, 'hh:mm'),
+                          moment(s.location.time_close, 'hh:mm')
+                        ) ? (
+                          <span className="open">Open now</span>
+                        ) : (
+                          <span className="close">Closed now</span>
+                        )}
+                      </p>
+                    ) : null}
+                    {s.location.receive_start ? (
+                      <p>
+                        {s.org.org_type === 'recipient' ? 'Receive' : 'Pickup'}{' '}
+                        hours:{' '}
+                        {moment(s.location.receive_start, 'hh:mm').format('LT')}{' '}
+                        - {moment(s.location.receive_end, 'hh:mm').format('LT')}
+                      </p>
+                    ) : null}
                     {s.location.secondary_contact_phone ? (
                       <p>
                         <i className="fa fa-phone" />

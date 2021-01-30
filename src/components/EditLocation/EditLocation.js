@@ -30,6 +30,10 @@ export default function EditLocation() {
     secondary_contact_phone: '',
     upon_arrival_instructions: '',
     is_philabundance_partner: '',
+    time_open: '',
+    time_close: '',
+    receive_start: '',
+    receive_end: '',
   })
   const [isPrimary, setIsPrimary] = useState(
     loc_id && organization ? organization.primary_location === loc_id : false
@@ -160,6 +164,35 @@ export default function EditLocation() {
             label="Apartment/Unit Number"
             element_id="address2"
             value={formData.address2}
+            onChange={handleChange}
+          />
+          <Input
+            type="time"
+            label="Open"
+            element_id="time_open"
+            value={formData.time_open}
+            onChange={handleChange}
+          />
+          <Input
+            type="time"
+            label="Close"
+            element_id="time_close"
+            value={formData.time_close}
+            onChange={handleChange}
+          />
+          <h4>Pickup/Receive Hours</h4>
+          <Input
+            type="time"
+            label="Start"
+            element_id="receive_start"
+            value={formData.receive_start}
+            onChange={handleChange}
+          />
+          <Input
+            type="time"
+            label="End"
+            element_id="receive_end"
+            value={formData.receive_end}
             onChange={handleChange}
           />
           <Input
