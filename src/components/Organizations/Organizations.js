@@ -7,6 +7,7 @@ import './Organizations.scss'
 import { Input } from '../Input/Input'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
+import moment from 'moment'
 
 const org_icon_urls = {}
 
@@ -30,13 +31,21 @@ function Organizations() {
   function handleSearch(e) {
     setSearch(e.target.value)
   }
-
+  console.log(organizations)
   function filterBySearch(array) {
     const filtered_by_search = array.filter(i =>
       i.name.toLowerCase().includes(search.toLowerCase())
     )
-    if (filter !== 'all') {
+    if (filter !== 'all' && filter !== 'open') {
       return filtered_by_search.filter(i => i.org_type === filter)
+    } else if (filter === 'open') {
+      return filtered_by_search.filter(
+        i =>
+          moment().isBetween(
+            moment(i.time_open, 'hh:mm'),
+            moment(i.time_close, 'hh:mm')
+          ) === true
+      )
     } else return filtered_by_search
   }
 
@@ -52,6 +61,9 @@ function Organizations() {
           </option>
           <option value="recipient">
             View{filter === 'recipient' ? 'ing' : ''} Recipients
+          </option>
+          <option value="open">
+            View{filter === 'open' ? 'ing' : ''} Currently Open Organizations
           </option>
         </select>
         <Link to="/admin/create-organization">
