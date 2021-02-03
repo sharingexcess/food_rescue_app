@@ -8,6 +8,7 @@ import {
   OrganizationContact,
   OrganizationEmail,
   OrganizationPhone,
+  OrganizationHours,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
@@ -56,6 +57,7 @@ function Organization() {
               <p>
                 {loc.city}, {loc.state} {loc.zip_code}
               </p>
+              <OrganizationHours org={loc} org_type={org.org_type} />
             </section>
           </Link>
         ))}

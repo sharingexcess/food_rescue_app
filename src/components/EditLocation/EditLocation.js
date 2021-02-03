@@ -27,8 +27,13 @@ export default function EditLocation() {
     zip_code: '',
     contact_name: '',
     contact_phone: '',
+    secondary_contact_phone: '',
     upon_arrival_instructions: '',
     is_philabundance_partner: '',
+    time_open: '',
+    time_close: '',
+    receive_start: '',
+    receive_end: '',
   })
   const [isPrimary, setIsPrimary] = useState(
     loc_id && organization ? organization.primary_location === loc_id : false
@@ -162,6 +167,35 @@ export default function EditLocation() {
             onChange={handleChange}
           />
           <Input
+            type="time"
+            label="Open"
+            element_id="time_open"
+            value={formData.time_open}
+            onChange={handleChange}
+          />
+          <Input
+            type="time"
+            label="Close"
+            element_id="time_close"
+            value={formData.time_close}
+            onChange={handleChange}
+          />
+          <h4>Pickup/Receive Hours</h4>
+          <Input
+            type="time"
+            label="Start"
+            element_id="receive_start"
+            value={formData.receive_start}
+            onChange={handleChange}
+          />
+          <Input
+            type="time"
+            label="End"
+            element_id="receive_end"
+            value={formData.receive_end}
+            onChange={handleChange}
+          />
+          <Input
             type="text"
             label="Contact Name"
             element_id="contact_name"
@@ -173,6 +207,13 @@ export default function EditLocation() {
             label="Contact Phone"
             element_id="contact_phone"
             value={formData.contact_phone}
+            onChange={handleChange}
+          />
+          <Input
+            type="tel"
+            label="Secondary Contact Phone"
+            element_id="secondary_contact_phone"
+            value={formData.secondary_contact_phone}
             onChange={handleChange}
           />
           <Input

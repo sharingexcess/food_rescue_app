@@ -67,6 +67,7 @@
       border-bottom: 4px solid var(--primary);
     }
   }
+  select option { background-color: var(--foreground); }
 
   input,
   textarea {
