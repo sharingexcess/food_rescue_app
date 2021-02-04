@@ -44,7 +44,8 @@ function Organizations() {
           moment().isBetween(
             moment(i.time_open, 'hh:mm'),
             moment(i.time_close, 'hh:mm')
-          ) === true
+          ) === true &&
+          !!i.primary_location &&
       )
     } else return filtered_by_search
   }
