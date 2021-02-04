@@ -31,7 +31,7 @@ function Organizations() {
   function handleSearch(e) {
     setSearch(e.target.value)
   }
-  console.log(organizations)
+
   function filterBySearch(array) {
     const filtered_by_search = array.filter(i =>
       i.name.toLowerCase().includes(search.toLowerCase())
@@ -44,8 +44,7 @@ function Organizations() {
           moment().isBetween(
             moment(i.time_open, 'hh:mm'),
             moment(i.time_close, 'hh:mm')
-          ) === true &&
-          !!i.primary_location &&
+          ) === true && !!i.primary_location
       )
     } else return filtered_by_search
   }
