@@ -193,7 +193,7 @@
         }
         .close {
           font-weight: 700;
-          color: var(--red)
+          color: var(--red);
         }
       }
 
@@ -237,13 +237,13 @@
       width: 100%;
       font-size: 18px;
       text-align: center;
-      color: var(--white);
+      color: var(--text);
     }
 
     > p {
       width: 100%;
       font-size: 14px;
-      color: var(--white);
+      color: var(--text);
       margin-top: 4px;
       text-align: center;
     }
