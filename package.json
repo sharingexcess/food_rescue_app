@@ -6,7 +6,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.0",
     "@sentry/react": "^5.30.0",
-    "@sentry/tracing": "^5.29.2",
+    "@sentry/tracing": "^5.30.0",
     "firebase": "^8.2.1",
     "google-map-react": "^2.1.9",
     "moment": "^2.29.1",
