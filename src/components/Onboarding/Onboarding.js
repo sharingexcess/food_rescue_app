@@ -27,7 +27,7 @@ export default function Onboarding(props) {
       <img src={Logo} alt="Sharing Excess Logo" />
       <h1>Welcome to Sharing Excess</h1>
       <button className="getstart" onClick={() => setPage(page + 1)}>
-        Get Start
+        Get Started
       </button>
       <button className="logout" onClick={props.handleClick}>
         Logout{' '}
