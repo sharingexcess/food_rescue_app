@@ -8,6 +8,7 @@ import { updateUserPermissions } from './utils'
 import { useLocation } from 'react-router-dom'
 import Landing from '../Landing/Landing'
 import Login from '../Login/Login'
+import Onboarding from '../Onboarding/Onboarding'
 import './Auth.scss'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
@@ -54,39 +55,15 @@ function Auth({ children }) {
     )
   }
 
-  function RequestAccess() {
-    return (
-      <main id="Auth" className="request-access">
-        <h1>
-          <span className="green">Sharing</span> Excess
-        </h1>
-        <p>Hi, {user.displayName}!</p>
-        <div>
-          You've logged in successfully with Google. Before you gain access to
-          rescue data, you'll need to be given permission by an admin.
-          <br />
-          <br />
-          Updating your permissions requires logging out and back in again. Once
-          you've been granted permissions, log back in to gain access!
-        </div>
-        <br />
-        <img className="background" src={Logo} alt="Sharing Excess Logo" />
-        <button onClick={handleLogout}>
-          <i className="fas fa-sign-out-alt" />
-          logout
-        </button>
-      </main>
-    )
-  }
-
   return loading ? (
     <Loading text="Signing in" />
   ) : error ? (
     <Error />
   ) : user ? (
     !(basicAccess || admin) ? (
-      <RequestAccess />
+      <Onboarding handleClick={handleLogout} userName={user.displayName} />
     ) : (
+      // <RequestAccess />
       <AuthContext.Provider value={{ user, admin, handleLogout }}>
         {/* 
         All children will now be able to access user, admin, and handleLogout by calling:
