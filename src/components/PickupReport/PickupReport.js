@@ -29,6 +29,8 @@ export default function PickupReport() {
     notes: '',
   })
   const [changed, setChanged] = useState(false)
+  const [errors, setErrors] = useState([])
+  const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
     pickup && pickup.report
@@ -41,42 +43,84 @@ export default function PickupReport() {
   }
 
   function handleChange(e) {
+    setErrors([])
+    setShowErrors(false)
     setFormData({ ...formData, [e.target.id]: e.target.value })
     setChanged(true)
   }
 
   function increment(field) {
+    setErrors([])
+    setShowErrors(false)
     setFormData({ ...formData, [field]: formData[field] + 1 })
     setChanged(true)
   }
 
   function decrement(field) {
+    setErrors([])
+    setShowErrors(false)
     setFormData({ ...formData, [field]: Math.max(0, formData[field] - 1) })
     setChanged(true)
   }
 
+  function validateFormData() {
+    if (
+      formData.dairy +
+        formData.bakery +
+        formData.produce +
+        formData['meat/Fish'] +
+        formData['non-perishable'] +
+        formData['prepared/Frozen'] +
+        formData.other ===
+      0
+    ) {
+      errors.push('Invalid Input: number of items must be greater than zero')
+    }
+    if (isNaN(formData.weight) || /\s/g.test(formData.weight)) {
+      errors.push('Invalid Input: Total Weight is not a number')
+    }
+    if (formData.weight <= 0) {
+      errors.push('Invalid Input: Total Weight must be greater than zero')
+    }
+    if (errors.length === 0) {
+      return true
+    }
+    return false
+  }
+
+  function FormError() {
+    if (showErrors === true) {
+      return errors.map(error => <p id="FormError">{error}</p>)
+    } else return null
+  }
+
   function handleSubmit(event) {
     event.preventDefault()
-    setFirestoreData(['Pickups', pickup_id], {
-      report: {
-        dairy: parseInt(formData.dairy),
-        bakery: parseInt(formData.bakery),
-        produce: parseInt(formData.produce),
-        'meat/Fish': parseInt(formData['meat/Fish']),
-        'non-perishable': parseInt(formData['non-perishable']),
-        'prepared/Frozen': parseInt(formData['prepared/Frozen']),
-        other: parseInt(formData.other),
-        weight: parseInt(formData.weight),
-        notes: formData.notes,
-        created_at:
-          pickup.completed_at ||
-          firebase.firestore.FieldValue.serverTimestamp(),
-        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      status: 9,
-    })
-      .then(() => history.push(`/routes/${route_id}`))
-      .catch(e => console.error('Error writing document: ', e))
+    if (validateFormData()) {
+      console.log('valid')
+      setFirestoreData(['Pickups', pickup_id], {
+        report: {
+          dairy: parseInt(formData.dairy),
+          bakery: parseInt(formData.bakery),
+          produce: parseInt(formData.produce),
+          'meat/Fish': parseInt(formData['meat/Fish']),
+          'non-perishable': parseInt(formData['non-perishable']),
+          'prepared/Frozen': parseInt(formData['prepared/Frozen']),
+          other: parseInt(formData.other),
+          weight: parseInt(formData.weight),
+          notes: formData.notes,
+          created_at:
+            pickup.completed_at ||
+            firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+        status: 9,
+      })
+        .then(() => history.push(`/routes/${route_id}`))
+        .catch(e => console.error('Error writing document: ', e))
+    } else {
+      setShowErrors(true)
+    }
   }
   if (!pickup) return <Loading text="Loading report" />
   return (
@@ -128,6 +172,7 @@ export default function PickupReport() {
         onChange={handleChange}
         readOnly={!canEdit()}
       />
+      <FormError />
       {changed && canEdit() ? (
         <button onClick={handleSubmit}>
           {pickup.report ? 'update report' : 'submit report'}
