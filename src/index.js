@@ -91,6 +91,15 @@ function App() {
                 <Route exact path="/history">
                   <Routes initial_filter={r => [0, 9].includes(r.status)} />
                 </Route>
+                <Route exact path="/history/:route_id">
+                  <DriverRoute />
+                </Route>
+                <Route exact path="/history/:route_id/pickup/:pickup_id">
+                  <PickupReport />
+                </Route>
+                <Route exact path="/history/:route_id/delivery/:delivery_id">
+                  <DeliveryReport />
+                </Route>
                 <Route exact path="/routes/:route_id">
                   <DriverRoute />
                 </Route>
@@ -128,9 +137,6 @@ function App() {
                   {/* this 404 page component will render if the url does not match any other routes */}
                 </Route>
               </Switch>
-              <AdminPhoneNumber
-                text={'Have any questions? Call us at 1-833-742-7397'}
-              />
             </Firestore>
           </Auth>
         </BrowserRouter>

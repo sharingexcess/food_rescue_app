@@ -9,7 +9,7 @@ import {
 import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
@@ -37,6 +37,7 @@ function Route() {
   const deliveries = useDeliveryData()
   const organizations = useOrganizationData()
   const locations = useLocationData()
+  const location = useLocation()
   const [stops, setStops] = useState([])
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
@@ -375,7 +376,10 @@ function Route() {
     }
 
     function handleOpenReport() {
-      history.push(`/routes/${route_id}/${stop.type}/${stop.id}`)
+      const baseURL = location.pathname.includes('routes')
+        ? 'routes'
+        : 'history'
+      history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
     }
 
     if (route.status < 3) return null
@@ -451,7 +455,13 @@ function Route() {
       icon = <i id="StatusIndicator" className="fa fa-clock-o" />
     }
     return icon ? (
-      <Link to={`/routes/${route_id}/${stop.type}/${stop.id}`}>{icon}</Link>
+      <Link
+        to={`/${location.pathname.split('/')[1]}/${route_id}/${stop.type}/${
+          stop.id
+        }`}
+      >
+        {icon}
+      </Link>
     ) : null
   }
 
