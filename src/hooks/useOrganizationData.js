@@ -20,7 +20,7 @@ export default function useOrganizationData(filter) {
         setData(updated)
       }
     }
-  }, [organizations]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [organizations, filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return data
 }

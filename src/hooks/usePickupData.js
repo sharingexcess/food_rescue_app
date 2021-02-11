@@ -20,7 +20,7 @@ export default function usePickupData(filter) {
         setData(updated)
       }
     }
-  }, [pickups]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pickups, filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return data
 }
