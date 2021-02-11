@@ -20,7 +20,7 @@ export default function useDeliveryData(filter) {
         setData(updated)
       }
     }
-  }, [deliveries]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [deliveries, filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return data
 }

@@ -20,7 +20,7 @@ export default function useLocationData(filter) {
         setData(updated)
       }
     }
-  }, [locations]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [locations, filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return data
 }

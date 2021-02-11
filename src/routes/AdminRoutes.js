@@ -9,6 +9,7 @@ import EditLocation from '../components/EditLocation/EditLocation'
 import Users from '../components/Users/Users'
 import User from '../components/User/User'
 import Organization from '../components/Organization/Organization'
+import Analytics from '../components/Analytics/Analytics'
 
 export default function AdminRoutes() {
   // the AuthContext contains a value 'admin' which tells us if the current authenticated user is an admin or not
@@ -57,6 +58,9 @@ export default function AdminRoutes() {
       </AdminRoute>
       <AdminRoute exact path="/admin/users/:id">
         <User />
+      </AdminRoute>
+      <AdminRoute exact path="/admin/analytics">
+        <Analytics />
       </AdminRoute>
       <Route>
         {/* This route has no path, and therefore will be the 'catch all' */}

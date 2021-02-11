@@ -1,0 +1,34 @@
+@import '../../styles/global.scss';
+
+#Analytics {
+  @include page;
+
+  #Tabs {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 16px;
+    button {
+      margin: 0 4px;
+      &.inactive {
+        background: var(--white);
+        color: var(--blue);
+      }
+      &.active {
+        background: var(--blue);
+        color: var(--white);
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    thead {
+      font-weight: 900;
+      color: var(--primary);
+    }
+    td {
+      padding: 4px;
+    }
+  }
+}
