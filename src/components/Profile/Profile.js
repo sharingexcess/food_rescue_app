@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthContext } from '../Auth/Auth'
+import { Link } from 'react-router-dom'
 import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
@@ -53,6 +54,10 @@ export default function Profile() {
       <Header text="Profile" />
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>
+      <button>
+        {' '}
+        <Link to="/liability">View Signed Document</Link>
+      </button>
       <Input
         element_id="name"
         label="Display Name"
