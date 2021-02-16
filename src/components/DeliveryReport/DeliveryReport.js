@@ -89,6 +89,7 @@ export default function DeliveryReport() {
           firebase.firestore.FieldValue.serverTimestamp(),
         updated_at: firebase.firestore.FieldValue.serverTimestamp(),
       },
+      time_finished: firebase.firestore.FieldValue.serverTimestamp(),
       status: 9,
     })
       .then(() => history.push(`/routes/${route_id}`))

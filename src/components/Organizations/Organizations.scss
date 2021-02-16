@@ -44,7 +44,7 @@
     }
     h3 {
       font-size: 18px;
-      color: var(--black);
+      color: var(--text);
     }
 
     h2 {
@@ -54,7 +54,7 @@
       font-size: 13px;
       color: var(--white);
       text-transform: capitalize;
-    
+
       &.donor {
         background-color: var(--red);
       }
