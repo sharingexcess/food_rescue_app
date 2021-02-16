@@ -24,8 +24,9 @@ export default function PickupReport() {
     'meat/Fish': 0,
     'non-perishable': 0,
     'prepared/Frozen': 0,
+    'mixed groceries': 0,
     other: 0,
-    weight: 0,
+    weight: '',
     notes: '',
   })
   const [changed, setChanged] = useState(false)
@@ -71,6 +72,7 @@ export default function PickupReport() {
         formData['meat/Fish'] +
         formData['non-perishable'] +
         formData['prepared/Frozen'] +
+        formData['mixed groceries'] +
         formData.other ===
       0
     ) {
@@ -106,6 +108,7 @@ export default function PickupReport() {
           'meat/Fish': parseInt(formData['meat/Fish']),
           'non-perishable': parseInt(formData['non-perishable']),
           'prepared/Frozen': parseInt(formData['prepared/Frozen']),
+          'mixed groceries': parseInt(formData['mixed groceries']),
           other: parseInt(formData.other),
           weight: parseInt(formData.weight),
           notes: formData.notes,
