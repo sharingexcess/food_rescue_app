@@ -237,7 +237,7 @@ export default function Analytics() {
           className={tab === 'RouteAnalytics' ? 'active' : 'inactive'}
           onClick={() => setTab('RouteAnalytics')}
         >
-          Drivers
+          Routes
         </button>
         <button
           className={tab === 'DriverAnalytics' ? 'active' : 'inactive'}
