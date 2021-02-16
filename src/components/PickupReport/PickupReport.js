@@ -118,6 +118,7 @@ export default function PickupReport() {
           updated_at: firebase.firestore.FieldValue.serverTimestamp(),
         },
         status: 9,
+        time_finished: firebase.firestore.FieldValue.serverTimestamp(),
       })
         .then(() => history.push(`/routes/${route_id}`))
         .catch(e => console.error('Error writing document: ', e))

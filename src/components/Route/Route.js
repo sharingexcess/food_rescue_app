@@ -122,11 +122,18 @@ function Route() {
     const [willAssign, setWillAssign] = useState()
 
     function handleBegin() {
-      setFirestoreData(['Routes', route.id], { status: 3 })
+      setFirestoreData(['Routes', route.id], {
+        status: 3,
+        time_started: firebase.firestore.FieldValue.serverTimestamp(),
+      })
     }
 
     async function handleComplete() {
-      await setFirestoreData(['Routes', route.id], { status: 9, notes })
+      await setFirestoreData(['Routes', route.id], {
+        status: 9,
+        notes,
+        time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+      })
       history.push(`/routes/${route_id}/completed`)
     }
 
@@ -142,6 +149,14 @@ function Route() {
         google_calendar_event_id: event.id,
         notes: null,
       })
+      for (const stop of route.stops) {
+        console.log(stop)
+        debugger
+        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+        setFirestoreData([collection, stop.id], {
+          driver_id: user.uid,
+        })
+      }
     }
 
     async function handleUnassign() {
@@ -156,6 +171,14 @@ function Route() {
         google_calendar_event_id: event.id,
         notes: `Route dropped by ${route.driver.name}: "${notes}"`,
       })
+      for (const stop of route.stops) {
+        console.log(stop)
+        debugger
+        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+        setFirestoreData([collection, stop.id], {
+          driver_id: null,
+        })
+      }
     }
 
     async function handleAssign(e) {
@@ -174,6 +197,14 @@ function Route() {
         google_calendar_event_id: event.id,
         notes: null,
       })
+      for (const stop of route.stops) {
+        console.log(stop)
+        debugger
+        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+        setFirestoreData([collection, stop.id], {
+          driver_id: driver.id,
+        })
+      }
     }
 
     if (
@@ -371,7 +402,10 @@ function Route() {
   function UpdateStop({ stop }) {
     function handleOnTheWay() {
       const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-      setFirestoreData([collection, stop.id], { status: 3 })
+      setFirestoreData([collection, stop.id], {
+        status: 3,
+        time_started: firebase.firestore.FieldValue.serverTimestamp(),
+      })
       window.open(generateDirectionsLink(stop.location), '_blank')
     }
 

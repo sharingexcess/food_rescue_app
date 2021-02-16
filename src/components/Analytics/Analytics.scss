@@ -21,14 +21,41 @@
     }
   }
 
+  #Filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 16px 6px;
+
+    select {
+      -webkit-appearance: none;
+      background: none;
+      background-color: none;
+      border: none;
+      color: var(--blue);
+      font-size: 20px;
+      margin-right: auto;
+      text-decoration: underline;
+    }
+  }
+
   table {
     width: 100%;
+    table-layout: fixed;
     thead {
       font-weight: 900;
       color: var(--primary);
     }
     td {
       padding: 4px;
+      word-wrap: break-word;
+      ul {
+        padding-right: 8px;
+        li {
+          list-style-type: circle;
+        }
+      }
     }
   }
 }
