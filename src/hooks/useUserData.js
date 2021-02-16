@@ -20,6 +20,6 @@ export default function useUserData(filter) {
         setData(updated)
       }
     }
-  }, [users]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [users, filter]) // eslint-disable-line react-hooks/exhaustive-deps
   return data
 }

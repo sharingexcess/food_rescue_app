@@ -91,7 +91,14 @@ export default function Routes({ initial_filter }) {
         </div>
       ) : (
         filterAndSortRoutes(routes).map(r => (
-          <Link to={`/routes/${r.id}`} key={r.id}>
+          <Link
+            to={
+              location.pathname === '/routes'
+                ? `/routes/${r.id}`
+                : `/history/${r.id}`
+            }
+            key={r.id}
+          >
             <div
               className={`Route${
                 [0, 9].includes(r.status) && location.pathname === '/routes'

@@ -20,7 +20,7 @@ export default function useRouteData(filter) {
         setData(updated)
       }
     }
-  }, [routes]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [routes, filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return data
 }
