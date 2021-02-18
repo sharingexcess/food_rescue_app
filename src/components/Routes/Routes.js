@@ -23,7 +23,7 @@ export default function Routes({ initial_filter }) {
   const users = useUserData()
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState(true)
+  const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     async function addData() {
@@ -50,9 +50,17 @@ export default function Routes({ initial_filter }) {
   }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function filterAndSortRoutes(routes) {
-    return filter
+    return filter === 'mine'
       ? routes
           .filter(r => r.driver_id === user.uid)
+          .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+      : filter === 'incomplete'
+      ? routes
+          .filter(r => r.status === 1)
+          .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+      : filter === 'happening'
+      ? routes
+          .filter(r => r.status === 3)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
       : routes.sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
   }
@@ -70,9 +78,25 @@ export default function Routes({ initial_filter }) {
   return (
     <main id="Routes">
       <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
-      <button className="secondary" onClick={() => setFilter(!filter)}>
+      <section id="Filters">
+        <select
+          name="filters"
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+        >
+          {location.pathname === '/routes' ? (
+            <option value="incomplete">Show Incomplete routes</option>
+          ) : null}
+          {location.pathname === '/routes' ? (
+            <option value="happening">Show Happening routes</option>
+          ) : null}
+          <option value="all">Show All Routes</option>
+          <option value="mine">Show My Routes</option>
+        </select>
+      </section>
+      {/* <button className="secondary" onClick={() => setFilter(!filter)}>
         {filter ? 'Show All Routes' : 'Show My Routes'}
-      </button>
+      </button> */}
       {loading ? (
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (

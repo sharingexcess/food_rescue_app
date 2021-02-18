@@ -33,6 +33,24 @@
     }
   }
 
+  #Filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    select {
+      -webkit-appearance: none;
+      background: none;
+      background-color: none;
+      border: none;
+      color: var(--blue);
+      font-size: 16px;
+      margin-right: auto;
+      text-decoration: underline;
+    }
+  }
+
   .Route {
     @include card;
     flex-direction: row;
