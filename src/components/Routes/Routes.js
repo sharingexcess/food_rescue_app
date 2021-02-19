@@ -84,19 +84,17 @@ export default function Routes({ initial_filter }) {
           value={filter}
           onChange={e => setFilter(e.target.value)}
         >
-          {location.pathname === '/routes' ? (
-            <option value="incomplete">Show Incomplete routes</option>
-          ) : null}
-          {location.pathname === '/routes' ? (
-            <option value="happening">Show Happening routes</option>
-          ) : null}
           <option value="all">Show All Routes</option>
           <option value="mine">Show My Routes</option>
+          {/*  Only adding these filters to Routes page */}
+          {location.pathname === '/routes' ? (
+            <>
+              <option value="incomplete">Show Incomplete routes</option>
+              <option value="happening">Show Happening routes</option>
+            </>
+          ) : null}
         </select>
       </section>
-      {/* <button className="secondary" onClick={() => setFilter(!filter)}>
-        {filter ? 'Show All Routes' : 'Show My Routes'}
-      </button> */}
       {loading ? (
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (
