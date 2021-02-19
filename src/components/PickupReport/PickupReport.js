@@ -132,7 +132,15 @@ export default function PickupReport() {
       <Header text="Rescue Report" />
       <h3>{pickup_org.name}</h3>
       {Object.keys(formData)
-        .sort()
+        .sort(function (a, b) {
+          if (a === 'other') {
+            return 1
+          }
+          if (b === 'other') {
+            return -1
+          }
+          return a.localeCompare(b)
+        })
         .map(field =>
           !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
             <section key={field}>
