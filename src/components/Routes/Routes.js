@@ -23,7 +23,7 @@ export default function Routes({ initial_filter }) {
   const users = useUserData()
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState(admin ? 'all' : 'mine')
 
   useEffect(() => {
     async function addData() {
