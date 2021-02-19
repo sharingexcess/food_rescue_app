@@ -90,7 +90,7 @@ export default function Routes({ initial_filter }) {
           {location.pathname === '/routes' ? (
             <>
               <option value="incomplete">Show Incomplete routes</option>
-              <option value="happening">Show Happening routes</option>
+              <option value="happening">Show Ongoing routes</option>
             </>
           ) : null}
         </select>
