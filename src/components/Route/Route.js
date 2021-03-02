@@ -42,6 +42,7 @@ function Route() {
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
+  const [changeRecipient, setChangeRecipient] = useState()
 
   useEffect(() => {
     if (drivers && route) {
@@ -309,6 +310,40 @@ function Route() {
         </button>
       )
     } else return null
+  }
+
+  function ChangeRecipientButton() {
+    const [notes, setNotes] = useState('')
+    function handleChangeRecipient() {
+      setChangeRecipient(false)
+    }
+
+    return changeRecipient ? (
+      <>
+        <Input
+          label="Why do you want to change the Recipient?"
+          animation={false}
+          type="textarea"
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+        />
+        <section className="buttons">
+          <button
+            className="yellow small"
+            onClick={() => setChangeRecipient(false)}
+          >
+            back
+          </button>
+          <button className="green" onClick={handleChangeRecipient}>
+            yes
+          </button>
+        </section>
+      </>
+    ) : (
+      <button className="green" onClick={() => setChangeRecipient(true)}>
+        change Recipient
+      </button>
+    )
   }
 
   function CancelButton() {
@@ -712,6 +747,7 @@ function Route() {
                 ))}
               </section>
               <BackupDelivery />
+              <ChangeRecipientButton />
               <StatusButton />
               <CancelButton />
               {admin && <DeleteButton />}
