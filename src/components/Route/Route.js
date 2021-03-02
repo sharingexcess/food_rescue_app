@@ -196,7 +196,7 @@ function Route() {
         setConfDriver(true)
       }
     }
-    
+
     async function handleAssign(driver) {
       const event = await updateGoogleCalendarEvent({
         ...route,
@@ -600,9 +600,21 @@ function Route() {
     return confDriver ? (
       <div id="confirmation modal" class="modal">
         <div className="modal-content">
-          <span className="close" onClick={() => setConfDriver(false)}>&times;</span>
-          <span>Are you sure you want to re-assign this route to another driver?</span>
-          <button className="confirm driver" onClick={() => {StatusButton.handleAssign(otherDriver); setConfDriver(false)}}>confirm</button>
+          <span className="close" onClick={() => setConfDriver(false)}>
+            &times;
+          </span>
+          <span>
+            Are you sure you want to re-assign this route to another driver?
+          </span>
+          <button
+            className="confirm driver"
+            onClick={() => {
+              StatusButton.handleAssign(otherDriver)
+              setConfDriver(false)
+            }}
+          >
+            confirm
+          </button>
         </div>
       </div>
     ) : null
