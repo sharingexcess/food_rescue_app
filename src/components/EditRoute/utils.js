@@ -88,3 +88,35 @@ export const formFields = [
     }),
   },
 ]
+
+export const formFieldsRecurring = [
+  {
+    label: 'Start Time',
+    id: 'time_start',
+    type: 'datetime-local',
+  },
+  {
+    label: 'End Time',
+    id: 'time_end',
+    preReq: 'time_start',
+    type: 'datetime-local',
+  },
+  {
+    label: 'Recurring Type',
+    id: 'recurring_type',
+    type: 'select',
+    handleSelect: type => ({ recurring_type: type }),
+    loadSuggestionsOnInit: true,
+  },
+  {
+    label: 'Select a driver...',
+    id: 'driver_name',
+    type: 'text',
+    suggestionQuery: (name, drivers) =>
+      drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
+    handleSelect: user => ({
+      driver_name: user.name,
+      driver_id: user.id,
+    }),
+  },
+]

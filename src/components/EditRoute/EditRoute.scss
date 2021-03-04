@@ -76,6 +76,16 @@
     }
   }
 
+  #Recurring {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .text {
+      margin-left: 10px;
+      font-size: larger;
+    }
+  }
   #AddStop {
     background: var(--background);
     border-radius: 8px;
