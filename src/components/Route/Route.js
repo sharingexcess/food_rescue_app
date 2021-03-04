@@ -313,29 +313,49 @@ function Route() {
   }
 
   function ChangeRecipientButton() {
-    const [notes, setNotes] = useState('')
-    function handleChangeRecipient() {
-      setChangeRecipient(false)
+    const [selectedRecipient, setSelectedRecipient] = useState()
+    const handleSelect = e => {
+      setSelectedRecipient(e.target.value)
+    }
+    const replaceRecipient = stop_id => {
+      const index = stops.findIndex(stop => stop.org.name === selectedRecipient)
+      const new_stops = [...route.stops]
+      new_stops[index] = { type: 'delivery', id: stop_id }
+      return new_stops
+    }
+    async function handleChangeRecipient(stop) {
+      const stop_id = generateStopId(stop)
+      const lastStop = stops[stops.length - 1]
+      await setFirestoreData(['Deliveries', stop_id], {
+        id: stop_id,
+        org_id: stop.org_id,
+        location_id: stop.location_id,
+        driver_id: route.driver_id,
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 1,
+        pickup_ids: lastStop.pickup_ids,
+        route_id,
+      })
+      await setFirestoreData(['Routes', route.id], {
+        stops: replaceRecipient(stop_id),
+      })
     }
 
     return changeRecipient ? (
       <>
         <Input
-          label="Why do you want to change the Recipient?"
-          animation={false}
-          type="textarea"
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
+          type="select"
+          label="Which Recipient you want to change?"
+          suggestions={stops
+            .filter(s => s.type === 'delivery')
+            .map(s => s.org.name)}
+          onSuggestionClick={handleSelect}
         />
+        <EditDelivery handleSubmit={handleChangeRecipient} />
         <section className="buttons">
-          <button
-            className="yellow small"
-            onClick={() => setChangeRecipient(false)}
-          >
+          <button className="yellow" onClick={() => setChangeRecipient(false)}>
             back
-          </button>
-          <button className="green" onClick={handleChangeRecipient}>
-            yes
           </button>
         </section>
       </>
