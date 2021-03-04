@@ -26,6 +26,7 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
+import { check } from 'prettier'
 
 function Route() {
   const history = useHistory()
@@ -42,7 +43,12 @@ function Route() {
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
+<<<<<<< HEAD
   const [changeRecipient, setChangeRecipient] = useState()
+=======
+  const [confDriver, setConfDriver] = useState()
+  const [otherDriver, setOtherDriver] = useState()
+>>>>>>> c96502bcc564229a71e8c48d43cb5bdf2f35ca19
 
   useEffect(() => {
     if (drivers && route) {
@@ -182,11 +188,20 @@ function Route() {
       }
     }
 
-    async function handleAssign(e) {
+    function checkDriver(e) {
       const val = e.target.value
       const email = val.substring(val.indexOf('(') + 1, val.length - 1)
       const driver = drivers.find(d => d.email === email)
 
+      if (user.uid === driver.id) {
+        handleAssign(driver)
+      } else {
+        setOtherDriver(driver)
+        setConfDriver(true)
+      }
+    }
+
+    async function handleAssign(driver) {
       const event = await updateGoogleCalendarEvent({
         ...route,
         stops,
@@ -207,6 +222,8 @@ function Route() {
         })
       }
     }
+
+    StatusButton.handleAssign = handleAssign
 
     if (
       willCancel ||
@@ -230,7 +247,7 @@ function Route() {
                   type="select"
                   label="Select Driver"
                   suggestions={drivers.map(d => `${d.name} (${d.email})`)}
-                  onSuggestionClick={handleAssign}
+                  onSuggestionClick={checkDriver}
                 />
               ) : (
                 <button className="green" onClick={() => setWillAssign(true)}>
@@ -271,7 +288,7 @@ function Route() {
             type="select"
             label="Select Driver"
             suggestions={drivers.map(d => `${d.name} (${d.email})`)}
-            onSuggestionClick={handleAssign}
+            onSuggestionClick={checkDriver}
           />
         ) : (
           <button className="blue" onClick={() => setWillAssign(true)}>
@@ -637,6 +654,30 @@ function Route() {
     return null
   }
 
+  function ConfirmationModal() {
+    return confDriver ? (
+      <div id="confirmation modal" class="modal">
+        <div className="modal-content">
+          <span className="close" onClick={() => setConfDriver(false)}>
+            &times;
+          </span>
+          <span>
+            Are you sure you want to re-assign this route to another driver?
+          </span>
+          <button
+            className="confirm driver"
+            onClick={() => {
+              StatusButton.handleAssign(otherDriver)
+              setConfDriver(false)
+            }}
+          >
+            confirm
+          </button>
+        </div>
+      </div>
+    ) : null
+  }
+
   return (
     <main id="Route">
       {!route ? (
@@ -771,6 +812,7 @@ function Route() {
               <StatusButton />
               <CancelButton />
               {admin && <DeleteButton />}
+              <ConfirmationModal />
             </>
           ) : (
             <Loading text="Loading stops on route" relative />
