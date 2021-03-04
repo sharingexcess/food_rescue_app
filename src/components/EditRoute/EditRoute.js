@@ -178,15 +178,18 @@ function EditRoute() {
     }`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
-    // const exists = await getCollection('Routes')
-    //   .doc(uniq_id)
-    //   .get()
-    //   .then(res => res.data())
-    // if (exists) {
-    //   alert('This driver is already scheduled for a delivery at this time.')
-    //   return null
-    // } else return uniq_id
-    return uniq_id
+    if (isRecurring === true) {
+      return uniq_id
+    } else {
+      const exists = await getCollection('Routes')
+        .doc(uniq_id)
+        .get()
+        .then(res => res.data())
+      if (exists) {
+        alert('This driver is already scheduled for a delivery at this time.')
+        return null
+      } else return uniq_id
+    }
   }
   function addDays(startTime, numberofWeeks) {
     const year = startTime.substring(0, 4)
