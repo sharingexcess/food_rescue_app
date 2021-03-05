@@ -26,7 +26,6 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
-import { check } from 'prettier'
 
 function Route() {
   const history = useHistory()
@@ -327,6 +326,9 @@ function Route() {
   }
 
   function ChangeRecipientButton() {
+    const [newRecipient, setNewRecipient] = useState()
+    const [openModal, setOpenModal] = useState()
+    /* const [notify, setNotify] = useState() */
     const [selectedRecipient, setSelectedRecipient] = useState()
     const handleSelect = e => {
       setSelectedRecipient(e.target.value)
@@ -337,6 +339,11 @@ function Route() {
       new_stops[index] = { type: 'delivery', id: stop_id }
       return new_stops
     }
+    const confirmChangeRecipient = recipient => {
+      setNewRecipient(recipient)
+      setOpenModal(true)
+    }
+
     async function handleChangeRecipient(stop) {
       const stop_id = generateStopId(stop)
       const lastStop = stops[stops.length - 1]
@@ -354,6 +361,8 @@ function Route() {
       await setFirestoreData(['Routes', route.id], {
         stops: replaceRecipient(stop_id),
       })
+      setChangeRecipient(false)
+      /* setNotify(true) */
     }
 
     return changeRecipient ? (
@@ -362,11 +371,26 @@ function Route() {
           type="select"
           label="Which Recipient you want to change?"
           suggestions={stops
-            .filter(s => s.type === 'delivery')
+            .filter(s => s.type === 'delivery' && s.status !== 9)
             .map(s => s.org.name)}
           onSuggestionClick={handleSelect}
         />
-        <EditDelivery handleSubmit={handleChangeRecipient} />
+        <EditDelivery handleSubmit={confirmChangeRecipient} />
+        <ConfirmationModal
+          openModal={openModal}
+          text={'Are you sure you want to change the Recipient?'}
+          onConfirm={() => handleChangeRecipient(newRecipient)}
+          onClose={() => setChangeRecipient(false)}
+        />
+        {/* {route.driver_id !== user.uid ? (
+          <ConfirmationModal
+            openModal={notify}
+            text={'Hey friend, your Route detail has been check. Check it out!'}
+            onConfirm={() => setNotify(false)}
+            onClose={() => setNotify(false)}
+          />
+        ) : null} */}
+
         <section className="buttons">
           <button className="yellow" onClick={() => setChangeRecipient(false)}>
             back
@@ -651,23 +675,15 @@ function Route() {
     return null
   }
 
-  function ConfirmationModal() {
-    return confDriver ? (
+  function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
+    return openModal ? (
       <div id="confirmation modal" class="modal">
         <div className="modal-content">
-          <span className="close" onClick={() => setConfDriver(false)}>
+          <span className="close" onClick={onClose}>
             &times;
           </span>
-          <span>
-            Are you sure you want to re-assign this route to another driver?
-          </span>
-          <button
-            className="confirm driver"
-            onClick={() => {
-              StatusButton.handleAssign(otherDriver)
-              setConfDriver(false)
-            }}
-          >
+          <span>{text}</span>
+          <button className="confirm driver" onClick={onConfirm}>
             confirm
           </button>
         </div>
@@ -809,7 +825,17 @@ function Route() {
               <StatusButton />
               <CancelButton />
               {admin && <DeleteButton />}
-              <ConfirmationModal />
+              <ConfirmationModal
+                openModal={confDriver}
+                text={
+                  'Are you sure you want to re-assign this route to another driver?'
+                }
+                onConfirm={() => {
+                  StatusButton.handleAssign(otherDriver)
+                  setConfDriver(false)
+                }}
+                onClose={() => setConfDriver(false)}
+              />
             </>
           ) : (
             <Loading text="Loading stops on route" relative />
