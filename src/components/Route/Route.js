@@ -43,12 +43,9 @@ function Route() {
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
-<<<<<<< HEAD
   const [changeRecipient, setChangeRecipient] = useState()
-=======
   const [confDriver, setConfDriver] = useState()
   const [otherDriver, setOtherDriver] = useState()
->>>>>>> c96502bcc564229a71e8c48d43cb5bdf2f35ca19
 
   useEffect(() => {
     if (drivers && route) {
