@@ -26,7 +26,6 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
-import { check } from 'prettier'
 
 function Route() {
   const history = useHistory()

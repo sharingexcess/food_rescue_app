@@ -6,8 +6,10 @@ import {
   updateFieldSuggestions,
   formFields,
   formFieldsRecurring,
+  addDays,
   getDefaultStartTime,
   getDefaultEndTime,
+  getDefaultEndRecurring,
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -29,7 +31,6 @@ import { OrganizationHours } from '../Organization/utils'
 function EditRoute() {
   const history = useHistory()
   const drivers = useUserData()
-  const recurring_type = ['Weekly', 'Bi-weekly', 'Monthly']
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -37,14 +38,14 @@ function EditRoute() {
     driver_id: null,
     time_start: getDefaultStartTime(),
     time_end: getDefaultEndTime(),
-    recurring_type: '',
+    end_recurring: getDefaultEndRecurring(),
+    is_recurring: null,
     stops: [],
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
     driver_name: [],
     driver_id: [],
-    recurring_type: recurring_type,
   })
   const [list, setList] = useState('pickups')
   const [working, setWorking] = useState()
@@ -112,15 +113,18 @@ function EditRoute() {
         }
       }
       if (isRecurring === true) {
-        const oldTimeStart = formData.time_start
-        const oldTImeEnd = formData.time_end
-        for (let i = 0; i < 2; i++) {
-          const updatedTimeStart = addDays(oldTimeStart, i)
-          const updatedTimeEnd = addDays(oldTImeEnd, i)
+        let updatedTimeStart = formData.time_start
+        let updatedTimeEnd = formData.time_end
+        let recurring_route_id = route_id
+        let iteration = 0
+        while (
+          moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
+        ) {
           const event = await updateGoogleCalendarEvent({
             ...formData,
             time_start: updatedTimeStart,
             time_end: updatedTimeEnd,
+            is_recurring: isRecurring,
           })
           if (!event.id) {
             alert(
@@ -129,19 +133,24 @@ function EditRoute() {
             return
           }
           getCollection('Routes')
-            .doc(route_id)
+            .doc(recurring_route_id)
             .set({
-              id: route_id,
+              id: recurring_route_id,
               google_calendar_event_id: event.id,
               driver_id: formData.driver_id,
-              time_start: formData.time_start,
-              time_end: formData.time_end,
+              time_start: updatedTimeStart,
+              time_end: updatedTimeEnd,
               stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
               created_at: firebase.firestore.FieldValue.serverTimestamp(),
               updated_at: firebase.firestore.FieldValue.serverTimestamp(),
               status: 1,
+              is_recurring: isRecurring,
             })
             .then(() => history.push(`/routes/${route_id}`))
+          updatedTimeStart = addDays(updatedTimeStart)
+          updatedTimeEnd = addDays(updatedTimeEnd)
+          iteration += 1
+          recurring_route_id = route_id + 'rec' + iteration.toString()
         }
         setWorking(false)
       } else {
@@ -190,27 +199,6 @@ function EditRoute() {
         return null
       } else return uniq_id
     }
-  }
-  function addDays(startTime, numberofWeeks) {
-    const year = startTime.substring(0, 4)
-    let month = startTime.substring(5, 7)
-    let day = parseInt(startTime.substring(8, 10))
-    const hour = startTime.substring(10)
-    day += 7 * numberofWeeks
-    if (day < 10) {
-      day = '0' + day.toString()
-    } else if (day > 31) {
-      month += parseInt(month) + 1
-      if (month < 10) {
-        month = '0' + month.toString()
-      } else {
-        month = month.toString()
-      }
-    } else {
-      day = day.toString()
-    }
-    const updatedTime = year + '-' + month + '-' + day + hour
-    return updatedTime
   }
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
