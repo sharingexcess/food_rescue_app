@@ -63,7 +63,6 @@ function Auth({ children }) {
     !(basicAccess || admin) ? (
       <Onboarding handleClick={handleLogout} userName={user.displayName} />
     ) : (
-      // <RequestAccess />
       <AuthContext.Provider value={{ user, admin, handleLogout }}>
         {/* 
         All children will now be able to access user, admin, and handleLogout by calling:

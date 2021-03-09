@@ -5,8 +5,11 @@ import { useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
   formFields,
+  formFieldsRecurring,
+  addDays,
   getDefaultStartTime,
   getDefaultEndTime,
+  getDefaultEndRecurring,
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -35,6 +38,8 @@ function EditRoute() {
     driver_id: null,
     time_start: getDefaultStartTime(),
     time_end: getDefaultEndTime(),
+    end_recurring: getDefaultEndRecurring(),
+    is_recurring: null,
     stops: [],
   })
   const [suggestions, setSuggestions] = useState({
@@ -46,7 +51,9 @@ function EditRoute() {
   const [working, setWorking] = useState()
   const [confirmedTimes, setConfirmedTime] = useState()
   const [errors, setErrors] = useState([])
+  const [isRecurring, setRecurring] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
+  const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
 
   useEffect(() => {
     formData.driver_id &&
@@ -105,27 +112,70 @@ function EditRoute() {
           })
         }
       }
-      const event = await updateGoogleCalendarEvent(formData)
+      if (isRecurring === true) {
+        let updatedTimeStart = formData.time_start
+        let updatedTimeEnd = formData.time_end
+        let recurring_route_id = route_id
+        let iteration = 0
+        while (
+          moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
+        ) {
+          const event = await updateGoogleCalendarEvent({
+            ...formData,
+            time_start: updatedTimeStart,
+            time_end: updatedTimeEnd,
+            is_recurring: isRecurring,
+          })
+          if (!event.id) {
+            alert(
+              'Error creating Google Calendar event. Please contact support!'
+            )
+            return
+          }
+          getCollection('Routes')
+            .doc(recurring_route_id)
+            .set({
+              id: recurring_route_id,
+              google_calendar_event_id: event.id,
+              driver_id: formData.driver_id,
+              time_start: updatedTimeStart,
+              time_end: updatedTimeEnd,
+              stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+              created_at: firebase.firestore.FieldValue.serverTimestamp(),
+              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+              status: 1,
+              is_recurring: isRecurring,
+            })
+            .then(() => history.push(`/routes/${route_id}`))
+          updatedTimeStart = addDays(updatedTimeStart)
+          updatedTimeEnd = addDays(updatedTimeEnd)
+          iteration += 1
+          recurring_route_id = route_id + 'rec' + iteration.toString()
+        }
+        setWorking(false)
+      } else {
+        const event = await updateGoogleCalendarEvent(formData)
 
-      if (!event.id) {
-        alert('Error creating Google Calendar event. Please contact support!')
-        return
+        if (!event.id) {
+          alert('Error creating Google Calendar event. Please contact support!')
+          return
+        }
+        getCollection('Routes')
+          .doc(route_id)
+          .set({
+            id: route_id,
+            google_calendar_event_id: event.id,
+            driver_id: formData.driver_id,
+            time_start: formData.time_start,
+            time_end: formData.time_end,
+            stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 1,
+          })
+          .then(() => history.push(`/routes/${route_id}`))
+        setWorking(false)
       }
-      getCollection('Routes')
-        .doc(route_id)
-        .set({
-          id: route_id,
-          google_calendar_event_id: event.id,
-          driver_id: formData.driver_id,
-          time_start: formData.time_start,
-          time_end: formData.time_end,
-          stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-          created_at: firebase.firestore.FieldValue.serverTimestamp(),
-          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          status: 1,
-        })
-        .then(() => history.push(`/routes/${route_id}`))
-      setWorking(false)
     }
   }
 
@@ -137,16 +187,19 @@ function EditRoute() {
     }`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
-    const exists = await getCollection('Routes')
-      .doc(uniq_id)
-      .get()
-      .then(res => res.data())
-    if (exists) {
-      alert('This driver is already scheduled for a delivery at this time.')
-      return null
-    } else return uniq_id
+    if (isRecurring === true) {
+      return uniq_id
+    } else {
+      const exists = await getCollection('Routes')
+        .doc(uniq_id)
+        .get()
+        .then(res => res.data())
+      if (exists) {
+        alert('This driver is already scheduled for a delivery at this time.')
+        return null
+      } else return uniq_id
+    }
   }
-
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
     for (let i = index - 1; i >= 0; i--) {
@@ -210,6 +263,13 @@ function EditRoute() {
     updated_fields && setFormData({ ...formData, ...updated_fields })
   }
 
+  function handleDropdownSelect(e, field) {
+    handleSelect(
+      e,
+      suggestions[field.id].find(s => s.id === e.target.value),
+      field
+    )
+  }
   function Stop({ s }) {
     return (
       <div className={`Stop ${s.type}`}>
@@ -246,19 +306,26 @@ function EditRoute() {
   }
 
   function validateFormData() {
-    if (!moment(formData.time_start).isValid()) {
-      errors.push('Invalid Data Input: Start Time is invalid')
+    if (isRecurring === false) {
+      if (!moment(formData.time_start).isValid()) {
+        errors.push('Invalid Data Input: Start Time is invalid')
+      }
+      if (!moment(formData.time_end).isValid()) {
+        errors.push('Invalid Data Input: End Time is invalid')
+      }
+      if (moment(formData.time_end).isSameOrBefore(formData.time_start)) {
+        errors.push('Invalid Data Input: End Time is before Start Time')
+      }
+      if (errors.length === 0) {
+        return true
+      }
+      return false
+    } else {
+      if (errors.length === 0) {
+        return true
+      }
+      return false
     }
-    if (!moment(formData.time_end).isValid()) {
-      errors.push('Invalid Data Input: End Time is invalid')
-    }
-    if (moment(formData.time_end).isSameOrBefore(formData.time_start)) {
-      errors.push('Invalid Data Input: End Time is before Start Time')
-    }
-    if (errors.length === 0) {
-      return true
-    }
-    return false
   }
 
   function FormError() {
@@ -266,7 +333,6 @@ function EditRoute() {
       return errors.map(error => <p id="FormError">{error}</p>)
     } else return null
   }
-
   return (
     <main id="EditRoute">
       <Header text="New Route" />
@@ -280,7 +346,11 @@ function EditRoute() {
             <h3>
               {formData.driver ? formData.driver.name : 'Unassigned Route'}
             </h3>
-            <h4>{moment(formData.time_start).format('dddd, MMMM D')}</h4>
+            <h4>
+              {isRecurring
+                ? moment(formData.time_start).format('dddd') + ', Recurring'
+                : moment(formData.time_start).format('dddd, MMMM D')}
+            </h4>
             <h5>
               {moment(formData.time_start).format('h:mma')} -{' '}
               {moment(formData.time_end).format('h:mma')}
@@ -292,7 +362,17 @@ function EditRoute() {
         </div>
       ) : (
         <>
-          {formFields.map(field =>
+          <div id="Recurring">
+            <input
+              type="checkbox"
+              id="is_recurring"
+              name="is_recurring"
+              checked={isRecurring}
+              onChange={() => setRecurring(!isRecurring)}
+            />
+            <p className="text"> Recurring Route</p>
+          </div>
+          {selectedFormFields.map(field =>
             !field.preReq || formData[field.preReq] ? (
               <Input
                 key={field.id}
@@ -302,7 +382,11 @@ function EditRoute() {
                 value={formData[field.id]}
                 onChange={e => handleChange(e, field)}
                 suggestions={suggestions[field.id]}
-                onSuggestionClick={(e, s) => handleSelect(e, s, field)}
+                onSuggestionClick={
+                  field.type === 'select'
+                    ? e => handleDropdownSelect(e, field)
+                    : (e, s) => handleSelect(e, s, field)
+                }
                 animation={false}
               />
             ) : null
@@ -354,7 +438,13 @@ function EditRoute() {
                 {isValidRoute() && (
                   <button
                     className="complete"
-                    onClick={working ? null : handleCreateRoute}
+                    onClick={
+                      working
+                        ? null
+                        : () => {
+                            handleCreateRoute()
+                          }
+                    }
                   >
                     {working ? (
                       <>
