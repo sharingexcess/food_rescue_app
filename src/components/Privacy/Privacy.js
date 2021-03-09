@@ -7,7 +7,7 @@ export default function Privacy() {
     <main id="Privacy">
       <Header text="Privacy Policy" />
       <section id="intro">
-        <h2>Our Privacy Policy</h2>
+        <h1>Our Privacy Policy</h1>
         <p>Our Policy includes:</p>
         <li>
           Our policies and procedures on the collection, use and disclosure of
@@ -21,7 +21,7 @@ export default function Privacy() {
         </li>
       </section>
       <section id="definition">
-        <h2>Definitions</h2>
+        <h1>Definitions</h1>
         <p>For the purposes of this Privacy Policy:</p>
 
         <li>
@@ -88,7 +88,7 @@ export default function Privacy() {
         </li>
       </section>
       <section id="personal data">
-        <h2>Personal Data</h2>
+        <h1>Personal Data</h1>
         <p>
           While using Our Service, We may ask You to provide Us with certain
           personally identifiable information that can be used to contact or
@@ -101,7 +101,7 @@ export default function Privacy() {
         <li>Usage Data</li>
       </section>
       <section id="usage data">
-        <h2>Usage Data</h2>
+        <h1>Usage Data</h1>
         <p>Usage Data is collected automatically when using the Service:</p>
         <li>
           Usage Data may include information such as Your Device's Internet
@@ -125,7 +125,7 @@ export default function Privacy() {
         </li>
       </section>
       <section id="third party">
-        <h2>Information from Third-Party Social Media Services</h2>
+        <h1>Information from Third-Party Social Media Services</h1>
         <p>
           The Company allows You to create an account and log in to use the
           Service through the following Third-party Social Media Services:
@@ -150,7 +150,7 @@ export default function Privacy() {
         </li>
       </section>
       <section id="tracking and cookies">
-        <h2>Tracking Technologies and Cookies</h2>
+        <h1>Tracking Technologies and Cookies</h1>
         <p>
           We use Cookies and similar tracking technologies to track the activity
           on Our Service and store certain information. Tracking technologies
@@ -197,7 +197,7 @@ export default function Privacy() {
         </h3>
       </section>
       <section id="use of personal data">
-        <h2>Use of Your Personal Data</h2>
+        <h1>Use of Your Personal Data</h1>
         <p>The Company may use Personal Data for the following purposes:</p>
         <li>
           <strong>To provide and maintain our Service</strong>, including to
@@ -291,7 +291,7 @@ export default function Privacy() {
         </li>
       </section>
       <section id="retention">
-        <h2>Retention of Your Personal Data</h2>
+        <h1>Retention of Your Personal Data</h1>
         <h3>
           The Company will retain Your Personal Data only for as long as is
           necessary for the purposes set out in this Privacy Policy. We will
@@ -309,7 +309,7 @@ export default function Privacy() {
         </h3>
       </section>
       <section id="transfer">
-        <h2>Transfer of Your Personal Data</h2>
+        <h1>Transfer of Your Personal Data</h1>
         <h3>
           Your information, including Personal Data, is processed at the
           Company's operating offices and in any other places where the parties
@@ -332,7 +332,7 @@ export default function Privacy() {
         </h3>
       </section>
       <section id="disclosure">
-        <h2>Disclosure of Your Personal Data</h2>
+        <h1>Disclosure of Your Personal Data</h1>
         <p>Business Transactions</p>
         <li>
           If the Company is involved in a merger, acquisition or asset sale,
@@ -359,7 +359,7 @@ export default function Privacy() {
         <li>Protect against legal liability</li>
       </section>
       <section id="security">
-        <h2>Security of Your Personal Data</h2>
+        <h1>Security of Your Personal Data</h1>
         <h3>
           The security of Your Personal Data is important to Us, but remember
           that no method of transmission over the Internet, or method of
@@ -369,7 +369,7 @@ export default function Privacy() {
         </h3>
       </section>
       <section id="change">
-        <h2>Changes to this Privacy Policy</h2>
+        <h1>Changes to this Privacy Policy</h1>
         <h3>
           We may update Our Privacy Policy from time to time. We will notify You
           of any changes by posting the new Privacy Policy on this page.
@@ -386,7 +386,7 @@ export default function Privacy() {
         </h3>
       </section>
       <section id="contact">
-        <h2>Contact Us</h2>
+        <h1>Contact Us</h1>
         <p>
           If you have any questions about this Privacy Policy, You can contact
           us:
