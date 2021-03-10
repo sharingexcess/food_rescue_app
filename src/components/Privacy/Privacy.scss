@@ -2,24 +2,34 @@
 
 #Privacy {
   @include page;
+  padding: 96px 16px 16px 16px;
 
-  h2 {
-    font-size: 20px;
-    color: var(--green);
-    margin-bottom: 10px;
+  h1 {
+    font-size: 22px;
+    margin-bottom: 8px;
   }
 
   h3 {
-    margin-top: 8px;
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
   }
 
   section {
     @include card;
   }
 
-  ol {
-    list-style-type: decimal;
-    margin-left: 24px;
+  li {
+    margin-left: 16px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    line-height: 20px;
+    font-size: 16px;
   }
 
   .green {

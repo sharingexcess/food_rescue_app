@@ -9,7 +9,7 @@ export default function Liability() {
     <main id="Liability">
       <Header text="Release of Liability" />
       <section id="intro">
-        <h2>Release of Liability</h2>
+        <h1>Release of Liability</h1>
         {data.user === null ? (
           <p className="red">
             Please read and sign the Release of Liability before using
@@ -20,7 +20,7 @@ export default function Liability() {
         )}
       </section>
       <section id="agreement">
-        <h2>Agreement</h2>
+        <h1>Agreement</h1>
         <p>
           {' '}
           I certify that I am at least 18 years of age and acknowledge that I am
@@ -76,7 +76,7 @@ export default function Liability() {
         </li>
       </section>
       <section id="acknowledgement">
-        <h2>Acknowledgement </h2>
+        <h1>Acknowledgement </h1>
         <p>
           I acknowledge that Sharing Excess retains the right at its discretion
           to discontinue my services if I am deemed an unsafe driver or act in

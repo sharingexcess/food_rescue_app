@@ -7,15 +7,15 @@ export default function Terms() {
     <main id="Terms">
       <Header text="Terms of Service" />
       <section id="intro">
-        <h2>Terms of Service</h2>
+        <h1>Terms of Service</h1>
         <p className="red">
           {' '}
           Please read these terms of service carefully before using
-          SharingExcess website operated by Sharing Excess .
+          SharingExcess website operated by Sharing Excess.
         </p>
       </section>
       <section id="condition">
-        <h2> Conditions of Use</h2>
+        <h1> Conditions of Use</h1>
         <li>
           By using this website, you certify that you have read and reviewed
           this Agreement and that you agree to comply with its terms.
@@ -30,7 +30,7 @@ export default function Terms() {
         </li>
       </section>
       <section id="age">
-        <h2> Age Restriction</h2>
+        <h1> Age Restriction</h1>
         <p className="red">
           You must be at least 18 years of age before you can use this website.
         </p>
@@ -44,7 +44,7 @@ export default function Terms() {
         </li>
       </section>
       <section id="intellectual">
-        <h2> Intellectual property</h2>
+        <h1> Intellectual Property</h1>
         <li>
           You agree that all materials, products, and services provided on this
           website are the property of Sharing Excess, its affiliates, directors,
@@ -65,7 +65,7 @@ export default function Terms() {
         </li>
       </section>
       <section id="account">
-        <h2> User Accounts</h2>
+        <h1> User Accounts</h1>
         <p className="red">
           {' '}
           As a user of this website, you may be asked to register with us and
@@ -88,7 +88,7 @@ export default function Terms() {
         </li>
       </section>
       <section id="law">
-        <h2>Applicable Law</h2>
+        <h1>Applicable Law</h1>
         <li>
           By visiting this website, you agree that the laws of the Pennsylvania,
           without regard to principles of conflict laws, will govern these terms
@@ -97,7 +97,7 @@ export default function Terms() {
         </li>
       </section>
       <section id="indemnification">
-        <h2>Indemnification</h2>
+        <h1>Indemnification</h1>
         <li>
           You agree to indemnify Sharing Excess and its affiliates and hold
           Sharing Excess harmless against legal claims and demands that may
@@ -106,7 +106,7 @@ export default function Terms() {
         <li>We reserve the right to select our own legal counsel.</li>
       </section>
       <section id="limitation">
-        <h2>Limitation on Liability</h2>
+        <h1>Limitation on Liability</h1>
         <li>
           Sharing Excess is not liable for any damages that may occur to you as
           a result of your misuse of our website.
@@ -120,7 +120,7 @@ export default function Terms() {
         </li>
       </section>
       <section id="agreement">
-        <h2>Agreement</h2>
+        <h1>Agreement</h1>
         <p>
           This Agreement is an understanding between Sharing Excess and the
           user, and this supersedes and replaces all prior agreements regarding
