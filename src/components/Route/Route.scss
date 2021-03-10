@@ -179,7 +179,9 @@
           margin-right: 4px;
           margin-bottom: 2px;
         }
-        span {
+        .open,
+        .close {
+          font-size: 1em;
           text-decoration: none;
           color: var(--text);
           margin-left: 4px;

@@ -42,6 +42,7 @@ function Route() {
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
+  const [changeRecipient, setChangeRecipient] = useState()
   const [confDriver, setConfDriver] = useState()
   const [otherDriver, setOtherDriver] = useState()
 
@@ -324,6 +325,85 @@ function Route() {
     } else return null
   }
 
+  function ChangeRecipientButton() {
+    const [newRecipient, setNewRecipient] = useState()
+    const [openModal, setOpenModal] = useState()
+    /* const [notify, setNotify] = useState() */
+    const [selectedRecipient, setSelectedRecipient] = useState()
+    const handleSelect = e => {
+      setSelectedRecipient(e.target.value)
+    }
+    const replaceRecipient = stop_id => {
+      const index = stops.findIndex(stop => stop.org.name === selectedRecipient)
+      const new_stops = [...route.stops]
+      new_stops[index] = { type: 'delivery', id: stop_id }
+      return new_stops
+    }
+    const confirmChangeRecipient = recipient => {
+      setNewRecipient(recipient)
+      setOpenModal(true)
+    }
+
+    async function handleChangeRecipient(stop) {
+      const stop_id = generateStopId(stop)
+      const lastStop = stops[stops.length - 1]
+      await setFirestoreData(['Deliveries', stop_id], {
+        id: stop_id,
+        org_id: stop.org_id,
+        location_id: stop.location_id,
+        driver_id: route.driver_id,
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 1,
+        pickup_ids: lastStop.pickup_ids,
+        route_id,
+      })
+      await setFirestoreData(['Routes', route.id], {
+        stops: replaceRecipient(stop_id),
+      })
+      setChangeRecipient(false)
+      /* setNotify(true) */
+    }
+
+    return changeRecipient ? (
+      <>
+        <Input
+          type="select"
+          label="Which Recipient you want to change?"
+          suggestions={stops
+            .filter(s => s.type === 'delivery' && s.status !== 9)
+            .map(s => s.org.name)}
+          onSuggestionClick={handleSelect}
+        />
+        <EditDelivery handleSubmit={confirmChangeRecipient} />
+        <ConfirmationModal
+          openModal={openModal}
+          text={'Are you sure you want to change the Recipient?'}
+          onConfirm={() => handleChangeRecipient(newRecipient)}
+          onClose={() => setChangeRecipient(false)}
+        />
+        {/* {route.driver_id !== user.uid ? (
+          <ConfirmationModal
+            openModal={notify}
+            text={'Hey friend, your Route detail has been check. Check it out!'}
+            onConfirm={() => setNotify(false)}
+            onClose={() => setNotify(false)}
+          />
+        ) : null} */}
+
+        <section className="buttons">
+          <button className="yellow" onClick={() => setChangeRecipient(false)}>
+            back
+          </button>
+        </section>
+      </>
+    ) : (
+      <button className="green" onClick={() => setChangeRecipient(true)}>
+        change Recipient
+      </button>
+    )
+  }
+
   function CancelButton() {
     const [notes, setNotes] = useState('')
 
@@ -595,23 +675,15 @@ function Route() {
     return null
   }
 
-  function ConfirmationModal() {
-    return confDriver ? (
+  function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
+    return openModal ? (
       <div id="confirmation modal" class="modal">
         <div className="modal-content">
-          <span className="close" onClick={() => setConfDriver(false)}>
+          <span className="close" onClick={onClose}>
             &times;
           </span>
-          <span>
-            Are you sure you want to re-assign this route to another driver?
-          </span>
-          <button
-            className="confirm driver"
-            onClick={() => {
-              StatusButton.handleAssign(otherDriver)
-              setConfDriver(false)
-            }}
-          >
+          <span>{text}</span>
+          <button className="confirm driver" onClick={onConfirm}>
             confirm
           </button>
         </div>
@@ -749,10 +821,21 @@ function Route() {
                 ))}
               </section>
               <BackupDelivery />
+              <ChangeRecipientButton />
               <StatusButton />
               <CancelButton />
               {admin && <DeleteButton />}
-              <ConfirmationModal />
+              <ConfirmationModal
+                openModal={confDriver}
+                text={
+                  'Are you sure you want to re-assign this route to another driver?'
+                }
+                onConfirm={() => {
+                  StatusButton.handleAssign(otherDriver)
+                  setConfDriver(false)
+                }}
+                onClose={() => setConfDriver(false)}
+              />
             </>
           ) : (
             <Loading text="Loading stops on route" relative />
