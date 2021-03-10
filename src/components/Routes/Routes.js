@@ -54,15 +54,20 @@ export default function Routes({ initial_filter }) {
       ? routes
           .filter(r => r.driver_id === user.uid)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+          .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'incomplete'
       ? routes
           .filter(r => r.status === 1)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+          .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'happening'
       ? routes
           .filter(r => r.status === 3)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
-      : routes.sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+          .sort((a, b) => new Date(a.time_start) - Date.now())
+      : routes
+          .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+          .sort((a, b) => new Date(a.time_start) - Date.now())
   }
 
   function StatusIndicator({ route }) {
