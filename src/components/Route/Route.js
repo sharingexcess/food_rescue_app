@@ -535,6 +535,7 @@ function Route() {
     const [cancelNotes, setCancelNotes] = useState('')
 
     function handleCancel() {
+      setCancelStop(false)
       const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
       getCollection(collection)
         .doc(stop.id)
