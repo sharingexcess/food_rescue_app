@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import Loading from '../Loading/Loading'
+import { Input } from '../Input/Input'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
@@ -23,6 +24,8 @@ export default function Routes({ initial_filter }) {
   const users = useUserData()
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [filterByDriver, setFilterByDriver] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
 
   useEffect(() => {
@@ -48,7 +51,16 @@ export default function Routes({ initial_filter }) {
     }
     raw_routes && addData()
   }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line react-hooks/exhaustive-deps
-
+  useEffect(() => {
+    if (filter === 'driver') {
+      setFilterByDriver(true)
+    } else {
+      setFilterByDriver(false)
+    }
+  }, [filter])
+  function handleSearch(e) {
+    setSearch(e.target.value)
+  }
   function filterAndSortRoutes(routes) {
     return filter === 'mine'
       ? routes
@@ -70,6 +82,12 @@ export default function Routes({ initial_filter }) {
           .filter(r => r.status === 3)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
+      : filter === 'driver'
+      ? routes.filter(
+          r =>
+            r.driver.name !== undefined &&
+            r.driver.name.toLowerCase().includes(search.toLowerCase())
+        )
       : routes
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
@@ -97,6 +115,8 @@ export default function Routes({ initial_filter }) {
           <option value="all">Show All Routes</option>
           <option value="mine">Show My Routes</option>
           <option value="unassigned">Show Unassigned Routes</option>
+          <option value="date">Show Routes by Date</option>
+          <option value="driver">Show Routes by Driver</option>
           {/*  Only adding these filters to Routes page */}
           {location.pathname === '/routes' ? (
             <>
@@ -106,6 +126,14 @@ export default function Routes({ initial_filter }) {
           ) : null}
         </select>
       </section>
+      {filterByDriver ? (
+        <Input
+          label="Filter Route by Driver Name"
+          onChange={handleSearch}
+          value={search}
+          animation={false}
+        />
+      ) : null}
       {loading ? (
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (
