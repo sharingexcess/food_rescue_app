@@ -24,8 +24,12 @@ export default function Routes({ initial_filter }) {
   const users = useUserData()
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  const [searchByDriver, setSearchByDriver] = useState('')
+  const [searchByDate, setSearchByDate] = useState(
+    moment(new Date()).format('yyyy-MM-DD')
+  )
   const [filterByDriver, setFilterByDriver] = useState(false)
+  const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
 
   useEffect(() => {
@@ -54,12 +58,22 @@ export default function Routes({ initial_filter }) {
   useEffect(() => {
     if (filter === 'driver') {
       setFilterByDriver(true)
+      setFilterByDate(false)
+    } else if (filter === 'date') {
+      setFilterByDriver(false)
+      setFilterByDate(true)
     } else {
       setFilterByDriver(false)
+      setFilterByDate(false)
     }
   }, [filter])
-  function handleSearch(e) {
-    setSearch(e.target.value)
+  function handleSearchByDriver(e) {
+    setSearchByDriver(e.target.value)
+  }
+  function handleSearchByDate(e) {
+    setSearchByDate(e.target.value)
+    console.log(e.target.value)
+    console.log(routes.map(r => r.time_start.substring(0, 10)))
   }
   function filterAndSortRoutes(routes) {
     return filter === 'mine'
@@ -83,11 +97,19 @@ export default function Routes({ initial_filter }) {
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'driver'
-      ? routes.filter(
-          r =>
-            r.driver.name !== undefined &&
-            r.driver.name.toLowerCase().includes(search.toLowerCase())
-        )
+      ? routes
+          .filter(
+            r =>
+              r.driver.name !== undefined &&
+              r.driver.name.toLowerCase().includes(searchByDriver.toLowerCase())
+          )
+          .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+          .sort((a, b) => new Date(a.time_start) - Date.now())
+      : filter === 'date'
+      ? routes
+          .filter(r => r.time_start.substring(0, 10) === searchByDate)
+          .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
+          .sort((a, b) => new Date(a.time_start) - Date.now())
       : routes
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
@@ -115,8 +137,8 @@ export default function Routes({ initial_filter }) {
           <option value="all">Show All Routes</option>
           <option value="mine">Show My Routes</option>
           <option value="unassigned">Show Unassigned Routes</option>
-          <option value="date">Show Routes by Date</option>
           <option value="driver">Show Routes by Driver</option>
+          <option value="date">Show Routes by Date</option>
           {/*  Only adding these filters to Routes page */}
           {location.pathname === '/routes' ? (
             <>
@@ -129,8 +151,17 @@ export default function Routes({ initial_filter }) {
       {filterByDriver ? (
         <Input
           label="Filter Route by Driver Name"
-          onChange={handleSearch}
-          value={search}
+          onChange={handleSearchByDriver}
+          value={searchByDriver}
+          animation={false}
+        />
+      ) : null}
+      {filterByDate ? (
+        <Input
+          label="Filter Route by Date"
+          type="date"
+          onChange={handleSearchByDate}
+          value={searchByDate}
           animation={false}
         />
       ) : null}
