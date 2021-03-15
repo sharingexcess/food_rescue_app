@@ -77,14 +77,6 @@ function Route() {
       route.status < 3
     )
       return false
-    let inProgress = false
-    for (const s of stops) {
-      if (s.status === 3) {
-        inProgress = true
-        break
-      }
-    }
-    if (inProgress) return stops[index].status === 3
     return true
   }
 
@@ -92,7 +84,7 @@ function Route() {
     let completed = true
     for (const s of stops) {
       // if stop is not completed or cancelled
-      if (![0, 9].includes(s.status)) {
+      if (s.status === 1) {
         completed = false
         break
       }
@@ -497,15 +489,6 @@ function Route() {
   }
 
   function UpdateStop({ stop }) {
-    function handleOnTheWay() {
-      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-      setFirestoreData([collection, stop.id], {
-        status: 3,
-        time_started: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      window.open(generateDirectionsLink(stop.location), '_blank')
-    }
-
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
@@ -516,15 +499,23 @@ function Route() {
     if (route.status < 3) return null
     if (stop.status === 1) {
       return (
-        <button className="update-stop" onClick={handleOnTheWay}>
-          I'm on my way!
-        </button>
-      )
-    }
-    if (stop.status === 3) {
-      return (
         <button className="update-stop" onClick={handleOpenReport}>
           Complete {stop.type} report
+        </button>
+      )
+    } else return null
+  }
+
+  function DirectionsButton({ stop }) {
+    function handleOpenDirections() {
+      window.open(generateDirectionsLink(stop.location), '_blank')
+    }
+
+    if (route.status < 3) return null
+    if (stop.status === 1) {
+      return (
+        <button className="directions" onClick={handleOpenDirections}>
+          Get Directions
         </button>
       )
     } else return null
@@ -582,7 +573,7 @@ function Route() {
       icon = <i id="StatusIndicator" className="fa fa-check" />
     } else if (stop.status === 0) {
       icon = <i id="StatusIndicator" className="fa fa-times" />
-    } else if (stop.status === 3) {
+    } else if (stop.status === 1) {
       icon = <i id="StatusIndicator" className="fa fa-clock-o" />
     }
     return icon ? (
@@ -608,7 +599,7 @@ function Route() {
   }
 
   function StopNotes({ stop }) {
-    return [1, 3].includes(stop.status) ? (
+    return stop.status === 1 ? (
       <>
         {stop.location.upon_arrival_instructions ? (
           <h6>
@@ -632,14 +623,15 @@ function Route() {
       for (const s of stops) {
         if (
           s.status === 9 &&
-          (!lastStop || s.time_started > lastStop.time_started)
+          (!lastStop || s.time_finished > lastStop.time_finished)
         )
           lastStop = s
       }
       if (
         lastStop &&
         (!lastStop.report.weight ||
-          lastStop.report.percent_of_total_dropped < 100)
+          lastStop.report.percent_of_total_dropped < 100 ||
+          lastStop.type === 'pickup')
       ) {
         async function addBackupDelivery(stop) {
           const stop_id = generateStopId(stop)
@@ -816,13 +808,14 @@ function Route() {
                           <>
                             {s.location.lat &&
                             s.location.lng &&
-                            [1, 3].includes(s.status) ? (
+                            s.status === 1 ? (
                               <GoogleMap
                                 address={s.location}
                                 style={{ height: 200, marginTop: 8 }}
                                 zoom={14}
                               />
                             ) : null}
+                            <DirectionsButton stop={s} />
                             <UpdateStop stop={s} />
                             {s.status < 9 ? <CancelStop stop={s} /> : null}
                           </>
