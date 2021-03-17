@@ -77,11 +77,15 @@ function Route() {
       route.status < 3
     )
       return false
-    return (
-      index === 0 ||
-      stops[index - 1].status === 9 ||
-      stops[index - 1].status === 0
-    )
+    let inProgress = false
+    for (const s of stops) {
+      if (s.status === 3) {
+        inProgress = true
+        break
+      }
+    }
+    if (inProgress) return stops[index].status === 3
+    return true
   }
 
   function areAllStopsCompleted() {
@@ -624,10 +628,18 @@ function Route() {
   function BackupDelivery() {
     const [willFind, setWillFind] = useState()
     if (areAllStopsCompleted()) {
-      const lastStop = stops[stops.length - 1]
+      let lastStop
+      for (const s of stops) {
+        if (
+          s.status === 9 &&
+          (!lastStop || s.time_started > lastStop.time_started)
+        )
+          lastStop = s
+      }
       if (
-        !lastStop.report.weight ||
-        lastStop.report.percent_of_total_dropped < 100
+        lastStop &&
+        (!lastStop.report.weight ||
+          lastStop.report.percent_of_total_dropped < 100)
       ) {
         async function addBackupDelivery(stop) {
           const stop_id = generateStopId(stop)

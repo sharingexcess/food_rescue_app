@@ -41,14 +41,16 @@ export default function DeliveryReport() {
       let updated_weight = 0
       const route = routes.find(r => r.id === delivery.route_id)
       const stop_index = route.stops.findIndex(stop => stop.id === delivery_id)
-      for (let i = stop_index - 1; i >= 0; i--) {
+      for (let i = route.stops.length - 1; i >= 0; i--) {
         const stop = route.stops[i]
-        if (stop.type === 'pickup') {
-          const pickup = pickups.find(p => p.id === stop.id)
-          updated_weight += pickup.report.weight
-        } else if (stop.type === 'delivery') {
-          const delivery = deliveries.find(d => d.id === stop.id)
-          updated_weight -= delivery.report.weight
+        if (i !== stop_index) {
+          if (stop.type === 'pickup') {
+            const pickup = pickups.find(p => p.id === stop.id)
+            if (pickup.status === 9) updated_weight += pickup.report.weight
+          } else if (stop.type === 'delivery') {
+            const delivery = deliveries.find(d => d.id === stop.id)
+            if (delivery.status === 9) updated_weight -= delivery.report.weight
+          }
         }
       }
       if (isNaN(updated_weight)) updated_weight = 0
