@@ -1,5 +1,6 @@
 import GoogleMapReact from 'google-map-react'
 import './GoogleMap.scss'
+import { generateDirectionsLink } from './utils'
 
 const defaultAddress = {
   lat: 39.952583,
@@ -13,10 +14,14 @@ export default function GoogleMap({
   style,
   zoom = 15,
 }) {
+  function openDirections() {
+    window.open(generateDirectionsLink(address), '_blank')
+  }
+
   function Marker() {
     return (
       <div className="Marker">
-        <i className="fa fa-map-marker" />
+        <i className="fa fa-map-marker" onClick={openDirections} />
       </div>
     )
   }
