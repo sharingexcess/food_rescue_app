@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
 import Ellipsis from '../../helpers/components'
+import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
@@ -357,8 +358,11 @@ function EditRoute() {
             </h5>
           </div>
           <button onClick={() => setConfirmedTime(false)}>
-            update route info
+            Update Route Info
           </button>
+          <Link to="/admin/create-organization">
+            <button className="create">Create an Organization</button>
+          </Link>
         </div>
       ) : (
         <>

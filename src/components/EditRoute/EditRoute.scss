@@ -34,10 +34,18 @@
     padding: 24px 0;
     flex-wrap: wrap;
 
-    button {
-      width: 100%;
-      margin-top: 24px;
-    }
+
+      button {
+        width: 100%;
+        margin-top: 24px;
+      }
+      a {
+        width: 100%;
+        .create {
+          margin-top: 8px;
+          background-color: var(--blue);
+        }
+      }
 
     @media (min-width: 600px) {
       flex-wrap: nowrap;
@@ -45,10 +53,19 @@
       button {
         margin: 0;
         padding: 8px;
-        margin-left: auto;
         width: auto;
+        margin-left: auto;
       }
-    }
+      a {
+        margin: 0;
+        padding: 8px;
+        width: auto;
+        .create {
+          margin-top: 0px;
+        }
+      }
+
+      }
 
     h3 {
       font-size: 24px;
