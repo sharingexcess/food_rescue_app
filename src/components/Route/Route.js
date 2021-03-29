@@ -450,7 +450,7 @@ function Route() {
       </>
     ) : (
       <button className="yellow" onClick={() => setWillCancel(true)}>
-        cancel route
+        cancel routes
       </button>
     )
   }
