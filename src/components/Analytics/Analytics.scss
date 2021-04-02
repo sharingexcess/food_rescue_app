@@ -48,12 +48,14 @@
       color: var(--primary);
     }
     td {
+      box-shadow: 0px 2px var(--lightgrey);
       padding: 4px;
       word-wrap: break-word;
       ul {
         padding-right: 8px;
         li {
           list-style-type: circle;
+          margin-bottom: 12px;
         }
       }
     }
