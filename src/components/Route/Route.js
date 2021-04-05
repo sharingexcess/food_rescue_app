@@ -119,14 +119,14 @@ function Route() {
           </h5>
           {route.notes ? <p>Notes: {route.notes}</p> : null}
         </div>
-        <div className={`driver-buttons ${admin ? 'buttons' : ''}`}>
-          {!willAssign ? (
+        {admin ? null : !willAssign ? (
+          <div className="driver-buttons">
             <button className="blue" onClick={handleBegin}>
               begin route
               {admin && route.driver_id !== user.uid ? ' as admin' : ''}
             </button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
     )
   }
