@@ -119,7 +119,7 @@ function Route() {
           </h5>
           {route.notes ? <p>Notes: {route.notes}</p> : null}
         </div>
-        <div className={admin ? 'buttons' : ''}>
+        <div className={`driver-buttons ${admin ? 'buttons' : ''}`}>
           {!willAssign ? (
             <button className="blue" onClick={handleBegin}>
               begin route
