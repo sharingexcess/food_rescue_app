@@ -69,7 +69,7 @@ export default function Analytics() {
 
   function RouteAnalytics() {
     return (
-      <table>
+      <table className="Analytics__Route">
         <thead>
           <tr>
             <td>Route ID</td>

@@ -48,7 +48,6 @@
       color: var(--primary);
     }
     td {
-      box-shadow: 0px 2px var(--lightgrey);
       padding: 4px;
       word-wrap: break-word;
       ul {
@@ -58,6 +57,12 @@
           margin-bottom: 12px;
         }
       }
+    }
+  }
+
+  .Analytics__Route {
+    td {
+      border: 2px solid white;
     }
   }
 }
