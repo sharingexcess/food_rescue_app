@@ -7,6 +7,7 @@ import { Input } from '../Input/Input'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
 import './Profile.scss'
+import { formatPhoneNumber } from '../../helpers/helpers'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -35,16 +36,21 @@ export default function Profile() {
   }
 
   function handleUpdate() {
-    firebase
-      .firestore()
-      .collection('Users')
-      .doc(user.uid)
-      .set(formData, { merge: true })
-      .then(() => {
-        setButton('profile updated!')
-        setTimeout(() => setButton(), 2000)
-      })
-      .catch(e => console.error('Error updating profile: ', e))
+    console.log('Profile >>>', profile)
+    if (formatPhoneNumber(formData.phone)) {
+      firebase
+        .firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .set(formData, { merge: true })
+        .then(() => {
+          setButton('profile updated!')
+          setTimeout(() => setButton(), 2000)
+        })
+        .catch(e => console.error('Error updating profile: ', e))
+    } else {
+      alert('Wrong format, number should contains 10 digits')
+    }
   }
 
   return !profile ? (
