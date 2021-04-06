@@ -82,7 +82,11 @@ export default function Profile() {
         value={formData.phone}
         onChange={handleChange}
       />
-      {button && <button onClick={handleUpdate}>{button}</button>}
+      {button && (
+        <button onClick={handleUpdate} disabled={button !== 'update profile'}>
+          {button}
+        </button>
+      )}
     </main>
   )
 }
