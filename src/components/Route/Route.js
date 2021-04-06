@@ -45,6 +45,7 @@ function Route() {
   const [changeRecipient, setChangeRecipient] = useState()
   const [confDriver, setConfDriver] = useState()
   const [otherDriver, setOtherDriver] = useState()
+  const [willAssign, setWillAssign] = useState()
 
   useEffect(() => {
     if (drivers && route) {
@@ -97,6 +98,12 @@ function Route() {
   }
 
   function Driver() {
+    function handleBegin() {
+      setFirestoreData(['Routes', route.id], {
+        status: 3,
+        time_started: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    }
     return (
       <div id="Driver">
         <img
@@ -112,13 +119,23 @@ function Route() {
           </h5>
           {route.notes ? <p>Notes: {route.notes}</p> : null}
         </div>
+        {admin ? null : route.status === 1 &&
+          route.driver &&
+          route.driver_id == user.uid &&
+          !willAssign ? (
+          <div className="driver-buttons">
+            <button className="blue" onClick={handleBegin}>
+              begin route
+              {admin && route.driver_id !== user.uid ? ' as admin' : ''}
+            </button>
+          </div>
+        ) : null}
       </div>
     )
   }
 
   function StatusButton() {
     const [notes, setNotes] = useState('')
-    const [willAssign, setWillAssign] = useState()
 
     function handleBegin() {
       setFirestoreData(['Routes', route.id], {
@@ -826,7 +843,11 @@ function Route() {
                 ))}
               </section>
               <BackupDelivery />
-              <ChangeRecipientButton />
+              {route.status === 1 &&
+                route.driver &&
+                (route.driver_id == user.uid || admin) && (
+                  <ChangeRecipientButton />
+                )}
               <StatusButton />
               <CancelButton />
               {admin && <DeleteButton />}
