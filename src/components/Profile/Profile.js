@@ -8,6 +8,7 @@ import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
 import './Profile.scss'
 import { formatPhoneNumber } from '../../helpers/helpers'
+import Alert from '../Alert/Alert'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -18,6 +19,7 @@ export default function Profile() {
     pronouns: '',
   })
   const [button, setButton] = useState()
+  const [alertMessage, setAlertMessage] = useState()
 
   useEffect(() => {
     // update formData only once by checking name population
@@ -45,11 +47,13 @@ export default function Profile() {
         .set(formData, { merge: true })
         .then(() => {
           setButton('profile updated!')
+          setAlertMessage()
           setTimeout(() => setButton(), 2000)
         })
         .catch(e => console.error('Error updating profile: ', e))
     } else {
-      alert('Wrong format, number should contains 10 digits')
+      setAlertMessage('Phone number should contains only 10 digits')
+      setTimeout(() => setAlertMessage(), 4000)
     }
   }
 
@@ -87,6 +91,7 @@ export default function Profile() {
           {button}
         </button>
       )}
+      {alertMessage && <Alert alertMessage={alertMessage} />}
     </main>
   )
 }

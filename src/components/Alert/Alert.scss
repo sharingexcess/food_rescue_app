@@ -1,0 +1,10 @@
+@import '../../styles/index.scss';
+
+#Alert {
+  background-color: var(--red);
+  color: var(--white);
+
+  height: max-content;
+  border-radius: 5px;
+  padding: 8px;
+}
