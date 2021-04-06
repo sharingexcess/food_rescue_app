@@ -119,7 +119,10 @@ function Route() {
           </h5>
           {route.notes ? <p>Notes: {route.notes}</p> : null}
         </div>
-        {admin ? null : !willAssign ? (
+        {admin ? null : route.status === 1 &&
+          route.driver &&
+          route.driver_id == user.uid &&
+          !willAssign ? (
           <div className="driver-buttons">
             <button className="blue" onClick={handleBegin}>
               begin route
@@ -840,7 +843,11 @@ function Route() {
                 ))}
               </section>
               <BackupDelivery />
-              <ChangeRecipientButton />
+              {route.status === 1 &&
+                route.driver &&
+                (route.driver_id == user.uid || admin) && (
+                  <ChangeRecipientButton />
+                )}
               <StatusButton />
               <CancelButton />
               {admin && <DeleteButton />}
