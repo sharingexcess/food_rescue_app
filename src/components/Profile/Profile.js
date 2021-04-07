@@ -33,8 +33,13 @@ export default function Profile() {
   }, [profile, formData, button])
 
   function handleChange(e) {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-    setButton('update profile')
+    if (
+      (e.target.id === 'phone' && e.target.value.length <= 10) ||
+      e.target.id !== 'phone'
+    ) {
+      setFormData({ ...formData, [e.target.id]: e.target.value })
+      setButton('update profile')
+    }
   }
 
   function handleUpdate() {
@@ -83,6 +88,7 @@ export default function Profile() {
       <Input
         element_id="phone"
         label="Phone Number"
+        type="number"
         value={formData.phone}
         onChange={handleChange}
       />
