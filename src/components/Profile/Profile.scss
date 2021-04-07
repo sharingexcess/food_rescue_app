@@ -24,4 +24,12 @@
     text-align: center;
     padding-bottom: 16px;
   }
+
+  input {
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
 }
