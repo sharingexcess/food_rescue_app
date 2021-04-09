@@ -8,6 +8,8 @@ import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
 import './Profile.scss'
 import validator from 'validator'
+import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -38,7 +40,7 @@ export default function Profile() {
     ) {
       setError("Please enter your Profile's Name")
       return false
-    } else if (!validator.isMobilePhone(formData.phone)) {
+    } else if (!formData.phone || !isPossiblePhoneNumber(formData.phone)) {
       setError(
         'Your phone may contain invalid characters or missing some digits'
       )
@@ -49,6 +51,13 @@ export default function Profile() {
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
+    setButton('update profile')
+  }
+
+  function handlePhoneInputChange(changeValue) {
+    setFormData(prevData => {
+      return { ...prevData, phone: changeValue }
+    })
     setButton('update profile')
   }
 
@@ -94,11 +103,11 @@ export default function Profile() {
         value={formData.pronouns}
         onChange={handleChange}
       />
-      <Input
-        element_id="phone"
-        label="Phone Number"
+      <PhoneInput
+        placeholder="Phone Number"
         value={formData.phone}
-        onChange={handleChange}
+        onChange={handlePhoneInputChange}
+        defaultCountry="US"
       />
       {button && (
         <button onClick={handleUpdate} disabled={button !== 'update profile'}>
