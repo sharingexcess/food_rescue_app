@@ -1,10 +1,7 @@
 import { ExternalLink } from '../../helpers/components'
-import {
-  formatPhoneNumber,
-  getImageFromStorage,
-  isValidURL,
-} from '../../helpers/helpers'
+import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import moment from 'moment'
+import { formatPhoneNumberIntl } from 'react-phone-number-input'
 
 export function handleOrgIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
@@ -33,8 +30,7 @@ export function OrganizationPhone({ org }) {
       <p>
         <i className="fa fa-phone" />
         <ExternalLink url={`tel:${org.default_contact_phone}`}>
-          {/* {formatPhoneNumber(org.default_contact_phone)} */}
-          {org.default_contact_phone}
+          {formatPhoneNumberIntl(org.default_contact_phone)}
         </ExternalLink>
       </p>
     )
