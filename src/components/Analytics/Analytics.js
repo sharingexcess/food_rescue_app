@@ -69,7 +69,7 @@ export default function Analytics() {
 
   function RouteAnalytics() {
     return (
-      <table>
+      <table className="Analytics__Route">
         <thead>
           <tr>
             <td>Route ID</td>
@@ -91,7 +91,7 @@ export default function Analytics() {
             return (
               <tr key={r.id}>
                 <td>{r.id}</td>
-                <td>{r_driver.name}</td>
+                <td id="driver">{r_driver.name}</td>
                 <td>
                   <ul>
                     {r_pickups.map(p => (
@@ -106,7 +106,7 @@ export default function Analytics() {
                     ))}
                   </ul>
                 </td>
-                <td>{r_weight}</td>
+                <td id="weight">{r_weight}</td>
               </tr>
             )
           })}

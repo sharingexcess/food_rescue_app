@@ -53,9 +53,21 @@
       ul {
         padding-right: 8px;
         li {
-          list-style-type: circle;
+          list-style-type: none;
+          margin-bottom: 12px;
         }
       }
+    }
+  }
+
+  .Analytics__Route {
+    td {
+      border: 2px solid white;
+    }
+
+    #driver,
+    #weight {
+      text-align: center;
     }
   }
 }
