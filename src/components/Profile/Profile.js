@@ -32,7 +32,10 @@ export default function Profile() {
   }, [profile, formData, button])
 
   function validateInformation() {
-    if (!formData.name) {
+    if (
+      !formData.name ||
+      !validator.isAlphanumeric(formData.name.split(' ')[0])
+    ) {
       setError("Please enter your Profile's Name")
       return false
     } else if (!validator.isMobilePhone(formData.phone)) {
