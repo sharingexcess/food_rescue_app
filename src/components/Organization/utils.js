@@ -33,7 +33,8 @@ export function OrganizationPhone({ org }) {
       <p>
         <i className="fa fa-phone" />
         <ExternalLink url={`tel:${org.default_contact_phone}`}>
-          {formatPhoneNumber(org.default_contact_phone)}
+          {/* {formatPhoneNumber(org.default_contact_phone)} */}
+          {org.default_contact_phone}
         </ExternalLink>
       </p>
     )

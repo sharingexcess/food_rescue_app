@@ -7,8 +7,7 @@ import { Input } from '../Input/Input'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
 import './Profile.scss'
-import { formatPhoneNumber } from '../../helpers/helpers'
-import Alert from '../Alert/Alert'
+import validator from 'validator'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -19,7 +18,7 @@ export default function Profile() {
     pronouns: '',
   })
   const [button, setButton] = useState()
-  const [alertMessage, setAlertMessage] = useState()
+  const [error, setError] = useState()
 
   useEffect(() => {
     // update formData only once by checking name population
@@ -32,19 +31,27 @@ export default function Profile() {
     }
   }, [profile, formData, button])
 
-  function handleChange(e) {
-    if (
-      (e.target.id === 'phone' && e.target.value.length <= 10) ||
-      e.target.id !== 'phone'
-    ) {
-      setFormData({ ...formData, [e.target.id]: e.target.value })
-      setButton('update profile')
+  function validateInformation() {
+    if (!formData.name) {
+      setError("Please enter your Profile's Name")
+      return false
+    } else if (!validator.isMobilePhone(formData.phone)) {
+      setError(
+        'Your phone may contain invalid characters or missing some digits'
+      )
+      return false
     }
+    return true
+  }
+
+  function handleChange(e) {
+    setFormData({ ...formData, [e.target.id]: e.target.value })
+    setButton('update profile')
   }
 
   function handleUpdate() {
     console.log('Profile >>>', profile)
-    if (formatPhoneNumber(formData.phone)) {
+    if (validateInformation()) {
       firebase
         .firestore()
         .collection('Users')
@@ -52,13 +59,12 @@ export default function Profile() {
         .set(formData, { merge: true })
         .then(() => {
           setButton('profile updated!')
-          setAlertMessage()
           setTimeout(() => setButton(), 2000)
+          setError()
         })
         .catch(e => console.error('Error updating profile: ', e))
     } else {
-      setAlertMessage('Phone number should contains only 10 digits')
-      setTimeout(() => setAlertMessage(), 4000)
+      setTimeout(() => setError(), 4000)
     }
   }
 
@@ -88,7 +94,6 @@ export default function Profile() {
       <Input
         element_id="phone"
         label="Phone Number"
-        type="number"
         value={formData.phone}
         onChange={handleChange}
       />
@@ -97,7 +102,7 @@ export default function Profile() {
           {button}
         </button>
       )}
-      {alertMessage && <Alert alertMessage={alertMessage} />}
+      {error && <p id="FormError">{error}</p>}
     </main>
   )
 }

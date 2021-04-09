@@ -40,7 +40,8 @@ export function UserPhone({ profile }) {
       <p>
         <i className="fa fa-phone" />
         <ExternalLink url={`tel:${profile.phone}`}>
-          {formatPhoneNumber(profile.phone)}
+          {/* {formatAllPhoneNumber(profile.phone)} */}
+          {profile.phone}
         </ExternalLink>
       </p>
     )
