@@ -1,11 +1,8 @@
 import Ellipsis, { ExternalLink } from '../../helpers/components'
 import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
-import {
-  formatPhoneNumber,
-  getImageFromStorage,
-  isValidURL,
-} from '../../helpers/helpers'
+import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import { useAuthContext } from '../Auth/Auth'
+import { formatPhoneNumberIntl } from 'react-phone-number-input'
 
 export function handleUserIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
@@ -40,8 +37,7 @@ export function UserPhone({ profile }) {
       <p>
         <i className="fa fa-phone" />
         <ExternalLink url={`tel:${profile.phone}`}>
-          {/* {formatAllPhoneNumber(profile.phone)} */}
-          {profile.phone}
+          {formatPhoneNumberIntl(profile.phone)}
         </ExternalLink>
       </p>
     )
