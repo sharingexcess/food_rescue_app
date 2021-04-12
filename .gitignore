@@ -7,3 +7,4 @@ package-lock.json
 .firebase
 .DS_Store
 *credentials*
+src/components/User/DriverDocumentsutils.js
