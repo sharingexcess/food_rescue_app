@@ -62,7 +62,11 @@ function User() {
         isAdmin={isAdmin}
         basicAccess={basicAccess}
       />
+      <button>
+        View Driver Document
+      </button>
     </main>
+    // View Driver Document button currently has no functionality
   )
 }
 
