@@ -2,11 +2,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import './InfoTodoList.scss'
 
-function Task({ title, status }) {
+function Task({ title, isComplete }) {
   // status means complete or incomplete
   return (
     <div className="Task">
-      {status === 'complete' ? (
+      {isComplete ? (
         <i className="fa fa-check StatusIndicator"></i>
       ) : (
         <i className="fa fa-clock-o" id="StatusIndicator"></i>
@@ -17,12 +17,15 @@ function Task({ title, status }) {
     </div>
   )
 }
-function InfoTodoList() {
+function InfoTodoList({ profile }) {
+  console.log('User Profile in InfoTodoList >>>', profile)
+  const hasPhone = profile?.phone ? true : false
+
   return (
     <div className="TodoList">
-      <Task title="Input phone Number" status="incomplete" />
-      <Task title="Insert Driver License" status="incomplete" />
-      <Task title="Insert Insurance" status="incomplete" />
+      <Task title="Input phone Number" isComplete={hasPhone} />
+      <Task title="Insert Driver License" isComplete={false} />
+      <Task title="Insert Insurance" isComplete={true} />
     </div>
   )
 }
