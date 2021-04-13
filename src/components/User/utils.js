@@ -128,4 +128,3 @@ export function UserAdminPermissions({ id, email, isAdmin, basicAccess }) {
       </>
     )
 }
-
