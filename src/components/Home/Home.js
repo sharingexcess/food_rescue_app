@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
+import useUserData from '../../hooks/useUserData'
 import { useAuthContext } from '../Auth/Auth'
 import InfoTodoList from '../InfoTodoList/InfoTodoList'
 import './Home.scss'
@@ -17,6 +18,7 @@ export default function Home() {
     d => d.driver_id === user.uid && d.status === 9
   )
   const stats = generateDriverStats(my_routes, my_deliveries)
+  const profile = useUserData(user.uid)
 
   function Tile({ name, icon, link }) {
     return (
@@ -64,7 +66,7 @@ export default function Home() {
           driven, <span>{stats.weight}</span> lbs. rescued
         </h3>
       ) : null}
-      <InfoTodoList />
+      <InfoTodoList profile={profile} />
       <section id="Tiles">{admin ? <AdminTiles /> : <DriverTiles />}</section>
     </main>
   )
