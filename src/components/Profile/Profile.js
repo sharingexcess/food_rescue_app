@@ -21,6 +21,8 @@ export default function Profile() {
   })
   const [button, setButton] = useState()
   const [error, setError] = useState()
+  const [driverLicense, setDriverLicense] = useState()
+  const [insurance, setInsurance] = useState()
 
   useEffect(() => {
     // update formData only once by checking name population
@@ -80,6 +82,16 @@ export default function Profile() {
     }
   }
 
+  const handleUploadForLicenseAndInsurance = e => {
+    if (e.target.id === 'driver-license') {
+      console.log('Update driver License')
+      setDriverLicense(e.target.files[0])
+    } else if (e.target.id === 'insurance') {
+      console.log('Update driver Insurance')
+      setInsurance(e.target.files[0])
+    }
+  }
+
   return !profile ? (
     <Loading text="Loading profile" />
   ) : (
@@ -109,6 +121,27 @@ export default function Profile() {
         onChange={handlePhoneInputChange}
         defaultCountry="US"
       />
+      <div className="Paper">
+        <label>Driver License</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleUploadForLicenseAndInsurance}
+          id="driver-license"
+        />
+        <p>{driverLicense ? driverLicense.name : 'No file selected'}</p>
+      </div>
+
+      <div className="Paper">
+        <label>Insurance</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleUploadForLicenseAndInsurance}
+          id="insurance"
+        />
+        <p>{insurance ? insurance.name : 'No file selected'}</p>
+      </div>
       {button && (
         <button onClick={handleUpdate} disabled={button !== 'update profile'}>
           {button}
