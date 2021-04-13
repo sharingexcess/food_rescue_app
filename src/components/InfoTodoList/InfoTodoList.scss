@@ -1,0 +1,11 @@
+.TodoList {
+  .Task {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+
+    i {
+      margin-right: 20px;
+    }
+  }
+}
