@@ -121,7 +121,7 @@ function Route() {
         </div>
         {admin ? null : route.status === 1 &&
           route.driver &&
-          route.driver_id == user.uid &&
+          route.driver_id === user.uid &&
           !willAssign ? (
           <div className="driver-buttons">
             <button className="blue" onClick={handleBegin}>
@@ -845,7 +845,7 @@ function Route() {
               <BackupDelivery />
               {route.status === 1 &&
                 route.driver &&
-                (route.driver_id == user.uid || admin) && (
+                (route.driver_id === user.uid || admin) && (
                   <ChangeRecipientButton />
                 )}
               <StatusButton />
