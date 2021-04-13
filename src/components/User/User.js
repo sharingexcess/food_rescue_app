@@ -9,8 +9,9 @@ import {
   UserAdminPermissions,
   handleUserIcon,
   checkUserAdminPermissions,
-  checkUserBasicAccess,
+  checkUserBasicAccess
 } from './utils'
+import ViewDriverDocuments from './DriverDocumentsutils'
 import useUserData from '../../hooks/useUserData'
 import './User.scss'
 import Header from '../Header/Header'
@@ -62,7 +63,10 @@ function User() {
         isAdmin={isAdmin}
         basicAccess={basicAccess}
       />
+      <ViewDriverDocuments
+      />
     </main>
+    // View Driver Document button currently has no functionality
   )
 }
 
