@@ -26,7 +26,8 @@
     "dev": "cp environments/.env.dev .env.local && react-scripts start",
     "prod": "cp environments/.env.prod .env.local && react-scripts start",
     "build": "react-scripts build",
-    "deploy:prod": "node scripts/prod_deploy.js"
+    "deploy:prod": "node scripts/prod_deploy.js",
+    "rollback": "node scripts/prod_emergency_rollback.js"
   },
   "browserslist": {
     "production": [
