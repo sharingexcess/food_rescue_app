@@ -20,8 +20,11 @@ function Task({ title, isComplete }) {
 function InfoTodoList({ profile }) {
   console.log('User Profile in InfoTodoList >>>', profile)
   const hasPhone = profile?.phone ? true : false
+  const hasDriverLicense = false
+  const hasInsurance = false
 
-  return (
+  // Only show the tasks list if one of the tasks is not complete
+  return hasPhone && hasDriverLicense && hasInsurance ? null : (
     <div className="TodoList">
       <Task title="Input phone Number" isComplete={hasPhone} />
       <Task title="Insert Driver License" isComplete={false} />
