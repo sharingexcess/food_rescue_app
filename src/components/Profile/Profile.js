@@ -91,6 +91,23 @@ export default function Profile() {
       setInsurance(e.target.files[0])
     }
   }
+  const PaperWork = ({ type }) => {
+    const label = type === 'insurance' ? 'Insurance' : 'Driver License'
+    const inputId = type === 'insurance' ? 'insurance' : 'driver-license'
+    return (
+      <div className="PaperWork">
+        <fieldset>
+          <legend>{label}</legend>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUploadForLicenseAndInsurance}
+            id={inputId}
+          />
+        </fieldset>
+      </div>
+    )
+  }
 
   return !profile ? (
     <Loading text="Loading profile" />
@@ -121,33 +138,16 @@ export default function Profile() {
         onChange={handlePhoneInputChange}
         defaultCountry="US"
       />
-      <div className="Paper">
-        <label>Driver License</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleUploadForLicenseAndInsurance}
-          id="driver-license"
-        />
-        <p>{driverLicense ? driverLicense.name : 'No file selected'}</p>
-      </div>
 
-      <div className="Paper">
-        <label>Insurance</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleUploadForLicenseAndInsurance}
-          id="insurance"
-        />
-        <p>{insurance ? insurance.name : 'No file selected'}</p>
-      </div>
       {button && (
         <button onClick={handleUpdate} disabled={button !== 'update profile'}>
           {button}
         </button>
       )}
       {error && <p id="FormError">{error}</p>}
+
+      <PaperWork type="driver-license" />
+      <PaperWork type="insurance" />
     </main>
   )
 }
