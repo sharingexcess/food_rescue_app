@@ -7,6 +7,9 @@ import { Input } from '../Input/Input'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
 import './Profile.scss'
+import validator from 'validator'
+import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -17,6 +20,7 @@ export default function Profile() {
     pronouns: '',
   })
   const [button, setButton] = useState()
+  const [error, setError] = useState()
 
   useEffect(() => {
     // update formData only once by checking name population
@@ -29,22 +33,51 @@ export default function Profile() {
     }
   }, [profile, formData, button])
 
+  function validateInformation() {
+    if (
+      !formData.name ||
+      !validator.isAlphanumeric(formData.name.split(' ')[0])
+    ) {
+      setError("Please enter your Profile's Name")
+      return false
+    } else if (!formData.phone || !isPossiblePhoneNumber(formData.phone)) {
+      setError(
+        'Your phone may contain invalid characters or missing some digits'
+      )
+      return false
+    }
+    return true
+  }
+
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
     setButton('update profile')
   }
 
+  function handlePhoneInputChange(changeValue) {
+    setFormData(prevData => {
+      return { ...prevData, phone: changeValue }
+    })
+    setButton('update profile')
+  }
+
   function handleUpdate() {
-    firebase
-      .firestore()
-      .collection('Users')
-      .doc(user.uid)
-      .set(formData, { merge: true })
-      .then(() => {
-        setButton('profile updated!')
-        setTimeout(() => setButton(), 2000)
-      })
-      .catch(e => console.error('Error updating profile: ', e))
+    console.log('Profile >>>', profile)
+    if (validateInformation()) {
+      firebase
+        .firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .set(formData, { merge: true })
+        .then(() => {
+          setButton('profile updated!')
+          setTimeout(() => setButton(), 2000)
+          setError()
+        })
+        .catch(e => console.error('Error updating profile: ', e))
+    } else {
+      setTimeout(() => setError(), 4000)
+    }
   }
 
   return !profile ? (
@@ -70,13 +103,18 @@ export default function Profile() {
         value={formData.pronouns}
         onChange={handleChange}
       />
-      <Input
-        element_id="phone"
-        label="Phone Number"
+      <PhoneInput
+        placeholder="Phone Number"
         value={formData.phone}
-        onChange={handleChange}
+        onChange={handlePhoneInputChange}
+        defaultCountry="US"
       />
-      {button && <button onClick={handleUpdate}>{button}</button>}
+      {button && (
+        <button onClick={handleUpdate} disabled={button !== 'update profile'}>
+          {button}
+        </button>
+      )}
+      {error && <p id="FormError">{error}</p>}
     </main>
   )
 }
