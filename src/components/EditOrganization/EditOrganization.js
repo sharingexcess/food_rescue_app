@@ -11,6 +11,8 @@ import './EditOrganization.scss'
 import { getCollection } from '../../helpers/helpers'
 import validator from 'validator'
 import Header from '../Header/Header'
+import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 export default function EditOrganization() {
   const { id } = useParams()
@@ -48,6 +50,14 @@ export default function EditOrganization() {
     setShowErrors(false)
   }
 
+  function handlePhoneInputChange(changeValue) {
+    setFormData(prevData => {
+      return { ...prevData, default_contact_phone: changeValue }
+    })
+    setErrors([])
+    setShowErrors(false)
+  }
+
   function validateFormData() {
     if (
       !formData.name ||
@@ -62,8 +72,8 @@ export default function EditOrganization() {
       errors.push('Invalid Data Input: Contact Email is incorrect')
     }
     if (
-      !validator.isMobilePhone(formData.default_contact_phone) &&
-      !!formData.default_contact_phone.length
+      !formData.default_contact_phone ||
+      !isPossiblePhoneNumber(formData.default_contact_phone)
     ) {
       errors.push('Invalid Data Input: Contact Phone Number is invalid')
     }
@@ -154,12 +164,11 @@ export default function EditOrganization() {
         value={formData.default_contact_email}
         onChange={handleChange}
       />
-      <Input
-        type="tel"
-        label="Contact Phone"
-        element_id="default_contact_phone"
+      <PhoneInput
+        placeholder="Phone Number"
         value={formData.default_contact_phone}
-        onChange={handleChange}
+        onChange={handlePhoneInputChange}
+        defaultCountry="US"
       />
       <Input
         type="select"

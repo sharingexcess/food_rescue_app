@@ -15,7 +15,7 @@ export async function getImageFromStorage(path) {
 export function formatPhoneNumber(phoneNumberString) {
   const cleaned = ('' + phoneNumberString).replace(/\D/g, '')
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
-  if (match) {
+  if (match && match.length === 4) {
     return '(' + match[1] + ') ' + match[2] + '-' + match[3]
   }
   return null

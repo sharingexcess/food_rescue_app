@@ -246,7 +246,7 @@ function Route() {
           <div className={admin ? 'buttons' : ''}>
             {!willAssign ? (
               <button className="blue" onClick={handleBegin}>
-                start route
+                begin route
                 {admin && route.driver_id !== user.uid ? ' as admin' : ''}
               </button>
             ) : null}
