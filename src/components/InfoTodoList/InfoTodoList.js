@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import './InfoTodoList.scss'
 
 function Task({ title, status }) {
@@ -10,7 +11,9 @@ function Task({ title, status }) {
       ) : (
         <i className="fa fa-clock-o" id="StatusIndicator"></i>
       )}
-      <p>{title}</p>
+      <Link to="/profile">
+        <p>{title}</p>
+      </Link>
     </div>
   )
 }
