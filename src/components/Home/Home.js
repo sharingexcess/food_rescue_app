@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import { useAuthContext } from '../Auth/Auth'
+import InfoTodoList from '../InfoTodoList/InfoTodoList'
 import './Home.scss'
 import { generateDriverStats, generateGreeting } from './utils'
 
@@ -63,6 +64,7 @@ export default function Home() {
           driven, <span>{stats.weight}</span> lbs. rescued
         </h3>
       ) : null}
+      <InfoTodoList />
       <section id="Tiles">{admin ? <AdminTiles /> : <DriverTiles />}</section>
     </main>
   )
