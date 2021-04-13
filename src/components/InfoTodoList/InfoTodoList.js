@@ -27,8 +27,8 @@ function InfoTodoList({ profile }) {
   return hasPhone && hasDriverLicense && hasInsurance ? null : (
     <div className="TodoList">
       <Task title="Input phone Number" isComplete={hasPhone} />
-      <Task title="Insert Driver License" isComplete={false} />
-      <Task title="Insert Insurance" isComplete={true} />
+      <Task title="Insert Driver License" isComplete={hasDriverLicense} />
+      <Task title="Insert Insurance" isComplete={hasInsurance} />
     </div>
   )
 }
