@@ -67,7 +67,7 @@ function Organizations() {
           </option>
         </select>
         <Link to="/admin/create-organization">
-          <button className="secondary">+ New Org</button>
+          <button className="grant">+ New Org</button>
         </Link>
       </section>
       <Input
