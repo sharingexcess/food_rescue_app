@@ -93,6 +93,58 @@ export default function Profile() {
     }
     setLicenseInsuranceButton('update paperwork')
   }
+  const handleLicenseAndInsuranceSubmit = async () => {
+    const storage = firebase.storage()
+    const paperWorkRef = storage.ref().child(`/Users/${user.uid}`)
+    const promises = []
+    if (driverLicense) {
+      promises.push(
+        paperWorkRef
+          .child(`driverLicense/${driverLicense.name}`)
+          .put(driverLicense, { contentType: driverLicense.type })
+          .then(snapshot => snapshot.ref.fullPath)
+          .then(storagePath => {
+            return { driver_license_url: storagePath }
+          })
+      )
+    }
+    if (insurance) {
+      promises.push(
+        paperWorkRef
+          .child(`insurance/${insurance.name}`)
+          .put(insurance, { contentType: insurance.type })
+          .then(snapshot => snapshot.ref.fullPath)
+          .then(storagePath => {
+            return { insurance_url: storagePath }
+          })
+      )
+    }
+    await Promise.all(promises)
+      .then(values => {
+        const paperWorkData = { driver_license_url: '', insurance_url: '' }
+        values.forEach(value => {
+          if (value.driver_license_url) {
+            paperWorkData.driver_license_url = value.driver_license_url
+          } else if (value.insurance_url) {
+            paperWorkData.insurance_url = value.insurance_url
+          }
+        })
+        console.log('PaperWorkData >>>', paperWorkData)
+        firebase
+          .firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .set(paperWorkData, { merge: true })
+          .then(() => {
+            setLicenseInsuranceButton('paperwork updated!')
+            setTimeout(() => setLicenseInsuranceButton(), 3000)
+          })
+          .catch(e => console.error('Error updating profile: ', e))
+      })
+      .catch(error => {
+        console.log('Error >>>', error)
+      })
+  }
 
   return !profile ? (
     <Loading text="Loading profile" />
@@ -154,7 +206,10 @@ export default function Profile() {
         </fieldset>
       </div>
       {licenseInsuranceButton && (
-        <button disabled={licenseInsuranceButton !== 'update paperwork'}>
+        <button
+          disabled={licenseInsuranceButton !== 'update paperwork'}
+          onClick={handleLicenseAndInsuranceSubmit}
+        >
           {licenseInsuranceButton}
         </button>
       )}
