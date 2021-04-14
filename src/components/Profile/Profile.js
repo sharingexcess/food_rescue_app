@@ -183,6 +183,11 @@ export default function Profile() {
       <div className="PaperWork">
         <fieldset>
           <legend>Driver License</legend>
+          <p>
+            {profile?.driver_license_url
+              ? 'Has a driver license'
+              : 'No license selected'}
+          </p>
           <input
             type="file"
             accept="image/*"
@@ -194,6 +199,11 @@ export default function Profile() {
       <div className="PaperWork">
         <fieldset>
           <legend>Insurance</legend>
+          <p>
+            {profile?.insurance_url
+              ? 'Has an insurance'
+              : 'No insurance selected'}
+          </p>
           <input
             type="file"
             accept="image/*"
