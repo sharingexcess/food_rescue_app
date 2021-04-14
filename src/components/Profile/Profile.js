@@ -23,6 +23,7 @@ export default function Profile() {
   const [error, setError] = useState()
   const [driverLicense, setDriverLicense] = useState()
   const [insurance, setInsurance] = useState()
+  const [licenseInsuranceButton, setLicenseInsuranceButton] = useState()
 
   useEffect(() => {
     // update formData only once by checking name population
@@ -90,23 +91,7 @@ export default function Profile() {
       console.log('Update driver Insurance')
       setInsurance(e.target.files[0])
     }
-  }
-  const PaperWork = ({ type }) => {
-    const label = type === 'insurance' ? 'Insurance' : 'Driver License'
-    const inputId = type === 'insurance' ? 'insurance' : 'driver-license'
-    return (
-      <div className="PaperWork">
-        <fieldset>
-          <legend>{label}</legend>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUploadForLicenseAndInsurance}
-            id={inputId}
-          />
-        </fieldset>
-      </div>
-    )
+    setLicenseInsuranceButton('update paperwork')
   }
 
   return !profile ? (
@@ -146,8 +131,33 @@ export default function Profile() {
       )}
       {error && <p id="FormError">{error}</p>}
 
-      <PaperWork type="driver-license" />
-      <PaperWork type="insurance" />
+      <div className="PaperWork">
+        <fieldset>
+          <legend>Driver License</legend>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUploadForLicenseAndInsurance}
+            id="driver-license"
+          />
+        </fieldset>
+      </div>
+      <div className="PaperWork">
+        <fieldset>
+          <legend>Insurance</legend>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUploadForLicenseAndInsurance}
+            id="insurance"
+          />
+        </fieldset>
+      </div>
+      {licenseInsuranceButton && (
+        <button disabled={licenseInsuranceButton !== 'update paperwork'}>
+          {licenseInsuranceButton}
+        </button>
+      )}
     </main>
   )
 }
