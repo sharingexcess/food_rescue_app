@@ -79,4 +79,31 @@
       }
     }
   }
+  .openForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: max-content;
+    i {
+      height: max-content;
+      width: max-content;
+      font-size: 24px;
+    }
+  }
+  .right {
+    float: right;
+    background-color: var(--blue);
+    i {
+      margin: 0;
+      margin-left: 8px;
+    }
+  }
+  .left {
+    float: left;
+    background-color: var(--red);
+    i {
+      margin: 0;
+      margin-right: 8px;
+    }
+  }
 }
