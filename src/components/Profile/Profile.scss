@@ -79,23 +79,4 @@
       }
     }
   }
-
-  .PaperWork {
-    height: 50px;
-    margin: 0;
-    margin-bottom: 20px;
-    fieldset {
-      border: 1px solid var(--primary);
-      border-radius: 8px;
-      padding: 10px;
-      legend {
-        font-weight: 900;
-        font-size: 18px;
-      }
-      input {
-        width: 100%;
-        color: white;
-      }
-    }
-  }
 }

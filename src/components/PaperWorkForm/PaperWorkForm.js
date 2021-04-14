@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { getDriverLicenseFileName, getInsuranceFileName } from './utils'
 import firebase from 'firebase/app'
+import './PaperWorkForm.scss'
 
 function PaperWorkForm({ profile, user }) {
   const [driverLicense, setDriverLicense] = useState()
