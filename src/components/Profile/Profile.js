@@ -10,6 +10,7 @@ import './Profile.scss'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import { getDriverLicenseFileName, getInsuranceFileName } from './utils'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -185,7 +186,7 @@ export default function Profile() {
           <legend>Driver License</legend>
           <p>
             {profile?.driver_license_url
-              ? 'Has a driver license'
+              ? getDriverLicenseFileName(profile)
               : 'No license selected'}
           </p>
           <input
@@ -201,7 +202,7 @@ export default function Profile() {
           <legend>Insurance</legend>
           <p>
             {profile?.insurance_url
-              ? 'Has an insurance'
+              ? getInsuranceFileName(profile)
               : 'No insurance selected'}
           </p>
           <input
