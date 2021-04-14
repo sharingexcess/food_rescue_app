@@ -10,7 +10,7 @@ import './Profile.scss'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import { getDriverLicenseFileName, getInsuranceFileName } from './utils'
+import PaperWorkForm from '../PaperWorkForm/PaperWorkForm'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -22,9 +22,6 @@ export default function Profile() {
   })
   const [button, setButton] = useState()
   const [error, setError] = useState()
-  const [driverLicense, setDriverLicense] = useState()
-  const [insurance, setInsurance] = useState()
-  const [licenseInsuranceButton, setLicenseInsuranceButton] = useState()
 
   useEffect(() => {
     // update formData only once by checking name population
@@ -84,66 +81,6 @@ export default function Profile() {
     }
   }
 
-  const handleUploadForLicenseAndInsurance = e => {
-    if (e.target.id === 'driver-license') {
-      setDriverLicense(e.target.files[0])
-    } else if (e.target.id === 'insurance') {
-      setInsurance(e.target.files[0])
-    }
-    setLicenseInsuranceButton('update paperwork')
-  }
-  const handleLicenseAndInsuranceSubmit = async () => {
-    const storage = firebase.storage()
-    const paperWorkRef = storage.ref().child(`/Users/${user.uid}`)
-    const promises = []
-    if (driverLicense) {
-      promises.push(
-        paperWorkRef
-          .child(`driverLicense/${driverLicense.name}`)
-          .put(driverLicense, { contentType: driverLicense.type })
-          .then(snapshot => snapshot.ref.fullPath)
-          .then(storagePath => {
-            return { driver_license_url: storagePath }
-          })
-      )
-    }
-    if (insurance) {
-      promises.push(
-        paperWorkRef
-          .child(`insurance/${insurance.name}`)
-          .put(insurance, { contentType: insurance.type })
-          .then(snapshot => snapshot.ref.fullPath)
-          .then(storagePath => {
-            return { insurance_url: storagePath }
-          })
-      )
-    }
-    await Promise.all(promises)
-      .then(values => {
-        const paperWorkData = { driver_license_url: '', insurance_url: '' }
-        values.forEach(value => {
-          if (value.driver_license_url) {
-            paperWorkData.driver_license_url = value.driver_license_url
-          } else if (value.insurance_url) {
-            paperWorkData.insurance_url = value.insurance_url
-          }
-        })
-        firebase
-          .firestore()
-          .collection('Users')
-          .doc(user.uid)
-          .set(paperWorkData, { merge: true })
-          .then(() => {
-            setLicenseInsuranceButton('paperwork updated!')
-            setTimeout(() => setLicenseInsuranceButton(), 3000)
-          })
-          .catch(e => console.error('Error updating profile: ', e))
-      })
-      .catch(error => {
-        console.error('Error >>>', error)
-      })
-  }
-
   return !profile ? (
     <Loading text="Loading profile" />
   ) : (
@@ -181,46 +118,7 @@ export default function Profile() {
       )}
       {error && <p id="FormError">{error}</p>}
 
-      <div className="PaperWork">
-        <fieldset>
-          <legend>Driver License</legend>
-          <p>
-            {profile?.driver_license_url
-              ? getDriverLicenseFileName(profile)
-              : 'No license selected'}
-          </p>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUploadForLicenseAndInsurance}
-            id="driver-license"
-          />
-        </fieldset>
-      </div>
-      <div className="PaperWork">
-        <fieldset>
-          <legend>Insurance</legend>
-          <p>
-            {profile?.insurance_url
-              ? getInsuranceFileName(profile)
-              : 'No insurance selected'}
-          </p>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUploadForLicenseAndInsurance}
-            id="insurance"
-          />
-        </fieldset>
-      </div>
-      {licenseInsuranceButton && (
-        <button
-          disabled={licenseInsuranceButton !== 'update paperwork'}
-          onClick={handleLicenseAndInsuranceSubmit}
-        >
-          {licenseInsuranceButton}
-        </button>
-      )}
+      <PaperWorkForm profile={profile} user={user} />
     </main>
   )
 }
