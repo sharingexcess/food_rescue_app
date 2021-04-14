@@ -85,10 +85,8 @@ export default function Profile() {
 
   const handleUploadForLicenseAndInsurance = e => {
     if (e.target.id === 'driver-license') {
-      console.log('Update driver License')
       setDriverLicense(e.target.files[0])
     } else if (e.target.id === 'insurance') {
-      console.log('Update driver Insurance')
       setInsurance(e.target.files[0])
     }
     setLicenseInsuranceButton('update paperwork')
@@ -129,7 +127,6 @@ export default function Profile() {
             paperWorkData.insurance_url = value.insurance_url
           }
         })
-        console.log('PaperWorkData >>>', paperWorkData)
         firebase
           .firestore()
           .collection('Users')
@@ -142,7 +139,7 @@ export default function Profile() {
           .catch(e => console.error('Error updating profile: ', e))
       })
       .catch(error => {
-        console.log('Error >>>', error)
+        console.error('Error >>>', error)
       })
   }
 
