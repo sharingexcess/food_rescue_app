@@ -100,9 +100,7 @@ export default function Profile() {
         {isOpenPaperWork && (
           <i className="fa fa-arrow-left" style={{ background: 'none' }}></i>
         )}
-        {isOpenPaperWork
-          ? 'Back to Basic Info'
-          : 'Driver License and Insurance'}
+        {isOpenPaperWork ? 'Basic Info' : 'Documents'}
         {!isOpenPaperWork && (
           <i className="fa fa-arrow-right" style={{ background: 'none' }}></i>
         )}
