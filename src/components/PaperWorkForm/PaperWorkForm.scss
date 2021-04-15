@@ -1,12 +1,13 @@
 .PaperWork {
-  height: 50px;
-  margin: 0;
-  margin-bottom: 20px;
+  height: 80px;
+  margin: 12px 0 20px;
   animation: slide-in 0.48s forwards ease;
+  box-sizing: border-box;
   fieldset {
+    height: 100%;
     border: 1px solid var(--primary);
     border-radius: 8px;
-    padding: 10px;
+    padding: 5px 12px 0;
     legend {
       font-weight: 900;
       font-size: 18px;
@@ -14,6 +15,10 @@
     input {
       width: 100%;
       color: white;
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 5px;
     }
   }
 }
