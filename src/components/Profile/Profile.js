@@ -93,6 +93,20 @@ export default function Profile() {
         {' '}
         <Link to="/liability">View Signed Document</Link>
       </button>
+      <button
+        className={`openForm ${isOpenPaperWork ? 'paperwork' : 'basic'}`}
+        onClick={() => setIsOpenPaperWork(!isOpenPaperWork)}
+      >
+        {isOpenPaperWork && (
+          <i className="fa fa-arrow-left" style={{ background: 'none' }}></i>
+        )}
+        {isOpenPaperWork
+          ? 'Back to Basic Info'
+          : 'Driver License and Insurance'}
+        {!isOpenPaperWork && (
+          <i className="fa fa-arrow-right" style={{ background: 'none' }}></i>
+        )}
+      </button>
       {!isOpenPaperWork ? (
         <div>
           <Input
@@ -126,20 +140,6 @@ export default function Profile() {
       ) : (
         <PaperWorkForm profile={profile} user={user} />
       )}
-      <button
-        className={`openForm ${isOpenPaperWork ? 'left' : 'right'}`}
-        onClick={() => setIsOpenPaperWork(!isOpenPaperWork)}
-      >
-        {isOpenPaperWork && (
-          <i className="fa fa-arrow-left" style={{ background: 'none' }}></i>
-        )}
-        {isOpenPaperWork
-          ? 'Back to Basic Info'
-          : 'Driver License and Insurance'}
-        {!isOpenPaperWork && (
-          <i className="fa fa-arrow-right" style={{ background: 'none' }}></i>
-        )}
-      </button>
     </main>
   )
 }
