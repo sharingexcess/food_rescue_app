@@ -10,7 +10,7 @@ import './Profile.scss'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import PaperWorkForm from '../PaperWorkForm/PaperWorkForm'
+import DocumentsForm from '../DocumentsForm/DocumentsForm'
 
 export default function Profile() {
   const { user } = useAuthContext()
@@ -136,7 +136,7 @@ export default function Profile() {
           {error && <p id="FormError">{error}</p>}
         </div>
       ) : (
-        <PaperWorkForm profile={profile} user={user} />
+        <DocumentsForm profile={profile} user={user} />
       )}
     </main>
   )

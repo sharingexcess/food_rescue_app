@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { getDriverLicenseFileName, getInsuranceFileName } from './utils'
 import firebase from 'firebase/app'
-import './PaperWorkForm.scss'
+import './DocumentsForm.scss'
 
-function PaperWorkForm({ profile, user }) {
+function DocumentsForm({ profile, user }) {
   const [driverLicense, setDriverLicense] = useState()
   const [insurance, setInsurance] = useState()
   const [licenseInsuranceButton, setLicenseInsuranceButton] = useState()
@@ -13,7 +13,7 @@ function PaperWorkForm({ profile, user }) {
     } else if (e.target.id === 'insurance') {
       setInsurance(e.target.files[0])
     }
-    setLicenseInsuranceButton('update paperwork')
+    setLicenseInsuranceButton('update documents')
   }
   const handleLicenseAndInsuranceSubmit = async () => {
     const storage = firebase.storage()
@@ -57,7 +57,7 @@ function PaperWorkForm({ profile, user }) {
           .doc(user.uid)
           .set(paperWorkData, { merge: true })
           .then(() => {
-            setLicenseInsuranceButton('paperwork updated!')
+            setLicenseInsuranceButton('documents updated!')
             setTimeout(() => setLicenseInsuranceButton(), 3000)
           })
           .catch(e => console.error('Error updating profile: ', e))
@@ -103,7 +103,7 @@ function PaperWorkForm({ profile, user }) {
       </div>
       {licenseInsuranceButton && (
         <button
-          disabled={licenseInsuranceButton !== 'update paperwork'}
+          disabled={licenseInsuranceButton !== 'update documents'}
           onClick={handleLicenseAndInsuranceSubmit}
         >
           {licenseInsuranceButton}
@@ -113,4 +113,4 @@ function PaperWorkForm({ profile, user }) {
   )
 }
 
-export default PaperWorkForm
+export default DocumentsForm
