@@ -29,6 +29,7 @@ function InfoTodoList({ profile }) {
       <Task title="Input phone Number" isComplete={hasPhone} />
       <Task title="Insert Driver License" isComplete={hasDriverLicense} />
       <Task title="Insert Insurance" isComplete={hasInsurance} />
+      <h5>Note: Click on Tasks for instructions</h5>
     </div>
   )
 }
