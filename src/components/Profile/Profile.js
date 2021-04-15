@@ -82,37 +82,6 @@ export default function Profile() {
     }
   }
 
-  function BasicProfile() {
-    return (
-      <div>
-        <Input
-          element_id="name"
-          label="Display Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <Input
-          element_id="pronouns"
-          label="Personal Pronouns"
-          value={formData.pronouns}
-          onChange={handleChange}
-        />
-        <PhoneInput
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handlePhoneInputChange}
-          defaultCountry="US"
-        />
-        {button && (
-          <button onClick={handleUpdate} disabled={button !== 'update profile'}>
-            {button}
-          </button>
-        )}
-        {error && <p id="FormError">{error}</p>}
-      </div>
-    )
-  }
-
   return !profile ? (
     <Loading text="Loading profile" />
   ) : (
@@ -125,7 +94,35 @@ export default function Profile() {
         <Link to="/liability">View Signed Document</Link>
       </button>
       {!isOpenPaperWork ? (
-        <BasicProfile />
+        <div>
+          <Input
+            element_id="name"
+            label="Display Name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          <Input
+            element_id="pronouns"
+            label="Personal Pronouns"
+            value={formData.pronouns}
+            onChange={handleChange}
+          />
+          <PhoneInput
+            placeholder="Phone Number"
+            value={formData.phone}
+            onChange={handlePhoneInputChange}
+            defaultCountry="US"
+          />
+          {button && (
+            <button
+              onClick={handleUpdate}
+              disabled={button !== 'update profile'}
+            >
+              {button}
+            </button>
+          )}
+          {error && <p id="FormError">{error}</p>}
+        </div>
       ) : (
         <PaperWorkForm profile={profile} user={user} />
       )}
