@@ -7,9 +7,9 @@ function Task({ title, isComplete }) {
   return (
     <div className="Task">
       {isComplete ? (
-        <i className="fa fa-check StatusIndicator"></i>
+        <i className="fa fa-check complete" id="StatusIndicator"></i>
       ) : (
-        <i className="fa fa-clock-o" id="StatusIndicator"></i>
+        <i className="fa fa-times" id="StatusIndicator"></i>
       )}
       <Link to="/profile">
         <p>{title}</p>

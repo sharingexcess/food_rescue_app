@@ -1,11 +1,31 @@
 .TodoList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
   .Task {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
-
+    margin: 0 auto 8px;
+    border-left: 2px solid white;
+    padding-left: 12px;
+    width: 75%;
+    cursor: pointer;
     i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-right: 20px;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background-color: var(--red);
+    }
+    .complete {
+      background-color: var(--primary);
+    }
+    &:hover {
+      transform: scale(1.01);
     }
   }
 }
