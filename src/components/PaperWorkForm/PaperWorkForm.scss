@@ -2,6 +2,7 @@
   height: 50px;
   margin: 0;
   margin-bottom: 20px;
+  animation: slide-in 0.48s forwards ease;
   fieldset {
     border: 1px solid var(--primary);
     border-radius: 8px;

@@ -55,6 +55,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+    animation: slide-in 0.48s forwards ease;
 
     &:hover {
       border: 3px solid var(--primary);
@@ -80,9 +81,10 @@
     }
   }
   .openForm {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    // display: flex;
+    // align-items: center;
+    // justify-content: center;
+    margin: 0 0 0 auto;
     height: max-content;
     i {
       height: max-content;
@@ -90,16 +92,14 @@
       font-size: 24px;
     }
   }
-  .right {
-    float: right;
+  .basic {
     background-color: var(--blue);
     i {
       margin: 0;
       margin-left: 8px;
     }
   }
-  .left {
-    float: left;
+  .paperwork {
     background-color: var(--red);
     i {
       margin: 0;
