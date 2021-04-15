@@ -97,13 +97,7 @@ export default function Profile() {
         className={`openForm ${isOpenPaperWork ? 'paperwork' : 'basic'}`}
         onClick={() => setIsOpenPaperWork(!isOpenPaperWork)}
       >
-        {isOpenPaperWork && (
-          <i className="fa fa-arrow-left" style={{ background: 'none' }}></i>
-        )}
-        {isOpenPaperWork ? 'Basic Info' : 'Documents'}
-        {!isOpenPaperWork && (
-          <i className="fa fa-arrow-right" style={{ background: 'none' }}></i>
-        )}
+        {isOpenPaperWork ? 'Basic Info' : 'Upload Documents'}
       </button>
       {!isOpenPaperWork ? (
         <div>
