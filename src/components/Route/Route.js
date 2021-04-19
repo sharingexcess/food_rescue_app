@@ -75,7 +75,7 @@ function Route() {
     const myDelivery = deliveries.find(
       deliveryRoute => deliveryRoute.route_id === route.id
     )
-    return myDelivery ? myDelivery.report.weight : 0
+    return myDelivery ? myDelivery.report?.weight : 0
   }
 
   function isNextIncompleteStop(index) {
