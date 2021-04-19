@@ -42,6 +42,7 @@ function EditRoute() {
     end_recurring: getDefaultEndRecurring(),
     is_recurring: null,
     stops: [],
+    original_route_id: '',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
@@ -82,7 +83,85 @@ function EditRoute() {
     })
   }
 
-  async function handleCreateRoute() {
+  async function handleCreateRouteButtonClick() {
+    const original_route_id = await generateRouteId()
+    setFormData(prevData => {
+      return { ...prevData, original_route_id: original_route_id }
+    })
+    if (isRecurring === true) {
+      let updatedTimeStart = formData.time_start
+      let updatedTimeEnd = formData.time_end
+      // let recurring_route_id = route_id
+      let iteration = 0
+      while (moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)) {
+        console.log('New start time >>>', updatedTimeStart)
+        updatedTimeStart = addDays(updatedTimeStart)
+        updatedTimeEnd = addDays(updatedTimeEnd)
+        iteration += 1
+        await setFormData(prevData => {
+          return {
+            ...prevData,
+            time_start: updatedTimeStart,
+            time_end: updatedTimeEnd,
+          }
+        })
+        const tempFormData = {
+          ...formData,
+          time_start: updatedTimeStart,
+          time_end: updatedTimeEnd,
+        }
+        console.log('Temp form Data >>>', tempFormData)
+        // const route_id = await generateRouteId(tempFormData.time_start)
+        // console.log('Route Id >>>', route_id)
+        // recurring_route_id = route_id + 'rec' + iteration.toString()
+      }
+      setWorking(false)
+      // if (isRecurring === true) {
+      //   let updatedTimeStart = formData.time_start
+      //   let updatedTimeEnd = formData.time_end
+      //   let recurring_route_id = route_id
+      //   let iteration = 0
+      //   while (
+      //     moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
+      //   ) {
+      //     const event = await updateGoogleCalendarEvent({
+      //       ...formData,
+      //       time_start: updatedTimeStart,
+      //       time_end: updatedTimeEnd,
+      //       is_recurring: isRecurring,
+      //     })
+      //     if (!event.id) {
+      //       alert(
+      //         'Error creating Google Calendar event. Please contact support!'
+      //       )
+      //       return
+      //     }
+      //     getCollection('Routes')
+      //       .doc(recurring_route_id)
+      //       .set({
+      //         id: recurring_route_id,
+      //         google_calendar_event_id: event.id,
+      //         driver_id: formData.driver_id,
+      //         time_start: updatedTimeStart,
+      //         time_end: updatedTimeEnd,
+      //         stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+      //         created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      //         updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      //         status: 1,
+      //         is_recurring: isRecurring,
+      //       })
+      //       .then(() => history.push(`/routes/${route_id}`))
+      //     updatedTimeStart = addDays(updatedTimeStart)
+      //     updatedTimeEnd = addDays(updatedTimeEnd)
+      //     iteration += 1
+      //     recurring_route_id = route_id + 'rec' + iteration.toString()
+      //   }
+      //   setWorking(false)
+      // } else {
+    }
+  }
+
+  async function handleCreateRoute(formData) {
     setWorking(true)
     const route_id = await generateRouteId()
     if (route_id) {
@@ -113,70 +192,32 @@ function EditRoute() {
           })
         }
       }
-      if (isRecurring === true) {
-        let updatedTimeStart = formData.time_start
-        let updatedTimeEnd = formData.time_end
-        let recurring_route_id = route_id
-        let iteration = 0
-        while (
-          moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
-        ) {
-          const event = await updateGoogleCalendarEvent({
-            ...formData,
-            time_start: updatedTimeStart,
-            time_end: updatedTimeEnd,
-            is_recurring: isRecurring,
-          })
-          if (!event.id) {
-            alert(
-              'Error creating Google Calendar event. Please contact support!'
-            )
-            return
-          }
-          getCollection('Routes')
-            .doc(recurring_route_id)
-            .set({
-              id: recurring_route_id,
-              google_calendar_event_id: event.id,
-              driver_id: formData.driver_id,
-              time_start: updatedTimeStart,
-              time_end: updatedTimeEnd,
-              stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-              status: 1,
-              is_recurring: isRecurring,
-            })
-            .then(() => history.push(`/routes/${route_id}`))
-          updatedTimeStart = addDays(updatedTimeStart)
-          updatedTimeEnd = addDays(updatedTimeEnd)
-          iteration += 1
-          recurring_route_id = route_id + 'rec' + iteration.toString()
-        }
-        setWorking(false)
-      } else {
-        const event = await updateGoogleCalendarEvent(formData)
 
-        if (!event.id) {
-          alert('Error creating Google Calendar event. Please contact support!')
-          return
-        }
-        getCollection('Routes')
-          .doc(route_id)
-          .set({
-            id: route_id,
-            google_calendar_event_id: event.id,
-            driver_id: formData.driver_id,
-            time_start: formData.time_start,
-            time_end: formData.time_end,
-            stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
-          })
-          .then(() => history.push(`/routes/${route_id}`))
-        setWorking(false)
+      if (isRecurring) {
+        console.log('This is a recurring Route')
       }
+
+      const event = await updateGoogleCalendarEvent(formData)
+
+      if (!event.id) {
+        alert('Error creating Google Calendar event. Please contact support!')
+        return
+      }
+      getCollection('Routes')
+        .doc(route_id)
+        .set({
+          id: route_id,
+          google_calendar_event_id: event.id,
+          driver_id: formData.driver_id,
+          time_start: formData.time_start,
+          time_end: formData.time_end,
+          stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 1,
+        })
+        .then(() => history.push(`/routes/${route_id}`))
+      setWorking(false)
     }
   }
 
@@ -188,18 +229,15 @@ function EditRoute() {
     }`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
-    if (isRecurring === true) {
-      return uniq_id
-    } else {
-      const exists = await getCollection('Routes')
-        .doc(uniq_id)
-        .get()
-        .then(res => res.data())
-      if (exists) {
-        alert('This driver is already scheduled for a delivery at this time.')
-        return null
-      } else return uniq_id
-    }
+
+    const exists = await getCollection('Routes')
+      .doc(uniq_id)
+      .get()
+      .then(res => res.data())
+    if (exists) {
+      alert('This driver is already scheduled for a delivery at this time.')
+      return null
+    } else return uniq_id
   }
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
@@ -446,7 +484,7 @@ function EditRoute() {
                       working
                         ? null
                         : () => {
-                            handleCreateRoute()
+                            handleCreateRouteButtonClick()
                           }
                     }
                   >
