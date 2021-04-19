@@ -71,6 +71,17 @@ function Route() {
     route && route.stops && updateStops()
   }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  function getDeliveryWeight() {
+    if (route?.status === 9) {
+      const myDelivery = deliveries.find(
+        deliveryRoute => deliveryRoute.route_id === route.id
+      )
+      return myDelivery ? myDelivery.report.weight : 0
+    } else {
+      return 0
+    }
+  }
+
   function isNextIncompleteStop(index) {
     if (
       stops[index].status === 9 ||
@@ -104,6 +115,7 @@ function Route() {
         time_started: firebase.firestore.FieldValue.serverTimestamp(),
       })
     }
+    const deliveryWeight = getDeliveryWeight()
     return (
       <div id="Driver">
         <img
@@ -111,7 +123,10 @@ function Route() {
           alt={route.driver ? route.driver.name : 'No assigned driver'}
         />
         <div>
-          <h3>{route.driver ? route.driver.name : 'No assigned driver'}</h3>
+          <h3>
+            {route.driver ? route.driver.name : 'No assigned driver'} -{' '}
+            <span>{deliveryWeight} lbs.</span>
+          </h3>
           <h4>{moment(route.time_start).format('dddd, MMMM D')}</h4>
           <h5>
             {moment(route.time_start).format('h:mma')} -{' '}
