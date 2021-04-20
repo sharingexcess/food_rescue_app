@@ -31,8 +31,8 @@ export default function Home() {
   function DriverTiles() {
     return (
       <>
-        <Tile name="Routes" icon="fa-calendar" link="/routes" />
-        <Tile name="History" icon="fa-route" link="/history" />
+        <Tile name="Routes" icon="fa-route" link="/routes" />
+        <Tile name="History" icon="fa-clock" link="/history" />
         <Tile name="Contact" icon="fa-question" link="/contact" />
         <Tile name="Profile" icon="fa-user" link="/profile" />
       </>
@@ -44,7 +44,7 @@ export default function Home() {
     return (
       <>
         <Tile name="Calendar" icon="fa-calendar" link="/calendar" />
-        <Tile name="New Route" icon="fa-route" link="/admin/create-route" />
+        <Tile name="Add Route" icon="fa-route" link="/admin/create-route" />
         <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
