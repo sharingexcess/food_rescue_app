@@ -32,6 +32,13 @@ export default function Routes({ initial_filter }) {
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
 
+  function getDeliveryWeight(routeId) {
+    const myDelivery = deliveries.find(
+      deliveryRoute => deliveryRoute.route_id === routeId
+    )
+    return myDelivery ? myDelivery.report?.weight : 0
+  }
+
   useEffect(() => {
     async function addData() {
       const full_data = []
@@ -203,7 +210,12 @@ export default function Routes({ initial_filter }) {
               )}
               <div>
                 <StatusIndicator route={r} />
-                <h2>{r.driver.name || 'Unassigned Route'}</h2>
+                <h2>
+                  {r.driver.name || 'Unassigned Route'}
+                  {r.status === 9 && (
+                    <span> - {getDeliveryWeight(r.id)} lbs.</span>
+                  )}
+                </h2>
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                 <h5>
                   {moment(r.time_start).format('h:mma')} -{' '}
