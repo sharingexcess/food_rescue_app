@@ -12,7 +12,13 @@ export default function Analytics() {
   const [tab, setTab] = useState('RouteAnalytics')
   const [rangeStart, setRangeStart] = useState('')
   const [rangeEnd, setRangeEnd] = useState('')
-  const drivers = useUserData()
+  const [driverNameFilter, setDriverNameFilter] = useState('')
+  const drivers = useUserData(
+    driverNameFilter !== ''
+      ? driver =>
+          driver.name.toLowerCase().includes(driverNameFilter.toLowerCase())
+      : driver => driver
+  )
   const orgs = useOrganizationData()
   const routes = useRouteData(
     rangeStart && rangeEnd
@@ -264,6 +270,14 @@ export default function Analytics() {
           label="To..."
           value={rangeEnd}
           onChange={e => setRangeEnd(e.target.value)}
+        />
+      </section>
+      <section id="DriverName">
+        <Input
+          type="text"
+          label="Driver's name"
+          value={driverNameFilter}
+          onChange={e => setDriverNameFilter(e.target.value)}
         />
       </section>
       <ActiveTab />
