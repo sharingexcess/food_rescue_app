@@ -275,14 +275,16 @@ export default function Analytics() {
           onChange={e => setRangeEnd(e.target.value)}
         />
       </section>
-      <section id="DriverName">
-        <Input
-          type="text"
-          label="Driver's name"
-          value={driverNameFilter}
-          onChange={e => setDriverNameFilter(e.target.value)}
-        />
-      </section>
+      {tab !== 'OrgAnalytics' && (
+        <section id="DriverName">
+          <Input
+            type="text"
+            label="Driver's name"
+            value={driverNameFilter}
+            onChange={e => setDriverNameFilter(e.target.value)}
+          />
+        </section>
+      )}
       <ActiveTab />
     </main>
   )
