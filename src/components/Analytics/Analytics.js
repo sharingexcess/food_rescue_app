@@ -87,7 +87,10 @@ export default function Analytics() {
         </thead>
         <tbody>
           {routes.map(r => {
-            const r_driver = drivers.find(d => d.id === r.driver_id) || {}
+            const r_driver = drivers.find(d => d.id === r.driver_id)
+            if (!r_driver) {
+              return null
+            }
             console.log(r.stops)
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
