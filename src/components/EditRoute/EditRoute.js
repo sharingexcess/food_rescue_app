@@ -125,11 +125,10 @@ function EditRoute() {
     if (route_id) {
       for (const [index, stop] of formData.stops.entries()) {
         if (stop.type === 'pickup') {
-          console.log('Stop Ids >>>', stop.id)
           await setFirestoreData(['Pickups', stop.id], {
             id: stop.id,
-            original_stop_id: stop.original_route_id
-              ? stop.original_route_id
+            original_stop_id: stop.original_stop_id
+              ? stop.original_stop_id
               : '',
             org_id: stop.org_id,
             location_id: stop.location_id,
@@ -140,13 +139,12 @@ function EditRoute() {
             route_id,
           })
         } else if (stop.type === 'delivery') {
-          console.log('Stop Ids >>>', stop.id)
           const pickup_ids = getPickupsInDelivery(index)
           await setFirestoreData(['Deliveries', stop.id], {
             id: stop.id,
             org_id: stop.org_id,
-            original_stop_id: stop.original_route_id
-              ? stop.original_route_id
+            original_stop_id: stop.original_stop_id
+              ? stop.original_stop_id
               : '',
             location_id: stop.location_id,
             driver_id: formData.driver_id,
