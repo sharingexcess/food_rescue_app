@@ -48,6 +48,7 @@ export default function Analytics() {
           r.report.updated_at.toDate() < new Date(rangeEnd)
       : r => r.status === 9
   )
+  const [filterType, setFilterType] = useState('dateFilter')
 
   function sortByRoutes(array) {
     return array.sort((a, b) =>
@@ -261,21 +262,33 @@ export default function Analytics() {
           Organizations
         </button>
       </section>
-      <section id="DateRanges">
-        <Input
-          type="datetime-local"
-          label="From..."
-          value={rangeStart}
-          onChange={e => setRangeStart(e.target.value)}
-        />
-        <Input
-          type="datetime-local"
-          label="To..."
-          value={rangeEnd}
-          onChange={e => setRangeEnd(e.target.value)}
-        />
-      </section>
       {tab !== 'OrgAnalytics' && (
+        <section id="FilterOptions">
+          <button onClick={() => setFilterType('dateFilter')}>
+            Date Filter
+          </button>
+          <button onClick={() => setFilterType('driverFilter')}>
+            Driver Filter
+          </button>
+        </section>
+      )}
+      {filterType === 'dateFilter' && (
+        <section id="DateRanges">
+          <Input
+            type="datetime-local"
+            label="From..."
+            value={rangeStart}
+            onChange={e => setRangeStart(e.target.value)}
+          />
+          <Input
+            type="datetime-local"
+            label="To..."
+            value={rangeEnd}
+            onChange={e => setRangeEnd(e.target.value)}
+          />
+        </section>
+      )}
+      {filterType === 'driverFilter' && tab !== 'OrgAnalytics' && (
         <section id="DriverName">
           <Input
             type="text"
