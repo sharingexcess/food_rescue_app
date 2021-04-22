@@ -22,26 +22,8 @@ export default function Analytics() {
           new Date(r.time_start) < new Date(rangeEnd)
       : r => r.status === 9
   )
-  const deliveries = useDeliveryData(
-    rangeStart && rangeEnd
-      ? r =>
-          r.status === 9 &&
-          r.report &&
-          r.report.updated_at &&
-          r.report.updated_at.toDate() > new Date(rangeStart) &&
-          r.report.updated_at.toDate() < new Date(rangeEnd)
-      : r => r.status === 9
-  )
-  const pickups = usePickupData(
-    rangeStart && rangeEnd
-      ? r =>
-          r.status === 9 &&
-          r.report &&
-          r.report.updated_at &&
-          r.report.updated_at.toDate() > new Date(rangeStart) &&
-          r.report.updated_at.toDate() < new Date(rangeEnd)
-      : r => r.status === 9
-  )
+  const deliveries = useDeliveryData(r => r.status === 9 && r.report)
+  const pickups = usePickupData(r => r.status === 9 && r.report)
 
   function sortByRoutes(array) {
     return array.sort((a, b) =>
