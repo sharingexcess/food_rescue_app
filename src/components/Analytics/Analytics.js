@@ -266,17 +266,17 @@ export default function Analytics() {
         </button>
       </section>
 
-      <section id="FilterOptions">
-        <select
-          value={filterType}
-          onChange={e => setFilterType(e.target.value)}
-        >
-          <option value="dateFilter">Date Filter</option>
-          {tab !== 'OrgAnalytics' && (
-            <option value="driverFilter">Driver Filter</option>
-          )}
-        </select>
-      </section>
+      {tab !== 'OrgAnalytics' && (
+        <section id="FilterOptions">
+          <select
+            value={filterType}
+            onChange={e => setFilterType(e.target.value)}
+          >
+            <option value="dateFilter">Date Filter</option>(
+            <option value="driverFilter">Driver Filter</option>)
+          </select>
+        </section>
+      )}
 
       {filterType === 'dateFilter' && (
         <section id="DateRanges">
