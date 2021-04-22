@@ -267,20 +267,15 @@ export default function Analytics() {
       </section>
 
       <section id="FilterOptions">
-        <button
-          className={filterType === 'dateFilter' ? 'active' : 'inactive'}
-          onClick={() => setFilterType('dateFilter')}
+        <select
+          value={filterType}
+          onChange={e => setFilterType(e.target.value)}
         >
-          Date Filter
-        </button>
-        {tab !== 'OrgAnalytics' && (
-          <button
-            className={filterType === 'driverFilter' ? 'active' : 'inactive'}
-            onClick={() => setFilterType('driverFilter')}
-          >
-            Driver Filter
-          </button>
-        )}
+          <option value="dateFilter">Date Filter</option>
+          {tab !== 'OrgAnalytics' && (
+            <option value="driverFilter">Driver Filter</option>
+          )}
+        </select>
       </section>
 
       {filterType === 'dateFilter' && (
