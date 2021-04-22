@@ -264,10 +264,16 @@ export default function Analytics() {
       </section>
       {tab !== 'OrgAnalytics' && (
         <section id="FilterOptions">
-          <button onClick={() => setFilterType('dateFilter')}>
+          <button
+            className={filterType === 'dateFilter' ? 'active' : 'inactive'}
+            onClick={() => setFilterType('dateFilter')}
+          >
             Date Filter
           </button>
-          <button onClick={() => setFilterType('driverFilter')}>
+          <button
+            className={filterType === 'driverFilter' ? 'active' : 'inactive'}
+            onClick={() => setFilterType('driverFilter')}
+          >
             Driver Filter
           </button>
         </section>
