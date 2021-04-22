@@ -257,27 +257,32 @@ export default function Analytics() {
         </button>
         <button
           className={tab === 'OrgAnalytics' ? 'active' : 'inactive'}
-          onClick={() => setTab('OrgAnalytics')}
+          onClick={() => {
+            setTab('OrgAnalytics')
+            setFilterType('dateFilter')
+          }}
         >
           Organizations
         </button>
       </section>
-      {tab !== 'OrgAnalytics' && (
-        <section id="FilterOptions">
-          <button
-            className={filterType === 'dateFilter' ? 'active' : 'inactive'}
-            onClick={() => setFilterType('dateFilter')}
-          >
-            Date Filter
-          </button>
+
+      <section id="FilterOptions">
+        <button
+          className={filterType === 'dateFilter' ? 'active' : 'inactive'}
+          onClick={() => setFilterType('dateFilter')}
+        >
+          Date Filter
+        </button>
+        {tab !== 'OrgAnalytics' && (
           <button
             className={filterType === 'driverFilter' ? 'active' : 'inactive'}
             onClick={() => setFilterType('driverFilter')}
           >
             Driver Filter
           </button>
-        </section>
-      )}
+        )}
+      </section>
+
       {filterType === 'dateFilter' && (
         <section id="DateRanges">
           <Input
