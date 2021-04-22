@@ -265,6 +265,7 @@ export default function EditLocation() {
           >
             {loc_id ? 'update location' : 'add location'}
           </button>{' '}
+          <button className="red">Delete Location</button>
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />

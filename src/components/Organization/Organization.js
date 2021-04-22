@@ -58,6 +58,7 @@ function Organization() {
                 {loc.city}, {loc.state} {loc.zip_code}
               </p>
               <OrganizationHours org={loc} org_type={org.org_type} />
+              <button className="red">Delete Location</button>
             </section>
           </Link>
         ))}
