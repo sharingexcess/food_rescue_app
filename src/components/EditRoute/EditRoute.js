@@ -40,8 +40,8 @@ function EditRoute() {
     time_start: getDefaultStartTime(),
     time_end: getDefaultEndTime(),
     end_recurring: getDefaultEndRecurring(),
-    is_recurring: null,
     stops: [],
+    original_route_id: '',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
@@ -82,14 +82,54 @@ function EditRoute() {
     })
   }
 
-  async function handleCreateRoute() {
+  async function handleCreateRouteButtonClick() {
+    const original_route_id = await generateRouteId(formData.time_start)
+    const FirstFormData = {
+      ...formData,
+      original_route_id: original_route_id,
+    }
+    handleCreateRoute(FirstFormData, original_route_id)
+    if (isRecurring === true) {
+      let updatedTimeStart = addDays(formData.time_start)
+      let updatedTimeEnd = addDays(formData.time_end)
+      let iteration = 1
+      while (moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)) {
+        const route_id = await generateRouteId(updatedTimeStart)
+        const updatedStops = []
+        for (const stop of formData.stops) {
+          const original_stop_id = stop.id
+          const updatedStop = {
+            ...stop,
+            id: original_stop_id + iteration.toString(),
+            original_stop_id: original_stop_id,
+          }
+          updatedStops.push(updatedStop)
+        }
+        const recurrenceFormData = {
+          ...formData,
+          time_start: updatedTimeStart,
+          time_end: updatedTimeEnd,
+          original_route_id: original_route_id,
+          stops: updatedStops,
+        }
+        handleCreateRoute(recurrenceFormData, route_id)
+        updatedTimeStart = addDays(updatedTimeStart)
+        updatedTimeEnd = addDays(updatedTimeEnd)
+        iteration += 1
+      }
+    }
+  }
+
+  async function handleCreateRoute(formData, route_id) {
     setWorking(true)
-    const route_id = await generateRouteId()
     if (route_id) {
       for (const [index, stop] of formData.stops.entries()) {
         if (stop.type === 'pickup') {
           await setFirestoreData(['Pickups', stop.id], {
             id: stop.id,
+            original_stop_id: stop.original_stop_id
+              ? stop.original_stop_id
+              : '',
             org_id: stop.org_id,
             location_id: stop.location_id,
             driver_id: formData.driver_id,
@@ -103,6 +143,9 @@ function EditRoute() {
           await setFirestoreData(['Deliveries', stop.id], {
             id: stop.id,
             org_id: stop.org_id,
+            original_stop_id: stop.original_stop_id
+              ? stop.original_stop_id
+              : '',
             location_id: stop.location_id,
             driver_id: formData.driver_id,
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
@@ -113,93 +156,46 @@ function EditRoute() {
           })
         }
       }
-      if (isRecurring === true) {
-        let updatedTimeStart = formData.time_start
-        let updatedTimeEnd = formData.time_end
-        let recurring_route_id = route_id
-        let iteration = 0
-        while (
-          moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
-        ) {
-          const event = await updateGoogleCalendarEvent({
-            ...formData,
-            time_start: updatedTimeStart,
-            time_end: updatedTimeEnd,
-            is_recurring: isRecurring,
-          })
-          if (!event.id) {
-            alert(
-              'Error creating Google Calendar event. Please contact support!'
-            )
-            return
-          }
-          getCollection('Routes')
-            .doc(recurring_route_id)
-            .set({
-              id: recurring_route_id,
-              google_calendar_event_id: event.id,
-              driver_id: formData.driver_id,
-              time_start: updatedTimeStart,
-              time_end: updatedTimeEnd,
-              stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-              status: 1,
-              is_recurring: isRecurring,
-            })
-            .then(() => history.push(`/routes/${route_id}`))
-          updatedTimeStart = addDays(updatedTimeStart)
-          updatedTimeEnd = addDays(updatedTimeEnd)
-          iteration += 1
-          recurring_route_id = route_id + 'rec' + iteration.toString()
-        }
-        setWorking(false)
-      } else {
-        const event = await updateGoogleCalendarEvent(formData)
 
-        if (!event.id) {
-          alert('Error creating Google Calendar event. Please contact support!')
-          return
-        }
-        getCollection('Routes')
-          .doc(route_id)
-          .set({
-            id: route_id,
-            google_calendar_event_id: event.id,
-            driver_id: formData.driver_id,
-            time_start: formData.time_start,
-            time_end: formData.time_end,
-            stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
-          })
-          .then(() => history.push(`/routes/${route_id}`))
-        setWorking(false)
+      const event = await updateGoogleCalendarEvent(formData)
+
+      if (!event.id) {
+        alert('Error creating Google Calendar event. Please contact support!')
+        return
       }
+      getCollection('Routes')
+        .doc(route_id)
+        .set({
+          id: route_id,
+          google_calendar_event_id: event.id,
+          driver_id: formData.driver_id,
+          time_start: formData.time_start,
+          time_end: formData.time_end,
+          stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 1,
+        })
+        .then(() => history.push(`/routes/${route_id}`))
+      setWorking(false)
     }
   }
 
-  async function generateRouteId() {
+  async function generateRouteId(time_start) {
     const uniq_id = `${
       formData.driver ? formData.driver.name + '_' : ''
-    }${formData.time_start.toString()}${
-      formData.driver ? '' : '_' + generateUUID()
-    }`
+    }${time_start.toString()}${formData.driver ? '' : '_' + generateUUID()}`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
-    if (isRecurring === true) {
-      return uniq_id
-    } else {
-      const exists = await getCollection('Routes')
-        .doc(uniq_id)
-        .get()
-        .then(res => res.data())
-      if (exists) {
-        alert('This driver is already scheduled for a delivery at this time.')
-        return null
-      } else return uniq_id
-    }
+
+    const exists = await getCollection('Routes')
+      .doc(uniq_id)
+      .get()
+      .then(res => res.data())
+    if (exists) {
+      alert('This driver is already scheduled for a delivery at this time.')
+      return null
+    } else return uniq_id
   }
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
@@ -446,7 +442,7 @@ function EditRoute() {
                       working
                         ? null
                         : () => {
-                            handleCreateRoute()
+                            handleCreateRouteButtonClick()
                           }
                     }
                   >

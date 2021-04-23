@@ -12,6 +12,8 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
+import './RoutesHeaders.scss'
+import RouteHeader from '../Routes/RoutesHeaders'
 import './Routes.scss'
 
 export default function Routes({ initial_filter }) {
@@ -135,6 +137,9 @@ export default function Routes({ initial_filter }) {
   return (
     <main id="Routes">
       <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
+      <div>
+        <RouteHeader text={location.pathname === '/routes' ? 'Viewing Current/Upcoming Routes' : 'Viewing Past/Completed Routes'} />
+      </div>
       <section id="Filters">
         <select
           name="filters"
