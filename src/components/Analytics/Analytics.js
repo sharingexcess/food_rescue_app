@@ -12,7 +12,13 @@ export default function Analytics() {
   const [tab, setTab] = useState('RouteAnalytics')
   const [rangeStart, setRangeStart] = useState('')
   const [rangeEnd, setRangeEnd] = useState('')
-  const drivers = useUserData()
+  const [driverNameFilter, setDriverNameFilter] = useState('')
+  const drivers = useUserData(
+    driverNameFilter !== ''
+      ? driver =>
+          driver.name.toLowerCase().includes(driverNameFilter.toLowerCase())
+      : driver => driver
+  )
   const orgs = useOrganizationData()
   const routes = useRouteData(
     rangeStart && rangeEnd
@@ -63,7 +69,10 @@ export default function Analytics() {
         </thead>
         <tbody>
           {routes.map(r => {
-            const r_driver = drivers.find(d => d.id === r.driver_id) || {}
+            const r_driver = drivers.find(d => d.id === r.driver_id)
+            if (!r_driver) {
+              return null
+            }
             console.log(r.stops)
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
@@ -229,25 +238,53 @@ export default function Analytics() {
         </button>
         <button
           className={tab === 'OrgAnalytics' ? 'active' : 'inactive'}
-          onClick={() => setTab('OrgAnalytics')}
+          onClick={() => {
+            setTab('OrgAnalytics')
+            setFilterType('dateFilter')
+          }}
         >
           Organizations
         </button>
       </section>
-      <section id="DateRanges">
-        <Input
-          type="datetime-local"
-          label="From..."
-          value={rangeStart}
-          onChange={e => setRangeStart(e.target.value)}
-        />
-        <Input
-          type="datetime-local"
-          label="To..."
-          value={rangeEnd}
-          onChange={e => setRangeEnd(e.target.value)}
-        />
-      </section>
+
+      {tab !== 'OrgAnalytics' && (
+        <section id="FilterOptions">
+          <select
+            value={filterType}
+            onChange={e => setFilterType(e.target.value)}
+          >
+            <option value="dateFilter">Date Filter</option>(
+            <option value="driverFilter">Driver Filter</option>)
+          </select>
+        </section>
+      )}
+
+      {filterType === 'dateFilter' && (
+        <section id="DateRanges">
+          <Input
+            type="datetime-local"
+            label="From..."
+            value={rangeStart}
+            onChange={e => setRangeStart(e.target.value)}
+          />
+          <Input
+            type="datetime-local"
+            label="To..."
+            value={rangeEnd}
+            onChange={e => setRangeEnd(e.target.value)}
+          />
+        </section>
+      )}
+      {filterType === 'driverFilter' && tab !== 'OrgAnalytics' && (
+        <section id="DriverName">
+          <Input
+            type="text"
+            label="Driver's name"
+            value={driverNameFilter}
+            onChange={e => setDriverNameFilter(e.target.value)}
+          />
+        </section>
+      )}
       <ActiveTab />
     </main>
   )

@@ -70,4 +70,17 @@
       text-align: center;
     }
   }
+
+  #FilterOptions {
+    width: 50%;
+    margin: 0 10px;
+    height: 24px;
+
+    select {
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      padding: 0 8px;
+    }
+  }
 }
