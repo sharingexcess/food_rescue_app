@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
 import { getCollection } from '../../helpers/helpers'
-import { initializeFormData } from './utils'
+import { initializeFormData, handleDeleteLocation } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
@@ -98,6 +98,18 @@ export default function EditLocation() {
           .catch(e => console.error('Error writing document: ', e))
       }
     }
+  }
+  async function handleDeleteClick() {
+    const {
+      canDelete,
+      locationRoutes,
+      locationDeliveries,
+      locationPickups,
+    } = await handleDeleteLocation(loc_id)
+    console.log('Can delete >>>', canDelete)
+    console.log('Routes of location >>>', locationRoutes)
+    console.log('Location Deliveries >>>', locationDeliveries)
+    console.log('Location pickups >>>', locationPickups)
   }
 
   async function generateLocationId() {
@@ -265,7 +277,9 @@ export default function EditLocation() {
           >
             {loc_id ? 'update location' : 'add location'}
           </button>{' '}
-          <button className="red">Delete Location</button>
+          <button className="red" onClick={handleDeleteClick}>
+            Delete Location
+          </button>
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />

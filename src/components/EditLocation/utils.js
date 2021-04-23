@@ -1,3 +1,4 @@
+import { getCollection } from '../../helpers/helpers'
 export function initializeFormData(location, callback) {
   callback({
     name: location.name,
@@ -24,6 +25,48 @@ export function initializeFormData(location, callback) {
     receive_start: location.receive_start ? location.receive_start : '',
     receive_end: location.receive_end ? location.receive_end : '',
   })
+}
+
+export async function handleDeleteLocation(locationId) {
+  let canDelete = true
+  let routesOfLocation = []
+  const deliveries = await getCollection('Deliveries')
+    .get()
+    .then(res => res.docs.map(doc => doc.data()))
+  const pickups = await getCollection('Pickups')
+    .get()
+    .then(res => res.docs.map(doc => doc.data()))
+  const deliveriesWithLocationId = deliveries.filter(
+    delivery => delivery.location_id === locationId
+  )
+  const pickupsWithLocationId = pickups.filter(
+    pickup => pickup.location_id === locationId
+  )
+  // Only remove the location if the route is not started or already complete
+  for (let stop of deliveriesWithLocationId) {
+    const route = await getCollection('Routes')
+      .doc(stop.route_id)
+      .get()
+      .then(result => result.data())
+    if (route.status !== 1 || route.status !== 9) {
+      canDelete = false
+    }
+    routesOfLocation.push(route)
+  }
+  for (let stop of pickupsWithLocationId) {
+    const route = await getCollection('Routes')
+      .doc(stop.route_id)
+      .get()
+      .then(result => result.data())
+    routesOfLocation.push(route)
+  }
+
+  return {
+    canDelete,
+    locationRoutes: routesOfLocation,
+    locationDeliveries: deliveriesWithLocationId,
+    locationPickups: pickupsWithLocationId,
+  }
 }
 
 export const required_fields = ['name', 'address1', 'city', 'state', 'zip_code']
