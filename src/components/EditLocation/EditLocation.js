@@ -12,6 +12,7 @@ import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
 import './EditLocation.scss'
 import validator from 'validator'
+import Modal from '../Modal/Modal'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -41,6 +42,7 @@ export default function EditLocation() {
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     if (isInitialLoad && location && location.name) {
@@ -110,6 +112,7 @@ export default function EditLocation() {
     console.log('Routes of location >>>', locationRoutes)
     console.log('Location Deliveries >>>', locationDeliveries)
     console.log('Location pickups >>>', locationPickups)
+    setOpenModal(true)
   }
 
   async function generateLocationId() {
@@ -280,6 +283,7 @@ export default function EditLocation() {
           <button className="red" onClick={handleDeleteClick}>
             Delete Location
           </button>
+          {openModal && <Modal setOpenModal={setOpenModal} />}
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />
