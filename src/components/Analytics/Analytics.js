@@ -30,6 +30,7 @@ export default function Analytics() {
   )
   const deliveries = useDeliveryData(r => r.status === 9 && r.report)
   const pickups = usePickupData(r => r.status === 9 && r.report)
+  const [filterType, setFilterType] = useState('dateFilter')
 
   function sortByRoutes(array) {
     return array.sort((a, b) =>
