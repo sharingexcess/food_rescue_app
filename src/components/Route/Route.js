@@ -758,16 +758,20 @@ function Route() {
                         ? ` (${s.location.name})`
                         : ''}
                     </h2>
-                    <ExternalLink url={generateDirectionsLink(s.location)}>
-                      <p className="Directions">
-                        <i className="fa fa-map-marker" />
-                        {s.location.address1}
-                        {s.location.address2 && ` - ${s.location.address2}`}
-                        <br />
-                        {s.location.city}, {s.location.state}{' '}
-                        {s.location.zip_code}
-                      </p>
-                    </ExternalLink>
+                    {s.location_id ? (
+                      <ExternalLink url={generateDirectionsLink(s.location)}>
+                        <p className="Directions">
+                          <i className="fa fa-map-marker" />
+                          {s.location.address1}
+                          {s.location.address2 && ` - ${s.location.address2}`}
+                          <br />
+                          {s.location.city}, {s.location.state}{' '}
+                          {s.location.zip_code}
+                        </p>
+                      </ExternalLink>
+                    ) : (
+                      <p>Location deleted</p>
+                    )}
                     {s.location.contact_phone || s.org.default_contact_phone ? (
                       <p>
                         <i className="fa fa-phone" />
