@@ -287,9 +287,11 @@ export default function EditLocation() {
           >
             {loc_id ? 'update location' : 'add location'}
           </button>{' '}
-          <button className="red" onClick={handleDeleteClick}>
-            Delete Location
-          </button>
+          {loc_id && (
+            <button className="red" onClick={handleDeleteClick}>
+              Delete Location
+            </button>
+          )}
           {openModal && (
             <DeleteLocationModal
               setOpenModal={setOpenModal}
