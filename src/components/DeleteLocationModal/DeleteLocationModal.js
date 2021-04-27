@@ -2,6 +2,7 @@ import React from 'react'
 import './DeleteLocationModal.scss'
 import 'firebase/firestore'
 import { getCollection } from '../../helpers/helpers'
+import { Link } from 'react-router-dom'
 
 function DeleteLocationModal({
   setOpenModal,
@@ -48,8 +49,14 @@ function DeleteLocationModal({
     } else {
       return (
         <div className="modal-main">
-          <p>Can not delete</p>
-          <button>Confirm</button>
+          <p>There are some routes not complete yet</p>
+          <p>Please change the locations or remove the routes</p>
+          {locationRoutes.map(route => (
+            <Link to={`/routes/${route.id}`} target="_blank">
+              Route: {route.id}
+            </Link>
+          ))}
+          <button onClick={() => setOpenModal(false)}>Cancel</button>
         </div>
       )
     }
