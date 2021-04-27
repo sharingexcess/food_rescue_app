@@ -12,7 +12,7 @@ import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
 import './EditLocation.scss'
 import validator from 'validator'
-import Modal from '../Modal/Modal'
+import DeleteLocationModal from '../DeleteLocationModal/DeleteLocationModal'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -283,7 +283,7 @@ export default function EditLocation() {
           <button className="red" onClick={handleDeleteClick}>
             Delete Location
           </button>
-          {openModal && <Modal setOpenModal={setOpenModal} />}
+          {openModal && <DeleteLocationModal setOpenModal={setOpenModal} />}
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />

@@ -1,6 +1,6 @@
 import React from 'react'
-import './Modal.scss'
-function Modal({ setOpenModal }) {
+import './DeleteLocationModal.scss'
+function DeleteLocationModal({ setOpenModal }) {
   return (
     <div id="Modal">
       <div className="modal-content">
@@ -13,4 +13,4 @@ function Modal({ setOpenModal }) {
   )
 }
 
-export default Modal
+export default DeleteLocationModal
