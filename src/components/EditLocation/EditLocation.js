@@ -298,6 +298,7 @@ export default function EditLocation() {
               locationRoutes={locationRoutes}
               locationDeliveries={locationDeliveries}
               locationPickups={locationPickups}
+              locationId={loc_id}
             />
           )}
         </>

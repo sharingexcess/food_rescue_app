@@ -1,19 +1,35 @@
 import React from 'react'
 import './DeleteLocationModal.scss'
+import 'firebase/firestore'
+import { getCollection } from '../../helpers/helpers'
+
 function DeleteLocationModal({
   setOpenModal,
   canDelete,
   locationRoutes,
   locationDeliveries,
   locationPickups,
+  locationId,
 }) {
   console.log('Can Delete in Modal >>>', canDelete)
   console.log('Location Routes in modal >>>', locationRoutes)
   console.log('Location deliveries in Modal >>>', locationDeliveries)
   console.log('Location Pickups in modal >>>', locationPickups)
-  const handleDeleteLocation = () => {
+  const handleDeleteLocation = async () => {
     // remove the location id from the deliveries and pickups
+    for (const delivery of locationDeliveries) {
+      await getCollection('Deliveries')
+        .doc(delivery.id)
+        .set({ location_id: '' }, { merge: true })
+    }
+    for (const pickup of locationPickups) {
+      await getCollection('Pickups')
+        .doc(pickup.id)
+        .set({ location_id: '' }, { merge: true })
+    }
+
     // then remove the location
+    await getCollection('Locations').doc(locationId).delete()
   }
 
   const renderModal = () => {
@@ -25,7 +41,7 @@ function DeleteLocationModal({
           </p>
           <div className="modal-buttons">
             <button onClick={() => setOpenModal(false)}>Cancel</button>
-            <button>Delete Location</button>
+            <button onClick={handleDeleteLocation}>Delete Location</button>
           </div>
         </div>
       )
