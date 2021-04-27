@@ -56,11 +56,20 @@ function DeleteLocationModal({
         <div className="modal-main">
           <p>There are some routes not complete yet</p>
           <p>Please change the locations or remove the routes</p>
-          {locationRoutes.map(route => (
-            <Link to={`/routes/${route.id}`} target="_blank">
-              Route: {route.id}
-            </Link>
-          ))}
+          {/* Just filter and display the routes that are not complete yet */}
+          {locationRoutes
+            .filter(route => route.status !== 9)
+            .map(route => (
+              <Link
+                to={`/routes/${route.id}`}
+                target="_blank"
+                onClick={() => setOpenModal(false)}
+                key={route.id}
+                id="LocationRoute"
+              >
+                <p>Route: {route.id}</p>
+              </Link>
+            ))}
           <button onClick={() => setOpenModal(false)}>Cancel</button>
         </div>
       )
