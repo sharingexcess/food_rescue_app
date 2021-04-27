@@ -43,6 +43,10 @@ export default function EditLocation() {
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [openModal, setOpenModal] = useState(false)
+  const [canDelete, setCanDelete] = useState(true)
+  const [locationRoutes, setLocationRoutes] = useState([])
+  const [locationDeliveries, setLocationDeliveries] = useState([])
+  const [locationPickups, setLocationPickups] = useState([])
 
   useEffect(() => {
     if (isInitialLoad && location && location.name) {
@@ -108,6 +112,10 @@ export default function EditLocation() {
       locationDeliveries,
       locationPickups,
     } = await handleDeleteLocation(loc_id)
+    setCanDelete(canDelete)
+    setLocationRoutes(locationRoutes)
+    setLocationDeliveries(locationDeliveries)
+    setLocationPickups(locationPickups)
     console.log('Can delete >>>', canDelete)
     console.log('Routes of location >>>', locationRoutes)
     console.log('Location Deliveries >>>', locationDeliveries)
@@ -283,7 +291,15 @@ export default function EditLocation() {
           <button className="red" onClick={handleDeleteClick}>
             Delete Location
           </button>
-          {openModal && <DeleteLocationModal setOpenModal={setOpenModal} />}
+          {openModal && (
+            <DeleteLocationModal
+              setOpenModal={setOpenModal}
+              canDelete={canDelete}
+              locationRoutes={locationRoutes}
+              locationDeliveries={locationDeliveries}
+              locationPickups={locationPickups}
+            />
+          )}
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />
