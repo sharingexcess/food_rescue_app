@@ -48,7 +48,7 @@ export async function handleDeleteLocation(locationId) {
       .doc(stop.route_id)
       .get()
       .then(result => result.data())
-    if (route.status !== 1 || route.status !== 9) {
+    if (route.status !== 9) {
       canDelete = false
     }
     routesOfLocation.push(route)
@@ -58,6 +58,9 @@ export async function handleDeleteLocation(locationId) {
       .doc(stop.route_id)
       .get()
       .then(result => result.data())
+    if (route.status !== 9) {
+      canDelete = false
+    }
     routesOfLocation.push(route)
   }
 
