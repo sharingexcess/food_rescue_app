@@ -47,29 +47,36 @@ function DeleteLocationModal({
           </p>
           <div className="modal-buttons">
             <button onClick={() => setOpenModal(false)}>Cancel</button>
-            <button onClick={handleDeleteLocation}>Delete Location</button>
+            <button onClick={handleDeleteLocation} className="red">
+              Delete Location
+            </button>
           </div>
         </div>
       )
     } else {
       return (
         <div className="modal-main">
-          <p>There are some routes not complete yet</p>
-          <p>Please change the locations or remove the routes</p>
+          <p>
+            Some routes are <span className="red-text">not complete</span> yet
+          </p>
+          <p>Change the locations or remove the routes</p>
           {/* Just filter and display the routes that are not complete yet */}
-          {locationRoutes
-            .filter(route => route.status !== 9)
-            .map(route => (
-              <Link
-                to={`/routes/${route.id}`}
-                target="_blank"
-                onClick={() => setOpenModal(false)}
-                key={route.id}
-                id="LocationRoute"
-              >
-                <p>Route: {route.id}</p>
-              </Link>
-            ))}
+          <div id="RoutesContainer">
+            {locationRoutes
+              .filter(route => route.status !== 9)
+              .map(route => (
+                <Link
+                  to={`/routes/${route.id}`}
+                  target="_blank"
+                  onClick={() => setOpenModal(false)}
+                  key={route.id}
+                  id="LocationRoute"
+                >
+                  <p>Route: {route.id}</p>
+                </Link>
+              ))}
+          </div>
+
           <button onClick={() => setOpenModal(false)}>Cancel</button>
         </div>
       )
