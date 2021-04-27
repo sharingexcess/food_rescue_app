@@ -2,7 +2,7 @@ import React from 'react'
 import './DeleteLocationModal.scss'
 import 'firebase/firestore'
 import { getCollection } from '../../helpers/helpers'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 function DeleteLocationModal({
   setOpenModal,
@@ -11,11 +11,13 @@ function DeleteLocationModal({
   locationDeliveries,
   locationPickups,
   locationId,
+  orgId,
 }) {
   console.log('Can Delete in Modal >>>', canDelete)
   console.log('Location Routes in modal >>>', locationRoutes)
   console.log('Location deliveries in Modal >>>', locationDeliveries)
   console.log('Location Pickups in modal >>>', locationPickups)
+  const history = useHistory()
   const handleDeleteLocation = async () => {
     // remove the location id from the deliveries and pickups
     for (const delivery of locationDeliveries) {
@@ -31,6 +33,9 @@ function DeleteLocationModal({
 
     // then remove the location
     await getCollection('Locations').doc(locationId).delete()
+
+    // return to org page
+    history.push(`/admin/organizations/${orgId}`)
   }
 
   const renderModal = () => {

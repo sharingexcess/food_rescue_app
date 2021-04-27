@@ -152,7 +152,6 @@ export default function EditLocation() {
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
-
   return !location ? (
     <Loading text="Loading location data..." />
   ) : (
@@ -299,6 +298,7 @@ export default function EditLocation() {
               locationDeliveries={locationDeliveries}
               locationPickups={locationPickups}
               locationId={loc_id}
+              orgId={organization.id}
             />
           )}
         </>
