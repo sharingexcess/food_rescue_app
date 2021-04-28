@@ -44,7 +44,7 @@ export default function Home() {
     return (
       <>
         <Tile name="Calendar" icon="fa-calendar" link="/calendar" />
-        <Tile name="Add Route" icon="fa-route" link="/admin/create-route" />
+        <Tile name="Add Route" icon="fa-plus" link="/admin/create-route" />
         <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
