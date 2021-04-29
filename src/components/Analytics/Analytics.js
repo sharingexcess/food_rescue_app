@@ -7,6 +7,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
 import { Input } from '../Input/Input'
 import './Analytics.scss'
+import moment from 'moment'
 
 export default function Analytics() {
   const [tab, setTab] = useState('RouteAnalytics')
@@ -61,8 +62,8 @@ export default function Analytics() {
       <table className="Analytics__Route">
         <thead>
           <tr>
-            <td>Route ID</td>
             <td>Driver</td>
+            <td>Timeline</td>
             <td>Pickups</td>
             <td>Deliveries</td>
             <td>Total Weight</td>
@@ -74,7 +75,8 @@ export default function Analytics() {
             if (!r_driver) {
               return null
             }
-            console.log(r.stops)
+            const r_timestart = r.time_start
+            const r_timeend = r.time_end
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
             const r_weight = r_deliveries
@@ -82,8 +84,12 @@ export default function Analytics() {
               .reduce((a, b) => a + b, 0)
             return (
               <tr key={r.id}>
-                <td>{r.id}</td>
                 <td id="driver">{r_driver.name}</td>
+                <td id="timeline">
+                  {moment(r_timestart).format('MM-DD-YYYY')} <br></br>
+                  {moment(r_timestart).format('h:mma')} -{' '}
+                  {moment(r_timeend).format('h:mma')}{' '}
+                </td>
                 <td>
                   <ul>
                     {r_pickups.map(p => (
