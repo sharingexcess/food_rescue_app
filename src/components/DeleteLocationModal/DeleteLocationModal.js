@@ -19,20 +19,22 @@ function DeleteLocationModal({
   console.log('Location Pickups in modal >>>', locationPickups)
   const history = useHistory()
   const handleDeleteLocation = async () => {
-    // remove the location id from the deliveries and pickups
-    for (const delivery of locationDeliveries) {
-      await getCollection('Deliveries')
-        .doc(delivery.id)
-        .set({ location_id: '' }, { merge: true })
-    }
-    for (const pickup of locationPickups) {
-      await getCollection('Pickups')
-        .doc(pickup.id)
-        .set({ location_id: '' }, { merge: true })
-    }
+    // // remove the location id from the deliveries and pickups
+    // for (const delivery of locationDeliveries) {
+    //   await getCollection('Deliveries')
+    //     .doc(delivery.id)
+    //     .set({ location_id: '' }, { merge: true })
+    // }
+    // for (const pickup of locationPickups) {
+    //   await getCollection('Pickups')
+    //     .doc(pickup.id)
+    //     .set({ location_id: '' }, { merge: true })
+    // }
 
     // then remove the location
-    await getCollection('Locations').doc(locationId).delete()
+    await getCollection('Locations')
+      .doc(locationId)
+      .set({ isDeleted: true }, { merge: true })
 
     // return to org page
     history.push(`/admin/organizations/${orgId}`)
