@@ -758,81 +758,103 @@ function Route() {
                         ? ` (${s.location.name})`
                         : ''}
                     </h2>
-                    {s.location_id ? (
-                      <ExternalLink url={generateDirectionsLink(s.location)}>
-                        <p className="Directions">
-                          <i className="fa fa-map-marker" />
-                          {s.location.address1}
-                          {s.location.address2 && ` - ${s.location.address2}`}
-                          <br />
-                          {s.location.city}, {s.location.state}{' '}
-                          {s.location.zip_code}
-                        </p>
-                      </ExternalLink>
-                    ) : (
-                      <p>Location deleted</p>
-                    )}
-                    {s.location.contact_phone || s.org.default_contact_phone ? (
-                      <p>
-                        <i className="fa fa-phone" />
-                        <a
-                          href={`tel:${
-                            s.location.contact_phone ||
-                            s.org.default_contact_phone
-                          }`}
-                        >
-                          {formatPhoneNumber(
-                            s.location.contact_phone ||
-                              s.org.default_contact_phone
-                          )}
-                        </a>
-                        {s.location.contact_name ||
-                        s.org.default_contact_name ? (
-                          <span>
-                            (Contact location manager:{' '}
+                    {!s.location.isDeleted ? (
+                      <div>
+                        {s.location_id ? (
+                          <ExternalLink
+                            url={generateDirectionsLink(s.location)}
+                          >
+                            <p className="Directions">
+                              <i className="fa fa-map-marker" />
+                              {s.location.address1}
+                              {s.location.address2 &&
+                                ` - ${s.location.address2}`}
+                              <br />
+                              {s.location.city}, {s.location.state}{' '}
+                              {s.location.zip_code}
+                            </p>
+                          </ExternalLink>
+                        ) : (
+                          <p>Location deleted</p>
+                        )}
+                        {s.location.contact_phone ||
+                        s.org.default_contact_phone ? (
+                          <p>
+                            <i className="fa fa-phone" />
+                            <a
+                              href={`tel:${
+                                s.location.contact_phone ||
+                                s.org.default_contact_phone
+                              }`}
+                            >
+                              {formatPhoneNumber(
+                                s.location.contact_phone ||
+                                  s.org.default_contact_phone
+                              )}
+                            </a>
                             {s.location.contact_name ||
-                              s.org.default_contact_name}
-                            )
-                          </span>
-                        ) : (
-                          ''
-                        )}
-                      </p>
-                    ) : null}
-                    {s.location.secondary_contact_phone ? (
-                      <p>
-                        <i className="fa fa-phone" />
-                        <a href={`tel:${s.location.secondary_contact_phone}`}>
-                          {formatPhoneNumber(s.location.contact_phone)}
-                        </a>
-                        <span>(Secondary)</span>
-                      </p>
-                    ) : null}
-                    {s.location.time_open ? (
-                      <p>
-                        <i className="fa fa-clock-o" />
-                        {moment(s.location.time_open, 'hh:mm').format(
-                          'LT'
-                        )} -{' '}
-                        {moment(s.location.time_close, 'hh:mm').format('LT')}
-                        {moment().isBetween(
-                          moment(s.location.time_open, 'hh:mm'),
-                          moment(s.location.time_close, 'hh:mm')
-                        ) ? (
-                          <span className="open">Open now</span>
-                        ) : (
-                          <span className="close">Closed now</span>
-                        )}
-                      </p>
-                    ) : null}
-                    {s.location.receive_start ? (
-                      <p>
-                        {s.org.org_type === 'recipient' ? 'Receive' : 'Pickup'}{' '}
-                        hours:{' '}
-                        {moment(s.location.receive_start, 'hh:mm').format('LT')}{' '}
-                        - {moment(s.location.receive_end, 'hh:mm').format('LT')}
-                      </p>
-                    ) : null}
+                            s.org.default_contact_name ? (
+                              <span>
+                                (Contact location manager:{' '}
+                                {s.location.contact_name ||
+                                  s.org.default_contact_name}
+                                )
+                              </span>
+                            ) : (
+                              ''
+                            )}
+                          </p>
+                        ) : null}
+                        {s.location.secondary_contact_phone ? (
+                          <p>
+                            <i className="fa fa-phone" />
+                            <a
+                              href={`tel:${s.location.secondary_contact_phone}`}
+                            >
+                              {formatPhoneNumber(s.location.contact_phone)}
+                            </a>
+                            <span>(Secondary)</span>
+                          </p>
+                        ) : null}
+                        {s.location.time_open ? (
+                          <p>
+                            <i className="fa fa-clock-o" />
+                            {moment(s.location.time_open, 'hh:mm').format(
+                              'LT'
+                            )}{' '}
+                            -{' '}
+                            {moment(s.location.time_close, 'hh:mm').format(
+                              'LT'
+                            )}
+                            {moment().isBetween(
+                              moment(s.location.time_open, 'hh:mm'),
+                              moment(s.location.time_close, 'hh:mm')
+                            ) ? (
+                              <span className="open">Open now</span>
+                            ) : (
+                              <span className="close">Closed now</span>
+                            )}
+                          </p>
+                        ) : null}
+                        {s.location.receive_start ? (
+                          <p>
+                            {s.org.org_type === 'recipient'
+                              ? 'Receive'
+                              : 'Pickup'}{' '}
+                            hours:{' '}
+                            {moment(s.location.receive_start, 'hh:mm').format(
+                              'LT'
+                            )}{' '}
+                            -{' '}
+                            {moment(s.location.receive_end, 'hh:mm').format(
+                              'LT'
+                            )}
+                          </p>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <p>Location Deleted</p>
+                    )}
                     <StopNotes stop={s} />
                     {hasEditPermissions() ? (
                       <>
