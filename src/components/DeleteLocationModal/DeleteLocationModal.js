@@ -34,7 +34,7 @@ function DeleteLocationModal({
     // then remove the location
     await getCollection('Locations')
       .doc(locationId)
-      .set({ isDeleted: true }, { merge: true })
+      .set({ is_deleted: true }, { merge: true })
 
     // return to org page
     history.push(`/admin/organizations/${orgId}`)

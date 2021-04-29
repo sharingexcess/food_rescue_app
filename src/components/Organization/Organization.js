@@ -23,7 +23,7 @@ function Organization() {
   // get org's locations from firestore data
   const locations =
     useLocationData(
-      i => i.org_id === id && (!i.isDeleted || i.isDeleted === false)
+      i => i.org_id === id && (!i.is_deleted || i.is_deleted === false)
     ) || []
   // orgIconFullUrl defines the URL we build based on the path stored in org.icon
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()

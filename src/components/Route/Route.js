@@ -758,7 +758,7 @@ function Route() {
                         ? ` (${s.location.name})`
                         : ''}
                     </h2>
-                    {!s.location.isDeleted ? (
+                    {!s.location.is_deleted ? (
                       <div>
                         {s.location_id ? (
                           <ExternalLink
