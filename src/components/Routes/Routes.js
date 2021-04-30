@@ -84,6 +84,11 @@ export default function Routes({ initial_filter }) {
     console.log(routes.map(r => r.time_start.substring(0, 10)))
   }
   function filterAndSortRoutes(routes) {
+    // filter routes by date before rendering them
+    const routesToDisplay = admin
+      ? routes
+      : routes.filter(route => new Date(route.time_start) <= new Date())
+
     return filter === 'mine'
       ? routes
           .filter(r => r.driver_id === user.uid)
