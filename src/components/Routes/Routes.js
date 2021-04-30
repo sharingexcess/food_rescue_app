@@ -90,27 +90,27 @@ export default function Routes({ initial_filter }) {
       : routes.filter(route => new Date(route.time_start) <= new Date())
 
     return filter === 'mine'
-      ? routes
+      ? routesToDisplay
           .filter(r => r.driver_id === user.uid)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'unassigned'
-      ? routes
+      ? routesToDisplay
           .filter(r => r.driver.name === undefined)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'incomplete'
-      ? routes
+      ? routesToDisplay
           .filter(r => r.status === 1)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'happening'
-      ? routes
+      ? routesToDisplay
           .filter(r => r.status === 3)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'driver'
-      ? routes
+      ? routesToDisplay
           .filter(
             r =>
               r.driver.name !== undefined &&
@@ -119,11 +119,11 @@ export default function Routes({ initial_filter }) {
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'date'
-      ? routes
+      ? routesToDisplay
           .filter(r => r.time_start.substring(0, 10) === searchByDate)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
-      : routes
+      : routesToDisplay
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
   }
