@@ -122,4 +122,11 @@
         color: var(--red);
       }  
     }
+    button{
+      &.red{
+        background-color: var(--red);
+        margin: 10px 0 0;
+        padding: 8px 8px;
+      }
+    }
   }
