@@ -57,6 +57,11 @@ export default function Analytics() {
     )
   }
 
+  function capitalize(s) {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
+
   function RouteAnalytics() {
     return (
       <table className="Analytics__Route">
@@ -66,7 +71,7 @@ export default function Analytics() {
             <td>Timeline</td>
             <td>Pickups</td>
             <td>Deliveries</td>
-            <td>Total Weight</td>
+            <td>Weight - Mileage</td>
           </tr>
         </thead>
         <tbody>
@@ -76,35 +81,50 @@ export default function Analytics() {
               return null
             }
             const r_timestart = r.time_start
-            const r_timeend = r.time_end
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
+            const r_timeend = r_deliveries.map(p =>
+              p.time_finished ? p.time_finished : 'None'
+            )
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
               .reduce((a, b) => a + b, 0)
+            // Todo: inspect time_finished and diplay correctly
             return (
               <tr key={r.id}>
                 <td id="driver">{r_driver.name}</td>
                 <td id="timeline">
                   {moment(r_timestart).format('MM-DD-YYYY')} <br></br>
                   {moment(r_timestart).format('h:mma')} -{' '}
-                  {moment(r_timeend).format('h:mma')}{' '}
+                  {r_timeend[0] === 'None'
+                    ? moment(r_timeend[0]).format('h:mma')
+                    : 'No end time'}{' '}
                 </td>
                 <td>
                   <ul>
                     {r_pickups.map(p => (
-                      <li>{p.id}</li>
+                      <li>
+                        {' - '}
+                        {p.location_id
+                          .split('_')
+                          .map(p_name => capitalize(p_name) + ' ')}
+                      </li>
                     ))}
                   </ul>
                 </td>
                 <td>
                   <ul>
                     {r_deliveries.map(p => (
-                      <li>{p.id}</li>
+                      <li>
+                        {' - '}
+                        {p.location_id
+                          .split('_')
+                          .map(p_name => capitalize(p_name) + ' ')}
+                      </li>
                     ))}
                   </ul>
                 </td>
-                <td id="weight">{r_weight}</td>
+                <td id="weight">{r_weight} lbs</td>
               </tr>
             )
           })}

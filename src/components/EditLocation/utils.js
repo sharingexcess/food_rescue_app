@@ -29,6 +29,7 @@ export function initializeFormData(location, callback) {
 
 export async function handleDeleteLocation(locationId) {
   let canDelete = true
+  // eslint-disable-next-line
   let routesOfLocation = []
   const deliveries = await getCollection('Deliveries')
     .get()
@@ -43,6 +44,7 @@ export async function handleDeleteLocation(locationId) {
     pickup => pickup.location_id === locationId
   )
   // Only remove the location if the route is not started or already complete
+  // eslint-disable-next-line
   for (let stop of deliveriesWithLocationId) {
     const route = await getCollection('Routes')
       .doc(stop.route_id)
@@ -53,6 +55,7 @@ export async function handleDeleteLocation(locationId) {
     }
     routesOfLocation.push(route)
   }
+  // eslint-disable-next-line
   for (let stop of pickupsWithLocationId) {
     const route = await getCollection('Routes')
       .doc(stop.route_id)
