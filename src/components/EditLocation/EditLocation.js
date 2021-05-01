@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
 import { getCollection } from '../../helpers/helpers'
-import { initializeFormData } from './utils'
+import { initializeFormData, handleDeleteLocation } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import Loading from '../Loading/Loading'
@@ -12,6 +12,7 @@ import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
 import './EditLocation.scss'
 import validator from 'validator'
+import DeleteLocationModal from '../DeleteLocationModal/DeleteLocationModal'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -41,6 +42,11 @@ export default function EditLocation() {
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [openModal, setOpenModal] = useState(false)
+  const [canDelete, setCanDelete] = useState(true)
+  const [locationRoutes, setLocationRoutes] = useState([])
+  const [locationDeliveries, setLocationDeliveries] = useState([])
+  const [locationPickups, setLocationPickups] = useState([])
 
   useEffect(() => {
     if (isInitialLoad && location && location.name) {
@@ -99,6 +105,23 @@ export default function EditLocation() {
       }
     }
   }
+  async function handleDeleteClick() {
+    const {
+      canDelete,
+      locationRoutes,
+      locationDeliveries,
+      locationPickups,
+    } = await handleDeleteLocation(loc_id)
+    setCanDelete(canDelete)
+    setLocationRoutes(locationRoutes)
+    setLocationDeliveries(locationDeliveries)
+    setLocationPickups(locationPickups)
+    console.log('Can delete >>>', canDelete)
+    console.log('Routes of location >>>', locationRoutes)
+    console.log('Location Deliveries >>>', locationDeliveries)
+    console.log('Location pickups >>>', locationPickups)
+    setOpenModal(true)
+  }
 
   async function generateLocationId() {
     const uniq_id = `${organization.name
@@ -129,7 +152,6 @@ export default function EditLocation() {
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
-
   return !location ? (
     <Loading text="Loading location data..." />
   ) : (
@@ -265,6 +287,22 @@ export default function EditLocation() {
           >
             {loc_id ? 'update location' : 'add location'}
           </button>{' '}
+          {loc_id && (
+            <button className="red" onClick={handleDeleteClick}>
+              Delete Location
+            </button>
+          )}
+          {openModal && (
+            <DeleteLocationModal
+              setOpenModal={setOpenModal}
+              canDelete={canDelete}
+              locationRoutes={locationRoutes}
+              locationDeliveries={locationDeliveries}
+              locationPickups={locationPickups}
+              locationId={loc_id}
+              orgId={organization.id}
+            />
+          )}
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />
