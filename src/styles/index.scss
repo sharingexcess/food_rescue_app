@@ -16,8 +16,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   // brand colors
-  --primary: rgb(102, 205, 159);
-  --primary-rgb: 114, 222, 179;
+  --primary: rgb(78, 165, 40);
+  --primary-rgb: 78, 165, 40;
   --secondary: rgb(133, 219, 187);
   --secondary-rgb: 133, 219, 187;
   --tertiary: rgb(228, 241, 236);
@@ -60,7 +60,7 @@ body.dark-theme {
 body.light-theme {
   --strong: rgb(57, 143, 104);
   --strong-rgb: 57, 143, 104;
-  --background: rgb(228, 241, 236);
+  --background: rgb(255, 255, 255);
   --background-rgb: 228, 241, 236;
   --foreground: rgb(255, 255, 255);
   --foreground-rgb: 255, 255, 255;
