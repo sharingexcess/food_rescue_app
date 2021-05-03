@@ -81,11 +81,10 @@ export default function Analytics() {
               return null
             }
             const r_timestart = r.time_start
+            const r_timeend = r.time_end
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
-            const r_timeend = r_deliveries.map(p =>
-              p.time_finished ? p.time_finished : 'None'
-            )
+            console.log(r)
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
               .reduce((a, b) => a + b, 0)
@@ -96,9 +95,7 @@ export default function Analytics() {
                 <td id="timeline">
                   {moment(r_timestart).format('MM-DD-YYYY')} <br></br>
                   {moment(r_timestart).format('h:mma')} -{' '}
-                  {r_timeend[0] === 'None'
-                    ? moment(r_timeend[0]).format('h:mma')
-                    : 'No end time'}{' '}
+                  {moment(r_timeend).format('h:mma')}{' '}
                 </td>
                 <td>
                   <ul>
