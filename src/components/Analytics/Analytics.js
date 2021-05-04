@@ -67,11 +67,11 @@ export default function Analytics() {
       <table className="Analytics__Route">
         <thead>
           <tr>
-            <td>Driver</td>
-            <td>Timeline</td>
-            <td>Pickups</td>
-            <td>Deliveries</td>
-            <td>Weight - Mileage</td>
+            <td id="driver">Driver</td>
+            <td id="timeline">Timeline</td>
+            <td id="stops">Pickups</td>
+            <td id="stops">Deliveries</td>
+            <td id="weight">Weight - Mileage</td>
           </tr>
         </thead>
         <tbody>
