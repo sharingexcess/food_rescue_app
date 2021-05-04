@@ -1,21 +1,11 @@
 header#RouteHeader {
     position: relative;
     top: 0;
-    left: 160px;
     width: 100%;
     padding: 24px 16px;
     display: flex;
-    justify-content: flex-start;
-    align-items: right;
-    animation: fade-in 0.32s ease forwards;
-    z-index: 20;
-    pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      var(--background),
-      rgba(var(--background-rgb), 0)
-    );
-  
+    justify-content: center;
+    align-items: center;
     h1 {
       font-size: 25px;
       text-align: right;

@@ -141,15 +141,13 @@ export default function Routes({ initial_filter }) {
   return (
     <main id="Routes">
       <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
-      <div>
-        <RouteHeader
-          text={
-            location.pathname === '/routes'
-              ? 'Viewing Current/Upcoming Routes'
-              : 'Viewing Past/Completed Routes'
-          }
-        />
-      </div>
+      <RouteHeader
+        text={
+          location.pathname === '/routes'
+            ? 'Viewing Current Routes'
+            : 'Viewing Past Routes'
+        }
+      />
       <section id="Filters">
         <select
           name="filters"
