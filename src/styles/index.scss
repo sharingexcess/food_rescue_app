@@ -24,8 +24,8 @@ body {
   --tertiary-rgb: 228, 241, 236;
 
   // basic colors
-  --green: rgb(102, 205, 159);
-  --green-rgb: 102, 205, 159;
+  --green: rgb(78, 165, 40);
+  --green-rgb: 78, 165, 40;
   --yellow: rgb(253, 205, 102);
   --yellow-rgb: 253, 205, 102;
   --blue: rgb(105, 168, 250);
@@ -45,7 +45,7 @@ body {
 }
 
 body.dark-theme {
-  --strong: rgb(47, 181, 120);
+  --strong: rgb(78, 165, 40);
   --strong-rgb: 57, 143, 104;
   --background: rgb(28, 33, 41);
   --background-rgb: 28, 33, 41;
@@ -58,10 +58,10 @@ body.dark-theme {
 }
 
 body.light-theme {
-  --strong: rgb(57, 143, 104);
+  --strong: rgb(78, 165, 40);
   --strong-rgb: 57, 143, 104;
-  --background: rgba(230, 225, 225, 0.527);
-  --background-rgb: 228, 241, 236;
+  --background: rgb(235, 229, 229);
+  --background-rgb: 235, 229, 229;
   --foreground: rgb(255, 255, 255);
   --foreground-rgb: 255, 255, 255;
   --shadow: rgb(56, 56, 56);

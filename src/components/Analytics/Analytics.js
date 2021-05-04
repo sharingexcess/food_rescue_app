@@ -80,11 +80,13 @@ export default function Analytics() {
             if (!r_driver) {
               return null
             }
-            const r_timestart = r.time_start
-            const r_timeend = r.time_end
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
-            console.log(r)
+            const r_starttime = r.time_start
+            const r_endtime_array = r_deliveries.map(de => de.time_finished)
+            const r_endtime = r_endtime_array[r_endtime_array.length - 1]
+              ? r_endtime_array[r_endtime_array.length - 1].toDate()
+              : 'Not found'
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
               .reduce((a, b) => a + b, 0)
@@ -93,9 +95,11 @@ export default function Analytics() {
               <tr key={r.id}>
                 <td id="driver">{r_driver.name}</td>
                 <td id="timeline">
-                  {moment(r_timestart).format('MM-DD-YYYY')} <br></br>
-                  {moment(r_timestart).format('h:mma')} -{' '}
-                  {moment(r_timeend).format('h:mma')}{' '}
+                  {moment(r_starttime).format('MM-DD-YYYY')} <br></br>
+                  {moment(r_starttime).format('h:mma')} {' - '}
+                  {r_endtime === 'Not found'
+                    ? 'Not found'
+                    : moment(r_endtime).format('h:mma')}{' '}
                 </td>
                 <td>
                   <ul>
