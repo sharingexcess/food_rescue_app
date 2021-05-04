@@ -204,6 +204,7 @@ export default function Routes({ initial_filter }) {
       ) : (
         filterAndSortRoutes(routes).map(r => (
           <Link
+            target="_blank"
             to={
               location.pathname === '/routes'
                 ? `/routes/${r.id}`
