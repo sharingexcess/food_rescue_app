@@ -8,7 +8,7 @@ import { MOBILE_THRESHOLD } from '../../helpers/constants'
 
 const initialState = {
   menu: false,
-  darkMode: true,
+  darkMode: false,
   mobile: window.innerWidth < MOBILE_THRESHOLD,
 }
 
