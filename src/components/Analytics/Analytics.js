@@ -7,6 +7,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
 import { Input } from '../Input/Input'
 import './Analytics.scss'
+import moment from 'moment'
 
 export default function Analytics() {
   const [tab, setTab] = useState('RouteAnalytics')
@@ -56,16 +57,21 @@ export default function Analytics() {
     )
   }
 
+  function capitalize(s) {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
+
   function RouteAnalytics() {
     return (
       <table className="Analytics__Route">
         <thead>
           <tr>
-            <td>Route ID</td>
-            <td>Driver</td>
-            <td>Pickups</td>
-            <td>Deliveries</td>
-            <td>Total Weight</td>
+            <td id="driver">Driver</td>
+            <td id="timeline">Timeline</td>
+            <td id="stops">Pickups</td>
+            <td id="stops">Deliveries</td>
+            <td id="weight">Weight - Mileage</td>
           </tr>
         </thead>
         <tbody>
@@ -74,31 +80,52 @@ export default function Analytics() {
             if (!r_driver) {
               return null
             }
-            console.log(r.stops)
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
+            const r_starttime = r.time_start
+            const r_endtime_array = r_deliveries.map(de => de.time_finished)
+            const r_endtime = r_endtime_array[r_endtime_array.length - 1]
+              ? r_endtime_array[r_endtime_array.length - 1].toDate()
+              : 'Not found'
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
               .reduce((a, b) => a + b, 0)
+            // Todo: inspect time_finished and diplay correctly
             return (
               <tr key={r.id}>
-                <td>{r.id}</td>
                 <td id="driver">{r_driver.name}</td>
+                <td id="timeline">
+                  {moment(r_starttime).format('MM-DD-YYYY')} <br></br>
+                  {moment(r_starttime).format('h:mma')} {' - '}
+                  {r_endtime === 'Not found'
+                    ? 'Not found'
+                    : moment(r_endtime).format('h:mma')}{' '}
+                </td>
                 <td>
                   <ul>
                     {r_pickups.map(p => (
-                      <li>{p.id}</li>
+                      <li>
+                        {' - '}
+                        {p.location_id
+                          .split('_')
+                          .map(p_name => capitalize(p_name) + ' ')}
+                      </li>
                     ))}
                   </ul>
                 </td>
                 <td>
                   <ul>
                     {r_deliveries.map(p => (
-                      <li>{p.id}</li>
+                      <li>
+                        {' - '}
+                        {p.location_id
+                          .split('_')
+                          .map(p_name => capitalize(p_name) + ' ')}
+                      </li>
                     ))}
                   </ul>
                 </td>
-                <td id="weight">{r_weight}</td>
+                <td id="weight">{r_weight} lbs</td>
               </tr>
             )
           })}
