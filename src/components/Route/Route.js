@@ -880,7 +880,7 @@ function Route() {
                 ))}
               </section>
               <BackupDelivery />
-              {route.status === 1 &&
+              {(route.status === 1 || route.status === 3) &&
                 route.driver &&
                 (route.driver_id === user.uid || admin) && (
                   <ChangeRecipientButton />
