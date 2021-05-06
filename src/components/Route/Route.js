@@ -882,7 +882,7 @@ function Route() {
               <BackupDelivery />
               {(route.status === 1 || route.status === 3) &&
                 route.driver &&
-                (route.driver_id === user.uid || admin) && (
+                admin && (
                   <div>
                     <Link to={`/routes/${route.id}/edit`}>
                       <button>Edit Stops</button>
