@@ -156,7 +156,7 @@ export const getExistingRouteData = async route_id => {
     .get()
     .then(result => result.docs.map(doc => doc.data()))
   // console.log('Driver >>>', driver)
-  // console.log('myRoute >>>', myRoute)
+  console.log('myRoute >>>', myRoute)
   // console.log('Routes data >>>', routes)
   // console.log('Deliveries >>>', deliveries)
   // console.log('Pickups >>>', pickups)
@@ -171,7 +171,7 @@ export const getExistingRouteData = async route_id => {
       org => org.id === stopData.org_id
     )
     const locationData = locations.find(loc => loc.id === stopData.location_id)
-    // console.log('Stops data >>>', stopData)
+    console.log('Stops data >>>', stopData)
     // console.log('Organization >>>', organizationData)
     // console.log('Location >>>', locationData)
     return {
@@ -182,6 +182,7 @@ export const getExistingRouteData = async route_id => {
       org_id: stopData.org_id,
       org_name: organizationData.name,
       can_delete: stopData.status !== 9,
+      status: stopData.status,
     }
   })
   // console.log('New Stops >>>', newStops)
@@ -193,6 +194,8 @@ export const getExistingRouteData = async route_id => {
     time_end: myRoute.time_end,
     end_recurring: getDefaultEndRecurring(),
     stops: newStops,
+    created_at: myRoute.created_at,
+    status: myRoute.status,
   }
   console.log('User Data >>>', routeData)
   return routeData

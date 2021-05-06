@@ -92,7 +92,8 @@ function EditRoute() {
   }
 
   async function handleCreateRouteButtonClick() {
-    const original_route_id = await generateRouteId(formData.time_start)
+    const original_route_id =
+      route_id || (await generateRouteId(formData.time_start))
     const FirstFormData = {
       ...formData,
       original_route_id: original_route_id,
@@ -142,9 +143,11 @@ function EditRoute() {
             org_id: stop.org_id,
             location_id: stop.location_id,
             driver_id: formData.driver_id,
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            created_at:
+              stop.created_at ||
+              firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
+            status: stop.status || 1,
             route_id,
           })
         } else if (stop.type === 'delivery') {
@@ -157,9 +160,11 @@ function EditRoute() {
               : '',
             location_id: stop.location_id,
             driver_id: formData.driver_id,
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            created_at:
+              stop.created_at ||
+              firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
+            status: stop.status || 1,
             pickup_ids,
             route_id,
           })
@@ -181,9 +186,11 @@ function EditRoute() {
           time_start: formData.time_start,
           time_end: formData.time_end,
           stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          created_at:
+            formData.created_at ||
+            firebase.firestore.FieldValue.serverTimestamp(),
           updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          status: 1,
+          status: formData.status || 1,
         })
         .then(() => history.push(`/routes/${route_id}`))
       setWorking(false)
