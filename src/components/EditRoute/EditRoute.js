@@ -287,7 +287,7 @@ function EditRoute() {
     return (
       <div className={`Stop ${s.type}`}>
         <div>
-          {s.can_delete && (
+          {s.can_delete !== false && (
             <i className="fa fa-times" onClick={() => handleRemoveStop(s.id)} />
           )}
           <h4>
