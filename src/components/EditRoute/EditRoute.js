@@ -371,16 +371,18 @@ function EditRoute() {
         </div>
       ) : (
         <>
-          <div id="Recurring">
-            <input
-              type="checkbox"
-              id="is_recurring"
-              name="is_recurring"
-              checked={isRecurring}
-              onChange={() => setRecurring(!isRecurring)}
-            />
-            <p className="text"> Recurring Route</p>
-          </div>
+          {!route_id && (
+            <div id="Recurring">
+              <input
+                type="checkbox"
+                id="is_recurring"
+                name="is_recurring"
+                checked={isRecurring}
+                onChange={() => setRecurring(!isRecurring)}
+              />
+              <p className="text"> Recurring Route</p>
+            </div>
+          )}
           {selectedFormFields.map(field =>
             !field.preReq || formData[field.preReq] ? (
               <Input
