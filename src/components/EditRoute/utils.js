@@ -155,13 +155,6 @@ export const getExistingRouteData = async route_id => {
   const organizations = await getCollection('Organizations')
     .get()
     .then(result => result.docs.map(doc => doc.data()))
-  // console.log('Driver >>>', driver)
-  console.log('myRoute >>>', myRoute)
-  // console.log('Routes data >>>', routes)
-  // console.log('Deliveries >>>', deliveries)
-  // console.log('Pickups >>>', pickups)
-  // console.log('Locations >>>', locations)
-  // console.log('Organizations >>>', organizations)
 
   const newStops = myRoute.stops.map(route_stop => {
     const stopCategory = route_stop.type === 'pickup' ? pickups : deliveries
@@ -171,9 +164,7 @@ export const getExistingRouteData = async route_id => {
       org => org.id === stopData.org_id
     )
     const locationData = locations.find(loc => loc.id === stopData.location_id)
-    console.log('Stops data >>>', stopData)
-    // console.log('Organization >>>', organizationData)
-    // console.log('Location >>>', locationData)
+
     return {
       ...route_stop,
       location: locationData,
@@ -185,7 +176,6 @@ export const getExistingRouteData = async route_id => {
       status: stopData.status,
     }
   })
-  // console.log('New Stops >>>', newStops)
 
   const routeData = {
     driver_id: myRoute.driver_id,
@@ -197,6 +187,5 @@ export const getExistingRouteData = async route_id => {
     created_at: myRoute.created_at,
     status: myRoute.status,
   }
-  console.log('User Data >>>', routeData)
   return routeData
 }
