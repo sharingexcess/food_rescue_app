@@ -883,7 +883,11 @@ function Route() {
               {(route.status === 1 || route.status === 3) &&
                 route.driver &&
                 (route.driver_id === user.uid || admin) && (
-                  <ChangeRecipientButton />
+                  <div>
+                    <Link to={`/routes/${route.id}/edit`}>
+                      <button>Edit Stops</button>
+                    </Link>
+                  </div>
                 )}
               <StatusButton />
               <CancelButton />
