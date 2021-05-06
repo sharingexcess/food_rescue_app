@@ -186,7 +186,7 @@ export const getExistingRouteData = async route_id => {
   })
   // console.log('New Stops >>>', newStops)
 
-  const userData = {
+  const routeData = {
     driver_id: myRoute.driver_id,
     driver_name: driver.name,
     time_start: myRoute.time_start,
@@ -194,6 +194,6 @@ export const getExistingRouteData = async route_id => {
     end_recurring: getDefaultEndRecurring(),
     stops: newStops,
   }
-  console.log('User Data >>>', userData)
-  return userData
+  console.log('User Data >>>', routeData)
+  return routeData
 }
