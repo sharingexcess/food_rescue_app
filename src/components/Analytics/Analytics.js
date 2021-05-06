@@ -283,7 +283,7 @@ export default function Analytics() {
       </section>
 
       {tab !== 'OrgAnalytics' && (
-        <section id="FilterOptions">
+        <section id="Filters">
           <select
             value={filterType}
             onChange={e => setFilterType(e.target.value)}
