@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
 import Ellipsis from '../../helpers/components'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
@@ -11,6 +11,7 @@ import {
   getDefaultStartTime,
   getDefaultEndTime,
   getDefaultEndRecurring,
+  getExistingRouteData,
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -32,6 +33,7 @@ import { OrganizationHours } from '../Organization/utils'
 function EditRoute() {
   const history = useHistory()
   const drivers = useUserData()
+  const { route_id } = useParams()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -55,6 +57,13 @@ function EditRoute() {
   const [isRecurring, setRecurring] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
+  useEffect(async () => {
+    if (route_id) {
+      const existingUserData = await getExistingRouteData(route_id)
+      console.log('User data in EditRoute >>>', existingUserData)
+      setFormData({ ...existingUserData })
+    }
+  }, [route_id])
 
   useEffect(() => {
     formData.driver_id &&
