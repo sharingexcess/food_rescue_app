@@ -57,11 +57,13 @@ function EditRoute() {
   const [isRecurring, setRecurring] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
+  const [canRender, setCanRender] = useState(route_id ? false : true)
   useEffect(async () => {
     if (route_id) {
       const existingUserData = await getExistingRouteData(route_id)
       console.log('User data in EditRoute >>>', existingUserData)
       setFormData({ ...existingUserData })
+      setCanRender(true)
     }
   }, [route_id])
 
@@ -393,7 +395,7 @@ function EditRoute() {
             </div>
           )}
           {selectedFormFields.map(field =>
-            !field.preReq || formData[field.preReq] ? (
+            (!field.preReq || formData[field.preReq]) && canRender ? (
               <Input
                 key={field.id}
                 element_id={field.id}
@@ -412,7 +414,7 @@ function EditRoute() {
             ) : null
           )}
           <FormError />
-          {formData.time_end && (
+          {formData.time_end && canRender && (
             <button
               onClick={() => {
                 validateFormData()
@@ -422,6 +424,13 @@ function EditRoute() {
             >
               {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
+          )}
+          {!canRender && (
+            <div className="loading">
+              <h2>
+                Loading <Ellipsis />
+              </h2>
+            </div>
           )}
         </>
       )}
