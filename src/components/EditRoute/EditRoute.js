@@ -50,7 +50,7 @@ function EditRoute() {
     driver_name: [],
     driver_id: [],
   })
-  const [list, setList] = useState('pickups')
+  const [list, setList] = useState(route_id ? null : 'pickups')
   const [working, setWorking] = useState()
   const [confirmedTimes, setConfirmedTime] = useState()
   const [errors, setErrors] = useState([])
