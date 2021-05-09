@@ -60,9 +60,9 @@ function EditRoute() {
   const [canRender, setCanRender] = useState(route_id ? false : true)
   useEffect(async () => {
     if (route_id) {
-      const existingUserData = await getExistingRouteData(route_id)
-      console.log('User data in EditRoute >>>', existingUserData)
-      setFormData({ ...existingUserData })
+      const existingRouteData = await getExistingRouteData(route_id)
+      console.log('Route data in EditRoute >>>', existingRouteData)
+      setFormData({ ...existingRouteData })
       setCanRender(true)
     }
   }, [route_id])
