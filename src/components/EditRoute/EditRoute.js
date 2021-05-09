@@ -353,7 +353,7 @@ function EditRoute() {
   return (
     <main id="EditRoute">
       <Header text="New Route" />
-      {confirmedTimes ? (
+      {confirmedTimes && canRender ? (
         <div id="Driver">
           <img
             src={formData.driver ? formData.driver.icon : UserIcon}
@@ -376,9 +376,11 @@ function EditRoute() {
           <button onClick={() => setConfirmedTime(false)}>
             Update Route Info
           </button>
-          <Link to="/admin/create-organization">
-            <button className="create">Create an Organization</button>
-          </Link>
+          {!route_id && (
+            <Link to="/admin/create-organization">
+              <button className="create">Create an Organization</button>
+            </Link>
+          )}
         </div>
       ) : (
         <>
@@ -425,16 +427,9 @@ function EditRoute() {
               {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
           )}
-          {!canRender && (
-            <div className="loading">
-              <h2>
-                Loading <Ellipsis />
-              </h2>
-            </div>
-          )}
         </>
       )}
-      {confirmedTimes ? (
+      {confirmedTimes && canRender ? (
         <>
           {formData.stops.map(s => (
             <Stop s={s} key={s.id} />
@@ -490,6 +485,14 @@ function EditRoute() {
           </div>
         </>
       ) : null}
+
+      {!canRender && (
+        <div className="loading">
+          <h2>
+            Loading <Ellipsis />
+          </h2>
+        </div>
+      )}
     </main>
   )
 }
