@@ -178,6 +178,7 @@ export const getExistingRouteData = async route_id => {
   })
 
   const routeData = {
+    driver: driver,
     driver_id: myRoute.driver_id,
     driver_name: driver.name,
     time_start: myRoute.time_start,

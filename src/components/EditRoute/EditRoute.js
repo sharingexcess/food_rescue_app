@@ -59,13 +59,21 @@ function EditRoute() {
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
   const [canRender, setCanRender] = useState(route_id ? false : true)
   useEffect(async () => {
-    if (route_id) {
+    if (drivers && route_id) {
       const existingRouteData = await getExistingRouteData(route_id)
       console.log('Route data in EditRoute >>>', existingRouteData)
-      setFormData({ ...existingRouteData })
+      setFormData({
+        ...existingRouteData,
+      })
+      setSuggestions(prevSuggestions => ({
+        ...prevSuggestions,
+        driver_name: drivers?.filter(
+          d => d?.id === existingRouteData.driver_id
+        ),
+      }))
       setCanRender(true)
     }
-  }, [route_id])
+  }, [route_id, drivers])
 
   useEffect(() => {
     formData.driver_id &&
