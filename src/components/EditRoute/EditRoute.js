@@ -67,7 +67,7 @@ function EditRoute() {
       })
       setSuggestions(prevSuggestions => ({
         ...prevSuggestions,
-        driver_name: [existingRouteData.driver],
+        driver_name: null,
       }))
       setCanRender(true)
     }
