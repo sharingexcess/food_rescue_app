@@ -62,9 +62,10 @@ function EditRoute() {
     if (drivers && route_id) {
       const existingRouteData = await getExistingRouteData(route_id)
       console.log('Route data in EditRoute >>>', existingRouteData)
-      setFormData({
+      setFormData(prevFormData => ({
+        ...prevFormData,
         ...existingRouteData,
-      })
+      }))
       setSuggestions(prevSuggestions => ({
         ...prevSuggestions,
         driver_name: null,
