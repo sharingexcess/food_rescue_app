@@ -277,6 +277,13 @@ function EditRoute() {
         [e.target.id]: e.target.value,
         time_end: moment(time_end).format('yyyy-MM-DDTHH:mm'),
       })
+    } else if (field.id === 'driver_name') {
+      setFormData({
+        ...formData,
+        driver: {},
+        driver_id: '',
+        driver_name: e.target.value,
+      })
     } else setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
