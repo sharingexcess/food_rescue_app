@@ -87,19 +87,30 @@ function EditRoute() {
 
   const Warning = () => (
     <div className="warning modal">
-      <p>This is the warning modal</p>
-      <button className="yellow small" onClick={() => setShowModal(false)}>
-        Back
-      </button>
-      <button
-        className="small"
-        onClick={() => {
-          setShowModal(false)
-          setConfirmedTime(true)
-        }}
-      >
-        Next
-      </button>
+      <p>
+        {formData.driver_name
+          ? timeConflictInfo.hasConflict
+            ? 'Route with Conflict time exists'
+            : 'No warning'
+          : 'Route has no Driver'}
+      </p>
+      {timeConflictInfo.hasConflict && (
+        <button className="blue">Show More</button>
+      )}
+      <div className="footer">
+        <button className="yellow small" onClick={() => setShowModal(false)}>
+          Back
+        </button>
+        <button
+          className="small"
+          onClick={() => {
+            setShowModal(false)
+            setConfirmedTime(true)
+          }}
+        >
+          Next
+        </button>
+      </div>
     </div>
   )
 
