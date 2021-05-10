@@ -82,7 +82,7 @@ function EditRoute() {
         ),
       })
     }
-  }, [routes, formData.driver_id])
+  }, [routes, formData.driver_id, formData.time_start, formData.time_end])
 
   function handleAddPickup(pickup) {
     setList(false)
