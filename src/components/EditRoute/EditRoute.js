@@ -181,21 +181,29 @@ function EditRoute() {
     }
   }
 
-  async function generateRouteId(time_start) {
-    const uniq_id = `${
-      formData.driver ? formData.driver.name + '_' : ''
-    }${time_start.toString()}${formData.driver ? '' : '_' + generateUUID()}`
-      .replace(/[^A-Z0-9]/gi, '_')
-      .toLowerCase()
+  async function generateRouteId() {
+    let uniq_id =
+      `${formData.driver ? formData.driver.name + '_' : ''}` +
+      generateUUID()
+        .replace(/[^A-Z0-9]/gi, '_')
+        .toLowerCase()
 
-    const exists = await getCollection('Routes')
+    let exists = await getCollection('Routes')
       .doc(uniq_id)
       .get()
       .then(res => res.data())
-    if (exists) {
-      alert('This driver is already scheduled for a delivery at this time.')
-      return null
-    } else return uniq_id
+    while (exists) {
+      uniq_id =
+        `${formData.driver ? formData.driver.name + '_' : ''}` +
+        generateUUID()
+          .replace(/[^A-Z0-9]/gi, '_')
+          .toLowerCase()
+      exists = await getCollection('Routes')
+        .doc(uniq_id)
+        .get()
+        .then(res => res.data())
+    }
+    return uniq_id
   }
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
