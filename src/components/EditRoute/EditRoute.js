@@ -52,7 +52,7 @@ function EditRoute() {
   })
   const [list, setList] = useState(route_id ? null : 'pickups')
   const [working, setWorking] = useState()
-  const [confirmedTimes, setConfirmedTime] = useState()
+  const [confirmedTimes, setConfirmedTime] = useState(route_id ? true : null)
   const [errors, setErrors] = useState([])
   const [isRecurring, setRecurring] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
