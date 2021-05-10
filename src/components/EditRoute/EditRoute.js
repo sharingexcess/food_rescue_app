@@ -11,6 +11,7 @@ import {
   getDefaultStartTime,
   getDefaultEndTime,
   getDefaultEndRecurring,
+  getTimeConflictInfo,
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -24,6 +25,7 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
 import useUserData from '../../hooks/useUserData'
+import useRouteData from '../../hooks/useRouteData'
 import { v4 as generateUUID } from 'uuid'
 import './EditRoute.scss'
 import Header from '../Header/Header'
@@ -32,6 +34,7 @@ import { OrganizationHours } from '../Organization/utils'
 function EditRoute() {
   const history = useHistory()
   const drivers = useUserData()
+  const routes = useRouteData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -55,6 +58,10 @@ function EditRoute() {
   const [isRecurring, setRecurring] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
+  const [timeConflictInfo, setTimeConflictInfo] = useState({
+    hasConflict: false,
+    conflictRoutes: [],
+  })
 
   useEffect(() => {
     formData.driver_id &&
@@ -63,6 +70,19 @@ function EditRoute() {
         driver: drivers.find(i => i.id === formData.driver_id),
       })
   }, [formData.driver_id, drivers]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (routes && formData.driver_id) {
+      setTimeConflictInfo({
+        ...getTimeConflictInfo(
+          formData.driver_id,
+          formData.time_start,
+          formData.time_end,
+          routes
+        ),
+      })
+    }
+  }, [routes, formData.driver_id])
 
   function handleAddPickup(pickup) {
     setList(false)
