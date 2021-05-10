@@ -62,6 +62,7 @@ function EditRoute() {
     hasConflict: false,
     conflictRoutes: [],
   })
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     formData.driver_id &&
@@ -83,6 +84,24 @@ function EditRoute() {
       })
     }
   }, [routes, formData.driver_id, formData.time_start, formData.time_end])
+
+  const Warning = () => (
+    <div className="warning modal">
+      <p>This is the warning modal</p>
+      <button className="yellow small" onClick={() => setShowModal(false)}>
+        Back
+      </button>
+      <button
+        className="small"
+        onClick={() => {
+          setShowModal(false)
+          setConfirmedTime(true)
+        }}
+      >
+        Next
+      </button>
+    </div>
+  )
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -430,14 +449,13 @@ function EditRoute() {
           {formData.time_end && (
             <button
               onClick={() => {
-                validateFormData()
-                  ? setConfirmedTime(true)
-                  : setShowErrors(true)
+                validateFormData() ? setShowModal(true) : setShowErrors(true)
               }}
             >
               {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
           )}
+          {showModal && <Warning />}
         </>
       )}
       {confirmedTimes ? (
