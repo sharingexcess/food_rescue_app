@@ -85,34 +85,56 @@ function EditRoute() {
     }
   }, [routes, formData.driver_id, formData.time_start, formData.time_end])
 
-  const Warning = () => (
-    <div className="warning modal">
-      <p>
-        {formData.driver_name
-          ? timeConflictInfo.hasConflict
-            ? 'Route with Conflict time exists'
-            : 'No warning'
-          : 'Route has no Driver'}
-      </p>
-      {timeConflictInfo.hasConflict && (
-        <button className="blue">Show More</button>
-      )}
-      <div className="footer">
-        <button className="yellow small" onClick={() => setShowModal(false)}>
-          Back
-        </button>
-        <button
-          className="small"
-          onClick={() => {
-            setShowModal(false)
-            setConfirmedTime(true)
-          }}
-        >
-          Next
-        </button>
+  const Warning = () => {
+    const [showConflictRoutes, setShowConflictRoutes] = useState(false)
+    return (
+      <div className="warning modal">
+        <div className="modal-content">
+          <div className="header">
+            <p className={timeConflictInfo.hasConflict && 'short'}>
+              {formData.driver_name
+                ? timeConflictInfo.hasConflict
+                  ? 'Route with Conflict time exists'
+                  : 'No warning'
+                : 'Route has no Driver'}
+            </p>
+            {timeConflictInfo.hasConflict && (
+              <button
+                className="blue small"
+                onClick={() => setShowConflictRoutes(!showConflictRoutes)}
+              >
+                {showConflictRoutes ? 'Less' : 'More'}
+              </button>
+            )}
+          </div>
+
+          {showConflictRoutes &&
+            timeConflictInfo.conflictRoutes.map(route => (
+              <Link to={`/routes/${route.id}`} target="_blank">
+                <p className="route">{route.id.slice(0, 14)}...</p>
+              </Link>
+            ))}
+          <div className="footer">
+            <button
+              className="yellow small"
+              onClick={() => setShowModal(false)}
+            >
+              Back
+            </button>
+            <button
+              className="small"
+              onClick={() => {
+                setShowModal(false)
+                setConfirmedTime(true)
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   function handleAddPickup(pickup) {
     setList(false)

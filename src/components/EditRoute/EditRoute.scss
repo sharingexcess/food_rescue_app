@@ -34,18 +34,17 @@
     padding: 24px 0;
     flex-wrap: wrap;
 
-
-      button {
-        width: 100%;
-        margin-top: 24px;
+    button {
+      width: 100%;
+      margin-top: 24px;
+    }
+    a {
+      width: 100%;
+      .create {
+        margin-top: 8px;
+        background-color: var(--blue);
       }
-      a {
-        width: 100%;
-        .create {
-          margin-top: 8px;
-          background-color: var(--blue);
-        }
-      }
+    }
 
     @media (min-width: 600px) {
       flex-wrap: nowrap;
@@ -64,8 +63,7 @@
           margin-top: 0px;
         }
       }
-
-      }
+    }
 
     h3 {
       font-size: 24px;
@@ -175,18 +173,17 @@
 
       &.philabundance {
         color: var(--yellow);
-        
       }
     }
 
     .org_hours p {
       text-decoration: none;
     }
-    
+
     .org_hours {
       color: var(--green);
       text-decoration: none;
-    
+
       span {
         margin-left: 5px;
         font-weight: 700;
@@ -196,8 +193,91 @@
         color: var(--green);
       }
       span.close {
-        color: var(--red)
-      }  
+        color: var(--red);
+      }
+    }
+  }
+
+  .warning {
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.4);
+    &.modal {
+      border: 1px solid black;
+    }
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      background-color: var(--foreground);
+      margin: 30% auto;
+      padding: 16px 8px 8px;
+      width: 75%;
+      max-height: 50%;
+      overflow: auto;
+    }
+
+    .footer {
+      margin: 20px 0 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 20px 0;
+      button {
+        margin: 0;
+      }
+    }
+
+    .header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 0 20px;
+      p {
+        color: var(--yellow);
+        text-align: center;
+        width: 100%;
+        font-size: 16px;
+        &.short {
+          width: 75%;
+        }
+      }
+      .blue {
+        background-color: var(--blue);
+        margin: 0;
+        padding: 8px 16px;
+      }
+    }
+
+    .route {
+      padding: 8px 32px;
+      box-shadow: 4px 4px 8px var(--grey);
+      border-radius: 8px;
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
+    .yellow {
+      background-color: var(--yellow);
+    }
+
+    .small {
+      padding: 8px 32px;
+    }
+
+    Link {
+      border: 1px solid black;
     }
   }
 }
