@@ -218,7 +218,7 @@
       align-items: center;
       border-radius: 8px;
       background-color: var(--foreground);
-      margin: 30% auto;
+      margin: 10% auto;
       padding: 16px 8px 8px;
       width: 75%;
       max-height: 50%;
@@ -273,6 +273,10 @@
 
     .small {
       padding: 8px 32px;
+    }
+
+    .red {
+      background-color: var(--red);
     }
 
     Link {

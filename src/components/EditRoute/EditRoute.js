@@ -92,11 +92,7 @@ function EditRoute() {
         <div className="modal-content">
           <div className="header">
             <p className={timeConflictInfo.hasConflict && 'short'}>
-              {formData.driver_name
-                ? timeConflictInfo.hasConflict
-                  ? 'Route with Conflict time exists'
-                  : 'No warning'
-                : 'Route has no Driver'}
+              Warning: Route with Conflict time exists
             </p>
             {timeConflictInfo.hasConflict && (
               <button
@@ -122,13 +118,13 @@ function EditRoute() {
               Back
             </button>
             <button
-              className="small"
+              className="red small"
               onClick={() => {
                 setShowModal(false)
                 setConfirmedTime(true)
               }}
             >
-              Next
+              Dismiss
             </button>
           </div>
         </div>
@@ -482,7 +478,11 @@ function EditRoute() {
           {formData.time_end && (
             <button
               onClick={() => {
-                validateFormData() ? setShowModal(true) : setShowErrors(true)
+                validateFormData()
+                  ? timeConflictInfo.hasConflict
+                    ? setShowModal(true)
+                    : setConfirmedTime(true)
+                  : setShowErrors(true)
               }}
             >
               {formData.stops.length ? 'confirm' : 'add pickups'}
