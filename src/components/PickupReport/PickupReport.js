@@ -10,6 +10,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import { useAuthContext } from '../Auth/Auth'
 import './PickupReport.scss'
 import Header from '../Header/Header'
+import validator from 'validator'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
@@ -151,9 +152,8 @@ export default function PickupReport() {
                 </button>
               ) : null}
               <input
-                readOnly
                 id={field}
-                type="tel"
+                type="number"
                 value={formData[field]}
                 onChange={handleChange}
               />
