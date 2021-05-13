@@ -85,6 +85,21 @@ export default function PickupReport() {
     if (formData.weight <= 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
     }
+    if (
+      !validator.isInt(
+        formData.dairy ||
+          formData.bakery ||
+          formData.produce ||
+          formData['meat/Fish'] ||
+          formData['non-perishable'] ||
+          formData['prepared/Frozen'] ||
+          formData['mixed groceries'] ||
+          formData.other
+      )
+    ) {
+      errors.push('Invalid Input: Item Weight must be a whole number')
+      return false
+    }
     if (errors.length === 0) {
       return true
     }
@@ -153,9 +168,10 @@ export default function PickupReport() {
               ) : null}
               <input
                 id={field}
-                type="number"
+                type="string"
                 value={formData[field]}
                 onChange={handleChange}
+                readOnly={!canEdit()}
               />
               {canEdit() ? (
                 <button className="increment" onClick={() => increment(field)}>
