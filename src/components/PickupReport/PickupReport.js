@@ -10,6 +10,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import { useAuthContext } from '../Auth/Auth'
 import './PickupReport.scss'
 import Header from '../Header/Header'
+import validator from 'validator'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
@@ -84,6 +85,21 @@ export default function PickupReport() {
     if (formData.weight <= 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
     }
+    if (
+      !validator.isInt(
+        formData.dairy ||
+          formData.bakery ||
+          formData.produce ||
+          formData['meat/Fish'] ||
+          formData['non-perishable'] ||
+          formData['prepared/Frozen'] ||
+          formData['mixed groceries'] ||
+          formData.other
+      )
+    ) {
+      errors.push('Invalid Input: Item Weight must be a whole number')
+      return false
+    }
     if (errors.length === 0) {
       return true
     }
@@ -151,11 +167,11 @@ export default function PickupReport() {
                 </button>
               ) : null}
               <input
-                readOnly
                 id={field}
-                type="tel"
+                type="string"
                 value={formData[field]}
                 onChange={handleChange}
+                readOnly={!canEdit()}
               />
               {canEdit() ? (
                 <button className="increment" onClick={() => increment(field)}>
