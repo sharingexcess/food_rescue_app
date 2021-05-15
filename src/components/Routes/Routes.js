@@ -84,33 +84,28 @@ export default function Routes({ initial_filter }) {
     console.log(routes.map(r => r.time_start.substring(0, 10)))
   }
   function filterAndSortRoutes(routes) {
-    // filter routes by date before rendering them
-    const routesToDisplay = admin
-      ? routes
-      : routes.filter(route => new Date(route.time_start) <= new Date())
-
     return filter === 'mine'
-      ? routesToDisplay
+      ? routes
           .filter(r => r.driver_id === user.uid)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'unassigned'
-      ? routesToDisplay
+      ? routes
           .filter(r => r.driver.name === undefined)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'incomplete'
-      ? routesToDisplay
+      ? routes
           .filter(r => r.status === 1)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'happening'
-      ? routesToDisplay
+      ? routes
           .filter(r => r.status === 3)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'driver'
-      ? routesToDisplay
+      ? routes
           .filter(
             r =>
               r.driver.name !== undefined &&
@@ -119,11 +114,11 @@ export default function Routes({ initial_filter }) {
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
       : filter === 'date'
-      ? routesToDisplay
+      ? routes
           .filter(r => r.time_start.substring(0, 10) === searchByDate)
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
-      : routesToDisplay
+      : routes
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
   }

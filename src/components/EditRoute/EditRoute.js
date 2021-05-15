@@ -12,6 +12,7 @@ import {
   getDefaultEndTime,
   getDefaultEndRecurring,
   getExistingRouteData,
+  getTimeConflictInfo
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -25,6 +26,7 @@ import EditDelivery from '../EditDelivery/EditDelivery'
 import EditPickup from '../EditPickup/EditPickup'
 import firebase from 'firebase/app'
 import useUserData from '../../hooks/useUserData'
+import useRouteData from '../../hooks/useRouteData'
 import { v4 as generateUUID } from 'uuid'
 import './EditRoute.scss'
 import Header from '../Header/Header'
@@ -34,6 +36,7 @@ function EditRoute() {
   const history = useHistory()
   const drivers = useUserData()
   const { route_id } = useParams()
+  const routes = useRouteData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -73,6 +76,11 @@ function EditRoute() {
       setCanRender(true)
     }
   }, [route_id, drivers])
+  const [timeConflictInfo, setTimeConflictInfo] = useState({
+    hasConflict: false,
+    conflictRoutes: [],
+  })
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     formData.driver_id &&
@@ -81,6 +89,66 @@ function EditRoute() {
         driver: drivers.find(i => i.id === formData.driver_id),
       })
   }, [formData.driver_id, drivers]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (routes && formData.driver_id) {
+      setTimeConflictInfo({
+        ...getTimeConflictInfo(
+          formData.driver_id,
+          formData.time_start,
+          formData.time_end,
+          routes
+        ),
+      })
+    }
+  }, [routes, formData.driver_id, formData.time_start, formData.time_end])
+
+  const Warning = () => {
+    const [showConflictRoutes, setShowConflictRoutes] = useState(false)
+    return (
+      <div className="warning modal">
+        <div className="modal-content">
+          <div className="header">
+            <p className={timeConflictInfo.hasConflict && 'short'}>
+              Warning: Route with Conflict time exists
+            </p>
+            {timeConflictInfo.hasConflict && (
+              <button
+                className="blue small"
+                onClick={() => setShowConflictRoutes(!showConflictRoutes)}
+              >
+                {showConflictRoutes ? 'Less' : 'More'}
+              </button>
+            )}
+          </div>
+
+          {showConflictRoutes &&
+            timeConflictInfo.conflictRoutes.map(route => (
+              <Link to={`/routes/${route.id}`} target="_blank">
+                <p className="route">{route.id.slice(0, 14)}...</p>
+              </Link>
+            ))}
+          <div className="footer">
+            <button
+              className="yellow small"
+              onClick={() => setShowModal(false)}
+            >
+              Back
+            </button>
+            <button
+              className="red small"
+              onClick={() => {
+                setShowModal(false)
+                setConfirmedTime(true)
+              }}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -206,21 +274,29 @@ function EditRoute() {
     }
   }
 
-  async function generateRouteId(time_start) {
-    const uniq_id = `${
-      formData.driver ? formData.driver.name + '_' : ''
-    }${time_start.toString()}${formData.driver ? '' : '_' + generateUUID()}`
-      .replace(/[^A-Z0-9]/gi, '_')
-      .toLowerCase()
+  async function generateRouteId() {
+    let uniq_id =
+      `${formData.driver ? formData.driver.name + '_' : ''}` +
+      generateUUID()
+        .replace(/[^A-Z0-9]/gi, '_')
+        .toLowerCase()
 
-    const exists = await getCollection('Routes')
+    let exists = await getCollection('Routes')
       .doc(uniq_id)
       .get()
       .then(res => res.data())
-    if (exists) {
-      alert('This driver is already scheduled for a delivery at this time.')
-      return null
-    } else return uniq_id
+    while (exists) {
+      uniq_id =
+        `${formData.driver ? formData.driver.name + '_' : ''}` +
+        generateUUID()
+          .replace(/[^A-Z0-9]/gi, '_')
+          .toLowerCase()
+      exists = await getCollection('Routes')
+        .doc(uniq_id)
+        .get()
+        .then(res => res.data())
+    }
+    return uniq_id
   }
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
@@ -273,6 +349,13 @@ function EditRoute() {
         ...formData,
         [e.target.id]: e.target.value,
         time_end: moment(time_end).format('yyyy-MM-DDTHH:mm'),
+      })
+    } else if (field.id === 'driver_name') {
+      setFormData({
+        ...formData,
+        driver: {},
+        driver_id: '',
+        driver_name: e.target.value,
       })
     } else setFormData({ ...formData, [e.target.id]: e.target.value })
   }
@@ -427,13 +510,16 @@ function EditRoute() {
             <button
               onClick={() => {
                 validateFormData()
-                  ? setConfirmedTime(true)
+                  ? timeConflictInfo.hasConflict
+                    ? setShowModal(true)
+                    : setConfirmedTime(true)
                   : setShowErrors(true)
               }}
             >
               {formData.stops.length ? 'confirm' : 'add pickups'}
             </button>
           )}
+          {showModal && <Warning />}
         </>
       )}
       {confirmedTimes && canRender ? (
@@ -483,7 +569,7 @@ function EditRoute() {
                         <Ellipsis />
                       </>
                     ) : (
-                      'complete'
+                      'create route'
                     )}
                   </button>
                 )}

@@ -82,7 +82,12 @@ export default function Analytics() {
             }
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
-            const r_starttime = r.time_start
+            const r_startday = r.time_start
+            const r_starttime_array = r_pickups.map(p => p.time_finished)
+            const r_starttime = r_starttime_array[0]
+              ? r_starttime_array[0].toDate()
+              : 'Not found'
+            console.log(r_starttime)
             const r_endtime_array = r_deliveries.map(de => de.time_finished)
             const r_endtime = r_endtime_array[r_endtime_array.length - 1]
               ? r_endtime_array[r_endtime_array.length - 1].toDate()
@@ -90,15 +95,17 @@ export default function Analytics() {
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
               .reduce((a, b) => a + b, 0)
-            // Todo: inspect time_finished and diplay correctly
             return (
               <tr key={r.id}>
                 <td id="driver">{r_driver.name}</td>
                 <td id="timeline">
-                  {moment(r_starttime).format('MM-DD-YYYY')} <br></br>
-                  {moment(r_starttime).format('h:mma')} {' - '}
+                  {moment(r_startday).format('MM-DD-YYYY')} <br></br>
+                  {r_starttime === 'Not found'
+                    ? r_starttime
+                    : moment(r_starttime).format('h:mma')}{' '}
+                  {' - '}
                   {r_endtime === 'Not found'
-                    ? 'Not found'
+                    ? r_endtime
                     : moment(r_endtime).format('h:mma')}{' '}
                 </td>
                 <td>
@@ -276,7 +283,7 @@ export default function Analytics() {
       </section>
 
       {tab !== 'OrgAnalytics' && (
-        <section id="FilterOptions">
+        <section id="Filters">
           <select
             value={filterType}
             onChange={e => setFilterType(e.target.value)}

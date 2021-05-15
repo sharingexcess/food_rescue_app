@@ -190,3 +190,29 @@ export const getExistingRouteData = async route_id => {
   }
   return routeData
 }
+
+export const getTimeConflictInfo = (
+  driver_id,
+  time_start,
+  time_end,
+  routes
+) => {
+  let checkInfo = { hasConflict: false, conflictRoutes: [] }
+  if (!driver_id) {
+    return checkInfo
+  } else {
+    const driverRoutes = routes.filter(
+      route =>
+        route.driver_id === driver_id &&
+        route.status !== 9 &&
+        ((moment(route.time_start) <= moment(time_start) &&
+          moment(time_start) < moment(route.time_end)) ||
+          (moment(route.time_start) >= moment(time_start) &&
+            moment(route.time_start) < moment(time_end)))
+    )
+    if (driverRoutes.length > 0) {
+      checkInfo = { hasConflict: true, conflictRoutes: [...driverRoutes] }
+    }
+    return checkInfo
+  }
+}

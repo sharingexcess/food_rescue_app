@@ -46,6 +46,10 @@ function Route() {
   const [confDriver, setConfDriver] = useState()
   const [otherDriver, setOtherDriver] = useState()
   const [willAssign, setWillAssign] = useState()
+  const canBeginRoute = admin
+    ? true
+    : moment(route?.time_start) <= moment() ||
+      moment(route?.time_start).subtract(2, 'hours') <= moment()
 
   useEffect(() => {
     if (drivers && route) {
@@ -133,6 +137,7 @@ function Route() {
         {admin ? null : route.status === 1 &&
           route.driver &&
           route.driver_id === user.uid &&
+          canBeginRoute &&
           !willAssign ? (
           <div className="driver-buttons">
             <button className="blue" onClick={handleBegin}>
@@ -255,7 +260,7 @@ function Route() {
       if (route.driver) {
         return (
           <div className={admin ? 'buttons' : ''}>
-            {!willAssign ? (
+            {!willAssign && canBeginRoute ? (
               <button className="blue" onClick={handleBegin}>
                 begin route
                 {admin && route.driver_id !== user.uid ? ' as admin' : ''}
