@@ -728,12 +728,28 @@ function Route() {
     ) : null
   }
 
+  const WarningText = ({ text }) => {
+    return (
+      <div className="warning-text">
+        <p>{text}</p>
+      </div>
+    )
+  }
+
   return (
     <main id="Route">
       {!route ? (
         <Loading />
       ) : (
         <>
+          {!allFoodDelivered(stops) && (
+            <WarningText text="There is leftover food, please add another delivery to finish the route" />
+          )}
+          {route.status === 3 &&
+            areAllStopsCompleted() &&
+            allFoodDelivered(stops) && (
+              <WarningText text={`Scroll down and click "finsih route"`} />
+            )}
           <Header text={generateStatusHeader()} />
           <Driver />
           {stops.length ? (
