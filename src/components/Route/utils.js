@@ -4,10 +4,15 @@ export function generateDirectionsLink(addressObj) {
 }
 
 export function allFoodDelivered(stops) {
-  // This function will only be called after all stops are finished
+  if (stops.length === 0) {
+    return false
+  }
   console.log('Stops data >>>', stops)
   let finalWeight = 0
   for (let stop of stops) {
+    if (!stop.report) {
+      return false
+    }
     stop.type === 'pickup'
       ? (finalWeight += stop.report.weight)
       : (finalWeight -= stop.report.weight)
