@@ -742,14 +742,13 @@ function Route() {
         <Loading />
       ) : (
         <>
-          {!allFoodDelivered(stops) && (
-            <WarningText text="There is leftover food, please add another delivery to finish the route" />
-          )}
           {route.status === 3 &&
             areAllStopsCompleted() &&
-            allFoodDelivered(stops) && (
+            (allFoodDelivered(stops) ? (
               <WarningText text={`Scroll down and click "finsih route"`} />
-            )}
+            ) : (
+              <WarningText text="There is leftover food, please add another delivery to finish the route" />
+            ))}
           <Header text={generateStatusHeader()} />
           <Driver />
           {stops.length ? (
