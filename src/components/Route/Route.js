@@ -745,7 +745,7 @@ function Route() {
           {route.status === 3 &&
             areAllStopsCompleted() &&
             (allFoodDelivered(stops) ? (
-              <WarningText text={`Scroll down and click "finsih route"`} />
+              <WarningText text={`Scroll down and click "finish route"`} />
             ) : (
               <WarningText text="There is leftover food, please add another delivery to finish the route" />
             ))}
