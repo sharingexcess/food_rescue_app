@@ -54,14 +54,17 @@ export default function PickupReport() {
   function increment(field) {
     setErrors([])
     setShowErrors(false)
-    setFormData({ ...formData, [field]: formData[field] + 1 })
+    setFormData({ ...formData, [field]: parseFloat(formData[field]) + 1 })
     setChanged(true)
   }
 
   function decrement(field) {
     setErrors([])
     setShowErrors(false)
-    setFormData({ ...formData, [field]: Math.max(0, formData[field] - 1) })
+    setFormData({
+      ...formData,
+      [field]: Math.max(0, parseFloat(formData[field]) - 1),
+    })
     setChanged(true)
   }
 
@@ -85,21 +88,19 @@ export default function PickupReport() {
     if (formData.weight <= 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
     }
-    if (
-      !validator.isInt(
-        formData.dairy ||
-          formData.bakery ||
-          formData.produce ||
-          formData['meat/Fish'] ||
-          formData['non-perishable'] ||
-          formData['prepared/Frozen'] ||
-          formData['mixed groceries'] ||
-          formData.other
-      )
-    ) {
-      errors.push('Invalid Input: Item Weight must be a whole number')
-      return false
+    for (let field in formData) {
+      if (
+        field != 'weight' &&
+        field != 'notes' &&
+        field != 'created_at' &&
+        field != 'updated_at' &&
+        !validator.isInt(formData[field].toString())
+      ) {
+        errors.push('Invalid Input: Item weight must be whole number')
+        break
+      }
     }
+
     if (errors.length === 0) {
       return true
     }
