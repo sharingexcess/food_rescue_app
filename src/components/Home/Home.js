@@ -48,6 +48,7 @@ export default function Home() {
         <Tile name="Manage Orgs" icon="fa-gear" link="/admin/organizations" />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
+        <Tile name="Test Environment" icon="fa-flask" link="/admin/testenv" />
       </>
     )
   }
