@@ -29,6 +29,7 @@ import CompletedRoute from './components/CompletedRoute/CompletedRoute'
 import Footer from './components/Footer/Footer'
 import Home from './components/Home/Home'
 import './styles/index.scss'
+import EditRoute from './components/EditRoute/EditRoute'
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -108,6 +109,9 @@ function App() {
                 </Route>
                 <Route exact path="/routes/:route_id/delivery/:delivery_id">
                   <DeliveryReport />
+                </Route>
+                <Route exact path="/routes/:route_id/edit">
+                  <EditRoute />
                 </Route>
                 <Route exact path="/routes/:route_id/completed">
                   <CompletedRoute />

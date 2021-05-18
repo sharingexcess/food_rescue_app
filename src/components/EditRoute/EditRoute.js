@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
 import { Input } from '../Input/Input'
 import Ellipsis from '../../helpers/components'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
@@ -11,7 +11,8 @@ import {
   getDefaultStartTime,
   getDefaultEndTime,
   getDefaultEndRecurring,
-  getTimeConflictInfo,
+  getExistingRouteData,
+  getTimeConflictInfo
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -34,6 +35,7 @@ import { OrganizationHours } from '../Organization/utils'
 function EditRoute() {
   const history = useHistory()
   const drivers = useUserData()
+  const { route_id } = useParams()
   const routes = useRouteData()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
@@ -51,13 +53,29 @@ function EditRoute() {
     driver_name: [],
     driver_id: [],
   })
-  const [list, setList] = useState('pickups')
+  const [list, setList] = useState(route_id ? null : 'pickups')
   const [working, setWorking] = useState()
-  const [confirmedTimes, setConfirmedTime] = useState()
+  const [confirmedTimes, setConfirmedTime] = useState(route_id ? true : null)
   const [errors, setErrors] = useState([])
   const [isRecurring, setRecurring] = useState(false)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
+  const [canRender, setCanRender] = useState(route_id ? false : true)
+  useEffect(async () => {
+    if (drivers && route_id) {
+      const existingRouteData = await getExistingRouteData(route_id)
+      console.log('Route data in EditRoute >>>', existingRouteData)
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        ...existingRouteData,
+      }))
+      setSuggestions(prevSuggestions => ({
+        ...prevSuggestions,
+        driver_name: null,
+      }))
+      setCanRender(true)
+    }
+  }, [route_id, drivers])
   const [timeConflictInfo, setTimeConflictInfo] = useState({
     hasConflict: false,
     conflictRoutes: [],
@@ -151,7 +169,8 @@ function EditRoute() {
   }
 
   async function handleCreateRouteButtonClick() {
-    const original_route_id = await generateRouteId(formData.time_start)
+    const original_route_id =
+      route_id || (await generateRouteId(formData.time_start))
     const FirstFormData = {
       ...formData,
       original_route_id: original_route_id,
@@ -201,9 +220,11 @@ function EditRoute() {
             org_id: stop.org_id,
             location_id: stop.location_id,
             driver_id: formData.driver_id,
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            created_at:
+              stop.created_at ||
+              firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
+            status: stop.status || 1,
             route_id,
           })
         } else if (stop.type === 'delivery') {
@@ -216,9 +237,11 @@ function EditRoute() {
               : '',
             location_id: stop.location_id,
             driver_id: formData.driver_id,
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            created_at:
+              stop.created_at ||
+              firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
+            status: stop.status || 1,
             pickup_ids,
             route_id,
           })
@@ -240,9 +263,11 @@ function EditRoute() {
           time_start: formData.time_start,
           time_end: formData.time_end,
           stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          created_at:
+            formData.created_at ||
+            firebase.firestore.FieldValue.serverTimestamp(),
           updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          status: 1,
+          status: formData.status || 1,
         })
         .then(() => history.push(`/routes/${route_id}`))
       setWorking(false)
@@ -354,7 +379,9 @@ function EditRoute() {
     return (
       <div className={`Stop ${s.type}`}>
         <div>
-          <i className="fa fa-times" onClick={() => handleRemoveStop(s.id)} />
+          {s.can_delete !== false && (
+            <i className="fa fa-times" onClick={() => handleRemoveStop(s.id)} />
+          )}
           <h4>
             <i
               className={
@@ -369,7 +396,7 @@ function EditRoute() {
               ? `(${s.location.name})`
               : ''}
           </h2>
-          <p class="philabundance">
+          <p className="philabundance">
             {s.location.is_philabundance_partner ? 'Philabundance Partner' : ''}
           </p>
           <p>
@@ -416,7 +443,7 @@ function EditRoute() {
   return (
     <main id="EditRoute">
       <Header text="New Route" />
-      {confirmedTimes ? (
+      {confirmedTimes && canRender ? (
         <div id="Driver">
           <img
             src={formData.driver ? formData.driver.icon : UserIcon}
@@ -439,24 +466,28 @@ function EditRoute() {
           <button onClick={() => setConfirmedTime(false)}>
             Update Route Info
           </button>
-          <Link to="/admin/create-organization">
-            <button className="create">Create an Organization</button>
-          </Link>
+          {!route_id && (
+            <Link to="/admin/create-organization">
+              <button className="create">Create an Organization</button>
+            </Link>
+          )}
         </div>
       ) : (
         <>
-          <div id="Recurring">
-            <input
-              type="checkbox"
-              id="is_recurring"
-              name="is_recurring"
-              checked={isRecurring}
-              onChange={() => setRecurring(!isRecurring)}
-            />
-            <p className="text"> Recurring Route</p>
-          </div>
+          {!route_id && (
+            <div id="Recurring">
+              <input
+                type="checkbox"
+                id="is_recurring"
+                name="is_recurring"
+                checked={isRecurring}
+                onChange={() => setRecurring(!isRecurring)}
+              />
+              <p className="text"> Recurring Route</p>
+            </div>
+          )}
           {selectedFormFields.map(field =>
-            !field.preReq || formData[field.preReq] ? (
+            (!field.preReq || formData[field.preReq]) && canRender ? (
               <Input
                 key={field.id}
                 element_id={field.id}
@@ -475,7 +506,7 @@ function EditRoute() {
             ) : null
           )}
           <FormError />
-          {formData.time_end && (
+          {formData.time_end && canRender && (
             <button
               onClick={() => {
                 validateFormData()
@@ -491,7 +522,7 @@ function EditRoute() {
           {showModal && <Warning />}
         </>
       )}
-      {confirmedTimes ? (
+      {confirmedTimes && canRender ? (
         <>
           {formData.stops.map(s => (
             <Stop s={s} key={s.id} />
@@ -547,6 +578,14 @@ function EditRoute() {
           </div>
         </>
       ) : null}
+
+      {!canRender && (
+        <div className="loading">
+          <h2>
+            Loading <Ellipsis />
+          </h2>
+        </div>
+      )}
     </main>
   )
 }

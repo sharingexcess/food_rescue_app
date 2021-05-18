@@ -134,6 +134,63 @@ export const formFieldsRecurring = [
   },
 ]
 
+export const getExistingRouteData = async route_id => {
+  const routes = await getCollection('Routes')
+    .get()
+    .then(result => result.docs.map(doc => doc.data()))
+  const myRoute = routes.find(route => route.id === route_id)
+  const driver = await getCollection('Users')
+    .doc(myRoute.driver_id)
+    .get()
+    .then(result => result.data())
+  const deliveries = await getCollection('Deliveries')
+    .get()
+    .then(result => result.docs.map(doc => doc.data()))
+  const pickups = await getCollection('Pickups')
+    .get()
+    .then(result => result.docs.map(doc => doc.data()))
+  const locations = await getCollection('Locations')
+    .get()
+    .then(result => result.docs.map(doc => doc.data()))
+  const organizations = await getCollection('Organizations')
+    .get()
+    .then(result => result.docs.map(doc => doc.data()))
+
+  const newStops = myRoute.stops.map(route_stop => {
+    const stopCategory = route_stop.type === 'pickup' ? pickups : deliveries
+    const stopData = stopCategory.find(stop => stop.id === route_stop.id)
+    // We can get location_id and org_id from this stopData
+    const organizationData = organizations.find(
+      org => org.id === stopData.org_id
+    )
+    const locationData = locations.find(loc => loc.id === stopData.location_id)
+
+    return {
+      ...route_stop,
+      location: locationData,
+      location_id: stopData.location_id,
+      org: organizationData,
+      org_id: stopData.org_id,
+      org_name: organizationData.name,
+      can_delete: stopData.status !== 9,
+      status: stopData.status,
+    }
+  })
+
+  const routeData = {
+    driver: driver,
+    driver_id: myRoute.driver_id,
+    driver_name: driver.name,
+    time_start: myRoute.time_start,
+    time_end: myRoute.time_end,
+    end_recurring: getDefaultEndRecurring(),
+    stops: newStops,
+    created_at: myRoute.created_at,
+    status: myRoute.status,
+  }
+  return routeData
+}
+
 export const getTimeConflictInfo = (
   driver_id,
   time_start,
