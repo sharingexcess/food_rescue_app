@@ -6,8 +6,8 @@ export default function TestEnv() {
     <main id="TestEnv">
       <h1>Testing Environment</h1>
       <p>
-        You can create and walkthrough mock routes, modify organizations and
-        users on test environment
+        Users can create and walk through mock routes, modify organizations and
+        users, or access Driver view in Test Environment
       </p>
       <a
         target="_blank"
