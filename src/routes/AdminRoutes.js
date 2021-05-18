@@ -10,6 +10,7 @@ import Users from '../components/Users/Users'
 import User from '../components/User/User'
 import Organization from '../components/Organization/Organization'
 import Analytics from '../components/Analytics/Analytics'
+import TestEnv from '../components/TestEnv/TestEnv'
 
 export default function AdminRoutes() {
   // the AuthContext contains a value 'admin' which tells us if the current authenticated user is an admin or not
@@ -61,6 +62,9 @@ export default function AdminRoutes() {
       </AdminRoute>
       <AdminRoute exact path="/admin/analytics">
         <Analytics />
+      </AdminRoute>
+      <AdminRoute exact path="/admin/testenv">
+        <TestEnv />
       </AdminRoute>
       <Route>
         {/* This route has no path, and therefore will be the 'catch all' */}
