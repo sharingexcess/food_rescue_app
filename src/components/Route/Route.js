@@ -11,7 +11,7 @@ import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink } from '../../helpers/components'
-import { generateDirectionsLink } from './utils'
+import { generateDirectionsLink, allFoodDelivered } from './utils'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -346,11 +346,11 @@ function Route() {
             <button onClick={handleComplete}>complete route</button>
           </section>
         </>
-      ) : (
+      ) : allFoodDelivered(stops) ? (
         <button className="blue" onClick={() => setWillComplete(true)}>
           finish route
         </button>
-      )
+      ) : null
     } else return null
   }
 
@@ -728,12 +728,27 @@ function Route() {
     ) : null
   }
 
+  const WarningText = ({ text }) => {
+    return (
+      <div className="warning-text">
+        <p>{text}</p>
+      </div>
+    )
+  }
+
   return (
     <main id="Route">
       {!route ? (
         <Loading />
       ) : (
         <>
+          {route.status === 3 &&
+            areAllStopsCompleted() &&
+            (allFoodDelivered(stops) ? (
+              <WarningText text={`Scroll down and click "finish route"`} />
+            ) : (
+              <WarningText text="There is leftover food, please add another delivery to finish the route" />
+            ))}
           <Header text={generateStatusHeader()} />
           <Driver />
           {stops.length ? (
