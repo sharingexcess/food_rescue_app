@@ -88,12 +88,12 @@ export default function PickupReport() {
     if (formData.weight <= 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
     }
-    for (let field in formData) {
+    for (const field in formData) {
       if (
-        field != 'weight' &&
-        field != 'notes' &&
-        field != 'created_at' &&
-        field != 'updated_at' &&
+        field !== 'weight' &&
+        field !== 'notes' &&
+        field !== 'created_at' &&
+        field !== 'updated_at' &&
         !validator.isInt(formData[field].toString())
       ) {
         errors.push('Invalid Input: Item weight must be whole number')

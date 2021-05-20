@@ -42,6 +42,21 @@ export function OrganizationPhone({ org }) {
     )
 }
 
+export function LocationPhone({ loc }) {
+  if (loc.contact_phone) {
+    return (
+      <p className="org_hours">
+        Contact Phone: {formatPhoneNumberIntl(loc.contact_phone)}
+      </p>
+    )
+  } else
+    return (
+      <p>
+        <i className="fa fa-phone" /> no contact phone
+      </p>
+    )
+}
+
 export function OrganizationEmail({ org }) {
   if (org.default_contact_email) {
     return (

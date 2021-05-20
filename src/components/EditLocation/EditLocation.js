@@ -13,6 +13,8 @@ import Header from '../Header/Header'
 import './EditLocation.scss'
 import validator from 'validator'
 import DeleteLocationModal from '../DeleteLocationModal/DeleteLocationModal'
+import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 export default function EditLocation() {
   const { id, loc_id } = useParams()
@@ -61,6 +63,14 @@ export default function EditLocation() {
     setShowErrors(false)
   }
 
+  function handlePhoneInputChange(changeValue) {
+    setFormData(prevData => {
+      return { ...prevData, contact_phone: changeValue }
+    })
+    setErrors([])
+    setShowErrors(false)
+  }
+
   function validateFormData() {
     const updatedErrors = [...errors]
     if (formData.name === '') {
@@ -69,12 +79,11 @@ export default function EditLocation() {
     if (formData.address1 === '') {
       updatedErrors.push('Missing Address')
     }
-    // OPTIONAL FIELDS: check if they're empty, if not, they'll be validated
     if (
-      formData.contact_phone !== '' &&
-      !validator.isMobilePhone(formData.contact_phone)
+      !formData.contact_phone ||
+      !isPossiblePhoneNumber(formData.contact_phone)
     ) {
-      updatedErrors.push('Invalid Contact phone')
+      updatedErrors.push('Invalid Data Input: Contact Phone Number is invalid')
     }
     setErrors(updatedErrors)
     return updatedErrors.length === 0
@@ -224,12 +233,18 @@ export default function EditLocation() {
             value={formData.contact_name}
             onChange={handleChange}
           />
-          <Input
+          {/* <Input
             type="tel"
             label="Contact Phone"
             element_id="contact_phone"
             value={formData.contact_phone}
             onChange={handleChange}
+          /> */}
+          <PhoneInput
+            placeholder="Contact Phone"
+            value={formData.contact_phone}
+            onChange={handlePhoneInputChange}
+            defaultCountry="US"
           />
           <Input
             type="tel"

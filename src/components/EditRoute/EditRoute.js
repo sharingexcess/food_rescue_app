@@ -12,7 +12,7 @@ import {
   getDefaultEndTime,
   getDefaultEndRecurring,
   getExistingRouteData,
-  getTimeConflictInfo
+  getTimeConflictInfo,
 } from './utils'
 import UserIcon from '../../assets/user.svg'
 import {

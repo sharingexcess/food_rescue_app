@@ -9,7 +9,7 @@ export function allFoodDelivered(stops) {
   }
   console.log('Stops data >>>', stops)
   let finalWeight = 0
-  for (let stop of stops) {
+  for (const stop of stops) {
     if (!stop.report) {
       return false
     }
