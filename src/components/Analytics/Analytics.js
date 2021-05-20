@@ -3,6 +3,7 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import useUserData from '../../hooks/useUserData'
 import usePickupData from '../../hooks/usePickupData'
+import { getDefaultRangeStart, getDefaultRangeEnd } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
 import { Input } from '../Input/Input'
@@ -11,8 +12,8 @@ import moment from 'moment'
 
 export default function Analytics() {
   const [tab, setTab] = useState('RouteAnalytics')
-  const [rangeStart, setRangeStart] = useState('')
-  const [rangeEnd, setRangeEnd] = useState('')
+  const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
+  const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [driverNameFilter, setDriverNameFilter] = useState('')
   const drivers = useUserData(
     driverNameFilter !== ''
