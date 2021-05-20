@@ -87,7 +87,6 @@ export default function Analytics() {
             const r_starttime = r_starttime_array[0]
               ? r_starttime_array[0].toDate()
               : 'Not found'
-            console.log(r_starttime)
             const r_endtime_array = r_deliveries.map(de => de.time_finished)
             const r_endtime = r_endtime_array[r_endtime_array.length - 1]
               ? r_endtime_array[r_endtime_array.length - 1].toDate()
@@ -116,18 +115,20 @@ export default function Analytics() {
                         {p.location_id
                           .split('_')
                           .map(p_name => capitalize(p_name) + ' ')}
+                        ({p.report.weight} lbs)
                       </li>
                     ))}
                   </ul>
                 </td>
                 <td>
                   <ul>
-                    {r_deliveries.map(p => (
+                    {r_deliveries.map(de => (
                       <li>
                         {' - '}
-                        {p.location_id
+                        {de.location_id
                           .split('_')
-                          .map(p_name => capitalize(p_name) + ' ')}
+                          .map(de_name => capitalize(de_name) + ' ')}
+                        ({de.report.weight} lbs)
                       </li>
                     ))}
                   </ul>
