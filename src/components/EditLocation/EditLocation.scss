@@ -60,4 +60,43 @@
       background-color: var(--red);
     }
   }
+  .PhoneInput {
+    width: 100%;
+    margin: 24px 0;
+    height: 50px;
+    border-radius: 0;
+    border: 0;
+    border: 1px solid var(--secondary);
+    background: var(--foreground);
+    border-radius: 8px;
+    font-size: 24px;
+    padding: 0px 8px;
+    * {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    &:hover {
+      border: 3px solid var(--primary);
+    }
+
+    input {
+      background: none;
+      height: 100%;
+      position: relative;
+      border: 0;
+      padding: 20px 8px 16px 8px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      width: 100%;
+      z-index: 1;
+      transition: border 0.1s ease;
+      -webkit-appearance: none;
+
+      &::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+    }
+  }
 }
