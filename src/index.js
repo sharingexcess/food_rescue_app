@@ -30,6 +30,7 @@ import Footer from './components/Footer/Footer'
 import Home from './components/Home/Home'
 import './styles/index.scss'
 import EditRoute from './components/EditRoute/EditRoute'
+import Requirements from './components/Requirements/Requirements'
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -74,76 +75,78 @@ function App() {
         <BrowserRouter>
           <Auth>
             <Firestore>
-              <Menu />
-              <Footer />
-              {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
-              {/* Auth component handles login and will show a login page if no user is authenticated */}
-              {/* Switch will only allows the first matching route to be rendered */}
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <Route exact path="/calendar">
-                  <Calendar />
-                </Route>
-                <Route exact path="/routes">
-                  <Routes initial_filter={r => [1, 3].includes(r.status)} />
-                </Route>
-                <Route exact path="/history">
-                  <Routes initial_filter={r => [0, 9].includes(r.status)} />
-                </Route>
-                <Route exact path="/history/:route_id">
-                  <DriverRoute />
-                </Route>
-                <Route exact path="/history/:route_id/pickup/:pickup_id">
-                  <PickupReport />
-                </Route>
-                <Route exact path="/history/:route_id/delivery/:delivery_id">
-                  <DeliveryReport />
-                </Route>
-                <Route exact path="/routes/:route_id">
-                  <DriverRoute />
-                </Route>
-                <Route exact path="/routes/:route_id/pickup/:pickup_id">
-                  <PickupReport />
-                </Route>
-                <Route exact path="/routes/:route_id/delivery/:delivery_id">
-                  <DeliveryReport />
-                </Route>
-                <Route exact path="/routes/:route_id/edit">
-                  <EditRoute />
-                </Route>
-                <Route exact path="/routes/:route_id/completed">
-                  <CompletedRoute />
-                </Route>
-                <Route exact path="/profile">
-                  <Profile />
-                </Route>
-                {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
-                <Route path="/admin">
-                  <AdminRoutes />
-                </Route>
-                <Route exact path="/privacy">
-                  <Privacy />
-                </Route>
-                <Route exact path="/tos">
-                  <Terms />
-                </Route>
-                <Route exact path="/contact">
-                  <ContactUs />
-                </Route>
-                <Route exact path="/foodsafety">
-                  <FoodSafety />
-                </Route>
-                <Route exact path="/liability">
-                  <Liability />
-                </Route>
-                <Route>
-                  {/* This route has no path, and therefore will be the 'catch all' */}
-                  <Error />
-                  {/* this 404 page component will render if the url does not match any other routes */}
-                </Route>
-              </Switch>
+              <Requirements>
+                <Menu />
+                <Footer />
+                {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+                {/* Auth component handles login and will show a login page if no user is authenticated */}
+                {/* Switch will only allows the first matching route to be rendered */}
+                <Switch>
+                  <Route exact path="/">
+                    <Home />
+                  </Route>
+                  <Route exact path="/calendar">
+                    <Calendar />
+                  </Route>
+                  <Route exact path="/routes">
+                    <Routes initial_filter={r => [1, 3].includes(r.status)} />
+                  </Route>
+                  <Route exact path="/history">
+                    <Routes initial_filter={r => [0, 9].includes(r.status)} />
+                  </Route>
+                  <Route exact path="/history/:route_id">
+                    <DriverRoute />
+                  </Route>
+                  <Route exact path="/history/:route_id/pickup/:pickup_id">
+                    <PickupReport />
+                  </Route>
+                  <Route exact path="/history/:route_id/delivery/:delivery_id">
+                    <DeliveryReport />
+                  </Route>
+                  <Route exact path="/routes/:route_id">
+                    <DriverRoute />
+                  </Route>
+                  <Route exact path="/routes/:route_id/pickup/:pickup_id">
+                    <PickupReport />
+                  </Route>
+                  <Route exact path="/routes/:route_id/delivery/:delivery_id">
+                    <DeliveryReport />
+                  </Route>
+                  <Route exact path="/routes/:route_id/edit">
+                    <EditRoute />
+                  </Route>
+                  <Route exact path="/routes/:route_id/completed">
+                    <CompletedRoute />
+                  </Route>
+                  <Route exact path="/profile">
+                    <Profile />
+                  </Route>
+                  {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
+                  <Route path="/admin">
+                    <AdminRoutes />
+                  </Route>
+                  <Route exact path="/privacy">
+                    <Privacy />
+                  </Route>
+                  <Route exact path="/tos">
+                    <Terms />
+                  </Route>
+                  <Route exact path="/contact">
+                    <ContactUs />
+                  </Route>
+                  <Route exact path="/foodsafety">
+                    <FoodSafety />
+                  </Route>
+                  <Route exact path="/liability">
+                    <Liability />
+                  </Route>
+                  <Route>
+                    {/* This route has no path, and therefore will be the 'catch all' */}
+                    <Error />
+                    {/* this 404 page component will render if the url does not match any other routes */}
+                  </Route>
+                </Switch>
+              </Requirements>
             </Firestore>
           </Auth>
         </BrowserRouter>
