@@ -11,7 +11,7 @@ import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 
-export default function Profile() {
+export default function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuthContext()
   const profile = useUserData(user.uid)
   const [formData, setFormData] = useState({
@@ -73,6 +73,7 @@ export default function Profile() {
           setButton('profile updated!')
           setTimeout(() => setButton(), 2000)
           setError()
+          handleUpdateClick()
         })
         .catch(e => console.error('Error updating profile: ', e))
     } else {
@@ -80,11 +81,20 @@ export default function Profile() {
     }
   }
 
+  const WarningText = ({ text }) => {
+    return (
+      <div className="warning-text">
+        <p>{text}</p>
+      </div>
+    )
+  }
+
   return !profile ? (
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
       <Header text="Profile" />
+      {inForm && <WarningText text="Please update your phone number" />}
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>
       <button>
