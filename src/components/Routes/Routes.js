@@ -33,11 +33,11 @@ export default function Routes({ initial_filter }) {
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
 
-  function getDeliveryWeight(routeId) {
-    const myDelivery = deliveries.find(
-      deliveryRoute => deliveryRoute.route_id === routeId
+  function getPickUpWeight(routeId) {
+    const myPickup = pickups.find(
+      pickupRoute => pickupRoute.route_id === routeId
     )
-    return myDelivery ? myDelivery.report?.weight : 0
+    return myPickup ? myPickup.report?.weight : 0
   }
 
   useEffect(() => {
@@ -220,7 +220,7 @@ export default function Routes({ initial_filter }) {
                 <h2>
                   {r.driver.name || 'Unassigned Route'}
                   {r.status === 9 && (
-                    <span> - {getDeliveryWeight(r.id)} lbs.</span>
+                    <span> - {getPickUpWeight(r.id)} lbs.</span>
                   )}
                 </h2>
                 <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>

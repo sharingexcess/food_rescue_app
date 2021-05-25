@@ -61,10 +61,10 @@ function EditRoute() {
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
   const [canRender, setCanRender] = useState(route_id ? false : true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     if (drivers && route_id) {
       const existingRouteData = await getExistingRouteData(route_id)
-      console.log('Route data in EditRoute >>>', existingRouteData)
       setFormData(prevFormData => ({
         ...prevFormData,
         ...existingRouteData,
