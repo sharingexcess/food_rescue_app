@@ -79,4 +79,15 @@
       }
     }
   }
+  .warning-text {
+    border-radius: 10px;
+    background-color: var(--yellow);
+    text-align: center;
+    color: var(--black);
+    padding: 12px;
+    margin: 10px 0;
+    p {
+      font-size: 20px !important;
+    }
+  }
 }
