@@ -11,7 +11,12 @@ import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink } from '../../helpers/components'
-import { generateDirectionsLink, allFoodDelivered } from './utils'
+import {
+  generateDirectionsLink,
+  allFoodDelivered,
+  WarningText,
+  ConfirmationModal,
+} from './utils'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -27,7 +32,7 @@ import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
 
-function Route() {
+export function Route() {
   const history = useHistory()
   const { route_id } = useParams()
   const { user, admin } = useAuthContext()
@@ -267,12 +272,20 @@ function Route() {
             ) : null}
             {admin ? (
               willAssign ? (
-                <Input
-                  type="select"
-                  label="Select Driver"
-                  suggestions={drivers.map(d => `${d.name} (${d.email})`)}
-                  onSuggestionClick={checkDriver}
-                />
+                <>
+                  <Input
+                    type="select"
+                    label="Select Driver"
+                    suggestions={drivers.map(d => `${d.name} (${d.email})`)}
+                    onSuggestionClick={checkDriver}
+                  />
+                  <button
+                    className="red"
+                    onClick={() => setWillAssign(!willAssign)}
+                  >
+                    cancel re-assign route
+                  </button>
+                </>
               ) : (
                 <button className="blue" onClick={() => setWillAssign(true)}>
                   re-assign route
@@ -632,30 +645,6 @@ function Route() {
     return null
   }
 
-  function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
-    return openModal ? (
-      <div id="confirmation modal" class="modal">
-        <div className="modal-content">
-          <span className="close" onClick={onClose}>
-            &times;
-          </span>
-          <span>{text}</span>
-          <button className="confirm driver" onClick={onConfirm}>
-            confirm
-          </button>
-        </div>
-      </div>
-    ) : null
-  }
-
-  const WarningText = ({ text }) => {
-    return (
-      <div className="warning-text">
-        <p>{text}</p>
-      </div>
-    )
-  }
-
   return (
     <main id="Route">
       {!route ? (
@@ -669,7 +658,7 @@ function Route() {
             ) : (
               <WarningText text="There is leftover food, please add another delivery to finish the route" />
             ))}
-          <Header text={generateStatusHeader()} />
+          <Header text={generateStatusHeader(route)} />
           <Driver />
           {stops.length ? (
             <>
@@ -831,7 +820,7 @@ function Route() {
                 )}
               <StatusButton />
               <CancelButton />
-              {admin && <DeleteButton />}
+              <DeleteButton />
               <ConfirmationModal
                 openModal={confDriver}
                 text={
@@ -852,5 +841,3 @@ function Route() {
     </main>
   )
 }
-
-export { Route }
