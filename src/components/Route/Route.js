@@ -11,7 +11,12 @@ import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink } from '../../helpers/components'
-import { generateDirectionsLink, allFoodDelivered } from './utils'
+import {
+  generateDirectionsLink,
+  allFoodDelivered,
+  WarningText,
+  ConfirmationModal,
+} from './utils'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -27,7 +32,7 @@ import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
 import Header from '../Header/Header'
 
-function Route() {
+export function Route() {
   const history = useHistory()
   const { route_id } = useParams()
   const { user, admin } = useAuthContext()
@@ -42,7 +47,6 @@ function Route() {
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
   const [willDelete, setWillDelete] = useState()
-  const [changeRecipient, setChangeRecipient] = useState()
   const [confDriver, setConfDriver] = useState()
   const [otherDriver, setOtherDriver] = useState()
   const [willAssign, setWillAssign] = useState()
@@ -268,14 +272,22 @@ function Route() {
             ) : null}
             {admin ? (
               willAssign ? (
-                <Input
-                  type="select"
-                  label="Select Driver"
-                  suggestions={drivers.map(d => `${d.name} (${d.email})`)}
-                  onSuggestionClick={checkDriver}
-                />
+                <>
+                  <Input
+                    type="select"
+                    label="Select Driver"
+                    suggestions={drivers.map(d => `${d.name} (${d.email})`)}
+                    onSuggestionClick={checkDriver}
+                  />
+                  <button
+                    className="red"
+                    onClick={() => setWillAssign(!willAssign)}
+                  >
+                    cancel re-assign route
+                  </button>
+                </>
               ) : (
-                <button className="green" onClick={() => setWillAssign(true)}>
+                <button className="blue" onClick={() => setWillAssign(true)}>
                   re-assign route
                 </button>
               )
@@ -352,85 +364,6 @@ function Route() {
         </button>
       ) : null
     } else return null
-  }
-
-  function ChangeRecipientButton() {
-    const [newRecipient, setNewRecipient] = useState()
-    const [openModal, setOpenModal] = useState()
-    /* const [notify, setNotify] = useState() */
-    const [selectedRecipient, setSelectedRecipient] = useState()
-    const handleSelect = e => {
-      setSelectedRecipient(e.target.value)
-    }
-    const replaceRecipient = stop_id => {
-      const index = stops.findIndex(stop => stop.org.name === selectedRecipient)
-      const new_stops = [...route.stops]
-      new_stops[index] = { type: 'delivery', id: stop_id }
-      return new_stops
-    }
-    const confirmChangeRecipient = recipient => {
-      setNewRecipient(recipient)
-      setOpenModal(true)
-    }
-
-    async function handleChangeRecipient(stop) {
-      const stop_id = generateStopId(stop)
-      const lastStop = stops[stops.length - 1]
-      await setFirestoreData(['Deliveries', stop_id], {
-        id: stop_id,
-        org_id: stop.org_id,
-        location_id: stop.location_id,
-        driver_id: route.driver_id,
-        created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-        status: 1,
-        pickup_ids: lastStop.pickup_ids,
-        route_id,
-      })
-      await setFirestoreData(['Routes', route.id], {
-        stops: replaceRecipient(stop_id),
-      })
-      setChangeRecipient(false)
-      /* setNotify(true) */
-    }
-
-    return changeRecipient ? (
-      <>
-        <Input
-          type="select"
-          label="Which Recipient you want to change?"
-          suggestions={stops
-            .filter(s => s.type === 'delivery' && s.status !== 9)
-            .map(s => s.org.name)}
-          onSuggestionClick={handleSelect}
-        />
-        <EditDelivery handleSubmit={confirmChangeRecipient} />
-        <ConfirmationModal
-          openModal={openModal}
-          text={'Are you sure you want to change the Recipient?'}
-          onConfirm={() => handleChangeRecipient(newRecipient)}
-          onClose={() => setChangeRecipient(false)}
-        />
-        {/* {route.driver_id !== user.uid ? (
-          <ConfirmationModal
-            openModal={notify}
-            text={'Hey friend, your Route detail has been check. Check it out!'}
-            onConfirm={() => setNotify(false)}
-            onClose={() => setNotify(false)}
-          />
-        ) : null} */}
-
-        <section className="buttons">
-          <button className="yellow" onClick={() => setChangeRecipient(false)}>
-            back
-          </button>
-        </section>
-      </>
-    ) : (
-      <button className="green" onClick={() => setChangeRecipient(true)}>
-        change Recipient
-      </button>
-    )
   }
 
   function CancelButton() {
@@ -712,30 +645,6 @@ function Route() {
     return null
   }
 
-  function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
-    return openModal ? (
-      <div id="confirmation modal" class="modal">
-        <div className="modal-content">
-          <span className="close" onClick={onClose}>
-            &times;
-          </span>
-          <span>{text}</span>
-          <button className="confirm driver" onClick={onConfirm}>
-            confirm
-          </button>
-        </div>
-      </div>
-    ) : null
-  }
-
-  const WarningText = ({ text }) => {
-    return (
-      <div className="warning-text">
-        <p>{text}</p>
-      </div>
-    )
-  }
-
   return (
     <main id="Route">
       {!route ? (
@@ -749,7 +658,7 @@ function Route() {
             ) : (
               <WarningText text="There is leftover food, please add another delivery to finish the route" />
             ))}
-          <Header text={generateStatusHeader()} />
+          <Header text={generateStatusHeader(route)} />
           <Driver />
           {stops.length ? (
             <>
@@ -911,7 +820,7 @@ function Route() {
                 )}
               <StatusButton />
               <CancelButton />
-              {admin && <DeleteButton />}
+              <DeleteButton />
               <ConfirmationModal
                 openModal={confDriver}
                 text={
@@ -932,5 +841,3 @@ function Route() {
     </main>
   )
 }
-
-export { Route }

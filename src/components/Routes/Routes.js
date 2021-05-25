@@ -122,7 +122,6 @@ export default function Routes({ initial_filter }) {
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
   }
-
   function StatusIndicator({ route }) {
     if (route.status === 9) {
       return <i id="StatusIndicator" className="fa fa-check" />
@@ -132,7 +131,6 @@ export default function Routes({ initial_filter }) {
       return <i id="StatusIndicator" className="fa fa-clock-o" />
     } else return null
   }
-
   return (
     <main id="Routes">
       <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
