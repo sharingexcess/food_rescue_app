@@ -56,11 +56,13 @@
 
   .login {
     pointer-events: all;
-    transform: translateX(-12px);
+    transform: translateX(-15px);
     button {
-      color: var(--blue);
-      font-size: 18px;
+      font-size: 20px;
       padding: 8px 12px;
+      color: #fff;
+      font-weight: 600;
+      margin: 8px 0;
     }
   }
 
