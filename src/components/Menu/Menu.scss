@@ -1,7 +1,7 @@
 #Menu {
   position: fixed;
   top: 0;
-  right: -204px;
+  right: -180px;
   width: 284px;
   height: 100vh;
   padding: 16px;
@@ -56,13 +56,12 @@
 
   .login {
     pointer-events: all;
-    transform: translateX(-15px);
+    transform: translateX(-8px);
     button {
       font-size: 20px;
       padding: 8px 12px;
       color: #fff;
       font-weight: 600;
-      margin: 8px 0;
     }
   }
 
