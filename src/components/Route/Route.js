@@ -39,6 +39,10 @@ export function Route() {
   const route = useRouteData(route_id)
   const drivers = useUserData()
   const pickups = usePickupData()
+  const starttime_array = pickups.map(p => p.time_finished)
+  const starttime = starttime_array[0]
+    ? starttime_array[0].toDate()
+    : 'Not found'
   const deliveries = useDeliveryData()
   const organizations = useOrganizationData()
   const locations = useLocationData()
@@ -133,8 +137,10 @@ export function Route() {
           </h3>
           <h4>{moment(route.time_start).format('dddd, MMMM D')}</h4>
           <h5>
-            {moment(route.time_start).format('h:mma')} -{' '}
-            {moment(route.time_end).format('h:mma')}
+            {starttime === 'Not found'
+              ? starttime
+              : moment(starttime).format('h:mma')}{' '}
+            - {moment(route.time_end).format('h:mma')}
           </h5>
           {route.notes ? <p>Notes: {route.notes}</p> : null}
         </div>
