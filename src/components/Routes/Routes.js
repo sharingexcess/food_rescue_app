@@ -195,63 +195,87 @@ export default function Routes({ initial_filter }) {
           ) : null}
         </div>
       ) : (
-        filterAndSortRoutes(routes).map(r => (
-          <Link
-            target="_blank"
-            to={
-              location.pathname === '/routes'
-                ? `/routes/${r.id}`
-                : `/history/${r.id}`
-            }
-            key={r.id}
-          >
-            <div
-              className={`Route${
-                [0, 9].includes(r.status) && location.pathname === '/routes'
-                  ? ' complete'
-                  : ''
-              }`}
+        filterAndSortRoutes(routes).map(r => {
+          const r_pickups = pickups.filter(p => p.route_id === r.id)
+          const r_deliveries = deliveries.filter(de => de.route_id === r.id)
+          const r_starttime_array = r_pickups.map(p => p.time_finished)
+          const r_starttime = r_starttime_array[0]
+            ? r_starttime_array[0].toDate()
+            : 'Not found'
+          const r_endtime_array = r_deliveries.map(de => de.time_finished)
+          const r_endtime = r_endtime_array[r_endtime_array.length - 1]
+            ? r_endtime_array[r_endtime_array.length - 1].toDate()
+            : 'Not found'
+          return (
+            <Link
+              target="_blank"
+              to={
+                location.pathname === '/routes'
+                  ? `/routes/${r.id}`
+                  : `/history/${r.id}`
+              }
+              key={r.id}
             >
-              {r.driver && (
-                <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
-              )}
-              <div>
-                <StatusIndicator route={r} />
-                <h2>
-                  {r.driver.name || 'Unassigned Route'}
-                  {r.status === 9 && (
-                    <span> - {getPickUpWeight(r.id)} lbs.</span>
+              <div
+                className={`Route${
+                  [0, 9].includes(r.status) && location.pathname === '/routes'
+                    ? ' complete'
+                    : ''
+                }`}
+              >
+                {r.driver && (
+                  <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
+                )}
+                <div>
+                  <StatusIndicator route={r} />
+                  <h2>
+                    {r.driver.name || 'Unassigned Route'}
+                    {r.status === 9 && (
+                      <span> - {getPickUpWeight(r.id)} lbs.</span>
+                    )}
+                  </h2>
+                  <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
+                  {location.pathname === '/routes' ? (
+                    <h5>
+                      {moment(r.time_start).format('h:mma')} -
+                      {moment(r.time_end).format('h:mma')}{' '}
+                    </h5>
+                  ) : (
+                    <h5>
+                      {r_starttime === 'Not found'
+                        ? r_starttime
+                        : moment(r_starttime).format('h:mma')}{' '}
+                      {' - '}
+                      {r_endtime === 'Not found'
+                        ? r_endtime
+                        : moment(r_endtime).format('h:mma')}{' '}
+                    </h5>
                   )}
-                </h2>
-                <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
-                <h5>
-                  {moment(r.time_start).format('h:mma')} -{' '}
-                  {moment(r.time_end).format('h:mma')}{' '}
-                </h5>
-                <p className="pickups">
-                  <i className="fa fa-arrow-up" />
-                  {r.stops
-                    .filter(s => s.type === 'pickup')
-                    .map(s => s.org.name)
-                    .join(', ')}
-                </p>
-                <p className="deliveries">
-                  <i className="fa fa-arrow-down" />
-                  {r.stops
-                    .filter(s => s.type === 'delivery')
-                    .map(s => s.org.name)
-                    .join(', ')}
-                </p>
-                {r.notes ? (
-                  <h6>
-                    <span>Notes: </span>
-                    {r.notes}
-                  </h6>
-                ) : null}
+                  <p className="pickups">
+                    <i className="fa fa-arrow-up" />
+                    {r.stops
+                      .filter(s => s.type === 'pickup')
+                      .map(s => s.org.name)
+                      .join(', ')}
+                  </p>
+                  <p className="deliveries">
+                    <i className="fa fa-arrow-down" />
+                    {r.stops
+                      .filter(s => s.type === 'delivery')
+                      .map(s => s.org.name)
+                      .join(', ')}
+                  </p>
+                  {r.notes ? (
+                    <h6>
+                      <span>Notes: </span>
+                      {r.notes}
+                    </h6>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          </Link>
-        ))
+            </Link>
+          )
+        })
       )}
     </main>
   )
