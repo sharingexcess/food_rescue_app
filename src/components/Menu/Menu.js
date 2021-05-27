@@ -54,7 +54,7 @@ function Menu() {
       </div>
     ) : location.pathname !== '/login' ? (
       <Link to="/login" className="login">
-        <button className="secondary">login</button>
+        <button>Log in</button>
       </Link>
     ) : null
   }
