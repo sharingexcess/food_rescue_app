@@ -4,10 +4,10 @@ import './TestEnv.scss'
 export default function TestEnv() {
   return (
     <main id="TestEnv">
-      <h1>Testing Environment</h1>
+      <h1>Test Environment</h1>
       <p>
-        Users can create and walk through mock routes, modify organizations and
-        users, or access Driver view in Test Environment
+        Create and walk through routes, modify organizations and users, or
+        access Driver view in Test Environment
       </p>
       <a
         target="_blank"
