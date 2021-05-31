@@ -9,6 +9,7 @@
     "@sentry/tracing": "^5.30.0",
     "firebase": "^8.2.1",
     "google-map-react": "^2.1.9",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "node-sass": "^4.14.1",
     "react": "^17.0.1",
