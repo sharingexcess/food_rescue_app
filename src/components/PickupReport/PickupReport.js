@@ -33,7 +33,6 @@ export default function PickupReport() {
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
-  let updatedWeight = 0
 
   useEffect(() => {
     pickup && pickup.report
@@ -42,33 +41,30 @@ export default function PickupReport() {
   }, [pickup])
 
   useEffect(() => {
-    updatedWeight = sumWeight(formData)
-  }, [changed])
+    setFormData(formData => ({ ...formData, weight: sumWeight(formData) }))
+  }, [errors])
 
   function canEdit() {
     return [1, 3].includes(pickup.status) || admin
   }
-  console.log(sumWeight(formData))
   function sumWeight(object) {
     let sum = 0
     for (const field in object) {
       if (field === 'weight' || field === 'notes') {
-        console.log('Not count >>>', field)
+        //pass
       } else {
         sum += parseFloat(object[field])
       }
-      return sum
     }
+    return sum
   }
   function handleChange(e) {
     // TODO: take the sum of all the field
     setErrors([])
     setShowErrors(false)
-    updatedWeight += parseInt(e.target.value)
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
-      weight: updatedWeight,
     })
     setChanged(true)
   }
@@ -179,7 +175,7 @@ export default function PickupReport() {
         )}
       <section className="weight">
         <h4>Total Weight (lbs.)</h4>
-        <h4>{formData.weight}</h4>
+        <h6>{formData.weight}</h6>
       </section>
       <Input
         type="textarea"

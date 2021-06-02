@@ -20,8 +20,8 @@
 
   .center {
     text-align: center;
-  } 
-  
+  }
+
   section {
     position: relative;
     display: flex;
@@ -76,17 +76,16 @@
     }
 
     &.weight {
-      justify-content: space-between;
-      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 10px;
       h4 {
         font-size: 20px;
-        color: var(--primary);
       }
-      input {
-        width: 96px;
-        height: 48px;
-        font-size: 24px;
-        margin-left: 0;
+      h6 {
+        font-size: 32px;
+        color: var(--primary);
       }
     }
   }
