@@ -175,7 +175,11 @@ export default function PickupReport() {
         )}
       <section className="weight">
         <h4>Total Weight (lbs.)</h4>
-        <h6>{isNaN(formData.weight) ? '0' : formData.weight}</h6>
+        {isNaN(formData.weight) ? (
+          <h4>Weight cannot be blank</h4>
+        ) : (
+          <h6>{formData.weight}</h6>
+        )}
       </section>
       <Input
         type="textarea"
