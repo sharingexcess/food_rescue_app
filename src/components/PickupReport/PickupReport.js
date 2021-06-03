@@ -27,7 +27,7 @@ export default function PickupReport() {
     'prepared/Frozen': 0,
     'mixed groceries': 0,
     other: 0,
-    weight: '',
+    weight: 0,
     notes: '',
   })
   const [changed, setChanged] = useState(false)
@@ -40,34 +40,34 @@ export default function PickupReport() {
       : setChanged(true)
   }, [pickup])
 
+  useEffect(() => {
+    setFormData(formData => ({ ...formData, weight: sumWeight(formData) }))
+  }, [errors])
+
   function canEdit() {
     return [1, 3].includes(pickup.status) || admin
   }
-
+  function sumWeight(object) {
+    let sum = 0
+    for (const field in object) {
+      if (field === 'weight' || field === 'notes') {
+        //pass
+      } else {
+        sum += parseFloat(object[field])
+      }
+    }
+    return sum
+  }
   function handleChange(e) {
-    setErrors([])
-    setShowErrors(false)
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-    setChanged(true)
-  }
-
-  function increment(field) {
-    setErrors([])
-    setShowErrors(false)
-    setFormData({ ...formData, [field]: parseFloat(formData[field]) + 1 })
-    setChanged(true)
-  }
-
-  function decrement(field) {
+    // TODO: take the sum of all the field
     setErrors([])
     setShowErrors(false)
     setFormData({
       ...formData,
-      [field]: Math.max(0, parseFloat(formData[field]) - 1),
+      [e.target.id]: e.target.value,
     })
     setChanged(true)
   }
-
   function validateFormData() {
     if (
       formData.dairy +
@@ -148,6 +148,7 @@ export default function PickupReport() {
     <main id="PickupReport">
       <Header text="Rescue Report" />
       <h3>{pickup_org.name}</h3>
+      <h1 className="center">Please input weights by category</h1>
       {Object.keys(formData)
         .sort(function (a, b) {
           if (a === 'other') {
@@ -162,11 +163,6 @@ export default function PickupReport() {
           !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
             <section key={field}>
               <h5>{field}</h5>
-              {canEdit() ? (
-                <button className="decrement" onClick={() => decrement(field)}>
-                  -
-                </button>
-              ) : null}
               <input
                 id={field}
                 type="string"
@@ -174,23 +170,16 @@ export default function PickupReport() {
                 onChange={handleChange}
                 readOnly={!canEdit()}
               />
-              {canEdit() ? (
-                <button className="increment" onClick={() => increment(field)}>
-                  +
-                </button>
-              ) : null}
             </section>
           ) : null
         )}
       <section className="weight">
         <h4>Total Weight (lbs.)</h4>
-        <input
-          id="weight"
-          type="tel"
-          value={formData.weight}
-          onChange={handleChange}
-          readOnly={!canEdit()}
-        />
+        {isNaN(formData.weight) ? (
+          <h4>Weight cannot be blank</h4>
+        ) : (
+          <h6>{formData.weight}</h6>
+        )}
       </section>
       <Input
         type="textarea"

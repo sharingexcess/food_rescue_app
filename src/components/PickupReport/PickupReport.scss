@@ -18,6 +18,10 @@
     color: var(--green);
   }
 
+  .center {
+    text-align: center;
+  }
+
   section {
     position: relative;
     display: flex;
@@ -41,19 +45,6 @@
       padding: 0;
       margin: 8px;
       border: none;
-
-      &.decrement {
-        font-size: 24px;
-        background: var(--red);
-        padding: 0 1px 3px 0;
-        margin-left: 0;
-      }
-      &.increment {
-        font-size: 18px;
-        background: var(--green);
-        margin-right: 0;
-        padding: 0 0 4px 0;
-      }
     }
     input {
       width: 48px;
@@ -73,16 +64,24 @@
 
     &.weight {
       justify-content: space-between;
-      margin-top: 16px;
       h4 {
         font-size: 20px;
         color: var(--primary);
       }
-      input {
-        width: 96px;
+      h6 {
+        width: 48px;
         height: 48px;
-        font-size: 24px;
-        margin-left: 0;
+        font-size: 18px;
+        font-weight: 900;
+        background: var(--grey);
+        color: var(--black);
+        display: flex;
+        justify-content: center;
+        border-radius: 8px;
+        align-items: center;
+        text-align: center;
+        margin: 0 8px;
+        border: 0;
       }
     }
   }
