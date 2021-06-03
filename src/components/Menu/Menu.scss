@@ -17,14 +17,14 @@
   animation: fade-in 0.32s ease forwards;
 
   &.open {
-    transform: translateX(-204px);
+    transform: translateX(-180px);
     background: var(--foreground);
     pointer-events: all;
     box-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.16);
   }
 
   &.closed {
-    transform: translateX(0);
+    transform: translateX(25px);
     background: rgba(var(--foreground-rgb), 0);
     pointer-events: none;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
