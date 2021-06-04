@@ -148,7 +148,7 @@ export default function PickupReport() {
     <main id="PickupReport">
       <Header text="Rescue Report" />
       <h3>{pickup_org.name}</h3>
-      <h1 className="center">Please input weights by category</h1>
+      <h1 className="center">Input Category Weight in Pounds (lbs)</h1>
       {Object.keys(formData)
         .sort(function (a, b) {
           if (a === 'other') {
