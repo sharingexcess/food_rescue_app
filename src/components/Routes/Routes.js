@@ -241,7 +241,7 @@ export default function Routes({ initial_filter }) {
                   <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
                   {location.pathname === '/routes' ? (
                     <h5>
-                      {moment(r.time_start).format('h:mma')} -
+                      {moment(r.time_start).format('h:mma')} {' - '}
                       {moment(r.time_end).format('h:mma')}{' '}
                     </h5>
                   ) : (
