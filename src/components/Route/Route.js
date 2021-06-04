@@ -644,7 +644,6 @@ export function Route() {
     }
     return null
   }
-
   return (
     <main id="Route">
       {!route ? (

@@ -13,10 +13,12 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
 import RouteHeader from '../RoutesHeader/RoutesHeaders'
+import useLocationData from '../../hooks/useLocationData'
 import './Routes.scss'
 
 export default function Routes({ initial_filter }) {
   const { user, admin } = useAuthContext()
+  const locations = useLocationData()
   const location = useLocation()
   const raw_routes = useRouteData()
   const pickups = usePickupData()
@@ -51,6 +53,7 @@ export default function Routes({ initial_filter }) {
               : deliveries.find(d => d.id === s.id) || {}
           Object.keys(stop).forEach(key => (s[key] = stop[key]))
           s.org = organizations.find(o => o.id === s.org_id) || {}
+          s.location = locations.find(l => l.id === s.location_id) || {}
         }
         route.driver = users.find(u => u.id === route.driver_id) || {}
         if (route.driver.icon && !isValidURL(route.driver.icon)) {
@@ -206,6 +209,7 @@ export default function Routes({ initial_filter }) {
           const r_endtime = r_endtime_array[r_endtime_array.length - 1]
             ? r_endtime_array[r_endtime_array.length - 1].toDate()
             : 'Not found'
+          console.log(r)
           return (
             <Link
               target="_blank"
@@ -255,14 +259,22 @@ export default function Routes({ initial_filter }) {
                     <i className="fa fa-arrow-up" />
                     {r.stops
                       .filter(s => s.type === 'pickup')
-                      .map(s => s.org.name)
+                      .map(s =>
+                        s.location.name
+                          ? s.org.name + ` (${s.location.name})`
+                          : s.org.name
+                      )
                       .join(', ')}
                   </p>
                   <p className="deliveries">
                     <i className="fa fa-arrow-down" />
                     {r.stops
                       .filter(s => s.type === 'delivery')
-                      .map(s => s.org.name)
+                      .map(s =>
+                        s.location.name
+                          ? s.org.name + ` (${s.location.name})`
+                          : s.org.name
+                      )
                       .join(', ')}
                   </p>
                   {r.notes ? (
