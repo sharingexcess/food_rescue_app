@@ -27,7 +27,7 @@ export default function CompletedRoute() {
       : 0
     const deliveryMileage = deliveries
       ? deliveries
-          .map(d => (d.report ? d.report.weight : 0))
+          .map(d => (d.report ? d.report.mileage : 0))
           .reduce((a, b) => a + b, 0)
       : 0
     return pickupMileage + deliveryMileage

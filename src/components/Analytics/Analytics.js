@@ -95,6 +95,12 @@ export default function Analytics() {
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
               .reduce((a, b) => a + b, 0)
+            const r_pickup_mileage = r_pickups
+              .map(p => p.report.mileage || 0)
+              .reduce((a, b) => a + b, 0)
+            const r_delivery_mileage = r_deliveries
+              .map(de => de.report.mileage || 0)
+              .reduce((a, b) => a + b, 0)
             return (
               <tr key={r.id}>
                 <td id="driver">{r_driver.name}</td>
@@ -134,7 +140,9 @@ export default function Analytics() {
                     ))}
                   </ul>
                 </td>
-                <td id="weight">{r_weight} lbs</td>
+                <td id="weight">
+                  {r_weight} lbs - {r_pickup_mileage + r_delivery_mileage} miles
+                </td>
               </tr>
             )
           })}
