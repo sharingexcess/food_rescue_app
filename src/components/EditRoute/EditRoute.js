@@ -167,7 +167,6 @@ function EditRoute() {
       stops: [...formData.stops, { ...delivery, id, type: 'delivery' }],
     })
   }
-
   async function handleCreateRouteButtonClick() {
     const original_route_id =
       route_id || (await generateRouteId(formData.time_start))

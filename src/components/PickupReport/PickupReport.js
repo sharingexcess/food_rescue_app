@@ -28,6 +28,7 @@ export default function PickupReport() {
     'mixed groceries': 0,
     other: 0,
     weight: 0,
+    mileage: 0,
     notes: '',
   })
   const [changed, setChanged] = useState(false)
@@ -50,7 +51,7 @@ export default function PickupReport() {
   function sumWeight(object) {
     let sum = 0
     for (const field in object) {
-      if (field === 'weight' || field === 'notes') {
+      if (field === 'weight' || field === 'notes' || field === 'mileage') {
         //pass
       } else {
         sum += parseFloat(object[field])
@@ -59,7 +60,6 @@ export default function PickupReport() {
     return sum
   }
   function handleChange(e) {
-    // TODO: take the sum of all the field
     setErrors([])
     setShowErrors(false)
     setFormData({
@@ -85,8 +85,14 @@ export default function PickupReport() {
     if (isNaN(formData.weight) || /\s/g.test(formData.weight)) {
       errors.push('Invalid Input: Total Weight is not a number')
     }
+    if (isNaN(formData.mileage) || /\s/g.test(formData.mileage)) {
+      errors.push('Invalid Input: Total Mileage is not a number')
+    }
     if (formData.weight <= 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
+    }
+    if (formData.mileage <= 0) {
+      errors.push('Invalid Input: Total Mileage must be greater than zero')
     }
     for (const field in formData) {
       if (
@@ -116,7 +122,6 @@ export default function PickupReport() {
   function handleSubmit(event) {
     event.preventDefault()
     if (validateFormData()) {
-      console.log('valid')
       setFirestoreData(['Pickups', pickup_id], {
         report: {
           dairy: parseInt(formData.dairy),
@@ -128,6 +133,7 @@ export default function PickupReport() {
           'mixed groceries': parseInt(formData['mixed groceries']),
           other: parseInt(formData.other),
           weight: parseInt(formData.weight),
+          mileage: parseInt(formData.mileage),
           notes: formData.notes,
           created_at:
             pickup.completed_at ||
@@ -160,7 +166,9 @@ export default function PickupReport() {
           return a.localeCompare(b)
         })
         .map(field =>
-          !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
+          !['weight', 'notes', 'created_at', 'updated_at', 'mileage'].includes(
+            field
+          ) ? (
             <section key={field}>
               <h5>{field}</h5>
               <input
@@ -180,6 +188,16 @@ export default function PickupReport() {
         ) : (
           <h6>{formData.weight}</h6>
         )}
+      </section>
+      <section className="mileage">
+        <h4>Total Mileage (miles.)</h4>
+        <input
+          id="mileage"
+          type="tel"
+          value={formData.mileage}
+          onChange={handleChange}
+          readOnly={!canEdit()}
+        />
       </section>
       <Input
         type="textarea"

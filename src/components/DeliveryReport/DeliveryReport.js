@@ -24,11 +24,14 @@ export default function DeliveryReport() {
   const routes = useRouteData()
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
+    mileage: 0,
     notes: '',
   })
   const [changed, setChanged] = useState(false)
   const [weight, setWeight] = useState()
   const { admin } = useAuthContext()
+  const [errors, setErrors] = useState([])
+  const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
     delivery && delivery.report
@@ -65,7 +68,27 @@ export default function DeliveryReport() {
     return [1, 3].includes(delivery.status) || admin
   }
 
+  function FormError() {
+    if (showErrors === true) {
+      return errors.map(error => <p id="FormError">{error}</p>)
+    } else return null
+  }
+
+  function validateFormData() {
+    if (formData.mileage <= 0) {
+      errors.push('Invalid Input: Total Mileage must be greater than zero')
+    }
+    if (isNaN(formData.mileage) || /\s/g.test(formData.mileage)) {
+      errors.push('Invalid Input: Total Mileage is not a number')
+    }
+    if (errors.length === 0) {
+      return true
+    }
+    return false
+  }
   function handleChange(e) {
+    setErrors([])
+    setShowErrors(false)
     setFormData({
       ...formData,
       [e.target.id]:
@@ -81,21 +104,26 @@ export default function DeliveryReport() {
     const calculated_weight = parseInt(
       (weight * formData.percent_of_total_dropped) / 100
     )
-    setFirestoreData(['Deliveries', delivery_id], {
-      report: {
-        percent_of_total_dropped: parseInt(formData.percent_of_total_dropped),
-        weight: isNaN(calculated_weight) ? 0 : calculated_weight,
-        notes: formData.notes,
-        created_at:
-          delivery.completed_at ||
-          firebase.firestore.FieldValue.serverTimestamp(),
-        updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      time_finished: firebase.firestore.FieldValue.serverTimestamp(),
-      status: 9,
-    })
-      .then(() => history.push(`/routes/${route_id}`))
-      .catch(e => console.error('Error writing document: ', e))
+    if (validateFormData()) {
+      setFirestoreData(['Deliveries', delivery_id], {
+        report: {
+          percent_of_total_dropped: parseInt(formData.percent_of_total_dropped),
+          weight: isNaN(calculated_weight) ? 0 : calculated_weight,
+          mileage: parseInt(formData.mileage),
+          notes: formData.notes,
+          created_at:
+            delivery.completed_at ||
+            firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+        time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 9,
+      })
+        .then(() => history.push(`/routes/${route_id}`))
+        .catch(e => console.error('Error writing document: ', e))
+    } else {
+      setShowErrors(true)
+    }
   }
   if (!delivery) return <Loading text="Loading report" />
   return (
@@ -119,6 +147,16 @@ export default function DeliveryReport() {
         onChange={handleChange}
         disabled={!canEdit()}
       />
+      <section>
+        <h6>Total Mileage (miles.)</h6>
+        <input
+          id="mileage"
+          type="tel"
+          value={formData.mileage}
+          onChange={handleChange}
+          readOnly={!canEdit()}
+        />
+      </section>
       <Input
         type="textarea"
         label="Notes..."
@@ -128,6 +166,7 @@ export default function DeliveryReport() {
         onChange={handleChange}
         readOnly={!canEdit()}
       />
+      <FormError />
       {changed && canEdit() ? (
         <button onClick={handleSubmit}>
           {delivery.report ? 'update report' : 'submit report'}
