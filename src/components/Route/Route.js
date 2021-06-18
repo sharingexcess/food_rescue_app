@@ -44,9 +44,9 @@ export function Route() {
   const locations = useLocationData()
   const location = useLocation()
   const [stops, setStops] = useState([])
-  const [willCancel, setWillCancel] = useState()
+  //const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
-  const [willDelete, setWillDelete] = useState()
+  //const [willDelete, setWillDelete] = useState()
   const [confDriver, setConfDriver] = useState()
   const [otherDriver, setOtherDriver] = useState()
   const [willAssign, setWillAssign] = useState()
@@ -255,9 +255,9 @@ export function Route() {
     StatusButton.handleAssign = handleAssign
 
     if (
-      willCancel ||
-      willDelete ||
-      (!admin && route.driver_id && route.driver_id !== user.uid)
+      /*willCancel ||
+      willDelete ||*/
+      !admin && route.driver_id && route.driver_id !== user.uid
     )
       return null
     if (route.status === 1) {
@@ -366,7 +366,7 @@ export function Route() {
     } else return null
   }
 
-  function CancelButton() {
+  /*function CancelButton() {
     const [notes, setNotes] = useState('')
 
     function handleCancel() {
@@ -452,7 +452,7 @@ export function Route() {
         delete route
       </button>
     )
-  }
+  }*/
 
   function UpdateStop({ stop }) {
     function handleOpenReport() {
@@ -470,7 +470,7 @@ export function Route() {
         </button>
       )
     } else return null
-  }
+  } //work in progress for disable delivery report button
 
   function DirectionsButton({ stop }) {
     function handleOpenDirections() {
@@ -818,8 +818,7 @@ export function Route() {
                   </div>
                 )}
               <StatusButton />
-              <CancelButton />
-              <DeleteButton />
+              
               <ConfirmationModal
                 openModal={confDriver}
                 text={
