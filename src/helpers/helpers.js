@@ -72,10 +72,10 @@ export async function setFirestoreData(identifier, value) {
 }
 
 export async function updateGoogleCalendarEvent(data) {
-  const resource = {
+    const resource = {
     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
     summary: data.driver
-      ? `Food Rescue: ${data.driver.name}`
+      ? `Food Rescue: ${data.driver.name} ${data.driver.phone}`
       : 'Unassigned Food Rescue',
     location: `${data.stops[0].location.address1}, ${data.stops[0].location.city}, ${data.stops[0].location.state} ${data.stops[0].location.zip_code}`,
     description: `Stops on Route: ${data.stops
