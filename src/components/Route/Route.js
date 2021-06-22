@@ -153,7 +153,6 @@ export function Route() {
       </div>
     )
   }
-
   function StatusButton() {
     const [notes, setNotes] = useState('')
 
@@ -186,7 +185,7 @@ export function Route() {
         notes: null,
       })
       for (const stop of route.stops) {
-        console.log(stop)
+        // console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -208,7 +207,7 @@ export function Route() {
         notes: `Route dropped by ${route.driver.name}: "${notes}"`,
       })
       for (const stop of route.stops) {
-        console.log(stop)
+        // console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -243,7 +242,7 @@ export function Route() {
         notes: null,
       })
       for (const stop of route.stops) {
-        console.log(stop)
+        // console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -264,7 +263,7 @@ export function Route() {
       if (route.driver) {
         return (
           <div className={admin ? 'buttons' : ''}>
-            {!willAssign && canBeginRoute ? (
+            {!willAssign && canBeginRoute && admin ? (
               <button className="blue" onClick={handleBegin}>
                 begin route
                 {admin && route.driver_id !== user.uid ? ' as admin' : ''}
@@ -818,8 +817,8 @@ export function Route() {
                   </div>
                 )}
               <StatusButton />
-              <CancelButton />
-              <DeleteButton />
+              {admin === true ? <CancelButton /> : null}
+              {admin === true ? <DeleteButton /> : null}
               <ConfirmationModal
                 openModal={confDriver}
                 text={
