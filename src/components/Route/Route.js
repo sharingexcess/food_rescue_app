@@ -91,15 +91,17 @@ export function Route() {
       <div className="warning modal">
         <div className="modal-content">
           <div className="header">
-            <p className="short">
+            <p className="woahThere">
               Woah there, partner. You zoomed through that route! In the future,
               be sure to fill out pickup and delivery reports in real time as
               you complete the route. This is especially important for food
               safety purposes and accurate data tracking.
             </p>
-            <div className="footer">
+          </div>
+          <div className="footer">
+            <p>
               <button
-                className="red small"
+                className="red"
                 onClick={() => {
                   setShowModal(false)
                   handleOpenReport()
@@ -107,7 +109,7 @@ export function Route() {
               >
                 Dismiss
               </button>
-            </div>
+            </p>
           </div>
         </div>
       </div>
