@@ -90,14 +90,6 @@ export function Route() {
     return (
       <div className="warning modal">
         <div className="modal-content">
-          <div className="header">
-            <p className="woahThere">
-              Woah there, partner. You zoomed through that route! In the future,
-              be sure to fill out pickup and delivery reports in real time as
-              you complete the route. This is especially important for food
-              safety purposes and accurate data tracking.
-            </p>
-          </div>
           <div className="footer">
             <p>
               <button
@@ -107,8 +99,16 @@ export function Route() {
                   handleOpenReport()
                 }}
               >
-                Dismiss
+                x
               </button>
+            </p>
+          </div>
+          <div className="header">
+            <p className="woahThere">
+              Woah there, partner. You zoomed through that route! In the future,
+              be sure to fill out pickup and delivery reports in real time as
+              you complete the route. This is especially important for food
+              safety purposes and accurate data tracking.
             </p>
           </div>
         </div>
