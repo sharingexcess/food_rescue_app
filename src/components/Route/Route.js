@@ -384,7 +384,6 @@ export function Route() {
           }).catch(e => console.error('Error deleting calendar event:', e))
         })
     }
-
     if (
       willComplete ||
       willDelete ||
@@ -436,7 +435,6 @@ export function Route() {
       await getCollection('Routes').doc(route.id).delete()
       history.push('/routes')
     }
-
     if (willCancel || willComplete) return null
     return willDelete ? (
       <section className="buttons">
