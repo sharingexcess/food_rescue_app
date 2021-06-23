@@ -104,7 +104,7 @@ export function Route() {
             </p>
           </div>
           <div className="header">
-            <p className="woahThere">
+            <p>
               Woah there, partner. You zoomed through that route! In the future,
               be sure to fill out pickup and delivery reports in real time as
               you complete the route. This is especially important for food
@@ -147,7 +147,6 @@ export function Route() {
   function hasEditPermissions() {
     return admin || user.uid === route.driver_id
   }
-
   function Driver() {
     function handleBegin() {
       setFirestoreData(['Routes', route.id], {
@@ -489,8 +488,10 @@ export function Route() {
       </button>
     )
   }
-
   function UpdateStop({ stop }) {
+    let beginTime = moment(route.time_started.toDate())
+    beginTime = beginTime.add(2, 'minutes')
+    const currentTime = moment(new Date())
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
@@ -503,7 +504,7 @@ export function Route() {
         <button
           className="update-stop"
           onClick={
-            stop.type === 'delivery'
+            stop.type === 'delivery' && currentTime.isBefore(beginTime)
               ? () => setShowModal(true)
               : () => handleOpenReport()
           }

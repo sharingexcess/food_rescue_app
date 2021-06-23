@@ -66,8 +66,8 @@
       align-items: center;
       border-radius: 8px;
       background-color: var(--foreground);
-      margin: 10% auto;
-      padding: 16px 8px 8px;
+      margin: 25% auto;
+      padding: 25px 8px 8px;
       width: 75%;
       max-height: 50%;
       overflow: auto;
@@ -96,7 +96,7 @@
           text-align: center;
           width: 100%;
           font-size: 22px;
-          color: white;
+          color: var(--red);
           margin-top: 20px;
           &.short {
             width: 100%;
