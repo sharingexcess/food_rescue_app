@@ -52,7 +52,7 @@ function Organizations() {
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
-      <Header text="Organizations" />
+      <Header text="Network" />
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="all">View{filter === 'all' ? 'ing' : ''} All</option>
@@ -67,7 +67,7 @@ function Organizations() {
           </option>
         </select>
         <Link to="/admin/create-organization">
-          <button className="grant">+ New Org</button>
+          <button className="grant">+ New Network</button>
         </Link>
       </section>
       <Input
