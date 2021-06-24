@@ -152,7 +152,6 @@ export function Route() {
       </div>
     )
   }
-
   function StatusButton() {
     const [notes, setNotes] = useState('')
 
@@ -185,7 +184,7 @@ export function Route() {
         notes: null,
       })
       for (const stop of route.stops) {
-        console.log(stop)
+        // console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -207,7 +206,7 @@ export function Route() {
         notes: `Route dropped by ${route.driver.name}: "${notes}"`,
       })
       for (const stop of route.stops) {
-        console.log(stop)
+        // console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -242,7 +241,7 @@ export function Route() {
         notes: null,
       })
       for (const stop of route.stops) {
-        console.log(stop)
+        // console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -263,7 +262,7 @@ export function Route() {
       if (route.driver) {
         return (
           <div className={admin ? 'buttons' : ''}>
-            {!willAssign && canBeginRoute ? (
+            {!willAssign && canBeginRoute && admin ? (
               <button className="blue" onClick={handleBegin}>
                 begin route
                 {admin && route.driver_id !== user.uid ? ' as admin' : ''}
@@ -383,7 +382,6 @@ export function Route() {
           }).catch(e => console.error('Error deleting calendar event:', e))
         })
     }
-
     if (
       willComplete ||
       willDelete ||
@@ -435,7 +433,6 @@ export function Route() {
       await getCollection('Routes').doc(route.id).delete()
       history.push('/routes')
     }
-
     if (willCancel || willComplete) return null
     return willDelete ? (
       <section className="buttons">
@@ -453,6 +450,11 @@ export function Route() {
     )
   }
   function UpdateStop({ stop }) {
+    let beginTime = route.time_started
+      ? moment(route.time_started.toDate())
+      : moment(new Date())
+    beginTime = beginTime.add(30, 'minutes')
+    const currentTime = moment(new Date())
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
@@ -815,8 +817,8 @@ export function Route() {
                   </div>
                 )}
               <StatusButton />
-              <CancelButton />
-              <DeleteButton />
+              {admin === true ? <CancelButton /> : null}
+              {admin === true ? <DeleteButton /> : null}
               <ConfirmationModal
                 openModal={confDriver}
                 text={
