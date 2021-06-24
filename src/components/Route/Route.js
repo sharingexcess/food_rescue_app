@@ -489,7 +489,9 @@ export function Route() {
     )
   }
   function UpdateStop({ stop }) {
-    let beginTime = moment(route.time_started.toDate())
+    let beginTime = route.time_started
+      ? moment(route.time_started.toDate())
+      : moment(new Date())
     beginTime = beginTime.add(2, 'minutes')
     const currentTime = moment(new Date())
     function handleOpenReport() {
