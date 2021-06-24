@@ -492,7 +492,7 @@ export function Route() {
     let beginTime = route.time_started
       ? moment(route.time_started.toDate())
       : moment(new Date())
-    beginTime = beginTime.add(15, 'minutes')
+    beginTime = beginTime.add(30, 'minutes')
     const currentTime = moment(new Date())
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
