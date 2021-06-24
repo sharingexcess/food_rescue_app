@@ -43,7 +43,6 @@ export function Route() {
   const organizations = useOrganizationData()
   const locations = useLocationData()
   const location = useLocation()
-  const [showModal, setShowModal] = useState(false)
   const [stops, setStops] = useState([])
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
@@ -80,41 +79,6 @@ export function Route() {
     route && route.stops && updateStops()
   }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function DelivWarning({ stop }) {
-    function handleOpenReport() {
-      const baseURL = location.pathname.includes('routes')
-        ? 'routes'
-        : 'history'
-      history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
-    }
-    return (
-      <div className="warning modal">
-        <div className="modal-content">
-          <div className="footer">
-            <p>
-              <button
-                className="red"
-                onClick={() => {
-                  setShowModal(false)
-                  handleOpenReport()
-                }}
-              >
-                x
-              </button>
-            </p>
-          </div>
-          <div className="header">
-            <p>
-              Woah there, partner. You zoomed through that route! In the future,
-              be sure to fill out pickup and delivery reports in real time as
-              you complete the route. This is especially important for food
-              safety purposes and accurate data tracking.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
   function getDeliveryWeight() {
     const myDelivery = deliveries.find(
       deliveryRoute => deliveryRoute.route_id === route.id
@@ -489,11 +453,6 @@ export function Route() {
     )
   }
   function UpdateStop({ stop }) {
-    let beginTime = route.time_started
-      ? moment(route.time_started.toDate())
-      : moment(new Date())
-    beginTime = beginTime.add(15, 'minutes')
-    const currentTime = moment(new Date())
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
@@ -503,14 +462,7 @@ export function Route() {
     if (route.status < 3) return null
     if (stop.status === 1) {
       return (
-        <button
-          className="update-stop"
-          onClick={
-            stop.type === 'delivery' && currentTime.isBefore(beginTime)
-              ? () => setShowModal(true)
-              : () => handleOpenReport()
-          }
-        >
+        <button className="update-stop" onClick={handleOpenReport}>
           Complete {stop.type} report
         </button>
       )
@@ -829,7 +781,6 @@ export function Route() {
                       <p>Location Deleted</p>
                     )}
                     <StopNotes stop={s} />
-                    {showModal === true ? <DelivWarning stop={s} /> : null}
                     {hasEditPermissions() ? (
                       <>
                         {isNextIncompleteStop(i) ? (
