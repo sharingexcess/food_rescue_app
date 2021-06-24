@@ -75,13 +75,13 @@
 
       .footer {
         width: 5%;
-        margin-right: -90%;
+        margin-right: -85%;
         margin-bottom: -10px;
-        padding: 0px 0px 0px 0px;
+        padding: 5px 0px 0px 0px;
         button {
           margin: 0;
           text-align: center;
-          padding: 3px 9px 3px 8px;
+          padding: 3px 10px 3px 10px;
         }
       }
 
@@ -96,11 +96,11 @@
           text-align: center;
           width: 100%;
           font-size: 22px;
-          color: var(--red);
+          color: var(--text);
           margin-top: 20px;
           &.short {
             width: 100%;
-            color: white;
+            color: var(--black);
           }
         }
         .blue {
