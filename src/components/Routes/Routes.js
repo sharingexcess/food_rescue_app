@@ -153,13 +153,21 @@ export default function Routes({ initial_filter }) {
           {admin === true ? <option value="all">Show All Routes</option> : null}
           <option value="mine">Show My Routes</option>
           <option value="unassigned">Show Unassigned Routes</option>
-          {admin === true ? <option value="driver">Show Routes by Driver</option> : null}
-          {admin === true ? <option value="date">Show Routes by Date</option> : null}
+          {admin === true ? (
+            <option value="driver">Show Routes by Driver</option>
+          ) : null}
+          {admin === true ? (
+            <option value="date">Show Routes by Date</option>
+          ) : null}
           {/*  Only adding these filters to Routes page */}
           {location.pathname === '/routes' ? (
             <>
-              {admin === true ? <option value="incomplete">Show Incomplete Routes</option> : null}
-              {admin === true ? <option value="happening">Show Ongoing Routes</option> : null}
+              {admin === true ? (
+                <option value="incomplete">Show Incomplete Routes</option>
+              ) : null}
+              {admin === true ? (
+                <option value="happening">Show Ongoing Routes</option>
+              ) : null}
             </>
           ) : null}
         </select>
