@@ -229,6 +229,13 @@ export default function FoodSafety() {
           </li>
           <li>Wear closed toe shoes</li>
         </ol>
+        <h3>Logging Routes</h3>
+        <ol>
+          <li>
+            Be sure to fill out pickup and delivery reports in real time as you
+            complete each route for food safety and data tracking purposes
+          </li>
+        </ol>
       </section>
       <section id="waste">
         <h2>Waste and Recycling</h2>
