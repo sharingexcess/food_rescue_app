@@ -42,6 +42,13 @@ export default function Routes({ initial_filter }) {
     return myPickup ? myPickup.report?.weight : 0
   }
 
+  function getDeliveryWeight(routeId) {
+    const myDelivery = deliveries.find(
+      deliveryRoute => deliveryRoute.route_id === routeId
+    )
+    return myDelivery ? myDelivery.report?.weight : 0
+  }
+
   useEffect(() => {
     async function addData() {
       const full_data = []
@@ -125,6 +132,7 @@ export default function Routes({ initial_filter }) {
           .sort((a, b) => new Date(b.time_start) - new Date(a.time_start))
           .sort((a, b) => new Date(a.time_start) - Date.now())
   }
+
   function StatusIndicator({ route }) {
     if (route.status === 9) {
       return <i id="StatusIndicator" className="fa fa-check" />
@@ -280,7 +288,9 @@ export default function Routes({ initial_filter }) {
                       .filter(s => s.type === 'delivery')
                       .map(s =>
                         s.location.name
-                          ? s.org.name + ` (${s.location.name})`
+                          ? s.org.name +
+                            ` (${s.location.name})` +
+                            `(${getDeliveryWeight(s.id)} lbs)`
                           : s.org.name
                       )
                       .join(', ')}
