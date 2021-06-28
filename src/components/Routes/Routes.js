@@ -46,7 +46,7 @@ export default function Routes({ initial_filter }) {
     const myDelivery = deliveries.find(
       deliveryRoute => deliveryRoute.route_id === routeId
     )
-    return myDelivery ? myDelivery.report?.weight : 0
+    return myDelivery ? ': ' + myDelivery.report?.weight.toString() + ' lbs' : 0
   }
 
   useEffect(() => {
@@ -290,7 +290,11 @@ export default function Routes({ initial_filter }) {
                         s.location.name
                           ? s.org.name +
                             ` (${s.location.name})` +
-                            `(${getDeliveryWeight(s.id)} lbs)`
+                            `${
+                              location.pathname === '/history'
+                                ? getDeliveryWeight(r.id)
+                                : ''
+                            }`
                           : s.org.name
                       )
                       .join(', ')}
