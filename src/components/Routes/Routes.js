@@ -42,15 +42,6 @@ export default function Routes({ initial_filter }) {
     return myPickup ? myPickup.report?.weight : 0
   }
 
-  function getDeliveryWeight(routeId) {
-    const myDelivery = deliveries.find(
-      deliveryRoute => deliveryRoute.route_id === routeId
-    )
-    return myDelivery
-      ? ': ' + myDelivery.report?.weight.toString() + ' lbs '
-      : 0
-  }
-
   useEffect(() => {
     async function addData() {
       const full_data = []
@@ -290,13 +281,7 @@ export default function Routes({ initial_filter }) {
                       .filter(s => s.type === 'delivery')
                       .map(s =>
                         s.location.name
-                          ? s.org.name +
-                            ` (${s.location.name})` +
-                            `${
-                              location.pathname === '/history'
-                                ? getDeliveryWeight(r.id)
-                                : ''
-                            }`
+                          ? s.org.name + ` (${s.location.name})`
                           : s.org.name
                       )
                       .join(', ')}
