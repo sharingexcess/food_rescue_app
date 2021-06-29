@@ -7,7 +7,6 @@ import './Organizations.scss'
 import { Input } from '../Input/Input'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
-import moment from 'moment'
 
 const org_icon_urls = {}
 
@@ -34,42 +33,18 @@ function Organizations() {
     setSearch(e.target.value)
   }
 
-  function filterBySearch(array) {
-    const filtered_by_search = array.filter(i =>
-      i.name.toLowerCase().includes(search.toLowerCase())
-    )
-    if (filter !== 'all' && filter !== 'open') {
-      return filtered_by_search.filter(i => i.org_type === filter)
-    } else if (filter === 'open') {
-      return filtered_by_search.filter(
-        i =>
-          moment().isBetween(
-            moment(i.time_open, 'hh:mm'),
-            moment(i.time_close, 'hh:mm')
-          ) === true && !!i.primary_location
-      )
-    } else return filtered_by_search
-  }
-
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
       <Header text="Network" />
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
-          <option value="all">View{filter === 'all' ? 'ing' : ''} All</option>
-          <option value="donor">
-            View{filter === 'donor' ? 'ing' : ''} Donors
-          </option>
-          <option value="recipient">
-            View{filter === 'recipient' ? 'ing' : ''} Recipients
-          </option>
-          <option value="open">
-            View{filter === 'open' ? 'ing' : ''} Currently Open Organizations
-          </option>
+          <option value="all">All</option>
+          <option value="donor">Donors</option>
+          <option value="recipient">Recipients</option>
         </select>
         <Link to="/admin/create-organization">
-          <button className="grant">+ New Network</button>
+          <button className="grant">+ New Org</button>
         </Link>
       </section>
       <Input
@@ -78,59 +53,60 @@ function Organizations() {
         value={search}
         animation={false}
       />
-      
-      <div id="donors"> <p>Donors</p> </div>
 
-      {donors.map(org => (
-        <Link
-          key={org.id}
-          className="wrapper"
-          to={`/admin/organizations/${org.id}`}
-        >
-          <section className="Organization">
-            <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-            <h3>{org.name}</h3>
-            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
-              {org.org_type}
-            </h2>
-          </section>
-        </Link>
-      ))}
+      {filter === 'donor' || filter === 'all' ? (
+        <div id="donors">
+          {' '}
+          <p>Donors</p>{' '}
+        </div>
+      ) : null}
 
-      <div id="recipients"> <p>Recipients</p> </div>
+      {filter === 'donor' || filter === 'all'
+        ? donors.map(org => (
+            <Link
+              key={org.id}
+              className="wrapper"
+              to={`/admin/organizations/${org.id}`}
+            >
+              <section className="Organization">
+                <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
+                <h3>{org.name}</h3>
+                <h2
+                  className={org.org_type === 'donor' ? 'donor' : 'recipient'}
+                >
+                  {org.org_type}
+                </h2>
+              </section>
+            </Link>
+          ))
+        : null}
 
-      {recipients.map(org => (
-        <Link
-          key={org.id}
-          className="wrapper"
-          to={`/admin/organizations/${org.id}`}
-        >
-          <section className="Organization">
-            <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-            <h3>{org.name}</h3>
-            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
-              {org.org_type}
-            </h2>
-          </section>
-        </Link>
-      ))}
+      {filter === 'recipient' || filter === 'all' ? (
+        <div id="recipients">
+          {' '}
+          <p>Recipients</p>{' '}
+        </div>
+      ) : null}
 
-
-      {/*filterBySearch(organizations).map(org => (
-        <Link
-          key={org.id}
-          className="wrapper"
-          to={`/admin/organizations/${org.id}`}
-        >
-          <section className="Organization">
-            <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-            <h3>{org.name}</h3>
-            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
-              {org.org_type}
-            </h2>
-          </section>
-        </Link>
-      ))*/}
+      {filter === 'recipient' || filter === 'all'
+        ? recipients.map(org => (
+            <Link
+              key={org.id}
+              className="wrapper"
+              to={`/admin/organizations/${org.id}`}
+            >
+              <section className="Organization">
+                <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
+                <h3>{org.name}</h3>
+                <h2
+                  className={org.org_type === 'donor' ? 'donor' : 'recipient'}
+                >
+                  {org.org_type}
+                </h2>
+              </section>
+            </Link>
+          ))
+        : null}
     </main>
   )
 }
