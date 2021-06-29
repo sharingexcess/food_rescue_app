@@ -15,6 +15,8 @@ function Organizations() {
   const organizations = useOrganizationData()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
+  const donors = organizations.filter(org => org.org_type === 'donor')
+  const recipients = organizations.filter(org => org.org_type === 'recipient')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
   useEffect(() => {
@@ -76,7 +78,10 @@ function Organizations() {
         value={search}
         animation={false}
       />
-      {filterBySearch(organizations).map(org => (
+      
+      <div id="donors"> <p>Donors</p> </div>
+
+      {donors.map(org => (
         <Link
           key={org.id}
           className="wrapper"
@@ -91,6 +96,41 @@ function Organizations() {
           </section>
         </Link>
       ))}
+
+      <div id="recipients"> <p>Recipients</p> </div>
+
+      {recipients.map(org => (
+        <Link
+          key={org.id}
+          className="wrapper"
+          to={`/admin/organizations/${org.id}`}
+        >
+          <section className="Organization">
+            <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
+            <h3>{org.name}</h3>
+            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+              {org.org_type}
+            </h2>
+          </section>
+        </Link>
+      ))}
+
+
+      {/*filterBySearch(organizations).map(org => (
+        <Link
+          key={org.id}
+          className="wrapper"
+          to={`/admin/organizations/${org.id}`}
+        >
+          <section className="Organization">
+            <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
+            <h3>{org.name}</h3>
+            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+              {org.org_type}
+            </h2>
+          </section>
+        </Link>
+      ))*/}
     </main>
   )
 }
