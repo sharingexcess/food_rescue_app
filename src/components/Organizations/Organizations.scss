@@ -70,4 +70,22 @@
       }
     }
   }
+
+  #donors {
+    p {
+      font-size: 40px;
+      text-align: left;
+      color: var(--light);
+      padding: 12px;
+    }
+  }
+
+  #recipients {
+    p {
+      font-size: 40px;
+      text-align: left;
+      color: var(--light);
+      padding: 12px;
+    }
+  }
 }
