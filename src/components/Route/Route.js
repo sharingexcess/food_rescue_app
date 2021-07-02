@@ -11,12 +11,8 @@ import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink } from '../../helpers/components'
-import {
-  generateDirectionsLink,
-  allFoodDelivered,
-  WarningText,
-  ConfirmationModal,
-} from './utils'
+import { generateDirectionsLink, allFoodDelivered } from './utils'
+import { WarningText, ConfirmationModal } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -80,7 +76,7 @@ export function Route() {
     route && route.stops && updateStops()
   }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function DelivWarning({ stop }) {
+  function WarningModal({ stop }) {
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
@@ -488,6 +484,7 @@ export function Route() {
       </button>
     )
   }
+
   function UpdateStop({ stop }) {
     let beginTime = route.time_started
       ? moment(route.time_started.toDate())
@@ -829,7 +826,7 @@ export function Route() {
                       <p>Location Deleted</p>
                     )}
                     <StopNotes stop={s} />
-                    {showModal === true ? <DelivWarning stop={s} /> : null}
+                    {showModal === true ? <WarningModal stop={s} /> : null}
                     {hasEditPermissions() ? (
                       <>
                         {isNextIncompleteStop(i) ? (
