@@ -11,7 +11,12 @@ import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import Ellipsis, { ExternalLink } from '../../helpers/components'
-import { generateDirectionsLink, allFoodDelivered } from './utils'
+import {
+  generateDirectionsLink,
+  allFoodDelivered,
+  getDeliveryWeight,
+  isNextIncompleteStop,
+} from './utils'
 import { WarningText, ConfirmationModal } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
@@ -111,22 +116,6 @@ export function Route() {
       </div>
     )
   }
-  function getDeliveryWeight() {
-    const myDelivery = deliveries.find(
-      deliveryRoute => deliveryRoute.route_id === route.id
-    )
-    return myDelivery ? myDelivery.report?.weight : 0
-  }
-
-  function isNextIncompleteStop(index) {
-    if (
-      stops[index].status === 9 ||
-      stops[index].status === 0 ||
-      route.status < 3
-    )
-      return false
-    return true
-  }
 
   function areAllStopsCompleted() {
     let completed = true
@@ -150,7 +139,7 @@ export function Route() {
         time_started: firebase.firestore.FieldValue.serverTimestamp(),
       })
     }
-    const deliveryWeight = getDeliveryWeight()
+    const deliveryWeight = getDeliveryWeight(deliveries, route)
     return (
       <div id="Driver">
         <img
@@ -707,7 +696,7 @@ export function Route() {
                 {stops.map((s, i) => (
                   <div
                     className={`Stop ${s.type} ${
-                      isNextIncompleteStop(i) ? 'active' : ''
+                      isNextIncompleteStop(route, stops, i) ? 'active' : ''
                     }${areAllStopsCompleted() ? 'complete' : ''}`}
                     key={i}
                   >
@@ -829,7 +818,7 @@ export function Route() {
                     {showModal === true ? <WarningModal stop={s} /> : null}
                     {hasEditPermissions() ? (
                       <>
-                        {isNextIncompleteStop(i) ? (
+                        {isNextIncompleteStop(route, stops, i) ? (
                           <>
                             {s.location.lat &&
                             s.location.lng &&

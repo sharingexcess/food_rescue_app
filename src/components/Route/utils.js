@@ -18,3 +18,20 @@ export function allFoodDelivered(stops) {
   }
   return finalWeight === 0
 }
+
+export function getDeliveryWeight(deliveries, route) {
+  const myDelivery = deliveries.find(
+    deliveryRoute => deliveryRoute.route_id === route.id
+  )
+  return myDelivery ? myDelivery.report?.weight : 0
+}
+
+export function isNextIncompleteStop(route, stops, index) {
+  if (
+    stops[index].status === 9 ||
+    stops[index].status === 0 ||
+    route.status < 3
+  )
+    return false
+  return true
+}
