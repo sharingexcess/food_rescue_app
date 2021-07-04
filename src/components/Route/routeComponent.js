@@ -21,3 +21,21 @@ export function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
     </div>
   ) : null
 }
+
+export function StopNotes({ stop }) {
+  return stop.status === 1 ? (
+    <>
+      {stop.location.upon_arrival_instructions ? (
+        <h6>
+          <span>Instructions: </span>
+          {stop.location.upon_arrival_instructions}
+        </h6>
+      ) : null}
+    </>
+  ) : [0, 9].includes(stop.status) && stop.report && stop.report.notes ? (
+    <h6>
+      <span>Notes: </span>
+      {stop.report.notes}
+    </h6>
+  ) : null
+}

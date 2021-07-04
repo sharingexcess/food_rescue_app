@@ -17,7 +17,7 @@ import {
   getDeliveryWeight,
   isNextIncompleteStop,
 } from './utils'
-import { WarningText, ConfirmationModal } from './routeComponent'
+import { WarningText, ConfirmationModal, StopNotes } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -593,24 +593,6 @@ export function Route() {
         </>
       )
     } else return `Route ${ROUTE_STATUSES[route.status].replace('_', ' ')}`
-  }
-
-  function StopNotes({ stop }) {
-    return stop.status === 1 ? (
-      <>
-        {stop.location.upon_arrival_instructions ? (
-          <h6>
-            <span>Instructions: </span>
-            {stop.location.upon_arrival_instructions}
-          </h6>
-        ) : null}
-      </>
-    ) : [0, 9].includes(stop.status) && stop.report && stop.report.notes ? (
-      <h6>
-        <span>Notes: </span>
-        {stop.report.notes}
-      </h6>
-    ) : null
   }
 
   function BackupDelivery() {
