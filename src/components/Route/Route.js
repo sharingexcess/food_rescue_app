@@ -16,6 +16,7 @@ import {
   allFoodDelivered,
   getDeliveryWeight,
   isNextIncompleteStop,
+  areAllStopsCompleted,
 } from './utils'
 import {
   FinishRouteInstruction,
@@ -122,21 +123,10 @@ export function Route() {
     )
   }
 
-  function areAllStopsCompleted() {
-    let completed = true
-    for (const s of stops) {
-      // if stop is not completed or cancelled
-      if (s.status === 1) {
-        completed = false
-        break
-      }
-    }
-    return completed
-  }
-
   function hasEditPermissions() {
     return admin || user.uid === route.driver_id
   }
+
   function Driver() {
     function handleBegin() {
       setFirestoreData(['Routes', route.id], {
@@ -363,7 +353,7 @@ export function Route() {
             claim route
           </button>
         )
-    } else if (route.status === 3 && areAllStopsCompleted()) {
+    } else if (route.status === 3 && areAllStopsCompleted(stops)) {
       return willComplete ? (
         <>
           <Input
@@ -582,7 +572,7 @@ export function Route() {
 
   function BackupDelivery() {
     const [willFind, setWillFind] = useState()
-    if (areAllStopsCompleted()) {
+    if (areAllStopsCompleted(stops)) {
       let lastStop
       for (const s of stops) {
         if (
@@ -642,6 +632,7 @@ export function Route() {
     }
     return null
   }
+
   return (
     <main id="Route">
       {!route ? (
@@ -649,7 +640,7 @@ export function Route() {
       ) : (
         <>
           {route.status === 3 &&
-            areAllStopsCompleted() &&
+            areAllStopsCompleted(stops) &&
             (allFoodDelivered(stops) ? (
               <FinishRouteInstruction
                 text={`Scroll down and click "finish route"`}
@@ -666,7 +657,7 @@ export function Route() {
                   <div
                     className={`Stop ${s.type} ${
                       isNextIncompleteStop(route, stops, i) ? 'active' : ''
-                    }${areAllStopsCompleted() ? 'complete' : ''}`}
+                    }${areAllStopsCompleted(stops) ? 'complete' : ''}`}
                     key={i}
                   >
                     <StatusIndicator

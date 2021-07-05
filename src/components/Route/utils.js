@@ -19,6 +19,18 @@ export function allFoodDelivered(stops) {
   return finalWeight === 0
 }
 
+export function areAllStopsCompleted(stops) {
+  let completed = true
+  for (const s of stops) {
+    // if stop is not completed or cancelled
+    if (s.status === 1) {
+      completed = false
+      break
+    }
+  }
+  return completed
+}
+
 export function isNextIncompleteStop(route, stops, index) {
   if (
     stops[index].status === 9 ||
