@@ -1,5 +1,6 @@
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 
+// warning drivers when they run through the route within less than 30 minutes
 export const WarningText = ({ text }) => {
   return (
     <div className="warning-text">
@@ -8,6 +9,7 @@ export const WarningText = ({ text }) => {
   )
 }
 
+// Confirmation modal pops up when admin changes the recipients for a route
 export function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
   return openModal ? (
     <div id="confirmation modal" class="modal">
@@ -21,6 +23,27 @@ export function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
         </button>
       </div>
     </div>
+  ) : null
+}
+
+// route components
+export function StatusIndicator({ stop, location, route_id }) {
+  let icon
+  if (stop.status === 9) {
+    icon = <i id="StatusIndicator" className="fa fa-check" />
+  } else if (stop.status === 0) {
+    icon = <i id="StatusIndicator" className="fa fa-times" />
+  } else if (stop.status === 1) {
+    icon = <i id="StatusIndicator" className="fa fa-clock-o" />
+  }
+  return icon ? (
+    <Link
+      to={`/${location.pathname.split('/')[1]}/${route_id}/${stop.type}/${
+        stop.id
+      }`}
+    >
+      {icon}
+    </Link>
   ) : null
 }
 
@@ -39,25 +62,5 @@ export function StopNotes({ stop }) {
       <span>Notes: </span>
       {stop.report.notes}
     </h6>
-  ) : null
-}
-
-export function StatusIndicator({ stop, location, route_id }) {
-  let icon
-  if (stop.status === 9) {
-    icon = <i id="StatusIndicator" className="fa fa-check" />
-  } else if (stop.status === 0) {
-    icon = <i id="StatusIndicator" className="fa fa-times" />
-  } else if (stop.status === 1) {
-    icon = <i id="StatusIndicator" className="fa fa-clock-o" />
-  }
-  return icon ? (
-    <Link
-      to={`/${location.pathname.split('/')[1]}/${route_id}/${stop.type}/${
-        stop.id
-      }`}
-    >
-      {icon}
-    </Link>
   ) : null
 }
