@@ -1,5 +1,7 @@
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 
+import { generateDirectionsLink } from './utils'
+
 // Instruction to finish route for driver after they filled all the reports
 export const FinishRouteInstruction = ({ text }) => {
   return (
@@ -63,4 +65,19 @@ export function StopNotes({ stop }) {
       {stop.report.notes}
     </h6>
   ) : null
+}
+
+export function DirectionsButton({ stop, route }) {
+  function handleOpenDirections() {
+    window.open(generateDirectionsLink(stop.location), '_blank')
+  }
+
+  if (route.status < 3) return null
+  if (stop.status === 1) {
+    return (
+      <button className="directions" onClick={handleOpenDirections}>
+        Get Directions
+      </button>
+    )
+  } else return null
 }

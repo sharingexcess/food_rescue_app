@@ -22,6 +22,7 @@ import {
   FinishRouteInstruction,
   ChangeDriverModal,
   StopNotes,
+  DirectionsButton,
   StatusIndicator,
 } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
@@ -498,21 +499,6 @@ export function Route() {
     } else return null
   }
 
-  function DirectionsButton({ stop }) {
-    function handleOpenDirections() {
-      window.open(generateDirectionsLink(stop.location), '_blank')
-    }
-
-    if (route.status < 3) return null
-    if (stop.status === 1) {
-      return (
-        <button className="directions" onClick={handleOpenDirections}>
-          Get Directions
-        </button>
-      )
-    } else return null
-  }
-
   function CancelStop({ stop }) {
     const [cancelStop, setCancelStop] = useState()
     const [cancelNotes, setCancelNotes] = useState('')
@@ -793,7 +779,7 @@ export function Route() {
                                 zoom={14}
                               />
                             ) : null}
-                            <DirectionsButton stop={s} />
+                            <DirectionsButton stop={s} route={route} />
                             <UpdateStop stop={s} />
                             {s.status < 9 ? <CancelStop stop={s} /> : null}
                           </>
