@@ -18,8 +18,8 @@ import {
   isNextIncompleteStop,
 } from './utils'
 import {
-  WarningText,
-  ConfirmationModal,
+  FinishRouteInstruction,
+  ChangeDriverModal,
   StopNotes,
   StatusIndicator,
 } from './routeComponent'
@@ -651,9 +651,11 @@ export function Route() {
           {route.status === 3 &&
             areAllStopsCompleted() &&
             (allFoodDelivered(stops) ? (
-              <WarningText text={`Scroll down and click "finish route"`} />
+              <FinishRouteInstruction
+                text={`Scroll down and click "finish route"`}
+              />
             ) : (
-              <WarningText text="There is leftover food, please add another delivery to finish the route" />
+              <FinishRouteInstruction text="There is leftover food, please add another delivery to finish the route" />
             ))}
           <Header text={generateStatusHeader(route)} />
           <Driver />
@@ -823,7 +825,7 @@ export function Route() {
               <StatusButton />
               {admin === true ? <CancelButton /> : null}
               {admin === true ? <DeleteButton /> : null}
-              <ConfirmationModal
+              <ChangeDriverModal
                 openModal={confDriver}
                 text={
                   'Are you sure you want to re-assign this route to another driver?'

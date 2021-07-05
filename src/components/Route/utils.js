@@ -19,13 +19,6 @@ export function allFoodDelivered(stops) {
   return finalWeight === 0
 }
 
-export function getDeliveryWeight(deliveries, route) {
-  const myDelivery = deliveries.find(
-    deliveryRoute => deliveryRoute.route_id === route.id
-  )
-  return myDelivery ? myDelivery.report?.weight : 0
-}
-
 export function isNextIncompleteStop(route, stops, index) {
   if (
     stops[index].status === 9 ||
@@ -34,4 +27,11 @@ export function isNextIncompleteStop(route, stops, index) {
   )
     return false
   return true
+}
+
+export function getDeliveryWeight(deliveries, route) {
+  const myDelivery = deliveries.find(
+    deliveryRoute => deliveryRoute.route_id === route.id
+  )
+  return myDelivery ? myDelivery.report?.weight : 0
 }

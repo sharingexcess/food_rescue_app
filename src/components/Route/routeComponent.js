@@ -1,7 +1,7 @@
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 
-// warning drivers when they run through the route within less than 30 minutes
-export const WarningText = ({ text }) => {
+// Instruction to finish route for driver after they filled all the reports
+export const FinishRouteInstruction = ({ text }) => {
   return (
     <div className="warning-text">
       <p>{text}</p>
@@ -9,8 +9,8 @@ export const WarningText = ({ text }) => {
   )
 }
 
-// Confirmation modal pops up when admin changes the recipients for a route
-export function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
+// Confirmation modal pops up when admin changes driver for a route
+export function ChangeDriverModal({ openModal, text, onConfirm, onClose }) {
   return openModal ? (
     <div id="confirmation modal" class="modal">
       <div className="modal-content">
@@ -26,7 +26,7 @@ export function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
   ) : null
 }
 
-// route components
+// Route components
 export function StatusIndicator({ stop, location, route_id }) {
   let icon
   if (stop.status === 9) {
