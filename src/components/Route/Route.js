@@ -24,6 +24,7 @@ import {
   StopNotes,
   DirectionsButton,
   StatusIndicator,
+  WarningModal,
 } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
@@ -87,42 +88,6 @@ export function Route() {
     }
     route && route.stops && updateStops()
   }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  function WarningModal({ stop }) {
-    function handleOpenReport() {
-      const baseURL = location.pathname.includes('routes')
-        ? 'routes'
-        : 'history'
-      history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
-    }
-    return (
-      <div className="warning modal">
-        <div className="modal-content">
-          <div className="footer">
-            <p>
-              <button
-                className="red"
-                onClick={() => {
-                  setShowModal(false)
-                  handleOpenReport()
-                }}
-              >
-                x
-              </button>
-            </p>
-          </div>
-          <div className="header">
-            <p>
-              Woah there, partner. You zoomed through that route! In the future,
-              be sure to fill out pickup and delivery reports in real time as
-              you complete the route. This is especially important for food
-              safety purposes and accurate data tracking.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   function hasEditPermissions() {
     return admin || user.uid === route.driver_id
@@ -765,7 +730,15 @@ export function Route() {
                       <p>Location Deleted</p>
                     )}
                     <StopNotes stop={s} />
-                    {showModal === true ? <WarningModal stop={s} /> : null}
+                    {showModal === true ? (
+                      <WarningModal
+                        stop={s}
+                        history={history}
+                        location={location}
+                        route_id={route_id}
+                        onShowModal={() => setShowModal(false)}
+                      />
+                    ) : null}
                     {hasEditPermissions() ? (
                       <>
                         {isNextIncompleteStop(route, stops, i) ? (

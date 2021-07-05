@@ -1,4 +1,4 @@
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { generateDirectionsLink } from './utils'
 
@@ -26,6 +26,47 @@ export function ChangeDriverModal({ openModal, text, onConfirm, onClose }) {
       </div>
     </div>
   ) : null
+}
+
+// warning modal pops up when the driver trying to complete the delivery report in less than 30 minutes into the route
+export function WarningModal({
+  stop,
+  history,
+  location,
+  route_id,
+  onShowModal,
+}) {
+  function handleOpenReport() {
+    const baseURL = location.pathname.includes('routes') ? 'routes' : 'history'
+    history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
+  }
+  return (
+    <div className="warning modal">
+      <div className="modal-content">
+        <div className="footer">
+          <p>
+            <button
+              className="red"
+              onClick={() => {
+                onShowModal()
+                handleOpenReport()
+              }}
+            >
+              x
+            </button>
+          </p>
+        </div>
+        <div className="header">
+          <p>
+            Woah there, partner. You zoomed through that route! In the future,
+            be sure to fill out pickup and delivery reports in real time as you
+            complete the route. This is especially important for food safety
+            purposes and accurate data tracking.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // Route components
