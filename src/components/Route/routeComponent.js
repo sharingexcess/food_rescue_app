@@ -1,3 +1,5 @@
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+
 export const WarningText = ({ text }) => {
   return (
     <div className="warning-text">
@@ -37,5 +39,25 @@ export function StopNotes({ stop }) {
       <span>Notes: </span>
       {stop.report.notes}
     </h6>
+  ) : null
+}
+
+export function StatusIndicator({ stop, location, route_id }) {
+  let icon
+  if (stop.status === 9) {
+    icon = <i id="StatusIndicator" className="fa fa-check" />
+  } else if (stop.status === 0) {
+    icon = <i id="StatusIndicator" className="fa fa-times" />
+  } else if (stop.status === 1) {
+    icon = <i id="StatusIndicator" className="fa fa-clock-o" />
+  }
+  return icon ? (
+    <Link
+      to={`/${location.pathname.split('/')[1]}/${route_id}/${stop.type}/${
+        stop.id
+      }`}
+    >
+      {icon}
+    </Link>
   ) : null
 }

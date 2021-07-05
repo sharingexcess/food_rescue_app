@@ -17,7 +17,12 @@ import {
   getDeliveryWeight,
   isNextIncompleteStop,
 } from './utils'
-import { WarningText, ConfirmationModal, StopNotes } from './routeComponent'
+import {
+  WarningText,
+  ConfirmationModal,
+  StopNotes,
+  StatusIndicator,
+} from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -564,26 +569,6 @@ export function Route() {
     )
   }
 
-  function StatusIndicator({ stop }) {
-    let icon
-    if (stop.status === 9) {
-      icon = <i id="StatusIndicator" className="fa fa-check" />
-    } else if (stop.status === 0) {
-      icon = <i id="StatusIndicator" className="fa fa-times" />
-    } else if (stop.status === 1) {
-      icon = <i id="StatusIndicator" className="fa fa-clock-o" />
-    }
-    return icon ? (
-      <Link
-        to={`/${location.pathname.split('/')[1]}/${route_id}/${stop.type}/${
-          stop.id
-        }`}
-      >
-        {icon}
-      </Link>
-    ) : null
-  }
-
   function generateStatusHeader() {
     if (!route || route.status === null || route.status === undefined) {
       return (
@@ -682,7 +667,11 @@ export function Route() {
                     }${areAllStopsCompleted() ? 'complete' : ''}`}
                     key={i}
                   >
-                    <StatusIndicator stop={s} />
+                    <StatusIndicator
+                      stop={s}
+                      location={location}
+                      route_id={route_id}
+                    />
                     <h4>
                       <i
                         className={
