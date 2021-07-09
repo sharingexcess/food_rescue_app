@@ -44,7 +44,7 @@ function Organizations() {
           <option value="recipient">Recipients</option>
         </select>
         <Link to="/admin/create-organization">
-          <button className="grant">+ New Org</button>
+          <button className="grant">+ New Network</button>
         </Link>
       </section>
       <Input
