@@ -765,7 +765,9 @@ export function Route() {
                   </div>
                 ))}
               </section>
-              <BackupDelivery />
+              {route.status === 3 &&
+                areAllStopsCompleted(stops) &&
+                !allFoodDelivered(stops) && <BackupDelivery />}
               {(route.status === 1 || route.status === 3) &&
                 route.driver &&
                 admin && (
