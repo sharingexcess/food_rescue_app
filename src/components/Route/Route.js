@@ -591,13 +591,16 @@ export function Route() {
       ) : (
         <>
           {route.status === 3 &&
-            areAllStopsCompleted(stops) &&
-            (allFoodDelivered(stops) ? (
-              <FinishRouteInstruction
-                text={`Scroll down and click "finish route"`}
-              />
+            (areAllStopsCompleted(stops) ? (
+              allFoodDelivered(stops) ? (
+                <FinishRouteInstruction
+                  text={`Scroll down and click "finish route"`}
+                />
+              ) : (
+                <FinishRouteInstruction text="There is leftover food, please add another delivery to finish the route" />
+              )
             ) : (
-              <FinishRouteInstruction text="There is leftover food, please add another delivery to finish the route" />
+              <FinishRouteInstruction text="Stops are not fully completed" />
             ))}
           <Header text={generateStatusHeader(route)} />
           <Driver />
