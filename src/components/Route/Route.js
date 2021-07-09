@@ -14,9 +14,18 @@ import Ellipsis, { ExternalLink } from '../../helpers/components'
 import {
   generateDirectionsLink,
   allFoodDelivered,
-  WarningText,
-  ConfirmationModal,
+  getDeliveryWeight,
+  isNextIncompleteStop,
+  areAllStopsCompleted,
 } from './utils'
+import {
+  FinishRouteInstruction,
+  ChangeDriverModal,
+  StopNotes,
+  DirectionsButton,
+  StatusIndicator,
+  WarningModal,
+} from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
 import { Input } from '../Input/Input'
@@ -80,73 +89,10 @@ export function Route() {
     route && route.stops && updateStops()
   }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function DelivWarning({ stop }) {
-    function handleOpenReport() {
-      const baseURL = location.pathname.includes('routes')
-        ? 'routes'
-        : 'history'
-      history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
-    }
-    return (
-      <div className="warning modal">
-        <div className="modal-content">
-          <div className="footer">
-            <p>
-              <button
-                className="red"
-                onClick={() => {
-                  setShowModal(false)
-                  handleOpenReport()
-                }}
-              >
-                x
-              </button>
-            </p>
-          </div>
-          <div className="header">
-            <p>
-              Woah there, partner. You zoomed through that route! In the future,
-              be sure to fill out pickup and delivery reports in real time as
-              you complete the route. This is especially important for food
-              safety purposes and accurate data tracking.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-  function getDeliveryWeight() {
-    const myDelivery = deliveries.find(
-      deliveryRoute => deliveryRoute.route_id === route.id
-    )
-    return myDelivery ? myDelivery.report?.weight : 0
-  }
-
-  function isNextIncompleteStop(index) {
-    if (
-      stops[index].status === 9 ||
-      stops[index].status === 0 ||
-      route.status < 3
-    )
-      return false
-    return true
-  }
-
-  function areAllStopsCompleted() {
-    let completed = true
-    for (const s of stops) {
-      // if stop is not completed or cancelled
-      if (s.status === 1) {
-        completed = false
-        break
-      }
-    }
-    return completed
-  }
-
   function hasEditPermissions() {
     return admin || user.uid === route.driver_id
   }
+
   function Driver() {
     function handleBegin() {
       setFirestoreData(['Routes', route.id], {
@@ -154,7 +100,7 @@ export function Route() {
         time_started: firebase.firestore.FieldValue.serverTimestamp(),
       })
     }
-    const deliveryWeight = getDeliveryWeight()
+    const deliveryWeight = getDeliveryWeight(deliveries, route)
     return (
       <div id="Driver">
         <img
@@ -373,7 +319,7 @@ export function Route() {
             claim route
           </button>
         )
-    } else if (route.status === 3 && areAllStopsCompleted()) {
+    } else if (route.status === 3 && areAllStopsCompleted(stops)) {
       return willComplete ? (
         <>
           <Input
@@ -488,6 +434,7 @@ export function Route() {
       </button>
     )
   }
+
   function UpdateStop({ stop }) {
     let beginTime = route.time_started
       ? moment(route.time_started.toDate())
@@ -512,21 +459,6 @@ export function Route() {
           }
         >
           Complete {stop.type} report
-        </button>
-      )
-    } else return null
-  }
-
-  function DirectionsButton({ stop }) {
-    function handleOpenDirections() {
-      window.open(generateDirectionsLink(stop.location), '_blank')
-    }
-
-    if (route.status < 3) return null
-    if (stop.status === 1) {
-      return (
-        <button className="directions" onClick={handleOpenDirections}>
-          Get Directions
         </button>
       )
     } else return null
@@ -578,26 +510,6 @@ export function Route() {
     )
   }
 
-  function StatusIndicator({ stop }) {
-    let icon
-    if (stop.status === 9) {
-      icon = <i id="StatusIndicator" className="fa fa-check" />
-    } else if (stop.status === 0) {
-      icon = <i id="StatusIndicator" className="fa fa-times" />
-    } else if (stop.status === 1) {
-      icon = <i id="StatusIndicator" className="fa fa-clock-o" />
-    }
-    return icon ? (
-      <Link
-        to={`/${location.pathname.split('/')[1]}/${route_id}/${stop.type}/${
-          stop.id
-        }`}
-      >
-        {icon}
-      </Link>
-    ) : null
-  }
-
   function generateStatusHeader() {
     if (!route || route.status === null || route.status === undefined) {
       return (
@@ -609,27 +521,9 @@ export function Route() {
     } else return `Route ${ROUTE_STATUSES[route.status].replace('_', ' ')}`
   }
 
-  function StopNotes({ stop }) {
-    return stop.status === 1 ? (
-      <>
-        {stop.location.upon_arrival_instructions ? (
-          <h6>
-            <span>Instructions: </span>
-            {stop.location.upon_arrival_instructions}
-          </h6>
-        ) : null}
-      </>
-    ) : [0, 9].includes(stop.status) && stop.report && stop.report.notes ? (
-      <h6>
-        <span>Notes: </span>
-        {stop.report.notes}
-      </h6>
-    ) : null
-  }
-
   function BackupDelivery() {
     const [willFind, setWillFind] = useState()
-    if (areAllStopsCompleted()) {
+    if (areAllStopsCompleted(stops)) {
       let lastStop
       for (const s of stops) {
         if (
@@ -689,6 +583,7 @@ export function Route() {
     }
     return null
   }
+
   return (
     <main id="Route">
       {!route ? (
@@ -696,11 +591,13 @@ export function Route() {
       ) : (
         <>
           {route.status === 3 &&
-            areAllStopsCompleted() &&
+            areAllStopsCompleted(stops) &&
             (allFoodDelivered(stops) ? (
-              <WarningText text={`Scroll down and click "finish route"`} />
+              <FinishRouteInstruction
+                text={`Scroll down and click "finish route"`}
+              />
             ) : (
-              <WarningText text="There is leftover food, please add another delivery to finish the route" />
+              <FinishRouteInstruction text="There is leftover food, please add another delivery to finish the route" />
             ))}
           <Header text={generateStatusHeader(route)} />
           <Driver />
@@ -710,11 +607,15 @@ export function Route() {
                 {stops.map((s, i) => (
                   <div
                     className={`Stop ${s.type} ${
-                      isNextIncompleteStop(i) ? 'active' : ''
-                    }${areAllStopsCompleted() ? 'complete' : ''}`}
+                      isNextIncompleteStop(route, stops, i) ? 'active' : ''
+                    }${areAllStopsCompleted(stops) ? 'complete' : ''}`}
                     key={i}
                   >
-                    <StatusIndicator stop={s} />
+                    <StatusIndicator
+                      stop={s}
+                      location={location}
+                      route_id={route_id}
+                    />
                     <h4>
                       <i
                         className={
@@ -829,10 +730,18 @@ export function Route() {
                       <p>Location Deleted</p>
                     )}
                     <StopNotes stop={s} />
-                    {showModal === true ? <DelivWarning stop={s} /> : null}
+                    {showModal === true ? (
+                      <WarningModal
+                        stop={s}
+                        history={history}
+                        location={location}
+                        route_id={route_id}
+                        onShowModal={() => setShowModal(false)}
+                      />
+                    ) : null}
                     {hasEditPermissions() ? (
                       <>
-                        {isNextIncompleteStop(i) ? (
+                        {isNextIncompleteStop(route, stops, i) ? (
                           <>
                             {s.location.lat &&
                             s.location.lng &&
@@ -843,7 +752,7 @@ export function Route() {
                                 zoom={14}
                               />
                             ) : null}
-                            <DirectionsButton stop={s} />
+                            <DirectionsButton stop={s} route={route} />
                             <UpdateStop stop={s} />
                             {s.status < 9 ? <CancelStop stop={s} /> : null}
                           </>
@@ -866,7 +775,7 @@ export function Route() {
               <StatusButton />
               {admin === true ? <CancelButton /> : null}
               {admin === true ? <DeleteButton /> : null}
-              <ConfirmationModal
+              <ChangeDriverModal
                 openModal={confDriver}
                 text={
                   'Are you sure you want to re-assign this route to another driver?'

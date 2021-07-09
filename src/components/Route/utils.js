@@ -1,27 +1,3 @@
-export const WarningText = ({ text }) => {
-  return (
-    <div className="warning-text">
-      <p>{text}</p>
-    </div>
-  )
-}
-
-export function ConfirmationModal({ openModal, text, onConfirm, onClose }) {
-  return openModal ? (
-    <div id="confirmation modal" class="modal">
-      <div className="modal-content">
-        <span className="close" onClick={onClose}>
-          &times;
-        </span>
-        <span>{text}</span>
-        <button className="confirm driver" onClick={onConfirm}>
-          confirm
-        </button>
-      </div>
-    </div>
-  ) : null
-}
-
 export function generateDirectionsLink(addressObj) {
   const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
   return `${base_url}${addressObj.address1}+${addressObj.city}+${addressObj.state}+${addressObj.zip_code}`
@@ -41,4 +17,33 @@ export function allFoodDelivered(stops) {
       : (finalWeight -= stop.report.weight)
   }
   return finalWeight === 0
+}
+
+export function areAllStopsCompleted(stops) {
+  let completed = true
+  for (const s of stops) {
+    // if stop is not completed or cancelled
+    if (s.status === 1) {
+      completed = false
+      break
+    }
+  }
+  return completed
+}
+
+export function isNextIncompleteStop(route, stops, index) {
+  if (
+    stops[index].status === 9 ||
+    stops[index].status === 0 ||
+    route.status < 3
+  )
+    return false
+  return true
+}
+
+export function getDeliveryWeight(deliveries, route) {
+  const myDelivery = deliveries.find(
+    deliveryRoute => deliveryRoute.route_id === route.id
+  )
+  return myDelivery ? myDelivery.report?.weight : 0
 }
