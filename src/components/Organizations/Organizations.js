@@ -57,40 +57,37 @@ function Organizations() {
         animation={false}
       />
       {filter === 'community' || filter === 'all' ? (
-        <div id="donors">
-          {' '}
-          <p>Community Frigdes </p>{' '}
-        </div>
+        <>
+          <div id="networks">
+            {' '}
+            <p>Community Fridges</p>{' '}
+          </div>
+          {communityFridges.length !== 0 ? (
+            communityFridges.map(org => (
+              <Link
+                key={org.id}
+                className="wrapper"
+                to={`/admin/organizations/${org.id}`}
+              >
+                <section className="Organization">
+                  <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
+                  <h3>{org.name}</h3>
+                  <h2 className={'community'}>{org.org_type}</h2>
+                </section>
+              </Link>
+            ))
+          ) : (
+            <p>No community fridges in the database yet</p>
+          )}
+        </>
       ) : null}
-
-      {filter === 'community' || filter === 'all'
-        ? communityFridges.map(org => (
-            <Link
-              key={org.id}
-              className="wrapper"
-              to={`/admin/organizations/${org.id}`}
-            >
-              <section className="Organization">
-                <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-                <h3>{org.name}</h3>
-                <h2
-                  className={org.org_type === 'donor' ? 'donor' : 'recipient'}
-                >
-                  {org.org_type}
-                </h2>
-              </section>
-            </Link>
-          ))
-        : null}
       {filter === 'donor' || filter === 'all' ? (
-        <div id="donors">
-          {' '}
-          <p>Donors</p>{' '}
-        </div>
-      ) : null}
-
-      {filter === 'donor' || filter === 'all'
-        ? donors.map(org => (
+        <>
+          <div id="networks">
+            {' '}
+            <p>Donors</p>{' '}
+          </div>
+          {donors.map(org => (
             <Link
               key={org.id}
               className="wrapper"
@@ -99,25 +96,19 @@ function Organizations() {
               <section className="Organization">
                 <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
                 <h3>{org.name}</h3>
-                <h2
-                  className={org.org_type === 'donor' ? 'donor' : 'recipient'}
-                >
-                  {org.org_type}
-                </h2>
+                <h2 className={'donor'}>{org.org_type}</h2>
               </section>
             </Link>
-          ))
-        : null}
-
+          ))}
+        </>
+      ) : null}
       {filter === 'recipient' || filter === 'all' ? (
-        <div id="recipients">
-          {' '}
-          <p>Recipients</p>{' '}
-        </div>
-      ) : null}
-
-      {filter === 'recipient' || filter === 'all'
-        ? recipients.map(org => (
+        <>
+          <div id="networks">
+            {' '}
+            <p>Recipients</p>{' '}
+          </div>
+          {recipients.map(org => (
             <Link
               key={org.id}
               className="wrapper"
@@ -126,15 +117,12 @@ function Organizations() {
               <section className="Organization">
                 <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
                 <h3>{org.name}</h3>
-                <h2
-                  className={org.org_type === 'donor' ? 'donor' : 'recipient'}
-                >
-                  {org.org_type}
-                </h2>
+                <h2 className={'recipient'}>{org.org_type}</h2>
               </section>
             </Link>
-          ))
-        : null}
+          ))}
+        </>
+      ) : null}
     </main>
   )
 }

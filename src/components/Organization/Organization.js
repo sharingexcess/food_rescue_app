@@ -79,7 +79,15 @@ function Organization() {
         <div>
           <div>
             <h3>{org.name}</h3>
-            <h2 className={org.org_type === 'donor' ? 'donor' : 'recipient'}>
+            <h2
+              className={
+                org.org_type === 'donor'
+                  ? 'donor'
+                  : org.org_type === 'recipient'
+                  ? 'recipient'
+                  : 'community'
+              }
+            >
               {org.org_type}
             </h2>
           </div>
