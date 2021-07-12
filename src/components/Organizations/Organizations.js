@@ -13,12 +13,7 @@ const org_icon_urls = {}
 function Organizations() {
   const organizations = useOrganizationData()
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('all')
-  const donors = organizations.filter(org => org.org_type === 'donor')
-  const recipients = organizations.filter(org => org.org_type === 'recipient')
-  const communityFridges = organizations.filter(
-    org => org.org_type === 'community fridge'
-  )
+  const [filter, setFilter] = useState('donor')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
   useEffect(() => {
@@ -35,16 +30,23 @@ function Organizations() {
   function handleSearch(e) {
     setSearch(e.target.value)
   }
+
+  function filterBySearch(array) {
+    const filtered_by_search = array.filter(i =>
+      i.name.toLowerCase().includes(search.toLowerCase())
+    )
+    return filtered_by_search.filter(i => i.org_type === filter)
+  }
+
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
       <Header text="Network" />
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
-          <option value="all">All</option>
           <option value="donor">Donors</option>
           <option value="recipient">Recipients</option>
-          <option value="community">Community Fridges</option>
+          <option value="community fridge">Community Fridges</option>
         </select>
         <Link to="/admin/create-organization">
           <button className="grant">+ New Network</button>
@@ -56,73 +58,36 @@ function Organizations() {
         value={search}
         animation={false}
       />
-      {filter === 'community' || filter === 'all' ? (
-        <>
-          <div id="networks">
-            {' '}
-            <p>Community Fridges</p>{' '}
-          </div>
-          {communityFridges.length !== 0 ? (
-            communityFridges.map(org => (
-              <Link
-                key={org.id}
-                className="wrapper"
-                to={`/admin/organizations/${org.id}`}
-              >
-                <section className="Organization">
-                  <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-                  <h3>{org.name}</h3>
-                  <h2 className={'community'}>{org.org_type}</h2>
-                </section>
-              </Link>
-            ))
-          ) : (
-            <p>No community fridges in the database yet</p>
-          )}
-        </>
-      ) : null}
-      {filter === 'donor' || filter === 'all' ? (
-        <>
-          <div id="networks">
-            {' '}
-            <p>Donors</p>{' '}
-          </div>
-          {donors.map(org => (
-            <Link
-              key={org.id}
-              className="wrapper"
-              to={`/admin/organizations/${org.id}`}
+      {filter === 'donor' ? (
+        <h1>Donors</h1>
+      ) : filter === 'recipient' ? (
+        <h1>Recipients</h1>
+      ) : (
+        <h1>Community Fridges</h1>
+      )}
+      {filterBySearch(organizations).map(org => (
+        <Link
+          key={org.id}
+          className="wrapper"
+          to={`/admin/organizations/${org.id}`}
+        >
+          <section className="Organization">
+            <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
+            <h3>{org.name}</h3>
+            <h2
+              className={
+                org.org_type === 'donor'
+                  ? 'donor'
+                  : org.org_type === 'recipient'
+                  ? 'recipient'
+                  : 'community'
+              }
             >
-              <section className="Organization">
-                <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-                <h3>{org.name}</h3>
-                <h2 className={'donor'}>{org.org_type}</h2>
-              </section>
-            </Link>
-          ))}
-        </>
-      ) : null}
-      {filter === 'recipient' || filter === 'all' ? (
-        <>
-          <div id="networks">
-            {' '}
-            <p>Recipients</p>{' '}
-          </div>
-          {recipients.map(org => (
-            <Link
-              key={org.id}
-              className="wrapper"
-              to={`/admin/organizations/${org.id}`}
-            >
-              <section className="Organization">
-                <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-                <h3>{org.name}</h3>
-                <h2 className={'recipient'}>{org.org_type}</h2>
-              </section>
-            </Link>
-          ))}
-        </>
-      ) : null}
+              {org.org_type}
+            </h2>
+          </section>
+        </Link>
+      ))}
     </main>
   )
 }
