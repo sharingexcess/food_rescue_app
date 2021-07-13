@@ -266,32 +266,32 @@ export default function Analytics() {
       </section>
 
       {tab === 'RouteAnalytics' && (
-        <>
-          <section id="DateRanges">
-            <h2>Filter by Date</h2>
-            <Input
-              type="datetime-local"
-              label="From..."
-              value={rangeStart}
-              onChange={e => setRangeStart(e.target.value)}
-            />
-            <Input
-              type="datetime-local"
-              label="To..."
-              value={rangeEnd}
-              onChange={e => setRangeEnd(e.target.value)}
-            />
-          </section>
-          <section id="DriverName">
-            <h2>Filter by Driver</h2>
-            <Input
-              type="text"
-              label="Driver's name"
-              value={driverNameFilter}
-              onChange={e => setDriverNameFilter(e.target.value)}
-            />
-          </section>
-        </>
+        <section id="DateRanges">
+          <h2>Filter by Date</h2>
+          <Input
+            type="datetime-local"
+            label="From..."
+            value={rangeStart}
+            onChange={e => setRangeStart(e.target.value)}
+          />
+          <Input
+            type="datetime-local"
+            label="To..."
+            value={rangeEnd}
+            onChange={e => setRangeEnd(e.target.value)}
+          />
+        </section>
+      )}
+      {tab !== 'OrgAnalytics' && (
+        <section id="DriverName">
+          <h2>Filter by Driver</h2>
+          <Input
+            type="text"
+            label="Driver's name"
+            value={driverNameFilter}
+            onChange={e => setDriverNameFilter(e.target.value)}
+          />
+        </section>
       )}
       <ActiveTab />
     </main>
