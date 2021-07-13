@@ -32,6 +32,7 @@ export default function EditLocation() {
     secondary_contact_phone: '',
     upon_arrival_instructions: '',
     is_philabundance_partner: '',
+    is_community_fridge: '',
     time_open: '',
     time_close: '',
     receive_start: '',
@@ -79,8 +80,9 @@ export default function EditLocation() {
       updatedErrors.push('Missing Address')
     }
     if (
-      !formData.contact_phone ||
-      !isPossiblePhoneNumber(formData.contact_phone)
+      formData.is_community_fridge === '' &&
+      (!formData.contact_phone ||
+        !isPossiblePhoneNumber(formData.contact_phone))
     ) {
       updatedErrors.push('Invalid Data Input: Contact Phone Number is invalid')
     }
@@ -282,6 +284,24 @@ export default function EditLocation() {
             <p>
               Make this Network
               <br />a Philabundance Partner
+            </p>
+          </div>
+          <div className="is_community_fridge">
+            <input
+              type="checkbox"
+              id="is_community_fridge"
+              name="is_community_fridge"
+              checked={formData.is_community_fridge}
+              onChange={() =>
+                setFormData({
+                  ...formData,
+                  is_community_fridge: !formData.is_community_fridge,
+                })
+              }
+            />
+            <p>
+              Make this Network
+              <br />a Community Fridge
             </p>
           </div>
           <FormError />
