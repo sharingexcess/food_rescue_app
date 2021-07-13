@@ -232,13 +232,6 @@ export default function EditLocation() {
             value={formData.contact_name}
             onChange={handleChange}
           />
-          {/* <Input
-            type="tel"
-            label="Contact Phone"
-            element_id="contact_phone"
-            value={formData.contact_phone}
-            onChange={handleChange}
-          /> */}
           <PhoneInput
             placeholder="Contact Phone"
             value={formData.contact_phone}
