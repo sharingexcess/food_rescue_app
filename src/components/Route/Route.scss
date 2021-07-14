@@ -45,7 +45,7 @@
       flex-grow: 1;
     }
   }
-  
+
   .warning {
     position: fixed;
     z-index: 10;
@@ -205,6 +205,9 @@
         h2,
         h4 {
           color: var(--red);
+          span {
+            color: var(--red);
+          }
         }
       }
 
