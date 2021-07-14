@@ -167,7 +167,6 @@ export function Route() {
         notes: null,
       })
       for (const stop of route.stops) {
-        console.log(stop)
         debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
@@ -583,7 +582,7 @@ export function Route() {
     }
     return null
   }
-
+  console.log(stops)
   return (
     <main id="Route">
       {!route ? (
@@ -634,6 +633,9 @@ export function Route() {
                       {s.location.name && s.location.name !== s.org.name
                         ? ` (${s.location.name})`
                         : ''}
+                      {route.status === 9 && (
+                        <span> - {s.report?.weight} lbs.</span>
+                      )}
                     </h2>
                     {!s.location.is_deleted ? (
                       <div>
