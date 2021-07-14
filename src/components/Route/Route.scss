@@ -199,6 +199,9 @@
         h2,
         h4 {
           color: var(--strong);
+          span {
+            color: var(--strong);
+          }
         }
       }
       &.delivery {

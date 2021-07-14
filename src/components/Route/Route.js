@@ -633,7 +633,7 @@ export function Route() {
                       {s.location.name && s.location.name !== s.org.name
                         ? ` (${s.location.name})`
                         : ''}
-                      {route.status === 9 && s.type === 'delivery' && (
+                      {route.status === 9 && (
                         <span> - {s.report?.weight} lbs.</span>
                       )}
                     </h2>

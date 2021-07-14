@@ -44,7 +44,6 @@ export default function Routes({ initial_filter }) {
         )
       : 0
   }
-
   useEffect(() => {
     async function addData() {
       const full_data = []
@@ -221,7 +220,6 @@ export default function Routes({ initial_filter }) {
           const r_endtime = r_endtime_array[r_endtime_array.length - 1]
             ? r_endtime_array[r_endtime_array.length - 1].toDate()
             : 'Not found'
-          console.log(r)
           return (
             <Link
               target="_blank"
@@ -273,7 +271,9 @@ export default function Routes({ initial_filter }) {
                       .filter(s => s.type === 'pickup')
                       .map(s =>
                         s.location.name
-                          ? s.org.name + ` (${s.location.name})`
+                          ? s.org.name +
+                            ` (${s.location.name})` +
+                            ` : ${s.report?.weight} lbs`
                           : s.org.name
                       )
                       .join(', ')}
@@ -284,7 +284,9 @@ export default function Routes({ initial_filter }) {
                       .filter(s => s.type === 'delivery')
                       .map(s =>
                         s.location.name
-                          ? s.org.name + ` (${s.location.name})`
+                          ? s.org.name +
+                            ` (${s.location.name})` +
+                            ` : ${s.report?.weight} lbs`
                           : s.org.name
                       )
                       .join(', ')}
