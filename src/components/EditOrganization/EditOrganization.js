@@ -63,17 +63,19 @@ export default function EditOrganization() {
       !formData.name ||
       !validator.isAlphanumeric(formData.name.split(' ')[0])
     ) {
-      errors.push('Missing in form data: Organization Name')
+      errors.push('Missing in form data: Network Name')
     }
     if (
       !validator.isEmail(formData.default_contact_email) &&
-      !!formData.default_contact_email
+      !!formData.default_contact_email &&
+      formData.org_type !== 'community fridge'
     ) {
-      errors.push('Invalid Data Input: Contact Email is incorrect')
+      errors.push('Invalid Data Input: Contact Email is invalid')
     }
     if (
-      !formData.default_contact_phone ||
-      !isPossiblePhoneNumber(formData.default_contact_phone)
+      formData.org_type !== 'community fridge' &&
+      (!formData.default_contact_phone ||
+        !isPossiblePhoneNumber(formData.default_contact_phone))
     ) {
       errors.push('Invalid Data Input: Contact Phone Number is invalid')
     }
@@ -135,7 +137,7 @@ export default function EditOrganization() {
 
   return (
     <main id="EditOrganization">
-      <Header text={id ? 'Edit Organization' : 'Create Organization'} />
+      <Header text={id ? 'Edit Network' : 'Create Network'} />
       <section>
         <img
           src={file ? URL.createObjectURL(file) : orgIconFullUrl || UserIcon}
@@ -145,7 +147,7 @@ export default function EditOrganization() {
       </section>
       <Input
         type="text"
-        label="Organization Name"
+        label="Network Name"
         element_id="name"
         value={formData.name}
         onChange={handleChange}
@@ -172,10 +174,10 @@ export default function EditOrganization() {
       />
       <Input
         type="select"
-        label="Organization Type"
+        label="Network Type"
         element_id="org_type"
         value={formData.org_type}
-        suggestions={['donor', 'recipient']}
+        suggestions={['donor', 'recipient', 'community fridge']}
         onSuggestionClick={handleChange}
       />
       <FormError />
@@ -185,7 +187,7 @@ export default function EditOrganization() {
           setShowErrors(true)
         }}
       >
-        {id ? 'update organization' : 'create organization'}
+        {id ? 'update network' : 'create network'}
       </button>
     </main>
   )

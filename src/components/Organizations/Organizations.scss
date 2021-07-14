@@ -68,24 +68,19 @@
       &.recipient {
         background-color: var(--green);
       }
+      &.community {
+        background-color: var(--blue);
+      }
     }
   }
 
-  #donors {
-    p {
-      font-size: 40px;
-      text-align: left;
-      color: var(--light);
-      padding: 12px;
-    }
+  p {
+    text-align: center;
   }
-
-  #recipients {
-    p {
-      font-size: 40px;
-      text-align: left;
-      color: var(--light);
-      padding: 12px;
-    }
+  h1 {
+    text-align: center;
+    font-size: 25px;
+    color: var(--light);
+    padding: 8px;
   }
 }
