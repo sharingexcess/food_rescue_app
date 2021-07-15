@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import useUserData from '../../hooks/useUserData'
@@ -24,21 +24,37 @@ export default function Analytics() {
   const orgs = useOrganizationData()
   const deliveries = useDeliveryData(r => r.status === 9 && r.report)
   const pickups = usePickupData(r => r.status === 9 && r.report)
-  const drivers = useUserData(
-    driverNameFilter !== ''
-      ? driver =>
-          driver.name.toLowerCase().includes(driverNameFilter.toLowerCase())
-      : driver => driver
-  )
+  const driversOriginal = useUserData()
+  const routesOriginal = useRouteData(r => r.status === 9)
+  const [drivers, setDrivers] = useState(driversOriginal)
+  const [routes, setRoutes] = useState(routesOriginal)
 
-  const routes = useRouteData(
-    rangeStart && rangeEnd
-      ? r =>
-          r.status === 9 &&
-          new Date(r.time_start) > new Date(rangeStart) &&
-          new Date(r.time_start) < new Date(rangeEnd)
-      : r => r.status === 9
-  )
+  useEffect(() => {
+    if (driverNameFilter !== '') {
+      console.log('testing')
+      setDrivers(
+        driversOriginal.filter(dr =>
+          dr.name.toLowerCase().includes(driverNameFilter.toLowerCase())
+        )
+      )
+    } else {
+      setDrivers(driversOriginal)
+    }
+  }, [driversOriginal, driverNameFilter])
+
+  useEffect(() => {
+    if (rangeStart && rangeEnd) {
+      setRoutes(
+        routesOriginal.filter(
+          r =>
+            new Date(r.time_start) > new Date(rangeStart) &&
+            new Date(r.time_start) < new Date(rangeEnd)
+        )
+      )
+    } else {
+      setRoutes(routesOriginal)
+    }
+  }, [routesOriginal, rangeStart, rangeEnd])
 
   function sortByWeight(array) {
     return array.sort((a, b) =>
