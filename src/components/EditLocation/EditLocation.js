@@ -33,6 +33,7 @@ export default function EditLocation() {
     upon_arrival_instructions: '',
     is_philabundance_partner: '',
     is_community_fridge: '',
+    is_warehouse: '',
     time_open: '',
     time_close: '',
     receive_start: '',
@@ -80,6 +81,7 @@ export default function EditLocation() {
       updatedErrors.push('Missing Address')
     }
     if (
+      formData.is_warehouse === '' &&
       formData.is_community_fridge === '' &&
       (!formData.contact_phone ||
         !isPossiblePhoneNumber(formData.contact_phone))
@@ -302,6 +304,24 @@ export default function EditLocation() {
             <p>
               Make this Network
               <br />a Community Fridge
+            </p>
+          </div>
+          <div className="is_warehouse">
+            <input
+              type="checkbox"
+              id="is_warehouse"
+              name="is_warehouse"
+              checked={formData.is_warehouse}
+              onChange={() =>
+                setFormData({
+                  ...formData,
+                  is_warehouse: !formData.is_warehouse,
+                })
+              }
+            />
+            <p>
+              Make this Network
+              <br />a Warehouse
             </p>
           </div>
           <FormError />

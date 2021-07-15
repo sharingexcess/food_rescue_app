@@ -180,6 +180,8 @@ export default function Analytics() {
         return orgs.filter(o => o.org_type === 'recipient')
       } else if (filter === 'community fridge') {
         return orgs.filter(o => o.org_type === 'community fridge')
+      } else if (filter === 'warehouse') {
+        return orgs.filter(o => o.org_type === 'warehouse')
       } else return orgs
     }
     return (
@@ -190,6 +192,7 @@ export default function Analytics() {
             <option value="donor">Donors</option>
             <option value="recipient">Recipients</option>
             <option value="community fridge">Community Fridges</option>
+            <option value="warehouse">Warehouse</option>
           </select>
         </section>
         <table className="Styling">
