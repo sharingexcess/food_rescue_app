@@ -73,7 +73,7 @@ function Organization() {
   if (!org) return <Loading text="Loading your organization" />
   return (
     <main id="Organization">
-      <Header text="Manage Org" />
+      <Header text="Manage Network" />
       <div>
         <img src={orgIconFullUrl || UserIcon} id="org-icon" alt={org.name} />
         <div>
@@ -85,6 +85,8 @@ function Organization() {
                   ? 'donor'
                   : org.org_type === 'recipient'
                   ? 'recipient'
+                  : org.org_type === 'warehouse'
+                  ? 'warehouse'
                   : 'community'
               }
             >
