@@ -31,7 +31,6 @@ export default function Analytics() {
 
   useEffect(() => {
     if (driverNameFilter !== '') {
-      console.log('testing')
       setDrivers(
         driversOriginal.filter(dr =>
           dr.name.toLowerCase().includes(driverNameFilter.toLowerCase())
