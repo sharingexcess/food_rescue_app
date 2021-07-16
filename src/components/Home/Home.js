@@ -16,7 +16,6 @@ export default function Home() {
     d => d.driver_id === user.uid && d.status === 9
   )
   const stats = generateDriverStats(my_routes, my_deliveries)
-
   function Tile({ name, icon, link }) {
     return (
       <Link className="Tile" to={link}>
@@ -52,7 +51,19 @@ export default function Home() {
         />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
-        <Tile name="Test Environment" icon="fa-flask" link="/admin/testenv" />
+        {window.location.href === 'https://sharingexcess.web.app/' ? (
+          <Tile
+            name="Test Environment"
+            icon="fa-flask"
+            link="/admin/switchenv"
+          />
+        ) : (
+          <Tile
+            name="Prod Environment"
+            icon="fa-flask"
+            link="/admin/switchenv"
+          />
+        )}
       </>
     )
   }
@@ -61,6 +72,9 @@ export default function Home() {
 
   return (
     <main id="Home">
+      {window.location.href === 'https://sharingexcess.web.app/' ? null : (
+        <h2>Test Environment</h2>
+      )}
       <h1>{header}</h1>
       {stats ? (
         <h3>
