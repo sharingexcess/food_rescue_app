@@ -41,7 +41,7 @@
           font-size: 16px;
           color: var(--white);
           text-transform: capitalize;
-          
+
           &.donor {
             background-color: var(--red);
           }
@@ -51,85 +51,88 @@
           &.community {
             background-color: var(--blue);
           }
-        }
-        }
-      }
-      a {
-        text-decoration: underline;
-      }
-      button {
-        margin-top: 8px;
-      }
-      p {
-        font-size: 12px;
-        font-weight: 500;
-        padding: 2px;
-        color: var(--blue);
-        i {
-          color: var(--white);
-          width: 20px;
+          &.warehouse {
+            background-color: var(--yellow);
+          }
         }
       }
     }
-  }
-
-  h4 {
-    margin-top: 48px;
-  }
-
-  #NoLocations {
-    width: 100%;
-    padding: 32px 16px 8px 16px;
-    text-align: center;
-  }
-
-  .Location {
-    @include card;
-
-    .primary {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      color: var(--yellow);
+    a {
+      text-decoration: underline;
     }
-
-    .philabundance {
-      position: absolute;
-      top: 36px;
-      right: 12px;
-      color: var(--yellow);
-    }
-
-    h5 {
-      font-size: 18px;
-      margin-bottom: 4px;
+    button {
+      margin-top: 8px;
     }
     p {
       font-size: 12px;
-      color: var(--green);
-    }
-
-    .org_hours {
+      font-weight: 500;
+      padding: 2px;
       color: var(--blue);
-      p {
-        color: var(--blue);
-      }
-      span {
-        margin-left: 5px;
-        font-weight: 700;
-      }
-      span.open {
-        color: var(--green);
-      }
-      span.close {
-        color: var(--red);
-      }  
-    }
-    button{
-      &.red{
-        background-color: var(--red);
-        margin: 10px 0 0;
-        padding: 8px 8px;
+      i {
+        color: var(--white);
+        width: 20px;
       }
     }
   }
+}
+
+h4 {
+  margin-top: 48px;
+}
+
+#NoLocations {
+  width: 100%;
+  padding: 32px 16px 8px 16px;
+  text-align: center;
+}
+
+.Location {
+  @include card;
+
+  .primary {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: var(--yellow);
+  }
+
+  .philabundance {
+    position: absolute;
+    top: 36px;
+    right: 12px;
+    color: var(--yellow);
+  }
+
+  h5 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  p {
+    font-size: 12px;
+    color: var(--green);
+  }
+
+  .org_hours {
+    color: var(--blue);
+    p {
+      color: var(--blue);
+    }
+    span {
+      margin-left: 5px;
+      font-weight: 700;
+    }
+    span.open {
+      color: var(--green);
+    }
+    span.close {
+      color: var(--red);
+    }
+  }
+  button {
+    &.red {
+      background-color: var(--red);
+      margin: 10px 0 0;
+      padding: 8px 8px;
+    }
+  }
+}
