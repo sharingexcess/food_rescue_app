@@ -60,7 +60,7 @@ export default function Home() {
         ) : (
           <Tile
             name="Prod Environment"
-            icon="fa-flask"
+            icon="fa-rocket"
             link="/admin/switchenv"
           />
         )}
