@@ -21,7 +21,7 @@ export default function Analytics() {
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [driverNameFilter, setDriverNameFilter] = useState('')
-  const orgs = useOrganizationData()
+  const orgsOriginal = useOrganizationData()
   const deliveries = useDeliveryData(r => r.status === 9 && r.report)
   const pickups = usePickupData(r => r.status === 9 && r.report)
   const driversOriginal = useUserData()
@@ -187,20 +187,46 @@ export default function Analytics() {
 
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
+    const [organizations, setOrgs] = useState(orgsOriginal)
+    const [orgsNameFilter, setOrgNameFilter] = useState('')
 
-    function filterByType(orgs) {
+    console.log(orgsNameFilter)
+    console.log(organizations)
+    useEffect(() => {
+      if (orgsNameFilter !== '') {
+        setOrgs(
+          orgsOriginal.filter(dr =>
+            dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
+          )
+        )
+      } else {
+        setOrgs(orgsOriginal)
+      }
+    }, [orgsOriginal, orgsNameFilter])
+
+    function filterByType(orgsOriginal) {
       if (filter === 'donor') {
-        return orgs.filter(o => o.org_type === 'donor')
+        return orgsOriginal.filter(o => o.org_type === 'donor')
       } else if (filter === 'recipient') {
-        return orgs.filter(o => o.org_type === 'recipient')
+        return orgsOriginal.filter(o => o.org_type === 'recipient')
       } else if (filter === 'community fridge') {
-        return orgs.filter(o => o.org_type === 'community fridge')
+        return orgsOriginal.filter(o => o.org_type === 'community fridge')
       } else if (filter === 'warehouse') {
-        return orgs.filter(o => o.org_type === 'warehouse')
-      } else return orgs
+        return orgsOriginal.filter(o => o.org_type === 'warehouse')
+      } else return orgsOriginal
     }
     return (
       <>
+        <section id="OrgName">
+          <h2>Filter by Organization</h2>
+          <Input
+            type="text"
+            label="Organization name"
+            value={orgsNameFilter}
+            onChange={e => setOrgNameFilter(e.target.value)}
+          />
+        </section>
+
         <section id="Filters">
           <select value={filter} onChange={e => setFilter(e.target.value)}>
             <option value="all">All</option>
@@ -221,7 +247,7 @@ export default function Analytics() {
             </tr>
           </thead>
           <tbody>
-            {sortByWeight(filterByType(orgs)).map(org => {
+            {sortByWeight(filterByType(organizations)).map(org => {
               const org_pickups = pickups.filter(
                 p => p.org_id === org.id && p.status === 9
               )
@@ -283,7 +309,7 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab === 'RouteAnalytics' && (
+      {tab !== 'OrgAnalytics' && (
         <section id="DateRanges">
           <h2>Filter by Date</h2>
           <Input
@@ -300,7 +326,24 @@ export default function Analytics() {
           />
         </section>
       )}
+
       {tab !== 'OrgAnalytics' && (
+        // <section id="DateRanges">
+        //   <h2>Filter by Date</h2>
+        //   <Input
+        //     type="datetime-local"
+        //     label="From..."
+        //     value={rangeStart}
+        //     onChange={e => setRangeStart(e.target.value)}
+        //   />
+        //   <Input
+        //     type="datetime-local"
+        //     label="To..."
+        //     value={rangeEnd}
+        //     onChange={e => setRangeEnd(e.target.value)}
+        //   />
+        // </section>
+
         <section id="DriverName">
           <h2>Filter by Driver</h2>
           <Input
@@ -311,6 +354,7 @@ export default function Analytics() {
           />
         </section>
       )}
+
       <ActiveTab />
     </main>
   )
