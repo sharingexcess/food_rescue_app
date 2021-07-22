@@ -9,12 +9,11 @@ export function allFoodDelivered(stops) {
   }
   let finalWeight = 0
   for (const stop of stops) {
-    if (!stop.report) {
-      return false
+    if (stop.report?.weight) {
+      stop.type === 'pickup'
+        ? (finalWeight += stop.report.weight)
+        : (finalWeight -= stop.report.weight)
     }
-    stop.type === 'pickup'
-      ? (finalWeight += stop.report.weight)
-      : (finalWeight -= stop.report.weight)
   }
   return finalWeight === 0
 }
@@ -23,7 +22,7 @@ export function areAllStopsCompleted(stops) {
   let completed = true
   for (const s of stops) {
     // if stop is not completed or cancelled
-    if (s.status === 1) {
+    if (s.status !== 0 && s.status !== 9) {
       completed = false
       break
     }
