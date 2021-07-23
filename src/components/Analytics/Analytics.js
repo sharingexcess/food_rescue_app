@@ -9,6 +9,7 @@ import {
   sortByRoutes,
   capitalize,
   calculateAllWeights,
+  sortByWeight,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
@@ -21,14 +22,27 @@ export default function Analytics() {
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [driverNameFilter, setDriverNameFilter] = useState('')
-  const orgs = useOrganizationData()
+  const orgsOriginal = useOrganizationData()
   const deliveries = useDeliveryData(r => r.status === 9 && r.report)
   const pickups = usePickupData(r => r.status === 9 && r.report)
   const driversOriginal = useUserData()
   const routesOriginal = useRouteData(r => r.status === 9)
   const [drivers, setDrivers] = useState(driversOriginal)
   const [routes, setRoutes] = useState(routesOriginal)
+  const [organizations, setOrgs] = useState(orgsOriginal)
+  const [orgsNameFilter, setOrgNameFilter] = useState('')
 
+  useEffect(() => {
+    if (orgsNameFilter !== '') {
+      setOrgs(
+        orgsOriginal.filter(dr =>
+          dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
+        )
+      )
+    } else {
+      setOrgs(orgsOriginal)
+    }
+  }, [orgsOriginal, orgsNameFilter])
   useEffect(() => {
     if (driverNameFilter !== '') {
       setDrivers(
@@ -40,7 +54,6 @@ export default function Analytics() {
       setDrivers(driversOriginal)
     }
   }, [driversOriginal, driverNameFilter])
-
   useEffect(() => {
     if (rangeStart && rangeEnd) {
       setRoutes(
@@ -54,15 +67,6 @@ export default function Analytics() {
       setRoutes(routesOriginal)
     }
   }, [routesOriginal, rangeStart, rangeEnd])
-
-  function sortByWeight(array) {
-    return array.sort((a, b) =>
-      calculateAllWeights(a, pickups, deliveries) >
-      calculateAllWeights(b, pickups, deliveries)
-        ? -1
-        : 1
-    )
-  }
 
   function RouteAnalytics() {
     return (
@@ -188,58 +192,62 @@ export default function Analytics() {
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
 
-    function filterByType(orgs) {
+    function filterByType(orgsOriginal) {
       if (filter === 'donor') {
-        return orgs.filter(o => o.org_type === 'donor')
+        return orgsOriginal.filter(o => o.org_type === 'donor')
       } else if (filter === 'recipient') {
-        return orgs.filter(o => o.org_type === 'recipient')
+        return orgsOriginal.filter(o => o.org_type === 'recipient')
       } else if (filter === 'community fridge') {
-        return orgs.filter(o => o.org_type === 'community fridge')
+        return orgsOriginal.filter(o => o.org_type === 'community fridge')
       } else if (filter === 'warehouse') {
-        return orgs.filter(o => o.org_type === 'warehouse')
+        return orgsOriginal.filter(o => o.org_type === 'warehouse')
       } else if (filter === 'home delivery') {
-        return orgs.filter(o => o.org_type === 'home delivery')
-      } else return orgs
+        return orgsOriginal.filter(o => o.org_type === 'home delivery')
+      } else return orgsOriginal
     }
     return (
       <>
         <section id="Filters">
+          <h2>Filter by Types</h2>
           <select value={filter} onChange={e => setFilter(e.target.value)}>
             <option value="all">All</option>
             <option value="donor">Donors</option>
             <option value="recipient">Recipients</option>
             <option value="community fridge">Community Fridges</option>
             <option value="warehouse">Warehouse</option>
+            <option value="home delivery">Home Delivery</option>
           </select>
         </section>
         <table className="Styling">
           <thead>
             <tr>
               <td>Organization</td>
-              <td>Type</td>
+              <td>Types</td>
               <td>Pickups</td>
               <td>Deliveries</td>
               <td>Total Weight</td>
             </tr>
           </thead>
           <tbody>
-            {sortByWeight(filterByType(orgs)).map(org => {
-              const org_pickups = pickups.filter(
-                p => p.org_id === org.id && p.status === 9
-              )
-              const org_deliveries = deliveries.filter(
-                de => de.org_id === org.id && de.status === 9
-              )
-              return (
-                <tr key={org.id}>
-                  <td>{org.name}</td>
-                  <td>{org.org_type}</td>
-                  <td>{org_pickups.length}</td>
-                  <td>{org_deliveries.length}</td>
-                  <td>{calculateAllWeights(org, pickups, deliveries)}</td>
-                </tr>
-              )
-            })}
+            {sortByWeight(filterByType(organizations), pickups, deliveries).map(
+              org => {
+                const org_pickups = pickups.filter(
+                  p => p.org_id === org.id && p.status === 9
+                )
+                const org_deliveries = deliveries.filter(
+                  de => de.org_id === org.id && de.status === 9
+                )
+                return (
+                  <tr key={org.id}>
+                    <td>{org.name}</td>
+                    <td>{org.org_type}</td>
+                    <td>{org_pickups.length}</td>
+                    <td>{org_deliveries.length}</td>
+                    <td>{calculateAllWeights(org, pickups, deliveries)}</td>
+                  </tr>
+                )
+              }
+            )}
           </tbody>
         </table>
       </>
@@ -285,7 +293,7 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab === 'RouteAnalytics' && (
+      {tab !== 'OrgAnalytics' && (
         <section id="DateRanges">
           <h2>Filter by Date</h2>
           <Input
@@ -302,7 +310,7 @@ export default function Analytics() {
           />
         </section>
       )}
-      {tab !== 'OrgAnalytics' && (
+      {tab !== 'OrgAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
           <Input
@@ -310,6 +318,16 @@ export default function Analytics() {
             label="Driver's name"
             value={driverNameFilter}
             onChange={e => setDriverNameFilter(e.target.value)}
+          />
+        </section>
+      ) : (
+        <section id="OrgName">
+          <h2>Filter by Organization</h2>
+          <Input
+            type="text"
+            label="Organization name"
+            value={orgsNameFilter}
+            onChange={e => setOrgNameFilter(e.target.value)}
           />
         </section>
       )}
