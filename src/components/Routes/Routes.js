@@ -34,15 +34,15 @@ export default function Routes({ initial_filter }) {
   const [filterByDriver, setFilterByDriver] = useState(false)
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
-
   function getRouteWeight(routeId) {
-    const myRoute = deliveries.find(r => r.route_id === routeId)
-    return myRoute
-      ? Math.round(
-          myRoute.report?.weight /
-            (myRoute.report?.percent_of_total_dropped / 100)
-        )
-      : 0
+    const deliveredWeight = deliveries.filter(r => r.route_id === routeId)
+    let totalWeight = 0
+    for (let i = 0; i < deliveredWeight.length; i++) {
+      totalWeight += deliveredWeight[i].report?.weight
+        ? deliveredWeight[i].report?.weight
+        : 0
+    }
+    return totalWeight
   }
   useEffect(() => {
     async function addData() {
