@@ -33,3 +33,12 @@ export function calculateAllWeights(org, pickups, deliveries) {
     .map(stop => stop.report.weight || 0)
     .reduce((a, b) => a + b, 0)
 }
+
+export function sortByWeight(array, pickups, deliveries) {
+  return array.sort((a, b) =>
+    calculateAllWeights(a, pickups, deliveries) >
+    calculateAllWeights(b, pickups, deliveries)
+      ? -1
+      : 1
+  )
+}
