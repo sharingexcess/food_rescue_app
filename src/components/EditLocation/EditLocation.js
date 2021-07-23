@@ -34,6 +34,7 @@ export default function EditLocation() {
     is_philabundance_partner: '',
     is_community_fridge: '',
     is_warehouse: '',
+    is_home_delivery: '',
     time_open: '',
     time_close: '',
     receive_start: '',
@@ -83,6 +84,7 @@ export default function EditLocation() {
     if (
       formData.is_warehouse === '' &&
       formData.is_community_fridge === '' &&
+      formData.is_home_delivery === '' &&
       (!formData.contact_phone ||
         !isPossiblePhoneNumber(formData.contact_phone))
     ) {
@@ -322,6 +324,24 @@ export default function EditLocation() {
             <p>
               Make this Network
               <br />a Warehouse
+            </p>
+          </div>
+          <div className="is_home_delivery">
+            <input
+              type="checkbox"
+              id="is_home_delivery"
+              name="is_home_delivery"
+              checked={formData.is_home_delivery}
+              onChange={() =>
+                setFormData({
+                  ...formData,
+                  is_home_delivery: !formData.is_home_delivery,
+                })
+              }
+            />
+            <p>
+              Make this Network
+              <br />a Home Delivery
             </p>
           </div>
           <FormError />

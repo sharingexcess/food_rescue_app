@@ -197,6 +197,8 @@ export default function Analytics() {
         return orgs.filter(o => o.org_type === 'community fridge')
       } else if (filter === 'warehouse') {
         return orgs.filter(o => o.org_type === 'warehouse')
+      } else if (filter === 'home delivery') {
+        return orgs.filter(o => o.org_type === 'home delivery')
       } else return orgs
     }
     return (
