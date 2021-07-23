@@ -41,11 +41,12 @@ export function isNextIncompleteStop(route, stops, index) {
 }
 
 export function getDeliveryWeight(deliveries, route) {
-  const myRoute = deliveries.find(r => r.route_id === route.id)
-  return myRoute
-    ? Math.round(
-        myRoute.report?.weight /
-          (myRoute.report?.percent_of_total_dropped / 100)
-      )
-    : 0
+  const deliveredWeight = deliveries.filter(r => r.route_id === route.id)
+  let totalWeight = 0
+  for (let i = 0; i < deliveredWeight.length; i++) {
+    totalWeight += deliveredWeight[i].report?.weight
+      ? deliveredWeight[i].report?.weight
+      : 0
+  }
+  return totalWeight
 }
