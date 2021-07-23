@@ -273,7 +273,12 @@ export default function Routes({ initial_filter }) {
                         s.location.name
                           ? s.org.name +
                             ` (${s.location.name})` +
-                            ` : ${s.report?.weight} lbs`
+                            `${location.pathname === '/history' ? ' : ' : ''}` +
+                            `${
+                              location.pathname === '/history'
+                                ? s.report?.weight?.toString() + 'lbs'
+                                : ''
+                            }`
                           : s.org.name
                       )
                       .join(', ')}
@@ -286,7 +291,12 @@ export default function Routes({ initial_filter }) {
                         s.location.name
                           ? s.org.name +
                             ` (${s.location.name})` +
-                            ` : ${s.report?.weight} lbs`
+                            `${location.pathname === '/history' ? ' : ' : ''}` +
+                            `${
+                              location.pathname === '/history'
+                                ? s.report?.weight?.toString() + 'lbs'
+                                : ''
+                            }`
                           : s.org.name
                       )
                       .join(', ')}
