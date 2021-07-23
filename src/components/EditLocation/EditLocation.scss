@@ -11,7 +11,8 @@
   .is_primary,
   .is_philabundance_partner,
   .is_community_fridge,
-  .is_warehouse {
+  .is_warehouse,
+  .is_home_delivery {
     opacity: 0;
     animation: slide-in 0.48s ease forwards;
     width: 100%;

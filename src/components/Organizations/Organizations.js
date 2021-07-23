@@ -48,6 +48,7 @@ function Organizations() {
           <option value="recipient">Recipients</option>
           <option value="community fridge">Community Fridges</option>
           <option value="warehouse">Warehouse</option>
+          <option value="home delivery">Home Deliveries</option>
         </select>
         <Link to="/admin/create-organization">
           <button className="grant">+ New Network</button>
@@ -65,6 +66,8 @@ function Organizations() {
         <h1>Recipients</h1>
       ) : filter === 'warehouse' ? (
         <h1>Warehouse</h1>
+      ) : filter === 'home delivery' ? (
+        <h1>Home Deliveries</h1>
       ) : (
         <h1>Community Fridges</h1>
       )}
@@ -85,6 +88,10 @@ function Organizations() {
                   ? 'recipient'
                   : org.org_type === 'warehouse'
                   ? 'warehouse'
+                  : org.org_type === 'community'
+                  ? 'community'
+                  : org.org_type === 'home'
+                  ? 'home'
                   : 'community'
               }
             >

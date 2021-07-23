@@ -87,7 +87,11 @@ function Organization() {
                   ? 'recipient'
                   : org.org_type === 'warehouse'
                   ? 'warehouse'
-                  : 'community'
+                  : org.org_type === 'community'
+                  ? 'community fridge'
+                  : org.org_type === 'home'
+                  ? 'home delivery'
+                  : 'donor'
               }
             >
               {org.org_type}

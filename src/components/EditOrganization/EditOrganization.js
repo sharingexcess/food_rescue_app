@@ -69,12 +69,14 @@ export default function EditOrganization() {
       !validator.isEmail(formData.default_contact_email) &&
       !!formData.default_contact_email &&
       formData.org_type !== 'community fridge' &&
-      formData.org_type !== 'warehouse'
+      formData.org_type !== 'warehouse' &&
+      formData.org_type !== 'home delivery'
     ) {
       errors.push('Invalid Data Input: Contact Email is invalid')
     }
     if (
       formData.org_type !== 'warehouse' &&
+      formData.org_type !== 'home delivery' &&
       formData.org_type !== 'community fridge' &&
       (!formData.default_contact_phone ||
         !isPossiblePhoneNumber(formData.default_contact_phone))
@@ -179,7 +181,13 @@ export default function EditOrganization() {
         label="Network Type"
         element_id="org_type"
         value={formData.org_type}
-        suggestions={['donor', 'recipient', 'community fridge', 'warehouse']}
+        suggestions={[
+          'donor',
+          'recipient',
+          'community fridge',
+          'warehouse',
+          'home delivery',
+        ]}
         onSuggestionClick={handleChange}
       />
       <FormError />
