@@ -8,8 +8,9 @@ import {
   getDefaultRangeEnd,
   sortByRoutes,
   capitalize,
-  calculateAllWeights,
+  // calculateAllWeights,
   sortByWeight,
+  // sortByWeight,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
@@ -188,7 +189,6 @@ export default function Analytics() {
       </table>
     )
   }
-
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
 
@@ -222,7 +222,8 @@ export default function Analytics() {
           <thead>
             <tr>
               <td>Organization</td>
-              <td>Types</td>
+              {/* <td>Type</td> */}
+              <td>Routes</td>
               <td>Pickups</td>
               <td>Deliveries</td>
               <td>Total Weight</td>
@@ -237,13 +238,33 @@ export default function Analytics() {
                 const org_deliveries = deliveries.filter(
                   de => de.org_id === org.id && de.status === 9
                 )
+                const org_pickup_ids = org_pickups.map(p => p.id)
+                const org_delivery_ids = org_deliveries.map(p => p.id)
+
+                const org_routes = routes.filter(
+                  r =>
+                    r.stops.filter(
+                      s =>
+                        org_pickup_ids.includes(s.id) ||
+                        org_delivery_ids.includes(s.id)
+                    ).length > 0 && r.status === 9
+                )
+                const org_pickup = pickups.filter(p =>
+                  org_routes.map(r => r.id).includes(p.route_id)
+                )
+                const org_delivery = deliveries.filter(de =>
+                  org_routes.map(r => r.id).includes(de.route_id)
+                )
+                const org_weight = org_delivery
+                  .map(de => de.report.weight || 0)
+                  .reduce((a, b) => a + b, 0)
                 return (
                   <tr key={org.id}>
                     <td>{org.name}</td>
-                    <td>{org.org_type}</td>
-                    <td>{org_pickups.length}</td>
-                    <td>{org_deliveries.length}</td>
-                    <td>{calculateAllWeights(org, pickups, deliveries)}</td>
+                    <td>{org_routes.length}</td>
+                    <td>{org_pickup.length}</td>
+                    <td>{org_delivery.length}</td>
+                    <td>{org_weight}</td>
                   </tr>
                 )
               }
@@ -293,23 +314,21 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab !== 'OrgAnalytics' && (
-        <section id="DateRanges">
-          <h2>Filter by Date</h2>
-          <Input
-            type="datetime-local"
-            label="From..."
-            value={rangeStart}
-            onChange={e => setRangeStart(e.target.value)}
-          />
-          <Input
-            type="datetime-local"
-            label="To..."
-            value={rangeEnd}
-            onChange={e => setRangeEnd(e.target.value)}
-          />
-        </section>
-      )}
+      <section id="DateRanges">
+        <h2>Filter by Date</h2>
+        <Input
+          type="datetime-local"
+          label="From..."
+          value={rangeStart}
+          onChange={e => setRangeStart(e.target.value)}
+        />
+        <Input
+          type="datetime-local"
+          label="To..."
+          value={rangeEnd}
+          onChange={e => setRangeEnd(e.target.value)}
+        />
+      </section>
       {tab !== 'OrgAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
