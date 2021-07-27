@@ -51,6 +51,7 @@ export default function Home() {
         />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
+        <Tile name="Submit Completed Route" />
         {window.location.href === 'https://sharingexcess.web.app/' ? (
           <Tile
             name="Test Environment"
