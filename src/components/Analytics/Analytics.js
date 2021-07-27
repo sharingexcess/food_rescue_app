@@ -9,7 +9,6 @@ import {
   sortByRoutesforDriver,
   capitalize,
   sortByRoutesforOrg,
-  // sortByWeight,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
@@ -221,7 +220,6 @@ export default function Analytics() {
           <thead>
             <tr>
               <td>Organization</td>
-              {/* <td>Type</td> */}
               <td>Routes</td>
               <td>Pickups</td>
               <td>Deliveries</td>
