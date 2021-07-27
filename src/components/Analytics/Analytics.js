@@ -28,20 +28,6 @@ export default function Analytics() {
   const routesOriginal = useRouteData(r => r.status === 9)
   const [drivers, setDrivers] = useState(driversOriginal)
   const [routes, setRoutes] = useState(routesOriginal)
-  const [organizations, setOrgs] = useState(orgsOriginal)
-  const [orgsNameFilter, setOrgNameFilter] = useState('')
-
-  useEffect(() => {
-    if (orgsNameFilter !== '') {
-      setOrgs(
-        orgsOriginal.filter(dr =>
-          dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
-        )
-      )
-    } else {
-      setOrgs(orgsOriginal)
-    }
-  }, [orgsOriginal, orgsNameFilter])
   useEffect(() => {
     if (driverNameFilter !== '') {
       setDrivers(
@@ -188,6 +174,20 @@ export default function Analytics() {
   }
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
+    const [organizations, setOrgs] = useState(orgsOriginal)
+    const [orgsNameFilter, setOrgNameFilter] = useState('')
+
+    useEffect(() => {
+      if (orgsNameFilter !== '') {
+        setOrgs(
+          orgsOriginal.filter(dr =>
+            dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
+          )
+        )
+      } else {
+        setOrgs(orgsOriginal)
+      }
+    }, [orgsOriginal, orgsNameFilter])
 
     function filterByType(orgsOriginal) {
       if (filter === 'donor') {
@@ -204,6 +204,16 @@ export default function Analytics() {
     }
     return (
       <>
+        <section id="OrgName">
+          <h2>Filter by Organization</h2>
+          <Input
+            type="text"
+            label="Organization name"
+            value={orgsNameFilter}
+            onChange={e => setOrgNameFilter(e.target.value)}
+          />
+        </section>
+
         <section id="Filters">
           <h2>Filter by Types</h2>
           <select value={filter} onChange={e => setFilter(e.target.value)}>
@@ -338,17 +348,7 @@ export default function Analytics() {
             onChange={e => setDriverNameFilter(e.target.value)}
           />
         </section>
-      ) : (
-        <section id="OrgName">
-          <h2>Filter by Organization</h2>
-          <Input
-            type="text"
-            label="Organization name"
-            value={orgsNameFilter}
-            onChange={e => setOrgNameFilter(e.target.value)}
-          />
-        </section>
-      )}
+      ) : null}
       <ActiveTab />
     </main>
   )
