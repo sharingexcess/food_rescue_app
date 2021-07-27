@@ -6,10 +6,9 @@ import usePickupData from '../../hooks/usePickupData'
 import {
   getDefaultRangeStart,
   getDefaultRangeEnd,
-  sortByRoutes,
+  sortByRoutesforDriver,
   capitalize,
-  // calculateAllWeights,
-  sortByWeight,
+  sortByRoutesforOrg,
   // sortByWeight,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
@@ -162,7 +161,7 @@ export default function Analytics() {
           </tr>
         </thead>
         <tbody>
-          {sortByRoutes(drivers, routes).map(dr => {
+          {sortByRoutesforDriver(drivers, routes).map(dr => {
             const dr_routes = routes.filter(
               r => r.driver_id === dr.id && r.status === 9
             )
@@ -230,45 +229,48 @@ export default function Analytics() {
             </tr>
           </thead>
           <tbody>
-            {sortByWeight(filterByType(organizations), pickups, deliveries).map(
-              org => {
-                const org_pickups = pickups.filter(
-                  p => p.org_id === org.id && p.status === 9
-                )
-                const org_deliveries = deliveries.filter(
-                  de => de.org_id === org.id && de.status === 9
-                )
-                const org_pickup_ids = org_pickups.map(p => p.id)
-                const org_delivery_ids = org_deliveries.map(p => p.id)
+            {sortByRoutesforOrg(
+              filterByType(organizations),
+              routes,
+              pickups,
+              deliveries
+            ).map(org => {
+              const all_pickups = pickups.filter(
+                p => p.org_id === org.id && p.status === 9
+              )
+              const all_deliveries = deliveries.filter(
+                de => de.org_id === org.id && de.status === 9
+              )
+              const org_pickup_ids = all_pickups.map(p => p.id)
+              const org_delivery_ids = all_deliveries.map(de => de.id)
 
-                const org_routes = routes.filter(
-                  r =>
-                    r.stops.filter(
-                      s =>
-                        org_pickup_ids.includes(s.id) ||
-                        org_delivery_ids.includes(s.id)
-                    ).length > 0 && r.status === 9
-                )
-                const org_pickup = pickups.filter(p =>
-                  org_routes.map(r => r.id).includes(p.route_id)
-                )
-                const org_delivery = deliveries.filter(de =>
-                  org_routes.map(r => r.id).includes(de.route_id)
-                )
-                const org_weight = org_delivery
-                  .map(de => de.report.weight || 0)
-                  .reduce((a, b) => a + b, 0)
-                return (
-                  <tr key={org.id}>
-                    <td>{org.name}</td>
-                    <td>{org_routes.length}</td>
-                    <td>{org_pickup.length}</td>
-                    <td>{org_delivery.length}</td>
-                    <td>{org_weight}</td>
-                  </tr>
-                )
-              }
-            )}
+              const org_routes = routes.filter(
+                r =>
+                  r.stops.filter(
+                    s =>
+                      org_pickup_ids.includes(s.id) ||
+                      org_delivery_ids.includes(s.id)
+                  ).length > 0 && r.status === 9
+              )
+              const org_pickup = pickups.filter(p =>
+                org_routes.map(r => r.id).includes(p.route_id)
+              )
+              const org_delivery = deliveries.filter(de =>
+                org_routes.map(r => r.id).includes(de.route_id)
+              )
+              const org_weight = org_delivery
+                .map(de => de.report.weight || 0)
+                .reduce((a, b) => a + b, 0)
+              return (
+                <tr key={org.id}>
+                  <td>{org.name}</td>
+                  <td>{org_routes.length}</td>
+                  <td>{org_pickup.length}</td>
+                  <td>{org_delivery.length}</td>
+                  <td>{org_weight}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </>
