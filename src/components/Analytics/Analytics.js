@@ -186,7 +186,7 @@ export default function Analytics() {
         )
       } else {
         setOrgs(orgsOriginal)
-      }
+      } // eslint-disable-next-line
     }, [orgsOriginal, orgsNameFilter])
 
     function filterByType(orgsOriginal) {
