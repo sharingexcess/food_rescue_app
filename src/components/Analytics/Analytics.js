@@ -88,13 +88,12 @@ export default function Analytics() {
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
             const r_startday = r.time_start
-            const r_starttime_array = r_pickups.map(p => p.time_finished)
-            const r_starttime = r_starttime_array[0]
-              ? r_starttime_array[0].toDate()
+            console.log(r)
+            const r_starttime = r.time_started
+              ? r.time_started.toDate()
               : 'Not found'
-            const r_endtime_array = r_deliveries.map(de => de.time_finished)
-            const r_endtime = r_endtime_array[r_endtime_array.length - 1]
-              ? r_endtime_array[r_endtime_array.length - 1].toDate()
+            const r_endtime = r.time_finished
+              ? r.time_finished.toDate()
               : 'Not found'
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
