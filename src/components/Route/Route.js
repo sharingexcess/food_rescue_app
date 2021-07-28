@@ -547,7 +547,7 @@ export function Route() {
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
             updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             status: 1,
-            pickup_ids: lastStop.pickup_ids,
+            pickup_ids: lastStop.pickup_ids || lastStop.id,
             route_id,
           })
           await setFirestoreData(['Routes', route.id], {
