@@ -44,6 +44,7 @@ export default function Home() {
       <>
         <Tile name="Calendar" icon="fa-calendar" link="/calendar" />
         <Tile name="Add Route" icon="fa-plus" link="/admin/create-route" />
+        <Tile name="Submit Completed Route" icon="fas fa-clipboard-check"/>
         <Tile
           name="Manage Network"
           icon="fa-map-marked-alt"
@@ -51,6 +52,7 @@ export default function Home() {
         />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
+        
         {window.location.href === 'https://sharingexcess.web.app/' ? (
           <Tile
             name="Test Environment"
