@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import { useAuthContext } from '../components/Auth/Auth'
 import Error from '../components/Error/Error'
 import EditRoute from '../components/EditRoute/EditRoute'
+import SubmitPastRoute from '../components/SubmitPastRoute/SubmitPastRoute'
 import EditOrganization from '../components/EditOrganization/EditOrganization'
 import Organizations from '../components/Organizations/Organizations'
 import EditLocation from '../components/EditLocation/EditLocation'
@@ -33,6 +34,9 @@ export default function AdminRoutes() {
       {/* Wrap in a switch so that only one route can render at a time */}
       <AdminRoute exact path="/admin/create-route">
         <EditRoute />
+      </AdminRoute>
+      <AdminRoute exact path="/admin/submit-route">
+        <SubmitPastRoute />
       </AdminRoute>
       <AdminRoute exact path="/admin/create-organization">
         <EditOrganization />
