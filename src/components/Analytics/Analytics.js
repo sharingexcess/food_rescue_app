@@ -148,6 +148,7 @@ export default function Analytics() {
   }
 
   function DriverAnalytics() {
+    console.log(routes)
     return (
       <table className="Styling">
         <thead>
@@ -346,23 +347,21 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab !== 'TotalAnalytics' ? (
-        <section id="DateRanges">
-          <h2>Filter by Date</h2>
-          <Input
-            type="datetime-local"
-            label="From..."
-            value={rangeStart}
-            onChange={e => setRangeStart(e.target.value)}
-          />
-          <Input
-            type="datetime-local"
-            label="To..."
-            value={rangeEnd}
-            onChange={e => setRangeEnd(e.target.value)}
-          />
-        </section>
-      ) : null}
+      <section id="DateRanges">
+        <h2>Filter by Date</h2>
+        <Input
+          type="datetime-local"
+          label="From..."
+          value={rangeStart}
+          onChange={e => setRangeStart(e.target.value)}
+        />
+        <Input
+          type="datetime-local"
+          label="To..."
+          value={rangeEnd}
+          onChange={e => setRangeEnd(e.target.value)}
+        />
+      </section>
       {tab !== 'OrgAnalytics' && tab !== 'TotalAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
