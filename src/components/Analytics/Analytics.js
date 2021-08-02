@@ -53,6 +53,21 @@ export default function Analytics() {
     }
   }, [routesOriginal, rangeStart, rangeEnd])
 
+  function TotalAnalytics() {
+    return (
+      <table className="Styling">
+        <thead>
+          <tr>
+            <td>Food Rescue (lbs)</td>
+            <td>Warehouse Incoming (lbs)</td>
+            <td>Number of Food Rescue Routes</td>
+            <td>Cummulative Impact (lbs)</td>
+          </tr>
+        </thead>
+      </table>
+    )
+  }
+
   function RouteAnalytics() {
     return (
       <table className="Styling">
@@ -286,6 +301,8 @@ export default function Analytics() {
 
   function ActiveTab() {
     switch (tab) {
+      case 'TotalAnalytics':
+        return <TotalAnalytics />
       case 'RouteAnalytics':
         return <RouteAnalytics />
       case 'DriverAnalytics':
@@ -301,6 +318,12 @@ export default function Analytics() {
     <main id="Analytics">
       <Header text="Analytics" />
       <section id="Tabs">
+        <button
+          className={tab === 'TotalAnalytics' ? 'active' : 'inactive'}
+          onClick={() => setTab('TotalAnalytics')}
+        >
+          Cummulative Pounds
+        </button>
         <button
           className={tab === 'RouteAnalytics' ? 'active' : 'inactive'}
           onClick={() => setTab('RouteAnalytics')}
@@ -338,7 +361,7 @@ export default function Analytics() {
           onChange={e => setRangeEnd(e.target.value)}
         />
       </section>
-      {tab !== 'OrgAnalytics' ? (
+      {tab !== 'OrgAnalytics' && tab !== 'TotalAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
           <Input
