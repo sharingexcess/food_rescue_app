@@ -6,10 +6,9 @@ import usePickupData from '../../hooks/usePickupData'
 import {
   getDefaultRangeStart,
   getDefaultRangeEnd,
-  sortByRoutes,
+  sortByRoutesforDriver,
   capitalize,
-  calculateAllWeights,
-  sortByWeight,
+  sortByRoutesforOrg,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
@@ -29,20 +28,6 @@ export default function Analytics() {
   const routesOriginal = useRouteData(r => r.status === 9)
   const [drivers, setDrivers] = useState(driversOriginal)
   const [routes, setRoutes] = useState(routesOriginal)
-  const [organizations, setOrgs] = useState(orgsOriginal)
-  const [orgsNameFilter, setOrgNameFilter] = useState('')
-
-  useEffect(() => {
-    if (orgsNameFilter !== '') {
-      setOrgs(
-        orgsOriginal.filter(dr =>
-          dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
-        )
-      )
-    } else {
-      setOrgs(orgsOriginal)
-    }
-  }, [orgsOriginal, orgsNameFilter])
   useEffect(() => {
     if (driverNameFilter !== '') {
       setDrivers(
@@ -89,13 +74,12 @@ export default function Analytics() {
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
             const r_startday = r.time_start
-            const r_starttime_array = r_pickups.map(p => p.time_finished)
-            const r_starttime = r_starttime_array[0]
-              ? r_starttime_array[0].toDate()
+            console.log(r)
+            const r_starttime = r.time_started
+              ? r.time_started.toDate()
               : 'Not found'
-            const r_endtime_array = r_deliveries.map(de => de.time_finished)
-            const r_endtime = r_endtime_array[r_endtime_array.length - 1]
-              ? r_endtime_array[r_endtime_array.length - 1].toDate()
+            const r_endtime = r.time_finished
+              ? r.time_finished.toDate()
               : 'Not found'
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
@@ -161,7 +145,7 @@ export default function Analytics() {
           </tr>
         </thead>
         <tbody>
-          {sortByRoutes(drivers, routes).map(dr => {
+          {sortByRoutesforDriver(drivers, routes).map(dr => {
             const dr_routes = routes.filter(
               r => r.driver_id === dr.id && r.status === 9
             )
@@ -188,9 +172,22 @@ export default function Analytics() {
       </table>
     )
   }
-
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
+    const [organizations, setOrgs] = useState(orgsOriginal)
+    const [orgsNameFilter, setOrgNameFilter] = useState('')
+
+    useEffect(() => {
+      if (orgsNameFilter !== '') {
+        setOrgs(
+          orgsOriginal.filter(dr =>
+            dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
+          )
+        )
+      } else {
+        setOrgs(orgsOriginal)
+      } // eslint-disable-next-line
+    }, [orgsOriginal, orgsNameFilter])
 
     function filterByType(orgsOriginal) {
       if (filter === 'donor') {
@@ -207,6 +204,16 @@ export default function Analytics() {
     }
     return (
       <>
+        <section id="OrgName">
+          <h2>Filter by Organization</h2>
+          <Input
+            type="text"
+            label="Organization name"
+            value={orgsNameFilter}
+            onChange={e => setOrgNameFilter(e.target.value)}
+          />
+        </section>
+
         <section id="Filters">
           <h2>Filter by Types</h2>
           <select value={filter} onChange={e => setFilter(e.target.value)}>
@@ -222,32 +229,55 @@ export default function Analytics() {
           <thead>
             <tr>
               <td>Organization</td>
-              <td>Types</td>
+              <td>Routes</td>
               <td>Pickups</td>
               <td>Deliveries</td>
               <td>Total Weight</td>
             </tr>
           </thead>
           <tbody>
-            {sortByWeight(filterByType(organizations), pickups, deliveries).map(
-              org => {
-                const org_pickups = pickups.filter(
-                  p => p.org_id === org.id && p.status === 9
-                )
-                const org_deliveries = deliveries.filter(
-                  de => de.org_id === org.id && de.status === 9
-                )
-                return (
-                  <tr key={org.id}>
-                    <td>{org.name}</td>
-                    <td>{org.org_type}</td>
-                    <td>{org_pickups.length}</td>
-                    <td>{org_deliveries.length}</td>
-                    <td>{calculateAllWeights(org, pickups, deliveries)}</td>
-                  </tr>
-                )
-              }
-            )}
+            {sortByRoutesforOrg(
+              filterByType(organizations),
+              routes,
+              pickups,
+              deliveries
+            ).map(org => {
+              const all_pickups = pickups.filter(
+                p => p.org_id === org.id && p.status === 9
+              )
+              const all_deliveries = deliveries.filter(
+                de => de.org_id === org.id && de.status === 9
+              )
+              const org_pickup_ids = all_pickups.map(p => p.id)
+              const org_delivery_ids = all_deliveries.map(de => de.id)
+
+              const org_routes = routes.filter(
+                r =>
+                  r.stops.filter(
+                    s =>
+                      org_pickup_ids.includes(s.id) ||
+                      org_delivery_ids.includes(s.id)
+                  ).length > 0 && r.status === 9
+              )
+              const org_pickup = pickups.filter(p =>
+                org_routes.map(r => r.id).includes(p.route_id)
+              )
+              const org_delivery = deliveries.filter(de =>
+                org_routes.map(r => r.id).includes(de.route_id)
+              )
+              const org_weight = org_delivery
+                .map(de => de.report.weight || 0)
+                .reduce((a, b) => a + b, 0)
+              return (
+                <tr key={org.id}>
+                  <td>{org.name}</td>
+                  <td>{org_routes.length}</td>
+                  <td>{org_pickup.length}</td>
+                  <td>{org_delivery.length}</td>
+                  <td>{org_weight}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </>
@@ -293,23 +323,21 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab !== 'OrgAnalytics' && (
-        <section id="DateRanges">
-          <h2>Filter by Date</h2>
-          <Input
-            type="datetime-local"
-            label="From..."
-            value={rangeStart}
-            onChange={e => setRangeStart(e.target.value)}
-          />
-          <Input
-            type="datetime-local"
-            label="To..."
-            value={rangeEnd}
-            onChange={e => setRangeEnd(e.target.value)}
-          />
-        </section>
-      )}
+      <section id="DateRanges">
+        <h2>Filter by Date</h2>
+        <Input
+          type="datetime-local"
+          label="From..."
+          value={rangeStart}
+          onChange={e => setRangeStart(e.target.value)}
+        />
+        <Input
+          type="datetime-local"
+          label="To..."
+          value={rangeEnd}
+          onChange={e => setRangeEnd(e.target.value)}
+        />
+      </section>
       {tab !== 'OrgAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
@@ -320,17 +348,7 @@ export default function Analytics() {
             onChange={e => setDriverNameFilter(e.target.value)}
           />
         </section>
-      ) : (
-        <section id="OrgName">
-          <h2>Filter by Organization</h2>
-          <Input
-            type="text"
-            label="Organization name"
-            value={orgsNameFilter}
-            onChange={e => setOrgNameFilter(e.target.value)}
-          />
-        </section>
-      )}
+      ) : null}
       <ActiveTab />
     </main>
   )
