@@ -346,21 +346,23 @@ export default function Analytics() {
         </button>
       </section>
 
-      <section id="DateRanges">
-        <h2>Filter by Date</h2>
-        <Input
-          type="datetime-local"
-          label="From..."
-          value={rangeStart}
-          onChange={e => setRangeStart(e.target.value)}
-        />
-        <Input
-          type="datetime-local"
-          label="To..."
-          value={rangeEnd}
-          onChange={e => setRangeEnd(e.target.value)}
-        />
-      </section>
+      {tab !== 'TotalAnalytics' ? (
+        <section id="DateRanges">
+          <h2>Filter by Date</h2>
+          <Input
+            type="datetime-local"
+            label="From..."
+            value={rangeStart}
+            onChange={e => setRangeStart(e.target.value)}
+          />
+          <Input
+            type="datetime-local"
+            label="To..."
+            value={rangeEnd}
+            onChange={e => setRangeEnd(e.target.value)}
+          />
+        </section>
+      ) : null}
       {tab !== 'OrgAnalytics' && tab !== 'TotalAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
