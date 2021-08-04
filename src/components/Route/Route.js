@@ -765,7 +765,9 @@ export function Route() {
                             ) : null}
                             <DirectionsButton stop={s} route={route} />
                             <UpdateStop stop={s} />
-                            {s.status < 9 ? <CancelStop stop={s} /> : null}
+                            {s.status < 9 && admin ? (
+                              <CancelStop stop={s} />
+                            ) : null}
                           </>
                         ) : null}
                       </>
