@@ -78,7 +78,7 @@ export default function Onboarding(props) {
       <Liability />
       <Footer />
     </main>
-  ) : page === 7 ? (
+  ) : (
     <main id="Auth" className="request-access">
       <h1>
         <span className="green">Sharing</span> Excess
@@ -96,5 +96,5 @@ export default function Onboarding(props) {
       <img className="background" src={Logo} alt="Sharing Excess Logo" />
       <button onClick={props.handleClick}>logout</button>
     </main>
-  ) : null
+  )
 }
