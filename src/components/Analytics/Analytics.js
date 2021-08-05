@@ -169,6 +169,7 @@ export default function Analytics() {
   }
 
   function DriverAnalytics() {
+    console.log(routes)
     return (
       <table className="Styling">
         <thead>
