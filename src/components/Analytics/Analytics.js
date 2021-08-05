@@ -54,6 +54,19 @@ export default function Analytics() {
   }, [routesOriginal, rangeStart, rangeEnd])
 
   function TotalAnalytics() {
+    function cummulative_impact() {
+      let total_weight = 0
+      routes.forEach(r => {
+        if (r.status === 9) {
+          deliveries.forEach(d => {
+            if (d.route_id === r.id) {
+              total_weight += d.report.weight
+            }
+          })
+        }
+      })
+      return total_weight
+    }
     return (
       <table className="Styling">
         <thead>
@@ -64,6 +77,14 @@ export default function Analytics() {
             <td>Cummulative Impact (lbs)</td>
           </tr>
         </thead>
+        <tbody>
+          <tr>
+            <td>null</td>
+            <td>null</td>
+            <td>{routes.length}</td>
+            <td>{cummulative_impact()}</td>
+          </tr>
+        </tbody>
       </table>
     )
   }
@@ -346,23 +367,22 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab !== 'TotalAnalytics' ? (
-        <section id="DateRanges">
-          <h2>Filter by Date</h2>
-          <Input
-            type="datetime-local"
-            label="From..."
-            value={rangeStart}
-            onChange={e => setRangeStart(e.target.value)}
-          />
-          <Input
-            type="datetime-local"
-            label="To..."
-            value={rangeEnd}
-            onChange={e => setRangeEnd(e.target.value)}
-          />
-        </section>
-      ) : null}
+      <section id="DateRanges">
+        <h2>Filter by Date</h2>
+        <Input
+          type="datetime-local"
+          label="From..."
+          value={rangeStart}
+          onChange={e => setRangeStart(e.target.value)}
+        />
+        <Input
+          type="datetime-local"
+          label="To..."
+          value={rangeEnd}
+          onChange={e => setRangeEnd(e.target.value)}
+        />
+      </section>
+
       {tab !== 'OrgAnalytics' && tab !== 'TotalAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
