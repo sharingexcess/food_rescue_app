@@ -596,7 +596,13 @@ export function Route() {
                   text={`Scroll down and click "finish route"`}
                 />
               ) : (
-                <FinishRouteInstruction text="There is leftover food, please add another delivery to finish the route" />
+                <FinishRouteInstruction
+                  text={
+                    admin
+                      ? 'There is leftover food, please add another delivery to finish the route'
+                      : 'There is leftover food, please contact admin to add another delivery'
+                  }
+                />
               )
             ) : (
               <FinishRouteInstruction text="Stops are not fully completed" />
@@ -759,7 +765,9 @@ export function Route() {
                             ) : null}
                             <DirectionsButton stop={s} route={route} />
                             <UpdateStop stop={s} />
-                            {s.status < 9 ? <CancelStop stop={s} /> : null}
+                            {s.status < 9 && admin ? (
+                              <CancelStop stop={s} />
+                            ) : null}
                           </>
                         ) : null}
                       </>
@@ -767,7 +775,8 @@ export function Route() {
                   </div>
                 ))}
               </section>
-              {route.status === 3 &&
+              {admin === true &&
+                route.status === 3 &&
                 areAllStopsCompleted(stops) &&
                 !allFoodDelivered(stops) && <BackupDelivery />}
               {(route.status === 1 || route.status === 3) &&

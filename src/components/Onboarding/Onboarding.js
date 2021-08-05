@@ -4,6 +4,7 @@ import Privacy from '../Privacy/Privacy'
 import Terms from '../Terms/Terms'
 import Liability from '../Liability/Liability'
 import Logo from '../../assets/logo.svg'
+import Header from '../Header/Header'
 import './Onboarding.scss'
 import '../Auth/Auth.scss'
 import '../FoodSafety/FoodSafety.scss'
@@ -40,6 +41,21 @@ export default function Onboarding(props) {
       </button>
     </main>
   ) : page === 2 ? (
+    <main id="VehicleAvailability">
+      <Header text="Driver Availability and Vehicle" />
+      <p>
+        Use the form below to submit information about your vehicle and
+        availability.
+      </p>
+      <iframe
+        title="Driver Availability and Vehicle"
+        src="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
+      ></iframe>
+      <div className="inner">
+        <button onClick={() => setPage(page + 1)}>Next</button>
+      </div>
+    </main>
+  ) : page === 3 ? (
     <main id="FoodSafety">
       <FoodSafety />
       <div id="Checkbox">
@@ -63,7 +79,7 @@ export default function Onboarding(props) {
         </div>
       </div>
     </main>
-  ) : page === 3 ? (
+  ) : page === 4 ? (
     <main id="Privacy">
       <Privacy />
       <div id="Checkbox">
@@ -87,7 +103,7 @@ export default function Onboarding(props) {
         </div>
       </div>
     </main>
-  ) : page === 4 ? (
+  ) : page === 5 ? (
     <main id="Terms">
       <Terms />
       <div id="Checkbox">
@@ -111,7 +127,7 @@ export default function Onboarding(props) {
         </div>
       </div>
     </main>
-  ) : page === 5 ? (
+  ) : page === 6 ? (
     <main id="Liability">
       <Liability />
       <div id="Signature">
@@ -135,7 +151,7 @@ export default function Onboarding(props) {
         </div>
       </div>
     </main>
-  ) : page === 6 ? (
+  ) : page === 7 ? (
     <main id="Auth" className="request-access">
       <h1>
         <span className="green">Sharing</span> Excess
