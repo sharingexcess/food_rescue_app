@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import FoodSafety from '../FoodSafety/FoodSafety'
 import Privacy from '../Privacy/Privacy'
 import Terms from '../Terms/Terms'
-import Liability from '../Liability/Liability'
 import Logo from '../../assets/logo.svg'
 import Header from '../Header/Header'
 import './Onboarding.scss'
@@ -10,7 +9,6 @@ import '../Auth/Auth.scss'
 import '../FoodSafety/FoodSafety.scss'
 import '../Privacy/Privacy.scss'
 import '../Terms/Terms.scss'
-import '../Liability/Liability.scss'
 
 export default function Onboarding(props) {
   const [page, setPage] = useState(1)
@@ -18,13 +16,25 @@ export default function Onboarding(props) {
     return (
       <>
         <div id="Navigation">
-          <div className="inner">
-            <button onClick={() => setPage(page - 1)}>Back</button>
-          </div>
+          {page !== 2 ? (
+            <div className="inner">
+              <button onClick={() => setPage(page - 1)}>Back</button>
+            </div>
+          ) : (
+            <div className="inner"></div>
+          )}
           <div className="inner">
             <button onClick={() => setPage(page + 1)}>Next</button>
           </div>
         </div>
+      </>
+    )
+  }
+  function GoogleFormEmbedded({ text, source }) {
+    return (
+      <>
+        <p>{text}</p>
+        <iframe title="Driver Availability and Vehicle" src={source}></iframe>
       </>
     )
   }
@@ -46,17 +56,12 @@ export default function Onboarding(props) {
   ) : page === 2 ? (
     <main id="VehicleAvailability">
       <Header text="Driver Availability and Vehicle" />
-      <p>
-        Use the form below to submit information about your vehicle and
-        availability.
-      </p>
-      <iframe
-        title="Driver Availability and Vehicle"
-        src="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
-      ></iframe>
-      <div className="inner">
-        <button onClick={() => setPage(page + 1)}>Next</button>
-      </div>
+      <GoogleFormEmbedded
+        text="Use the form below to submit information about your vehicle and
+          availability."
+        source="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
+      />
+      <Footer />
     </main>
   ) : page === 3 ? (
     <main id="FoodSafety">
@@ -75,7 +80,11 @@ export default function Onboarding(props) {
     </main>
   ) : page === 6 ? (
     <main id="Liability">
-      <Liability />
+      <Header text="Driver Liability" />
+      <GoogleFormEmbedded
+        text="Use the form below to sign the liability."
+        source="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
+      />
       <Footer />
     </main>
   ) : (
