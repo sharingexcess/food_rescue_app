@@ -14,20 +14,23 @@ import '../Liability/Liability.scss'
 
 export default function Onboarding(props) {
   const [page, setPage] = useState(1)
-  const [isCheck, setCheck] = useState(false)
-  const [signature, setSignature] = useState('')
-  const handleSignature = event => {
-    setSignature(event.target.value)
-  }
-  function FormError(props) {
-    if (props.condition === false || props.condition === '') {
-      return <p id="FormError">{props.name}</p>
-    } else return null
+  function Footer() {
+    return (
+      <>
+        <div id="Navigation">
+          <div className="inner">
+            <button onClick={() => setPage(page - 1)}>Back</button>
+          </div>
+          <div className="inner">
+            <button onClick={() => setPage(page + 1)}>Next</button>
+          </div>
+        </div>
+      </>
+    )
   }
   // scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0)
-    setCheck(false)
   }, [page])
   return page === 1 ? (
     <main id="Onboarding">
@@ -58,98 +61,22 @@ export default function Onboarding(props) {
   ) : page === 3 ? (
     <main id="FoodSafety">
       <FoodSafety />
-      <div id="Checkbox">
-        <input
-          type="checkbox"
-          id="foodsafety"
-          checked={isCheck}
-          onChange={() => setCheck(!isCheck)}
-        />
-        <p className="inner">Agree to Food Safety Training</p>
-      </div>
-      <FormError name="Check the textbox to continue" condition={isCheck} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button disabled={!isCheck} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 4 ? (
     <main id="Privacy">
       <Privacy />
-      <div id="Checkbox">
-        <input
-          type="checkbox"
-          id="privacy"
-          checked={isCheck}
-          onChange={() => setCheck(!isCheck)}
-        />
-        <p className="inner">Agree to Privacy Policy</p>
-      </div>
-      <FormError name="Check the textbox to continue" condition={isCheck} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button disabled={!isCheck} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 5 ? (
     <main id="Terms">
       <Terms />
-      <div id="Checkbox">
-        <input
-          type="checkbox"
-          id="terms"
-          checked={isCheck}
-          onChange={() => setCheck(!isCheck)}
-        />
-        <p className="inner">Agree to Terms and Conditions</p>
-      </div>
-      <FormError name="Check the textbox to continue" condition={isCheck} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button disabled={!isCheck} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 6 ? (
     <main id="Liability">
       <Liability />
-      <div id="Signature">
-        <input id="liability" onChange={handleSignature} value={signature} />
-      </div>
-      <FormError name="Sign the form to continue" condition={signature} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button
-            onClick={
-              signature !== ''
-                ? () => setPage(page + 1)
-                : () => console.log('Button Disabled')
-            }
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 7 ? (
     <main id="Auth" className="request-access">
@@ -167,10 +94,7 @@ export default function Onboarding(props) {
       </div>
       <br />
       <img className="background" src={Logo} alt="Sharing Excess Logo" />
-      <button onClick={props.handleClick}>
-        <i className="fas fa-sign-out-alt" />
-        logout
-      </button>
+      <button onClick={props.handleClick}>logout</button>
     </main>
   ) : null
 }
