@@ -57,6 +57,8 @@
     background-color: rgba(0, 0, 0, 0.4);
     &.modal {
       border: 1px solid black;
+      overflow: hidden;
+      z-index: 10;
     }
 
     .modal-content {
@@ -76,7 +78,7 @@
       .footer {
         width: 5%;
         margin-right: -85%;
-        margin-bottom: -10px;
+        margin-bottom: -5px;
         padding: 0px 0px 0px 0px;
         button {
           margin: 0;
@@ -90,7 +92,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         padding: 0 20px;
         p {
           text-align: center;

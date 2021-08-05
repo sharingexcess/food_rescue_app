@@ -52,7 +52,7 @@ export function WarningModal({
                 handleOpenReport()
               }}
             >
-              x
+              x 
             </button>
           </p>
         </div>
@@ -62,6 +62,36 @@ export function WarningModal({
             be sure to fill out pickup and delivery reports in real time as you
             complete the route. This is especially important for food safety
             purposes and accurate data tracking.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Modal contains contact information
+export function ContactModal({
+  onShowModal,
+}) {
+  return (
+    <div className="warning modal">
+      <div className="modal-content">
+        <div className="footer">
+          <p>
+            <button
+              className="red"
+              onClick={() => {
+                onShowModal()
+              }}
+            >
+              x
+            </button>
+          </p>
+        </div>
+        <div className="header">
+          <p>
+            Hannah Newlands <br></br>
+            123-456-7890
           </p>
         </div>
       </div>
