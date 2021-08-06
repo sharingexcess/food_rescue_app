@@ -34,7 +34,7 @@ export default function PickupReport() {
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const resetInput = e => {
-    if (e.target.value === 0) {
+    if (e.target.value == 0) {
       e.target.value = ''
     }
   }
