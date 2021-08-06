@@ -46,12 +46,16 @@
   }
 }
 
-#VehicleAvailability, #Liability {
+#VehicleAvailability,
+#Liability {
   @include page;
   height: 1260px;
   padding-top: 72px;
   z-index: -1;
 
+  .red {
+    color: var(--red);
+  }
   iframe {
     width: 100%;
     margin-top: 16px;
@@ -68,19 +72,4 @@
   .inner {
     display: inline-block;
   }
-}
-
-#Checkbox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .inner {
-    margin-left: 10px;
-  }
-}
-
-#Signature {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }

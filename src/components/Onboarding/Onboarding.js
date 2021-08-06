@@ -34,6 +34,19 @@ export default function Onboarding(props) {
     return (
       <>
         <p>{text}</p>
+        <p>
+          {' '}
+          If the form fails to render, please try to{' '}
+          <strong className="red">
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://support.google.com/chromebook/thread/17608433/having-drive-google-com-redirected-you-too-many-times-problem?hl=en"
+            >
+              clear your cookies
+            </a>
+          </strong>
+        </p>
         <iframe title="Driver Availability and Vehicle" src={source}></iframe>
       </>
     )
