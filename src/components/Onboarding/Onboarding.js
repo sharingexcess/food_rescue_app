@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import FoodSafety from '../FoodSafety/FoodSafety'
 import Privacy from '../Privacy/Privacy'
 import Terms from '../Terms/Terms'
-import Liability from '../Liability/Liability'
 import Logo from '../../assets/logo.svg'
 import Header from '../Header/Header'
 import './Onboarding.scss'
@@ -10,24 +9,38 @@ import '../Auth/Auth.scss'
 import '../FoodSafety/FoodSafety.scss'
 import '../Privacy/Privacy.scss'
 import '../Terms/Terms.scss'
-import '../Liability/Liability.scss'
 
 export default function Onboarding(props) {
   const [page, setPage] = useState(1)
-  const [isCheck, setCheck] = useState(false)
-  const [signature, setSignature] = useState('')
-  const handleSignature = event => {
-    setSignature(event.target.value)
+  function Footer() {
+    return (
+      <>
+        <div id="Navigation">
+          {page !== 2 ? (
+            <div className="inner">
+              <button onClick={() => setPage(page - 1)}>Back</button>
+            </div>
+          ) : (
+            <div className="inner"></div>
+          )}
+          <div className="inner">
+            <button onClick={() => setPage(page + 1)}>Next</button>
+          </div>
+        </div>
+      </>
+    )
   }
-  function FormError(props) {
-    if (props.condition === false || props.condition === '') {
-      return <p id="FormError">{props.name}</p>
-    } else return null
+  function GoogleFormEmbedded({ text, source }) {
+    return (
+      <>
+        <p>{text}</p>
+        <iframe title="Driver Availability and Vehicle" src={source}></iframe>
+      </>
+    )
   }
   // scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0)
-    setCheck(false)
   }, [page])
   return page === 1 ? (
     <main id="Onboarding">
@@ -43,115 +56,38 @@ export default function Onboarding(props) {
   ) : page === 2 ? (
     <main id="VehicleAvailability">
       <Header text="Driver Availability and Vehicle" />
-      <p>
-        Use the form below to submit information about your vehicle and
-        availability.
-      </p>
-      <iframe
-        title="Driver Availability and Vehicle"
-        src="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
-      ></iframe>
-      <div className="inner">
-        <button onClick={() => setPage(page + 1)}>Next</button>
-      </div>
+      <GoogleFormEmbedded
+        text="Use the form below to submit information about your vehicle and
+          availability."
+        source="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
+      />
+      <Footer />
     </main>
   ) : page === 3 ? (
     <main id="FoodSafety">
       <FoodSafety />
-      <div id="Checkbox">
-        <input
-          type="checkbox"
-          id="foodsafety"
-          checked={isCheck}
-          onChange={() => setCheck(!isCheck)}
-        />
-        <p className="inner">Agree to Food Safety Training</p>
-      </div>
-      <FormError name="Check the textbox to continue" condition={isCheck} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button disabled={!isCheck} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 4 ? (
     <main id="Privacy">
       <Privacy />
-      <div id="Checkbox">
-        <input
-          type="checkbox"
-          id="privacy"
-          checked={isCheck}
-          onChange={() => setCheck(!isCheck)}
-        />
-        <p className="inner">Agree to Privacy Policy</p>
-      </div>
-      <FormError name="Check the textbox to continue" condition={isCheck} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button disabled={!isCheck} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 5 ? (
     <main id="Terms">
       <Terms />
-      <div id="Checkbox">
-        <input
-          type="checkbox"
-          id="terms"
-          checked={isCheck}
-          onChange={() => setCheck(!isCheck)}
-        />
-        <p className="inner">Agree to Terms and Conditions</p>
-      </div>
-      <FormError name="Check the textbox to continue" condition={isCheck} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button disabled={!isCheck} onClick={() => setPage(page + 1)}>
-            Next
-          </button>
-        </div>
-      </div>
+      <Footer />
     </main>
   ) : page === 6 ? (
     <main id="Liability">
-      <Liability />
-      <div id="Signature">
-        <input id="liability" onChange={handleSignature} value={signature} />
-      </div>
-      <FormError name="Sign the form to continue" condition={signature} />
-      <div id="Navigation">
-        <div className="inner">
-          <button onClick={() => setPage(page - 1)}>Back</button>
-        </div>
-        <div className="inner">
-          <button
-            onClick={
-              signature !== ''
-                ? () => setPage(page + 1)
-                : () => console.log('Button Disabled')
-            }
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <Header text="Driver Liability" />
+      <GoogleFormEmbedded
+        text="Use the form below to sign the liability."
+        source="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
+      />
+      <Footer />
     </main>
-  ) : page === 7 ? (
+  ) : (
     <main id="Auth" className="request-access">
       <h1>
         <span className="green">Sharing</span> Excess
@@ -167,10 +103,7 @@ export default function Onboarding(props) {
       </div>
       <br />
       <img className="background" src={Logo} alt="Sharing Excess Logo" />
-      <button onClick={props.handleClick}>
-        <i className="fas fa-sign-out-alt" />
-        logout
-      </button>
+      <button onClick={props.handleClick}>logout</button>
     </main>
-  ) : null
+  )
 }
