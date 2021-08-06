@@ -25,6 +25,7 @@ import {
   DirectionsButton,
   StatusIndicator,
   WarningModal,
+  ContactModal,
 } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
 import { useAuthContext } from '../Auth/Auth'
@@ -52,7 +53,8 @@ export function Route() {
   const organizations = useOrganizationData()
   const locations = useLocationData()
   const location = useLocation()
-  const [showModal, setShowModal] = useState(false)
+  const [warningModal, setWarningModal] = useState(false)
+  const [contactModal, setContactModal] = useState(false)
   const [stops, setStops] = useState([])
   const [willCancel, setWillCancel] = useState()
   const [willComplete, setWillComplete] = useState()
@@ -453,7 +455,7 @@ export function Route() {
           className="update-stop"
           onClick={
             stop.type === 'delivery' && currentTime.isBefore(beginTime)
-              ? () => setShowModal(true)
+              ? () => setWarningModal(true)
               : () => handleOpenReport()
           }
         >
@@ -735,13 +737,13 @@ export function Route() {
                       <p>Location Deleted</p>
                     )}
                     <StopNotes stop={s} />
-                    {showModal === true ? (
+                    {warningModal === true ? (
                       <WarningModal
                         stop={s}
                         history={history}
                         location={location}
                         route_id={route_id}
-                        onShowModal={() => setShowModal(false)}
+                        onShowModal={() => setWarningModal(false)}
                       />
                     ) : null}
                     {hasEditPermissions() ? (
@@ -767,6 +769,16 @@ export function Route() {
                   </div>
                 ))}
               </section>
+              {!admin && route.driver && (
+                <div>
+                  <button onClick={() => setContactModal(true)}>contact admin </button>
+                  {contactModal === true ? (
+                    <ContactModal
+                      onShowModal={() => setContactModal(false)}
+                    />
+                  ) : null}
+                </div>
+              )}
               {route.status === 3 &&
                 areAllStopsCompleted(stops) &&
                 !allFoodDelivered(stops) && <BackupDelivery />}

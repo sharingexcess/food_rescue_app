@@ -69,6 +69,34 @@ export function WarningModal({
   )
 }
 
+// Modal contains contact information
+export function ContactModal({ onShowModal }) {
+  return (
+    <div className="warning modal">
+      <div className="modal-content">
+        <div className="footer">
+          <p>
+            <button
+              className="red"
+              onClick={() => {
+                onShowModal()
+              }}
+            >
+              x
+            </button>
+          </p>
+        </div>
+        <div className="header">
+          <p>
+            Hannah Newlands <br></br>
+            123-456-7890
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Route components
 export function StatusIndicator({ stop, location, route_id }) {
   let icon
