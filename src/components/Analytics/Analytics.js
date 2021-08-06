@@ -3,6 +3,7 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import useUserData from '../../hooks/useUserData'
 import usePickupData from '../../hooks/usePickupData'
+import Chart from 'react-apexcharts'
 import {
   getDefaultRangeStart,
   getDefaultRangeEnd,
@@ -17,7 +18,7 @@ import './Analytics.scss'
 import moment from 'moment'
 
 export default function Analytics() {
-  const [tab, setTab] = useState('RouteAnalytics')
+  const [tab, setTab] = useState('TotalAnalytics')
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [driverNameFilter, setDriverNameFilter] = useState('')
@@ -65,25 +66,97 @@ export default function Analytics() {
       })
       return total_weight
     }
+    const chartOption = {
+      chart: {
+        height: 350,
+        type: 'radialBar',
+        toolbar: {
+          show: true,
+        },
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: 0,
+          color: '4EA528',
+          endAngle: 360,
+          hollow: {
+            margin: 0,
+            size: '70%',
+            background: '#fff',
+            image: undefined,
+            imageOffsetX: 0,
+            imageOffsetY: 0,
+            position: 'front',
+            dropShadow: {
+              enabled: true,
+              top: 3,
+              left: 0,
+              blur: 4,
+              opacity: 0.24,
+            },
+          },
+          track: {
+            background: '#fff',
+            strokeWidth: '67%',
+            margin: 0, // margin is in pixels
+            dropShadow: {
+              enabled: true,
+              top: -3,
+              left: 0,
+              blur: 4,
+              opacity: 0.35,
+            },
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              offsetY: -10,
+              show: true,
+              color: '#888',
+              fontSize: '17px',
+            },
+            value: {
+              formatter: function (val) {
+                return parseInt(val)
+              },
+              color: '#111',
+              fontSize: '36px',
+              show: true,
+            },
+          },
+        },
+      },
+      labels: [''],
+    }
+    const chartState = {
+      series: [0],
+      options: chartOption,
+    }
+    const routeChart = {
+      ...chartState,
+      series: [routes.length],
+      options: { ...chartOption, labels: ['Total Number of Routes'] },
+    }
+    const weightChart = {
+      ...chartState,
+      series: [cummulative_impact()],
+      options: { ...chartOption, labels: ['Cummulative Impact (lbs)'] },
+    }
     return (
-      <table className="Styling">
-        <thead>
-          <tr>
-            {/* <td>Food Rescue (lbs)</td>
-            <td>Warehouse Incoming (lbs)</td> */}
-            <td>Total Number of Routes</td>
-            <td>Cummulative Impact (lbs)</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {/* <td>null</td>
-            <td>null</td> */}
-            <td>{routes.length}</td>
-            <td>{cummulative_impact()}</td>
-          </tr>
-        </tbody>
-      </table>
+      <>
+        <Chart
+          options={routeChart.options}
+          series={routeChart.series}
+          type="radialBar"
+          height={350}
+        />
+        <Chart
+          options={weightChart.options}
+          series={weightChart.series}
+          type="radialBar"
+          height={350}
+        />
+      </>
     )
   }
 
@@ -342,7 +415,7 @@ export default function Analytics() {
           className={tab === 'TotalAnalytics' ? 'active' : 'inactive'}
           onClick={() => setTab('TotalAnalytics')}
         >
-          Cummulative Pounds
+          Impact
         </button>
         <button
           className={tab === 'RouteAnalytics' ? 'active' : 'inactive'}
