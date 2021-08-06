@@ -57,13 +57,11 @@ export default function Analytics() {
     function cummulative_impact() {
       let total_weight = 0
       routes.forEach(r => {
-        if (r.status === 9) {
-          deliveries.forEach(d => {
-            if (d.route_id === r.id) {
-              total_weight += d.report.weight
-            }
-          })
-        }
+        deliveries.forEach(d => {
+          if (d.route_id === r.id) {
+            total_weight += d.report.weight
+          }
+        })
       })
       return total_weight
     }
@@ -71,16 +69,16 @@ export default function Analytics() {
       <table className="Styling">
         <thead>
           <tr>
-            <td>Food Rescue (lbs)</td>
-            <td>Warehouse Incoming (lbs)</td>
-            <td>Number of Food Rescue Routes</td>
+            {/* <td>Food Rescue (lbs)</td>
+            <td>Warehouse Incoming (lbs)</td> */}
+            <td>Total Number of Routes</td>
             <td>Cummulative Impact (lbs)</td>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>null</td>
-            <td>null</td>
+            {/* <td>null</td>
+            <td>null</td> */}
             <td>{routes.length}</td>
             <td>{cummulative_impact()}</td>
           </tr>
