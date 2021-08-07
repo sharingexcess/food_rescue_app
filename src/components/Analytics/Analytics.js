@@ -3,13 +3,13 @@ import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
 import useUserData from '../../hooks/useUserData'
 import usePickupData from '../../hooks/usePickupData'
+import Chart from 'react-apexcharts'
 import {
   getDefaultRangeStart,
   getDefaultRangeEnd,
-  sortByRoutes,
+  sortByRoutesforDriver,
   capitalize,
-  calculateAllWeights,
-  sortByWeight,
+  sortByRoutesforOrg,
 } from './utils'
 import useOrganizationData from '../../hooks/useOrganizationData'
 import Header from '../Header/Header'
@@ -18,7 +18,7 @@ import './Analytics.scss'
 import moment from 'moment'
 
 export default function Analytics() {
-  const [tab, setTab] = useState('RouteAnalytics')
+  const [tab, setTab] = useState('TotalAnalytics')
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [driverNameFilter, setDriverNameFilter] = useState('')
@@ -29,20 +29,6 @@ export default function Analytics() {
   const routesOriginal = useRouteData(r => r.status === 9)
   const [drivers, setDrivers] = useState(driversOriginal)
   const [routes, setRoutes] = useState(routesOriginal)
-  const [organizations, setOrgs] = useState(orgsOriginal)
-  const [orgsNameFilter, setOrgNameFilter] = useState('')
-
-  useEffect(() => {
-    if (orgsNameFilter !== '') {
-      setOrgs(
-        orgsOriginal.filter(dr =>
-          dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
-        )
-      )
-    } else {
-      setOrgs(orgsOriginal)
-    }
-  }, [orgsOriginal, orgsNameFilter])
   useEffect(() => {
     if (driverNameFilter !== '') {
       setDrivers(
@@ -68,6 +54,112 @@ export default function Analytics() {
     }
   }, [routesOriginal, rangeStart, rangeEnd])
 
+  function TotalAnalytics() {
+    function cummulative_impact() {
+      let total_weight = 0
+      routes.forEach(r => {
+        deliveries.forEach(d => {
+          if (d.route_id === r.id) {
+            total_weight += d.report.weight
+          }
+        })
+      })
+      return total_weight
+    }
+    const chartOption = {
+      chart: {
+        height: 350,
+        type: 'radialBar',
+        toolbar: {
+          show: true,
+        },
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: 0,
+          color: '4EA528',
+          endAngle: 360,
+          hollow: {
+            margin: 0,
+            size: '70%',
+            background: '#fff',
+            image: undefined,
+            imageOffsetX: 0,
+            imageOffsetY: 0,
+            position: 'front',
+            dropShadow: {
+              enabled: true,
+              top: 3,
+              left: 0,
+              blur: 4,
+              opacity: 0.24,
+            },
+          },
+          track: {
+            background: '#fff',
+            strokeWidth: '67%',
+            margin: 0, // margin is in pixels
+            dropShadow: {
+              enabled: true,
+              top: -3,
+              left: 0,
+              blur: 4,
+              opacity: 0.35,
+            },
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              offsetY: -10,
+              show: true,
+              color: '#888',
+              fontSize: '17px',
+            },
+            value: {
+              formatter: function (val) {
+                return parseInt(val)
+              },
+              color: '#111',
+              fontSize: '36px',
+              show: true,
+            },
+          },
+        },
+      },
+      labels: [''],
+    }
+    const chartState = {
+      series: [0],
+      options: chartOption,
+    }
+    const routeChart = {
+      ...chartState,
+      series: [routes.length],
+      options: { ...chartOption, labels: ['Total Number of Routes'] },
+    }
+    const weightChart = {
+      ...chartState,
+      series: [cummulative_impact()],
+      options: { ...chartOption, labels: ['Cummulative Impact (lbs)'] },
+    }
+    return (
+      <>
+        <Chart
+          options={routeChart.options}
+          series={routeChart.series}
+          type="radialBar"
+          height={350}
+        />
+        <Chart
+          options={weightChart.options}
+          series={weightChart.series}
+          type="radialBar"
+          height={350}
+        />
+      </>
+    )
+  }
+
   function RouteAnalytics() {
     return (
       <table className="Styling">
@@ -89,13 +181,12 @@ export default function Analytics() {
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
             const r_startday = r.time_start
-            const r_starttime_array = r_pickups.map(p => p.time_finished)
-            const r_starttime = r_starttime_array[0]
-              ? r_starttime_array[0].toDate()
+            console.log(r)
+            const r_starttime = r.time_started
+              ? r.time_started.toDate()
               : 'Not found'
-            const r_endtime_array = r_deliveries.map(de => de.time_finished)
-            const r_endtime = r_endtime_array[r_endtime_array.length - 1]
-              ? r_endtime_array[r_endtime_array.length - 1].toDate()
+            const r_endtime = r.time_finished
+              ? r.time_finished.toDate()
               : 'Not found'
             const r_weight = r_deliveries
               .map(de => de.report.weight || 0)
@@ -149,6 +240,7 @@ export default function Analytics() {
   }
 
   function DriverAnalytics() {
+    console.log(routes)
     return (
       <table className="Styling">
         <thead>
@@ -161,7 +253,7 @@ export default function Analytics() {
           </tr>
         </thead>
         <tbody>
-          {sortByRoutes(drivers, routes).map(dr => {
+          {sortByRoutesforDriver(drivers, routes).map(dr => {
             const dr_routes = routes.filter(
               r => r.driver_id === dr.id && r.status === 9
             )
@@ -188,9 +280,22 @@ export default function Analytics() {
       </table>
     )
   }
-
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
+    const [organizations, setOrgs] = useState(orgsOriginal)
+    const [orgsNameFilter, setOrgNameFilter] = useState('')
+
+    useEffect(() => {
+      if (orgsNameFilter !== '') {
+        setOrgs(
+          orgsOriginal.filter(dr =>
+            dr.name.toLowerCase().includes(orgsNameFilter.toLowerCase())
+          )
+        )
+      } else {
+        setOrgs(orgsOriginal)
+      } // eslint-disable-next-line
+    }, [orgsOriginal, orgsNameFilter])
 
     function filterByType(orgsOriginal) {
       if (filter === 'donor') {
@@ -207,6 +312,16 @@ export default function Analytics() {
     }
     return (
       <>
+        <section id="OrgName">
+          <h2>Filter by Organization</h2>
+          <Input
+            type="text"
+            label="Organization name"
+            value={orgsNameFilter}
+            onChange={e => setOrgNameFilter(e.target.value)}
+          />
+        </section>
+
         <section id="Filters">
           <h2>Filter by Types</h2>
           <select value={filter} onChange={e => setFilter(e.target.value)}>
@@ -222,32 +337,55 @@ export default function Analytics() {
           <thead>
             <tr>
               <td>Organization</td>
-              <td>Types</td>
+              <td>Routes</td>
               <td>Pickups</td>
               <td>Deliveries</td>
               <td>Total Weight</td>
             </tr>
           </thead>
           <tbody>
-            {sortByWeight(filterByType(organizations), pickups, deliveries).map(
-              org => {
-                const org_pickups = pickups.filter(
-                  p => p.org_id === org.id && p.status === 9
-                )
-                const org_deliveries = deliveries.filter(
-                  de => de.org_id === org.id && de.status === 9
-                )
-                return (
-                  <tr key={org.id}>
-                    <td>{org.name}</td>
-                    <td>{org.org_type}</td>
-                    <td>{org_pickups.length}</td>
-                    <td>{org_deliveries.length}</td>
-                    <td>{calculateAllWeights(org, pickups, deliveries)}</td>
-                  </tr>
-                )
-              }
-            )}
+            {sortByRoutesforOrg(
+              filterByType(organizations),
+              routes,
+              pickups,
+              deliveries
+            ).map(org => {
+              const all_pickups = pickups.filter(
+                p => p.org_id === org.id && p.status === 9
+              )
+              const all_deliveries = deliveries.filter(
+                de => de.org_id === org.id && de.status === 9
+              )
+              const org_pickup_ids = all_pickups.map(p => p.id)
+              const org_delivery_ids = all_deliveries.map(de => de.id)
+
+              const org_routes = routes.filter(
+                r =>
+                  r.stops.filter(
+                    s =>
+                      org_pickup_ids.includes(s.id) ||
+                      org_delivery_ids.includes(s.id)
+                  ).length > 0 && r.status === 9
+              )
+              const org_pickup = pickups.filter(p =>
+                org_routes.map(r => r.id).includes(p.route_id)
+              )
+              const org_delivery = deliveries.filter(de =>
+                org_routes.map(r => r.id).includes(de.route_id)
+              )
+              const org_weight = org_delivery
+                .map(de => de.report.weight || 0)
+                .reduce((a, b) => a + b, 0)
+              return (
+                <tr key={org.id}>
+                  <td>{org.name}</td>
+                  <td>{org_routes.length}</td>
+                  <td>{org_pickup.length}</td>
+                  <td>{org_delivery.length}</td>
+                  <td>{org_weight}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </>
@@ -256,6 +394,8 @@ export default function Analytics() {
 
   function ActiveTab() {
     switch (tab) {
+      case 'TotalAnalytics':
+        return <TotalAnalytics />
       case 'RouteAnalytics':
         return <RouteAnalytics />
       case 'DriverAnalytics':
@@ -271,6 +411,12 @@ export default function Analytics() {
     <main id="Analytics">
       <Header text="Analytics" />
       <section id="Tabs">
+        <button
+          className={tab === 'TotalAnalytics' ? 'active' : 'inactive'}
+          onClick={() => setTab('TotalAnalytics')}
+        >
+          Impact
+        </button>
         <button
           className={tab === 'RouteAnalytics' ? 'active' : 'inactive'}
           onClick={() => setTab('RouteAnalytics')}
@@ -293,24 +439,23 @@ export default function Analytics() {
         </button>
       </section>
 
-      {tab !== 'OrgAnalytics' && (
-        <section id="DateRanges">
-          <h2>Filter by Date</h2>
-          <Input
-            type="datetime-local"
-            label="From..."
-            value={rangeStart}
-            onChange={e => setRangeStart(e.target.value)}
-          />
-          <Input
-            type="datetime-local"
-            label="To..."
-            value={rangeEnd}
-            onChange={e => setRangeEnd(e.target.value)}
-          />
-        </section>
-      )}
-      {tab !== 'OrgAnalytics' ? (
+      <section id="DateRanges">
+        <h2>Filter by Date</h2>
+        <Input
+          type="datetime-local"
+          label="From..."
+          value={rangeStart}
+          onChange={e => setRangeStart(e.target.value)}
+        />
+        <Input
+          type="datetime-local"
+          label="To..."
+          value={rangeEnd}
+          onChange={e => setRangeEnd(e.target.value)}
+        />
+      </section>
+
+      {tab !== 'OrgAnalytics' && tab !== 'TotalAnalytics' ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
           <Input
@@ -320,17 +465,7 @@ export default function Analytics() {
             onChange={e => setDriverNameFilter(e.target.value)}
           />
         </section>
-      ) : (
-        <section id="OrgName">
-          <h2>Filter by Organization</h2>
-          <Input
-            type="text"
-            label="Organization name"
-            value={orgsNameFilter}
-            onChange={e => setOrgNameFilter(e.target.value)}
-          />
-        </section>
-      )}
+      ) : null}
       <ActiveTab />
     </main>
   )

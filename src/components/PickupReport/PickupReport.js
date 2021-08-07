@@ -33,6 +33,11 @@ export default function PickupReport() {
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
+  const resetInput = e => {
+    if (e.target.value === '0') {
+      e.target.value = ''
+    }
+  }
 
   useEffect(() => {
     pickup && pickup.report
@@ -166,7 +171,9 @@ export default function PickupReport() {
               <input
                 id={field}
                 type="string"
+                defaultValue="0"
                 value={formData[field]}
+                onFocus={resetInput}
                 onChange={handleChange}
                 readOnly={!canEdit()}
               />

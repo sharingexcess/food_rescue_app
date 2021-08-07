@@ -12,7 +12,7 @@ export default function CompletedRoute() {
   function calculateWeight() {
     return deliveries
       ? deliveries
-          .map(d => (d.report ? d.report.weight : 0))
+          .map(d => (d.report ? d.report.weight || 0 : 0))
           .reduce((a, b) => a + b, 0)
       : 0
   }
