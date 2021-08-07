@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-
+import { ExternalLink } from '../../helpers/components'
 import { generateDirectionsLink } from './utils'
 
 // Instruction to finish route for driver after they filled all the reports
@@ -88,8 +88,11 @@ export function ContactModal({ onShowModal }) {
         </div>
         <div className="header">
           <p>
-            Hannah Newlands <br></br>
-            123-456-7890
+            Please contact Hannah at{' '}
+            <ExternalLink url="tel:1-833-7424-7397">
+              1 (833) 7424-7397
+            </ExternalLink>{' '}
+            for further assist
           </p>
         </div>
       </div>

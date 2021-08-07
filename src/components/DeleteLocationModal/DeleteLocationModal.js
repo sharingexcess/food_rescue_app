@@ -13,10 +13,10 @@ function DeleteLocationModal({
   locationId,
   orgId,
 }) {
-  console.log('Can Delete in Modal >>>', canDelete)
-  console.log('Location Routes in modal >>>', locationRoutes)
-  console.log('Location deliveries in Modal >>>', locationDeliveries)
-  console.log('Location Pickups in modal >>>', locationPickups)
+  // console.log('Can Delete in Modal >>>', canDelete)
+  // console.log('Location Routes in modal >>>', locationRoutes)
+  // console.log('Location deliveries in Modal >>>', locationDeliveries)
+  // console.log('Location Pickups in modal >>>', locationPickups)
   const history = useHistory()
   const handleDeleteLocation = async () => {
     // // remove the location id from the deliveries and pickups

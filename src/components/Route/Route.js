@@ -584,7 +584,6 @@ export function Route() {
     }
     return null
   }
-  console.log(stops)
   return (
     <main id="Route">
       {!route ? (
@@ -779,16 +778,16 @@ export function Route() {
               </section>
               {!admin && route.driver && (
                 <div>
-                  <button onClick={() => setContactModal(true)}>contact admin </button>
+                  <button onClick={() => setContactModal(true)}>
+                    contact admin{' '}
+                  </button>
                   {contactModal === true ? (
-                    <ContactModal
-                      onShowModal={() => setContactModal(false)}
-                    />
+                    <ContactModal onShowModal={() => setContactModal(false)} />
                   ) : null}
                 </div>
               )}
               {route.status === 3 &&
-              admin === true &&
+                admin === true &&
                 route.status === 3 &&
                 areAllStopsCompleted(stops) &&
                 !allFoodDelivered(stops) && <BackupDelivery />}

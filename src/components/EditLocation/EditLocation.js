@@ -130,10 +130,10 @@ export default function EditLocation() {
     setLocationRoutes(locationRoutes)
     setLocationDeliveries(locationDeliveries)
     setLocationPickups(locationPickups)
-    console.log('Can delete >>>', canDelete)
-    console.log('Routes of location >>>', locationRoutes)
-    console.log('Location Deliveries >>>', locationDeliveries)
-    console.log('Location pickups >>>', locationPickups)
+    // console.log('Can delete >>>', canDelete)
+    // console.log('Routes of location >>>', locationRoutes)
+    // console.log('Location Deliveries >>>', locationDeliveries)
+    // console.log('Location pickups >>>', locationPickups)
     setOpenModal(true)
   }
 
