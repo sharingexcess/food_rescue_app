@@ -181,7 +181,6 @@ export default function Analytics() {
             const r_pickups = pickups.filter(p => p.route_id === r.id)
             const r_deliveries = deliveries.filter(de => de.route_id === r.id)
             const r_startday = r.time_start
-            console.log(r)
             const r_starttime = r.time_started
               ? r.time_started.toDate()
               : 'Not found'
@@ -240,7 +239,6 @@ export default function Analytics() {
   }
 
   function DriverAnalytics() {
-    console.log(routes)
     return (
       <table className="Styling">
         <thead>
