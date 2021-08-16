@@ -40,9 +40,6 @@ export default function EditLocation() {
   const [isPrimary, setIsPrimary] = useState(
     loc_id && organization ? organization.primary_location === loc_id : false
   )
-  const isHomeDelivery = organization
-    ? organization.org_type === 'home delivery'
-    : null
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
@@ -80,9 +77,6 @@ export default function EditLocation() {
     }
     if (formData.address1 === '') {
       updatedErrors.push('Missing Address')
-    }
-    if (isHomeDelivery && formData.address2 === '') {
-      updatedErrors.push('Missing Apartment Number')
     }
     if (
       formData.contact_phone &&
@@ -134,12 +128,14 @@ export default function EditLocation() {
   }
 
   async function generateLocationId() {
-    const address2 = formData.address2 ? formData.address2 : null
+    const address2 = formData.address2
+      ? formData.address2.replace(/[^A-Z0-9]/gi, '_').toLowerCase()
+      : null
     const uniq_id = `${organization.name
       .toLowerCase()
       .replace(/[^A-Z0-9]/gi, '_')}_${formData.address1
       .replace(/[^A-Z0-9]/gi, '_')
-      .toLowerCase()}${address2.replace(/[^A-Z0-9]/gi, '_').toLowerCase()}`
+      .toLowerCase()}${address2}`
     const exists = await getCollection('Organizations')
       .doc(uniq_id)
       .get()
