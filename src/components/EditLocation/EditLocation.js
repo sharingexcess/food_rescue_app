@@ -81,6 +81,9 @@ export default function EditLocation() {
     if (formData.address1 === '') {
       updatedErrors.push('Missing Address')
     }
+    if (formData.address2 === '') {
+      updatedErrors.push('Missing Apartment Number')
+    }
     if (
       formData.is_warehouse === '' &&
       formData.is_community_fridge === '' &&
@@ -130,10 +133,6 @@ export default function EditLocation() {
     setLocationRoutes(locationRoutes)
     setLocationDeliveries(locationDeliveries)
     setLocationPickups(locationPickups)
-    // console.log('Can delete >>>', canDelete)
-    // console.log('Routes of location >>>', locationRoutes)
-    // console.log('Location Deliveries >>>', locationDeliveries)
-    // console.log('Location pickups >>>', locationPickups)
     setOpenModal(true)
   }
 
@@ -141,6 +140,8 @@ export default function EditLocation() {
     const uniq_id = `${organization.name
       .toLowerCase()
       .replace(/[^A-Z0-9]/gi, '_')}_${formData.address1
+      .replace(/[^A-Z0-9]/gi, '_')
+      .toLowerCase()}${formData.address2
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()}`
     const exists = await getCollection('Organizations')
