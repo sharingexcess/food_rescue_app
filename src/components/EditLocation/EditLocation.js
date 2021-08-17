@@ -32,9 +32,6 @@ export default function EditLocation() {
     secondary_contact_phone: '',
     upon_arrival_instructions: '',
     is_philabundance_partner: '',
-    is_community_fridge: '',
-    is_warehouse: '',
-    is_home_delivery: '',
     time_open: '',
     time_close: '',
     receive_start: '',
@@ -82,13 +79,10 @@ export default function EditLocation() {
       updatedErrors.push('Missing Address')
     }
     if (
-      formData.is_warehouse === '' &&
-      formData.is_community_fridge === '' &&
-      formData.is_home_delivery === '' &&
-      (!formData.contact_phone ||
-        !isPossiblePhoneNumber(formData.contact_phone))
+      formData.contact_phone &&
+      !isPossiblePhoneNumber(formData.contact_phone)
     ) {
-      updatedErrors.push('Invalid Data Input: Contact Phone Number is invalid')
+      updatedErrors.push('Contact Phone Number is invalid')
     }
     setErrors(updatedErrors)
     return updatedErrors.length === 0
@@ -130,20 +124,16 @@ export default function EditLocation() {
     setLocationRoutes(locationRoutes)
     setLocationDeliveries(locationDeliveries)
     setLocationPickups(locationPickups)
-    // console.log('Can delete >>>', canDelete)
-    // console.log('Routes of location >>>', locationRoutes)
-    // console.log('Location Deliveries >>>', locationDeliveries)
-    // console.log('Location pickups >>>', locationPickups)
     setOpenModal(true)
   }
 
   async function generateLocationId() {
-    const uniq_id = `${organization.name
-      .toLowerCase()
-      .replace(/[^A-Z0-9]/gi, '_')}_${formData.address1
+    const uniq_id = `${organization.name}_${formData.address1}${
+      formData.address2 ? '_' + formData.address2 : ''
+    }`
       .replace(/[^A-Z0-9]/gi, '_')
-      .toLowerCase()}`
-    const exists = await getCollection('Organizations')
+      .toLowerCase()
+    const exists = await getCollection('Locations')
       .doc(uniq_id)
       .get()
       .then(res => res.data())
@@ -288,60 +278,6 @@ export default function EditLocation() {
             <p>
               Make this Network
               <br />a Philabundance Partner
-            </p>
-          </div>
-          <div className="is_community_fridge">
-            <input
-              type="checkbox"
-              id="is_community_fridge"
-              name="is_community_fridge"
-              checked={formData.is_community_fridge}
-              onChange={() =>
-                setFormData({
-                  ...formData,
-                  is_community_fridge: !formData.is_community_fridge,
-                })
-              }
-            />
-            <p>
-              Make this Network
-              <br />a Community Fridge
-            </p>
-          </div>
-          <div className="is_warehouse">
-            <input
-              type="checkbox"
-              id="is_warehouse"
-              name="is_warehouse"
-              checked={formData.is_warehouse}
-              onChange={() =>
-                setFormData({
-                  ...formData,
-                  is_warehouse: !formData.is_warehouse,
-                })
-              }
-            />
-            <p>
-              Make this Network
-              <br />a Warehouse
-            </p>
-          </div>
-          <div className="is_home_delivery">
-            <input
-              type="checkbox"
-              id="is_home_delivery"
-              name="is_home_delivery"
-              checked={formData.is_home_delivery}
-              onChange={() =>
-                setFormData({
-                  ...formData,
-                  is_home_delivery: !formData.is_home_delivery,
-                })
-              }
-            />
-            <p>
-              Make this Network
-              <br />a Home Delivery
             </p>
           </div>
           <FormError />
