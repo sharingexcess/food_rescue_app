@@ -133,7 +133,7 @@ export default function EditLocation() {
     }`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
-    const exists = await getCollection('Organizations')
+    const exists = await getCollection('Locations')
       .doc(uniq_id)
       .get()
       .then(res => res.data())
