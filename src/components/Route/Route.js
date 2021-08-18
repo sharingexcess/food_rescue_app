@@ -794,11 +794,12 @@ export function Route() {
               {(route.status === 1 || route.status === 3) &&
                 route.driver &&
                 admin && (
-                  <div>
-                    <Link to={`/routes/${route.id}/edit`}>
-                      <button>Edit Stops</button>
+                  <button>
+                    <Link to={`/routes/${route.id}/edit`} className="link">
+                      Edit Stops
                     </Link>
-                  </div>
+                  </button>
+
                 )}
               <StatusButton />
               {admin === true ? <CancelButton /> : null}
