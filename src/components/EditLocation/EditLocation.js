@@ -128,9 +128,9 @@ export default function EditLocation() {
   }
 
   async function generateLocationId() {
-    const uniq_id = `${organization.name}_${formData.address1}${
-      formData.address2 ? '_' + formData.address2 : ''
-    }`
+    const uniq_id = `${organization.name}_${formData.name}_${
+      formData.address1
+    }${formData.address2 ? '_' + formData.address2 : ''}`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
     const exists = await getCollection('Locations')
