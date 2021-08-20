@@ -311,10 +311,10 @@ export default function Analytics() {
     return (
       <>
         <section id="OrgName">
-          <h2>Filter by Organization</h2>
+          <h2>Filter by Network</h2>
           <Input
             type="text"
-            label="Organization name"
+            label="Network name"
             value={orgsNameFilter}
             onChange={e => setOrgNameFilter(e.target.value)}
           />
@@ -334,7 +334,7 @@ export default function Analytics() {
         <table className="Styling">
           <thead>
             <tr>
-              <td>Organization</td>
+              <td>Network</td>
               <td>Routes</td>
               <td>Pickups</td>
               <td>Deliveries</td>
@@ -433,7 +433,7 @@ export default function Analytics() {
             setTab('OrgAnalytics')
           }}
         >
-          Organizations
+          Networks
         </button>
       </section>
 
