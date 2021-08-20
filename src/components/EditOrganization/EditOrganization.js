@@ -59,10 +59,7 @@ export default function EditOrganization() {
   }
 
   function validateFormData() {
-    if (
-      !formData.name ||
-      !validator.isAlphanumeric(formData.name.split(' ')[0])
-    ) {
+    if (!formData.name) {
       errors.push('Missing in form data: Network Name')
     }
     if (
