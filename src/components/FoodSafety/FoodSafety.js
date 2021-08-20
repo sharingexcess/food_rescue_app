@@ -23,6 +23,34 @@ export default function FoodSafety() {
           <li>Only accept good quality food.</li>
         </ol>
       </section>
+      <section id="pickups">
+        <h2>Pickup and Delivery</h2>
+        <p>Please drive safe, obey traffic laws, and avoid parking tickets.</p>
+        <h3>Packaging</h3>
+        <ol>
+          <li>
+            All food items should be properly packed in boxes or sturdy bags
+            before transportation
+          </li>
+          <li>
+            Safely pack, stack and secure food donations on top of each other,
+            always placing meat on the bottom
+          </li>
+          <li>Do not overpack boxes or block road visibility</li>
+        </ol>
+        <h3>Vehicle</h3>
+        <ol>
+          <li>Keep vehicle interior clean and free of personal items</li>
+          <li>You must have a valid drivers license and proof of insurance</li>
+        </ol>
+        <h3>Logging Routes</h3>
+        <ol>
+          <li>
+            Be sure to fill out pickup and delivery reports in real time as you
+            complete each route for food safety and data tracking purposes
+          </li>
+        </ol>
+      </section>
       <section id="foodtemp">
         <h2>Food Temperature</h2>
         <p>
@@ -32,8 +60,10 @@ export default function FoodSafety() {
           risk.
         </p>
         <p>
-          Ensure all food donations were stored at the proper temperature to
-          pickup:
+          Proper storage temperatures for food donations are listed below. If
+          you suspect donations are not complying to these food temperature
+          guidelines, please contact your volunteer coordinator after your
+          pickup.
         </p>
         <ol>
           <li>Frozen: 32*F and below</li>
@@ -44,9 +74,12 @@ export default function FoodSafety() {
       <section id="perishables">
         <h2>Perishables</h2>
         <p>
-          For perishable items, use your best judgment, but prioritize quality.
-          As a general rule, only accept food that you would personally eat.
-          Avoid making direct contact with food.
+          At Sharing Excess, we prioritize quality and only accept food that we
+          would personally eat! Avoid making direct contact with food. Donations
+          have already been checked and sorted in accordance to the below rules
+          and guidelines. If you suspect that donations do not comply with the
+          following, please contact your volunteer coordinator after your
+          pickup.
         </p>
         <h3>Meat</h3>
         <div className="row">
@@ -200,50 +233,16 @@ export default function FoodSafety() {
           <li>Partially consumed food items</li>
         </ol>
       </section>
-      <section id="pickups">
-        <h2>Pickup and Delivery</h2>
-        <p>Please drive safe, obey traffic laws, and avoid parking tickets.</p>
-        <h3>Packaging</h3>
-        <ol>
-          <li>
-            All food items should be properly packed in boxes or sturdy bags
-            before transportation
-          </li>
-          <li>
-            Safely pack, stack and secure food donations on top of each other,
-            always placing meat on the bottom
-          </li>
-          <li>Do not overpack boxes or block road visibility</li>
-        </ol>
-        <h3>Vehicle</h3>
-        <ol>
-          <li>You may transport donations using a car, bike, or on-foot</li>
-          <li>Keep vehicle interior clean and free of personal items</li>
-          <li>You must have a valid drivers license and proof of insurance</li>
-        </ol>
-        <h3>Clothing</h3>
-        <ol>
-          <li>
-            Wear a Sharing Excess t-shirt, hat or have a bag with our logo on it
-            to be properly identified by our partners
-          </li>
-          <li>Wear closed toe shoes</li>
-        </ol>
-        <h3>Logging Routes</h3>
-        <ol>
-          <li>
-            Be sure to fill out pickup and delivery reports in real time as you
-            complete each route for food safety and data tracking purposes
-          </li>
-        </ol>
-      </section>
+
       <section id="waste">
         <h2>Waste and Recycling</h2>
         <p>
-          If the food doesn’t look or smell good, don’t hesitate to throw it
-          out. Use your best judgement, and always lean on the safe side.
+          At Sharing Excess, we prioritize quality and only accept food that we
+          would personally eat! Donations have already been checked and sorted
+          for freshness and quality. However, if the food doesn't look or smell
+          good, please contact your volunteer coordinator after your pickup.
         </p>
-        <h3>Proper Disposal</h3>
+        <h3>Our Proper Disposal Guidelines</h3>
         <ol>
           <li>
             Throw out any food that has touched the ground, or become loose
@@ -255,7 +254,7 @@ export default function FoodSafety() {
           </li>
           <li>Compost any organic food items whenever possible</li>
         </ol>
-        <h3>Reduce and Recycle Packaging</h3>
+        <h3>How we Reduce and Recycle Packaging</h3>
         <ol>
           <li>Try to consolidate half-filled boxes whenever possible</li>
           <li>Recycle any leftover packaging</li>
