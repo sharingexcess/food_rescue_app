@@ -56,16 +56,38 @@ export default function Analytics() {
 
   function TotalAnalytics() {
     function cummulative_impact() {
-      let total_weight = 0
+      let total_weight1 = 0
       routes.forEach(r => {
         deliveries.forEach(d => {
+          console.log(deliveries)
           if (d.route_id === r.id) {
-            total_weight += d.report.weight
+            total_weight1 += d.report.weight
           }
         })
       })
-      return total_weight
+      return total_weight1
     }
+
+    function warehouse_incoming() {
+      let total_weight2 = 0
+      routes.forEach(r => {
+        deliveries.forEach(d => {
+          if (d.route_id === r.id) {
+            console.log(pickups)
+            console.log(deliveries)
+            total_weight2 += d.report.weight
+          }
+        })
+      })
+      return total_weight2
+    }
+
+    //function food_rescue() {
+    //  let total_weight3 = 0
+    //  total_weight3 = TotalAnalytics() - warehouse_incoming()
+    //  return total_weight3
+    //}
+
     const chartOption = {
       chart: {
         height: 350,
@@ -142,6 +164,16 @@ export default function Analytics() {
       series: [cummulative_impact()],
       options: { ...chartOption, labels: ['Cummulative Impact (lbs)'] },
     }
+    const warehouseChart = {
+      ...chartState,
+      series: [warehouse_incoming()],
+      options: { ...chartOption, labels: ['Warehouse Incoming (lbs)'] },
+    }
+    const foodrescueChart = {
+      ...chartState,
+      series: ['NaN'],
+      options: { ...chartOption, labels: ['Food Rescue (lbs)'] },
+    }
     return (
       <>
         <Chart
@@ -153,6 +185,18 @@ export default function Analytics() {
         <Chart
           options={weightChart.options}
           series={weightChart.series}
+          type="radialBar"
+          height={350}
+        />
+        <Chart
+          options={warehouseChart.options}
+          series={warehouseChart.series}
+          type="radialBar"
+          height={350}
+        />
+        <Chart
+          options={foodrescueChart.options}
+          series={foodrescueChart.series}
           type="radialBar"
           height={350}
         />
