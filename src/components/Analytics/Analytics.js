@@ -53,13 +53,12 @@ export default function Analytics() {
       setRoutes(routesOriginal)
     }
   }, [routesOriginal, rangeStart, rangeEnd])
-
+  console.log(orgsOriginal)
   function TotalAnalytics() {
     function cummulative_impact() {
       let total_weight1 = 0
       routes.forEach(r => {
         deliveries.forEach(d => {
-          console.log(deliveries)
           if (d.route_id === r.id) {
             total_weight1 += d.report.weight
           }
@@ -69,24 +68,35 @@ export default function Analytics() {
     }
 
     function warehouse_incoming() {
-      let total_weight2 = 0
-      routes.forEach(r => {
-        deliveries.forEach(d => {
-          if (d.route_id === r.id) {
-            console.log(pickups)
-            console.log(deliveries)
-            total_weight2 += d.report.weight
-          }
-        })
+      let warehouse_weight
+      const warehouseOrg = orgsOriginal.filter(
+        org => org.org_type === 'warehouse'
+      )
+      warehouseOrg.forEach(org => {
+        const all_deliveries = deliveries.filter(
+          de => de.org_id === org.id && de.status === 9
+        )
+        const org_delivery_ids = all_deliveries.map(de => de.id)
+        const org_routes = routes.filter(
+          r =>
+            r.stops.filter(s => org_delivery_ids.includes(s.id)).length > 0 &&
+            r.status === 9
+        )
+        console.log(org_routes)
+        const org_delivery = deliveries.filter(de =>
+          org_routes.map(r => r.id).includes(de.route_id)
+        )
+        warehouse_weight = org_delivery
+          .map(de => de.report.weight || 0)
+          .reduce((a, b) => a + b, 0)
       })
-      return total_weight2
+      return warehouse_weight
     }
 
-    //function food_rescue() {
-    //  let total_weight3 = 0
-    //  total_weight3 = TotalAnalytics() - warehouse_incoming()
-    //  return total_weight3
-    //}
+    function food_rescue() {
+      const food_rescue_weight = cummulative_impact() - warehouse_incoming()
+      return food_rescue_weight
+    }
 
     const chartOption = {
       chart: {
@@ -171,7 +181,7 @@ export default function Analytics() {
     }
     const foodrescueChart = {
       ...chartState,
-      series: ['NaN'],
+      series: [food_rescue()],
       options: { ...chartOption, labels: ['Food Rescue (lbs)'] },
     }
     return (
