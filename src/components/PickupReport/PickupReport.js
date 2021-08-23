@@ -11,6 +11,7 @@ import { useAuthContext } from '../Auth/Auth'
 import './PickupReport.scss'
 import Header from '../Header/Header'
 import validator from 'validator'
+import { CalcModal } from '../../helpers/Calculator/Calculator'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
@@ -38,7 +39,7 @@ export default function PickupReport() {
       e.target.value = ''
     }
   }
-
+  const [showCal, setShowCal] = useState(false)
   useEffect(() => {
     pickup && pickup.report
       ? setFormData(formData => ({ ...formData, ...pickup.report }))
@@ -154,6 +155,16 @@ export default function PickupReport() {
       <Header text="Rescue Report" />
       <h3>{pickup_org.name}</h3>
       <h1 className="center">Input Category Weight in Pounds (lbs)</h1>
+
+      <div>
+        <button onClick={() => setShowCal(true)} class="fas fa-calculator">
+          {' '}
+        </button>
+        {showCal === true ? (
+          <CalcModal onShowModal={() => setShowCal(false)} />
+        ) : null}
+      </div>
+
       {Object.keys(formData)
         .sort(function (a, b) {
           if (a === 'other') {

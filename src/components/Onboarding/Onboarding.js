@@ -47,7 +47,17 @@ export default function Onboarding(props) {
             </a>
           </strong>
         </p>
-        <iframe title="Driver Availability and Vehicle" src={source}></iframe>
+        <iframe
+          title="Driver Availability and Vehicle"
+          src={source}
+          width="640"
+          height="1447"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+        >
+          Loading…
+        </iframe>
       </>
     )
   }
@@ -96,7 +106,7 @@ export default function Onboarding(props) {
       <Header text="Driver Liability" />
       <GoogleFormEmbedded
         text="Use the form below to sign the liability."
-        source="https://docs.google.com/forms/d/e/1FAIpQLSewe9RVwIiTm_dkqyY5NSgmsTsajtKHHGu00LSbEztNEZ-_gg/viewform?usp=sf_link"
+        source="https://docs.google.com/forms/d/e/1FAIpQLSf06ZcN0bQNgPglue7B0WoAWbesFN6Fo4c_0HA5sCCCm-MPoQ/viewform?embedded=true"
       />
       <Footer />
     </main>

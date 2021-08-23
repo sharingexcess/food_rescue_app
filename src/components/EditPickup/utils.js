@@ -51,13 +51,13 @@ export function updateFieldSuggestions(
 // loadSuggestionsOnInit: a boolean defining whether the suggestionQuery should be run before the user enters any input
 export const formFields = [
   {
-    label: 'Donor Organization',
+    label: 'Donor Network',
     id: 'org_name',
     preReq: null,
     type: 'text',
     suggestionQuery: (name, organizations) =>
       organizations.filter(o =>
-        o.name.toLowerCase().startsWith(name.toLowerCase())
+        o.name.toLowerCase().includes(name.toLowerCase())
       ),
     handleSelect: org => ({
       org,
