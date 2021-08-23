@@ -157,14 +157,14 @@ export default function PickupReport() {
       <h1 className="center">Input Category Weight in Pounds (lbs)</h1>
 
       <div>
-        <button onClick={() => setShowCal(true)} class="fas fa-calculator"> </button>
+        <button onClick={() => setShowCal(true)} class="fas fa-calculator">
+          {' '}
+        </button>
         {showCal === true ? (
-          <CalcModal
-          onShowModal={() => setShowCal(false)}
-          />
-          ) : null}
+          <CalcModal onShowModal={() => setShowCal(false)} />
+        ) : null}
       </div>
-      
+
       {Object.keys(formData)
         .sort(function (a, b) {
           if (a === 'other') {
