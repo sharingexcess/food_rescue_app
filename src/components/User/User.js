@@ -63,7 +63,6 @@ function User() {
         isAdmin={isAdmin}
         basicAccess={basicAccess}
       />
-      <ViewDriverDocuments />
     </main>
     // View Driver Document button currently has no functionality
   )
