@@ -58,7 +58,7 @@ export default function Liability() {
           I agree that, while using my own vehicle while providing services to
           Sharing Excess, I will:
         </p>
-        <li>UMaintain a valid driver’s license and active auto insurance</li>
+        <li>Maintain a valid driver’s license and active auto insurance</li>
         <li>
           Inspect and maintain my automobile, obey all traffic laws, drive
           safely and maintain state required minimum automobile liability
