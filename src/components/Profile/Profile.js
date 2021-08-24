@@ -10,6 +10,8 @@ import './Profile.scss'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import '../Liability/Liability'
+import '../Liability/Liability.scss'
 
 export default function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuthContext()
@@ -99,7 +101,7 @@ export default function Profile({ handleUpdateClick, inForm }) {
       <h3>{profile.email}</h3>
       <button>
         {' '}
-        <Link to="/liability">View Signed Document</Link>
+        <Link to="/liability">View Onboarding Documents</Link>
       </button>
       <Input
         element_id="name"
