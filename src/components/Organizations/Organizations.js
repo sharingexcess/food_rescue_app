@@ -51,7 +51,7 @@ function Organizations() {
           <option value="home delivery">Home Deliveries</option>
         </select>
         <Link to="/admin/create-organization">
-          <button className="grant">+ New Network</button>
+          <button>+ New Network</button>
         </Link>
       </section>
       <Input
