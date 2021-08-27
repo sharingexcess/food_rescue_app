@@ -11,7 +11,6 @@ import {
   checkUserAdminPermissions,
   checkUserBasicAccess,
 } from './utils'
-import ViewDriverDocuments from './DriverDocumentsutils'
 import useUserData from '../../hooks/useUserData'
 import './User.scss'
 import Header from '../Header/Header'
