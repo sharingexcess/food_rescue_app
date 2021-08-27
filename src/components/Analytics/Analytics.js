@@ -278,6 +278,7 @@ export default function Analytics() {
       </table>
     )
   }
+  console.log(orgsOriginal)
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
     const [organizations, setOrgs] = useState(orgsOriginal)
@@ -302,8 +303,10 @@ export default function Analytics() {
         return orgsOriginal.filter(o => o.org_type === 'recipient')
       } else if (filter === 'community fridge') {
         return orgsOriginal.filter(o => o.org_type === 'community fridge')
-      } else if (filter === 'warehouse') {
-        return orgsOriginal.filter(o => o.org_type === 'warehouse')
+      } else if (filter === 'incoming warehouse') {
+        return orgsOriginal.filter(
+          o => o.org_type === 'warehouse' && o.name === 'SE Warehouse (R)'
+        )
       } else if (filter === 'home delivery') {
         return orgsOriginal.filter(o => o.org_type === 'home delivery')
       } else return orgsOriginal
@@ -327,7 +330,7 @@ export default function Analytics() {
             <option value="donor">Donors</option>
             <option value="recipient">Recipients</option>
             <option value="community fridge">Community Fridges</option>
-            <option value="warehouse">Warehouse</option>
+            <option value="incoming warehouse">Incoming Warehouse</option>
             <option value="home delivery">Home Delivery</option>
           </select>
         </section>
