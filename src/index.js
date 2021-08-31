@@ -73,8 +73,8 @@ function App() {
       <Provider store={store}>
         {/* This Provider component wraps our app in a component that gives access to the Redux store */}
         <BrowserRouter>
-          <Auth>
-            <Firestore>
+          <Firestore>
+            <Auth>
               <Requirements>
                 <Menu />
                 <Footer />
@@ -147,8 +147,8 @@ function App() {
                   </Route>
                 </Switch>
               </Requirements>
-            </Firestore>
-          </Auth>
+            </Auth>
+          </Firestore>
         </BrowserRouter>
       </Provider>
     </Sentry.ErrorBoundary>

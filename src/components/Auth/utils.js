@@ -28,14 +28,3 @@ export async function updatePublicUserProfile(user) {
   }
   setFirestoreData(['Users', user.uid], update_payload)
 }
-
-export function updateUserPermissions(user, callback) {
-  user.getIdTokenResult().then(token => {
-    if (token && token.claims) {
-      callback({
-        admin: token.claims.admin,
-        basicAccess: token.claims.basic_access,
-      })
-    }
-  })
-}
