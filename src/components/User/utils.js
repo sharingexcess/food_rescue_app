@@ -1,4 +1,4 @@
-import Ellipsis, { ExternalLink } from '../../helpers/components'
+import { ExternalLink } from '../../helpers/components'
 import {
   createServerTimestamp,
   getImageFromStorage,

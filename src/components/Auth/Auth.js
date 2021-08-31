@@ -46,8 +46,7 @@ function Auth({ children }) {
     )
   }
 
-  // TODO: handle case where no DB USER exists, and infinite loading screen occurs
-  return loading || (auth_user && db_user === []) ? (
+  return loading || (auth_user && Array.isArray(db_user) && !db_user.length) ? (
     <Loading text="Signing in" />
   ) : error ? (
     <Error />
@@ -59,6 +58,7 @@ function Auth({ children }) {
         value={{
           user: auth_user ? { ...auth_user, ...db_user } : null,
           admin: db_user.access_level === 'admin',
+          driver: db_user.access_level === 'driver',
           handleLogout,
         }}
       >
@@ -74,6 +74,7 @@ function Auth({ children }) {
       value={{
         user: auth_user ? { ...auth_user, ...db_user } : null,
         admin: db_user.access_level === 'admin',
+        driver: db_user.access_level === 'driver',
         handleLogout,
       }}
     >

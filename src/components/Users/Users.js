@@ -6,12 +6,14 @@ import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import { Input } from '../Input/Input'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
+import { useAuth } from '../Auth/Auth'
 import './Users.scss'
 
 const user_icon_urls = {}
 
 function Users() {
   const users = useUserData()
+  const { admin, driver } = useAuth()
   const [search, setSearch] = useState('')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
@@ -60,6 +62,11 @@ function Users() {
               <h2>{user.name}</h2>
               <p>{user.email}</p>
             </div>
+            {user.access_level === 'admin' ? (
+              <i className="access-level fa fa-crown" />
+            ) : user.access_level === 'driver' ? (
+              <i className="access-level fa fa-truck" />
+            ) : null}
           </section>
         </Link>
       ))}
