@@ -5,7 +5,7 @@ import './EditPickup.scss'
 import useLocationData from '../../hooks/useLocationData'
 import useOrganizationData from '../../hooks/useOrganizationData'
 
-function EditPickup({ handleSubmit }) {
+function EditPickup({ handleSubmit, title }) {
   const organizations = useOrganizationData()
   const locations = useLocationData()
   const [formData, setFormData] = useState({
@@ -93,7 +93,7 @@ function EditPickup({ handleSubmit }) {
 
   return (
     <div id="EditPickup">
-      <h3>Add a Pickup</h3>
+      {title !== '' && <h3>{title || 'Add a Pickup'}</h3>}
       {formFields.map(f => renderFieldInput(f))}
     </div>
   )

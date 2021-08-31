@@ -14,7 +14,7 @@ import validator from 'validator'
 import { CalcModal } from '../../helpers/Calculator/Calculator'
 import './PickupReport.scss'
 
-export default function PickupReport({ customSubmitHandler }) {
+export default function PickupReport({ customSubmitHandler, hideHeader }) {
   const { pickup_id, route_id } = useParams()
   const { admin } = useAuth()
   const history = useHistory()
@@ -153,7 +153,7 @@ export default function PickupReport({ customSubmitHandler }) {
   if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
-      <Header text="Rescue Report" />
+      {!hideHeader && <Header text="Rescue Report" />}
       <h3>{pickup_org.name}</h3>
       <h1 className="center">Input Category Weight in Pounds (lbs)</h1>
 

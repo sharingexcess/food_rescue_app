@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import { useAuth } from '../components/Auth/Auth'
 import Error from '../components/Error/Error'
 import EditRoute from '../components/EditRoute/EditRoute'
-import EditBulkDelivery from '../components/EditBulkDelivery/EditBulkDelivery'
+import EditDirectDonation from '../components/EditDirectDonation/EditDirectDonation'
 import EditOrganization from '../components/EditOrganization/EditOrganization'
 import Organizations from '../components/Organizations/Organizations'
 import EditLocation from '../components/EditLocation/EditLocation'
@@ -38,8 +38,8 @@ export default function AdminRoutes() {
       {/* <AdminRoute exact path="/admin/submit-route">
         <SubmitPastRoute />
       </AdminRoute> */}
-      <AdminRoute exact path="/admin/create-bulk-delivery">
-        <EditBulkDelivery />
+      <AdminRoute exact path="/admin/create-direct-donation">
+        <EditDirectDonation />
       </AdminRoute>
       <AdminRoute exact path="/admin/create-organization">
         <EditOrganization />

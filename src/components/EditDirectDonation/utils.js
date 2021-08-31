@@ -1,4 +1,5 @@
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import { v4 as generateUUID } from 'uuid'
 
 export function handleOrgIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
@@ -14,4 +15,8 @@ export function initializeFormData(org, callback) {
     default_contact_phone: org.default_contact_phone,
     org_type: org.org_type,
   })
+}
+
+export function generateDirectDonationId(name) {
+  return `${name}_${generateUUID()}`.replace(/[^A-Z0-9]/gi, '_').toLowerCase()
 }
