@@ -10,7 +10,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import './DeliveryReport.scss'
 import usePickupData from '../../hooks/usePickupData'
 import useRouteData from '../../hooks/useRouteData'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import Header from '../Header/Header'
 
 export default function DeliveryReport() {
@@ -28,7 +28,7 @@ export default function DeliveryReport() {
   })
   const [changed, setChanged] = useState(false)
   const [weight, setWeight] = useState()
-  const { admin } = useAuthContext()
+  const { admin } = useAuth()
 
   useEffect(() => {
     delivery && delivery.report

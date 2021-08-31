@@ -125,3 +125,6 @@ export function generateStopId(stop) {
     .replace(/[^A-Z0-9]/gi, '_')
     .toLowerCase()
 }
+
+export const createServerTimestamp = () =>
+  firebase.firestore.FieldValue.serverTimestamp()

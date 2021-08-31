@@ -1,25 +1,18 @@
 import Ellipsis, { ExternalLink } from '../../helpers/components'
-import { CLOUD_FUNCTION_URLS } from '../../helpers/constants'
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
-import { useAuthContext } from '../Auth/Auth'
+import {
+  createServerTimestamp,
+  getImageFromStorage,
+  isValidURL,
+  setFirestoreData,
+} from '../../helpers/helpers'
+import { useAuth } from '../Auth/Auth'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
+import { useEffect, useState } from 'react'
 
 export function handleUserIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
     getImageFromStorage(icon).then(url => callback(url))
   }
-}
-
-export async function checkUserAdminPermissions(id, callback) {
-  const check_admin_url = `${CLOUD_FUNCTION_URLS.isUserAdmin}?id=${id}`
-  const response = await fetch(check_admin_url).then(data => data.text())
-  callback(response === 'true' ? true : false)
-}
-
-export async function checkUserBasicAccess(id, callback) {
-  const check_admin_url = `${CLOUD_FUNCTION_URLS.isUserBasicAccess}?id=${id}`
-  const response = await fetch(check_admin_url).then(data => data.text())
-  callback(response === 'true' ? true : false)
 }
 
 export function UserPronouns({ profile }) {
@@ -67,61 +60,34 @@ export function UserEmail({ profile }) {
     )
 }
 
-export function UserAdminPermissions({ id, email, isAdmin, basicAccess }) {
-  const { user } = useAuthContext()
+export function UserAdminPermissions({ profile }) {
+  const { user } = useAuth()
+  const [accessLevel, setAccessLevel] = useState(profile.access_level)
 
-  async function updateIsAdmin(newIsAdmin) {
-    const url = `${CLOUD_FUNCTION_URLS.setUserAdmin}?id=${id}&admin=${newIsAdmin}`
-    fetch(url, { method: 'POST' })
-      .then(() => window.location.reload())
-      .catch(e => console.error(e))
-  }
+  useEffect(() => {
+    if (accessLevel !== profile.access_level) {
+      setFirestoreData(['Users', profile.id], {
+        access_level: accessLevel,
+        updated_at: createServerTimestamp(),
+        granted_access_by: user.name,
+      })
+    }
+  }, [accessLevel]) // eslint-disable-line
 
-  async function updateBasicAccess(new_basic_access) {
-    const url = `${CLOUD_FUNCTION_URLS.setUserBasicAccess}?id=${id}&basic_access=${new_basic_access}`
-    fetch(url, { method: 'POST' })
-      .then(() => window.location.reload())
-      .catch(e => console.error(e))
-  }
-
-  if (user.uid === id) {
+  if (user.uid === profile.id) {
     return <p id="isAdmin">You are currently logged in as this user.</p>
-  } else if (isAdmin === undefined) {
-    // handle if we haven't received a response on if this user is admin
-    return (
-      <div id="isAdmin">
-        Checking admin permission status
-        <Ellipsis />
-      </div>
-    )
-  } else if (isAdmin) {
-    return (
-      <>
-        <p id="isAdmin">This user has admin access.</p>
-        <button className="revoke" onClick={() => updateIsAdmin(false)}>
-          Revoke Admin Access
-        </button>
-      </>
-    )
-  } else if (basicAccess) {
-    return (
-      <>
-        <p id="isAdmin">This user has basic access.</p>
-        <button className="grant" onClick={() => updateIsAdmin(true)}>
-          Grant Admin Access
-        </button>
-        <button className="revoke" onClick={() => updateBasicAccess(false)}>
-          Revoke Basic Access
-        </button>
-      </>
-    )
   } else
     return (
-      <>
-        <p id="isAdmin">This user does not have any access.</p>
-        <button className="grant" onClick={() => updateBasicAccess(true)}>
-          Grant Basic Access
-        </button>
-      </>
+      <div id="AccessLevel">
+        <h3>Access Level</h3>
+        <select
+          value={accessLevel}
+          onChange={e => setAccessLevel(e.target.value)}
+        >
+          <option value="none">No Access</option>
+          <option value="basic">Driver Access</option>
+          <option value="admin">Admin Access</option>
+        </select>
+      </div>
     )
 }

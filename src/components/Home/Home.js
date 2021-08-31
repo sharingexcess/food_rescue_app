@@ -2,13 +2,16 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import useDeliveryData from '../../hooks/useDeliveryData'
 import useRouteData from '../../hooks/useRouteData'
-import { useAuthContext } from '../Auth/Auth'
+import useUserData from '../../hooks/useUserData'
+import { useAuth } from '../Auth/Auth'
+import { addAccessLevelToAllUsers } from './auth_update'
 import './Home.scss'
 import { generateDriverStats, generateGreeting } from './utils'
 
 export default function Home() {
   // access current user and admin state from the Auth Context in Auth.js
-  const { user, admin } = useAuthContext()
+  const { user, admin } = useAuth()
+  const users = useUserData()
   const my_routes = useRouteData(
     r => r.driver_id === user.uid && r.status === 9
   )
@@ -82,6 +85,7 @@ export default function Home() {
         <h2>Test Environment</h2>
       )}
       <h1>{header}</h1>
+      <button onClick={() => addAccessLevelToAllUsers(users)}>Add Auth</button>
       {stats ? (
         <h3>
           <span>{stats.routes}</span> route{stats.routes === 1 ? '' : 's'}{' '}

@@ -3,7 +3,7 @@ import { updatePublicUserProfile } from '../Auth/utils'
 import Google from '../../assets/google.svg'
 import Logo from '../../assets/logo.svg'
 import { useHistory } from 'react-router-dom'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import Header from '../Header/Header'
 import Menu from '../Menu/Menu'
 import { getAuthenticatedUser } from '../Auth/utils'
@@ -11,7 +11,7 @@ import './Login.scss'
 
 function Login() {
   const history = useHistory()
-  const { user } = useAuthContext()
+  const { user } = useAuth()
 
   useEffect(() => {
     if (user) history.push('/')

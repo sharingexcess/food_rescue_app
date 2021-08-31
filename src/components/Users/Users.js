@@ -59,13 +59,6 @@ function Users() {
             <div>
               <h2>{user.name}</h2>
               <p>{user.email}</p>
-              <p>
-                {user.isAdmin
-                  ? 'admin'
-                  : user.isBasicUser
-                  ? 'basic user'
-                  : null}
-              </p>
             </div>
           </section>
         </Link>

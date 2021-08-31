@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { useAuthContext } from '../components/Auth/Auth'
+import { useAuth } from '../components/Auth/Auth'
 import Error from '../components/Error/Error'
 import EditRoute from '../components/EditRoute/EditRoute'
 // import SubmitPastRoute from '../components/SubmitPastRoute/SubmitPastRoute'
@@ -15,7 +15,7 @@ import SwithEnv from '../components/SwitchEnd/SwitchEnv'
 
 export default function AdminRoutes() {
   // the AuthContext contains a value 'admin' which tells us if the current authenticated user is an admin or not
-  const { admin } = useAuthContext()
+  const { admin } = useAuth()
 
   // AdminRoute is a wrapper function around Route to ensure that no admin components
   // can render if the user is not authenticated as an admin

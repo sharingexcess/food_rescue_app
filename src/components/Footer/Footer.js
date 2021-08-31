@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import './Footer.scss'
 
 export default function Footer() {
-  const { admin } = useAuthContext()
+  const { admin } = useAuth()
   const location = useLocation()
 
   function handleIsActive(route) {

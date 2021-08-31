@@ -28,7 +28,7 @@ import {
   ContactModal,
 } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import { Input } from '../Input/Input'
 import useRouteData from '../../hooks/useRouteData'
 import usePickupData from '../../hooks/usePickupData'
@@ -45,7 +45,7 @@ import Header from '../Header/Header'
 export function Route() {
   const history = useHistory()
   const { route_id } = useParams()
-  const { user, admin } = useAuthContext()
+  const { user, admin } = useAuth()
   const route = useRouteData(route_id)
   const drivers = useUserData()
   const pickups = usePickupData()
@@ -190,8 +190,6 @@ export function Route() {
         notes: `Route dropped by ${route.driver.name}: "${notes}"`,
       })
       for (const stop of route.stops) {
-        console.log(stop)
-        debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
           driver_id: null,
@@ -225,8 +223,6 @@ export function Route() {
         notes: null,
       })
       for (const stop of route.stops) {
-        console.log(stop)
-        debugger
         const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
         setFirestoreData([collection, stop.id], {
           driver_id: driver.id,

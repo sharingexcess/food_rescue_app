@@ -1,10 +1,10 @@
 import React from 'react'
 import Header from '../Header/Header'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import './Liability.scss'
 
 export default function Liability() {
-  const data = useAuthContext()
+  const data = useAuth()
   return (
     <main id="Liability">
       <Header text="Release of Liability" />

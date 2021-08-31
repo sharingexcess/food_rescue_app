@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import UserIcon from '../../assets/user.svg'
 import { ExternalLink } from '../../helpers/components'
 import './Menu.scss'
@@ -14,7 +14,8 @@ function Menu() {
   // get state from Redux Store to determine whether menu is open
   const isOpen = useSelector(store => store.app.menu)
   // get current user state from AuthContext
-  const { user, admin, handleLogout } = useAuthContext()
+  const { user, admin, handleLogout } = useAuth()
+
   // get public user profile state
   const profile = useUserData(user ? user.uid : {})
   // get access to the Redux update state function 'dispatch'
