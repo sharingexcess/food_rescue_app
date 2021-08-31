@@ -6,14 +6,12 @@ import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import { Input } from '../Input/Input'
 import useUserData from '../../hooks/useUserData'
 import Header from '../Header/Header'
-import { useAuth } from '../Auth/Auth'
 import './Users.scss'
 
 const user_icon_urls = {}
 
 function Users() {
   const users = useUserData()
-  const { admin, driver } = useAuth()
   const [search, setSearch] = useState('')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 

@@ -51,7 +51,7 @@ function Auth({ children }) {
   ) : error ? (
     <Error />
   ) : auth_user ? (
-    !(db_user.access_level === 'basic' || db_user.access_level === 'admin') ? (
+    !(db_user.access_level === 'driver' || db_user.access_level === 'admin') ? (
       <Onboarding handleClick={handleLogout} userName={auth_user.displayName} />
     ) : (
       <AuthContext.Provider

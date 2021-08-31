@@ -85,7 +85,7 @@ export function UserAdminPermissions({ profile }) {
           onChange={e => setAccessLevel(e.target.value)}
         >
           <option value="none">No Access</option>
-          <option value="basic">Driver Access</option>
+          <option value="driver">Driver Access</option>
           <option value="admin">Admin Access</option>
         </select>
       </div>
