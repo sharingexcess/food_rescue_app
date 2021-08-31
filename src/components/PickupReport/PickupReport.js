@@ -12,8 +12,9 @@ import './PickupReport.scss'
 import Header from '../Header/Header'
 import validator from 'validator'
 import { CalcModal } from '../../helpers/Calculator/Calculator'
+import './PickupReport.scss'
 
-export default function PickupReport() {
+export default function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
   const { admin } = useAuth()
   const history = useHistory()
@@ -74,33 +75,33 @@ export default function PickupReport() {
     })
     setChanged(true)
   }
-  function validateFormData() {
+  function validateFormData(data) {
     if (
-      formData.dairy +
-        formData.bakery +
-        formData.produce +
-        formData['meat/Fish'] +
-        formData['non-perishable'] +
-        formData['prepared/Frozen'] +
-        formData['mixed groceries'] +
-        formData.other ===
+      data.dairy +
+        data.bakery +
+        data.produce +
+        data['meat/Fish'] +
+        data['non-perishable'] +
+        data['prepared/Frozen'] +
+        data['mixed groceries'] +
+        data.other ===
       0
     ) {
       errors.push('Invalid Input: number of items must be greater than zero')
     }
-    if (isNaN(formData.weight) || /\s/g.test(formData.weight)) {
+    if (isNaN(data.weight) || /\s/g.test(data.weight)) {
       errors.push('Invalid Input: Total Weight is not a number')
     }
-    if (formData.weight <= 0) {
+    if (data.weight <= 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
     }
-    for (const field in formData) {
+    for (const field in data) {
       if (
         field !== 'weight' &&
         field !== 'notes' &&
         field !== 'created_at' &&
         field !== 'updated_at' &&
-        !validator.isInt(formData[field].toString())
+        !validator.isInt(data[field].toString())
       ) {
         errors.push('Invalid Input: Item weight must be whole number')
         break
@@ -119,21 +120,21 @@ export default function PickupReport() {
     } else return null
   }
 
-  function handleSubmit(event) {
+  function handleSubmit(event, data) {
     event.preventDefault()
-    if (validateFormData()) {
+    if (validateFormData(data)) {
       setFirestoreData(['Pickups', pickup_id], {
         report: {
-          dairy: parseInt(formData.dairy),
-          bakery: parseInt(formData.bakery),
-          produce: parseInt(formData.produce),
-          'meat/Fish': parseInt(formData['meat/Fish']),
-          'non-perishable': parseInt(formData['non-perishable']),
-          'prepared/Frozen': parseInt(formData['prepared/Frozen']),
-          'mixed groceries': parseInt(formData['mixed groceries']),
-          other: parseInt(formData.other),
-          weight: parseInt(formData.weight),
-          notes: formData.notes,
+          dairy: parseInt(data.dairy),
+          bakery: parseInt(data.bakery),
+          produce: parseInt(data.produce),
+          'meat/Fish': parseInt(data['meat/Fish']),
+          'non-perishable': parseInt(data['non-perishable']),
+          'prepared/Frozen': parseInt(data['prepared/Frozen']),
+          'mixed groceries': parseInt(data['mixed groceries']),
+          other: parseInt(data.other),
+          weight: parseInt(data.weight),
+          notes: data.notes,
           created_at:
             pickup.completed_at ||
             firebase.firestore.FieldValue.serverTimestamp(),
@@ -148,6 +149,7 @@ export default function PickupReport() {
       setShowErrors(true)
     }
   }
+
   if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
@@ -209,7 +211,13 @@ export default function PickupReport() {
       />
       <FormError />
       {changed && canEdit() ? (
-        <button onClick={handleSubmit}>
+        <button
+          onClick={
+            customSubmitHandler
+              ? e => customSubmitHandler(e, formData)
+              : e => handleSubmit(e, formData)
+          }
+        >
           {pickup.report ? 'update report' : 'submit report'}
         </button>
       ) : null}

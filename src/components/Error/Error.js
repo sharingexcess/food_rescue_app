@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import './Error.scss'
 
 export default function Error({ crash }) {
@@ -11,9 +10,9 @@ export default function Error({ crash }) {
           ? 'Uh oh... looks like something broke on this page.'
           : "The page you're looking for may have moved, or doesn't exist."}
       </p>
-      <Link to="/">
+      <a href="/">
         <button>back to home page</button>
-      </Link>
+      </a>
     </main>
   )
 }

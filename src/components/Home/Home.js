@@ -44,11 +44,11 @@ export default function Home() {
       <>
         <Tile name="Calendar" icon="fa-calendar" link="/calendar" />
         <Tile name="Add Route" icon="fa-plus" link="/admin/create-route" />
-        {/* <Tile
-          name="Submit Past Route"
+        <Tile
+          name="Add Direct Donation"
           icon="fas fa-clipboard-check"
-          link="admin/submit-route"
-        /> */}
+          link="admin/create-bulk-delivery"
+        />
         <Tile
           name="Manage Network"
           icon="fa-map-marked-alt"
