@@ -16,6 +16,7 @@ import Header from '../Header/Header'
 import { Input } from '../Input/Input'
 import './Analytics.scss'
 import moment from 'moment'
+import useDirectDonationData from '../../hooks/useDirectDonationData'
 
 export default function Analytics() {
   const [tab, setTab] = useState('TotalAnalytics')
@@ -25,10 +26,12 @@ export default function Analytics() {
   const orgsOriginal = useOrganizationData()
   const deliveries = useDeliveryData(r => r.status === 9 && r.report)
   const pickups = usePickupData(r => r.status === 9 && r.report)
+  const directDonationsOriginal = useDirectDonationData()
   const driversOriginal = useUserData()
   const routesOriginal = useRouteData(r => r.status === 9)
   const [drivers, setDrivers] = useState(driversOriginal)
   const [routes, setRoutes] = useState(routesOriginal)
+  const [directDonations, setDirectDonations] = useState(routesOriginal)
   useEffect(() => {
     if (driverNameFilter !== '') {
       setDrivers(
@@ -49,10 +52,17 @@ export default function Analytics() {
             new Date(r.time_start) < new Date(rangeEnd)
         )
       )
+      setDirectDonations(
+        directDonationsOriginal.filter(
+          r =>
+            new Date(r.time_finished) > new Date(rangeStart) &&
+            new Date(r.time_finished) < new Date(rangeEnd)
+        )
+      )
     } else {
       setRoutes(routesOriginal)
     }
-  }, [routesOriginal, rangeStart, rangeEnd])
+  }, [routesOriginal, directDonationsOriginal, rangeStart, rangeEnd])
 
   function TotalAnalytics() {
     function cummulative_impact() {
@@ -238,6 +248,42 @@ export default function Analytics() {
     )
   }
 
+  function DirectDonations() {
+    return (
+      <table className="Styling">
+        <thead>
+          <tr>
+            <td>Date</td>
+            <td>Handler</td>
+            <td>Donor</td>
+            <td>Recipient</td>
+            <td>Weight</td>
+          </tr>
+        </thead>
+        <tbody>
+          {directDonations.map(dd => {
+            const handler = drivers.find(u => u.id === dd.handler_id)
+            const pickup = pickups.find(p => p.id === dd.pickup_id)
+            const donor = orgsOriginal.find(o => o.id === pickup.org_id)
+            const delivery = deliveries.find(d => d.id === dd.delivery_id)
+            const recipient = orgsOriginal.find(o => o.id === delivery.org_id)
+            return (
+              <tr key={dd.id}>
+                <td id="timeline">
+                  {moment(dd.time_finished).format('MM-DD-YYYY')}
+                </td>
+                <td id="driver">{handler.name}</td>
+                <td>{donor.name}</td>
+                <td>{recipient.name}</td>
+                <td>{pickup.report.weight} lbs.</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    )
+  }
+
   function DriverAnalytics() {
     return (
       <table className="Styling">
@@ -278,6 +324,7 @@ export default function Analytics() {
       </table>
     )
   }
+
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
     const [organizations, setOrgs] = useState(orgsOriginal)
@@ -402,6 +449,8 @@ export default function Analytics() {
         return <DriverAnalytics />
       case 'OrgAnalytics':
         return <OrgAnalytics />
+      case 'DirectDonations':
+        return <DirectDonations />
       default:
         return null
     }
@@ -437,6 +486,14 @@ export default function Analytics() {
         >
           Networks
         </button>
+        <button
+          className={tab === 'DirectDonations' ? 'active' : 'inactive'}
+          onClick={() => {
+            setTab('DirectDonations')
+          }}
+        >
+          Direct Donations
+        </button>
       </section>
 
       <section id="DateRanges">
@@ -454,8 +511,7 @@ export default function Analytics() {
           onChange={e => setRangeEnd(e.target.value)}
         />
       </section>
-
-      {tab !== 'OrgAnalytics' && tab !== 'TotalAnalytics' ? (
+      {!['OrgAnalytics', 'TotalAnalytics', 'DirectDonations'].includes(tab) ? (
         <section id="DriverName">
           <h2>Filter by Driver</h2>
           <Input
