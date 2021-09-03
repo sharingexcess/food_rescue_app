@@ -11,13 +11,13 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import { Input } from '../Input/Input'
 import moment from 'moment'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import { generateDirectDonationId } from './utils'
 import './EditDirectDonation.scss'
 
 export default function EditDirectDonation() {
   const { id } = useParams()
-  const { user } = useAuthContext()
+  const { user } = useAuth()
   const history = useHistory()
   const [donor, setDonor] = useState()
   const [recipient, setRecipient] = useState()
