@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import Loading from '../Loading/Loading'
@@ -8,8 +8,8 @@ import { useLocation } from 'react-router-dom'
 import Landing from '../Landing/Landing'
 import Login from '../Login/Login'
 import Onboarding from '../Onboarding/Onboarding'
+import { getFirestoreData } from '../../helpers/helpers'
 import './Auth.scss'
-import useUserData from '../../hooks/useUserData'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -25,7 +25,15 @@ function Auth({ children }) {
   const [auth_user, loading, error] = useAuthState(firebase.auth())
   // db_user looks up the auth_user in the firestore db
   // to get additional permissions and profile data
-  const db_user = useUserData(auth_user ? auth_user.uid : null)
+  const [db_user, setDbUser] = useState()
+
+  useEffect(() => {
+    if (auth_user) {
+      getFirestoreData(['Users', auth_user.uid]).then(user_record =>
+        setDbUser(user_record)
+      )
+    }
+  }, [auth_user])
 
   const location = useLocation()
 
@@ -46,7 +54,7 @@ function Auth({ children }) {
     )
   }
 
-  return loading || (auth_user && Array.isArray(db_user) && !db_user.length) ? (
+  return loading || (auth_user && !db_user) ? (
     <Loading text="Signing in" />
   ) : error ? (
     <Error />

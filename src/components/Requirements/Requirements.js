@@ -6,7 +6,7 @@ import Profile from '../Profile/Profile'
 function Requirements({ children }) {
   const [hasPhone, setHasPhone] = useState(false)
   const { user } = useAuth()
-  const profile = useUserData(user.uid)
+  const profile = useUserData(user.id)
 
   useEffect(() => {
     if (profile) {
