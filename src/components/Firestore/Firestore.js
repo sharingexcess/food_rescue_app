@@ -16,10 +16,19 @@ function Firestore({ children }) {
   const [locations] = useCollectionData(
     getCollection('Locations').orderBy('name')
   )
+  const [direct_donations] = useCollectionData(getCollection('DirectDonations'))
 
   return (
     <FirestoreContext.Provider
-      value={{ routes, pickups, deliveries, users, organizations, locations }}
+      value={{
+        routes,
+        pickups,
+        deliveries,
+        users,
+        organizations,
+        locations,
+        direct_donations,
+      }}
     >
       {children}
     </FirestoreContext.Provider>

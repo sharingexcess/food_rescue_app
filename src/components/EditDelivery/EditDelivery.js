@@ -5,7 +5,7 @@ import useOrganizationData from '../../hooks/useOrganizationData'
 import useLocationData from '../../hooks/useLocationData'
 import './EditDelivery.scss'
 
-function EditDelivery({ handleSubmit }) {
+function EditDelivery({ handleSubmit, title }) {
   const organizations = useOrganizationData()
   const locations = useLocationData()
   const [formData, setFormData] = useState({
@@ -93,7 +93,7 @@ function EditDelivery({ handleSubmit }) {
 
   return (
     <div id="EditDelivery">
-      <h3>New Delivery</h3>
+      {title !== '' && <h3>{title || 'Add a Delivery'}</h3>}
       {formFields.map(f => renderFieldInput(f))}
     </div>
   )
