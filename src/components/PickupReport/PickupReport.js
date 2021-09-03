@@ -7,7 +7,7 @@ import { Input } from '../Input/Input'
 import { setFirestoreData } from '../../helpers/helpers'
 import usePickupData from '../../hooks/usePickupData'
 import useOrganizationData from '../../hooks/useOrganizationData'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import './PickupReport.scss'
 import Header from '../Header/Header'
 import validator from 'validator'
@@ -15,7 +15,7 @@ import { CalcModal } from '../../helpers/Calculator/Calculator'
 
 export default function PickupReport() {
   const { pickup_id, route_id } = useParams()
-  const { admin } = useAuthContext()
+  const { admin } = useAuth()
   const history = useHistory()
   const pickup = usePickupData(pickup_id)
   const pickup_org = useOrganizationData(pickup ? pickup.org_id : {}) || {}
@@ -122,7 +122,6 @@ export default function PickupReport() {
   function handleSubmit(event) {
     event.preventDefault()
     if (validateFormData()) {
-      console.log('valid')
       setFirestoreData(['Pickups', pickup_id], {
         report: {
           dairy: parseInt(formData.dairy),

@@ -60,6 +60,11 @@ function Users() {
               <h2>{user.name}</h2>
               <p>{user.email}</p>
             </div>
+            {user.access_level === 'admin' ? (
+              <i className="access-level fa fa-crown" />
+            ) : user.access_level === 'driver' ? (
+              <i className="access-level fa fa-truck" />
+            ) : null}
           </section>
         </Link>
       ))}

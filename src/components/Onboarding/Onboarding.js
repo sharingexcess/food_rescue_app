@@ -53,8 +53,6 @@ export default function Onboarding(props) {
           width="640"
           height="1447"
           frameborder="0"
-          marginheight="0"
-          marginwidth="0"
         >
           Loading…
         </iframe>
@@ -119,10 +117,6 @@ export default function Onboarding(props) {
       <div>
         You've logged in successfully with Google. Before you gain access to
         rescue data, you'll need to be given permission by an admin.
-        <br />
-        <br />
-        Updating your permissions requires logging out and back in again. Once
-        you've been granted permissions, log back in to gain access!
       </div>
       <br />
       <img className="background" src={Logo} alt="Sharing Excess Logo" />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import { Link } from 'react-router-dom'
 import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
@@ -14,7 +14,7 @@ import '../Liability/Liability'
 import '../Liability/Liability.scss'
 
 export default function Profile({ handleUpdateClick, inForm }) {
-  const { user } = useAuthContext()
+  const { user } = useAuth()
   const profile = useUserData(user.uid)
   const [formData, setFormData] = useState({
     name: '',
@@ -64,7 +64,6 @@ export default function Profile({ handleUpdateClick, inForm }) {
   }
 
   function handleUpdate() {
-    console.log('Profile >>>', profile)
     if (validateInformation()) {
       firebase
         .firestore()
@@ -96,7 +95,9 @@ export default function Profile({ handleUpdateClick, inForm }) {
   ) : (
     <main id="Profile">
       <Header text="Profile" />
-      {inForm && <WarningText text="Please update your phone number" />}
+      {inForm && (
+        <WarningText text="Please update your phone number and preferred pronouns" />
+      )}
       <img src={profile.icon} alt={profile.name} />
       <h3>{profile.email}</h3>
       <button>

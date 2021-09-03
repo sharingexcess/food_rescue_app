@@ -1,15 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { updateUserPermissions } from './utils'
 import { useLocation } from 'react-router-dom'
 import Landing from '../Landing/Landing'
 import Login from '../Login/Login'
 import Onboarding from '../Onboarding/Onboarding'
 import './Auth.scss'
+import useUserData from '../../hooks/useUserData'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -18,25 +18,16 @@ const AuthContext = createContext()
 AuthContext.displayName = 'Auth'
 
 function Auth({ children }) {
-  const location = useLocation()
-  // use an imported React Hook create state variables
-  // user defines the current auth state,
+  // we use an imported React Hook create state variables
+  // auth_user defines the current auth state,
   // loading defines whether a request is currently running
   // error defines whether we received a bad response from firebase
-  const [user, loading, error] = useAuthState(firebase.auth())
-  // we create our own state variable to define whether the current user is an admin
-  // the default is 'false' so as not to give any accidental permissions
-  const [admin, setAdmin] = useState(false)
-  const [basicAccess, setBasicAccess] = useState(false)
+  const [auth_user, loading, error] = useAuthState(firebase.auth())
+  // db_user looks up the auth_user in the firestore db
+  // to get additional permissions and profile data
+  const db_user = useUserData(auth_user ? auth_user.uid : null)
 
-  useEffect(() => {
-    // check and update the user's admin permission
-    if (user)
-      updateUserPermissions(user, permissions => {
-        setAdmin(permissions.admin)
-        setBasicAccess(permissions.basicAccess)
-      })
-  }, [user])
+  const location = useLocation()
 
   function handleLogout() {
     firebase.auth().signOut()
@@ -55,24 +46,38 @@ function Auth({ children }) {
     )
   }
 
-  return loading ? (
+  return loading || (auth_user && Array.isArray(db_user) && !db_user.length) ? (
     <Loading text="Signing in" />
   ) : error ? (
     <Error />
-  ) : user ? (
-    !(basicAccess || admin) ? (
-      <Onboarding handleClick={handleLogout} userName={user.displayName} />
+  ) : auth_user ? (
+    !(db_user.access_level === 'driver' || db_user.access_level === 'admin') ? (
+      <Onboarding handleClick={handleLogout} userName={auth_user.displayName} />
     ) : (
-      <AuthContext.Provider value={{ user, admin, handleLogout }}>
+      <AuthContext.Provider
+        value={{
+          user: auth_user ? { ...auth_user, ...db_user } : null,
+          admin: db_user.access_level === 'admin',
+          driver: db_user.access_level === 'driver',
+          handleLogout,
+        }}
+      >
         {/* 
         All children will now be able to access user, admin, and handleLogout by calling:
-        const { user, admin, handleLogout } = useContext(AuthContext) or using the useAuthContext() function below
+        const { user, admin, handleLogout } = useContext(AuthContext) or using the useAuth() function below
       */}
         {children}
       </AuthContext.Provider>
     )
   ) : (
-    <AuthContext.Provider value={{ user, admin, handleLogout }}>
+    <AuthContext.Provider
+      value={{
+        user: auth_user ? { ...auth_user, ...db_user } : null,
+        admin: db_user.access_level === 'admin',
+        driver: db_user.access_level === 'driver',
+        handleLogout,
+      }}
+    >
       {location.pathname === '/login' ? <Login /> : <Landing />}
     </AuthContext.Provider>
   )
@@ -80,11 +85,11 @@ function Auth({ children }) {
 
 // useAuth let's child component access the AuthContext more simply and cleanly
 // and ensures that we can set safe defaults
-const useAuthContext = () =>
+const useAuth = () =>
   useContext(AuthContext) || {
     user: null,
     admin: false,
     handleLogout: () => null,
   }
 
-export { Auth as default, useAuthContext }
+export { Auth as default, useAuth }

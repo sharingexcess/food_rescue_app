@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import useUserData from '../../hooks/useUserData'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import Profile from '../Profile/Profile'
 
 function Requirements({ children }) {
   const [hasPhone, setHasPhone] = useState(false)
-  const { user } = useAuthContext()
+  const { user } = useAuth()
   const profile = useUserData(user.uid)
 
   useEffect(() => {

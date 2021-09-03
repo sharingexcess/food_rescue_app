@@ -5,7 +5,7 @@ import { Input } from '../Input/Input'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuthContext } from '../Auth/Auth'
+import { useAuth } from '../Auth/Auth'
 import useRouteData from '../../hooks/useRouteData'
 import usePickupData from '../../hooks/usePickupData'
 import useDeliveryData from '../../hooks/useDeliveryData'
@@ -17,7 +17,7 @@ import useLocationData from '../../hooks/useLocationData'
 import './Routes.scss'
 
 export default function Routes({ initial_filter }) {
-  const { user, admin } = useAuthContext()
+  const { user, admin } = useAuth()
   const locations = useLocationData()
   const location = useLocation()
   const raw_routes = useRouteData()
@@ -85,8 +85,6 @@ export default function Routes({ initial_filter }) {
   }
   function handleSearchByDate(e) {
     setSearchByDate(e.target.value)
-    console.log(e.target.value)
-    console.log(routes.map(r => r.time_start.substring(0, 10)))
   }
   function filterAndSortRoutes(routes) {
     return filter === 'mine'

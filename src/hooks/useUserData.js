@@ -21,5 +21,6 @@ export default function useUserData(filter) {
       }
     }
   }, [users, filter]) // eslint-disable-line react-hooks/exhaustive-deps
+
   return data
 }

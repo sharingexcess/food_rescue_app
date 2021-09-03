@@ -15,6 +15,27 @@
     align-items: flex-end;
   }
 
+  .access-level {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    height: 24px;
+    width: 24px;
+    border-radius: 60%;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1px;
+
+    &.fa-crown {
+      background: var(--primary);
+    }
+    &.fa-truck {
+      background: var(--primary);
+    }
+  }
+
   .User {
     @include card;
     justify-content: flex-start;

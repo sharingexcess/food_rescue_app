@@ -278,7 +278,6 @@ export default function Analytics() {
       </table>
     )
   }
-  console.log(orgsOriginal)
   function OrgAnalytics() {
     const [filter, setFilter] = useState('all')
     const [organizations, setOrgs] = useState(orgsOriginal)
