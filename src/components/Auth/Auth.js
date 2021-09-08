@@ -81,8 +81,8 @@ function Auth({ children }) {
     <AuthContext.Provider
       value={{
         user: auth_user ? { ...auth_user, ...db_user } : null,
-        admin: db_user.access_level === 'admin',
-        driver: db_user.access_level === 'driver',
+        admin: db_user && db_user.access_level === 'admin',
+        driver: db_user && db_user.access_level === 'driver',
         handleLogout,
       }}
     >
