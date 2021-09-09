@@ -66,16 +66,48 @@ export default function Analytics() {
 
   function TotalAnalytics() {
     function cummulative_impact() {
-      let total_weight = 0
+      let total_weight1 = 0
       routes.forEach(r => {
         deliveries.forEach(d => {
           if (d.route_id === r.id) {
-            total_weight += d.report.weight
+            total_weight1 += d.report.weight
           }
         })
       })
-      return total_weight
+      return total_weight1
     }
+
+    function warehouse_incoming() {
+      let warehouse_weight
+      const warehouseOrg = orgsOriginal.filter(
+        org => org.org_type === 'warehouse'
+      )
+      warehouseOrg.forEach(org => {
+        const all_deliveries = deliveries.filter(
+          de => de.org_id === org.id && de.status === 9
+        )
+        const org_delivery_ids = all_deliveries.map(de => de.id)
+        const org_routes = routes.filter(
+          r =>
+            r.stops.filter(s => org_delivery_ids.includes(s.id)).length > 0 &&
+            r.status === 9
+        )
+        console.log(org_routes)
+        const org_delivery = deliveries.filter(de =>
+          org_routes.map(r => r.id).includes(de.route_id)
+        )
+        warehouse_weight = org_delivery
+          .map(de => de.report.weight || 0)
+          .reduce((a, b) => a + b, 0)
+      })
+      return warehouse_weight
+    }
+
+    function food_rescue() {
+      const food_rescue_weight = cummulative_impact() - warehouse_incoming()
+      return food_rescue_weight
+    }
+
     const chartOption = {
       chart: {
         height: 350,
@@ -152,6 +184,16 @@ export default function Analytics() {
       series: [cummulative_impact()],
       options: { ...chartOption, labels: ['Cummulative Impact (lbs)'] },
     }
+    const warehouseChart = {
+      ...chartState,
+      series: [warehouse_incoming()],
+      options: { ...chartOption, labels: ['Warehouse Incoming (lbs)'] },
+    }
+    const foodrescueChart = {
+      ...chartState,
+      series: [food_rescue()],
+      options: { ...chartOption, labels: ['Food Rescue (lbs)'] },
+    }
     return (
       <>
         <Chart
@@ -163,6 +205,18 @@ export default function Analytics() {
         <Chart
           options={weightChart.options}
           series={weightChart.series}
+          type="radialBar"
+          height={350}
+        />
+        <Chart
+          options={warehouseChart.options}
+          series={warehouseChart.series}
+          type="radialBar"
+          height={350}
+        />
+        <Chart
+          options={foodrescueChart.options}
+          series={foodrescueChart.series}
           type="radialBar"
           height={350}
         />
