@@ -1,0 +1,29 @@
+@import '../../styles/global.scss';
+
+#NewDriver {
+  @include page;
+  p {
+    white-space: pre-wrap;
+  }
+  a {
+    width: 100%;
+    .NewDriver-section {
+      @include card;
+      margin: 8px 0;
+      flex-direction: row;
+      justify-content: flex-start;
+      i {
+        margin-right: 16px;
+        color: var(--blue);
+      }
+
+      &.completed {
+        opacity: 0.5;
+        box-shadow: none;
+        i {
+          color: var(--green);
+        }
+      }
+    }
+  }
+}

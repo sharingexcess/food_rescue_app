@@ -1,8 +1,19 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
+import { setFirestoreData } from '../../helpers/helpers'
+import { useAuth } from '../Auth/Auth'
 import Header from '../Header/Header'
 import './FoodSafety.scss'
 
 export default function FoodSafety() {
+  const history = useHistory()
+  const { user } = useAuth()
+
+  function handleComplete() {
+    setFirestoreData(['Users', user.id], { completed_food_safety: true })
+    history.push('/')
+  }
+
   return (
     <main id="FoodSafety">
       <Header text="Safety Guidelines" />
@@ -260,6 +271,9 @@ export default function FoodSafety() {
           <li>Recycle any leftover packaging</li>
         </ol>
       </section>
+      <button onClick={handleComplete}>
+        I've read the Food Safety Guidelines
+      </button>
     </main>
   )
 }

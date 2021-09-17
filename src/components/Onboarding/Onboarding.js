@@ -50,9 +50,7 @@ export default function Onboarding(props) {
         <iframe
           title="Driver Availability and Vehicle"
           src={source}
-          width="640"
-          height="1447"
-          frameborder="0"
+          frameBorder="0"
         >
           Loading…
         </iframe>

@@ -30,7 +30,9 @@ import Footer from './components/Footer/Footer'
 import Home from './components/Home/Home'
 import './styles/index.scss'
 import EditRoute from './components/EditRoute/EditRoute'
-import Requirements from './components/Requirements/Requirements'
+import { ProtectedRoutes } from './helpers/components'
+import DriverInfo from './components/DriverInfo/DriverInfo'
+import Tutorial from './components/Tutorial/Tutorial'
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -75,16 +77,40 @@ function App() {
         <BrowserRouter>
           <Auth>
             <Firestore>
-              <Requirements>
-                <Menu />
-                <Footer />
-                {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
-                {/* Auth component handles login and will show a login page if no user is authenticated */}
-                {/* Switch will only allows the first matching route to be rendered */}
-                <Switch>
-                  <Route exact path="/">
-                    <Home />
-                  </Route>
+              <Menu />
+              <Footer />
+              {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
+              {/* Auth component handles login and will show a login page if no user is authenticated */}
+              {/* Switch will only allows the first matching route to be rendered */}
+              <Switch>
+                <Route exact path="/">
+                  <Home />
+                </Route>
+                <Route exact path="/profile">
+                  <Profile />
+                </Route>
+                <Route exact path="/privacy">
+                  <Privacy />
+                </Route>
+                <Route exact path="/tos">
+                  <Terms />
+                </Route>
+                <Route exact path="/contact">
+                  <ContactUs />
+                </Route>
+                <Route exact path="/foodsafety">
+                  <FoodSafety />
+                </Route>
+                <Route exact path="/liability">
+                  <Liability />
+                </Route>
+                <Route exact path="/driver-info">
+                  <DriverInfo />
+                </Route>
+                <Route exact path="/tutorial">
+                  <Tutorial />
+                </Route>
+                <ProtectedRoutes>
                   <Route exact path="/calendar">
                     <Calendar />
                   </Route>
@@ -118,35 +144,17 @@ function App() {
                   <Route exact path="/routes/:route_id/completed">
                     <CompletedRoute />
                   </Route>
-                  <Route exact path="/profile">
-                    <Profile />
-                  </Route>
                   {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
                   <Route path="/admin">
                     <AdminRoutes />
                   </Route>
-                  <Route exact path="/privacy">
-                    <Privacy />
-                  </Route>
-                  <Route exact path="/tos">
-                    <Terms />
-                  </Route>
-                  <Route exact path="/contact">
-                    <ContactUs />
-                  </Route>
-                  <Route exact path="/foodsafety">
-                    <FoodSafety />
-                  </Route>
-                  <Route exact path="/liability">
-                    <Liability />
-                  </Route>
-                  <Route>
-                    {/* This route has no path, and therefore will be the 'catch all' */}
-                    <Error />
-                    {/* this 404 page component will render if the url does not match any other routes */}
-                  </Route>
-                </Switch>
-              </Requirements>
+                </ProtectedRoutes>
+                <Route>
+                  {/* This route has no path, and therefore will be the 'catch all' */}
+                  <Error />
+                  {/* this 404 page component will render if the url does not match any other routes */}
+                </Route>
+              </Switch>
             </Firestore>
           </Auth>
         </BrowserRouter>

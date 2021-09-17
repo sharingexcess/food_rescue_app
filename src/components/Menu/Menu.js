@@ -1,20 +1,19 @@
 import React, { memo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { setMenu } from '../../redux/app/appReducer'
 import { useAuth } from '../Auth/Auth'
 import UserIcon from '../../assets/user.svg'
 import { ExternalLink } from '../../helpers/components'
-import './Menu.scss'
 import useUserData from '../../hooks/useUserData'
 import ModeToggle from '../ModeToggle/ModeToggle'
+import './Menu.scss'
 
 function Menu() {
-  const location = useLocation()
   // get state from Redux Store to determine whether menu is open
   const isOpen = useSelector(store => store.app.menu)
   // get current user state from AuthContext
-  const { user, admin, handleLogout } = useAuth()
+  const { user, admin, handleLogout, handleLogin } = useAuth()
 
   // get public user profile state
   const profile = useUserData(user ? user.uid : {})
@@ -53,11 +52,11 @@ function Menu() {
         </div>
         <i id="Close" className="fa fa-times" onClick={closeMenu} />
       </div>
-    ) : location.pathname !== '/login' ? (
-      <Link to="/login" className="login">
-        <button>Log in</button>
-      </Link>
-    ) : null
+    ) : (
+      <button className="login" onClick={handleLogin}>
+        Log in
+      </button>
+    )
   }
 
   return (

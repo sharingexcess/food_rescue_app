@@ -4,7 +4,7 @@ import { useAuth } from '../Auth/Auth'
 import './Footer.scss'
 
 export default function Footer() {
-  const { admin } = useAuth()
+  const { admin, user } = useAuth()
   const location = useLocation()
 
   function handleIsActive(route) {
@@ -12,7 +12,7 @@ export default function Footer() {
     return location.pathname.includes(route) ? 'active' : ''
   }
 
-  return (
+  return !user ? null : (
     <footer id="Footer">
       <Link to="/">
         <i className="fa fa-home" id={handleIsActive('')} />

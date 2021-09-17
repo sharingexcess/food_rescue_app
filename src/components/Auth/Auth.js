@@ -4,11 +4,9 @@ import 'firebase/auth'
 import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useLocation } from 'react-router-dom'
-import Landing from '../Landing/Landing'
-import Login from '../Login/Login'
-import Onboarding from '../Onboarding/Onboarding'
-import { getFirestoreData } from '../../helpers/helpers'
+import { useHistory } from 'react-router-dom'
+import { getCollection } from '../../helpers/helpers'
+import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
 import './Auth.scss'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
@@ -18,6 +16,7 @@ const AuthContext = createContext()
 AuthContext.displayName = 'Auth'
 
 function Auth({ children }) {
+  const history = useHistory()
   // we use an imported React Hook create state variables
   // auth_user defines the current auth state,
   // loading defines whether a request is currently running
@@ -29,16 +28,20 @@ function Auth({ children }) {
 
   useEffect(() => {
     if (auth_user) {
-      getFirestoreData(['Users', auth_user.uid]).then(user_record =>
-        setDbUser(user_record)
-      )
+      getCollection('Users')
+        .doc(auth_user.uid)
+        .onSnapshot(doc => setDbUser(doc.data()))
     }
   }, [auth_user])
 
-  const location = useLocation()
-
   function handleLogout() {
     firebase.auth().signOut()
+  }
+
+  async function handleLogin() {
+    const user = await getAuthenticatedUser()
+    updatePublicUserProfile(user)
+    history.push('/')
   }
 
   function Error() {
@@ -54,40 +57,33 @@ function Auth({ children }) {
     )
   }
 
+  function AuthWrapper({ children }) {
+    return (
+      <AuthContext.Provider
+        value={{
+          user: auth_user ? { ...auth_user, ...db_user } : null,
+          admin: db_user && db_user.access_level === 'admin',
+          driver: db_user && db_user.access_level === 'driver',
+          permission: db_user
+            ? db_user.access_level === 'none'
+              ? null
+              : db_user.access_level
+            : null,
+          handleLogout,
+          handleLogin,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    )
+  }
+
   return loading || (auth_user && !db_user) ? (
     <Loading text="Signing in" />
   ) : error ? (
     <Error />
-  ) : auth_user ? (
-    !(db_user.access_level === 'driver' || db_user.access_level === 'admin') ? (
-      <Onboarding handleClick={handleLogout} userName={auth_user.displayName} />
-    ) : (
-      <AuthContext.Provider
-        value={{
-          user: auth_user ? { ...auth_user, ...db_user } : null,
-          admin: db_user.access_level === 'admin',
-          driver: db_user.access_level === 'driver',
-          handleLogout,
-        }}
-      >
-        {/* 
-        All children will now be able to access user, admin, and handleLogout by calling:
-        const { user, admin, handleLogout } = useContext(AuthContext) or using the useAuth() function below
-      */}
-        {children}
-      </AuthContext.Provider>
-    )
   ) : (
-    <AuthContext.Provider
-      value={{
-        user: auth_user ? { ...auth_user, ...db_user } : null,
-        admin: db_user && db_user.access_level === 'admin',
-        driver: db_user && db_user.access_level === 'driver',
-        handleLogout,
-      }}
-    >
-      {location.pathname === '/login' ? <Login /> : <Landing />}
-    </AuthContext.Provider>
+    <AuthWrapper>{children}</AuthWrapper>
   )
 }
 

@@ -2,15 +2,24 @@ import React from 'react'
 import Header from '../Header/Header'
 import { useAuth } from '../Auth/Auth'
 import './Liability.scss'
+import { useHistory } from 'react-router'
+import { setFirestoreData } from '../../helpers/helpers'
 
 export default function Liability() {
-  const data = useAuth()
+  const history = useHistory()
+  const { user } = useAuth()
+
+  function handleComplete() {
+    setFirestoreData(['Users', user.id], { completed_liability_release: true })
+    history.push('/')
+  }
+
   return (
     <main id="Liability">
       <Header text="Release of Liability" />
       <section id="intro">
         <h1>Release of Liability</h1>
-        {data.user === null ? (
+        {user.completed_liability_release === null ? (
           <p className="red">
             Please read and sign the Release of Liability before using
             SharingExcess website operated by Sharing Excess.
@@ -115,6 +124,7 @@ export default function Liability() {
           Sharing Excess deems appropriate.
         </p>
       </section>
+      <button onClick={handleComplete}>I agree to the above terms.</button>
     </main>
   )
 }
