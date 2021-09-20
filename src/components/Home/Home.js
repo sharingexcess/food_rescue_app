@@ -5,10 +5,12 @@ import useRouteData from '../../hooks/useRouteData'
 import { useAuth } from '../Auth/Auth'
 import { generateDriverStats, generateGreeting } from './utils'
 import './Home.scss'
+import NewDriver from '../NewDriver/NewDriver'
+import Landing from '../Landing/Landing'
 
 export default function Home() {
   // access current user and admin state from the Auth Context in Auth.js
-  const { user, admin } = useAuth()
+  const { user, admin, permission } = useAuth()
   const my_routes = useRouteData(
     r => r.driver_id === user.uid && r.status === 9
   )
@@ -74,9 +76,15 @@ export default function Home() {
     )
   }
 
-  const header = generateGreeting(user.displayName, my_routes, my_deliveries)
+  const header = user
+    ? generateGreeting(user.displayName, my_routes, my_deliveries)
+    : null
 
-  return (
+  return !user ? (
+    <Landing />
+  ) : !permission ? (
+    <NewDriver />
+  ) : (
     <main id="Home">
       {window.location.href === 'https://sharingexcess.web.app/' ? null : (
         <h2>Test Environment</h2>

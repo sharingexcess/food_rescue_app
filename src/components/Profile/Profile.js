@@ -15,7 +15,7 @@ import '../Liability/Liability.scss'
 
 export default function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuth()
-  const profile = useUserData(user.uid)
+  const profile = useUserData(user ? user.uid : null)
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
