@@ -5,7 +5,7 @@ import {
   isValidURL,
   setFirestoreData,
 } from '../../helpers/helpers'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from '../../contexts/Auth/Auth'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useEffect, useState } from 'react'
 

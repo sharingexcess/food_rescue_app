@@ -11,7 +11,7 @@ import Users from '../components/Users/Users'
 import User from '../components/User/User'
 import Organization from '../components/Organization/Organization'
 import Analytics from '../components/Analytics/Analytics'
-import SwithEnv from '../components/SwitchEnd/SwitchEnv'
+import SwithEnv from '../components/SwitchEnv/SwitchEnv'
 
 export default function AdminRoutes() {
   // the AuthContext contains a value 'admin' which tells us if the current authenticated user is an admin or not

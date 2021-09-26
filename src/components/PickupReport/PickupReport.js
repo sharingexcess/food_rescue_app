@@ -5,16 +5,13 @@ import 'firebase/firestore'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
 import { setFirestoreData } from '../../helpers/helpers'
-import usePickupData from '../../hooks/usePickupData'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import { useAuth } from '../Auth/Auth'
-import './PickupReport.scss'
+import { usePickupData, useOrganizationData } from 'hooks'
+import { useAuth } from '../../contexts/Auth/Auth'
 import Header from '../Header/Header'
 import validator from 'validator'
 import { CalcModal } from '../../helpers/Calculator/Calculator'
-import './PickupReport.scss'
 
-export default function PickupReport({ customSubmitHandler, hideHeader }) {
+export function PickupReport({ customSubmitHandler, hideHeader }) {
   const { pickup_id, route_id } = useParams()
   const { admin } = useAuth()
   const history = useHistory()

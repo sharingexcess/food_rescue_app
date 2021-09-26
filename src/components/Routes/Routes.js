@@ -5,18 +5,19 @@ import { Input } from '../Input/Input'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../Auth/Auth'
-import useRouteData from '../../hooks/useRouteData'
-import usePickupData from '../../hooks/usePickupData'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useUserData from '../../hooks/useUserData'
+import { useAuth } from '../../contexts/Auth/Auth'
+import {
+  useLocationData,
+  useDeliveryData,
+  useRouteData,
+  useUserData,
+  usePickupData,
+  useOrganizationData,
+} from 'hooks'
 import Header from '../Header/Header'
-import RouteHeader from '../RoutesHeader/RoutesHeaders'
-import useLocationData from '../../hooks/useLocationData'
-import './Routes.scss'
+import RouteHeader from '../RouteHeader/RouteHeader'
 
-export default function Routes({ initial_filter }) {
+export function Routes({ initial_filter }) {
   const { user, admin } = useAuth()
   const locations = useLocationData()
   const location = useLocation()
@@ -67,7 +68,7 @@ export default function Routes({ initial_filter }) {
       setLoading(false)
     }
     raw_routes && addData()
-  }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line
   useEffect(() => {
     if (filter === 'driver') {
       setFilterByDriver(true)
@@ -220,7 +221,6 @@ export default function Routes({ initial_filter }) {
             : 'Not found'
           return (
             <Link
-              target="_blank"
               to={
                 location.pathname === '/routes'
                   ? `/routes/${r.id}`

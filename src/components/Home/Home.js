@@ -1,14 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useRouteData from '../../hooks/useRouteData'
-import { useAuth } from '../Auth/Auth'
+import { useDeliveryData, useRouteData } from 'hooks'
+import { useAuth } from '../../contexts/Auth/Auth'
 import { generateDriverStats, generateGreeting } from './utils'
-import './Home.scss'
 import NewDriver from '../NewDriver/NewDriver'
 import Landing from '../Landing/Landing'
 
-export default function Home() {
+export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin, permission } = useAuth()
   const my_routes = useRouteData(

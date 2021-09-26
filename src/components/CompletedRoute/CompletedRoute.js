@@ -1,10 +1,8 @@
 import { Link, Redirect, useParams } from 'react-router-dom'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useRouteData from '../../hooks/useRouteData'
-import Loading from '../Loading/Loading'
-import './CompletedRoute.scss'
+import { useDeliveryData, useRouteData } from 'hooks'
+import { Loading } from 'components'
 
-export default function CompletedRoute() {
+export function CompletedRoute() {
   const { route_id } = useParams()
   const route = useRouteData(route_id)
   const deliveries = useDeliveryData(d => d.route_id === route_id)

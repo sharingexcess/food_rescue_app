@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import Loading from '../Loading/Loading'
 import Logo from '../../assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHistory } from 'react-router-dom'
 import { getCollection } from '../../helpers/helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
-import './Auth.scss'
+import { Loading } from 'components'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop

@@ -2,7 +2,6 @@ import { memo } from 'react'
 import Map from '../../assets/map.png'
 import Header from '../Header/Header'
 import Menu from '../Menu/Menu'
-import './Landing.scss'
 
 function Landing() {
   return (
@@ -42,4 +41,4 @@ function Landing() {
   )
 }
 
-export default memo(Landing)
+export memo(Landing)

@@ -1,11 +1,10 @@
 import React from 'react'
 import Header from '../Header/Header'
-import { useAuth } from '../Auth/Auth'
-import './Liability.scss'
+import { useAuth } from '../../contexts/Auth/Auth'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from '../../helpers/helpers'
 
-export default function Liability() {
+export function Liability() {
   const history = useHistory()
   const { user } = useAuth()
 

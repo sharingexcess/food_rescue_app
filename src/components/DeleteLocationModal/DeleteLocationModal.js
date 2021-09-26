@@ -1,5 +1,4 @@
 import React from 'react'
-import './DeleteLocationModal.scss'
 import 'firebase/firestore'
 import { getCollection } from '../../helpers/helpers'
 import { Link, useHistory } from 'react-router-dom'
@@ -96,4 +95,4 @@ function DeleteLocationModal({
   )
 }
 
-export default DeleteLocationModal
+export DeleteLocationModal

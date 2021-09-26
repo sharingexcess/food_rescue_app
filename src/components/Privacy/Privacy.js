@@ -1,8 +1,7 @@
 import React from 'react'
 import Header from '../Header/Header'
-import './Privacy.scss'
 
-export default function Privacy() {
+export function Privacy() {
   return (
     <main id="Privacy">
       <Header text="Privacy Policy" />

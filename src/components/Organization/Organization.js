@@ -11,10 +11,8 @@ import {
   LocationPhone,
   OrganizationHours,
 } from './utils'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useLocationData from '../../hooks/useLocationData'
+import { useLocationData, useOrganizationData } from 'hooks'
 import Header from '../Header/Header'
-import './Organization.scss'
 
 function Organization() {
   // get org id from url parameters
@@ -117,4 +115,4 @@ function Organization() {
   )
 }
 
-export default memo(Organization)
+export memo(Organization)

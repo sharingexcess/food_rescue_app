@@ -1,9 +1,8 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../Auth/Auth'
-import './Footer.scss'
 
-export default function Footer() {
+export function Footer() {
   const { admin, user } = useAuth()
   const location = useLocation()
 

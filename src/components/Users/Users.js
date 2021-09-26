@@ -4,9 +4,8 @@ import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
 import { Input } from '../Input/Input'
-import useUserData from '../../hooks/useUserData'
+import { useUserData } from 'hooks'
 import Header from '../Header/Header'
-import './Users.scss'
 
 const user_icon_urls = {}
 
@@ -72,4 +71,4 @@ function Users() {
   )
 }
 
-export default memo(Users)
+export memo(Users)

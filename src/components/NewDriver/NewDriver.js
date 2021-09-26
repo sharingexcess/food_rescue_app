@@ -1,11 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from '../../contexts/Auth/Auth'
 import Header from '../Header/Header'
 import Menu from '../Menu/Menu'
-import './NewDriver.scss'
 
-export default function NewDriver() {
+export function NewDriver() {
   const { user } = useAuth()
 
   const sections = [

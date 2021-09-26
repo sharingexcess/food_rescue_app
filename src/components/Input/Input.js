@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import './Input.scss'
 
 export function Input({
   element_id,

@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { useState } from 'react'
-import './Calculator.scss'
 
 export function Calculator({ onShowModal }) {
   const [calc, setCalc] = useState('')

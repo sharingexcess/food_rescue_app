@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useRouteData from '../../hooks/useRouteData'
-import useUserData from '../../hooks/useUserData'
-import usePickupData from '../../hooks/usePickupData'
 import Chart from 'react-apexcharts'
+import moment from 'moment'
+import {
+  useDeliveryData,
+  useRouteData,
+  useUserData,
+  usePickupData,
+  useOrganizationData,
+  useDirectDonationData,
+} from 'hooks'
 import {
   getDefaultRangeStart,
   getDefaultRangeEnd,
@@ -11,14 +16,9 @@ import {
   capitalize,
   sortByRoutesforOrg,
 } from './utils'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import Header from '../Header/Header'
-import { Input } from '../Input/Input'
-import './Analytics.scss'
-import moment from 'moment'
-import useDirectDonationData from '../../hooks/useDirectDonationData'
+import { Input } from 'components'
 
-export default function Analytics() {
+export function Analytics() {
   const [tab, setTab] = useState('TotalAnalytics')
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
@@ -458,7 +458,6 @@ export default function Analytics() {
 
   return (
     <main id="Analytics">
-      <Header text="Analytics" />
       <section id="Tabs">
         <button
           className={tab === 'TotalAnalytics' ? 'active' : 'inactive'}

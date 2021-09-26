@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from '../../contexts/Auth/Auth'
 import { Link } from 'react-router-dom'
 import firebase from 'firebase/app'
 import Loading from '../Loading/Loading'
 import { Input } from '../Input/Input'
-import useUserData from '../../hooks/useUserData'
+import { useUserData } from 'hooks'
 import Header from '../Header/Header'
-import './Profile.scss'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import '../Liability/Liability'
-import '../Liability/Liability.scss'
 
-export default function Profile({ handleUpdateClick, inForm }) {
+export function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuth()
   const profile = useUserData(user ? user.uid : null)
   const [formData, setFormData] = useState({

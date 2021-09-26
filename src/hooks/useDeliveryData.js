@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useFirestoreContext } from '../components/Firestore/Firestore'
 
-export default function useDeliveryData(filter) {
+export function useDeliveryData(filter) {
   const { deliveries } = useFirestoreContext()
   const [data, setData] = useState(
     !filter || Array.isArray(filter) || typeof filter === 'function' ? [] : null

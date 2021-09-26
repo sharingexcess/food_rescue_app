@@ -28,19 +28,19 @@ import {
   ContactModal,
 } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from '../../contexts/Auth/Auth'
 import { Input } from '../Input/Input'
-import useRouteData from '../../hooks/useRouteData'
-import usePickupData from '../../hooks/usePickupData'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useUserData from '../../hooks/useUserData'
-import useLocationData from '../../hooks/useLocationData'
+import {
+  useLocationData,
+  useDeliveryData,
+  useRouteData,
+  useUserData,
+  usePickupData,
+  useOrganizationData,
+} from 'hooks'
 import firebase from 'firebase/app'
 import EditDelivery from '../EditDelivery/EditDelivery'
-import './Route.scss'
 import GoogleMap from '../GoogleMap/GoogleMap'
-import Header from '../Header/Header'
 
 export function Route() {
   const history = useHistory()
@@ -89,7 +89,7 @@ export function Route() {
       setStops(updated_stops)
     }
     route && route.stops && updateStops()
-  }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line
 
   function hasEditPermissions() {
     return admin || user.uid === route.driver_id
@@ -604,7 +604,7 @@ export function Route() {
             ) : (
               <FinishRouteInstruction text="Stops are not fully completed" />
             ))}
-          <Header text={generateStatusHeader(route)} />
+          {/* <Header text={generateStatusHeader(route)} /> */}
           <Driver />
           {stops.length ? (
             <>

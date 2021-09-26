@@ -1,12 +1,10 @@
 import React from 'react'
-import Header from '../Header/Header'
 import { useAuth } from '../Auth/Auth'
-import './DriverInfo.scss'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from '../../helpers/helpers'
 import { Link } from 'react-router-dom'
 
-export default function DriverInfo() {
+export function DriverInfo() {
   const history = useHistory()
   const { user } = useAuth()
 
@@ -17,7 +15,6 @@ export default function DriverInfo() {
 
   return (
     <main id="DriverInfo">
-      <Header text="Driver Information" />
       {user.completed_driver_info ? (
         <>
           <p>You've already completed this document.</p>

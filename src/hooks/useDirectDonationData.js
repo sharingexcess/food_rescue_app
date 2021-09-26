@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useFirestoreContext } from '../components/Firestore/Firestore'
 
-export default function useDirectDonationData(filter) {
+export function useDirectDonationData(filter) {
   const { direct_donations } = useFirestoreContext()
   const [data, setData] = useState(
     !filter || Array.isArray(filter) || typeof filter === 'function' ? [] : null

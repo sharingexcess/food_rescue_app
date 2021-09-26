@@ -9,31 +9,52 @@ header#Header {
   align-items: center;
   animation: fade-in 0.32s ease forwards;
   z-index: 20;
-  pointer-events: none;
   background: linear-gradient(
     to bottom,
     var(--background),
     rgba(var(--background-rgb), 0)
   );
 
-  h1 {
-    font-size: 28px;
-    text-align: left;
-    color: var(--text);
-    a {
-      font-size: 20px;
-      vertical-align: 10%;
-      pointer-events: all;
-      display: inline;
-      margin-right: 8px;
-      transition: color 0.16s ease;
-      color: var(--blue);
+  @include desktop {
+    padding: 32px;
+  }
 
-      @media (hover: hover) and (pointer: fine) {
-        &:hover {
-          color: var(--green);
+  #Header-location {
+    margin-left: 16px;
+
+    h1 {
+      font-size: 28px;
+      text-align: left;
+      color: var(--text);
+      text-transform: capitalize;
+      a {
+        font-size: 20px;
+        vertical-align: 10%;
+        pointer-events: all;
+        display: inline;
+        margin-right: 8px;
+        transition: color 0.16s ease;
+        color: var(--blue);
+
+        @media (hover: hover) and (pointer: fine) {
+          &:hover {
+            color: var(--green);
+          }
         }
       }
     }
+
+    a {
+      margin-top: 2px;
+      color: var(--blue);
+    }
+  }
+
+  #Header-logo {
+    height: 48px;
+    width: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
   }
 }

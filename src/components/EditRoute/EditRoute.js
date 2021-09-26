@@ -1,5 +1,5 @@
-import React, { memo, useEffect, useState } from 'react'
-import { Input } from '../Input/Input'
+import React, { useEffect, useState } from 'react'
+import firebase from 'firebase/app'
 import Ellipsis from '../../helpers/components'
 import { Link, useParams } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
@@ -22,17 +22,13 @@ import {
   updateGoogleCalendarEvent,
 } from '../../helpers/helpers'
 import moment from 'moment'
-import EditDelivery from '../EditDelivery/EditDelivery'
-import EditPickup from '../EditPickup/EditPickup'
-import firebase from 'firebase/app'
-import useUserData from '../../hooks/useUserData'
-import useRouteData from '../../hooks/useRouteData'
+import { EditDelivery, EditPickup, Input } from 'components'
+import { useRouteData, useUserData } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
-import './EditRoute.scss'
 import Header from '../Header/Header'
 import { OrganizationHours } from '../Organization/utils'
 
-function EditRoute() {
+export function EditRoute() {
   const history = useHistory()
   const drivers = useUserData()
   const { route_id } = useParams()
@@ -88,7 +84,7 @@ function EditRoute() {
         ...formData,
         driver: drivers.find(i => i.id === formData.driver_id),
       })
-  }, [formData.driver_id, drivers]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [formData.driver_id, drivers]) // eslint-disable-line
 
   useEffect(() => {
     if (routes && formData.driver_id) {
@@ -589,5 +585,3 @@ function EditRoute() {
     </main>
   )
 }
-
-export default memo(EditRoute)

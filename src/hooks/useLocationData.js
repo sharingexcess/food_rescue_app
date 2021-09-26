@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useFirestoreContext } from '../components/Firestore/Firestore'
 
-export default function useLocationData(filter) {
+export function useLocationData(filter) {
   const { locations } = useFirestoreContext()
   const [data, setData] = useState(
     !filter || Array.isArray(filter) || typeof filter === 'function' ? [] : null

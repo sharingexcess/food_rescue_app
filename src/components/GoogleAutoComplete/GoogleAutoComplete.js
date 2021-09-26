@@ -68,4 +68,4 @@ function GoogleAutoComplete({ handleSelect }) {
   )
 }
 
-export default GoogleAutoComplete
+export GoogleAutoComplete

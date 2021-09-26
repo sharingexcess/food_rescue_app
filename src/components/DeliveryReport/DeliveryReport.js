@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import Loading from '../Loading/Loading'
-import { Input } from '../Input/Input'
 import { setFirestoreData } from '../../helpers/helpers'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import './DeliveryReport.scss'
-import usePickupData from '../../hooks/usePickupData'
-import useRouteData from '../../hooks/useRouteData'
-import { useAuth } from '../Auth/Auth'
-import Header from '../Header/Header'
+import {
+  useDeliveryData,
+  useRouteData,
+  usePickupData,
+  useOrganizationData,
+} from 'hooks'
+import { Input, Loading, useAuth } from 'components'
 
-export default function DeliveryReport() {
+export function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
   const history = useHistory()
   const delivery = useDeliveryData(delivery_id)

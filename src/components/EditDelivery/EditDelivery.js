@@ -1,9 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
-import { Input } from '../Input/Input'
 import { updateFieldSuggestions, formFields } from './utils'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useLocationData from '../../hooks/useLocationData'
-import './EditDelivery.scss'
+import { useLocationData, useOrganizationData } from 'hooks'
+import { Input } from 'components'
 
 function EditDelivery({ handleSubmit, title }) {
   const organizations = useOrganizationData()
@@ -99,4 +97,4 @@ function EditDelivery({ handleSubmit, title }) {
   )
 }
 
-export default memo(EditDelivery)
+export memo(EditDelivery)

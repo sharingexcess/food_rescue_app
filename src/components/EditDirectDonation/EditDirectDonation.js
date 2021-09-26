@@ -1,22 +1,16 @@
 import React, { useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import 'firebase/firestore'
 import 'firebase/storage'
-import Header from '../Header/Header'
-import EditPickup from '../EditPickup/EditPickup'
 import { generateStopId, setFirestoreData } from '../../helpers/helpers'
-import EditDelivery from '../EditDelivery/EditDelivery'
-import PickupReport from '../PickupReport/PickupReport'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import { Input } from '../Input/Input'
 import moment from 'moment'
-import { useAuth } from '../Auth/Auth'
 import { generateDirectDonationId } from './utils'
-import './EditDirectDonation.scss'
+import { Input, EditDelivery, PickupReport, EditPickup } from 'components'
+import { useAuth } from 'contexts'
 
-export default function EditDirectDonation() {
-  const { id } = useParams()
+export function EditDirectDonation() {
   const { user } = useAuth()
   const history = useHistory()
   const [donor, setDonor] = useState()
@@ -89,7 +83,6 @@ export default function EditDirectDonation() {
 
   return (
     <main id="EditDirectDonation">
-      <Header text={id ? 'Edit Direct Donation' : 'Create Direct Donation'} />
       <h3>Donation Date + Time</h3>
       <section id="Time">
         <Input

@@ -3,18 +3,16 @@ import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/storage'
-import { Input } from '../Input/Input'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import UserIcon from '../../assets/user.svg'
 import { handleOrgIcon, initializeFormData } from './utils'
-import './EditOrganization.scss'
 import { getCollection } from '../../helpers/helpers'
 import validator from 'validator'
-import Header from '../Header/Header'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import { Input } from 'components'
 
-export default function EditOrganization() {
+export function EditOrganization() {
   const { id } = useParams()
   const history = useHistory()
   const [formData, setFormData] = useState({

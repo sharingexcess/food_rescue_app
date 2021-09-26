@@ -3,9 +3,8 @@ import Loading from '../Loading/Loading'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage } from '../../helpers/helpers'
-import './Organizations.scss'
 import { Input } from '../Input/Input'
-import useOrganizationData from '../../hooks/useOrganizationData'
+import { useOrganizationData } from 'hooks'
 import Header from '../Header/Header'
 
 const org_icon_urls = {}
@@ -104,4 +103,4 @@ function Organizations() {
   )
 }
 
-export default memo(Organizations)
+export memo(Organizations)

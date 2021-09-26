@@ -1,7 +1,6 @@
 import React from 'react'
-import './RoutesHeaders.scss'
 
-export default function RouteHeader({ text }) {
+export function RouteHeader({ text }) {
   return (
     <header id="RouteHeader">
       <h1>{text}</h1>

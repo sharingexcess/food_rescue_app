@@ -1,27 +1,20 @@
 import React, { memo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { setMenu } from '../../redux/app/appReducer'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from '../../contexts/Auth/Auth'
 import UserIcon from '../../assets/user.svg'
 import { ExternalLink } from '../../helpers/components'
-import useUserData from '../../hooks/useUserData'
-import ModeToggle from '../ModeToggle/ModeToggle'
-import './Menu.scss'
+import { useUserData } from 'hooks'
+import { MOBILE_THRESHOLD } from '../../helpers/constants'
 
-function Menu() {
-  // get state from Redux Store to determine whether menu is open
-  const isOpen = useSelector(store => store.app.menu)
+function Menu({ isOpen, setIsOpen }) {
   // get current user state from AuthContext
   const { user, admin, handleLogout, handleLogin } = useAuth()
 
   // get public user profile state
   const profile = useUserData(user ? user.uid : {})
-  // get access to the Redux update state function 'dispatch'
-  const dispatch = useDispatch()
 
   function closeMenu() {
-    dispatch(setMenu(false))
+    setIsOpen(false)
   }
 
   function UserProfile() {
@@ -41,7 +34,7 @@ function Menu() {
           src={user.photoURL || UserIcon}
           id="ProfileImg"
           alt="User"
-          onClick={() => dispatch(setMenu(true))}
+          onClick={() => setIsOpen(true)}
         />
         <div>
           <h2 id="UserName">
@@ -50,7 +43,9 @@ function Menu() {
           <h3 id="UserEmail">{user.email}</h3>
           <AdminIndicator />
         </div>
-        <i id="Close" className="fa fa-times" onClick={closeMenu} />
+        {window.innerWidth > MOBILE_THRESHOLD ? null : (
+          <i id="Close" className="fa fa-times" onClick={closeMenu} />
+        )}
       </div>
     ) : (
       <button className="login" onClick={handleLogin}>
@@ -60,50 +55,42 @@ function Menu() {
   }
 
   return (
-    <>
-      <div
-        id="MenuBackground"
-        className={isOpen ? 'open' : 'closed'}
-        onClick={closeMenu}
-      />
-      <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
-        <UserProfile />
-        <div id="MenuContent">
-          <div id="ToggleContainer">
-            Color Scheme:
-            <ModeToggle />
-          </div>
-          <ul>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/routes">Routes</Link>
-            </li>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/history">History</Link>
-            </li>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/profile">Profile</Link>
-            </li>
-            <li onClick={() => dispatch(setMenu(false))}>
-              <Link to="/foodsafety">Safety</Link>
-            </li>
+    <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
+      <UserProfile />
+      <div id="MenuContent">
+        <ul>
+          <li onClick={() => setIsOpen(false)}>
+            <Link to="/">Home</Link>
+          </li>
+          <li onClick={() => setIsOpen(false)}>
+            <Link to="/routes">Routes</Link>
+          </li>
+          <li onClick={() => setIsOpen(false)}>
+            <Link to="/history">History</Link>
+          </li>
+          <li onClick={() => setIsOpen(false)}>
+            <Link to="/profile">Profile</Link>
+          </li>
+          <li onClick={() => setIsOpen(false)}>
+            <Link to="/foodsafety">Safety</Link>
+          </li>
 
-            <li
-              onClick={() => {
-                dispatch(setMenu(false))
-                handleLogout()
-              }}
-            >
-              Logout
-            </li>
-          </ul>
-        </div>
-        <footer>
-          <ExternalLink url="/privacy">privacy policy</ExternalLink>
-          <ExternalLink url="/tos">terms of service</ExternalLink>
-        </footer>
-      </aside>
-    </>
+          <li
+            onClick={() => {
+              setIsOpen(false)
+              handleLogout()
+            }}
+          >
+            Logout
+          </li>
+        </ul>
+      </div>
+      <nav>
+        <ExternalLink url="/privacy">privacy policy</ExternalLink>
+        <ExternalLink url="/tos">terms of service</ExternalLink>
+      </nav>
+    </aside>
   )
 }
 
-export default memo(Menu)
+export memo(Menu)

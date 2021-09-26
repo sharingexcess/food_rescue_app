@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useFirestoreContext } from '../components/Firestore/Firestore'
 
-export default function usePickupData(filter) {
+export function usePickupData(filter) {
   const { pickups } = useFirestoreContext()
   const [data, setData] = useState(
     !filter || Array.isArray(filter) || typeof filter === 'function' ? [] : null

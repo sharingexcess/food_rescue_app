@@ -1,7 +1,6 @@
 import React from 'react'
-import './Error.scss'
 
-export default function Error({ crash, message }) {
+export function Error({ crash, message }) {
   return (
     <main id="Error">
       <h1>Uh oh!</h1>

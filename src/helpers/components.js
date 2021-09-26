@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../components/Auth/Auth'
+import { useAuth } from '../contexts/Auth/Auth'
 import Error from '../components/Error/Error'
 
 export function ProtectedRoutes({ children }) {

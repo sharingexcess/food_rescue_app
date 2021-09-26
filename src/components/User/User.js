@@ -9,8 +9,7 @@ import {
   UserAdminPermissions,
   handleUserIcon,
 } from './utils'
-import useUserData from '../../hooks/useUserData'
-import './User.scss'
+import { useUserData } from 'hooks'
 import Header from '../Header/Header'
 
 function User() {
@@ -52,4 +51,4 @@ function User() {
   )
 }
 
-export default memo(User)
+export memo(User)

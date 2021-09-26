@@ -1,5 +1,4 @@
 import React from 'react'
-import './SwitchEnv.scss'
 
 function TestEnv() {
   return (
@@ -36,7 +35,7 @@ function ProdEnv() {
   )
 }
 
-export default function SwithEnv() {
+export function SwithEnv() {
   return (
     <>
       {window.location.href ===

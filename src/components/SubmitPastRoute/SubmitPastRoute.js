@@ -1,10 +1,9 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Header from '../Header/Header'
 import { Input } from '../Input/Input'
 import { formFields } from './utils'
-import './SubmitPastRoute.scss'
 
-export default function SubmitPastRoute() {
+export function SubmitPastRoute() {
   const selectedFormFields = formFields
   const [formData, setFormData] = useState({
     driver_name: '',
