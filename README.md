@@ -6,6 +6,7 @@
 
 Ryan McHenry
 Armando Parra
+Sam Nguyen
 
 ## Tech Stack 🤖
 
