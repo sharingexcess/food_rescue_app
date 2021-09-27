@@ -36,28 +36,10 @@ header#Header {
   }
 
   #Header-location {
-    margin-left: 16px;
+    max-width: calc(100% - 120px);
 
-    h1 {
-      font-size: 28px;
-      text-align: left;
-      color: var(--text);
+    #Header-page-title {
       text-transform: capitalize;
-      a {
-        font-size: 20px;
-        vertical-align: 10%;
-        pointer-events: all;
-        display: inline;
-        margin-right: 8px;
-        transition: color 0.16s ease;
-        color: var(--blue);
-
-        @media (hover: hover) and (pointer: fine) {
-          &:hover {
-            color: var(--green);
-          }
-        }
-      }
     }
 
     a {

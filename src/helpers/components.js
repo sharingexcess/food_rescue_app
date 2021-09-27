@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from 'contexts'
-// import { Error } from 'components'
-
-export function ProtectedRoutes({ children }) {
-  const { permission } = useAuth()
-
-  return permission ? children : null
-  // <Error message="You do not have permission to view this page yet!" />
-}
 
 export function ExternalLink({ url, children }) {
   return (

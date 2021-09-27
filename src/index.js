@@ -1,32 +1,39 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route as PublicRoute, Switch } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import firebase from 'firebase/app'
 import {
-  Error,
-  PickupReport,
-  Profile,
-  Routes,
-  Route as DriverRoute,
   Calendar,
-  ContactUs,
-  FoodSafety,
-  Liability,
-  DeliveryReport,
-  Privacy,
-  Terms,
   CompletedRoute,
+  ContactUs,
+  DeliveryReport,
+  DriverInfo,
+  EditRoute,
+  Error,
+  FoodSafety,
   Header,
   Home,
-  EditRoute,
-  DriverInfo,
+  Liability,
+  PickupReport,
+  Privacy,
+  Profile,
+  Routes,
+  Terms,
   Tutorial,
+  Route,
+  EditDirectDonation,
+  EditOrganization,
+  Organizations,
+  Organization,
+  EditLocation,
+  Users,
+  User,
+  Analytics,
+  SwitchEnv,
 } from 'components'
-import { AdminRoutes } from './routes/AdminRoutes'
-import { Firestore, Auth } from 'contexts'
-import { ProtectedRoutes } from './helpers/components'
+import { Firestore, Auth, useAuth } from 'contexts'
 import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
 import './styles/index.scss'
 
@@ -40,6 +47,28 @@ Sentry.init({
 firebase.initializeApp(FIREBASE_CONFIG)
 
 function App() {
+  function DriverRoute({ children, exact, path }) {
+    const { permission } = useAuth()
+    return permission ? (
+      <PublicRoute exact={exact} path={path}>
+        {children}
+      </PublicRoute>
+    ) : (
+      <Error message="Only registered users have permission to view this page." />
+    )
+  }
+
+  function AdminRoute({ children, exact, path }) {
+    const { admin } = useAuth()
+    return admin ? (
+      <PublicRoute exact={exact} path={path}>
+        {children}
+      </PublicRoute>
+    ) : (
+      <Error message="Only admins have permission to view this page." />
+    )
+  }
+
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
       <BrowserRouter>
@@ -47,74 +76,119 @@ function App() {
           {/* Auth component handles login and will show a login page if no user is authenticated */}
           <Firestore>
             <Header />
-            {/* Switch will only allow the first matching route to be rendered */}
             <Switch>
-              <Route exact path="/">
+              {/*  Public Routes */}
+              <PublicRoute exact path="/">
                 <Home />
-              </Route>
-              <Route exact path="/profile">
+              </PublicRoute>
+              <PublicRoute exact path="/profile">
                 <Profile />
-              </Route>
-              <Route exact path="/privacy">
+              </PublicRoute>
+              <PublicRoute exact path="/privacy">
                 <Privacy />
-              </Route>
-              <Route exact path="/tos">
+              </PublicRoute>
+              <PublicRoute exact path="/tos">
                 <Terms />
-              </Route>
-              <Route exact path="/contact">
+              </PublicRoute>
+              <PublicRoute exact path="/contact">
                 <ContactUs />
-              </Route>
-              <Route exact path="/foodsafety">
+              </PublicRoute>
+              <PublicRoute exact path="/foodsafety">
                 <FoodSafety />
-              </Route>
-              <Route exact path="/liability">
+              </PublicRoute>
+              <PublicRoute exact path="/liability">
                 <Liability />
-              </Route>
-              <Route exact path="/driver-info">
+              </PublicRoute>
+              <PublicRoute exact path="/driver-info">
                 <DriverInfo />
-              </Route>
-              <Route exact path="/tutorial">
+              </PublicRoute>
+              <PublicRoute exact path="/tutorial">
                 <Tutorial />
-              </Route>
-              <ProtectedRoutes>
-                <Route exact path="/calendar">
-                  <Calendar />
-                </Route>
-                <Route exact path="/routes">
-                  <Routes initial_filter={r => [1, 3].includes(r.status)} />
-                </Route>
-                <Route exact path="/history">
-                  <Routes initial_filter={r => [0, 9].includes(r.status)} />
-                </Route>
-                <Route exact path="/history/:route_id">
-                  <DriverRoute />
-                </Route>
-                <Route exact path="/history/:route_id/pickup/:pickup_id">
-                  <PickupReport />
-                </Route>
-                <Route exact path="/history/:route_id/delivery/:delivery_id">
-                  <DeliveryReport />
-                </Route>
-                <Route exact path="/routes/:route_id">
-                  <DriverRoute />
-                </Route>
-                <Route exact path="/routes/:route_id/pickup/:pickup_id">
-                  <PickupReport />
-                </Route>
-                <Route exact path="/routes/:route_id/delivery/:delivery_id">
-                  <DeliveryReport />
-                </Route>
-                <Route exact path="/routes/:route_id/edit">
-                  <EditRoute />
-                </Route>
-                <Route exact path="/routes/:route_id/completed">
-                  <CompletedRoute />
-                </Route>
-                {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
-                <Route path="/admin">
-                  <AdminRoutes />
-                </Route>
-              </ProtectedRoutes>
+              </PublicRoute>
+
+              {/* Driver Routes */}
+              <DriverRoute exact path="/calendar">
+                <Calendar />
+              </DriverRoute>
+              <DriverRoute exact path="/routes">
+                <Routes initial_filter={r => [1, 3].includes(r.status)} />
+              </DriverRoute>
+              <DriverRoute exact path="/history">
+                <Routes initial_filter={r => [0, 9].includes(r.status)} />
+              </DriverRoute>
+              <DriverRoute exact path="/history/:route_id">
+                <Route />
+              </DriverRoute>
+              <DriverRoute exact path="/history/:route_id/pickup/:pickup_id">
+                <PickupReport />
+              </DriverRoute>
+              <DriverRoute
+                exact
+                path="/history/:route_id/delivery/:delivery_id"
+              >
+                <DeliveryReport />
+              </DriverRoute>
+              <DriverRoute exact path="/routes/:route_id">
+                <Route />
+              </DriverRoute>
+              <DriverRoute exact path="/routes/:route_id/pickup/:pickup_id">
+                <PickupReport />
+              </DriverRoute>
+              <DriverRoute exact path="/routes/:route_id/delivery/:delivery_id">
+                <DeliveryReport />
+              </DriverRoute>
+              <DriverRoute exact path="/routes/:route_id/edit">
+                <EditRoute />
+              </DriverRoute>
+              <DriverRoute exact path="/routes/:route_id/completed">
+                <CompletedRoute />
+              </DriverRoute>
+
+              {/* Admin Routes */}
+
+              <AdminRoute exact path="/admin/create-route">
+                <EditRoute />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/create-direct-donation">
+                <EditDirectDonation />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/create-organization">
+                <EditOrganization />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/organizations">
+                <Organizations />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/organizations/:id">
+                {/* adding a colon creates a variable url parameter */}
+                {/* we can access that variable using const { id } = useParams() */}
+                <Organization />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/organizations/:id/edit">
+                <EditOrganization />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/organizations/:id/create-location">
+                <EditLocation />
+              </AdminRoute>
+              <AdminRoute
+                exact
+                path="/admin/organizations/:id/location/:loc_id"
+              >
+                <EditLocation />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/users">
+                <Users />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/users/:id">
+                <User />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/analytics">
+                <Analytics />
+              </AdminRoute>
+              <AdminRoute exact path="/admin/switchenv">
+                <SwitchEnv />
+              </AdminRoute>
+
+              {/* Catch All */}
               <Route>
                 {/* This route has no path, and therefore will be the 'catch all' */}
                 <Error />

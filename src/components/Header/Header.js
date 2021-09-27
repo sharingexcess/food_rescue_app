@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from 'contexts'
-import SELogo from '../../assets/logo.svg'
 import { Menu } from 'components'
 import { MOBILE_THRESHOLD } from '../../helpers/constants'
 import { useIsMobile } from 'hooks'
+import { Text, Spacer, Logo } from '@sharingexcess/designsystem'
 
 export function Header() {
   const location = useLocation()
@@ -13,7 +13,16 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(window.innerWidth > MOBILE_THRESHOLD)
 
   const path_components = location.pathname.split('/').filter(i => i.length)
-  const text = path_components.length ? path_components[0] : 'Home'
+
+  const page_title = path_components.length
+    ? path_components[path_components.length - 1].replace(/[^a-zA-Z ]/g, ' ')
+    : 'Home'
+
+  const back_title =
+    path_components.length > 1
+      ? path_components[path_components.length - 2].replace('admin', 'home')
+      : null
+
   let back_url = `/${path_components
     .slice(0, path_components.length - 1)
     .join('/')}`
@@ -25,8 +34,6 @@ export function Header() {
   ) {
     back_url = back_url.substring(0, back_url.lastIndexOf('/'))
   }
-
-  console.log(path_components, text, back_url)
 
   function UserProfile() {
     return user ? (
@@ -47,13 +54,21 @@ export function Header() {
     <>
       <header id="Header">
         <Link to="/">
-          <img src={SELogo} id="Header-logo" alt="User" />
+          <Logo color="white" size={48} shadow />
         </Link>
+        <Spacer width={12} />
         <div id="Header-location">
-          <h1>{text}</h1>
+          <Text
+            id="Header-page-title"
+            type="section-header"
+            color="white"
+            wrap={false}
+          >
+            {page_title}
+          </Text>
           {path_components.length > 1 ? (
             <Link to={back_url}>
-              <i className="fa fa-arrow-left" /> back to {text}
+              <i className="fa fa-arrow-left" /> back to {back_title}
             </Link>
           ) : null}
         </div>

@@ -1,7 +1,5 @@
 #Profile {
-  padding: 92px 16px 64px 16px;
-  max-width: 800px;
-  margin: auto;
+  @include page;
   animation: fade-in 0.32s ease forwards;
 
   h1 {
