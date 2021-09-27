@@ -5,6 +5,7 @@
 ## Contributors
 
 Ryan McHenry
+Armando Parra
 
 ## Tech Stack 🤖
 
