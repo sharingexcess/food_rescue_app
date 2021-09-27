@@ -2,6 +2,10 @@
 
 ![Sharing Excess Logo](public/logo192.png)
 
+## Contributors
+
+Ryan McHenry
+
 ## Tech Stack 🤖
 
 The Rescue Web App is built using React, Redux, and Sass on the frontend, and Google Cloud Platform Firebase on the backend.\
