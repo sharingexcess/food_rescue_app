@@ -7,6 +7,7 @@
 Ryan McHenry
 Armando Parra
 Sam Nguyen
+Abdullah Dawud
 
 ## Tech Stack 🤖
 
