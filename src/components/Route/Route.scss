@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 #Route {
   @include page;
 
@@ -8,7 +6,6 @@
     text-transform: capitalize;
   }
 
-  
   button {
     width: 100%;
     margin-top: 12px;

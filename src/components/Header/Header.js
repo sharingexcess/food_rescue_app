@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../../contexts/Auth/Auth'
+import { useAuth } from 'contexts'
 import SELogo from '../../assets/logo.svg'
-import Menu from '../Menu/Menu'
+import { Menu } from 'components'
 import { MOBILE_THRESHOLD } from '../../helpers/constants'
 import { useIsMobile } from 'hooks'
 
@@ -30,14 +30,12 @@ export function Header() {
 
   function UserProfile() {
     return user ? (
-      <div id="UserProfile" onClick={() => setMenuOpen(true)}>
-        <img
-          src={SELogo}
-          id="ProfileImg"
-          alt="User"
-          onClick={() => setMenuOpen(true)}
-        />
-      </div>
+      <img
+        src={user.icon}
+        id="UserProfile"
+        alt="User"
+        onClick={() => setMenuOpen(true)}
+      />
     ) : (
       <button className="login" onClick={handleLogin}>
         Log in

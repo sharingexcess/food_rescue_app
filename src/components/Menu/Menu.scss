@@ -3,7 +3,7 @@
   background: var(--foreground);
   top: 0;
   left: 0;
-  width: 284px;
+  width: 250px;
   height: 100vh;
   padding: 16px;
   overflow-x: hidden;
@@ -22,19 +22,23 @@
     left: 32px;
     height: calc(100vh - 144px);
     border-radius: 8px;
-    @include card;
   }
 
   @include mobile {
+    left: unset;
+    right: 0;
     &.open {
       transform: translateX(0px);
-      box-shadow: 200px 0 0 0 var(--se-black-transparent);
     }
     &.closed {
-      transform: translateX(-300px);
-      pointer-events: none;
-      opacity: 0;
-      box-shadow: 200px 0 0 0 var(--se-transparent);
+      transform: translateX(300px);
+    }
+  }
+
+  .Menu-link {
+    transition: color 0.1s ease;
+    @include hover {
+      color: var(--se-blue-primary);
     }
   }
 

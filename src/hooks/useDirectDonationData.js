@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useFirestoreContext } from '../components/Firestore/Firestore'
+import { useFirestoreContext } from 'contexts'
 
 export function useDirectDonationData(filter) {
   const { direct_donations } = useFirestoreContext()

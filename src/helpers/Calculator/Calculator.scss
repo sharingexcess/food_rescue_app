@@ -1,15 +1,13 @@
-@import '../../styles/global.scss';
-
 #Calculator {
   .calculator {
     margin: auto;
     padding: 10px;
     width: 300px;
     height: 330px;
-    background-color: #FFF;
+    background-color: #fff;
     border-radius: 15px;
     overflow: hidden;
-    
+
     .display {
       .display-box {
         display: inline-block;
@@ -22,7 +20,7 @@
         height: 100%;
         border-radius: 5px;
         margin-bottom: 10px;
-        
+
         span {
           font-size: 14px;
           color: var(--for);
@@ -34,10 +32,10 @@
         width: 10%;
       }
     }
-    
+
     button {
       border: none;
-      outline:none;
+      outline: none;
       color: var(--white);
       font-size: 20px;
       height: 100%;
@@ -45,14 +43,12 @@
       border-radius: 5px;
       margin-top: -5px;
     }
-    
+
     .operators {
-      display: flex; 
+      display: flex;
       button {
         flex: 1 1 0%;
         width: 25%;
-        
-        
       }
     }
     .digits {
@@ -63,15 +59,11 @@
         flex: 1 1 33%;
         max-width: 33%;
       }
-
     }
-  
-      
-}
+  }
 }
 
 #CalcModal {
-  
   .modal {
     position: fixed;
     z-index: 1;
@@ -116,8 +108,6 @@
         margin-bottom: 5px;
         padding: 0 20px;
       }
-    } 
     }
-
-    
   }
+}

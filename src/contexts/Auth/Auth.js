@@ -95,4 +95,4 @@ const useAuth = () =>
     handleLogout: () => null,
   }
 
-export { Auth as default, useAuth }
+export { Auth, useAuth }

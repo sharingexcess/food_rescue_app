@@ -1,19 +1,21 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { useAuth } from '../components/Auth/Auth'
-import Error from '../components/Error/Error'
-import EditRoute from '../components/EditRoute/EditRoute'
-import EditDirectDonation from '../components/EditDirectDonation/EditDirectDonation'
-import EditOrganization from '../components/EditOrganization/EditOrganization'
-import Organizations from '../components/Organizations/Organizations'
-import EditLocation from '../components/EditLocation/EditLocation'
-import Users from '../components/Users/Users'
-import User from '../components/User/User'
-import Organization from '../components/Organization/Organization'
-import Analytics from '../components/Analytics/Analytics'
-import SwithEnv from '../components/SwitchEnv/SwitchEnv'
+import { useAuth } from 'contexts'
+import {
+  Error,
+  EditRoute,
+  EditDirectDonation,
+  EditOrganization,
+  Organizations,
+  EditLocation,
+  Users,
+  User,
+  Analytics,
+  Organization,
+  SwitchEnv,
+} from 'components'
 
-export default function AdminRoutes() {
+export function AdminRoutes() {
   // the AuthContext contains a value 'admin' which tells us if the current authenticated user is an admin or not
   const { admin } = useAuth()
 
@@ -71,7 +73,7 @@ export default function AdminRoutes() {
         <Analytics />
       </AdminRoute>
       <AdminRoute exact path="/admin/switchenv">
-        <SwithEnv />
+        <SwitchEnv />
       </AdminRoute>
       <Route>
         {/* This route has no path, and therefore will be the 'catch all' */}

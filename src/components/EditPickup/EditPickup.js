@@ -1,9 +1,9 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from 'components'
 import { updateFieldSuggestions, formFields } from './utils'
 import { useLocationData, useOrganizationData } from 'hooks'
 
-function EditPickup({ handleSubmit, title }) {
+export function EditPickup({ handleSubmit, title }) {
   const organizations = useOrganizationData()
   const locations = useLocationData()
   const [formData, setFormData] = useState({
@@ -96,5 +96,3 @@ function EditPickup({ handleSubmit, title }) {
     </div>
   )
 }
-
-export memo(EditPickup)

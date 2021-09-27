@@ -19,6 +19,22 @@ header#Header {
     padding: 32px;
   }
 
+  #UserProfile {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: auto;
+    opacity: 1;
+    pointer-events: all;
+    border-radius: 50%;
+    height: 48px;
+    width: 48px;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    background: var(--blue);
+  }
+
   #Header-location {
     margin-left: 16px;
 

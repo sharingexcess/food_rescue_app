@@ -25,7 +25,6 @@ import moment from 'moment'
 import { EditDelivery, EditPickup, Input } from 'components'
 import { useRouteData, useUserData } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
-import Header from '../Header/Header'
 import { OrganizationHours } from '../Organization/utils'
 
 export function EditRoute() {
@@ -438,7 +437,6 @@ export function EditRoute() {
   }
   return (
     <main id="EditRoute">
-      <Header text="New Route" />
       {confirmedTimes && canRender ? (
         <div id="Driver">
           <img

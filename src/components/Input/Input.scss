@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 .Input {
   position: relative;
   width: 100%;
@@ -67,7 +65,9 @@
       border-bottom: 4px solid var(--primary);
     }
   }
-  select option { background-color: var(--foreground); }
+  select option {
+    background-color: var(--foreground);
+  }
 
   input,
   textarea {

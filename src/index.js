@@ -6,7 +6,6 @@ import { Integrations } from '@sentry/tracing'
 import firebase from 'firebase/app'
 import {
   Error,
-  AdminRoutes,
   PickupReport,
   Profile,
   Routes,
@@ -25,6 +24,7 @@ import {
   DriverInfo,
   Tutorial,
 } from 'components'
+import { AdminRoutes } from './routes/AdminRoutes'
 import { Firestore, Auth } from 'contexts'
 import { ProtectedRoutes } from './helpers/components'
 import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'

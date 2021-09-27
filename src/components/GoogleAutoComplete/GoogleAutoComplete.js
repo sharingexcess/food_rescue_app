@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Input } from '../Input/Input'
+import { Input } from 'components'
 
-function GoogleAutoComplete({ handleSelect }) {
+export function GoogleAutoComplete({ handleSelect }) {
   const [query, setQuery] = useState('')
 
   useEffect(() => {
@@ -67,5 +67,3 @@ function GoogleAutoComplete({ handleSelect }) {
     />
   )
 }
-
-export GoogleAutoComplete

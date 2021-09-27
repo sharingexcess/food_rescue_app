@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../contexts/Auth/Auth'
+import { useAuth } from 'contexts'
 import { Link } from 'react-router-dom'
 import firebase from 'firebase/app'
-import Loading from '../Loading/Loading'
-import { Input } from '../Input/Input'
+import { Input, Loading } from 'components'
 import { useUserData } from 'hooks'
-import Header from '../Header/Header'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import '../Liability/Liability'
 
 export function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuth()
@@ -92,7 +89,6 @@ export function Profile({ handleUpdateClick, inForm }) {
     <Loading text="Loading profile" />
   ) : (
     <main id="Profile">
-      <Header text="Profile" />
       {inForm && (
         <WarningText text="Please update your phone number and preferred pronouns" />
       )}

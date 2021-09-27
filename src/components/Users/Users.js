@@ -1,15 +1,13 @@
-import React, { memo, useEffect, useState } from 'react'
-import Loading from '../Loading/Loading'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
-import { Input } from '../Input/Input'
+import { Input, Loading } from 'components'
 import { useUserData } from 'hooks'
-import Header from '../Header/Header'
 
 const user_icon_urls = {}
 
-function Users() {
+export function Users() {
   const users = useUserData()
   const [search, setSearch] = useState('')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
@@ -41,7 +39,6 @@ function Users() {
     <Loading text="Loading users" />
   ) : (
     <main id="Users">
-      <Header text="Users" />
       <Input
         label="Search..."
         onChange={handleSearch}
@@ -70,5 +67,3 @@ function Users() {
     </main>
   )
 }
-
-export memo(Users)

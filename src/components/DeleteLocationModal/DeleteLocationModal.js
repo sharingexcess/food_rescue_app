@@ -3,7 +3,7 @@ import 'firebase/firestore'
 import { getCollection } from '../../helpers/helpers'
 import { Link, useHistory } from 'react-router-dom'
 
-function DeleteLocationModal({
+export function DeleteLocationModal({
   setOpenModal,
   canDelete,
   locationRoutes,
@@ -94,5 +94,3 @@ function DeleteLocationModal({
     </div>
   )
 }
-
-export DeleteLocationModal

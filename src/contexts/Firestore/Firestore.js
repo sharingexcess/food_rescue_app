@@ -37,4 +37,4 @@ function Firestore({ children }) {
 
 const useFirestoreContext = () => useContext(FirestoreContext) || {}
 
-export { Firestore as default, useFirestoreContext }
+export { Firestore, useFirestoreContext }

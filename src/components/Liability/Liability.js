@@ -1,6 +1,5 @@
 import React from 'react'
-import Header from '../Header/Header'
-import { useAuth } from '../../contexts/Auth/Auth'
+import { useAuth } from 'contexts'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from '../../helpers/helpers'
 
@@ -15,7 +14,6 @@ export function Liability() {
 
   return (
     <main id="Liability">
-      <Header text="Release of Liability" />
       <section id="intro">
         <h1>Release of Liability</h1>
         {user.completed_liability_release === null ? (

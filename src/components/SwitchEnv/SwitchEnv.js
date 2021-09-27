@@ -35,7 +35,7 @@ function ProdEnv() {
   )
 }
 
-export function SwithEnv() {
+export function SwitchEnv() {
   return (
     <>
       {window.location.href ===

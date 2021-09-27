@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useFirestoreContext } from '../components/Firestore/Firestore'
+import { useFirestoreContext } from 'contexts'
 
 export function useDeliveryData(filter) {
   const { deliveries } = useFirestoreContext()

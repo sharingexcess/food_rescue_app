@@ -1,12 +1,15 @@
-import React, { memo } from 'react'
+import React from 'react'
+import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../contexts/Auth/Auth'
+import { useAuth } from 'contexts'
 import UserIcon from '../../assets/user.svg'
 import { ExternalLink } from '../../helpers/components'
 import { useUserData } from 'hooks'
 import { MOBILE_THRESHOLD } from '../../helpers/constants'
+import { Text } from '@sharingexcess/designsystem'
 
-function Menu({ isOpen, setIsOpen }) {
+export function Menu({ isOpen, setIsOpen }) {
+  const { pathname } = useLocation()
   // get current user state from AuthContext
   const { user, admin, handleLogout, handleLogin } = useAuth()
 
@@ -15,6 +18,26 @@ function Menu({ isOpen, setIsOpen }) {
 
   function closeMenu() {
     setIsOpen(false)
+  }
+
+  function isCurrentRoute(url) {
+    return pathname.includes(url)
+  }
+
+  function MenuLink({ url, label }) {
+    return (
+      <li onClick={() => setIsOpen(false)}>
+        <Link to={url}>
+          <Text
+            type="section-header"
+            classList={['Menu-link']}
+            color={isCurrentRoute(url) ? 'green' : 'white'}
+          >
+            {label}
+          </Text>
+        </Link>
+      </li>
+    )
   }
 
   function UserProfile() {
@@ -59,29 +82,19 @@ function Menu({ isOpen, setIsOpen }) {
       <UserProfile />
       <div id="MenuContent">
         <ul>
-          <li onClick={() => setIsOpen(false)}>
-            <Link to="/">Home</Link>
-          </li>
-          <li onClick={() => setIsOpen(false)}>
-            <Link to="/routes">Routes</Link>
-          </li>
-          <li onClick={() => setIsOpen(false)}>
-            <Link to="/history">History</Link>
-          </li>
-          <li onClick={() => setIsOpen(false)}>
-            <Link to="/profile">Profile</Link>
-          </li>
-          <li onClick={() => setIsOpen(false)}>
-            <Link to="/foodsafety">Safety</Link>
-          </li>
-
+          <MenuLink label="Routes" url="/routes" />
+          <MenuLink label="History" url="/history" />
+          <MenuLink label="Profile" url="/profile" />
+          <MenuLink label="Food Safety" url="/foodsafety" />
           <li
             onClick={() => {
               setIsOpen(false)
               handleLogout()
             }}
           >
-            Logout
+            <Text type="section-header" color="white">
+              Logout
+            </Text>
           </li>
         </ul>
       </div>
@@ -92,5 +105,3 @@ function Menu({ isOpen, setIsOpen }) {
     </aside>
   )
 }
-
-export memo(Menu)

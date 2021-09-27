@@ -1,6 +1,5 @@
 import React from 'react'
-import Header from '../Header/Header'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from 'contexts'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from '../../helpers/helpers'
 
@@ -15,7 +14,6 @@ export function Tutorial() {
 
   return (
     <main id="Tutorial">
-      <Header text="Tutorial" />
       <section id="start">
         <h3>1. Before You Start</h3>
         <ul>

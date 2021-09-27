@@ -1,9 +1,9 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { updateFieldSuggestions, formFields } from './utils'
 import { useLocationData, useOrganizationData } from 'hooks'
 import { Input } from 'components'
 
-function EditDelivery({ handleSubmit, title }) {
+export function EditDelivery({ handleSubmit, title }) {
   const organizations = useOrganizationData()
   const locations = useLocationData()
   const [formData, setFormData] = useState({
@@ -96,5 +96,3 @@ function EditDelivery({ handleSubmit, title }) {
     </div>
   )
 }
-
-export memo(EditDelivery)

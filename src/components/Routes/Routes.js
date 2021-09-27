@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
-import Loading from '../Loading/Loading'
-import { Input } from '../Input/Input'
+import { Input, Loading, RouteHeader } from 'components'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../../contexts/Auth/Auth'
+import { useAuth } from 'contexts'
 import {
   useLocationData,
   useDeliveryData,
@@ -14,8 +13,6 @@ import {
   usePickupData,
   useOrganizationData,
 } from 'hooks'
-import Header from '../Header/Header'
-import RouteHeader from '../RouteHeader/RouteHeader'
 
 export function Routes({ initial_filter }) {
   const { user, admin } = useAuth()
@@ -138,7 +135,6 @@ export function Routes({ initial_filter }) {
   }
   return (
     <main id="Routes">
-      <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
       <RouteHeader
         text={
           location.pathname === '/routes'

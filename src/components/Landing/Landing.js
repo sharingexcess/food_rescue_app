@@ -1,9 +1,7 @@
-import { memo } from 'react'
 import Map from '../../assets/map.png'
-import Header from '../Header/Header'
-import Menu from '../Menu/Menu'
+import { Header, Menu } from 'components'
 
-function Landing() {
+export function Landing() {
   return (
     <>
       <Header />
@@ -40,5 +38,3 @@ function Landing() {
     </>
   )
 }
-
-export memo(Landing)

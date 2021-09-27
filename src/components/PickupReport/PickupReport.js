@@ -2,16 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import Loading from '../Loading/Loading'
-import { Input } from '../Input/Input'
+import { Loading, Input } from 'components'
 import { setFirestoreData } from '../../helpers/helpers'
 import { usePickupData, useOrganizationData } from 'hooks'
-import { useAuth } from '../../contexts/Auth/Auth'
-import Header from '../Header/Header'
+import { useAuth } from 'contexts'
 import validator from 'validator'
 import { CalcModal } from '../../helpers/Calculator/Calculator'
 
-export function PickupReport({ customSubmitHandler, hideHeader }) {
+export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
   const { admin } = useAuth()
   const history = useHistory()
@@ -150,7 +148,6 @@ export function PickupReport({ customSubmitHandler, hideHeader }) {
   if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
-      {!hideHeader && <Header text="Rescue Report" />}
       <h3>{pickup_org.name}</h3>
       <h1 className="center">Input Category Weight in Pounds (lbs)</h1>
 

@@ -1,5 +1,5 @@
-import React, { memo, useEffect, useState } from 'react'
-import Loading from '../Loading/Loading'
+import React, { useEffect, useState } from 'react'
+import { Loading } from 'components'
 import { useParams } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
 import {
@@ -10,9 +10,8 @@ import {
   handleUserIcon,
 } from './utils'
 import { useUserData } from 'hooks'
-import Header from '../Header/Header'
 
-function User() {
+export function User() {
   // get the user id from the current url parameters
   const { id } = useParams()
   // get that users profile from the users collection in firestore
@@ -31,7 +30,6 @@ function User() {
   if (!profile) return <Loading text="Loading user" />
   return (
     <main id="User">
-      <Header text="Manage User" />
       <div>
         <img
           src={profileIconFullUrl || profile.icon || UserIcon}
@@ -50,5 +48,3 @@ function User() {
     // View Driver Document button currently has no functionality
   )
 }
-
-export memo(User)

@@ -9,7 +9,8 @@ import {
   usePickupData,
   useOrganizationData,
 } from 'hooks'
-import { Input, Loading, useAuth } from 'components'
+import { Input, Loading } from 'components'
+import { useAuth } from 'contexts'
 
 export function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
@@ -98,7 +99,6 @@ export function DeliveryReport() {
   if (!delivery) return <Loading text="Loading report" />
   return (
     <main id="DeliveryReport">
-      <Header text="Delivery Report" />
       <h3>{delivery_org.name}</h3>
       <h4>
         You're carrying <span>{weight}lbs.</span> of food.

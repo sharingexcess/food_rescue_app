@@ -1,15 +1,13 @@
-import React, { memo, useEffect, useState } from 'react'
-import Loading from '../Loading/Loading'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
 import { getImageFromStorage } from '../../helpers/helpers'
-import { Input } from '../Input/Input'
+import { Input, Loading } from 'components'
 import { useOrganizationData } from 'hooks'
-import Header from '../Header/Header'
 
 const org_icon_urls = {}
 
-function Organizations() {
+export function Organizations() {
   const organizations = useOrganizationData()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('donor')
@@ -40,7 +38,6 @@ function Organizations() {
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
-      <Header text="Network" />
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="donor">Donors</option>
@@ -102,5 +99,3 @@ function Organizations() {
     </main>
   )
 }
-
-export memo(Organizations)

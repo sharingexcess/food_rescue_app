@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import Header from '../Header/Header'
-import { Input } from '../Input/Input'
+import { Input } from 'components'
 import { formFields } from './utils'
 
 export function SubmitPastRoute() {
@@ -16,7 +15,6 @@ export function SubmitPastRoute() {
   return (
     <>
       <main id="EditRoute">
-        <Header text="Submit Past Route" />
         {selectedFormFields.map(field => (
           <Input
             key={field.id}

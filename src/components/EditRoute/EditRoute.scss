@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 #EditRoute {
   @include page;
 
@@ -285,7 +283,7 @@
     }
   }
 
-  .loading{
+  .loading {
     width: 100%;
     text-align: center;
     margin-top: 30%;

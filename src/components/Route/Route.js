@@ -6,7 +6,6 @@ import {
   updateGoogleCalendarEvent,
   generateStopId,
 } from '../../helpers/helpers'
-import Loading from '../Loading/Loading'
 import moment from 'moment'
 import UserIcon from '../../assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
@@ -28,8 +27,7 @@ import {
   ContactModal,
 } from './routeComponent'
 import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
-import { useAuth } from '../../contexts/Auth/Auth'
-import { Input } from '../Input/Input'
+import { useAuth } from 'contexts'
 import {
   useLocationData,
   useDeliveryData,
@@ -39,8 +37,7 @@ import {
   useOrganizationData,
 } from 'hooks'
 import firebase from 'firebase/app'
-import EditDelivery from '../EditDelivery/EditDelivery'
-import GoogleMap from '../GoogleMap/GoogleMap'
+import { GoogleMap, EditDelivery, Input, Loading } from 'components'
 
 export function Route() {
   const history = useHistory()

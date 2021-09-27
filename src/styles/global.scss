@@ -10,7 +10,8 @@
   z-index: 1;
 
   @include desktop {
-    padding-left: 364px;
+    padding-left: 314px;
+    padding-right: 32px;
     max-width: 1100px;
   }
 }
@@ -59,19 +60,19 @@
   box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.16);
 }
 
-@mixin hover {
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.32);
-    }
-  }
-  &:active {
-    transform: translate(1px, 1px);
-    box-shadow: 0 0px 2px 0 rgba(var(--shadow-rgb), 0.16);
-  }
-}
+// @mixin hover {
+//   transition: transform 0.16s ease, box-shadow 0.16s ease;
+//   @media (hover: hover) and (pointer: fine) {
+//     &:hover {
+//       transform: translate(-2px, -2px);
+//       box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.32);
+//     }
+//   }
+//   &:active {
+//     transform: translate(1px, 1px);
+//     box-shadow: 0 0px 2px 0 rgba(var(--shadow-rgb), 0.16);
+//   }
+// }
 
 * {
   box-sizing: border-box;

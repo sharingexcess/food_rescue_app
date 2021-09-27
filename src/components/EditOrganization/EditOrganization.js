@@ -136,7 +136,6 @@ export function EditOrganization() {
 
   return (
     <main id="EditOrganization">
-      <Header text={id ? 'Edit Network' : 'Create Network'} />
       <section>
         <img
           src={file ? URL.createObjectURL(file) : orgIconFullUrl || UserIcon}

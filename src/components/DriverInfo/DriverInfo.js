@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAuth } from '../Auth/Auth'
+import { useAuth } from 'contexts'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from '../../helpers/helpers'
 import { Link } from 'react-router-dom'

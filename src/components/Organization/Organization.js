@@ -1,7 +1,7 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import UserIcon from '../../assets/user.svg'
-import Loading from '../Loading/Loading'
+import { Loading } from 'components'
 import {
   handleOrgIcon,
   sortByPrimary,
@@ -12,9 +12,8 @@ import {
   OrganizationHours,
 } from './utils'
 import { useLocationData, useOrganizationData } from 'hooks'
-import Header from '../Header/Header'
 
-function Organization() {
+export function Organization() {
   // get org id from url parameters
   const { id } = useParams()
   // get org data using id from firestore data
@@ -71,7 +70,6 @@ function Organization() {
   if (!org) return <Loading text="Loading your organization" />
   return (
     <main id="Organization">
-      <Header text="Manage Network" />
       <div>
         <img src={orgIconFullUrl || UserIcon} id="org-icon" alt={org.name} />
         <div>
@@ -114,5 +112,3 @@ function Organization() {
     </main>
   )
 }
-
-export memo(Organization)

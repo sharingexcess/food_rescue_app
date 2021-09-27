@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 footer#Footer {
   @media (max-width: 600px) {
     @include card;
