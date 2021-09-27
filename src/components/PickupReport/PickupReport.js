@@ -3,18 +3,18 @@ import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import { Loading, Input } from 'components'
-import { setFirestoreData } from '../../helpers/helpers'
-import { usePickupData, useOrganizationData } from 'hooks'
-import { useAuth } from 'contexts'
+import { setFirestoreData } from 'helpers'
+import { useFirestore, useAuth } from 'hooks'
 import validator from 'validator'
-import { CalcModal } from '../../helpers/Calculator/Calculator'
+import { CalcModal } from '../Calculator/Calculator'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
   const { admin } = useAuth()
   const history = useHistory()
-  const pickup = usePickupData(pickup_id)
-  const pickup_org = useOrganizationData(pickup ? pickup.org_id : {}) || {}
+  const pickup = useFirestore('pickups', pickup_id)
+  const pickup_org =
+    useFirestore('organizations', pickup ? pickup.org_id : {}) || {}
   const [formData, setFormData] = useState({
     dairy: 0,
     bakery: 0,

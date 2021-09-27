@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Chart from 'react-apexcharts'
 import moment from 'moment'
-import {
-  useDeliveryData,
-  useRouteData,
-  useUserData,
-  usePickupData,
-  useOrganizationData,
-  useDirectDonationData,
-} from 'hooks'
 import {
   getDefaultRangeStart,
   getDefaultRangeEnd,
@@ -17,18 +9,28 @@ import {
   sortByRoutesforOrg,
 } from './utils'
 import { Input } from 'components'
+import { useFirestore } from 'hooks'
 
 export function Analytics() {
   const [tab, setTab] = useState('TotalAnalytics')
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [driverNameFilter, setDriverNameFilter] = useState('')
-  const orgsOriginal = useOrganizationData()
-  const deliveries = useDeliveryData(r => r.status === 9 && r.report)
-  const pickups = usePickupData(r => r.status === 9 && r.report)
-  const directDonationsOriginal = useDirectDonationData()
-  const driversOriginal = useUserData()
-  const routesOriginal = useRouteData(r => r.status === 9)
+  const orgsOriginal = useFirestore('organizations')
+  const deliveries = useFirestore(
+    'deliveries',
+    useCallback(r => r.status === 9 && r.report, [])
+  )
+  const pickups = useFirestore(
+    'pickups',
+    useCallback(r => r.status === 9 && r.report, [])
+  )
+  const directDonationsOriginal = useFirestore('direct_donations')
+  const driversOriginal = useFirestore('users')
+  const routesOriginal = useFirestore(
+    'routes',
+    useCallback(r => r.status === 9, [])
+  )
   const [drivers, setDrivers] = useState(driversOriginal)
   const [routes, setRoutes] = useState(routesOriginal)
   const [directDonations, setDirectDonations] = useState(routesOriginal)

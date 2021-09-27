@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from 'components'
 import { useParams } from 'react-router-dom'
-import UserIcon from '../../assets/user.svg'
+import UserIcon from 'assets/user.svg'
 import {
   UserPronouns,
   UserPhone,
@@ -9,13 +9,13 @@ import {
   UserAdminPermissions,
   handleUserIcon,
 } from './utils'
-import { useUserData } from 'hooks'
+import { useFirestore } from 'hooks'
 
 export function User() {
   // get the user id from the current url parameters
   const { id } = useParams()
   // get that users profile from the users collection in firestore
-  const profile = useUserData(id)
+  const profile = useFirestore('users', id)
   // profileIconFullUrl will be used to store the full path URL to the user's profile photo
   const [profileIconFullUrl, setProfileIconFullUrl] = useState()
   // isAdmin defines whether the user being viewed has admin permissions

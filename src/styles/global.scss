@@ -1,7 +1,7 @@
 /* use this file for all global app styles, should not be specific to components, pages, or views */
 
 @mixin page {
-  padding: 96px 16px 108px 16px;
+  padding: 120px 16px 108px 16px;
   width: 100%;
   max-width: 800px;
   min-height: 100vh;
@@ -60,26 +60,12 @@
   box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.16);
 }
 
-// @mixin hover {
-//   transition: transform 0.16s ease, box-shadow 0.16s ease;
-//   @media (hover: hover) and (pointer: fine) {
-//     &:hover {
-//       transform: translate(-2px, -2px);
-//       box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.32);
-//     }
-//   }
-//   &:active {
-//     transform: translate(1px, 1px);
-//     box-shadow: 0 0px 2px 0 rgba(var(--shadow-rgb), 0.16);
-//   }
-// }
-
 * {
   box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
+  background: var(--se-green-gradient);
   color: var(--text);
 }
 

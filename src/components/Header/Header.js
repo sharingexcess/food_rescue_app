@@ -1,39 +1,23 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from 'contexts'
+import { useAuth, useIsMobile, useScroll } from 'hooks'
 import { Menu } from 'components'
-import { MOBILE_THRESHOLD } from '../../helpers/constants'
-import { useIsMobile } from 'hooks'
-import { Text, Spacer, Logo } from '@sharingexcess/designsystem'
+import { MOBILE_THRESHOLD } from 'helpers'
+import { Text, Spacer, Logo, Button } from '@sharingexcess/designsystem'
+import { generateHeaderText } from './utils'
 
 export function Header() {
   const location = useLocation()
   const isMobile = useIsMobile()
+  const scroll = useScroll()
   const { user, handleLogin } = useAuth()
   const [menuOpen, setMenuOpen] = useState(window.innerWidth > MOBILE_THRESHOLD)
 
+  const scrolled = isMobile && scroll > 32
+
   const path_components = location.pathname.split('/').filter(i => i.length)
 
-  const page_title = path_components.length
-    ? path_components[path_components.length - 1].replace(/[^a-zA-Z ]/g, ' ')
-    : 'Home'
-
-  const back_title =
-    path_components.length > 1
-      ? path_components[path_components.length - 2].replace('admin', 'home')
-      : null
-
-  let back_url = `/${path_components
-    .slice(0, path_components.length - 1)
-    .join('/')}`
-
-  if (
-    ['admin', 'pickup', 'delivery', 'location'].includes(
-      back_url.slice(back_url.lastIndexOf('/') + 1, back_url.length)
-    )
-  ) {
-    back_url = back_url.substring(0, back_url.lastIndexOf('/'))
-  }
+  const { title, back_label, back_url } = generateHeaderText(path_components)
 
   function UserProfile() {
     return user ? (
@@ -52,23 +36,31 @@ export function Header() {
 
   return (
     <>
-      <header id="Header">
+      <header id="Header" className={scrolled ? 'with-background' : null}>
         <Link to="/">
-          <Logo color="white" size={48} shadow />
+          <Logo color={scrolled ? 'green' : 'white'} size={48} shadow />
         </Link>
         <Spacer width={12} />
         <div id="Header-location">
           <Text
             id="Header-page-title"
             type="section-header"
-            color="white"
+            color={scrolled ? 'black' : 'white'}
             wrap={false}
+            shadow
           >
-            {page_title}
+            {title}
           </Text>
-          {path_components.length > 1 ? (
+          {path_components.length > 0 ? (
             <Link to={back_url}>
-              <i className="fa fa-arrow-left" /> back to {back_title}
+              <Button
+                type="tertiary"
+                size="small"
+                color={scrolled ? 'black' : 'white'}
+                id="Header-back-link"
+              >
+                &lt; back to {back_label}
+              </Button>
             </Link>
           ) : null}
         </div>

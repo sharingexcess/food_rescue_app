@@ -10,7 +10,8 @@
     ],
     "react-hooks/rules-of-hooks": "warn",
     "no-var": "warn",
-    "prefer-const": "warn"
+    "prefer-const": "warn",
+    "no-duplicate-imports": "error"
   },
   "extends": [
     "react-app",

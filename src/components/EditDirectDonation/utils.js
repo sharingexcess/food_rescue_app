@@ -1,4 +1,4 @@
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import { getImageFromStorage, isValidURL } from 'helpers'
 import { v4 as generateUUID } from 'uuid'
 
 export function handleOrgIcon(icon, callback) {

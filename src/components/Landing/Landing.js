@@ -1,4 +1,4 @@
-import Map from '../../assets/map.png'
+import Map from 'assets/map.png'
 import { Header, Menu } from 'components'
 
 export function Landing() {

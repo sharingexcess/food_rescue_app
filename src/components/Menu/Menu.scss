@@ -4,6 +4,7 @@
   top: 0;
   left: 0;
   width: 250px;
+  border: 0;
   height: 100vh;
   padding: 16px;
   overflow-x: hidden;
@@ -22,6 +23,7 @@
     left: 32px;
     height: calc(100vh - 144px);
     border-radius: 8px;
+    box-shadow: var(--se-shadow-large);
   }
 
   @include mobile {
@@ -29,16 +31,10 @@
     right: 0;
     &.open {
       transform: translateX(0px);
+      box-shadow: var(--se-shadow-large);
     }
     &.closed {
       transform: translateX(300px);
-    }
-  }
-
-  .Menu-link {
-    transition: color 0.1s ease;
-    @include hover {
-      color: var(--se-blue-primary);
     }
   }
 
@@ -134,17 +130,11 @@
       color: var(--blue);
     }
     ul {
-      li {
-        font-size: 24px;
-        font-weight: 600;
-        transition: color 0.16s ease;
-        padding-bottom: 32px;
-        color: var(--text);
-        @media (hover: hover) and (pointer: fine) {
-          &:hover {
-            cursor: pointer;
-            color: var(--blue);
-          }
+      .Menu-link {
+        transition: color 0.1s ease;
+        cursor: pointer;
+        @include hover {
+          color: var(--se-blue-primary);
         }
       }
     }

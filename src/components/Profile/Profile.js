@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from 'contexts'
+import { useAuth, useFirestore } from 'hooks'
 import { Link } from 'react-router-dom'
 import firebase from 'firebase/app'
 import { Input, Loading } from 'components'
-import { useUserData } from 'hooks'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 
 export function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuth()
-  const profile = useUserData(user ? user.uid : null)
+  const profile = useFirestore('users', user ? user.uid : null)
   const [formData, setFormData] = useState({
     name: '',
     phone: '',

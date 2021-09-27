@@ -5,11 +5,12 @@ import {
   setFirestoreData,
   updateGoogleCalendarEvent,
   generateStopId,
-} from '../../helpers/helpers'
+  CLOUD_FUNCTION_URLS,
+} from 'helpers'
 import moment from 'moment'
-import UserIcon from '../../assets/user.svg'
+import UserIcon from 'assets/user.svg'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
-import Ellipsis, { ExternalLink } from '../../helpers/components'
+import { ExternalLink } from '@sharingexcess/designsystem'
 import {
   generateDirectionsLink,
   allFoodDelivered,
@@ -26,29 +27,20 @@ import {
   WarningModal,
   ContactModal,
 } from './routeComponent'
-import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
-import { useAuth } from 'contexts'
-import {
-  useLocationData,
-  useDeliveryData,
-  useRouteData,
-  useUserData,
-  usePickupData,
-  useOrganizationData,
-} from 'hooks'
 import firebase from 'firebase/app'
 import { GoogleMap, EditDelivery, Input, Loading } from 'components'
+import { useFirestore, useAuth } from 'hooks'
 
 export function Route() {
   const history = useHistory()
   const { route_id } = useParams()
   const { user, admin } = useAuth()
-  const route = useRouteData(route_id)
-  const drivers = useUserData()
-  const pickups = usePickupData()
-  const deliveries = useDeliveryData()
-  const organizations = useOrganizationData()
-  const locations = useLocationData()
+  const route = useFirestore('routes', route_id)
+  const drivers = useFirestore('users')
+  const pickups = useFirestore('pickups')
+  const deliveries = useFirestore('deliveries')
+  const organizations = useFirestore('organizations')
+  const locations = useFirestore('locations')
   const location = useLocation()
   const [warningModal, setWarningModal] = useState(false)
   const [contactModal, setContactModal] = useState(false)
@@ -502,17 +494,6 @@ export function Route() {
         cancel stop
       </button>
     )
-  }
-
-  function generateStatusHeader() {
-    if (!route || route.status === null || route.status === undefined) {
-      return (
-        <>
-          Loading route
-          <Ellipsis />
-        </>
-      )
-    } else return `Route ${ROUTE_STATUSES[route.status].replace('_', ' ')}`
   }
 
   function BackupDelivery() {

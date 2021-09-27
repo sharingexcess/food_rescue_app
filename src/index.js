@@ -33,7 +33,8 @@ import {
   Analytics,
   SwitchEnv,
 } from 'components'
-import { Firestore, Auth, useAuth } from 'contexts'
+import { Firestore, Auth } from 'contexts'
+import { useAuth } from 'hooks'
 import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
 import './styles/index.scss'
 
@@ -46,29 +47,29 @@ Sentry.init({
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
-function App() {
-  function DriverRoute({ children, exact, path }) {
-    const { permission } = useAuth()
-    return permission ? (
-      <PublicRoute exact={exact} path={path}>
-        {children}
-      </PublicRoute>
-    ) : (
-      <Error message="Only registered users have permission to view this page." />
-    )
-  }
+function DriverRoute({ children, exact, path }) {
+  const { permission } = useAuth()
+  return permission ? (
+    <PublicRoute exact={exact} path={path}>
+      {children}
+    </PublicRoute>
+  ) : (
+    <Error message="Only registered users have permission to view this page." />
+  )
+}
 
-  function AdminRoute({ children, exact, path }) {
-    const { admin } = useAuth()
-    return admin ? (
-      <PublicRoute exact={exact} path={path}>
-        {children}
-      </PublicRoute>
-    ) : (
-      <Error message="Only admins have permission to view this page." />
-    )
-  }
+function AdminRoute({ children, exact, path }) {
+  const { admin } = useAuth()
+  return admin ? (
+    <PublicRoute exact={exact} path={path}>
+      {children}
+    </PublicRoute>
+  ) : (
+    <Error message="Only admins have permission to view this page." />
+  )
+}
 
+function RescueAppRoutes() {
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
       <BrowserRouter>
@@ -93,7 +94,7 @@ function App() {
               <PublicRoute exact path="/contact">
                 <ContactUs />
               </PublicRoute>
-              <PublicRoute exact path="/foodsafety">
+              <PublicRoute exact path="/food-safety">
                 <FoodSafety />
               </PublicRoute>
               <PublicRoute exact path="/liability">
@@ -204,4 +205,4 @@ function App() {
 
 // this function call will render our React app into the DOM inside <div id='root'>
 // you can find that div in public/index.html
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<RescueAppRoutes />, document.getElementById('root'))

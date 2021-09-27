@@ -1,6 +1,6 @@
 import React from 'react'
-import Logo from '../../assets/logo.svg'
-import Ellipsis from '../../helpers/components'
+import Logo from 'assets/logo.svg'
+import { Ellipsis } from 'components'
 
 export function Loading({ text = 'Loading', relative = false }) {
   return (

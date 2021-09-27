@@ -1,7 +1,7 @@
 import React from 'react'
-import { useAuth } from 'contexts'
+import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
-import { setFirestoreData } from '../../helpers/helpers'
+import { setFirestoreData } from 'helpers'
 import { Link } from 'react-router-dom'
 
 export function DriverInfo() {

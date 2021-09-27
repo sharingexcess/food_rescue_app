@@ -1,23 +1,6 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
 
-export function ExternalLink({ url, children }) {
-  return (
-    <a target="_blank" rel="noreferrer" href={url}>
-      {children}
-    </a>
-  )
-}
-
-export function GoBack({ url }) {
-  return (
-    <Link to={url} className="back">
-      {'< '}back
-    </Link>
-  )
-}
-
-export default function Ellipsis({ style }) {
+export const Ellipsis = ({ style }) => {
   const [text, setText] = useState('.')
 
   useEffect(() => {

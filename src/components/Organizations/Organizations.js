@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import UserIcon from '../../assets/user.svg'
-import { getImageFromStorage } from '../../helpers/helpers'
+import UserIcon from 'assets/user.svg'
+import { getImageFromStorage } from 'helpers'
 import { Input, Loading } from 'components'
-import { useOrganizationData } from 'hooks'
+import { useFirestore } from 'hooks'
 
 const org_icon_urls = {}
 
 export function Organizations() {
-  const organizations = useOrganizationData()
+  const organizations = useFirestore('organizations')
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('donor')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function

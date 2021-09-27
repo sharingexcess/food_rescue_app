@@ -1,6 +1,6 @@
-import { createContext, useContext } from 'react'
+import { createContext } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 
 const FirestoreContext = createContext()
 FirestoreContext.displayName = 'Firestore'
@@ -34,7 +34,4 @@ function Firestore({ children }) {
     </FirestoreContext.Provider>
   )
 }
-
-const useFirestoreContext = () => useContext(FirestoreContext) || {}
-
-export { Firestore, useFirestoreContext }
+export { Firestore, FirestoreContext }

@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { getFirestoreData, setFirestoreData } from '../../helpers/helpers'
+import { getFirestoreData, setFirestoreData } from 'helpers'
 
 export async function getAuthenticatedUser() {
   const provider = new firebase.auth.GoogleAuthProvider()

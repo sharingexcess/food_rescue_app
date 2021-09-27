@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import UserIcon from '../../assets/user.svg'
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import UserIcon from 'assets/user.svg'
+import { getImageFromStorage, isValidURL } from 'helpers'
 import { Input, Loading } from 'components'
-import { useUserData } from 'hooks'
+import { useFirestore } from 'hooks'
 
 const user_icon_urls = {}
 
 export function Users() {
-  const users = useUserData()
+  const users = useFirestore('users')
   const [search, setSearch] = useState('')
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 

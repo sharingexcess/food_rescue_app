@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import UserIcon from '../../assets/user.svg'
+import UserIcon from 'assets/user.svg'
 import { Loading } from 'components'
 import {
   handleOrgIcon,
@@ -11,16 +11,17 @@ import {
   LocationPhone,
   OrganizationHours,
 } from './utils'
-import { useLocationData, useOrganizationData } from 'hooks'
+import { useFirestore } from 'hooks'
 
 export function Organization() {
   // get org id from url parameters
   const { id } = useParams()
   // get org data using id from firestore data
-  const org = useOrganizationData(id) || {}
+  const org = useFirestore('organizations', id) || {}
   // get org's locations from firestore data
   const locations =
-    useLocationData(
+    useFirestore(
+      'locations',
       i => i.org_id === id && (!i.is_deleted || i.is_deleted === false)
     ) || []
   // orgIconFullUrl defines the URL we build based on the path stored in org.icon

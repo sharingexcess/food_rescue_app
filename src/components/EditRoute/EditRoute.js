@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import firebase from 'firebase/app'
-import Ellipsis from '../../helpers/components'
-import { Link, useParams } from 'react-router-dom'
-import { useHistory } from 'react-router-dom'
+import { Link, useParams, useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
   formFields,
@@ -14,24 +12,24 @@ import {
   getExistingRouteData,
   getTimeConflictInfo,
 } from './utils'
-import UserIcon from '../../assets/user.svg'
+import UserIcon from 'assets/user.svg'
 import {
   generateStopId,
   getCollection,
   setFirestoreData,
   updateGoogleCalendarEvent,
-} from '../../helpers/helpers'
+} from 'helpers'
 import moment from 'moment'
-import { EditDelivery, EditPickup, Input } from 'components'
-import { useRouteData, useUserData } from 'hooks'
+import { EditDelivery, EditPickup, Input, Ellipsis } from 'components'
+import { useFirestore } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
 import { OrganizationHours } from '../Organization/utils'
 
 export function EditRoute() {
   const history = useHistory()
-  const drivers = useUserData()
+  const drivers = useFirestore('users')
   const { route_id } = useParams()
-  const routes = useRouteData()
+  const routes = useFirestore('routes')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null

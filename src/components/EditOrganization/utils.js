@@ -1,4 +1,4 @@
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import { getImageFromStorage, isValidURL } from 'helpers'
 
 export function handleOrgIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {

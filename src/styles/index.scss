@@ -30,8 +30,8 @@ body {
   --green-rgb: 78, 165, 40;
   --yellow: rgb(253, 205, 102);
   --yellow-rgb: 253, 205, 102;
-  --blue: rgb(105, 168, 250);
-  --blue-rgb: 105, 168, 250;
+  --blue: rgb(78, 108, 231);
+  --blue-rgb: 78, 108, 231;
   --red: rgb(231, 111, 90);
   --red-rgb: 231, 111, 90;
 
@@ -46,20 +46,7 @@ body {
   --white-rgb: 255, 255, 255;
 }
 
-body.dark-theme {
-  --strong: rgb(78, 165, 40);
-  --strong-rgb: 57, 143, 104;
-  --background: rgb(28, 33, 41);
-  --background-rgb: 28, 33, 41;
-  --foreground: rgb(44, 52, 65);
-  --foreground-rgb: 49, 49, 49;
-  --shadow: rgb(0, 0, 0);
-  --shadow-rgb: 0, 0, 0;
-  --text: rgb(255, 255, 255);
-  --text-rgb: 255, 255, 255;
-}
-
-body.light-theme {
+body {
   --strong: rgb(78, 165, 40);
   --strong-rgb: 57, 143, 104;
   --background: rgb(235, 229, 229);
@@ -72,6 +59,6 @@ body.light-theme {
   --text-rgb: 18, 18, 18;
 }
 
-body.light-theme ::-webkit-calendar-picker-indicator {
+::-webkit-calendar-picker-indicator {
   filter: invert(0) !important;
 }

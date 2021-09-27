@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { updateFieldSuggestions, formFields } from './utils'
-import { useLocationData, useOrganizationData } from 'hooks'
+import { useFirestore } from 'hooks'
 import { Input } from 'components'
 
 export function EditDelivery({ handleSubmit, title }) {
-  const organizations = useOrganizationData()
-  const locations = useLocationData()
+  const organizations = useFirestore('organizations')
+  const locations = useFirestore('locations')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null

@@ -1,21 +1,6 @@
 #Routes {
   @include page;
 
-  // h1 {
-  //   font-size: 24px;
-  //   width: 100%;
-  //   display: flex;
-  //   justify-content: center;
-  //   align-items: flex-end;
-  //   button {
-  //     margin-left: auto;
-  //   }
-  // }
-
-  a {
-    width: 100%;
-  }
-
   .no-routes {
     width: 100%;
     padding: 64px 16px;
@@ -29,6 +14,10 @@
       font-size: 24px;
       margin-bottom: 16px;
     }
+  }
+
+  a {
+    width: 100%;
   }
 
   #Filters {
@@ -57,45 +46,43 @@
   }
 
   .Route {
-    @include card;
-    flex-direction: row;
+    display: flex;
+    flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    margin: 8px 0;
 
-    &.complete {
-      opacity: 0.5;
+    .Routes-route-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+
+      div {
+        display: flex;
+        flex-direction: column;
+        .se-text.small {
+          line-height: 1.2;
+        }
+      }
+
+      img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        flex-shrink: 0;
+        padding: 2px;
+        background: var(--white);
+        border-radius: 50%;
+        margin-right: 12px;
+      }
     }
 
-    h5 {
-      margin-bottom: 12px;
-    }
-
-    p {
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    h6 {
-      margin-top: 8px;
-      font-weight: 600;
-    }
-
-    .pickups {
-      color: var(--primary);
-    }
+    .pickups,
     .deliveries {
-      color: var(--red);
-    }
-
-    img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-      flex-shrink: 0;
-      padding: 2px;
-      background: var(--white);
-      border-radius: 50%;
-      margin-right: 16px;
+      width: 100%;
+      padding-left: 1.5em;
+      text-indent: -1.5em;
+      white-space: pre-line;
     }
 
     #StatusIndicator {

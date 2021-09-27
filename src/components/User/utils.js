@@ -1,11 +1,11 @@
-import { ExternalLink } from '../../helpers/components'
+import { ExternalLink } from '@sharingexcess/designsystem'
 import {
   createServerTimestamp,
   getImageFromStorage,
   isValidURL,
   setFirestoreData,
-} from '../../helpers/helpers'
-import { useAuth } from '../../contexts/Auth/Auth'
+} from 'helpers'
+import { useAuth } from 'hooks'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useEffect, useState } from 'react'
 

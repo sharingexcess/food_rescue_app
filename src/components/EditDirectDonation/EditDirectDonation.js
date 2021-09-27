@@ -2,13 +2,12 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import 'firebase/firestore'
 import 'firebase/storage'
 import moment from 'moment'
-import { generateStopId, setFirestoreData } from '../../helpers/helpers'
+import { generateStopId, setFirestoreData } from 'helpers'
 import { generateDirectDonationId } from './utils'
 import { Input, EditDelivery, PickupReport, EditPickup } from 'components'
-import { useAuth } from 'contexts'
+import { useAuth } from 'hooks'
 
 export function EditDirectDonation() {
   const { user } = useAuth()

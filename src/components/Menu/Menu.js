@@ -1,12 +1,10 @@
 import React from 'react'
 import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
-import { useAuth } from 'contexts'
-import UserIcon from '../../assets/user.svg'
-import { ExternalLink } from '../../helpers/components'
-import { useUserData } from 'hooks'
-import { MOBILE_THRESHOLD } from '../../helpers/constants'
-import { Text } from '@sharingexcess/designsystem'
+import { useAuth, useFirestore } from 'hooks'
+import UserIcon from 'assets/user.svg'
+import { MOBILE_THRESHOLD } from 'helpers'
+import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
 
 export function Menu({ isOpen, setIsOpen }) {
   const { pathname } = useLocation()
@@ -14,7 +12,7 @@ export function Menu({ isOpen, setIsOpen }) {
   const { user, admin, handleLogout, handleLogin } = useAuth()
 
   // get public user profile state
-  const profile = useUserData(user ? user.uid : {})
+  const profile = useFirestore('users', user ? user.uid : {})
 
   function closeMenu() {
     setIsOpen(false)
@@ -26,17 +24,20 @@ export function Menu({ isOpen, setIsOpen }) {
 
   function MenuLink({ url, label }) {
     return (
-      <li onClick={() => setIsOpen(false)}>
-        <Link to={url}>
-          <Text
-            type="section-header"
-            classList={['Menu-link']}
-            color={isCurrentRoute(url) ? 'green' : 'white'}
-          >
-            {label}
-          </Text>
-        </Link>
-      </li>
+      <>
+        <li onClick={() => setIsOpen(false)}>
+          <Link to={url}>
+            <Text
+              type="subheader"
+              classList={['Menu-link']}
+              color={isCurrentRoute(url) ? 'green' : 'black'}
+            >
+              {label}
+            </Text>
+          </Link>
+        </li>
+        <Spacer height={16} />
+      </>
     )
   }
 
@@ -85,14 +86,14 @@ export function Menu({ isOpen, setIsOpen }) {
           <MenuLink label="Routes" url="/routes" />
           <MenuLink label="History" url="/history" />
           <MenuLink label="Profile" url="/profile" />
-          <MenuLink label="Food Safety" url="/foodsafety" />
+          <MenuLink label="Food Safety" url="/food-safety" />
           <li
             onClick={() => {
               setIsOpen(false)
               handleLogout()
             }}
           >
-            <Text type="section-header" color="white">
+            <Text type="subheader" color="black" classList={['Menu-link']}>
               Logout
             </Text>
           </li>

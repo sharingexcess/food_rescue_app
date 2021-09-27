@@ -1,5 +1,5 @@
-import { ExternalLink } from '../../helpers/components'
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
+import { ExternalLink } from '@sharingexcess/designsystem'
+import { getImageFromStorage, isValidURL } from 'helpers'
 import moment from 'moment'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 

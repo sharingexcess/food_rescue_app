@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import Logo from '../../assets/logo.svg'
+import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHistory } from 'react-router-dom'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
 import { Loading } from 'components'
 
@@ -86,13 +86,4 @@ function Auth({ children }) {
   )
 }
 
-// useAuth let's child component access the AuthContext more simply and cleanly
-// and ensures that we can set safe defaults
-const useAuth = () =>
-  useContext(AuthContext) || {
-    user: null,
-    admin: false,
-    handleLogout: () => null,
-  }
-
-export { Auth, useAuth }
+export { Auth, AuthContext }

@@ -9,14 +9,16 @@ header#Header {
   align-items: center;
   animation: fade-in 0.32s ease forwards;
   z-index: 20;
-  background: linear-gradient(
-    to bottom,
-    var(--background),
-    rgba(var(--background-rgb), 0)
-  );
+  transition: all 0.2s ease;
 
   @include desktop {
     padding: 32px;
+  }
+
+  &.with-background {
+    background: var(--se-white);
+    box-shadow: var(--se-shadow-large);
+    padding: 12px 16px;
   }
 
   #UserProfile {
@@ -42,9 +44,9 @@ header#Header {
       text-transform: capitalize;
     }
 
-    a {
-      margin-top: 2px;
-      color: var(--blue);
+    #Header-back-link {
+      text-decoration: underline;
+      margin: 0;
     }
   }
 

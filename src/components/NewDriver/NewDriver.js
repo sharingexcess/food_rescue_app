@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from 'contexts'
+import { useAuth } from 'hooks'
 import { Menu, Header } from 'components'
 
 export function NewDriver() {
@@ -24,7 +24,7 @@ export function NewDriver() {
     },
     {
       name: 'Food Safety Training',
-      page: '/foodsafety',
+      page: '/food-safety',
       completed: user.completed_food_safety,
     },
     {

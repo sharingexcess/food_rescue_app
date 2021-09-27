@@ -3,9 +3,9 @@ import { useHistory, useParams } from 'react-router-dom'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import 'firebase/firestore'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 import { initializeFormData, handleDeleteLocation } from './utils'
-import { useLocationData, useOrganizationData } from 'hooks'
+import { useFirestore } from 'hooks'
 import {
   Input,
   GoogleAutoComplete,
@@ -17,8 +17,8 @@ import {
 export function EditLocation() {
   const { id, loc_id } = useParams()
   const history = useHistory()
-  const organization = useOrganizationData(id)
-  const location = useLocationData(loc_id)
+  const organization = useFirestore('organizations', id)
+  const location = useFirestore('locations', loc_id)
   const [formData, setFormData] = useState({
     name: '',
     address1: '',

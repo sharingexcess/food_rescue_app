@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import { v4 as generateUniqueId } from 'uuid'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 
 export function createPickup(event, formData, history) {
   event.preventDefault()

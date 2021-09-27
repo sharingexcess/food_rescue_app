@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ExternalLink } from '../../helpers/components'
+import { ExternalLink } from '@sharingexcess/designsystem'
 import { generateDirectionsLink } from './utils'
 
 // Instruction to finish route for driver after they filled all the reports

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { setFirestoreData } from '../../helpers/helpers'
-import { useAuth } from 'contexts'
+import { setFirestoreData } from 'helpers'
+import { useAuth } from 'hooks'
 
 export function FoodSafety() {
   const history = useHistory()

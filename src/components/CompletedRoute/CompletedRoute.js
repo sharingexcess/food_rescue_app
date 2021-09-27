@@ -1,11 +1,15 @@
+import React, { useCallback } from 'react'
 import { Link, Redirect, useParams } from 'react-router-dom'
-import { useDeliveryData, useRouteData } from 'hooks'
+import { useFirestore } from 'hooks'
 import { Loading } from 'components'
 
 export function CompletedRoute() {
   const { route_id } = useParams()
-  const route = useRouteData(route_id)
-  const deliveries = useDeliveryData(d => d.route_id === route_id)
+  const route = useFirestore('routes', route_id)
+  const deliveries = useFirestore(
+    'deliveries',
+    useCallback(d => d.route_id === route_id, [route_id])
+  )
 
   function calculateWeight() {
     return deliveries

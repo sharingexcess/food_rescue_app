@@ -1,6 +1,6 @@
 import React from 'react'
 import 'firebase/firestore'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 import { Link, useHistory } from 'react-router-dom'
 
 export function DeleteLocationModal({

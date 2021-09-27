@@ -2,25 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import { setFirestoreData } from '../../helpers/helpers'
-import {
-  useDeliveryData,
-  useRouteData,
-  usePickupData,
-  useOrganizationData,
-} from 'hooks'
+import { setFirestoreData } from 'helpers'
 import { Input, Loading } from 'components'
-import { useAuth } from 'contexts'
+import { useAuth, useFirestore } from 'hooks'
 
 export function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
   const history = useHistory()
-  const delivery = useDeliveryData(delivery_id)
-  const deliveries = useDeliveryData()
+  const delivery = useFirestore('deliveries', delivery_id)
+  const deliveries = useFirestore('deliveries')
   const delivery_org =
-    useOrganizationData(delivery ? delivery.org_id : {}) || {}
-  const pickups = usePickupData()
-  const routes = useRouteData()
+    useFirestore('organizations', delivery ? delivery.org_id : {}) || {}
+  const pickups = useFirestore('pickups')
+  const routes = useFirestore('routes')
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',
