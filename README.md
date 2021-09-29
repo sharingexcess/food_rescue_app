@@ -5,9 +5,10 @@
 ## Contributors
 
 Ryan McHenry
-Armando Parra
-Sam Nguyen
 Abdullah Dawud
+Sam Nguyen
+Armando Parra
+Luke Shin
 
 ## Tech Stack 🤖
 
