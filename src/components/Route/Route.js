@@ -6,6 +6,7 @@ import {
   updateGoogleCalendarEvent,
   generateStopId,
   CLOUD_FUNCTION_URLS,
+  createServerTimestamp,
 } from 'helpers'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
@@ -61,6 +62,23 @@ export function Route() {
       route.driver = drivers.find(d => d.id === route.driver_id)
     }
   }, [drivers, route])
+
+  useEffect(() => {
+    let completed_deliveries = 0
+    const route_deliveries = deliveries.filter(d => d.route_id === route_id)
+    if (route_deliveries.length) {
+      for (const d of route_deliveries) {
+        if (d.status === 9) completed_deliveries++
+      }
+      console.log(completed_deliveries, route_deliveries)
+      if (completed_deliveries === route_deliveries.length) {
+        setFirestoreData(['Routes', route_id], {
+          status: 9,
+          time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+        }).then(() => history.push(`/routes/${route_id}/completed`))
+      }
+    }
+  }, [deliveries, route_id]) // eslint-disable-line
 
   useEffect(() => {
     async function updateStops() {
@@ -427,24 +445,46 @@ export function Route() {
       : moment(new Date())
     beginTime = beginTime.add(30, 'minutes')
     const currentTime = moment(new Date())
+
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
         : 'history'
       history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
     }
+
+    function handleSubmitHomeDelivery() {
+      const pickup = pickups.find(p => p.route_id === route.id)
+      const weight = pickup.report.weight
+      const percent_of_total_dropped = weight / (route.stops.length - 1)
+      setFirestoreData(['Deliveries', stop.id], {
+        report: {
+          percent_of_total_dropped: parseInt(percent_of_total_dropped),
+          weight: isNaN(weight) ? 0 : weight,
+          created_at: createServerTimestamp(),
+          updated_at: createServerTimestamp(),
+        },
+        time_finished: createServerTimestamp(),
+        status: 9,
+      })
+        .then(() => history.push(`/routes/${route_id}`))
+        .catch(e => console.error('Error writing document: ', e))
+    }
+
+    function handleClick() {
+      const org = organizations.find(o => o.id === stop.org_id)
+      console.log(org)
+      debugger
+      if (org.org_type === 'home delivery') {
+        handleSubmitHomeDelivery()
+      } else handleOpenReport()
+    }
+
     if (route.status < 3) return null
     if (stop.status === 1) {
       return (
-        <button
-          className="update-stop"
-          onClick={
-            stop.type === 'delivery' && currentTime.isBefore(beginTime)
-              ? () => setWarningModal(true)
-              : () => handleOpenReport()
-          }
-        >
-          Complete {stop.type} report
+        <button className="update-stop" onClick={handleClick}>
+          Complete {stop.type}
         </button>
       )
     } else return null

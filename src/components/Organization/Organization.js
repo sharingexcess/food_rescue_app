@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
 import { Loading } from 'components'
@@ -22,7 +22,10 @@ export function Organization() {
   const locations =
     useFirestore(
       'locations',
-      i => i.org_id === id && (!i.is_deleted || i.is_deleted === false)
+      useCallback(
+        i => i.org_id === id && (!i.is_deleted || i.is_deleted === false),
+        [id]
+      )
     ) || []
   // orgIconFullUrl defines the URL we build based on the path stored in org.icon
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
