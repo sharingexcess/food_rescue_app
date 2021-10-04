@@ -1,5 +1,5 @@
 header#Header {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -13,12 +13,7 @@ header#Header {
 
   @include desktop {
     padding: 32px;
-  }
-
-  &.with-background {
-    background: var(--se-white);
-    box-shadow: var(--se-shadow-large);
-    padding: 12px 16px;
+    position: fixed;
   }
 
   #UserProfile {

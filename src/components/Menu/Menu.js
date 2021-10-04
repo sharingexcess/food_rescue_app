@@ -54,19 +54,21 @@ export function Menu({ isOpen, setIsOpen }) {
 
     return user ? (
       <div id="UserProfile">
-        <img
-          src={user.photoURL || UserIcon}
-          id="ProfileImg"
-          alt="User"
-          onClick={() => setIsOpen(true)}
-        />
-        <div>
-          <h2 id="UserName">
-            {profile && profile.name ? profile.name : user.displayName}
-          </h2>
-          <h3 id="UserEmail">{user.email}</h3>
-          <AdminIndicator />
-        </div>
+        <Link to="/profile">
+          <img
+            src={user.photoURL || UserIcon}
+            id="ProfileImg"
+            alt="User"
+            onClick={() => setIsOpen(true)}
+          />
+          <div>
+            <h2 id="UserName">
+              {profile && profile.name ? profile.name : user.displayName}
+            </h2>
+            <h3 id="UserEmail">{user.email}</h3>
+            <AdminIndicator />
+          </div>
+        </Link>
         {window.innerWidth > MOBILE_THRESHOLD ? null : (
           <i id="Close" className="fa fa-times" onClick={closeMenu} />
         )}
@@ -85,8 +87,22 @@ export function Menu({ isOpen, setIsOpen }) {
         <ul>
           <MenuLink label="Routes" url="/routes" />
           <MenuLink label="History" url="/history" />
-          <MenuLink label="Profile" url="/profile" />
-          <MenuLink label="Food Safety" url="/food-safety" />
+          {admin ? (
+            <>
+              <MenuLink label="New Route" url="/admin/create-route" />
+              <MenuLink
+                label="New Direct Donation"
+                url="/admin/create-direct-donation"
+              />
+              <MenuLink label="Organizations" url="/admin/organizations" />
+              <MenuLink label="Users" url="/admin/users" />
+            </>
+          ) : (
+            <>
+              <MenuLink label="Food Safety" url="/food-safety" />
+              <MenuLink label="Tutorial" url="/tutorial" />
+            </>
+          )}
           <li
             onClick={() => {
               setIsOpen(false)
@@ -100,8 +116,8 @@ export function Menu({ isOpen, setIsOpen }) {
         </ul>
       </div>
       <nav>
-        <ExternalLink url="/privacy">privacy policy</ExternalLink>
-        <ExternalLink url="/tos">terms of service</ExternalLink>
+        <ExternalLink to="/privacy">privacy policy</ExternalLink>
+        <ExternalLink to="/tos">terms of service</ExternalLink>
       </nav>
     </aside>
   )

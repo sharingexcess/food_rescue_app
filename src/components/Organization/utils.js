@@ -29,7 +29,7 @@ export function OrganizationPhone({ org }) {
     return (
       <p>
         <i className="fa fa-phone" />
-        <ExternalLink url={`tel:${org.default_contact_phone}`}>
+        <ExternalLink to={`tel:${org.default_contact_phone}`}>
           {formatPhoneNumberIntl(org.default_contact_phone)}
         </ExternalLink>
       </p>
@@ -62,7 +62,7 @@ export function OrganizationEmail({ org }) {
     return (
       <p>
         <i className="fa fa-envelope" />
-        <ExternalLink url={`mailto:${org.default_contact_email}`}>
+        <ExternalLink to={`mailto:${org.default_contact_email}`}>
           {org.default_contact_email}
         </ExternalLink>
       </p>

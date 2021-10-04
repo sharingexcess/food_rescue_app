@@ -1,35 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import {
   getCollection,
-  formatPhoneNumber,
   setFirestoreData,
   updateGoogleCalendarEvent,
   generateStopId,
   CLOUD_FUNCTION_URLS,
-  createServerTimestamp,
+  ROUTE_STATUSES,
 } from 'helpers'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
-import { ExternalLink } from '@sharingexcess/designsystem'
-import {
-  generateDirectionsLink,
-  allFoodDelivered,
-  getDeliveryWeight,
-  isNextIncompleteStop,
-  areAllStopsCompleted,
-} from './utils'
-import {
-  FinishRouteInstruction,
-  ChangeDriverModal,
-  StopNotes,
-  DirectionsButton,
-  StatusIndicator,
-  WarningModal,
-  ContactModal,
-} from './routeComponent'
+import { Link, useHistory, useParams } from 'react-router-dom'
+import { Button, Image, Text } from '@sharingexcess/designsystem'
+import { allFoodDelivered, areAllStopsCompleted } from './utils'
+import { ChangeDriverModal, ContactModal } from './routeComponent'
+import { Stop } from './Route.children'
 import firebase from 'firebase/app'
-import { GoogleMap, EditDelivery, Input, Loading } from 'components'
+import { EditDelivery, Input, Loading } from 'components'
 import { useFirestore, useAuth } from 'hooks'
 
 export function Route() {
@@ -42,8 +28,6 @@ export function Route() {
   const deliveries = useFirestore('deliveries')
   const organizations = useFirestore('organizations')
   const locations = useFirestore('locations')
-  const location = useLocation()
-  const [warningModal, setWarningModal] = useState(false)
   const [contactModal, setContactModal] = useState(false)
   const [stops, setStops] = useState([])
   const [willCancel, setWillCancel] = useState()
@@ -70,7 +54,6 @@ export function Route() {
       for (const d of route_deliveries) {
         if (d.status === 9) completed_deliveries++
       }
-      console.log(completed_deliveries, route_deliveries)
       if (completed_deliveries === route_deliveries.length) {
         setFirestoreData(['Routes', route_id], {
           status: 9,
@@ -98,48 +81,53 @@ export function Route() {
     route && route.stops && updateStops()
   }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line
 
-  function hasEditPermissions() {
-    return admin || user.uid === route.driver_id
+  async function handleAssign(driver) {
+    const event = await updateGoogleCalendarEvent({
+      ...route,
+      stops,
+      driver,
+      notes: null,
+    })
+    setFirestoreData(['Routes', route.id], {
+      driver_id: driver.id,
+      google_calendar_event_id: event.id,
+      notes: null,
+    })
+    for (const stop of route.stops) {
+      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+      setFirestoreData([collection, stop.id], {
+        driver_id: driver.id,
+      })
+    }
   }
 
   function Driver() {
-    function handleBegin() {
-      setFirestoreData(['Routes', route.id], {
-        status: 3,
-        time_started: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-    }
-    const deliveryWeight = getDeliveryWeight(deliveries, route)
     return (
-      <div id="Driver">
-        <img
+      <div id="Driver" type="secondary">
+        <Image
           src={route.driver ? route.driver.icon : UserIcon}
           alt={route.driver ? route.driver.name : 'No assigned driver'}
         />
         <div>
-          <h3>
+          <Text type="small-header" color="white" shadow>
+            {ROUTE_STATUSES[route.status].toUpperCase()} ROUTE
+          </Text>
+          <Text type="section-header" color="white" shadow>
             {route.driver ? route.driver.name : 'No assigned driver'}
-            {route.status === 9 && <span> - {deliveryWeight} lbs.</span>}
-          </h3>
-          <h4>{moment(route.time_start).format('dddd, MMMM D')}</h4>
-          <h5>
-            {moment(route.time_start).format('h:mma')} -{' '}
-            {moment(route.time_end).format('h:mma')}
-          </h5>
-          {route.notes ? <p>Notes: {route.notes}</p> : null}
+          </Text>
+          <Text type="small" color="white" shadow>
+            {moment(route.time_start).format('ddd, MMM D, h:mma')} (
+            {route.stops.length} total stops)
+          </Text>
+          {route.notes ? (
+            <Text type="small" color="white" shadow>
+              Notes: {route.notes}
+            </Text>
+          ) : null}
         </div>
-        {admin ? null : route.status === 1 &&
-          route.driver &&
-          route.driver_id === user.uid &&
-          canBeginRoute &&
-          !willAssign ? (
-          <div className="driver-buttons">
-            <button className="blue" onClick={handleBegin}>
-              begin route
-              {admin && route.driver_id !== user.uid ? ' as admin' : ''}
-            </button>
-          </div>
-        ) : null}
+        <Button id="Route-edit-button" type="secondary" color="white">
+          ···
+        </Button>
       </div>
     )
   }
@@ -216,28 +204,6 @@ export function Route() {
         setConfDriver(true)
       }
     }
-
-    async function handleAssign(driver) {
-      const event = await updateGoogleCalendarEvent({
-        ...route,
-        stops,
-        driver,
-        notes: null,
-      })
-      setFirestoreData(['Routes', route.id], {
-        driver_id: driver.id,
-        google_calendar_event_id: event.id,
-        notes: null,
-      })
-      for (const stop of route.stops) {
-        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-        setFirestoreData([collection, stop.id], {
-          driver_id: driver.id,
-        })
-      }
-    }
-
-    StatusButton.handleAssign = handleAssign
 
     if (
       willCancel ||
@@ -439,57 +405,6 @@ export function Route() {
     )
   }
 
-  function UpdateStop({ stop }) {
-    let beginTime = route.time_started
-      ? moment(route.time_started.toDate())
-      : moment(new Date())
-    beginTime = beginTime.add(30, 'minutes')
-    const currentTime = moment(new Date())
-
-    function handleOpenReport() {
-      const baseURL = location.pathname.includes('routes')
-        ? 'routes'
-        : 'history'
-      history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
-    }
-
-    function handleSubmitHomeDelivery() {
-      const pickup = pickups.find(p => p.route_id === route.id)
-      const weight = pickup.report.weight
-      const percent_of_total_dropped = weight / (route.stops.length - 1)
-      setFirestoreData(['Deliveries', stop.id], {
-        report: {
-          percent_of_total_dropped: parseInt(percent_of_total_dropped),
-          weight: isNaN(weight) ? 0 : weight,
-          created_at: createServerTimestamp(),
-          updated_at: createServerTimestamp(),
-        },
-        time_finished: createServerTimestamp(),
-        status: 9,
-      })
-        .then(() => history.push(`/routes/${route_id}`))
-        .catch(e => console.error('Error writing document: ', e))
-    }
-
-    function handleClick() {
-      const org = organizations.find(o => o.id === stop.org_id)
-      console.log(org)
-      debugger
-      if (org.org_type === 'home delivery') {
-        handleSubmitHomeDelivery()
-      } else handleOpenReport()
-    }
-
-    if (route.status < 3) return null
-    if (stop.status === 1) {
-      return (
-        <button className="update-stop" onClick={handleClick}>
-          Complete {stop.type}
-        </button>
-      )
-    } else return null
-  }
-
   function CancelStop({ stop }) {
     const [cancelStop, setCancelStop] = useState()
     const [cancelNotes, setCancelNotes] = useState('')
@@ -598,196 +513,19 @@ export function Route() {
     }
     return null
   }
+
   return (
     <main id="Route">
       {!route ? (
         <Loading />
       ) : (
         <>
-          {route.status === 3 &&
-            (areAllStopsCompleted(stops) ? (
-              allFoodDelivered(stops) ? (
-                <FinishRouteInstruction
-                  text={`Scroll down and click "finish route"`}
-                />
-              ) : (
-                <FinishRouteInstruction
-                  text={
-                    admin
-                      ? 'There is leftover food, please add another delivery to finish the route'
-                      : 'There is leftover food, please contact admin to add another delivery'
-                  }
-                />
-              )
-            ) : (
-              <FinishRouteInstruction text="Stops are not fully completed" />
-            ))}
-          {/* <Header text={generateStatusHeader(route)} /> */}
           <Driver />
           {stops.length ? (
             <>
               <section className="Stops">
                 {stops.map((s, i) => (
-                  <div
-                    className={`Stop ${s.type} ${
-                      isNextIncompleteStop(route, stops, i) ? 'active' : ''
-                    }${areAllStopsCompleted(stops) ? 'complete' : ''}`}
-                    key={i}
-                  >
-                    <StatusIndicator
-                      stop={s}
-                      location={location}
-                      route_id={route_id}
-                    />
-                    <h4>
-                      <i
-                        className={
-                          s.type === 'pickup'
-                            ? 'fa fa-arrow-up'
-                            : 'fa fa-arrow-down'
-                        }
-                      />
-                      {s.type}
-                    </h4>
-                    <h2>
-                      {s.org.name}
-                      {s.location.name && s.location.name !== s.org.name
-                        ? ` (${s.location.name})`
-                        : ''}
-                      {route.status === 9 && (
-                        <span> - {s.report?.weight} lbs.</span>
-                      )}
-                    </h2>
-                    {!s.location.is_deleted ? (
-                      <div>
-                        {s.location_id ? (
-                          <ExternalLink
-                            url={generateDirectionsLink(s.location)}
-                          >
-                            <p className="Directions">
-                              <i className="fa fa-map-marker" />
-                              {s.location.address1}
-                              {s.location.address2 &&
-                                ` - ${s.location.address2}`}
-                              <br />
-                              {s.location.city}, {s.location.state}{' '}
-                              {s.location.zip_code}
-                            </p>
-                          </ExternalLink>
-                        ) : (
-                          <p>Location deleted</p>
-                        )}
-                        {s.location.contact_phone ||
-                        s.org.default_contact_phone ? (
-                          <p>
-                            <i className="fa fa-phone" />
-                            <a
-                              href={`tel:${
-                                s.location.contact_phone ||
-                                s.org.default_contact_phone
-                              }`}
-                            >
-                              {formatPhoneNumber(
-                                s.location.contact_phone ||
-                                  s.org.default_contact_phone
-                              )}
-                            </a>
-                            {s.location.contact_name ||
-                            s.org.default_contact_name ? (
-                              <span>
-                                (Contact location manager:{' '}
-                                {s.location.contact_name ||
-                                  s.org.default_contact_name}
-                                )
-                              </span>
-                            ) : (
-                              ''
-                            )}
-                          </p>
-                        ) : null}
-                        {s.location.secondary_contact_phone ? (
-                          <p>
-                            <i className="fa fa-phone" />
-                            <a
-                              href={`tel:${s.location.secondary_contact_phone}`}
-                            >
-                              {formatPhoneNumber(s.location.contact_phone)}
-                            </a>
-                            <span>(Secondary)</span>
-                          </p>
-                        ) : null}
-                        {s.location.time_open ? (
-                          <p>
-                            <i className="fa fa-clock-o" />
-                            {moment(s.location.time_open, 'hh:mm').format(
-                              'LT'
-                            )}{' '}
-                            -{' '}
-                            {moment(s.location.time_close, 'hh:mm').format(
-                              'LT'
-                            )}
-                            {moment().isBetween(
-                              moment(s.location.time_open, 'hh:mm'),
-                              moment(s.location.time_close, 'hh:mm')
-                            ) ? (
-                              <span className="open">Open now</span>
-                            ) : (
-                              <span className="close">Closed now</span>
-                            )}
-                          </p>
-                        ) : null}
-                        {s.location.receive_start ? (
-                          <p>
-                            {s.org.org_type === 'recipient'
-                              ? 'Receive'
-                              : 'Pickup'}{' '}
-                            hours:{' '}
-                            {moment(s.location.receive_start, 'hh:mm').format(
-                              'LT'
-                            )}{' '}
-                            -{' '}
-                            {moment(s.location.receive_end, 'hh:mm').format(
-                              'LT'
-                            )}
-                          </p>
-                        ) : null}
-                      </div>
-                    ) : (
-                      <p>Location Deleted</p>
-                    )}
-                    <StopNotes stop={s} />
-                    {warningModal === true ? (
-                      <WarningModal
-                        stop={s}
-                        history={history}
-                        location={location}
-                        route_id={route_id}
-                        onShowModal={() => setWarningModal(false)}
-                      />
-                    ) : null}
-                    {hasEditPermissions() ? (
-                      <>
-                        {isNextIncompleteStop(route, stops, i) ? (
-                          <>
-                            {s.location.lat &&
-                            s.location.lng &&
-                            s.status === 1 ? (
-                              <GoogleMap
-                                address={s.location}
-                                style={{ height: 200, marginTop: 8 }}
-                                zoom={14}
-                              />
-                            ) : null}
-                            <DirectionsButton stop={s} route={route} />
-                            <UpdateStop stop={s} />
-                            {s.status < 9 && admin ? (
-                              <CancelStop stop={s} />
-                            ) : null}
-                          </>
-                        ) : null}
-                      </>
-                    ) : null}
-                  </div>
+                  <Stop stops={stops} s={s} i={i} key={i} />
                 ))}
               </section>
               {!admin && route.driver && (
@@ -821,7 +559,7 @@ export function Route() {
                   'Are you sure you want to re-assign this route to another driver?'
                 }
                 onConfirm={() => {
-                  StatusButton.handleAssign(otherDriver)
+                  handleAssign(otherDriver)
                   setConfDriver(false)
                 }}
                 onClose={() => setConfDriver(false)}

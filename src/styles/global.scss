@@ -69,62 +69,62 @@ body {
   color: var(--text);
 }
 
-button {
-  position: relative;
-  cursor: pointer;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-size: 16px;
-  border: none;
+// button {
+//   position: relative;
+//   cursor: pointer;
+//   font-family: 'Source Sans Pro', sans-serif;
+//   font-size: 16px;
+//   border: none;
 
-  img,
-  svg,
-  i {
-    display: inline;
-    height: 24px;
-    width: 24px;
-    object-fit: cover;
-    padding: 4px;
-    margin-right: 8px;
-    background: #fff;
-    border-radius: 4px;
-  }
+//   img,
+//   svg,
+//   i {
+//     display: inline;
+//     height: 24px;
+//     width: 24px;
+//     object-fit: cover;
+//     padding: 4px;
+//     margin-right: 8px;
+//     background: #fff;
+//     border-radius: 4px;
+//   }
 
-  &.secondary {
-    background: transparent;
-    padding: 0;
-    font-size: 14px;
-    color: var(--strong);
-    text-decoration: underline;
-    margin: 0;
-    font-weight: 600;
-  }
-  &:not(.secondary) {
-    font-size: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 12px 32px;
-    margin: 8px auto;
-    background: var(--primary);
-    border: none;
-    color: var(--white);
-    font-weight: 600;
-    border-radius: 8px;
-    @include shadow;
-    @include hover;
+//   &.secondary {
+//     background: transparent;
+//     padding: 0;
+//     font-size: 14px;
+//     color: var(--strong);
+//     text-decoration: underline;
+//     margin: 0;
+//     font-weight: 600;
+//   }
+//   &:not(.secondary) {
+//     font-size: 16px;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     padding: 12px 32px;
+//     margin: 8px auto;
+//     background: var(--primary);
+//     border: none;
+//     color: var(--white);
+//     font-weight: 600;
+//     border-radius: 8px;
+//     @include shadow;
+//     @include hover;
 
-    @media (max-width: var(--mobile)) {
-      width: 100%;
-      padding: 16px 0;
-      margin: 8px 0;
-    }
+//     @media (max-width: var(--mobile)) {
+//       width: 100%;
+//       padding: 16px 0;
+//       margin: 8px 0;
+//     }
 
-    &:active {
-      transform: translate(1px, 1px);
-      box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
-    }
-  }
-}
+//     &:active {
+//       transform: translate(1px, 1px);
+//       box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.16);
+//     }
+//   }
+// }
 
 h1,
 h2,

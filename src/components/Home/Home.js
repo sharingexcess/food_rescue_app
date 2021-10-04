@@ -10,11 +10,11 @@ export function Home() {
   const { user, admin, permission } = useAuth()
   const my_routes = useFirestore(
     'routes',
-    useCallback(r => r.driver_id === user.uid && r.status === 9, [])
+    useCallback(r => r.driver_id === user.uid && r.status === 9, []) // eslint-disable-line
   )
   const my_deliveries = useFirestore(
     'deliveries',
-    useCallback(d => d.driver_id === user.uid && d.status === 9, [])
+    useCallback(d => d.driver_id === user.uid && d.status === 9, []) // eslint-disable-line
   )
   const stats = generateDriverStats(my_routes, my_deliveries)
 

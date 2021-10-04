@@ -30,14 +30,16 @@ export function areAllStopsCompleted(stops) {
   return completed
 }
 
-export function isNextIncompleteStop(route, stops, index) {
-  if (
-    stops[index].status === 9 ||
-    stops[index].status === 0 ||
-    route.status < 3
-  )
-    return false
-  return true
+export function getNextIncompleteStopIndex(route, stops) {
+  let index
+  for (const [idx, j] of route.stops.entries()) {
+    const stop = stops.find(s => j.id === s.id)
+    if (![0, 9].includes(stop.status)) {
+      index = idx
+      break
+    }
+  }
+  return index
 }
 
 export function getDeliveryWeight(deliveries, route) {

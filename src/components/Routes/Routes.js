@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getImageFromStorage, isValidURL } from 'helpers'
-import { Input, Loading, RouteHeader } from 'components'
+import { Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
@@ -198,16 +198,6 @@ export function Routes({ initial_filter }) {
         </div>
       ) : (
         filterAndSortRoutes(routes).map(r => {
-          const r_pickups = pickups.filter(p => p.route_id === r.id)
-          const r_deliveries = deliveries.filter(de => de.route_id === r.id)
-          const r_starttime_array = r_pickups.map(p => p.time_finished)
-          const r_starttime = r_starttime_array[0]
-            ? r_starttime_array[0].toDate()
-            : 'Not found'
-          const r_endtime_array = r_deliveries.map(de => de.time_finished)
-          const r_endtime = r_endtime_array[r_endtime_array.length - 1]
-            ? r_endtime_array[r_endtime_array.length - 1].toDate()
-            : 'Not found'
           return (
             <Link
               to={

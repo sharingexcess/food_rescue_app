@@ -29,7 +29,7 @@ export function UserPhone({ profile }) {
     return (
       <p>
         <i className="fa fa-phone" />
-        <ExternalLink url={`tel:${profile.phone}`}>
+        <ExternalLink to={`tel:${profile.phone}`}>
           {formatPhoneNumberIntl(profile.phone)}
         </ExternalLink>
       </p>
@@ -47,7 +47,7 @@ export function UserEmail({ profile }) {
     return (
       <p>
         <i className="fa fa-envelope" />
-        <ExternalLink url={`mailto:${profile.email}`}>
+        <ExternalLink to={`mailto:${profile.email}`}>
           {profile.email}
         </ExternalLink>
       </p>

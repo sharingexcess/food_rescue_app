@@ -36,5 +36,20 @@ export const generateHeaderText = path_components => {
     back_label = 'route'
   }
 
+  if (path_components[1] === 'organizations' && path_components.length > 2) {
+    title = 'Organization'
+    back_label = 'organizations'
+  }
+
+  if (path_components[1] === 'organizations' && path_components.length > 3) {
+    title = 'Location'
+    back_label = 'organization'
+  }
+
+  if (path_components[1] === 'users' && path_components.length > 2) {
+    title = 'User'
+    back_label = 'users'
+  }
+
   return { title, back_label, back_url }
 }
