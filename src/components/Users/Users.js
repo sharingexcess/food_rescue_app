@@ -4,12 +4,16 @@ import UserIcon from 'assets/user.svg'
 import { getImageFromStorage, isValidURL } from 'helpers'
 import { Input, Loading } from 'components'
 import { useFirestore } from 'hooks'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 const user_icon_urls = {}
 
 export function Users() {
   const users = useFirestore('users')
   const [search, setSearch] = useState('')
+  const [showAdmin, setShowAdmin] = useState(true)
+  const [showDriver, setShowDriver] = useState(true)
+  const [showNoAccess, setShowNoAccess] = useState(false)
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
   useEffect(() => {
@@ -35,6 +39,49 @@ export function Users() {
     )
   }
 
+  const permissionFilters = [
+    {
+      checked: showAdmin,
+      onChange: () => setShowAdmin(!showAdmin),
+      label: 'Admin',
+    },
+    {
+      checked: showDriver,
+      onChange: () => setShowDriver(!showDriver),
+      label: 'Driver',
+    },
+    {
+      checked: showNoAccess,
+      onChange: () => setShowNoAccess(!showNoAccess),
+      label: 'NoAccess',
+    },
+  ]
+
+  function filterByPermissions(array) {
+    const filteredByAdmin = !showAdmin
+      ? array.filter(i => i.access_level !== 'admin')
+      : array
+    const filteredByDriver = !showDriver
+      ? filteredByAdmin.filter(i => i.access_level !== 'driver')
+      : filteredByAdmin
+    const filteredByNoAccess = !showNoAccess
+      ? filteredByDriver.filter(i => i.access_level !== 'none')
+      : filteredByDriver
+    return filteredByNoAccess
+  }
+
+  function PermissionFilter({ checked, onChange, label }) {
+    const id = `Users-permission-filters-${label}`
+    return (
+      <div className="Users-permission-filter">
+        <input id={id} type="checkbox" checked={checked} onChange={onChange} />
+        <Text type="paragraph" color="white">
+          {label}
+        </Text>
+      </div>
+    )
+  }
+
   return !users.length ? (
     <Loading text="Loading users" />
   ) : (
@@ -45,7 +92,21 @@ export function Users() {
         value={search}
         animation={false}
       />
-      {filterBySearch(users).map(user => (
+
+      <section id="Users-permission-filters">
+        {permissionFilters.map(i => (
+          <PermissionFilter
+            key={i.label}
+            checked={i.checked}
+            onChange={i.onChange}
+            label={i.label}
+          />
+        ))}
+      </section>
+
+      <Spacer height={16} />
+
+      {filterByPermissions(filterBySearch(users)).map(user => (
         <Link key={user.id} className="wrapper" to={`/admin/users/${user.id}`}>
           <section className="User">
             <img

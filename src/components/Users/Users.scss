@@ -13,6 +13,19 @@
     align-items: flex-end;
   }
 
+  #Users-permission-filters {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .Users-permission-filter {
+      display: flex;
+      align-items: center;
+      input {
+        margin-right: 4px;
+      }
+    }
+  }
+
   .access-level {
     position: absolute;
     top: 12px;
@@ -24,13 +37,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1px;
 
     &.fa-crown {
       background: var(--primary);
+      font-size: 10px;
     }
     &.fa-truck {
       background: var(--primary);
+      font-size: 10px;
     }
   }
 
