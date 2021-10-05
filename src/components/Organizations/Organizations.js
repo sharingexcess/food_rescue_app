@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
 import { getImageFromStorage } from 'helpers'
 import { Input, Loading } from 'components'
-import { useFirestore } from 'hooks'
+import { useFirestore, useIsMobile } from 'hooks'
+import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 const org_icon_urls = {}
 
 export function Organizations() {
   const organizations = useFirestore('organizations')
+  const isMobile = useIsMobile()
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('donor')
+  const [filter, setFilter] = useState()
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
 
   useEffect(() => {
@@ -32,14 +34,21 @@ export function Organizations() {
     const filtered_by_search = array.filter(i =>
       i.name.toLowerCase().includes(search.toLowerCase())
     )
-    return filtered_by_search.filter(i => i.org_type === filter)
+    return filtered_by_search.filter(i =>
+      filter ? i.org_type === filter : true
+    )
   }
 
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
       <section id="Filters">
+        <Text type="section-header" color="white" shadow>
+          {filter || 'all'} Organizations
+        </Text>
+        {isMobile && <br />}
         <select value={filter} onChange={e => setFilter(e.target.value)}>
+          <option value="">Filter by type...</option>
           <option value="donor">Donors</option>
           <option value="recipient">Recipients</option>
           <option value="community fridge">Community Fridges</option>
@@ -47,7 +56,9 @@ export function Organizations() {
           <option value="home delivery">Home Deliveries</option>
         </select>
         <Link to="/admin/create-organization">
-          <button>+ New Network</button>
+          <Button type="secondary" color="white">
+            + New
+          </Button>
         </Link>
       </section>
       <Input
@@ -56,26 +67,18 @@ export function Organizations() {
         value={search}
         animation={false}
       />
-      {filter === 'donor' ? (
-        <h1>Donors</h1>
-      ) : filter === 'recipient' ? (
-        <h1>Recipients</h1>
-      ) : filter === 'warehouse' ? (
-        <h1>Warehouse</h1>
-      ) : filter === 'home delivery' ? (
-        <h1>Home Deliveries</h1>
-      ) : (
-        <h1>Community Fridges</h1>
-      )}
+      <Spacer height={16} />
       {filterBySearch(organizations).map(org => (
         <Link
           key={org.id}
           className="wrapper"
           to={`/admin/organizations/${org.id}`}
         >
-          <section className="Organization">
+          <Card classList={['Organization']}>
             <img src={org_icon_urls[org.id] || UserIcon} alt={org.name} />
-            <h3>{org.name}</h3>
+            <Text type="paragraph" color="black">
+              {org.name}
+            </Text>
             <h2
               className={
                 org.org_type === 'donor'
@@ -93,7 +96,7 @@ export function Organizations() {
             >
               {org.org_type}
             </h2>
-          </section>
+          </Card>
         </Link>
       ))}
     </main>

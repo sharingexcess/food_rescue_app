@@ -26,6 +26,11 @@ export const generateHeaderText = path_components => {
     back_label = 'routes'
   }
 
+  if (path_components[0] === 'history' && path_components.length > 1) {
+    title = 'route history'
+    back_label = 'history'
+  }
+
   if (path_components.length > 2 && path_components[2] === 'delivery') {
     title = 'delivery'
     back_label = 'route'

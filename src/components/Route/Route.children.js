@@ -370,7 +370,7 @@ export function Stop({ stops, s, i }) {
 
   function StopHeader() {
     const headerText =
-      s.type && s.status
+      s.type && s.status && route
         ? s.type === 'delivery'
           ? `⬇️ DELIVERY${
               route.status !== 0
@@ -400,18 +400,20 @@ export function Stop({ stops, s, i }) {
         >
           {headerText}
         </Text>
-        <Button
-          id="Route-stop-edit-button"
-          type="tertiary"
-          size="large"
-          color={isActiveStop ? 'black' : 'white'}
-          handler={() => {
-            setModalState(state => ({ ...state, stop: s }))
-            setModal('StopMenu')
-          }}
-        >
-          <i className="fa fa-ellipsis-v" />
-        </Button>
+        {!isCompletedStop && (
+          <Button
+            id="Route-stop-edit-button"
+            type="tertiary"
+            size="large"
+            color={isActiveStop ? 'black' : 'white'}
+            handler={() => {
+              setModalState(state => ({ ...state, stop: s }))
+              setModal('StopMenu')
+            }}
+          >
+            <i className="fa fa-ellipsis-v" />
+          </Button>
+        )}
       </div>
     )
   }
@@ -571,7 +573,7 @@ export function Stop({ stops, s, i }) {
         <StopMap />
         <Spacer height={24} />
         {s.status === 1 && <StopDirectionsButton />}
-        {s.status === 3 && <StopReportButton />}
+        {(s.status === 3 || s.status === 6) && <StopReportButton />}
       </>
     )
   }
@@ -579,13 +581,27 @@ export function Stop({ stops, s, i }) {
   function StopSummary() {
     return (
       <Text type="paragraph" color="white">
-        {s.status === 9 && s.report.weight + ' lbs. rescued '}
+        {s.status === 9 &&
+          s.report.weight +
+            ' lbs. ' +
+            (s.type === 'pickup' ? 'rescued' : 'delivered')}
         {s.report.notes && `"${s.report.notes}"`}
       </Text>
     )
   }
 
-  return (
+  function linkToReport(children) {
+    return (
+      <Link
+        style={{ width: '100%' }}
+        to={`/routes/${route_id}/${s.type}/${s.id}`}
+      >
+        {children}
+      </Link>
+    )
+  }
+
+  const stopCard = (
     <Card
       type={isActiveStop ? 'primary' : 'secondary'}
       classList={['Stop']}
@@ -616,6 +632,7 @@ export function Stop({ stops, s, i }) {
       ) : null}
     </Card>
   )
+  return s.status === 9 ? linkToReport(stopCard) : stopCard
 }
 
 export function RouteActionButton() {
@@ -690,6 +707,7 @@ export function RouteActionButton() {
 
 export function BackupDelivery() {
   const [willFind, setWillFind] = useState()
+  const [working, setWorking] = useState(false)
   const { modalState } = useApp()
   const { route_id } = useParams()
   if (areAllStopsCompleted(modalState.route.stops)) {
@@ -708,24 +726,28 @@ export function BackupDelivery() {
         lastStop.type === 'pickup')
     ) {
       async function addBackupDelivery(stop) {
-        const stop_id = generateStopId(stop)
-        await setFirestoreData(['Deliveries', stop_id], {
-          id: stop_id,
-          org_id: stop.org_id,
-          location_id: stop.location_id,
-          driver_id: modalState.route.driver_id,
-          created_at: firebase.firestore.FieldValue.serverTimestamp(),
-          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          status: 1,
-          pickup_ids: lastStop.pickup_ids || lastStop.id,
-          route_id,
-        })
-        await setFirestoreData(['Routes', route_id], {
-          stops: [
-            ...modalState.route.stops.map(s => ({ type: s.type, id: s.id })),
-            { type: 'delivery', id: stop_id },
-          ],
-        })
+        if (!working) {
+          setWorking(true)
+          const stop_id = generateStopId(stop)
+          await setFirestoreData(['Deliveries', stop_id], {
+            id: stop_id,
+            org_id: stop.org_id,
+            location_id: stop.location_id,
+            driver_id: modalState.route.driver_id,
+            created_at: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 1,
+            pickup_ids: lastStop.pickup_ids || lastStop.id,
+            route_id,
+          })
+          await setFirestoreData(['Routes', route_id], {
+            stops: [
+              ...modalState.route.stops.map(s => ({ type: s.type, id: s.id })),
+              { type: 'delivery', id: stop_id },
+            ],
+          })
+          setWorking(false)
+        }
       }
       return (
         <div id="BackupDelivery">
@@ -742,11 +764,15 @@ export function BackupDelivery() {
             </>
           ) : (
             <>
-              <h4>Looks like you have left over food!</h4>
-              <p>Add another delivery location to finish your route.</p>
-              <button onClick={() => setWillFind(true)}>
-                add another delivery
-              </button>
+              <Text type="section-header" color="white" shadow>
+                Looks like you have left over food!
+              </Text>
+              <Text type="paragraph" color="white" shadow>
+                Add another delivery location to finish your route.
+              </Text>
+              <Button handler={() => setWillFind(true)}>
+                Add Another Delivery
+              </Button>
             </>
           )}
         </div>

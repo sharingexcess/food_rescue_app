@@ -1,4 +1,4 @@
-import { ExternalLink } from '@sharingexcess/designsystem'
+import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 import {
   createServerTimestamp,
   getImageFromStorage,
@@ -17,46 +17,83 @@ export function handleUserIcon(icon, callback) {
 
 export function UserPronouns({ profile }) {
   return (
-    <p>
-      <i className="fa fa-user" />
+    <Text
+      id="User-pronouns"
+      type="paragraph"
+      color="white"
+      align="center"
+      shadow
+    >
+      <div>👋</div>
+      <Spacer width={8} />
       {profile.pronouns || 'no listed pronouns'}
-    </p>
+    </Text>
   )
 }
 
 export function UserPhone({ profile }) {
   if (profile.phone) {
     return (
-      <p>
-        <i className="fa fa-phone" />
+      <Text
+        id="User-phone"
+        type="paragraph"
+        color="white"
+        align="center"
+        shadow
+      >
+        <div>📱</div>
+        <Spacer width={8} />
         <ExternalLink to={`tel:${profile.phone}`}>
           {formatPhoneNumberIntl(profile.phone)}
         </ExternalLink>
-      </p>
+      </Text>
     )
   } else
     return (
-      <p>
-        <i className="fa fa-phone" /> no contact phone
-      </p>
+      <Text
+        id="User-phone"
+        type="paragraph"
+        color="white"
+        align="center"
+        shadow
+      >
+        <div>📱</div>
+        <Spacer width={8} />
+        no contact phone
+      </Text>
     )
 }
 
 export function UserEmail({ profile }) {
   if (profile.email) {
     return (
-      <p>
-        <i className="fa fa-envelope" />
+      <Text
+        id="User-phone"
+        type="paragraph"
+        color="white"
+        align="center"
+        shadow
+      >
+        <div>📧</div>
+        <Spacer width={8} />
         <ExternalLink to={`mailto:${profile.email}`}>
           {profile.email}
         </ExternalLink>
-      </p>
+      </Text>
     )
   } else
     return (
-      <p>
-        <i className="fa fa-envelope" /> no contact email
-      </p>
+      <Text
+        id="User-phone"
+        type="paragraph"
+        color="white"
+        align="center"
+        shadow
+      >
+        <div>📧</div>
+        <Spacer width={8} />
+        no contact email
+      </Text>
     )
 }
 
@@ -79,7 +116,10 @@ export function UserAdminPermissions({ profile }) {
   } else
     return (
       <div id="AccessLevel">
-        <h3>Access Level</h3>
+        <Text type="section-header" color="white" shadow>
+          Access Level
+        </Text>
+        <Spacer height={8} />
         <select
           value={accessLevel}
           onChange={e => setAccessLevel(e.target.value)}

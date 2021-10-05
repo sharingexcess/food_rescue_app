@@ -1,4 +1,4 @@
-import { ExternalLink } from '@sharingexcess/designsystem'
+import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 import { getImageFromStorage, isValidURL } from 'helpers'
 import moment from 'moment'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
@@ -15,64 +15,57 @@ export function sortByPrimary(array) {
 
 export function OrganizationContact({ org }) {
   return (
-    <p>
-      <i className="fa fa-user" />
+    <Text type="paragraph" color="white" shadow>
+      <div>👋</div>
+      <Spacer width={8} />
       {org.default_contact_name
         ? `Contact: ${org.default_contact_name}`
         : 'no default contact'}
-    </p>
+    </Text>
   )
 }
 
 export function OrganizationPhone({ org }) {
   if (org.default_contact_phone) {
     return (
-      <p>
-        <i className="fa fa-phone" />
+      <Text type="paragraph" color="white" shadow>
+        <div>📱</div>
+        <Spacer width={8} />
         <ExternalLink to={`tel:${org.default_contact_phone}`}>
           {formatPhoneNumberIntl(org.default_contact_phone)}
         </ExternalLink>
-      </p>
+      </Text>
     )
   } else
     return (
-      <p>
-        <i className="fa fa-phone" /> no contact phone
-      </p>
+      <Text type="paragraph" color="white" shadow>
+        <div>📱</div> No phone number available
+      </Text>
     )
 }
 
 export function LocationPhone({ loc }) {
   if (loc.contact_phone) {
     return (
-      <p className="org_hours">
+      <Text type="paragraph" color="blue">
         Contact Phone: {formatPhoneNumberIntl(loc.contact_phone)}
-      </p>
+      </Text>
     )
-  } else
-    return (
-      <p>
-        <i className="fa fa-phone" /> no contact phone
-      </p>
-    )
+  } else return null
 }
 
 export function OrganizationEmail({ org }) {
   if (org.default_contact_email) {
     return (
-      <p>
-        <i className="fa fa-envelope" />
+      <Text type="paragraph" color="white" shadow>
+        <div>📧</div>
+        <Spacer width={8} />
         <ExternalLink to={`mailto:${org.default_contact_email}`}>
           {org.default_contact_email}
         </ExternalLink>
-      </p>
+      </Text>
     )
-  } else
-    return (
-      <p>
-        <i className="fa fa-envelope" /> no contact email
-      </p>
-    )
+  } else return null
 }
 
 export function OrganizationHours({ org, org_type }) {
@@ -82,24 +75,24 @@ export function OrganizationHours({ org, org_type }) {
     return (
       <p className="org_hours">
         {org.time_open ? (
-          <p>
+          <Text type="paragraph" color="grey">
             Hours: {open_time.format('LT')} - {close_time.format('LT')}
             {moment().isBetween(open_time, close_time) ? (
               <span className="open">Open now</span>
             ) : (
               <span className="close">Closed now</span>
             )}
-          </p>
+          </Text>
         ) : null}
         {org.receive_start ? (
-          <p>
+          <Text type="paragraph" color="grey">
             {org_type === 'recipient' ? 'Receive' : 'Pickup'} hours:{' '}
             {moment(org.receive_start, 'hh:mm').format('LT')} -{' '}
             {moment(org.receive_end, 'hh:mm').format('LT')}
-          </p>
+          </Text>
         ) : null}
       </p>
     )
   }
-  return <p className="org_hours">Hours: N/A</p>
+  return null
 }

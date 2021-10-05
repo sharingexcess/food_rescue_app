@@ -6,6 +6,7 @@ import { Input, Loading } from 'components'
 import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import { Button, Text } from '@sharingexcess/designsystem'
 
 export function Profile({ handleUpdateClick, inForm }) {
   const { user } = useAuth()
@@ -92,11 +93,9 @@ export function Profile({ handleUpdateClick, inForm }) {
         <WarningText text="Please update your phone number and preferred pronouns" />
       )}
       <img src={profile.icon} alt={profile.name} />
-      <h3>{profile.email}</h3>
-      <button>
-        {' '}
-        <Link to="/liability">View Onboarding Documents</Link>
-      </button>
+      <Text type="section-header" color="white" shadow align="center">
+        {profile.email}
+      </Text>
       <Input
         element_id="name"
         label="Display Name"
@@ -116,9 +115,9 @@ export function Profile({ handleUpdateClick, inForm }) {
         defaultCountry="US"
       />
       {button && (
-        <button onClick={handleUpdate} disabled={button !== 'update profile'}>
+        <Button onClick={handleUpdate} disabled={button !== 'update profile'}>
           {button}
-        </button>
+        </Button>
       )}
       {error && <p id="FormError">{error}</p>}
     </main>

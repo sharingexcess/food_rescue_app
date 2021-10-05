@@ -60,7 +60,7 @@ export function Input({
               ? suggestions.map(s => (
                   <option key={s.id || s} id={s.id || s} value={s.id || s}>
                     {s.address1
-                      ? `${s.name} (${s.address1}, ${s.city}, ${s.state}, ${s.zip_code})`
+                      ? `${s.address1}, ${s.city}, ${s.state}, ${s.zip_code}`
                       : s}
                   </option>
                 ))

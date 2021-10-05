@@ -55,7 +55,7 @@ export function Home() {
           link="admin/create-direct-donation"
         />
         <Tile
-          name="Manage Network"
+          name="Manage Organizations"
           icon="fa-map-marked-alt"
           link="/admin/organizations"
         />

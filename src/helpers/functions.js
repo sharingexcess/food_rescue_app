@@ -96,7 +96,11 @@ export async function updateGoogleCalendarEvent(data) {
       timeZone: 'America/New_York',
     },
     end: {
-      dateTime: new Date(data.time_end).toISOString(),
+      dateTime: new Date(
+        new Date(data.time_start).setHours(
+          new Date(data.time_start).getHours() + 1
+        )
+      ).toISOString(),
       timeZone: 'America/New_York',
     },
     attendees: [data.driver ? { email: data.driver.email } : ''],

@@ -4,7 +4,7 @@ import UserIcon from 'assets/user.svg'
 import { getImageFromStorage, isValidURL } from 'helpers'
 import { Input, Loading } from 'components'
 import { useFirestore } from 'hooks'
-import { Spacer, Text } from '@sharingexcess/designsystem'
+import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 const user_icon_urls = {}
 
@@ -108,21 +108,25 @@ export function Users() {
 
       {filterByPermissions(filterBySearch(users)).map(user => (
         <Link key={user.id} className="wrapper" to={`/admin/users/${user.id}`}>
-          <section className="User">
+          <Card classList={['User']}>
             <img
               src={user_icon_urls[user.id] || user.icon || UserIcon}
               alt={user.name}
             />
             <div>
-              <h2>{user.name}</h2>
-              <p>{user.email}</p>
+              <Text type="section-header" color="black">
+                {user.name}
+              </Text>
+              <Text type="paragraph" color="blue">
+                {user.email}
+              </Text>
             </div>
             {user.access_level === 'admin' ? (
               <i className="access-level fa fa-crown" />
             ) : user.access_level === 'driver' ? (
               <i className="access-level fa fa-truck" />
             ) : null}
-          </section>
+          </Card>
         </Link>
       ))}
     </main>

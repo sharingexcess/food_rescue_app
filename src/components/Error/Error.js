@@ -1,17 +1,21 @@
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import React from 'react'
 
 export function Error({ crash, message }) {
   return (
     <main id="Error">
-      <h1>Uh oh!</h1>
-      <p>
+      <Text type="primary-header" color="white" shadow>
+        Uh oh!
+      </Text>
+      <Text type="paragraph" color="white shadow">
         {crash
           ? 'Uh oh... looks like something broke on this page.'
           : message ||
             "The page you're looking for may have moved, or doesn't exist."}
-      </p>
+      </Text>
+      <Spacer height={32} />
       <a href="/">
-        <button>back to home page</button>
+        <Button>Back to Home Page</Button>
       </a>
     </main>
   )

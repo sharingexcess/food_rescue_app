@@ -11,46 +11,44 @@
   .is_community_fridge,
   .is_warehouse,
   .is_home_delivery {
-    opacity: 0;
-    animation: slide-in 0.48s ease forwards;
     width: 100%;
     position: relative;
     padding: 16px 0 16px 16px;
-    p {
-      font-size: 16px;
-      font-weight: 900;
-      color: var(--strong);
-      text-align: left;
-      padding-left: 32px;
+    .se-text {
+      padding: 6px 0 0 32px;
     }
 
     input {
       position: absolute;
       top: 28px;
       left: 16px;
-      transform: scale(2.5);
+      transform: scale(2);
       margin: auto;
+      z-index: 2;
+      cursor: pointer;
     }
   }
 
-  #Address {
-    margin: 16px 0;
-    font-size: 18px;
+  #EditLocation-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .se-button {
+      margin: 8px;
+    }
+  }
+
+  #EditLocation-address {
     display: flex;
     justify-content: flex-start;
-    opacity: 0;
-    animation: slide-in 0.48s ease forwards;
-    i {
-      color: var(--red);
-      display: block;
-      margin-right: 8px;
-      font-size: 32px;
+    align-items: center;
+    .EditLocation-address-pin {
+      margin-right: 16px;
+      font-size: 48px;
     }
-    button {
-      margin: 0;
+    #EditLocation-address-clear-button {
       margin-left: auto;
-      padding: 8px;
-      background: var(--yellow);
     }
   }
 

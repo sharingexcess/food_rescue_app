@@ -5,7 +5,7 @@ import moment from 'moment'
 import UserIcon from 'assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
-import { Card, Spacer, Text } from '@sharingexcess/designsystem'
+import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function Routes({ initial_filter }) {
   const { user, admin } = useAuth()
@@ -184,15 +184,16 @@ export function Routes({ initial_filter }) {
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (
         <div className="no-routes">
-          <i className="fa fa-check" />
-          <p>
+          <div className="icon">👍</div>
+          <Text type="secondary-header" color="white" shadow align="center">
             {location.pathname === '/routes'
               ? 'Schedule is clear!'
               : 'History is empty!'}
-          </p>
+          </Text>
+          <Spacer height={16} />
           {admin ? (
             <Link to="/admin/create-route">
-              <button>schedule a new route</button>
+              <Button>Back to Home Page</Button>
             </Link>
           ) : null}
         </div>
@@ -221,7 +222,7 @@ export function Routes({ initial_filter }) {
                   )}
                   <StatusIndicator route={r} />
                   <div>
-                    <Text type="section-header" color="black">
+                    <Text type="section-header" color="black" wrap={false}>
                       {r.driver.name || 'Unassigned Route'}
                       {r.status === 9 && (
                         <span> - {getRouteWeight(r.id)} lbs.</span>

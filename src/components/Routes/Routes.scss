@@ -5,13 +5,9 @@
     width: 100%;
     padding: 64px 16px;
     text-align: center;
-    i {
+    .icon {
       font-size: 96px;
       color: var(--primary);
-      margin-bottom: 16px;
-    }
-    p {
-      font-size: 24px;
       margin-bottom: 16px;
     }
   }
@@ -62,6 +58,9 @@
         flex-direction: column;
         .se-text.small {
           line-height: 1.2;
+        }
+        span {
+          font-weight: 200;
         }
       }
 

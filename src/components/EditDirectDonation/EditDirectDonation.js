@@ -8,6 +8,7 @@ import { generateStopId, setFirestoreData } from 'helpers'
 import { generateDirectDonationId } from './utils'
 import { Input, EditDelivery, PickupReport, EditPickup } from 'components'
 import { useAuth } from 'hooks'
+import { Text } from '@sharingexcess/designsystem'
 
 export function EditDirectDonation() {
   const { user } = useAuth()
@@ -82,10 +83,13 @@ export function EditDirectDonation() {
 
   return (
     <main id="EditDirectDonation">
-      <h3>Donation Date + Time</h3>
+      <Text type="section-header" color="white" shadow>
+        Donation Date + Time
+      </Text>
       <section id="Time">
         <Input
           value={time}
+          label="Time"
           onChange={e => setTime(e.target.value)}
           type="datetime-local"
         />
@@ -108,7 +112,7 @@ export function EditDirectDonation() {
       ) : null}
       {recipient ? (
         <section id="Report">
-          <PickupReport customSubmitHandler={handleSubmit} hideHeader />
+          <PickupReport customSubmitHandler={handleSubmit} />
         </section>
       ) : null}
     </main>

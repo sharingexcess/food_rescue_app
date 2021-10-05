@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import firebase from 'firebase/app'
-import { Link, useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
   formFields,
@@ -9,7 +9,6 @@ import {
   getDefaultStartTime,
   getDefaultEndRecurring,
   getExistingRouteData,
-  getTimeConflictInfo,
 } from './utils'
 import UserIcon from 'assets/user.svg'
 import {
@@ -23,7 +22,13 @@ import { EditDelivery, EditPickup, Input, Ellipsis, Loading } from 'components'
 import { useFirestore } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
 import { OrganizationHours } from '../Organization/utils'
-import { Button, Spacer, Text } from '@sharingexcess/designsystem'
+import {
+  Button,
+  Spacer,
+  Text,
+  ExternalLink,
+  Card,
+} from '@sharingexcess/designsystem'
 
 export function EditRoute() {
   const history = useHistory()
@@ -250,39 +255,55 @@ export function EditRoute() {
     )
   }
   function Stop({ s }) {
+    function generateStopTitle() {
+      return `${s.org.name} (${s.location.address1})`
+    }
+
+    function StopAddress() {
+      function generateDirectionsLink(addressObj) {
+        const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
+        return `${base_url}${addressObj.address1}+${addressObj.city}+${addressObj.state}+${addressObj.zip_code}`
+      }
+
+      return (
+        <ExternalLink to={generateDirectionsLink(s.location)}>
+          <Button
+            classList={['Route-stop-address-button']}
+            type="tertiary"
+            size="small"
+            color="blue"
+          >
+            <div>🏢</div>
+            <Spacer width={16} />
+            {s.location.address1}
+            {s.location.address2 && ` - ${s.location.address2}`}
+            <br />
+            {s.location.city}, {s.location.state} {s.location.zip_code}
+          </Button>
+        </ExternalLink>
+      )
+    }
+
     return (
-      <div className={`Stop ${s.type}`}>
+      <Card classList={['Stop', s.type]}>
         <div>
           {s.can_delete !== false && (
             <i className="fa fa-times" onClick={() => handleRemoveStop(s.id)} />
           )}
-          <h4>
-            <i
-              className={
-                s.type === 'pickup' ? 'fa fa-arrow-up' : 'fa fa-arrow-down'
-              }
-            />
-            {s.type}
-          </h4>
-          <h2>
-            {s.org.name}{' '}
-            {s.location.name && s.location.name !== s.org.name
-              ? `(${s.location.name})`
-              : ''}
-          </h2>
-          <p className="philabundance">
-            {s.location.is_philabundance_partner ? 'Philabundance Partner' : ''}
-          </p>
-          <p>
-            {s.location.address1}
-            {s.location.address2 && ` - ${s.location.address2}`}
-          </p>
-          <p>
-            {s.location.city}, {s.location.state} {s.location.zip_code}
-          </p>
+          <Text
+            type="small-header"
+            color={s.type === 'pickup' ? 'green' : 'red'}
+          >
+            {s.type === 'pickup' ? '⬆️ PICKUP' : '⬇️ DELIVERY'}
+          </Text>
+          <Text type="section-header" color="black">
+            {generateStopTitle()}
+          </Text>
+          <Spacer height={8} />
+          <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
-      </div>
+      </Card>
     )
   }
 
@@ -367,7 +388,12 @@ export function EditRoute() {
       return (
         formData.time_start &&
         canRender && (
-          <Button type="primary" color="white" fullWidth handler={handleClick}>
+          <Button
+            id="EditRoute-confirm-button"
+            type="primary"
+            color="white"
+            handler={handleClick}
+          >
             {formData.stops.length ? 'Confirm' : 'Add Pickups'}
           </Button>
         )
@@ -517,7 +543,7 @@ export function EditRoute() {
     <main id="EditRoute">
       {canRender ? (
         <>
-          {confirmedTimes ? <Driver /> : <SelectDriver />}
+          {confirmedTimes ? <Driver /> : SelectDriver()}
           <SelectStops />
         </>
       ) : (

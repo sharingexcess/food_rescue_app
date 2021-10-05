@@ -11,6 +11,8 @@ import validator from 'validator'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { Input } from 'components'
+import { useFirestore } from 'hooks'
+import { Button } from '@sharingexcess/designsystem'
 
 export function EditOrganization() {
   const { id } = useParams()
@@ -25,6 +27,7 @@ export function EditOrganization() {
   const [org = {}] = useDocumentData(
     id ? getCollection('Organizations').doc(id) : null
   )
+  const locations = useFirestore('locations')
   const [orgIconFullUrl, setOrgIconFullUrl] = useState()
   const [file, setFile] = useState()
   const [errors, setErrors] = useState([])
@@ -83,9 +86,9 @@ export function EditOrganization() {
     }
     return false
   }
+
   async function handleSubmit() {
-    const is_valid = validateFormData()
-    if (is_valid) {
+    if (validateFormData()) {
       const org_id = id || (await generateOrgId(formData.name))
       if (org_id) {
         const icon = await handleFileUpload(org_id)
@@ -98,6 +101,21 @@ export function EditOrganization() {
           .then(() => history.push(`/admin/organizations/${org_id}`))
           .catch(e => console.error('Error writing document: ', e))
       }
+    }
+  }
+
+  async function handleDelete() {
+    if (window.confirm(`Are you sure you want to delete ${org.name}?`)) {
+      const org_id = id
+      const org_locations = locations.filter(l => l.org_id === org_id)
+      for (const loc of org_locations) {
+        await getCollection('Locations').doc(loc.id).delete()
+      }
+      getCollection('Organizations')
+        .doc(org_id)
+        .delete()
+        .then(() => history.push(`/admin/organizations`))
+        .catch(e => console.error('Error writing document: ', e))
     }
   }
 
@@ -185,14 +203,23 @@ export function EditOrganization() {
         onSuggestionClick={handleChange}
       />
       <FormError />
-      <button
-        onClick={() => {
-          handleSubmit()
-          setShowErrors(true)
-        }}
-      >
-        {id ? 'update network' : 'create network'}
-      </button>
+      <div id="EditOrganization-buttons">
+        <Button
+          type="primary"
+          color="white"
+          handler={() => {
+            handleSubmit()
+            setShowErrors(true)
+          }}
+        >
+          {id ? 'Update Organization' : 'Create Organization'}
+        </Button>
+        {id && (
+          <Button type="secondary" color="white" handler={handleDelete}>
+            Delete Organization
+          </Button>
+        )}
+      </div>
     </main>
   )
 }

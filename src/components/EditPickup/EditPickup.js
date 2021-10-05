@@ -100,8 +100,7 @@ export function EditPickup({ handleSubmit, title }) {
           </Text>
           <Spacer height={8} />
           <Text type="paragraph" color="white" shadow>
-            Choose a partner organization and location for the driver to rescue
-            food.
+            Choose a partner organization and location to rescue food.
           </Text>
         </>
       )}

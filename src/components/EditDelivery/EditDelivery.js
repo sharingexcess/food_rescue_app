@@ -40,7 +40,7 @@ export function EditDelivery({ handleSubmit, title }) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
-  function handleSelect(e, selected, field) {
+  function handleSelect(_e, selected, field) {
     if (field.type !== 'select') {
       setSuggestions({ ...suggestions, [field.id]: null })
     }
@@ -100,8 +100,7 @@ export function EditDelivery({ handleSubmit, title }) {
           </Text>
           <Spacer height={8} />
           <Text type="paragraph" color="white" shadow>
-            Choose a partner organization and location for the driver to drop
-            off food.
+            Choose a partner organization and location to drop off food.
           </Text>
         </>
       )}

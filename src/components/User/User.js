@@ -10,6 +10,7 @@ import {
   handleUserIcon,
 } from './utils'
 import { useFirestore } from 'hooks'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function User() {
   // get the user id from the current url parameters
@@ -30,19 +31,24 @@ export function User() {
   if (!profile) return <Loading text="Loading user" />
   return (
     <main id="User">
-      <div>
-        <img
-          src={profileIconFullUrl || profile.icon || UserIcon}
-          id="org-icon"
-          alt={profile.name}
-        />
-        <div>
-          <h1>{profile.name}</h1>
-          <UserPronouns profile={profile} />
-          <UserPhone profile={profile} />
-          <UserEmail profile={profile} />
-        </div>
+      <img
+        src={profileIconFullUrl || profile.icon || UserIcon}
+        id="org-icon"
+        alt={profile.name}
+      />
+      <Spacer height={24} />
+      <div id="User-info">
+        <Text type="secondary-header" color="white" align="center" shadow>
+          {profile.name}
+        </Text>
+        <Spacer height={16} />
+        <UserPronouns profile={profile} />
+        <Spacer height={4} />
+        <UserPhone profile={profile} />
+        <Spacer height={4} />
+        <UserEmail profile={profile} />
       </div>
+      <Spacer height={32} />
       <UserAdminPermissions profile={profile} />
     </main>
     // View Driver Document button currently has no functionality

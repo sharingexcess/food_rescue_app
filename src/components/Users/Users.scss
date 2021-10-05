@@ -49,10 +49,17 @@
   }
 
   .User {
-    @include card;
+    display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: row;
+    margin-bottom: 24px;
+    padding: 24px;
+
+    @include mobile {
+      padding: 24px 16px;
+      margin-bottom: 16px;
+    }
 
     div {
       width: 100%;

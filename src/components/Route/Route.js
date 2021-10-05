@@ -39,16 +39,19 @@ export function Route() {
     const route_deliveries = deliveries.filter(d => d.route_id === route_id)
     if (route_deliveries.length) {
       for (const d of route_deliveries) {
-        if (d.status === 9) completed_deliveries++
+        if (d.status === 9 || d.status === 0) completed_deliveries++
       }
-      if (completed_deliveries === route_deliveries.length) {
+      if (
+        completed_deliveries === route_deliveries.length &&
+        allFoodDelivered(stops)
+      ) {
         setFirestoreData(['Routes', route_id], {
           status: 9,
           time_finished: firebase.firestore.FieldValue.serverTimestamp(),
         }).then(() => history.push(`/routes/${route_id}/completed`))
       }
     }
-  }, [deliveries, route_id]) // eslint-disable-line
+  }, [deliveries, route_id, stops]) // eslint-disable-line
 
   useEffect(() => {
     // handle populating full pickup and delivery info based on stop ids

@@ -35,7 +35,7 @@ export function getNextIncompleteStopIndex(route, stops) {
   let index
   for (const [idx, j] of route.stops.entries()) {
     const stop = stops.find(s => j.id === s.id)
-    if (![0, 9].includes(stop.status)) {
+    if (stop && stop.status && ![0, 9].includes(stop.status)) {
       index = idx
       break
     }

@@ -1,6 +1,11 @@
 #EditRoute {
   @include page;
 
+  #EditRoute-confirm-button {
+    margin: auto;
+    display: block;
+  }
+
   #EditRoute-buttons {
     display: flex;
     justify-content: space-around;
@@ -59,63 +64,25 @@
   }
 
   .Stop {
-    @include card;
+    margin-bottom: 16px;
 
     .fa-times {
       position: absolute;
       top: 16px;
       right: 16px;
-      color: var(--blue);
       font-size: 20px;
       cursor: pointer;
-      transition: color 0.16s ease;
-
-      @media (hover: hover) and (pointer: fine) {
-        &:hover {
-          color: var(--white);
-        }
-      }
+      color: var(--se-black);
+      z-index: 2;
     }
 
-    &.pickup {
-      h2 {
-        color: var(--strong);
-      }
-
-      h4 {
-        color: var(--green);
-      }
-    }
-    &.delivery {
-      h2,
-      h4 {
-        color: var(--red);
-      }
-    }
-
-    h4 {
-      text-transform: capitalize;
-      font-size: 14px;
-      font-weight: 900;
-      margin-bottom: 8px;
-      i {
-        font-size: 12px;
-        margin-right: 4px;
-      }
-    }
-
-    h2 {
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
-
-    p {
-      color: var(--blue);
-      font-weight: 500;
-      text-decoration: underline;
-
-      &.philabundance {
-        color: var(--yellow);
+    .Route-stop-address-button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: left;
+      div {
+        font-size: 20px;
       }
     }
 
