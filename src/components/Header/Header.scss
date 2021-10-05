@@ -32,8 +32,9 @@ header#Header {
     height: 48px;
     width: 48px;
     object-fit: cover;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--se-white);
     background: var(--blue);
+    box-shadow: var(--se-shadow-medium);
   }
 
   #Header-location {

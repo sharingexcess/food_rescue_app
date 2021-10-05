@@ -439,7 +439,7 @@ export function Stop({ stops, s, i }) {
           classList={['Route-stop-address-button']}
           type="tertiary"
           size="small"
-          color="blue"
+          color={isActiveStop ? 'blue' : 'white'}
         >
           <div>🏢</div>
           <Spacer width={16} />
@@ -596,8 +596,16 @@ export function Stop({ stops, s, i }) {
       <Text type="section-header" color={isActiveStop ? 'black' : 'white'}>
         {generateStopTitle()}
       </Text>
-      {isActiveStop && <StopDetails />}
-      {isCompletedStop && <StopSummary />}
+      {isActiveStop ? (
+        <StopDetails />
+      ) : isCompletedStop ? (
+        <StopSummary />
+      ) : (
+        <>
+          <Spacer height={8} />
+          <StopAddress />
+        </>
+      )}
       {/* TODO: cancel individual stop logic */}
       {hasEditPermissions() ? (
         <>

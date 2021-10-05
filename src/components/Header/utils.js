@@ -41,6 +41,11 @@ export const generateHeaderText = path_components => {
     back_label = 'route'
   }
 
+  if (path_components.length > 2 && path_components[2] === 'completed') {
+    title = 'Completed Route'
+    back_label = 'route'
+  }
+
   if (path_components[1] === 'organizations' && path_components.length > 2) {
     title = 'Organization'
     back_label = 'organizations'
