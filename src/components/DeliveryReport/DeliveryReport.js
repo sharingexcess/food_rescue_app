@@ -5,14 +5,13 @@ import 'firebase/firestore'
 import { setFirestoreData } from 'helpers'
 import { Input, Loading } from 'components'
 import { useAuth, useFirestore } from 'hooks'
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function DeliveryReport() {
   const { delivery_id, route_id } = useParams()
   const history = useHistory()
   const delivery = useFirestore('deliveries', delivery_id)
   const deliveries = useFirestore('deliveries')
-  const delivery_org =
-    useFirestore('organizations', delivery ? delivery.org_id : {}) || {}
   const pickups = useFirestore('pickups')
   const routes = useFirestore('routes')
   const [formData, setFormData] = useState({
@@ -55,7 +54,7 @@ export function DeliveryReport() {
   }, [delivery, delivery_id, routes, pickups]) //eslint-disable-line react-hooks/exhaustive-deps
 
   function canEdit() {
-    return [1, 3].includes(delivery.status) || admin
+    return [1, 3, 6].includes(delivery.status) || admin
   }
 
   function handleChange(e) {
@@ -93,13 +92,14 @@ export function DeliveryReport() {
   if (!delivery) return <Loading text="Loading report" />
   return (
     <main id="DeliveryReport">
-      <h3>{delivery_org.name}</h3>
-      <h4>
-        You're carrying <span>{weight}lbs.</span> of food.
-        <br />
-        How much are you dropping at this location?
-      </h4>
-      <h5>{parseInt(formData.percent_of_total_dropped)}%</h5>
+      <Text type="section-header" color="white" align="center" shadow>
+        You're carrying <span>{weight}lbs.</span> of food. How much are you
+        dropping at this location?
+      </Text>
+      <Spacer height={64} />
+      <Text type="primary-header" color="white" align="center" shadow>
+        {parseInt(formData.percent_of_total_dropped)}%
+      </Text>
       <input
         id="percent_of_total_dropped"
         type="range"
@@ -111,6 +111,7 @@ export function DeliveryReport() {
         onChange={handleChange}
         disabled={!canEdit()}
       />
+      <Spacer height={32} />
       <Input
         type="textarea"
         label="Notes..."
@@ -121,9 +122,15 @@ export function DeliveryReport() {
         readOnly={!canEdit()}
       />
       {changed && canEdit() ? (
-        <button onClick={handleSubmit}>
-          {delivery.report ? 'update report' : 'submit report'}
-        </button>
+        <Button
+          type="primary"
+          color="white"
+          size="large"
+          fullWidth
+          handler={handleSubmit}
+        >
+          {delivery.report ? 'Update Report' : 'Submit Report'}
+        </Button>
       ) : null}
     </main>
   )

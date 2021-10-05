@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
 import { Loading, Input } from 'components'
-import { setFirestoreData } from 'helpers'
+import { createServerTimestamp, setFirestoreData } from 'helpers'
 import { useFirestore, useAuth } from 'hooks'
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
-import { CalcModal } from '../Calculator/Calculator'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
   const { admin } = useAuth()
   const history = useHistory()
   const pickup = useFirestore('pickups', pickup_id)
-  const pickup_org =
-    useFirestore('organizations', pickup ? pickup.org_id : {}) || {}
   const [formData, setFormData] = useState({
     dairy: 0,
     bakery: 0,
@@ -35,7 +31,6 @@ export function PickupReport({ customSubmitHandler }) {
       e.target.value = ''
     }
   }
-  const [showCal, setShowCal] = useState(false)
   useEffect(() => {
     pickup && pickup.report
       ? setFormData(formData => ({ ...formData, ...pickup.report }))
@@ -47,7 +42,7 @@ export function PickupReport({ customSubmitHandler }) {
   }, [errors])
 
   function canEdit() {
-    return [1, 3].includes(pickup.status) || admin
+    return [1, 3, 6].includes(pickup.status) || admin
   }
   function sumWeight(object) {
     let sum = 0
@@ -130,13 +125,12 @@ export function PickupReport({ customSubmitHandler }) {
           other: parseInt(data.other),
           weight: parseInt(data.weight),
           notes: data.notes,
-          created_at:
-            pickup.completed_at ||
-            firebase.firestore.FieldValue.serverTimestamp(),
-          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+          created_at: pickup.completed_at || createServerTimestamp(),
+          updated_at: createServerTimestamp(),
         },
         status: 9,
-        time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+        time_finished: createServerTimestamp(),
+        driver_completed_at: createServerTimestamp(),
       })
         .then(() => history.push(`/routes/${route_id}`))
         .catch(e => console.error('Error writing document: ', e))
@@ -148,17 +142,16 @@ export function PickupReport({ customSubmitHandler }) {
   if (!pickup) return <Loading text="Loading report" />
   return (
     <main id="PickupReport">
-      <h3>{pickup_org.name}</h3>
-      <h1 className="center">Input Category Weight in Pounds (lbs)</h1>
-
-      <div>
-        <button onClick={() => setShowCal(true)} class="fas fa-calculator">
-          {' '}
-        </button>
-        {showCal === true ? (
-          <CalcModal onShowModal={() => setShowCal(false)} />
-        ) : null}
-      </div>
+      <Text
+        classList={['PickupReport-field-label']}
+        type="primary-header"
+        color="white"
+        align="center"
+        shadow
+      >
+        Input Category Weight in Pounds
+      </Text>
+      <Spacer height={32} />
 
       {Object.keys(formData)
         .sort(function (a, b) {
@@ -173,11 +166,17 @@ export function PickupReport({ customSubmitHandler }) {
         .map(field =>
           !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
             <section key={field}>
-              <h5>{field}</h5>
+              <Text
+                classList={['PickupReport-field-label']}
+                type="section-header"
+                color="white"
+                shadow
+              >
+                {field}
+              </Text>
               <input
                 id={field}
-                type="string"
-                defaultValue="0"
+                type="number"
                 value={formData[field]}
                 onFocus={resetInput}
                 onChange={handleChange}
@@ -187,7 +186,13 @@ export function PickupReport({ customSubmitHandler }) {
           ) : null
         )}
       <section className="weight">
-        <h4>Total Weight (lbs.)</h4>
+        <Text
+          classList={['PickupReport-field-label']}
+          type="section-header"
+          color="Black"
+        >
+          Total Weight
+        </Text>
         {isNaN(formData.weight) ? (
           <h4>Weight cannot be blank</h4>
         ) : (
@@ -205,15 +210,19 @@ export function PickupReport({ customSubmitHandler }) {
       />
       <FormError />
       {changed && canEdit() ? (
-        <button
-          onClick={
+        <Button
+          type="primary"
+          color="white"
+          size="large"
+          fullWidth
+          handler={
             customSubmitHandler
               ? e => customSubmitHandler(e, formData)
               : e => handleSubmit(e, formData)
           }
         >
-          {pickup.report ? 'update report' : 'submit report'}
-        </button>
+          {pickup.report ? 'Update Report' : 'Submit Report'}
+        </Button>
       ) : null}
     </main>
   )

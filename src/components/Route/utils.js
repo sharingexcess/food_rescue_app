@@ -31,6 +31,7 @@ export function areAllStopsCompleted(stops) {
 }
 
 export function getNextIncompleteStopIndex(route, stops) {
+  if (route.status !== 3) return null
   let index
   for (const [idx, j] of route.stops.entries()) {
     const stop = stops.find(s => j.id === s.id)

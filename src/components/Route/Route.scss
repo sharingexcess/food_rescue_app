@@ -70,6 +70,10 @@
         }
       }
 
+      .se-button.type-primary {
+        text-transform: capitalize;
+      }
+
       #StatusIndicator {
         position: absolute;
         top: 12px;

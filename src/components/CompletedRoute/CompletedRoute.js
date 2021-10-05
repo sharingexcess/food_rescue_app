@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { Link, Redirect, useParams } from 'react-router-dom'
 import { useFirestore } from 'hooks'
 import { Loading } from 'components'
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function CompletedRoute() {
   const { route_id } = useParams()
@@ -25,14 +26,21 @@ export function CompletedRoute() {
     <Redirect to={`/routes/${route_id}`} />
   ) : (
     <main id="CompletedRoute">
-      <i className="fa fa-truck primary" />
-      <h1>Route Completed!</h1>
-      <p>
+      <div id="CompletedRoute-icon">🎉</div>
+      <Spacer height={32} />
+      <Text type="primary-header" color="white" shadow align="center">
+        Route Completed!
+      </Text>
+      <Spacer height={16} />
+      <Text type="subheader" color="white" shadow align="center">
         Thank you for driving with Sharing Excess! You rescued{' '}
         <span>{calculateWeight()}lbs.</span> of food today. Go you!
-      </p>
+      </Text>
+      <Spacer height={32} />
       <Link to="/routes">
-        <button>view more routes</button>
+        <Button type="primary" size="large" color="white">
+          View More Routes
+        </Button>
       </Link>
     </main>
   )

@@ -76,7 +76,6 @@
     position: relative;
     border: 0;
     border-radius: 8px;
-    border: 1px solid var(--secondary);
     background: var(--foreground);
     padding: 20px 8px 16px 8px;
     font-size: 18px;
@@ -86,10 +85,6 @@
     z-index: 1;
     transition: border 0.1s ease;
     -webkit-appearance: none;
-    &:focus {
-      border: 3px solid var(--primary);
-    }
-
     &::-webkit-calendar-picker-indicator {
       filter: invert(1);
     }
@@ -116,8 +111,9 @@
     transition: background 0.16s ease;
     background: var(--foreground);
     border-radius: 0;
-    &:hover {
-      background: rgba(var(--blue-rgb), 0.16);
+    @include hover {
+      background: var(--se-blue-light);
+      color: var(--se-blue-primary);
     }
     &:not(:last-child) {
       border-bottom: 1px solid var(--background);

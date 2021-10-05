@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
-import { useAuth, useFirestore } from 'hooks'
+import { useAuth, useFirestore, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
 import { MOBILE_THRESHOLD } from 'helpers'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
@@ -10,6 +10,11 @@ export function Menu({ isOpen, setIsOpen }) {
   const { pathname } = useLocation()
   // get current user state from AuthContext
   const { user, admin, handleLogout, handleLogin } = useAuth()
+  const isMobile = useIsMobile()
+
+  useEffect(() => {
+    if (isMobile) setIsOpen(false)
+  }, [isMobile]) // eslint-disable-line
 
   // get public user profile state
   const profile = useFirestore('users', user ? user.uid : {})

@@ -84,7 +84,7 @@ export function DeleteLocationModal({
     }
   }
   return (
-    <div id="Modal">
+    <div id="DeleteLocationModal">
       <div className="modal-content">
         <span className="close" onClick={() => setOpenModal(false)}>
           &times;

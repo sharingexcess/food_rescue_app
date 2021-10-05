@@ -268,28 +268,25 @@ export function EditRoute() {
   }
 
   async function generateRouteId() {
-    let uniq_id =
-      `${formData.driver ? formData.driver.name + '_' : ''}` +
-      generateUUID()
+    const createId = () =>
+      `${formData.driver ? formData.driver.name + '_' : ''}${generateUUID()}`
         .replace(/[^A-Z0-9]/gi, '_')
+        .replace(' ', '_')
         .toLowerCase()
 
-    let exists = await getCollection('Routes')
-      .doc(uniq_id)
-      .get()
-      .then(res => res.data())
-    while (exists) {
-      uniq_id =
-        `${formData.driver ? formData.driver.name + '_' : ''}` +
-        generateUUID()
-          .replace(/[^A-Z0-9]/gi, '_')
-          .toLowerCase()
-      exists = await getCollection('Routes')
-        .doc(uniq_id)
+    const exists = async id =>
+      await getCollection('Routes')
+        .doc(id)
         .get()
         .then(res => res.data())
+
+    let uniqId
+    let idExists = true
+    while (idExists) {
+      uniqId = createId()
+      idExists = await exists(uniqId)
     }
-    return uniq_id
+    return uniqId
   }
   function getPickupsInDelivery(index) {
     const sliced = formData.stops.slice(0, index)
@@ -557,9 +554,11 @@ export function EditRoute() {
                   >
                     {working ? (
                       <>
-                        creating
+                        {route_id ? 'updating' : 'creating'}
                         <Ellipsis />
                       </>
+                    ) : route_id ? (
+                      'update route'
                     ) : (
                       'create route'
                     )}

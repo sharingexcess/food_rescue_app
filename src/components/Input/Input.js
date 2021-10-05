@@ -95,6 +95,7 @@ export function Input({
             suggestions.map(s => (
               <li key={s.id} id={s.id} onClick={e => onSuggestionClick(e, s)}>
                 {s.name}
+                {s.email ? ` (${s.email})` : ''}
               </li>
             ))
           ) : value.length ? (

@@ -14,6 +14,10 @@ header#Header {
   @include desktop {
     padding: 32px;
     position: fixed;
+    pointer-events: none;
+    * {
+      pointer-events: all;
+    }
   }
 
   #UserProfile {

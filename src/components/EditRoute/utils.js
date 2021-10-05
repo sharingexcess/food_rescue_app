@@ -139,10 +139,12 @@ export const getExistingRouteData = async route_id => {
     .get()
     .then(result => result.docs.map(doc => doc.data()))
   const myRoute = routes.find(route => route.id === route_id)
-  const driver = await getCollection('Users')
-    .doc(myRoute.driver_id)
-    .get()
-    .then(result => result.data())
+  const driver = myRoute.driver_id
+    ? await getCollection('Users')
+        .doc(myRoute.driver_id)
+        .get()
+        .then(result => result.data())
+    : {}
   const deliveries = await getCollection('Deliveries')
     .get()
     .then(result => result.docs.map(doc => doc.data()))
@@ -178,7 +180,7 @@ export const getExistingRouteData = async route_id => {
   })
 
   const routeData = {
-    driver: driver,
+    driver: Object.keys(driver).length ? driver : null,
     driver_id: myRoute.driver_id,
     driver_name: driver.name,
     time_start: myRoute.time_start,

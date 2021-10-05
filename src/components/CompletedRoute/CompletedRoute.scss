@@ -5,26 +5,9 @@
   flex-direction: column;
   @include page;
 
-  .primary {
+  #CompletedRoute-icon {
     font-size: 96px;
-    color: var(--blue);
+    color: var(--se-white);
     margin-bottom: 16px;
-  }
-
-  h1 {
-    font-size: 32px;
-    color: var(--green);
-    margin-bottom: 16px;
-  }
-  p {
-    text-align: center;
-    font-size: 20px;
-    span {
-      color: var(--primary);
-      font-weight: 900;
-    }
-  }
-  button {
-    margin-top: 32px;
   }
 }

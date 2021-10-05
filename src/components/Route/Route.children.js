@@ -1,26 +1,350 @@
+import React, { useState } from 'react'
 import {
   Button,
   Card,
   ExternalLink,
+  Image,
   Spacer,
   Text,
 } from '@sharingexcess/designsystem'
-import { GoogleMap } from 'components'
+import { EditDelivery, GoogleMap, Input } from 'components'
+import firebase from 'firebase/app'
 import {
+  CLOUD_FUNCTION_URLS,
   createServerTimestamp,
   formatPhoneNumber,
+  generateStopId,
+  getCollection,
+  ROUTE_STATUSES,
   setFirestoreData,
   STOP_STATUSES,
+  updateGoogleCalendarEvent,
 } from 'helpers'
-import { useAuth, useFirestore } from 'hooks'
-import React from 'react'
-import { useHistory, useLocation, useParams } from 'react-router'
-import { generateDirectionsLink, getNextIncompleteStopIndex } from './utils'
+import { useAuth, useFirestore, useApp } from 'hooks'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import {
+  areAllStopsCompleted,
+  generateDirectionsLink,
+  getNextIncompleteStopIndex,
+} from './utils'
+import UserIcon from 'assets/user.svg'
+import moment from 'moment'
+
+export function RouteHeader() {
+  const { setModal } = useApp()
+  const { route_id } = useParams()
+  const route = useFirestore('routes', route_id)
+
+  return route ? (
+    <div id="Driver" type="secondary">
+      <Image
+        src={route.driver ? route.driver.icon : UserIcon}
+        alt={route.driver ? route.driver.name : 'No assigned driver'}
+      />
+      <div>
+        <Text type="small-header" color="white" shadow>
+          {ROUTE_STATUSES[route.status].toUpperCase()} ROUTE
+        </Text>
+        <Text type="section-header" color="white" shadow>
+          {route.driver ? route.driver.name : 'No assigned driver'}
+        </Text>
+        <Text type="small" color="white" shadow>
+          {moment(route.time_start).format('ddd, MMM D, h:mma')} (
+          {route.stops.length} total stops)
+        </Text>
+        {route.notes ? (
+          <Text type="small" color="white" shadow>
+            Notes: {route.notes}
+          </Text>
+        ) : null}
+      </div>
+      <Button
+        id="Route-edit-button"
+        type="secondary"
+        color="white"
+        handler={() => setModal('RouteMenu')}
+      >
+        <i className="fa fa-ellipsis-v" />
+      </Button>
+    </div>
+  ) : null
+}
+
+export function RouteMenu() {
+  const { setModal, modalState } = useApp()
+  const { user, admin } = useAuth()
+
+  return (
+    <div id="RouteMenu">
+      <Text type="secondary-header" color="black">
+        Route Options
+      </Text>
+      <Spacer height={8} />
+      <ul>
+        {user.id === modalState.route.driver_id ? (
+          <>
+            <li>
+              <Button
+                type="tertiary"
+                color="blue"
+                size="large"
+                handler={() => setModal('DropRoute')}
+              >
+                Drop Route
+              </Button>
+            </li>
+            <li>
+              <Button
+                type="tertiary"
+                color="blue"
+                size="large"
+                handler={() => setModal('ContactAdmin')}
+              >
+                Contact Admin
+              </Button>
+            </li>
+          </>
+        ) : null}
+        {admin ? (
+          <>
+            <li>
+              <Link to={`/routes/${modalState.route.id}/edit`}>
+                <Button type="tertiary" color="blue" size="large">
+                  Edit Route
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <Button
+                type="tertiary"
+                color="blue"
+                size="large"
+                handler={() => setModal('CancelRoute')}
+              >
+                Cancel Route
+              </Button>
+            </li>
+          </>
+        ) : null}
+      </ul>
+    </div>
+  )
+}
+
+export function StopMenu() {
+  const { setModal, modalState } = useApp()
+
+  return (
+    <div id="StopMenu">
+      <Text type="secondary-header" color="black">
+        {modalState.stop.type} Options
+      </Text>
+      <Spacer height={8} />
+      <ul>
+        <li>
+          <Button
+            type="tertiary"
+            color="blue"
+            size="large"
+            handler={() => setModal('CancelStop')}
+          >
+            Cancel {modalState.stop.type}
+          </Button>
+        </li>
+      </ul>
+    </div>
+  )
+}
+
+export function DropRoute() {
+  const { setModal, modalState } = useApp()
+  const [notes, setNotes] = useState()
+
+  async function handleUnassign() {
+    const event = await updateGoogleCalendarEvent({
+      ...modalState.route,
+      stops: modalState.route.stops,
+      driver: null,
+      notes: `Route dropped by ${modalState.route.driver.name}: "${notes}"`,
+    })
+    await setFirestoreData(['Routes', modalState.route.id], {
+      driver_id: null,
+      google_calendar_event_id: event.id,
+      notes: `Route dropped by ${modalState.route.driver.name}: "${notes}"`,
+    })
+    for (const stop of modalState.route.stops) {
+      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+      setFirestoreData([collection, stop.id], {
+        driver_id: null,
+      })
+    }
+    setModal()
+  }
+
+  return (
+    <>
+      <Text type="secondary-header" color="black">
+        Drop Route
+      </Text>
+      <Spacer height={4} />
+      <Button
+        type="tertiary"
+        color="blue"
+        handler={() => setModal('RouteMenu')}
+      >
+        &lt; Back to Route Options
+      </Button>
+      <Input
+        label="Why can't you complete this route?"
+        animation={false}
+        type="textarea"
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+      />
+      <Button
+        type="primary"
+        color="green"
+        size="large"
+        fullWidth
+        handler={handleUnassign}
+      >
+        Confirm Cancel Route
+      </Button>
+    </>
+  )
+}
+
+export function CancelRoute() {
+  const { setModal, modalState } = useApp()
+  const [notes, setNotes] = useState()
+
+  async function handleCancel() {
+    getCollection('Routes')
+      .doc(modalState.route.id)
+      .set({ status: 0, notes }, { merge: true })
+      .then(() => {
+        fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+          method: 'POST',
+          body: JSON.stringify({
+            calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+            eventId: modalState.route.google_calendar_event_id,
+          }),
+        }).catch(e => console.error('Error deleting calendar event:', e))
+      })
+      .then(() => setModal())
+  }
+
+  return (
+    <>
+      <Text type="secondary-header" color="black">
+        Cancel Route
+      </Text>
+      <Spacer height={4} />
+      <Button
+        type="tertiary"
+        color="blue"
+        handler={() => setModal('RouteMenu')}
+      >
+        &lt; Back to Route Options
+      </Button>
+      <Input
+        label="Why can't you complete this route?"
+        animation={false}
+        type="textarea"
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+      />
+      <Button
+        type="primary"
+        color="green"
+        size="large"
+        fullWidth
+        handler={handleCancel}
+      >
+        Confirm Drop Route
+      </Button>
+    </>
+  )
+}
+
+export function CancelStop() {
+  const [notes, setNotes] = useState('')
+  const { setModal, modalState } = useApp()
+
+  function handleCancel() {
+    const collection =
+      modalState.stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+    getCollection(collection)
+      .doc(modalState.stop.id)
+      .set(
+        {
+          status: 0,
+          report: modalState.stop.report
+            ? { ...modalState.stop.report, notes }
+            : { notes },
+        },
+        { merge: true }
+      )
+      .then(() => setModal())
+  }
+
+  return (
+    <>
+      <Text type="secondary-header" color="black">
+        Cancel Stop
+      </Text>
+      <Spacer height={4} />
+      <Input
+        label="Why are you cancelling this stop?"
+        animation={false}
+        type="textarea"
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+      />
+      <Button
+        type="primary"
+        color="green"
+        size="large"
+        fullWidth
+        handler={handleCancel}
+      >
+        Confirm Cancel Stop
+      </Button>
+    </>
+  )
+}
+
+export function ContactAdmin() {
+  const { setModal } = useApp()
+
+  return (
+    <div id="ContactAdmin">
+      <Text type="section-header">Need Help?</Text>
+      <Spacer height={4} />
+      <Button
+        type="tertiary"
+        color="blue"
+        handler={() => setModal('RouteMenu')}
+      >
+        &lt; Back to Route Options
+      </Button>
+      <Spacer height={16} />
+      <Text type="paragraph">No stress! Call Hannah for backup.</Text>
+      <Spacer height={16} />
+      <ExternalLink to="tel:83374727397" fullWidth>
+        <Button type="primary" color="green" size="large" fullWidth>
+          Call Now
+        </Button>
+      </ExternalLink>
+    </div>
+  )
+}
 
 export function Stop({ stops, s, i }) {
   const location = useLocation()
   const history = useHistory()
   const { route_id } = useParams()
+  const { setModal, setModalState } = useApp()
   const route = useFirestore('routes', route_id)
   const { user, admin } = useAuth()
   const pickups = useFirestore('pickups')
@@ -30,8 +354,10 @@ export function Stop({ stops, s, i }) {
     ? i === getNextIncompleteStopIndex(route, stops)
     : false
 
+  const isCompletedStop = s.status === 9 || s.status === 0
+
   function hasEditPermissions() {
-    return admin || user.uid === route.driver_id
+    return admin || (route && user && user.uid === route.driver_id)
   }
 
   function generateStopTitle() {
@@ -46,8 +372,22 @@ export function Stop({ stops, s, i }) {
     const headerText =
       s.type && s.status
         ? s.type === 'delivery'
-          ? `⬇️ DELIVERY ${STOP_STATUSES[s.status].toUpperCase()}`
-          : `⬆️ PICKUP ${STOP_STATUSES[s.status].toUpperCase()}`
+          ? `⬇️ DELIVERY${
+              route.status !== 0
+                ? ' (' +
+                  STOP_STATUSES[s.status].replace('_', ' ').toUpperCase() +
+                  ')'
+                : ''
+            }`
+          : `⬆️ PICKUP${
+              route.status !== 0
+                ? ' (' +
+                  STOP_STATUSES[s.status].replace('_', ' ').toUpperCase() +
+                  ')'
+                : ''
+            }`
+        : s.status === 0
+        ? `Cancelled ${s.type}`.toUpperCase()
         : 'loading...'
 
     return (
@@ -64,9 +404,13 @@ export function Stop({ stops, s, i }) {
           id="Route-stop-edit-button"
           type="tertiary"
           size="large"
-          color="black"
+          color={isActiveStop ? 'black' : 'white'}
+          handler={() => {
+            setModalState(state => ({ ...state, stop: s }))
+            setModal('StopMenu')
+          }}
         >
-          ···
+          <i className="fa fa-ellipsis-v" />
         </Button>
       </div>
     )
@@ -135,21 +479,41 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopDirectionsButton() {
+    async function handleClick() {
+      setFirestoreData(
+        [s.type === 'delivery' ? 'Deliveries' : 'Pickups', s.id],
+        {
+          status: 3,
+          driver_left_at: createServerTimestamp(),
+        }
+      ).then(() => window.open(generateDirectionsLink(s.location), '_blank'))
+    }
     return (
-      <ExternalLink to={generateDirectionsLink(s.location)}>
-        <Button type="primary" color="blue">
-          I'm On My Way
-        </Button>
-      </ExternalLink>
+      <Button
+        type="primary"
+        color="blue"
+        size="large"
+        fullWidth
+        handler={handleClick}
+      >
+        Get Directions
+      </Button>
     )
   }
 
-  function StopAdvanceButton() {
+  function StopReportButton() {
     function handleOpenReport() {
       const baseURL = location.pathname.includes('routes')
         ? 'routes'
         : 'history'
-      history.push(`/${baseURL}/${route_id}/${s.type}/${s.id}`)
+
+      setFirestoreData(
+        [s.type === 'delivery' ? 'Deliveries' : 'Pickups', s.id],
+        {
+          status: 6,
+          driver_arrived_at: createServerTimestamp(),
+        }
+      ).then(() => history.push(`/${baseURL}/${route_id}/${s.type}/${s.id}`))
     }
 
     function handleSubmitHomeDelivery() {
@@ -178,8 +542,14 @@ export function Stop({ stops, s, i }) {
     }
 
     return (
-      <Button type="primary" color="green" onClick={handleClick}>
-        Complete {s.type}
+      <Button
+        type="primary"
+        color="blue"
+        size="large"
+        fullWidth
+        handler={handleClick}
+      >
+        Finish {s.type}
       </Button>
     )
   }
@@ -199,10 +569,19 @@ export function Stop({ stops, s, i }) {
         <StopInstructions />
         <Spacer height={16} />
         <StopMap />
-        <Spacer height={16} />
-        <StopDirectionsButton />
-        {s.status === 1 && <StopAdvanceButton />}
+        <Spacer height={24} />
+        {s.status === 1 && <StopDirectionsButton />}
+        {s.status === 3 && <StopReportButton />}
       </>
+    )
+  }
+
+  function StopSummary() {
+    return (
+      <Text type="paragraph" color="white">
+        {s.status === 9 && s.report.weight + ' lbs. rescued '}
+        {s.report.notes && `"${s.report.notes}"`}
+      </Text>
     )
   }
 
@@ -213,11 +592,13 @@ export function Stop({ stops, s, i }) {
       key={i}
     >
       <StopHeader />
+      <Spacer height={4} />
       <Text type="section-header" color={isActiveStop ? 'black' : 'white'}>
         {generateStopTitle()}
       </Text>
       {isActiveStop && <StopDetails />}
-      {/* {isCompleted && <StopSummary />} */}
+      {isCompletedStop && <StopSummary />}
+      {/* TODO: cancel individual stop logic */}
       {hasEditPermissions() ? (
         <>
           {/* {isActiveStop ? (
@@ -227,4 +608,142 @@ export function Stop({ stops, s, i }) {
       ) : null}
     </Card>
   )
+}
+
+export function RouteActionButton() {
+  const { route_id } = useParams()
+  const drivers = useFirestore('users')
+  const { user, admin } = useAuth()
+  const { modalState } = useApp()
+
+  async function handleBegin() {
+    await setFirestoreData(['Routes', modalState.route.id], {
+      status: 3,
+      time_started: createServerTimestamp(),
+    })
+  }
+
+  async function handleClaim() {
+    const event = await updateGoogleCalendarEvent({
+      ...modalState.route,
+      notes: null,
+      driver: drivers.find(d => d.id === user.uid),
+    })
+    setFirestoreData(['Routes', modalState.route.id], {
+      driver_id: user.uid,
+      google_calendar_event_id: event.id,
+      notes: null,
+    })
+    for (const stop of modalState.route.stops) {
+      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
+      setFirestoreData([collection, stop.id], {
+        driver_id: user.uid,
+      })
+    }
+  }
+
+  function ActionButton({ handler, link, children }) {
+    const button = (
+      <Button
+        type="primary"
+        size="large"
+        color="white"
+        fullWidth
+        handler={handler}
+      >
+        {children}
+      </Button>
+    )
+    return link ? (
+      <Link to={link} style={{ width: '100%' }}>
+        {button}
+      </Link>
+    ) : (
+      button
+    )
+  }
+  if (!modalState || !modalState.route) return null
+  if (modalState.route.status === 1) {
+    if (modalState.route.driver) {
+      return <ActionButton handler={handleBegin}>Start Route</ActionButton>
+    } else {
+      if (admin) {
+        return (
+          <ActionButton link={`/routes/${route_id}/edit`}>
+            Assign Driver
+          </ActionButton>
+        )
+      } else
+        return <ActionButton handler={handleClaim}>Claim Route</ActionButton>
+    }
+  }
+  return null
+}
+
+export function BackupDelivery() {
+  const [willFind, setWillFind] = useState()
+  const { modalState } = useApp()
+  const { route_id } = useParams()
+  if (areAllStopsCompleted(modalState.route.stops)) {
+    let lastStop
+    for (const s of modalState.route.stops) {
+      if (
+        s.status === 9 &&
+        (!lastStop || s.time_finished > lastStop.time_finished)
+      )
+        lastStop = s
+    }
+    if (
+      lastStop &&
+      (!lastStop.report.weight ||
+        lastStop.report.percent_of_total_dropped < 100 ||
+        lastStop.type === 'pickup')
+    ) {
+      async function addBackupDelivery(stop) {
+        const stop_id = generateStopId(stop)
+        await setFirestoreData(['Deliveries', stop_id], {
+          id: stop_id,
+          org_id: stop.org_id,
+          location_id: stop.location_id,
+          driver_id: modalState.route.driver_id,
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 1,
+          pickup_ids: lastStop.pickup_ids || lastStop.id,
+          route_id,
+        })
+        await setFirestoreData(['Routes', route_id], {
+          stops: [
+            ...modalState.route.stops.map(s => ({ type: s.type, id: s.id })),
+            { type: 'delivery', id: stop_id },
+          ],
+        })
+      }
+      return (
+        <div id="BackupDelivery">
+          {willFind ? (
+            <>
+              <EditDelivery handleSubmit={addBackupDelivery} />
+              <br />
+              <button
+                className="yellow small"
+                onClick={() => setWillFind(false)}
+              >
+                cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <h4>Looks like you have left over food!</h4>
+              <p>Add another delivery location to finish your route.</p>
+              <button onClick={() => setWillFind(true)}>
+                add another delivery
+              </button>
+            </>
+          )}
+        </div>
+      )
+    }
+  }
+  return null
 }

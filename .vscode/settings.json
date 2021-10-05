@@ -1,16 +1,17 @@
 {
-    "cSpell.ignoreWords": [
-        "datetime",
-        "default",
-        "gapi",
-        "get",
-        "mediumgrey",
-        "middleground",
-        "millis",
-        "org",
-        "orgs",
-        "rgb",
-        "sharingexcess",
-        "to"
-    ]
+  "cSpell.ignoreWords": [
+    "datetime",
+    "default",
+    "gapi",
+    "get",
+    "mediumgrey",
+    "middleground",
+    "millis",
+    "org",
+    "orgs",
+    "rgb",
+    "sharingexcess",
+    "to"
+  ],
+  "cSpell.words": ["designsystem"]
 }
