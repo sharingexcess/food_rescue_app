@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Input } from 'components'
 import { updateFieldSuggestions, formFields } from './utils'
 import { useFirestore } from 'hooks'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditPickup({ handleSubmit, title }) {
   const organizations = useFirestore('organizations')
@@ -91,7 +92,19 @@ export function EditPickup({ handleSubmit, title }) {
 
   return (
     <div id="EditPickup">
-      {title !== '' && <h3>{title || 'Add a Pickup'}</h3>}
+      {title !== '' && (
+        <>
+          <Spacer height={16} />
+          <Text type="section-header" color="white" shadow>
+            {title || 'Add a Pickup'}
+          </Text>
+          <Spacer height={8} />
+          <Text type="paragraph" color="white" shadow>
+            Choose a partner organization and location for the driver to rescue
+            food.
+          </Text>
+        </>
+      )}
       {formFields.map(f => renderFieldInput(f))}
     </div>
   )

@@ -54,13 +54,6 @@ export function getDefaultStartTime() {
     .format('yyyy-MM-DDTkk:mm')
 }
 
-export function getDefaultEndTime() {
-  return moment(new Date())
-    .startOf('hour')
-    .add(4, 'hour')
-    .format('yyyy-MM-DDTkk:mm')
-}
-
 export function getDefaultEndRecurring() {
   return moment(new Date())
     .startOf('hour')
@@ -84,15 +77,9 @@ export const formFields = [
     type: 'datetime-local',
   },
   {
-    label: 'End Time',
-    id: 'time_end',
-    preReq: 'time_start',
-    type: 'datetime-local',
-  },
-  {
     label: 'Select a driver...',
     id: 'driver_name',
-    preReq: 'time_end',
+    preReq: 'time_start',
     type: 'text',
     suggestionQuery: (name, drivers) =>
       drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
@@ -110,15 +97,9 @@ export const formFieldsRecurring = [
     type: 'datetime-local',
   },
   {
-    label: 'End Time',
-    id: 'time_end',
-    preReq: 'time_start',
-    type: 'datetime-local',
-  },
-  {
     label: 'End Recurring On',
     id: 'end_recurring',
-    preReq: 'time_end',
+    preReq: 'time_start',
     type: 'datetime-local',
   },
   {

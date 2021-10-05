@@ -7,7 +7,6 @@ import {
   formFieldsRecurring,
   addDays,
   getDefaultStartTime,
-  getDefaultEndTime,
   getDefaultEndRecurring,
   getExistingRouteData,
   getTimeConflictInfo,
@@ -20,23 +19,22 @@ import {
   updateGoogleCalendarEvent,
 } from 'helpers'
 import moment from 'moment'
-import { EditDelivery, EditPickup, Input, Ellipsis } from 'components'
+import { EditDelivery, EditPickup, Input, Ellipsis, Loading } from 'components'
 import { useFirestore } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
 import { OrganizationHours } from '../Organization/utils'
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditRoute() {
   const history = useHistory()
   const drivers = useFirestore('users')
   const { route_id } = useParams()
-  const routes = useFirestore('routes')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
     driver_name: '',
     driver_id: null,
     time_start: getDefaultStartTime(),
-    time_end: getDefaultEndTime(),
     end_recurring: getDefaultEndRecurring(),
     stops: [],
     original_route_id: '',
@@ -69,11 +67,6 @@ export function EditRoute() {
       setCanRender(true)
     }
   }, [route_id, drivers])
-  const [timeConflictInfo, setTimeConflictInfo] = useState({
-    hasConflict: false,
-    conflictRoutes: [],
-  })
-  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     formData.driver_id &&
@@ -82,66 +75,6 @@ export function EditRoute() {
         driver: drivers.find(i => i.id === formData.driver_id),
       })
   }, [formData.driver_id, drivers]) // eslint-disable-line
-
-  useEffect(() => {
-    if (routes && formData.driver_id) {
-      setTimeConflictInfo({
-        ...getTimeConflictInfo(
-          formData.driver_id,
-          formData.time_start,
-          formData.time_end,
-          routes
-        ),
-      })
-    }
-  }, [routes, formData.driver_id, formData.time_start, formData.time_end])
-
-  const Warning = () => {
-    const [showConflictRoutes, setShowConflictRoutes] = useState(false)
-    return (
-      <div className="warning modal">
-        <div className="modal-content">
-          <div className="header">
-            <p className={timeConflictInfo.hasConflict && 'short'}>
-              Warning: Route with Conflict time exists
-            </p>
-            {timeConflictInfo.hasConflict && (
-              <button
-                className="blue small"
-                onClick={() => setShowConflictRoutes(!showConflictRoutes)}
-              >
-                {showConflictRoutes ? 'Less' : 'More'}
-              </button>
-            )}
-          </div>
-
-          {showConflictRoutes &&
-            timeConflictInfo.conflictRoutes.map(route => (
-              <Link to={`/routes/${route.id}`} target="_blank">
-                <p className="route">{route.id.slice(0, 14)}...</p>
-              </Link>
-            ))}
-          <div className="footer">
-            <button
-              className="yellow small"
-              onClick={() => setShowModal(false)}
-            >
-              Back
-            </button>
-            <button
-              className="red small"
-              onClick={() => {
-                setShowModal(false)
-                setConfirmedTime(true)
-              }}
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -159,45 +92,6 @@ export function EditRoute() {
       ...formData,
       stops: [...formData.stops, { ...delivery, id, type: 'delivery' }],
     })
-  }
-
-  async function handleCreateRouteButtonClick() {
-    const original_route_id =
-      route_id || (await generateRouteId(formData.time_start))
-    const FirstFormData = {
-      ...formData,
-      original_route_id: original_route_id,
-    }
-    handleCreateRoute(FirstFormData, original_route_id)
-    if (isRecurring === true) {
-      let updatedTimeStart = addDays(formData.time_start)
-      let updatedTimeEnd = addDays(formData.time_end)
-      let iteration = 1
-      while (moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)) {
-        const route_id = await generateRouteId(updatedTimeStart)
-        const updatedStops = []
-        for (const stop of formData.stops) {
-          const original_stop_id = stop.id
-          const updatedStop = {
-            ...stop,
-            id: original_stop_id + iteration.toString(),
-            original_stop_id: original_stop_id,
-          }
-          updatedStops.push(updatedStop)
-        }
-        const recurrenceFormData = {
-          ...formData,
-          time_start: updatedTimeStart,
-          time_end: updatedTimeEnd,
-          original_route_id: original_route_id,
-          stops: updatedStops,
-        }
-        handleCreateRoute(recurrenceFormData, route_id)
-        updatedTimeStart = addDays(updatedTimeStart)
-        updatedTimeEnd = addDays(updatedTimeEnd)
-        iteration += 1
-      }
-    }
   }
 
   async function handleCreateRoute(formData, route_id) {
@@ -254,7 +148,6 @@ export function EditRoute() {
           google_calendar_event_id: event.id,
           driver_id: formData.driver_id,
           time_start: formData.time_start,
-          time_end: formData.time_end,
           stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
           created_at:
             formData.created_at ||
@@ -331,16 +224,7 @@ export function EditRoute() {
         setSuggestions
       )
     }
-    if (field.id === 'time_start') {
-      // automatically set time end 2 hrs later
-      const time_end = new Date(e.target.value)
-      time_end.setTime(time_end.getTime() + 2 * 60 * 60 * 1000)
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
-        time_end: moment(time_end).format('yyyy-MM-DDTHH:mm'),
-      })
-    } else if (field.id === 'driver_name') {
+    if (field.id === 'driver_name') {
       setFormData({
         ...formData,
         driver: {},
@@ -407,12 +291,6 @@ export function EditRoute() {
       if (!moment(formData.time_start).isValid()) {
         errors.push('Invalid Data Input: Start Time is invalid')
       }
-      if (!moment(formData.time_end).isValid()) {
-        errors.push('Invalid Data Input: End Time is invalid')
-      }
-      if (moment(formData.time_end).isSameOrBefore(formData.time_start)) {
-        errors.push('Invalid Data Input: End Time is before Start Time')
-      }
       if (errors.length === 0) {
         return true
       }
@@ -430,152 +308,220 @@ export function EditRoute() {
       return errors.map(error => <p id="FormError">{error}</p>)
     } else return null
   }
+
+  function Driver() {
+    return (
+      <div id="EditRoute-driver">
+        <img
+          src={formData.driver ? formData.driver.icon : UserIcon}
+          alt={formData.driver ? formData.driver.name : 'Unassigned Route'}
+        />
+        <div id="EditRoute-driver-info">
+          <Text type="secondary-header" color="white" shadow>
+            {formData.driver ? formData.driver.name : 'Unassigned Route'}
+          </Text>
+          <Text type="subheader" color="white" shadow>
+            {isRecurring
+              ? moment(formData.time_start).format('dddd') + ', Recurring'
+              : moment(formData.time_start).format('dddd, MMMM D, h:mma')}
+          </Text>
+        </div>
+        <Button
+          id="EditRoute-driver-edit"
+          type="secondary"
+          handler={() => setConfirmedTime(false)}
+        >
+          Update Route Info
+        </Button>
+      </div>
+    )
+  }
+
+  function SelectDriver() {
+    function SetRecurringRoute() {
+      return !route_id ? (
+        <div id="Recurring">
+          <input
+            type="checkbox"
+            id="is_recurring"
+            name="is_recurring"
+            checked={isRecurring}
+            onChange={() => setRecurring(!isRecurring)}
+          />
+          <Spacer width={4} />
+          <Text type="subheader" color="white">
+            {' '}
+            Recurring Route
+          </Text>
+        </div>
+      ) : null
+    }
+
+    function ConfirmTimesButton() {
+      function handleClick() {
+        if (validateFormData()) {
+          setConfirmedTime(true)
+        } else setShowErrors(true)
+      }
+
+      return (
+        formData.time_start &&
+        canRender && (
+          <Button type="primary" color="white" fullWidth handler={handleClick}>
+            {formData.stops.length ? 'Confirm' : 'Add Pickups'}
+          </Button>
+        )
+      )
+    }
+
+    return (
+      <>
+        <SetRecurringRoute />
+        {selectedFormFields.map(field =>
+          (!field.preReq || formData[field.preReq]) && canRender ? (
+            <Input
+              key={field.id}
+              element_id={field.id}
+              type={field.type}
+              label={field.label}
+              value={formData[field.id]}
+              onChange={e => handleChange(e, field)}
+              suggestions={suggestions[field.id]}
+              onSuggestionClick={
+                field.type === 'select'
+                  ? e => handleDropdownSelect(e, field)
+                  : (e, s) => handleSelect(e, s, field)
+              }
+              animation={false}
+            />
+          ) : null
+        )}
+        <FormError />
+        <ConfirmTimesButton />
+      </>
+    )
+  }
+
+  function SelectStops() {
+    function SubmitButton() {
+      async function handleSubmit() {
+        if (working) return
+        const original_route_id =
+          route_id || (await generateRouteId(formData.time_start))
+        const FirstFormData = {
+          ...formData,
+          original_route_id: original_route_id,
+        }
+        handleCreateRoute(FirstFormData, original_route_id)
+        if (isRecurring === true) {
+          let updatedTimeStart = addDays(formData.time_start)
+          let iteration = 1
+          while (
+            moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
+          ) {
+            const route_id = await generateRouteId(updatedTimeStart)
+            const updatedStops = []
+            for (const stop of formData.stops) {
+              const original_stop_id = stop.id
+              const updatedStop = {
+                ...stop,
+                id: original_stop_id + iteration.toString(),
+                original_stop_id: original_stop_id,
+              }
+              updatedStops.push(updatedStop)
+            }
+            const recurrenceFormData = {
+              ...formData,
+              time_start: updatedTimeStart,
+              original_route_id: original_route_id,
+              stops: updatedStops,
+            }
+            handleCreateRoute(recurrenceFormData, route_id)
+            updatedTimeStart = addDays(updatedTimeStart)
+            iteration += 1
+          }
+        }
+      }
+
+      function generateSubmitButtonText() {
+        return working ? (
+          <>
+            {route_id ? 'Updating Route' : 'Creating Route'}
+            <Ellipsis />
+          </>
+        ) : route_id ? (
+          'Update Route'
+        ) : (
+          'Create Route'
+        )
+      }
+
+      return isValidRoute() && !list ? (
+        <Button id="EditRoute-submit" size="large" handler={handleSubmit}>
+          {generateSubmitButtonText()}
+        </Button>
+      ) : null
+    }
+
+    function CancelButton() {
+      return list ? (
+        <Button
+          id="EditRoute-cancel"
+          type="secondary"
+          handler={() => setList()}
+        >
+          Cancel
+        </Button>
+      ) : null
+    }
+
+    function AddPickupButton() {
+      return !list ? (
+        <Button id="EditRoute-add-pickup" handler={() => setList('pickups')}>
+          Add Pickup
+        </Button>
+      ) : null
+    }
+
+    function AddDeliveryButton() {
+      return formData.stops.length && !list ? (
+        <Button id="EditRoute-add-delivery" handler={() => setList('delivery')}>
+          Add Delivery
+        </Button>
+      ) : null
+    }
+
+    return confirmedTimes ? (
+      <>
+        {formData.stops.map(s => (
+          <Stop s={s} key={s.id} />
+        ))}
+        <section id="AddStop">
+          {list === 'pickups' ? (
+            <EditPickup handleSubmit={handleAddPickup} />
+          ) : list === 'delivery' ? (
+            <EditDelivery handleSubmit={handleAddDelivery} />
+          ) : null}
+        </section>
+        <div id="EditRoute-buttons">
+          <CancelButton />
+          <AddPickupButton />
+          <AddDeliveryButton />
+          <SubmitButton />
+        </div>
+      </>
+    ) : null
+  }
+
   return (
     <main id="EditRoute">
-      {confirmedTimes && canRender ? (
-        <div id="Driver">
-          <img
-            src={formData.driver ? formData.driver.icon : UserIcon}
-            alt={formData.driver ? formData.driver.name : 'Unassigned Route'}
-          />
-          <div>
-            <h3>
-              {formData.driver ? formData.driver.name : 'Unassigned Route'}
-            </h3>
-            <h4>
-              {isRecurring
-                ? moment(formData.time_start).format('dddd') + ', Recurring'
-                : moment(formData.time_start).format('dddd, MMMM D')}
-            </h4>
-            <h5>
-              {moment(formData.time_start).format('h:mma')} -{' '}
-              {moment(formData.time_end).format('h:mma')}
-            </h5>
-          </div>
-          <button onClick={() => setConfirmedTime(false)}>
-            Update Route Info
-          </button>
-          {!route_id && (
-            <Link to="/admin/create-organization">
-              <button className="create">Create an Organization</button>
-            </Link>
-          )}
-        </div>
+      {canRender ? (
+        <>
+          {confirmedTimes ? <Driver /> : <SelectDriver />}
+          <SelectStops />
+        </>
       ) : (
-        <>
-          {!route_id && (
-            <div id="Recurring">
-              <input
-                type="checkbox"
-                id="is_recurring"
-                name="is_recurring"
-                checked={isRecurring}
-                onChange={() => setRecurring(!isRecurring)}
-              />
-              <p className="text"> Recurring Route</p>
-            </div>
-          )}
-          {selectedFormFields.map(field =>
-            (!field.preReq || formData[field.preReq]) && canRender ? (
-              <Input
-                key={field.id}
-                element_id={field.id}
-                type={field.type}
-                label={field.label}
-                value={formData[field.id]}
-                onChange={e => handleChange(e, field)}
-                suggestions={suggestions[field.id]}
-                onSuggestionClick={
-                  field.type === 'select'
-                    ? e => handleDropdownSelect(e, field)
-                    : (e, s) => handleSelect(e, s, field)
-                }
-                animation={false}
-              />
-            ) : null
-          )}
-          <FormError />
-          {formData.time_end && canRender && (
-            <button
-              onClick={() => {
-                validateFormData()
-                  ? timeConflictInfo.hasConflict
-                    ? setShowModal(true)
-                    : setConfirmedTime(true)
-                  : setShowErrors(true)
-              }}
-            >
-              {formData.stops.length ? 'confirm' : 'add pickups'}
-            </button>
-          )}
-          {showModal && <Warning />}
-        </>
-      )}
-      {confirmedTimes && canRender ? (
-        <>
-          {formData.stops.map(s => (
-            <Stop s={s} key={s.id} />
-          ))}
-          <section id="AddStop">
-            {list === 'pickups' ? (
-              <EditPickup handleSubmit={handleAddPickup} />
-            ) : list === 'delivery' ? (
-              <EditDelivery handleSubmit={handleAddDelivery} />
-            ) : null}
-          </section>
-          <div className="add">
-            {list ? (
-              <button className="cancel" onClick={() => setList()}>
-                cancel
-              </button>
-            ) : (
-              <>
-                <button className="pickup" onClick={() => setList('pickups')}>
-                  add pickup
-                </button>
-                {formData.stops.length ? (
-                  <button
-                    className="delivery"
-                    onClick={() => setList('delivery')}
-                  >
-                    add delivery
-                  </button>
-                ) : null}
-                {isValidRoute() && (
-                  <button
-                    className="complete"
-                    onClick={
-                      working
-                        ? null
-                        : () => {
-                            handleCreateRouteButtonClick()
-                          }
-                    }
-                  >
-                    {working ? (
-                      <>
-                        {route_id ? 'updating' : 'creating'}
-                        <Ellipsis />
-                      </>
-                    ) : route_id ? (
-                      'update route'
-                    ) : (
-                      'create route'
-                    )}
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-        </>
-      ) : null}
-
-      {!canRender && (
-        <div className="loading">
-          <h2>
-            Loading <Ellipsis />
-          </h2>
-        </div>
+        <Loading />
       )}
     </main>
   )

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { updateFieldSuggestions, formFields } from './utils'
 import { useFirestore } from 'hooks'
 import { Input } from 'components'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditDelivery({ handleSubmit, title }) {
   const organizations = useFirestore('organizations')
@@ -91,7 +92,19 @@ export function EditDelivery({ handleSubmit, title }) {
 
   return (
     <div id="EditDelivery">
-      {title !== '' && <h3>{title || 'Add a Delivery'}</h3>}
+      {title !== '' && (
+        <>
+          <Spacer height={16} />
+          <Text type="section-header" color="white" shadow>
+            {title || 'Add a Delivery'}
+          </Text>
+          <Spacer height={8} />
+          <Text type="paragraph" color="white" shadow>
+            Choose a partner organization and location for the driver to drop
+            off food.
+          </Text>
+        </>
+      )}
       {formFields.map(f => renderFieldInput(f))}
     </div>
   )

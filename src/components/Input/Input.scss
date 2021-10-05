@@ -6,6 +6,7 @@
   height: 50px;
   border-radius: 0;
   border: 0;
+
   * {
     overflow: hidden;
     white-space: nowrap;
@@ -26,12 +27,12 @@
     }
 
     label {
-      color: var(--primary);
+      color: var(--se-black);
     }
   }
 
   label {
-    color: var(--primary);
+    color: var(--se-black);
     z-index: 2;
     font-size: 18px;
     font-weight: 700;
@@ -42,7 +43,8 @@
     transition: padding 0.16s ease, font-size 0.16s ease;
 
     &.focused {
-      padding: 6px 12px;
+      color: var(--se-blue-primary);
+      padding: 8px 12px;
       font-size: 10px;
     }
   }
@@ -71,13 +73,14 @@
 
   input,
   textarea {
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.4);
     background: none;
     height: 100%;
     position: relative;
     border: 0;
     border-radius: 8px;
     background: var(--foreground);
-    padding: 20px 8px 16px 8px;
+    padding: 28px 8px 16px 8px;
     font-size: 18px;
     font-weight: 700;
     color: var(--text);

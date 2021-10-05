@@ -1,81 +1,36 @@
 #EditRoute {
   @include page;
 
-  .add {
+  #EditRoute-buttons {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 16px;
+    justify-content: space-around;
     flex-wrap: wrap;
 
-    button {
-      margin: 4px;
+    .se-button {
       flex-grow: 1;
+      margin: 16px;
     }
 
-    .delivery {
-      background: var(--red);
+    #EditRoute-add-pickup {
+      color: var(--se-green-primary);
     }
-    .complete {
-      background: var(--blue);
+    #EditRoute-add-delivery {
+      color: var(--se-red-primary);
     }
-    .cancel {
-      background: var(--yellow);
+    #EditRoute-cancel {
       flex-grow: 0;
+    }
+    #EditRoute-submit {
+      width: 100%;
     }
   }
 
-  #Driver {
+  #EditRoute-driver {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 24px 0;
     flex-wrap: wrap;
-
-    button {
-      width: 100%;
-      margin-top: 24px;
-    }
-    a {
-      width: 100%;
-      .create {
-        margin-top: 8px;
-        background-color: var(--blue);
-      }
-    }
-
-    @media (min-width: 600px) {
-      flex-wrap: nowrap;
-
-      button {
-        margin: 0;
-        padding: 8px;
-        width: auto;
-        margin-left: auto;
-      }
-      a {
-        margin: 0;
-        padding: 8px;
-        width: auto;
-        .create {
-          margin-top: 0px;
-        }
-      }
-    }
-
-    h3 {
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
-
-    h4 {
-      color: var(--blue);
-      font-weight: 600;
-    }
-    h5 {
-      color: var(--blue);
-      font-weight: 600;
-    }
 
     img {
       width: 64px;
@@ -87,29 +42,20 @@
       border-radius: 50%;
       margin-right: 16px;
     }
+
+    #EditRoute-driver-edit {
+      margin-left: auto;
+      @include mobile {
+        width: 100%;
+        margin: 16px 0;
+      }
+    }
   }
 
   #Recurring {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    .text {
-      margin-left: 10px;
-      font-size: larger;
-    }
-  }
-  #AddStop {
-    border-radius: 8px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-
-    &:empty {
-      display: none;
-    }
   }
 
   .Stop {
@@ -193,99 +139,5 @@
         color: var(--red);
       }
     }
-  }
-
-  .warning {
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.4);
-    &.modal {
-      border: 1px solid black;
-    }
-
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      border-radius: 8px;
-      background-color: var(--foreground);
-      margin: 10% auto;
-      padding: 16px 8px 8px;
-      width: 75%;
-      max-height: 50%;
-      overflow: auto;
-      max-width: 750px;
-    }
-
-    .footer {
-      margin: 20px 0 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 20px 20px 0;
-      button {
-        margin: 0;
-      }
-    }
-
-    .header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      padding: 0 20px;
-      p {
-        text-align: center;
-        width: 100%;
-        font-size: 24px;
-        &.short {
-          width: 75%;
-        }
-      }
-      .blue {
-        background-color: var(--blue);
-        margin: 0;
-        padding: 8px 16px;
-      }
-    }
-
-    .route {
-      padding: 8px 32px;
-      box-shadow: 4px 4px 8px var(--grey);
-      border-radius: 8px;
-      &:hover {
-        transform: scale(1.1);
-      }
-    }
-
-    .yellow {
-      background-color: var(--yellow);
-    }
-
-    .small {
-      padding: 8px 32px;
-    }
-
-    .red {
-      background-color: var(--red);
-    }
-
-    Link {
-      border: 1px solid black;
-    }
-  }
-
-  .loading {
-    width: 100%;
-    text-align: center;
-    margin-top: 30%;
-    font-size: 32px;
   }
 }
