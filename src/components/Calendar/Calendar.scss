@@ -1,6 +1,5 @@
 #Calendar {
-  padding: 108px 16px 0 16px;
-  margin: auto;
+  @include page;
   animation: fade-in 0.32s ease forwards;
 
   h1 {

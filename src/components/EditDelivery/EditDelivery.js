@@ -1,13 +1,12 @@
-import React, { memo, useEffect, useState } from 'react'
-import { Input } from '../Input/Input'
+import React, { useEffect, useState } from 'react'
 import { updateFieldSuggestions, formFields } from './utils'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useLocationData from '../../hooks/useLocationData'
-import './EditDelivery.scss'
+import { useFirestore } from 'hooks'
+import { Input } from 'components'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
-function EditDelivery({ handleSubmit, title }) {
-  const organizations = useOrganizationData()
-  const locations = useLocationData()
+export function EditDelivery({ handleSubmit, title }) {
+  const organizations = useFirestore('organizations')
+  const locations = useFirestore('locations')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -41,7 +40,7 @@ function EditDelivery({ handleSubmit, title }) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
-  function handleSelect(e, selected, field) {
+  function handleSelect(_e, selected, field) {
     if (field.type !== 'select') {
       setSuggestions({ ...suggestions, [field.id]: null })
     }
@@ -93,10 +92,19 @@ function EditDelivery({ handleSubmit, title }) {
 
   return (
     <div id="EditDelivery">
-      {title !== '' && <h3>{title || 'Add a Delivery'}</h3>}
+      {title !== '' && (
+        <>
+          <Spacer height={16} />
+          <Text type="section-header" color="white" shadow>
+            {title || 'Add a Delivery'}
+          </Text>
+          <Spacer height={8} />
+          <Text type="paragraph" color="white" shadow>
+            Choose a partner organization and location to drop off food.
+          </Text>
+        </>
+      )}
       {formFields.map(f => renderFieldInput(f))}
     </div>
   )
 }
-
-export default memo(EditDelivery)

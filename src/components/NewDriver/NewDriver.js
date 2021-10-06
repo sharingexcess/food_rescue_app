@@ -1,11 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../Auth/Auth'
-import Header from '../Header/Header'
-import Menu from '../Menu/Menu'
-import './NewDriver.scss'
+import { useAuth } from 'hooks'
+import { Menu, Header } from 'components'
 
-export default function NewDriver() {
+export function NewDriver() {
   const { user } = useAuth()
 
   const sections = [
@@ -26,7 +24,7 @@ export default function NewDriver() {
     },
     {
       name: 'Food Safety Training',
-      page: '/foodsafety',
+      page: '/food-safety',
       completed: user.completed_food_safety,
     },
     {

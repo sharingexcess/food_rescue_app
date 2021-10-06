@@ -41,6 +41,19 @@ export const DELIVERY_STATUSES = {
   9: 'completed',
 }
 
+export const STOP_STATUSES = {
+  0: 'cancelled',
+  1: 'scheduled',
+  2: 'UNDEFINED_STATUS',
+  3: 'in_progress',
+  4: 'UNDEFINED_STATUS',
+  5: 'UNDEFINED_STATUS',
+  6: 'arrived',
+  7: 'UNDEFINED_STATUS',
+  8: 'UNDEFINED_STATUS',
+  9: 'completed',
+}
+
 export const ROUTE_STATUSES = {
   0: 'cancelled',
   1: 'scheduled',

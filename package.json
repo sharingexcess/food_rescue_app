@@ -1,16 +1,15 @@
 {
-  "name": "sharingexcess",
+  "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "dependencies": {
-    "@reduxjs/toolkit": "^1.5.0",
     "@sentry/react": "^5.30.0",
     "@sentry/tracing": "^5.30.0",
+    "@sharingexcess/designsystem": "^1.1.1",
     "apexcharts": "^3.27.3",
     "firebase": "^8.2.1",
     "google-map-react": "^2.1.9",
-    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "node-sass": "^4.14.1",
     "react": "^17.0.1",
@@ -18,10 +17,8 @@
     "react-dom": "^17.0.1",
     "react-firebase-hooks": "^2.2.0",
     "react-phone-number-input": "^3.1.18",
-    "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
-    "redux": "^4.0.5",
     "validator": "^13.5.2"
   },
   "scripts": {

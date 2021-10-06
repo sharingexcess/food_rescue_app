@@ -1,59 +1,41 @@
-@import '../../styles/global.scss';
-
 #User {
   @include page;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
 
   .wrapper {
     width: 100%;
     display: inline;
   }
 
-  div {
+  img {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+    background: var(--white);
+    padding: 4px;
+    border-radius: 50%;
+    object-fit: contain;
+  }
+
+  #User-info {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 8px 0;
-    img {
-      width: 96px;
-      height: 96px;
-      flex-shrink: 0;
-      background: var(--white);
-      padding: 4px;
-      border-radius: 50%;
-      object-fit: contain;
-      margin-right: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    a {
+      text-decoration: underline;
     }
-    div {
+    .se-text {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      a {
-        text-decoration: underline;
-      }
-      h1 {
-        font-size: 24px;
-        margin-bottom: 8px;
-      }
-      button {
-        margin-top: 8px;
-      }
-      p {
-        font-size: 12px;
-        font-weight: 500;
-        padding: 2px;
-        color: var(--blue);
-        i {
-          color: var(--white);
-          width: 20px;
-        }
-      }
     }
   }
   #AccessLevel {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 32px 16px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

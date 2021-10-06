@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 .Input {
   position: relative;
   width: 100%;
@@ -8,14 +6,11 @@
   height: 50px;
   border-radius: 0;
   border: 0;
+
   * {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-
-  &.animation {
-    animation: slide-in 0.48s forwards ease;
   }
 
   &.textarea {
@@ -28,68 +23,67 @@
     }
 
     label {
-      color: var(--primary);
+      color: var(--se-black);
     }
   }
 
   label {
-    color: var(--primary);
+    color: var(--se-grey-primary);
     z-index: 2;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     pointer-events: none;
 
-    padding: 14px 12px;
+    padding: 17px 12px 8px 12px;
     position: absolute;
     transition: padding 0.16s ease, font-size 0.16s ease;
 
     &.focused {
-      padding: 6px 12px;
+      color: var(--se-blue-primary);
+      padding: 8px 12px;
       font-size: 10px;
     }
   }
 
   select {
-    height: 100%;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    overflow-y: visible;
-    background: none;
-    width: 100%;
-    font-family: 'Source Sans Pro', sans-serif;
-    border: 0;
-    border-radius: 0;
-    border-bottom: 1px solid var(--secondary);
-    padding: 20px 0 8px 0;
-    -webkit-appearance: none;
-    &:focus {
-      border-bottom: 4px solid var(--primary);
-    }
-  }
-  select option { background-color: var(--foreground); }
-
-  input,
-  textarea {
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.4);
     background: none;
     height: 100%;
     position: relative;
     border: 0;
     border-radius: 8px;
-    border: 1px solid var(--secondary);
     background: var(--foreground);
-    padding: 20px 8px 16px 8px;
+    padding: 10px 8px 0 8px;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text);
     width: 100%;
     z-index: 1;
     transition: border 0.1s ease;
     -webkit-appearance: none;
-    &:focus {
-      border: 3px solid var(--primary);
-    }
+    cursor: pointer;
+  }
+  select option {
+    background-color: var(--foreground);
+  }
 
+  input,
+  textarea {
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.4);
+    background: none;
+    height: 100%;
+    position: relative;
+    border: 0;
+    border-radius: 8px;
+    background: var(--foreground);
+    padding: 28px 8px 16px 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    width: 100%;
+    z-index: 1;
+    transition: border 0.1s ease;
+    -webkit-appearance: none;
     &::-webkit-calendar-picker-indicator {
       filter: invert(1);
     }
@@ -116,8 +110,9 @@
     transition: background 0.16s ease;
     background: var(--foreground);
     border-radius: 0;
-    &:hover {
-      background: rgba(var(--blue-rgb), 0.16);
+    @include hover {
+      background: var(--se-blue-light);
+      color: var(--se-blue-primary);
     }
     &:not(:last-child) {
       border-bottom: 1px solid var(--background);

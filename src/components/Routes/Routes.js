@@ -1,30 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { getImageFromStorage, isValidURL } from '../../helpers/helpers'
-import Loading from '../Loading/Loading'
-import { Input } from '../Input/Input'
+import { getImageFromStorage, isValidURL } from 'helpers'
+import { Input, Loading } from 'components'
 import moment from 'moment'
-import UserIcon from '../../assets/user.svg'
+import UserIcon from 'assets/user.svg'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../Auth/Auth'
-import useRouteData from '../../hooks/useRouteData'
-import usePickupData from '../../hooks/usePickupData'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useUserData from '../../hooks/useUserData'
-import Header from '../Header/Header'
-import RouteHeader from '../RoutesHeader/RoutesHeaders'
-import useLocationData from '../../hooks/useLocationData'
-import './Routes.scss'
+import { useAuth, useFirestore } from 'hooks'
+import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
-export default function Routes({ initial_filter }) {
+export function Routes({ initial_filter }) {
   const { user, admin } = useAuth()
-  const locations = useLocationData()
+  const locations = useFirestore('locations')
   const location = useLocation()
-  const raw_routes = useRouteData()
-  const pickups = usePickupData()
-  const deliveries = useDeliveryData()
-  const organizations = useOrganizationData()
-  const users = useUserData()
+  const raw_routes = useFirestore('routes')
+  const pickups = useFirestore('pickups')
+  const deliveries = useFirestore('deliveries')
+  const organizations = useFirestore('organizations')
+  const users = useFirestore('users')
   const [routes, setRoutes] = useState()
   const [loading, setLoading] = useState(true)
   const [searchByDriver, setSearchByDriver] = useState('')
@@ -67,7 +58,7 @@ export default function Routes({ initial_filter }) {
       setLoading(false)
     }
     raw_routes && addData()
-  }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line
   useEffect(() => {
     if (filter === 'driver') {
       setFilterByDriver(true)
@@ -135,16 +126,15 @@ export default function Routes({ initial_filter }) {
       return <i id="StatusIndicator" className="fa fa-clock-o" />
     } else return null
   }
+
   return (
     <main id="Routes">
-      <Header text={location.pathname === '/routes' ? 'Routes' : 'History'} />
-      <RouteHeader
-        text={
-          location.pathname === '/routes'
-            ? 'Viewing Current Routes'
-            : 'Viewing Past Routes'
-        }
-      />
+      <Text type="section-header" color="white" align="center">
+        {location.pathname === '/routes'
+          ? 'Viewing Current Routes'
+          : 'Viewing Past Routes'}
+      </Text>
+      <Spacer height={32} />
       <section id="Filters">
         <select
           name="filters"
@@ -194,33 +184,23 @@ export default function Routes({ initial_filter }) {
         <Loading text="Loading routes" />
       ) : !filterAndSortRoutes(routes).length ? (
         <div className="no-routes">
-          <i className="fa fa-check" />
-          <p>
+          <div className="icon">👍</div>
+          <Text type="secondary-header" color="white" shadow align="center">
             {location.pathname === '/routes'
               ? 'Schedule is clear!'
               : 'History is empty!'}
-          </p>
+          </Text>
+          <Spacer height={16} />
           {admin ? (
             <Link to="/admin/create-route">
-              <button>schedule a new route</button>
+              <Button>Back to Home Page</Button>
             </Link>
           ) : null}
         </div>
       ) : (
         filterAndSortRoutes(routes).map(r => {
-          const r_pickups = pickups.filter(p => p.route_id === r.id)
-          const r_deliveries = deliveries.filter(de => de.route_id === r.id)
-          const r_starttime_array = r_pickups.map(p => p.time_finished)
-          const r_starttime = r_starttime_array[0]
-            ? r_starttime_array[0].toDate()
-            : 'Not found'
-          const r_endtime_array = r_deliveries.map(de => de.time_finished)
-          const r_endtime = r_endtime_array[r_endtime_array.length - 1]
-            ? r_endtime_array[r_endtime_array.length - 1].toDate()
-            : 'Not found'
           return (
             <Link
-              target="_blank"
               to={
                 location.pathname === '/routes'
                   ? `/routes/${r.id}`
@@ -228,85 +208,62 @@ export default function Routes({ initial_filter }) {
               }
               key={r.id}
             >
-              <div
-                className={`Route${
+              <Card
+                classList={[
+                  'Route',
                   [0, 9].includes(r.status) && location.pathname === '/routes'
                     ? ' complete'
-                    : ''
-                }`}
+                    : '',
+                ]}
               >
-                {r.driver && (
-                  <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
-                )}
-                <div>
-                  <StatusIndicator route={r} />
-                  <h2>
-                    {r.driver.name || 'Unassigned Route'}
-                    {r.status === 9 && (
-                      <span> - {getRouteWeight(r.id)} lbs.</span>
-                    )}
-                  </h2>
-                  <h4>{moment(r.time_start).format('dddd, MMMM Do')}</h4>
-                  {location.pathname === '/routes' ? (
-                    <h5>
-                      {moment(r.time_start).format('h:mma')} {' - '}
-                      {moment(r.time_end).format('h:mma')}{' '}
-                    </h5>
-                  ) : (
-                    <h5>
-                      {r_starttime === 'Not found'
-                        ? r_starttime
-                        : moment(r_starttime).format('h:mma')}{' '}
-                      {' - '}
-                      {r_endtime === 'Not found'
-                        ? r_endtime
-                        : moment(r_endtime).format('h:mma')}{' '}
-                    </h5>
+                <div className="Routes-route-header">
+                  {r.driver && (
+                    <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
                   )}
-                  <p className="pickups">
-                    <i className="fa fa-arrow-up" />
-                    {r.stops
-                      .filter(s => s.type === 'pickup')
-                      .map(s =>
-                        s.location.name
-                          ? s.org.name +
-                            ` (${s.location.name})` +
-                            `${location.pathname === '/history' ? ' : ' : ''}` +
-                            `${
-                              location.pathname === '/history'
-                                ? s.report?.weight?.toString() + 'lbs'
-                                : ''
-                            }`
-                          : s.org.name
-                      )
-                      .join(', ')}
-                  </p>
-                  <p className="deliveries">
-                    <i className="fa fa-arrow-down" />
-                    {r.stops
-                      .filter(s => s.type === 'delivery')
-                      .map(s =>
-                        s.location.name
-                          ? s.org.name +
-                            ` (${s.location.name})` +
-                            `${location.pathname === '/history' ? ' : ' : ''}` +
-                            `${
-                              location.pathname === '/history'
-                                ? s.report?.weight?.toString() + 'lbs'
-                                : ''
-                            }`
-                          : s.org.name
-                      )
-                      .join(', ')}
-                  </p>
-                  {r.notes ? (
-                    <h6>
-                      <span>Notes: </span>
-                      {r.notes}
-                    </h6>
-                  ) : null}
+                  <StatusIndicator route={r} />
+                  <div>
+                    <Text type="section-header" color="black" wrap={false}>
+                      {r.driver.name || 'Unassigned Route'}
+                      {r.status === 9 && (
+                        <span> - {getRouteWeight(r.id)} lbs.</span>
+                      )}
+                    </Text>
+                    <Text type="small" color="blue">
+                      {moment(r.time_start).format('ddd, MMM Do, h:mma')}
+                    </Text>
+                  </div>
                 </div>
-              </div>
+                <Spacer height={12} />
+                <Text type="small" color="grey" classList={['pickups']}>
+                  ⬆️{'  '}
+                  {r.stops
+                    .filter(s => s.type === 'pickup')
+                    .map(s =>
+                      s.location.name
+                        ? s.org.name + ` (${s.location.name})`
+                        : s.org.name
+                    )
+                    .join('\n')}
+                </Text>
+                <Spacer height={8} />
+                <Text type="small" color="grey" classList={['deliveries']}>
+                  ⬇️{'  '}
+                  {r.stops
+                    .filter(s => s.type === 'delivery')
+                    .map(s =>
+                      s.location.name
+                        ? s.org.name + ` (${s.location.name})`
+                        : s.org.name
+                    )
+                    .join('\n')}
+                </Text>
+                {r.notes ? (
+                  <h6>
+                    <span>Notes: </span>
+                    {r.notes}
+                  </h6>
+                ) : null}
+              </Card>
             </Link>
           )
         })

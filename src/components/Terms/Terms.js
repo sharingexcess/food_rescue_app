@@ -1,11 +1,8 @@
 import React from 'react'
-import Header from '../Header/Header'
-import './Terms.scss'
 
-export default function Terms() {
+export function Terms() {
   return (
     <main id="Terms">
-      <Header text="Terms of Service" />
       <section id="intro">
         <h1>Terms of Service</h1>
         <p className="red">

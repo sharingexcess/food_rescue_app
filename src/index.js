@@ -1,168 +1,218 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
-import firebase from 'firebase/app'
-import Firestore from './components/Firestore/Firestore'
-import Error from './components/Error/Error'
-import Auth from './components/Auth/Auth'
-import Menu from './components/Menu/Menu'
-import useWidth from './hooks/useWidth'
-import { Provider } from 'react-redux'
-import { resize, setDarkMode } from './redux/app/appReducer'
-import store from './redux/store'
-import AdminRoutes from './routes/AdminRoutes'
-import PickupReport from './components/PickupReport/PickupReport'
-import Profile from './components/Profile/Profile'
-import Routes from './components/Routes/Routes'
-import { Route as DriverRoute } from './components/Route/Route'
-import Calendar from './components/Calendar/Calendar'
-import ContactUs from './components/ContactUs/ContactUs'
-import FoodSafety from './components/FoodSafety/FoodSafety'
-import Liability from './components/Liability/Liability'
-import DeliveryReport from './components/DeliveryReport/DeliveryReport'
-import Privacy from './components/Privacy/Privacy'
-import Terms from './components/Terms/Terms'
+import { BrowserRouter, Route as PublicRoute, Switch } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
-import { Integrations as TracingIntegrations } from '@sentry/tracing'
-import CompletedRoute from './components/CompletedRoute/CompletedRoute'
-import Footer from './components/Footer/Footer'
-import Home from './components/Home/Home'
+import { Integrations } from '@sentry/tracing'
+import firebase from 'firebase/app'
+import {
+  Calendar,
+  CompletedRoute,
+  ContactUs,
+  DeliveryReport,
+  DriverInfo,
+  EditRoute,
+  Error,
+  FoodSafety,
+  Header,
+  Home,
+  Liability,
+  PickupReport,
+  Privacy,
+  Profile,
+  Routes,
+  Terms,
+  Tutorial,
+  Route,
+  EditDirectDonation,
+  EditOrganization,
+  Organizations,
+  Organization,
+  EditLocation,
+  Users,
+  User,
+  Analytics,
+  SwitchEnv,
+  Modal,
+} from 'components'
+import { Firestore, Auth, App } from 'contexts'
+import { useAuth } from 'hooks'
+import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
 import './styles/index.scss'
-import EditRoute from './components/EditRoute/EditRoute'
-import { ProtectedRoutes } from './helpers/components'
-import DriverInfo from './components/DriverInfo/DriverInfo'
-import Tutorial from './components/Tutorial/Tutorial'
 
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,
-  integrations: [new TracingIntegrations.BrowserTracing()],
-
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
-  tracesSampleRate: 0.2,
+  integrations: [new Integrations.BrowserTracing()],
 })
 
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
-function App() {
-  // this is a state variable that will update whenever the window size changes
-  const width = useWidth()
+function DriverRoute({ children, exact, path }) {
+  const { permission } = useAuth()
+  return permission ? (
+    <PublicRoute exact={exact} path={path}>
+      {children}
+    </PublicRoute>
+  ) : (
+    <Error message="Only registered users have permission to view this page." />
+  )
+}
 
-  // useEffect function will run when the component is mounted,
-  // then each time the component's state changes, and finally when a component is un-mounting.
-  // The first argument is the function to run on change, and the second is an array of dependencies.
-  // If the second argument is present, useEffect will only run when those values change, not all state.
-  // Read more: https://reactjs.org/docs/hooks-effect.html
-  useEffect(() => {
-    const savedDarkModePreference = localStorage.getItem('darkMode')
-    if (savedDarkModePreference !== null) {
-      store.dispatch(
-        setDarkMode(savedDarkModePreference === 'true' ? true : false)
-      )
-    }
-  }, [])
+function AdminRoute({ children, exact, path }) {
+  const { admin } = useAuth()
+  return admin ? (
+    <PublicRoute exact={exact} path={path}>
+      {children}
+    </PublicRoute>
+  ) : (
+    <Error message="Only admins have permission to view this page." />
+  )
+}
 
-  useEffect(() => {
-    // any time the screen width changes, handle the resize with this dispatch call
-    store.dispatch(resize({ width }))
-  }, [width])
-
+function RescueAppRoutes() {
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
-      <Provider store={store}>
-        {/* This Provider component wraps our app in a component that gives access to the Redux store */}
-        <BrowserRouter>
-          <Auth>
-            <Firestore>
-              <Menu />
-              <Footer />
-              {/* Header and Menu will be rendered on all routes because it is outside the Switch */}
-              {/* Auth component handles login and will show a login page if no user is authenticated */}
-              {/* Switch will only allows the first matching route to be rendered */}
+      <BrowserRouter>
+        <Auth>
+          {/* Auth component handles login and will show a login page if no user is authenticated */}
+          <Firestore>
+            <App>
+              <Header />
               <Switch>
-                <Route exact path="/">
+                {/*  Public Routes */}
+                <PublicRoute exact path="/">
                   <Home />
-                </Route>
-                <Route exact path="/profile">
+                </PublicRoute>
+                <PublicRoute exact path="/profile">
                   <Profile />
-                </Route>
-                <Route exact path="/privacy">
+                </PublicRoute>
+                <PublicRoute exact path="/privacy">
                   <Privacy />
-                </Route>
-                <Route exact path="/tos">
+                </PublicRoute>
+                <PublicRoute exact path="/tos">
                   <Terms />
-                </Route>
-                <Route exact path="/contact">
+                </PublicRoute>
+                <PublicRoute exact path="/contact">
                   <ContactUs />
-                </Route>
-                <Route exact path="/foodsafety">
+                </PublicRoute>
+                <PublicRoute exact path="/food-safety">
                   <FoodSafety />
-                </Route>
-                <Route exact path="/liability">
+                </PublicRoute>
+                <PublicRoute exact path="/liability">
                   <Liability />
-                </Route>
-                <Route exact path="/driver-info">
+                </PublicRoute>
+                <PublicRoute exact path="/driver-info">
                   <DriverInfo />
-                </Route>
-                <Route exact path="/tutorial">
+                </PublicRoute>
+                <PublicRoute exact path="/tutorial">
                   <Tutorial />
-                </Route>
-                <ProtectedRoutes>
-                  <Route exact path="/calendar">
-                    <Calendar />
-                  </Route>
-                  <Route exact path="/routes">
-                    <Routes initial_filter={r => [1, 3].includes(r.status)} />
-                  </Route>
-                  <Route exact path="/history">
-                    <Routes initial_filter={r => [0, 9].includes(r.status)} />
-                  </Route>
-                  <Route exact path="/history/:route_id">
-                    <DriverRoute />
-                  </Route>
-                  <Route exact path="/history/:route_id/pickup/:pickup_id">
-                    <PickupReport />
-                  </Route>
-                  <Route exact path="/history/:route_id/delivery/:delivery_id">
-                    <DeliveryReport />
-                  </Route>
-                  <Route exact path="/routes/:route_id">
-                    <DriverRoute />
-                  </Route>
-                  <Route exact path="/routes/:route_id/pickup/:pickup_id">
-                    <PickupReport />
-                  </Route>
-                  <Route exact path="/routes/:route_id/delivery/:delivery_id">
-                    <DeliveryReport />
-                  </Route>
-                  <Route exact path="/routes/:route_id/edit">
-                    <EditRoute />
-                  </Route>
-                  <Route exact path="/routes/:route_id/completed">
-                    <CompletedRoute />
-                  </Route>
-                  {/* We import all the Admin Routes from a separate file for security, see routes/AdminRoutes.js */}
-                  <Route path="/admin">
-                    <AdminRoutes />
-                  </Route>
-                </ProtectedRoutes>
+                </PublicRoute>
+
+                {/* Driver Routes */}
+                <DriverRoute exact path="/calendar">
+                  <Calendar />
+                </DriverRoute>
+                <DriverRoute exact path="/routes">
+                  <Routes initial_filter={r => [1, 3].includes(r.status)} />
+                </DriverRoute>
+                <DriverRoute exact path="/history">
+                  <Routes initial_filter={r => [0, 9].includes(r.status)} />
+                </DriverRoute>
+                <DriverRoute exact path="/history/:route_id">
+                  <Route />
+                </DriverRoute>
+                <DriverRoute exact path="/history/:route_id/pickup/:pickup_id">
+                  <PickupReport />
+                </DriverRoute>
+                <DriverRoute
+                  exact
+                  path="/history/:route_id/delivery/:delivery_id"
+                >
+                  <DeliveryReport />
+                </DriverRoute>
+                <DriverRoute exact path="/routes/:route_id">
+                  <Modal />
+                  <Route />
+                </DriverRoute>
+                <DriverRoute exact path="/routes/:route_id/pickup/:pickup_id">
+                  <PickupReport />
+                </DriverRoute>
+                <DriverRoute
+                  exact
+                  path="/routes/:route_id/delivery/:delivery_id"
+                >
+                  <DeliveryReport />
+                </DriverRoute>
+                <DriverRoute exact path="/routes/:route_id/edit">
+                  <EditRoute />
+                </DriverRoute>
+                <DriverRoute exact path="/routes/:route_id/completed">
+                  <CompletedRoute />
+                </DriverRoute>
+
+                {/* Admin Routes */}
+
+                <AdminRoute exact path="/admin/create-route">
+                  <EditRoute />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/create-direct-donation">
+                  <EditDirectDonation />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/create-organization">
+                  <EditOrganization />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/organizations">
+                  <Organizations />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/organizations/:id">
+                  {/* adding a colon creates a variable url parameter */}
+                  {/* we can access that variable using const { id } = useParams() */}
+                  <Organization />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/organizations/:id/edit">
+                  <EditOrganization />
+                </AdminRoute>
+                <AdminRoute
+                  exact
+                  path="/admin/organizations/:id/create-location"
+                >
+                  <EditLocation />
+                </AdminRoute>
+                <AdminRoute
+                  exact
+                  path="/admin/organizations/:id/location/:loc_id"
+                >
+                  <EditLocation />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/users">
+                  <Users />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/users/:id">
+                  <User />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/analytics">
+                  <Analytics />
+                </AdminRoute>
+                <AdminRoute exact path="/admin/switchenv">
+                  <SwitchEnv />
+                </AdminRoute>
+
+                {/* Catch All */}
                 <Route>
                   {/* This route has no path, and therefore will be the 'catch all' */}
                   <Error />
                   {/* this 404 page component will render if the url does not match any other routes */}
                 </Route>
               </Switch>
-            </Firestore>
-          </Auth>
-        </BrowserRouter>
-      </Provider>
+            </App>
+          </Firestore>
+        </Auth>
+      </BrowserRouter>
     </Sentry.ErrorBoundary>
   )
 }
 
 // this function call will render our React app into the DOM inside <div id='root'>
 // you can find that div in public/index.html
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<RescueAppRoutes />, document.getElementById('root'))

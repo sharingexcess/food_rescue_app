@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 #Home {
   @include page;
 
@@ -34,31 +32,23 @@
     grid-gap: 16px;
     padding-bottom: 32px;
 
-    .Tile {
-      div {
+    .Home-tile {
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+
+      i {
+        font-size: 64px;
+        margin: 32px;
+        color: var(--primary);
+      }
+
+      h4 {
+        font-size: 18px;
+        text-align: center;
         width: 100%;
-        height: 200px;
-        background: var(--foreground);
-        border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding: 16px;
-        @include shadow;
-        @include hover;
-
-        i {
-          font-size: 64px;
-          margin: 32px;
-          color: var(--primary);
-        }
-
-        h4 {
-          font-size: 18px;
-          text-align: center;
-          width: 100%;
-        }
       }
     }
   }

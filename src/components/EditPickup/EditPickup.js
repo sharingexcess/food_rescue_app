@@ -1,13 +1,12 @@
-import React, { memo, useEffect, useState } from 'react'
-import { Input } from '../Input/Input'
+import React, { useEffect, useState } from 'react'
+import { Input } from 'components'
 import { updateFieldSuggestions, formFields } from './utils'
-import './EditPickup.scss'
-import useLocationData from '../../hooks/useLocationData'
-import useOrganizationData from '../../hooks/useOrganizationData'
+import { useFirestore } from 'hooks'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
-function EditPickup({ handleSubmit, title }) {
-  const organizations = useOrganizationData()
-  const locations = useLocationData()
+export function EditPickup({ handleSubmit, title }) {
+  const organizations = useFirestore('organizations')
+  const locations = useFirestore('locations')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -93,10 +92,19 @@ function EditPickup({ handleSubmit, title }) {
 
   return (
     <div id="EditPickup">
-      {title !== '' && <h3>{title || 'Add a Pickup'}</h3>}
+      {title !== '' && (
+        <>
+          <Spacer height={16} />
+          <Text type="section-header" color="white" shadow>
+            {title || 'Add a Pickup'}
+          </Text>
+          <Spacer height={8} />
+          <Text type="paragraph" color="white" shadow>
+            Choose a partner organization and location to rescue food.
+          </Text>
+        </>
+      )}
       {formFields.map(f => renderFieldInput(f))}
     </div>
   )
 }
-
-export default memo(EditPickup)

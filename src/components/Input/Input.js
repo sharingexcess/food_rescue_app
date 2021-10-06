@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import './Input.scss'
 
 export function Input({
   element_id,
@@ -61,7 +60,7 @@ export function Input({
               ? suggestions.map(s => (
                   <option key={s.id || s} id={s.id || s} value={s.id || s}>
                     {s.address1
-                      ? `${s.name} (${s.address1}, ${s.city}, ${s.state}, ${s.zip_code})`
+                      ? `${s.address1}, ${s.city}, ${s.state}, ${s.zip_code}`
                       : s}
                   </option>
                 ))
@@ -96,6 +95,7 @@ export function Input({
             suggestions.map(s => (
               <li key={s.id} id={s.id} onClick={e => onSuggestionClick(e, s)}>
                 {s.name}
+                {s.email ? ` (${s.email})` : ''}
               </li>
             ))
           ) : value.length ? (

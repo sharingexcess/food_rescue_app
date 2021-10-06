@@ -1,79 +1,60 @@
 import React, { useEffect, useState } from 'react'
-import {
-  getCollection,
-  formatPhoneNumber,
-  setFirestoreData,
-  updateGoogleCalendarEvent,
-  generateStopId,
-} from '../../helpers/helpers'
-import Loading from '../Loading/Loading'
-import moment from 'moment'
-import UserIcon from '../../assets/user.svg'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
-import Ellipsis, { ExternalLink } from '../../helpers/components'
-import {
-  generateDirectionsLink,
-  allFoodDelivered,
-  getDeliveryWeight,
-  isNextIncompleteStop,
-  areAllStopsCompleted,
-} from './utils'
-import {
-  FinishRouteInstruction,
-  ChangeDriverModal,
-  StopNotes,
-  DirectionsButton,
-  StatusIndicator,
-  WarningModal,
-  ContactModal,
-} from './routeComponent'
-import { CLOUD_FUNCTION_URLS, ROUTE_STATUSES } from '../../helpers/constants'
-import { useAuth } from '../Auth/Auth'
-import { Input } from '../Input/Input'
-import useRouteData from '../../hooks/useRouteData'
-import usePickupData from '../../hooks/usePickupData'
-import useDeliveryData from '../../hooks/useDeliveryData'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useUserData from '../../hooks/useUserData'
-import useLocationData from '../../hooks/useLocationData'
 import firebase from 'firebase/app'
-import EditDelivery from '../EditDelivery/EditDelivery'
-import './Route.scss'
-import GoogleMap from '../GoogleMap/GoogleMap'
-import Header from '../Header/Header'
+import { useHistory, useParams } from 'react-router-dom'
+import { setFirestoreData } from 'helpers'
+import { allFoodDelivered, areAllStopsCompleted } from './utils'
+import { useFirestore, useAuth, useApp } from 'hooks'
+import { Spacer } from '@sharingexcess/designsystem'
+import { Loading } from 'components'
+import {
+  BackupDelivery,
+  RouteActionButton,
+  RouteHeader,
+  Stop,
+} from './Route.children'
 
 export function Route() {
-  const history = useHistory()
   const { route_id } = useParams()
-  const { user, admin } = useAuth()
-  const route = useRouteData(route_id)
-  const drivers = useUserData()
-  const pickups = usePickupData()
-  const deliveries = useDeliveryData()
-  const organizations = useOrganizationData()
-  const locations = useLocationData()
-  const location = useLocation()
-  const [warningModal, setWarningModal] = useState(false)
-  const [contactModal, setContactModal] = useState(false)
+  const { admin } = useAuth()
+  const { setModalState } = useApp()
+  const history = useHistory()
+  const route = useFirestore('routes', route_id)
+  const drivers = useFirestore('users')
+  const pickups = useFirestore('pickups')
+  const deliveries = useFirestore('deliveries')
+  const organizations = useFirestore('organizations')
+  const locations = useFirestore('locations')
   const [stops, setStops] = useState([])
-  const [willCancel, setWillCancel] = useState()
-  const [willComplete, setWillComplete] = useState()
-  const [willDelete, setWillDelete] = useState()
-  const [confDriver, setConfDriver] = useState()
-  const [otherDriver, setOtherDriver] = useState()
-  const [willAssign, setWillAssign] = useState()
-  const canBeginRoute = admin
-    ? true
-    : moment(route?.time_start) <= moment() ||
-      moment(route?.time_start).subtract(2, 'hours') <= moment()
 
   useEffect(() => {
+    // handle populating full driver info based on route.driver_id
     if (drivers && route) {
       route.driver = drivers.find(d => d.id === route.driver_id)
     }
   }, [drivers, route])
 
   useEffect(() => {
+    // handle auto completing a route when all stops are finished
+    let completed_deliveries = 0
+    const route_deliveries = deliveries.filter(d => d.route_id === route_id)
+    if (route_deliveries.length) {
+      for (const d of route_deliveries) {
+        if (d.status === 9 || d.status === 0) completed_deliveries++
+      }
+      if (
+        completed_deliveries === route_deliveries.length &&
+        allFoodDelivered(stops)
+      ) {
+        setFirestoreData(['Routes', route_id], {
+          status: 9,
+          time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+        }).then(() => history.push(`/routes/${route_id}/completed`))
+      }
+    }
+  }, [deliveries, route_id, stops]) // eslint-disable-line
+
+  useEffect(() => {
+    // handle populating full pickup and delivery info based on stop ids
     async function updateStops() {
       const updated_stops = []
       for (const s of route.stops) {
@@ -87,727 +68,31 @@ export function Route() {
         updated_stops.push(stop)
       }
       setStops(updated_stops)
+      setModalState({ route: { ...route, stops: updated_stops } })
     }
     route && route.stops && updateStops()
-  }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [route, pickups, deliveries, organizations, locations]) // eslint-disable-line
 
-  function hasEditPermissions() {
-    return admin || user.uid === route.driver_id
-  }
-
-  function Driver() {
-    function handleBegin() {
-      setFirestoreData(['Routes', route.id], {
-        status: 3,
-        time_started: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-    }
-    const deliveryWeight = getDeliveryWeight(deliveries, route)
-    return (
-      <div id="Driver">
-        <img
-          src={route.driver ? route.driver.icon : UserIcon}
-          alt={route.driver ? route.driver.name : 'No assigned driver'}
-        />
-        <div>
-          <h3>
-            {route.driver ? route.driver.name : 'No assigned driver'}
-            {route.status === 9 && <span> - {deliveryWeight} lbs.</span>}
-          </h3>
-          <h4>{moment(route.time_start).format('dddd, MMMM D')}</h4>
-          <h5>
-            {moment(route.time_start).format('h:mma')} -{' '}
-            {moment(route.time_end).format('h:mma')}
-          </h5>
-          {route.notes ? <p>Notes: {route.notes}</p> : null}
-        </div>
-        {admin ? null : route.status === 1 &&
-          route.driver &&
-          route.driver_id === user.uid &&
-          canBeginRoute &&
-          !willAssign ? (
-          <div className="driver-buttons">
-            <button className="blue" onClick={handleBegin}>
-              begin route
-              {admin && route.driver_id !== user.uid ? ' as admin' : ''}
-            </button>
-          </div>
-        ) : null}
-      </div>
-    )
-  }
-
-  function StatusButton() {
-    const [notes, setNotes] = useState('')
-
-    function handleBegin() {
-      setFirestoreData(['Routes', route.id], {
-        status: 3,
-        time_started: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-    }
-
-    async function handleComplete() {
-      await setFirestoreData(['Routes', route.id], {
-        status: 9,
-        notes,
-        time_finished: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      history.push(`/routes/${route_id}/completed`)
-    }
-
-    async function handleClaim() {
-      const event = await updateGoogleCalendarEvent({
-        ...route,
-        stops,
-        notes: null,
-        driver: drivers.find(d => d.id === user.uid),
-      })
-      setFirestoreData(['Routes', route.id], {
-        driver_id: user.uid,
-        google_calendar_event_id: event.id,
-        notes: null,
-      })
-      for (const stop of route.stops) {
-        debugger
-        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-        setFirestoreData([collection, stop.id], {
-          driver_id: user.uid,
-        })
-      }
-    }
-
-    async function handleUnassign() {
-      const event = await updateGoogleCalendarEvent({
-        ...route,
-        stops,
-        driver: null,
-        notes: `Route dropped by ${route.driver.name}: "${notes}"`,
-      })
-      await setFirestoreData(['Routes', route.id], {
-        driver_id: null,
-        google_calendar_event_id: event.id,
-        notes: `Route dropped by ${route.driver.name}: "${notes}"`,
-      })
-      for (const stop of route.stops) {
-        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-        setFirestoreData([collection, stop.id], {
-          driver_id: null,
-        })
-      }
-    }
-
-    function checkDriver(e) {
-      const val = e.target.value
-      const email = val.substring(val.indexOf('(') + 1, val.length - 1)
-      const driver = drivers.find(d => d.email === email)
-
-      if (user.uid === driver.id) {
-        handleAssign(driver)
-      } else {
-        setOtherDriver(driver)
-        setConfDriver(true)
-      }
-    }
-
-    async function handleAssign(driver) {
-      const event = await updateGoogleCalendarEvent({
-        ...route,
-        stops,
-        driver,
-        notes: null,
-      })
-      setFirestoreData(['Routes', route.id], {
-        driver_id: driver.id,
-        google_calendar_event_id: event.id,
-        notes: null,
-      })
-      for (const stop of route.stops) {
-        const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-        setFirestoreData([collection, stop.id], {
-          driver_id: driver.id,
-        })
-      }
-    }
-
-    StatusButton.handleAssign = handleAssign
-
-    if (
-      willCancel ||
-      willDelete ||
-      (!admin && route.driver_id && route.driver_id !== user.uid)
-    )
-      return null
-    if (route.status === 1) {
-      if (route.driver) {
-        return (
-          <div className={admin ? 'buttons' : ''}>
-            {!willAssign && canBeginRoute && admin ? (
-              <button className="blue" onClick={handleBegin}>
-                begin route
-                {admin && route.driver_id !== user.uid ? ' as admin' : ''}
-              </button>
-            ) : null}
-            {admin ? (
-              willAssign ? (
-                <>
-                  <Input
-                    type="select"
-                    label="Select Driver"
-                    suggestions={drivers.map(d => `${d.name} (${d.email})`)}
-                    onSuggestionClick={checkDriver}
-                  />
-                  <button
-                    className="red"
-                    onClick={() => setWillAssign(!willAssign)}
-                  >
-                    cancel re-assign route
-                  </button>
-                </>
-              ) : (
-                <button className="blue" onClick={() => setWillAssign(true)}>
-                  re-assign route
-                </button>
-              )
-            ) : willAssign ? (
-              <>
-                <Input
-                  label="Why can't you complete this route?"
-                  animation={false}
-                  type="textarea"
-                  value={notes}
-                  onChange={e => setNotes(e.target.value)}
-                />
-                <div className="buttons">
-                  <button
-                    className="red small"
-                    onClick={() => setWillAssign(false)}
-                  >
-                    cancel
-                  </button>
-                  <button className="blue" onClick={handleUnassign}>
-                    drop route
-                  </button>
-                </div>
-              </>
-            ) : (
-              <button className="red" onClick={() => setWillAssign(true)}>
-                drop route
-              </button>
-            )}
-          </div>
-        )
-      } else if (admin) {
-        return willAssign ? (
-          <Input
-            type="select"
-            label="Select Driver"
-            suggestions={drivers.map(d => `${d.name} (${d.email})`)}
-            onSuggestionClick={checkDriver}
-          />
-        ) : (
-          <button className="blue" onClick={() => setWillAssign(true)}>
-            assign route
-          </button>
-        )
-      } else
-        return (
-          <button className="blue" onClick={handleClaim}>
-            claim route
-          </button>
-        )
-    } else if (route.status === 3 && areAllStopsCompleted(stops)) {
-      return willComplete ? (
-        <>
-          <Input
-            label="Route notes..."
-            animation={false}
-            type="textarea"
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-          />
-          <section className="buttons">
-            <button
-              className="yellow small"
-              onClick={() => setWillComplete(false)}
-            >
-              back
-            </button>
-            <button onClick={handleComplete}>complete route</button>
-          </section>
-        </>
-      ) : allFoodDelivered(stops) ? (
-        <button className="blue" onClick={() => setWillComplete(true)}>
-          finish route
-        </button>
-      ) : null
-    } else return null
-  }
-
-  function CancelButton() {
-    const [notes, setNotes] = useState('')
-
-    function handleCancel() {
-      setWillCancel(false)
-      getCollection('Routes')
-        .doc(route.id)
-        .set({ status: 0, notes }, { merge: true })
-        .then(() => {
-          fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
-            method: 'POST',
-            body: JSON.stringify({
-              calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-              eventId: route.google_calendar_event_id,
-            }),
-          }).catch(e => console.error('Error deleting calendar event:', e))
-        })
-    }
-
-    if (
-      willComplete ||
-      willDelete ||
-      [0, 9].includes(route.status) ||
-      (!admin && route.driver_id !== user.uid)
-    )
-      return null
-    return willCancel ? (
-      <>
-        <Input
-          label="Why are you cancelling the route?"
-          animation={false}
-          type="textarea"
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-        />
-        <section className="buttons">
-          <button className="yellow small" onClick={() => setWillCancel(false)}>
-            back
-          </button>
-          <button className="red" onClick={handleCancel}>
-            cancel route
-          </button>
-        </section>
-      </>
-    ) : (
-      <button className="yellow" onClick={() => setWillCancel(true)}>
-        cancel route
-      </button>
-    )
-  }
-
-  function DeleteButton() {
-    async function handleDeleteRoute() {
-      await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
-        method: 'POST',
-        body: JSON.stringify({
-          calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-          eventId: route.google_calendar_event_id,
-        }),
-      }).catch(e => console.error('Error deleting calendar event:', e))
-      for (const stop of route.stops) {
-        if (stop.type === 'pickup') {
-          await getCollection('Pickups').doc(stop.id).delete()
-        } else if (stop.type === 'delivery') {
-          await getCollection('Deliveries').doc(stop.id).delete()
-        }
-      }
-      await getCollection('Routes').doc(route.id).delete()
-      history.push('/routes')
-    }
-
-    if (willCancel || willComplete) return null
-    return willDelete ? (
-      <section className="buttons">
-        <button className="yellow small" onClick={() => setWillDelete(false)}>
-          back
-        </button>
-        <button className="red" onClick={handleDeleteRoute}>
-          confirm delete
-        </button>
-      </section>
-    ) : (
-      <button className="red" onClick={() => setWillDelete(true)}>
-        delete route
-      </button>
-    )
-  }
-
-  function UpdateStop({ stop }) {
-    let beginTime = route.time_started
-      ? moment(route.time_started.toDate())
-      : moment(new Date())
-    beginTime = beginTime.add(30, 'minutes')
-    const currentTime = moment(new Date())
-    function handleOpenReport() {
-      const baseURL = location.pathname.includes('routes')
-        ? 'routes'
-        : 'history'
-      history.push(`/${baseURL}/${route_id}/${stop.type}/${stop.id}`)
-    }
-    if (route.status < 3) return null
-    if (stop.status === 1) {
-      return (
-        <button
-          className="update-stop"
-          onClick={
-            stop.type === 'delivery' && currentTime.isBefore(beginTime)
-              ? () => setWarningModal(true)
-              : () => handleOpenReport()
-          }
-        >
-          Complete {stop.type} report
-        </button>
-      )
-    } else return null
-  }
-
-  function CancelStop({ stop }) {
-    const [cancelStop, setCancelStop] = useState()
-    const [cancelNotes, setCancelNotes] = useState('')
-
-    function handleCancel() {
-      setCancelStop(false)
-      const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
-      getCollection(collection)
-        .doc(stop.id)
-        .set(
-          {
-            status: 0,
-            report: stop.report
-              ? { ...stop.report, notes: cancelNotes }
-              : { notes: cancelNotes },
-          },
-          { merge: true }
-        )
-        .then(() => window.location.reload())
-    }
-
-    return cancelStop ? (
-      <>
-        <Input
-          label="Why are you cancelling this stop?"
-          animation={false}
-          type="textarea"
-          value={cancelNotes}
-          onChange={e => setCancelNotes(e.target.value)}
-        />
-        <section className="buttons">
-          <button className="yellow small" onClick={() => setCancelStop(false)}>
-            back
-          </button>
-          <button className="red" onClick={handleCancel}>
-            cancel stop
-          </button>
-        </section>
-      </>
-    ) : (
-      <button className="secondary" onClick={() => setCancelStop(true)}>
-        cancel stop
-      </button>
-    )
-  }
-
-  function generateStatusHeader() {
-    if (!route || route.status === null || route.status === undefined) {
-      return (
-        <>
-          Loading route
-          <Ellipsis />
-        </>
-      )
-    } else return `Route ${ROUTE_STATUSES[route.status].replace('_', ' ')}`
-  }
-
-  function BackupDelivery() {
-    const [willFind, setWillFind] = useState()
-    if (areAllStopsCompleted(stops)) {
-      let lastStop
-      for (const s of stops) {
-        if (
-          s.status === 9 &&
-          (!lastStop || s.time_finished > lastStop.time_finished)
-        )
-          lastStop = s
-      }
-      if (
-        lastStop &&
-        (!lastStop.report.weight ||
-          lastStop.report.percent_of_total_dropped < 100 ||
-          lastStop.type === 'pickup')
-      ) {
-        async function addBackupDelivery(stop) {
-          const stop_id = generateStopId(stop)
-          await setFirestoreData(['Deliveries', stop_id], {
-            id: stop_id,
-            org_id: stop.org_id,
-            location_id: stop.location_id,
-            driver_id: route.driver_id,
-            created_at: firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 1,
-            pickup_ids: lastStop.pickup_ids || lastStop.id,
-            route_id,
-          })
-          await setFirestoreData(['Routes', route.id], {
-            stops: [...route.stops, { type: 'delivery', id: stop_id }],
-          })
-        }
-        return (
-          <div id="BackupDelivery">
-            {willFind ? (
-              <>
-                <EditDelivery handleSubmit={addBackupDelivery} />
-                <br />
-                <button
-                  className="yellow small"
-                  onClick={() => setWillFind(false)}
-                >
-                  cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <h4>Looks like you have left over food!</h4>
-                <p>Add another delivery location to finish your route.</p>
-                <button onClick={() => setWillFind(true)}>
-                  add another delivery
-                </button>
-              </>
-            )}
-          </div>
-        )
-      }
-    }
-    return null
-  }
   return (
     <main id="Route">
       {!route ? (
         <Loading />
       ) : (
         <>
-          {route.status === 3 &&
-            (areAllStopsCompleted(stops) ? (
-              allFoodDelivered(stops) ? (
-                <FinishRouteInstruction
-                  text={`Scroll down and click "finish route"`}
-                />
-              ) : (
-                <FinishRouteInstruction
-                  text={
-                    admin
-                      ? 'There is leftover food, please add another delivery to finish the route'
-                      : 'There is leftover food, please contact admin to add another delivery'
-                  }
-                />
-              )
-            ) : (
-              <FinishRouteInstruction text="Stops are not fully completed" />
-            ))}
-          <Header text={generateStatusHeader(route)} />
-          <Driver />
+          <RouteHeader />
+          <RouteActionButton />
+          <Spacer height={32} />
           {stops.length ? (
             <>
               <section className="Stops">
                 {stops.map((s, i) => (
-                  <div
-                    className={`Stop ${s.type} ${
-                      isNextIncompleteStop(route, stops, i) ? 'active' : ''
-                    }${areAllStopsCompleted(stops) ? 'complete' : ''}`}
-                    key={i}
-                  >
-                    <StatusIndicator
-                      stop={s}
-                      location={location}
-                      route_id={route_id}
-                    />
-                    <h4>
-                      <i
-                        className={
-                          s.type === 'pickup'
-                            ? 'fa fa-arrow-up'
-                            : 'fa fa-arrow-down'
-                        }
-                      />
-                      {s.type}
-                    </h4>
-                    <h2>
-                      {s.org.name}
-                      {s.location.name && s.location.name !== s.org.name
-                        ? ` (${s.location.name})`
-                        : ''}
-                      {route.status === 9 && (
-                        <span> - {s.report?.weight} lbs.</span>
-                      )}
-                    </h2>
-                    {!s.location.is_deleted ? (
-                      <div>
-                        {s.location_id ? (
-                          <ExternalLink
-                            url={generateDirectionsLink(s.location)}
-                          >
-                            <p className="Directions">
-                              <i className="fa fa-map-marker" />
-                              {s.location.address1}
-                              {s.location.address2 &&
-                                ` - ${s.location.address2}`}
-                              <br />
-                              {s.location.city}, {s.location.state}{' '}
-                              {s.location.zip_code}
-                            </p>
-                          </ExternalLink>
-                        ) : (
-                          <p>Location deleted</p>
-                        )}
-                        {s.location.contact_phone ||
-                        s.org.default_contact_phone ? (
-                          <p>
-                            <i className="fa fa-phone" />
-                            <a
-                              href={`tel:${
-                                s.location.contact_phone ||
-                                s.org.default_contact_phone
-                              }`}
-                            >
-                              {formatPhoneNumber(
-                                s.location.contact_phone ||
-                                  s.org.default_contact_phone
-                              )}
-                            </a>
-                            {s.location.contact_name ||
-                            s.org.default_contact_name ? (
-                              <span>
-                                (Contact location manager:{' '}
-                                {s.location.contact_name ||
-                                  s.org.default_contact_name}
-                                )
-                              </span>
-                            ) : (
-                              ''
-                            )}
-                          </p>
-                        ) : null}
-                        {s.location.secondary_contact_phone ? (
-                          <p>
-                            <i className="fa fa-phone" />
-                            <a
-                              href={`tel:${s.location.secondary_contact_phone}`}
-                            >
-                              {formatPhoneNumber(s.location.contact_phone)}
-                            </a>
-                            <span>(Secondary)</span>
-                          </p>
-                        ) : null}
-                        {s.location.time_open ? (
-                          <p>
-                            <i className="fa fa-clock-o" />
-                            {moment(s.location.time_open, 'hh:mm').format(
-                              'LT'
-                            )}{' '}
-                            -{' '}
-                            {moment(s.location.time_close, 'hh:mm').format(
-                              'LT'
-                            )}
-                            {moment().isBetween(
-                              moment(s.location.time_open, 'hh:mm'),
-                              moment(s.location.time_close, 'hh:mm')
-                            ) ? (
-                              <span className="open">Open now</span>
-                            ) : (
-                              <span className="close">Closed now</span>
-                            )}
-                          </p>
-                        ) : null}
-                        {s.location.receive_start ? (
-                          <p>
-                            {s.org.org_type === 'recipient'
-                              ? 'Receive'
-                              : 'Pickup'}{' '}
-                            hours:{' '}
-                            {moment(s.location.receive_start, 'hh:mm').format(
-                              'LT'
-                            )}{' '}
-                            -{' '}
-                            {moment(s.location.receive_end, 'hh:mm').format(
-                              'LT'
-                            )}
-                          </p>
-                        ) : null}
-                      </div>
-                    ) : (
-                      <p>Location Deleted</p>
-                    )}
-                    <StopNotes stop={s} />
-                    {warningModal === true ? (
-                      <WarningModal
-                        stop={s}
-                        history={history}
-                        location={location}
-                        route_id={route_id}
-                        onShowModal={() => setWarningModal(false)}
-                      />
-                    ) : null}
-                    {hasEditPermissions() ? (
-                      <>
-                        {isNextIncompleteStop(route, stops, i) ? (
-                          <>
-                            {s.location.lat &&
-                            s.location.lng &&
-                            s.status === 1 ? (
-                              <GoogleMap
-                                address={s.location}
-                                style={{ height: 200, marginTop: 8 }}
-                                zoom={14}
-                              />
-                            ) : null}
-                            <DirectionsButton stop={s} route={route} />
-                            <UpdateStop stop={s} />
-                            {s.status < 9 && admin ? (
-                              <CancelStop stop={s} />
-                            ) : null}
-                          </>
-                        ) : null}
-                      </>
-                    ) : null}
-                  </div>
+                  <Stop stops={stops} s={s} i={i} key={i} />
                 ))}
               </section>
-              {!admin && route.driver && (
-                <div>
-                  <button onClick={() => setContactModal(true)}>
-                    contact admin{' '}
-                  </button>
-                  {contactModal === true ? (
-                    <ContactModal onShowModal={() => setContactModal(false)} />
-                  ) : null}
-                </div>
-              )}
               {route.status === 3 &&
                 admin === true &&
-                route.status === 3 &&
                 areAllStopsCompleted(stops) &&
                 !allFoodDelivered(stops) && <BackupDelivery />}
-              {(route.status === 1 || route.status === 3) &&
-                route.driver &&
-                admin && (
-                  <Link to={`/routes/${route.id}/edit`} className="buttons">
-                    <button>Edit Stops</button>
-                  </Link>
-                )}
-              <StatusButton />
-              {admin === true ? <CancelButton /> : null}
-              {admin === true ? <DeleteButton /> : null}
-              <ChangeDriverModal
-                openModal={confDriver}
-                text={
-                  'Are you sure you want to re-assign this route to another driver?'
-                }
-                onConfirm={() => {
-                  StatusButton.handleAssign(otherDriver)
-                  setConfDriver(false)
-                }}
-                onClose={() => setConfDriver(false)}
-              />
             </>
           ) : (
             <Loading text="Loading stops on route" relative />

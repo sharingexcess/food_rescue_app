@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import 'firebase/firestore'
-import { Input } from '../Input/Input'
-import { getCollection } from '../../helpers/helpers'
-import { initializeFormData, handleDeleteLocation } from './utils'
-import useOrganizationData from '../../hooks/useOrganizationData'
-import useLocationData from '../../hooks/useLocationData'
-import Loading from '../Loading/Loading'
-import GoogleAutoComplete from '../GoogleAutoComplete/GoogleAutoComplete'
-import GoogleMap from '../GoogleMap/GoogleMap'
-import Header from '../Header/Header'
-import './EditLocation.scss'
-import DeleteLocationModal from '../DeleteLocationModal/DeleteLocationModal'
 import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import 'firebase/firestore'
+import { getCollection } from 'helpers'
+import { initializeFormData } from './utils'
+import { useFirestore } from 'hooks'
+import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
-export default function EditLocation() {
+export function EditLocation() {
   const { id, loc_id } = useParams()
   const history = useHistory()
-  const organization = useOrganizationData(id)
-  const location = useLocationData(loc_id)
+  const organization = useFirestore('organizations', id)
+  const location = useFirestore('locations', loc_id)
   const [formData, setFormData] = useState({
     name: '',
     address1: '',
@@ -43,18 +37,13 @@ export default function EditLocation() {
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
-  const [openModal, setOpenModal] = useState(false)
-  const [canDelete, setCanDelete] = useState(true)
-  const [locationRoutes, setLocationRoutes] = useState([])
-  const [locationDeliveries, setLocationDeliveries] = useState([])
-  const [locationPickups, setLocationPickups] = useState([])
 
   useEffect(() => {
-    if (isInitialLoad && location && location.name) {
+    if (isInitialLoad && location && location.address1) {
       setIsInitialLoad(false)
       initializeFormData(location, setFormData)
     }
-  }, [location, formData, isInitialLoad]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [location, formData, isInitialLoad]) // eslint-disable-line
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -72,9 +61,6 @@ export default function EditLocation() {
 
   function validateFormData() {
     const updatedErrors = [...errors]
-    if (formData.name === '') {
-      updatedErrors.push('Missing Location Name')
-    }
     if (formData.address1 === '') {
       updatedErrors.push('Missing Address')
     }
@@ -113,24 +99,11 @@ export default function EditLocation() {
       }
     }
   }
-  async function handleDeleteClick() {
-    const {
-      canDelete,
-      locationRoutes,
-      locationDeliveries,
-      locationPickups,
-    } = await handleDeleteLocation(loc_id)
-    setCanDelete(canDelete)
-    setLocationRoutes(locationRoutes)
-    setLocationDeliveries(locationDeliveries)
-    setLocationPickups(locationPickups)
-    setOpenModal(true)
-  }
 
   async function generateLocationId() {
-    const uniq_id = `${organization.name}_${formData.name}_${
-      formData.address1
-    }${formData.address2 ? '_' + formData.address2 : ''}`
+    const uniq_id = `${organization.name}_${formData.address1}${
+      formData.address2 ? '_' + formData.address2 : ''
+    }`
       .replace(/[^A-Z0-9]/gi, '_')
       .toLowerCase()
     const exists = await getCollection('Locations')
@@ -156,35 +129,42 @@ export default function EditLocation() {
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
-  return !location ? (
+  return !location || !organization ? (
     <Loading text="Loading location data..." />
   ) : (
     <main id="EditLocation">
-      <Header text={loc_id ? 'Edit Location' : 'Add Location'} />
-
-      <Input
-        type="text"
-        label="Location Nickname *"
-        element_id="name"
-        value={formData.name}
-        onChange={handleChange}
-      />
+      <Text type="secondary-header" color="white" shadow>
+        Edit Location
+      </Text>
+      <Text type="subheader" color="white" shadow>
+        Use this form to save a location for the {organization.name}{' '}
+        organization.
+      </Text>
       {formData.address1 ? (
         <>
           {formData.lat && formData.lng ? (
-            <GoogleMap address={formData} />
+            <>
+              <Spacer height={24} />
+              <GoogleMap address={formData} />
+              <Spacer height={24} />
+            </>
           ) : null}
-          <div id="Address">
-            <i className="fa fa-map-marker" />
-            <h4>
+          <div id="EditLocation-address">
+            <div className="EditLocation-address-pin">📍</div>
+            <Text type="section-header" color="white" shadow>
               {formData.address1}
               <br />
               {`${formData.city}, ${formData.state} ${formData.zip_code}`}
-            </h4>
-            <button onClick={() => setFormData({ ...formData, address1: '' })}>
-              clear
-            </button>
+            </Text>
+            <Button
+              id="EditLocation-address-clear-button"
+              type="secondary"
+              handler={() => setFormData({ ...formData, address1: '' })}
+            >
+              Clear Address
+            </Button>
           </div>
+          <Spacer height={32} />
           <Input
             type="text"
             label="Apartment/Unit Number"
@@ -256,11 +236,9 @@ export default function EditLocation() {
               checked={isPrimary}
               onChange={() => setIsPrimary(!isPrimary)}
             />
-            <p>
-              Make this the Network's
-              <br />
-              Primary Address
-            </p>
+            <Text type="paragraph" color="white" shadow>
+              Make this the Network's Primary Address
+            </Text>
           </div>
           <div className="is_philabundance_partner">
             <input
@@ -275,37 +253,23 @@ export default function EditLocation() {
                 })
               }
             />
-            <p>
-              Make this Network
-              <br />a Philabundance Partner
-            </p>
+            <Text type="paragraph" color="white" shadow>
+              Make this Network a Philabundance Partner
+            </Text>
           </div>
           <FormError />
-          <br />
-          <button
-            onClick={() => {
-              handleSubmit()
-              setShowErrors(true)
-            }}
-          >
-            {loc_id ? 'update location' : 'add location'}
-          </button>{' '}
-          {loc_id && (
-            <button className="red" onClick={handleDeleteClick}>
-              Delete Location
-            </button>
-          )}
-          {openModal && (
-            <DeleteLocationModal
-              setOpenModal={setOpenModal}
-              canDelete={canDelete}
-              locationRoutes={locationRoutes}
-              locationDeliveries={locationDeliveries}
-              locationPickups={locationPickups}
-              locationId={loc_id}
-              orgId={organization.id}
-            />
-          )}
+          <Spacer height={16} />
+          <div id="EditLocation-buttons">
+            <Button
+              type="primary"
+              handler={() => {
+                handleSubmit()
+                setShowErrors(true)
+              }}
+            >
+              Save Location
+            </Button>
+          </div>
         </>
       ) : (
         <GoogleAutoComplete handleSelect={handleReceiveAddress} />

@@ -1,6 +1,6 @@
 import firebase from 'firebase/app'
 import { v4 as generateUniqueId } from 'uuid'
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 import moment from 'moment'
 
 export function createPickup(event, formData, history) {
@@ -54,13 +54,6 @@ export function getDefaultStartTime() {
     .format('yyyy-MM-DDTkk:mm')
 }
 
-export function getDefaultEndTime() {
-  return moment(new Date())
-    .startOf('hour')
-    .add(4, 'hour')
-    .format('yyyy-MM-DDTkk:mm')
-}
-
 export function getDefaultEndRecurring() {
   return moment(new Date())
     .startOf('hour')
@@ -84,15 +77,9 @@ export const formFields = [
     type: 'datetime-local',
   },
   {
-    label: 'End Time',
-    id: 'time_end',
-    preReq: 'time_start',
-    type: 'datetime-local',
-  },
-  {
     label: 'Select a driver...',
     id: 'driver_name',
-    preReq: 'time_end',
+    preReq: 'time_start',
     type: 'text',
     suggestionQuery: (name, drivers) =>
       drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
@@ -110,15 +97,9 @@ export const formFieldsRecurring = [
     type: 'datetime-local',
   },
   {
-    label: 'End Time',
-    id: 'time_end',
-    preReq: 'time_start',
-    type: 'datetime-local',
-  },
-  {
     label: 'End Recurring On',
     id: 'end_recurring',
-    preReq: 'time_end',
+    preReq: 'time_start',
     type: 'datetime-local',
   },
   {
@@ -139,10 +120,12 @@ export const getExistingRouteData = async route_id => {
     .get()
     .then(result => result.docs.map(doc => doc.data()))
   const myRoute = routes.find(route => route.id === route_id)
-  const driver = await getCollection('Users')
-    .doc(myRoute.driver_id)
-    .get()
-    .then(result => result.data())
+  const driver = myRoute.driver_id
+    ? await getCollection('Users')
+        .doc(myRoute.driver_id)
+        .get()
+        .then(result => result.data())
+    : {}
   const deliveries = await getCollection('Deliveries')
     .get()
     .then(result => result.docs.map(doc => doc.data()))
@@ -178,7 +161,7 @@ export const getExistingRouteData = async route_id => {
   })
 
   const routeData = {
-    driver: driver,
+    driver: Object.keys(driver).length ? driver : null,
     driver_id: myRoute.driver_id,
     driver_name: driver.name,
     time_start: myRoute.time_start,

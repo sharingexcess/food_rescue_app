@@ -1,11 +1,9 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { setFirestoreData } from '../../helpers/helpers'
-import { useAuth } from '../Auth/Auth'
-import Header from '../Header/Header'
-import './FoodSafety.scss'
+import { setFirestoreData } from 'helpers'
+import { useAuth } from 'hooks'
 
-export default function FoodSafety() {
+export function FoodSafety() {
   const history = useHistory()
   const { user } = useAuth()
 
@@ -16,7 +14,6 @@ export default function FoodSafety() {
 
   return (
     <main id="FoodSafety">
-      <Header text="Safety Guidelines" />
       <section id="intro">
         <h2>Food safety is our priority</h2>
         <p>

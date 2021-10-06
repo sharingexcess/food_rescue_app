@@ -1,11 +1,9 @@
 import React from 'react'
-import Header from '../Header/Header'
-import { useAuth } from '../Auth/Auth'
-import './Tutorial.scss'
+import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
-import { setFirestoreData } from '../../helpers/helpers'
+import { setFirestoreData } from 'helpers'
 
-export default function Tutorial() {
+export function Tutorial() {
   const history = useHistory()
   const { user } = useAuth()
 
@@ -16,7 +14,6 @@ export default function Tutorial() {
 
   return (
     <main id="Tutorial">
-      <Header text="Tutorial" />
       <section id="start">
         <h3>1. Before You Start</h3>
         <ul>

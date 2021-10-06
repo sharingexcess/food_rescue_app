@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Input } from '../Input/Input'
+import { Input } from 'components'
 
-function GoogleAutoComplete({ handleSelect }) {
+export function GoogleAutoComplete({ handleSelect }) {
   const [query, setQuery] = useState('')
 
   useEffect(() => {
@@ -14,7 +14,6 @@ function GoogleAutoComplete({ handleSelect }) {
     autoComplete.addListener('place_changed', () => {
       try {
         const addressObject = autoComplete.getPlace()
-        console.log(addressObject)
         const query = addressObject.formatted_address
         setQuery(query)
         const parsedAddressObject = {
@@ -67,5 +66,3 @@ function GoogleAutoComplete({ handleSelect }) {
     />
   )
 }
-
-export default GoogleAutoComplete

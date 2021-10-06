@@ -1,0 +1,15 @@
+#Modal {
+  #Route-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  #RouteMenu,
+  #StopMenu {
+    text-transform: capitalize;
+    li {
+      margin: 8px 0;
+    }
+  }
+}

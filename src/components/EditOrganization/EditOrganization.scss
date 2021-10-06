@@ -1,5 +1,3 @@
-@import '../../styles/global.scss';
-
 #EditOrganization {
   @include page;
 
@@ -11,6 +9,12 @@
   button {
     opacity: 0;
     animation: fade-in 0.32s ease forwards 0.32s;
+  }
+
+  #EditOrganization-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
 
   section {

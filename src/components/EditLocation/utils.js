@@ -1,4 +1,4 @@
-import { getCollection } from '../../helpers/helpers'
+import { getCollection } from 'helpers'
 export function initializeFormData(location, callback) {
   callback({
     name: location.name,

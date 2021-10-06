@@ -1,5 +1,4 @@
 import GoogleMapReact from 'google-map-react'
-import './GoogleMap.scss'
 import { generateDirectionsLink } from './utils'
 
 const defaultAddress = {
@@ -9,11 +8,7 @@ const defaultAddress = {
   isDefault: true,
 }
 
-export default function GoogleMap({
-  address = defaultAddress,
-  style,
-  zoom = 15,
-}) {
+export function GoogleMap({ address = defaultAddress, style, zoom = 15 }) {
   function openDirections() {
     window.open(generateDirectionsLink(address), '_blank')
   }

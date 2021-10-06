@@ -1,4 +1,4 @@
 import React from 'react'
-export default function ViewDriverDocuments() {
+export function ViewDriverDocuments() {
   return <button>View Driver Document</button>
 }
