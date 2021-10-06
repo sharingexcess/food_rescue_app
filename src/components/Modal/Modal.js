@@ -9,7 +9,6 @@ import {
   RouteMenu,
   StopMenu,
 } from 'components/Route/Route.children'
-import { DeleteLocationModal } from 'components/DeleteLocationModal/DeleteLocationModal'
 
 export function Modal() {
   const { modal, setModal } = useApp()
@@ -28,8 +27,6 @@ export function Modal() {
         return <CancelStop />
       case 'ContactAdmin':
         return <ContactAdmin />
-      case 'DeleteLocation':
-        return <DeleteLocationModal />
       default:
         return null
     }
