@@ -85,7 +85,7 @@ export function Menu({ isOpen, setIsOpen }) {
     )
   }
 
-  return (
+  return user ? (
     <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
       <UserProfile />
       <div id="MenuContent">
@@ -125,5 +125,5 @@ export function Menu({ isOpen, setIsOpen }) {
         <ExternalLink to="/tos">terms of service</ExternalLink>
       </nav>
     </aside>
-  )
+  ) : null
 }

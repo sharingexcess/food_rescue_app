@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth, useFirestore } from 'hooks'
-import { Link } from 'react-router-dom'
 import firebase from 'firebase/app'
 import { Input, Loading } from 'components'
 import validator from 'validator'

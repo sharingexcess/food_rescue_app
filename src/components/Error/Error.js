@@ -7,7 +7,7 @@ export function Error({ crash, message }) {
       <Text type="primary-header" color="white" shadow>
         Uh oh!
       </Text>
-      <Text type="paragraph" color="white shadow">
+      <Text type="paragraph" color="white" shadow align="center">
         {crash
           ? 'Uh oh... looks like something broke on this page.'
           : message ||

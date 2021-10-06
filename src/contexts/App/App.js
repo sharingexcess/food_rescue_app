@@ -1,6 +1,5 @@
-import { useState, createContext } from 'react'
+import { useState, createContext, useEffect } from 'react'
 import { useLocation } from 'react-router'
-import { useEffect } from 'react/cjs/react.development'
 
 const AppContext = createContext()
 AppContext.displayName = 'App'

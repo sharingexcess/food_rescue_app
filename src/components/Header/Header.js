@@ -9,7 +9,7 @@ import { generateHeaderText } from './utils'
 export function Header() {
   const location = useLocation()
   const isMobile = useIsMobile()
-  const { user, handleLogin } = useAuth()
+  const { user } = useAuth()
   const [menuOpen, setMenuOpen] = useState(window.innerWidth > MOBILE_THRESHOLD)
 
   const path_components = location.pathname.split('/').filter(i => i.length)
@@ -24,11 +24,7 @@ export function Header() {
         alt="User"
         onClick={() => setMenuOpen(true)}
       />
-    ) : (
-      <button className="login" onClick={handleLogin}>
-        Log in
-      </button>
-    )
+    ) : null
   }
 
   return (
@@ -46,7 +42,7 @@ export function Header() {
             wrap={false}
             shadow
           >
-            {title}
+            {user ? title : 'Sharing Excess'}
           </Text>
           {path_components.length > 0 ? (
             <Link to={back_url}>
