@@ -88,6 +88,16 @@ export function RouteMenu() {
                 type="tertiary"
                 color="blue"
                 size="large"
+                handler={() => setModal('FinishRoute')}
+              >
+                Force Finish Route
+              </Button>
+            </li>
+            <li>
+              <Button
+                type="tertiary"
+                color="blue"
+                size="large"
                 handler={() => setModal('DropRoute')}
               >
                 Drop Route
@@ -107,6 +117,16 @@ export function RouteMenu() {
         ) : null}
         {admin ? (
           <>
+            <li>
+              <Button
+                type="tertiary"
+                color="blue"
+                size="large"
+                handler={() => setModal('FinishRoute')}
+              >
+                Force Finish Route
+              </Button>
+            </li>
             <li>
               <Link to={`/routes/${modalState.route.id}/edit`}>
                 <Button type="tertiary" color="blue" size="large">
@@ -406,14 +426,6 @@ export function Stop({ stops, s, i }) {
     return admin || (route && user && user.uid === route.driver_id)
   }
 
-  function generateStopTitle() {
-    return `${s.org.name}${
-      s.location.name && s.location.name !== s.org.name
-        ? ` (${s.location.name})`
-        : ''
-    }`
-  }
-
   function StopHeader() {
     const headerText =
       s.type && s.status && route
@@ -565,7 +577,7 @@ export function Stop({ stops, s, i }) {
         >
           Get Directions
         </Button>
-        <Spacer height={16} />
+        <Spacer height={24} />
         <Button
           type="tertiary"
           color="blue"
@@ -575,6 +587,7 @@ export function Stop({ stops, s, i }) {
         >
           Skip to Finish {s.type}
         </Button>
+        <Spacer height={8} />
       </>
     )
   }
@@ -658,13 +671,18 @@ export function Stop({ stops, s, i }) {
 
   function StopSummary() {
     return (
-      <Text type="paragraph" color="white">
-        {s.status === 9 &&
-          s.report.weight +
-            ' lbs. ' +
-            (s.type === 'pickup' ? 'rescued' : 'delivered')}
-        {s.report.notes && `"${s.report.notes}"`}
-      </Text>
+      <>
+        <Spacer height={8} />
+        <StopAddress />
+        <Spacer height={8} />
+        <Text type="paragraph" color="white">
+          {s.status === 9 &&
+            s.report.weight +
+              ' lbs. ' +
+              (s.type === 'pickup' ? 'rescued' : 'delivered')}
+          {s.report.notes && `"${s.report.notes}"`}
+        </Text>
+      </>
     )
   }
 
@@ -688,7 +706,7 @@ export function Stop({ stops, s, i }) {
       <StopHeader />
       <Spacer height={4} />
       <Text type="section-header" color={isActiveStop ? 'black' : 'white'}>
-        {generateStopTitle()}
+        {s.org.name}
       </Text>
       {isActiveStop ? (
         <StopDetails />

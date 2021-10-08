@@ -9,14 +9,20 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  opacity: 0;
-  animation: fade-in 1s forwards ease 0.2s;
+  background: var(--se-green-gradient);
 
-  img {
-    width: 200px;
-    max-width: 92%;
-    animation: pulse 2s infinite ease 0.5s;
-    margin-bottom: 32px;
+  #Loading-icon {
+    font-size: 96px;
+    animation: spin infinite 2s linear;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   h1 {
