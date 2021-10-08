@@ -1,15 +1,16 @@
 import React from 'react'
-import Logo from 'assets/logo.svg'
 import { Ellipsis } from 'components'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function Loading({ text = 'Loading', relative = false }) {
   return (
     <div id="Loading" className={relative ? 'relative' : ''}>
-      <img src={Logo} alt="Sharing Excess Logo" />
-      <h1>
+      <div id="Loading-icon">⚙️</div>
+      <Spacer height={24} />
+      <Text type="secondary-header" color="white" shadow align="center">
         {text}
         <Ellipsis />
-      </h1>
+      </Text>
     </div>
   )
 }

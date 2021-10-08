@@ -59,8 +59,17 @@ export function Routes({ initial_filter }) {
       setRoutes(full_data)
       setLoading(false)
     }
-    raw_routes && addData()
-  }, [raw_routes, pickups, deliveries, organizations, users, location]) // eslint-disable-line
+    raw_routes && addData() // eslint-disable-next-line
+  }, [
+    raw_routes,
+    pickups,
+    deliveries,
+    organizations,
+    users,
+    location,
+    locations,
+  ])
+
   useEffect(() => {
     if (filter === 'driver') {
       setFilterByDriver(true)
@@ -131,7 +140,7 @@ export function Routes({ initial_filter }) {
     } else return null
   }
 
-  return (
+  return routes && routes.length ? (
     <main id="Routes">
       <Text type="section-header" color="white" align="center">
         {location.pathname === '/routes'
@@ -248,11 +257,7 @@ export function Routes({ initial_filter }) {
                   ⬆️{'  '}
                   {r.stops
                     .filter(s => s.type === 'pickup')
-                    .map(s =>
-                      s.location.name
-                        ? s.org.name + ` (${s.location.name})`
-                        : s.org.name
-                    )
+                    .map(s => `${s.org.name} (${s.location.address1})`)
                     .join('\n')}
                 </Text>
                 <Spacer height={8} />
@@ -260,11 +265,7 @@ export function Routes({ initial_filter }) {
                   ⬇️{'  '}
                   {r.stops
                     .filter(s => s.type === 'delivery')
-                    .map(s =>
-                      s.location.name
-                        ? s.org.name + ` (${s.location.name})`
-                        : s.org.name
-                    )
+                    .map(s => `${s.org.name} (${s.location.address1})`)
                     .join('\n')}
                 </Text>
                 {r.notes ? (
@@ -279,5 +280,7 @@ export function Routes({ initial_filter }) {
         })
       )}
     </main>
+  ) : (
+    <Loading />
   )
 }
