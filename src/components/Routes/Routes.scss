@@ -50,8 +50,15 @@
 
     .Routes-route-header {
       width: 100%;
+      max-width: 100%;
       display: flex;
       align-items: center;
+
+      .Routes-route-status {
+        font-size: 28px;
+        margin-left: auto;
+        margin-bottom: auto;
+      }
 
       div {
         display: flex;
@@ -82,32 +89,6 @@
       padding-left: 1.5em;
       text-indent: -1.5em;
       white-space: pre-line;
-    }
-
-    #StatusIndicator {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      height: 24px;
-      width: 24px;
-      border-radius: 50%;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1px;
-
-      &.fa-times {
-        background: var(--red);
-      }
-
-      &.fa-clock-o {
-        background: var(--blue);
-      }
-
-      &.fa-check {
-        background: var(--primary);
-      }
     }
   }
 }

@@ -35,6 +35,7 @@ function Auth({ children }) {
 
   function handleLogout() {
     firebase.auth().signOut()
+    history.push('/')
   }
 
   async function handleLogin() {

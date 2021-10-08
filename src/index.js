@@ -33,6 +33,7 @@ import {
   Analytics,
   SwitchEnv,
   Modal,
+  EnvWarning,
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -79,6 +80,7 @@ function RescueAppRoutes() {
           <Firestore>
             <App>
               <Header />
+              <EnvWarning />
               <Switch>
                 {/*  Public Routes */}
                 <PublicRoute exact path="/">
@@ -194,7 +196,7 @@ function RescueAppRoutes() {
                 <AdminRoute exact path="/admin/analytics">
                   <Analytics />
                 </AdminRoute>
-                <AdminRoute exact path="/admin/switchenv">
+                <AdminRoute exact path="/admin/switch-environment">
                   <SwitchEnv />
                 </AdminRoute>
 

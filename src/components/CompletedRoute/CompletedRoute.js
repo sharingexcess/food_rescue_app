@@ -37,9 +37,9 @@ export function CompletedRoute() {
         <span>{calculateWeight()}lbs.</span> of food today. Go you!
       </Text>
       <Spacer height={32} />
-      <Link to="/routes">
+      <Link to="/">
         <Button type="primary" size="large" color="white">
-          View More Routes
+          Back to Home
         </Button>
       </Link>
     </main>

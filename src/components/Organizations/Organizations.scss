@@ -51,6 +51,9 @@
       font-size: 13px;
       color: var(--white);
       text-transform: capitalize;
+      overflow: hidden;
+      max-width: 64px;
+      @include ellipsis;
 
       &.donor {
         background-color: var(--red);
