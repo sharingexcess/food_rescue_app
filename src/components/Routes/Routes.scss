@@ -50,8 +50,15 @@
 
     .Routes-route-header {
       width: 100%;
+      max-width: 100%;
       display: flex;
       align-items: center;
+
+      .Routes-route-status {
+        font-size: 28px;
+        margin-left: auto;
+        margin-bottom: auto;
+      }
 
       div {
         display: flex;

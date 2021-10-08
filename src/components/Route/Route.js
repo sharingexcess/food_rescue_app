@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import firebase from 'firebase/app'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams, useLocation } from 'react-router-dom'
 import { setFirestoreData } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
 import { useFirestore, useAuth, useApp } from 'hooks'
@@ -24,6 +24,7 @@ export function Route() {
   const deliveries = useFirestore('deliveries')
   const organizations = useFirestore('organizations')
   const locations = useFirestore('locations')
+  const location = useLocation()
   const [stops, setStops] = useState([])
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export function Route() {
     // handle auto completing a route when all stops are finished
     let completed_deliveries = 0
     const route_deliveries = deliveries.filter(d => d.route_id === route_id)
-    if (route_deliveries.length) {
+    if (route_deliveries.length && !location.pathname.includes('history')) {
       for (const d of route_deliveries) {
         if (d.status === 9 || d.status === 0) completed_deliveries++
       }

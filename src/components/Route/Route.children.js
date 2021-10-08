@@ -267,6 +267,52 @@ export function CancelRoute() {
   )
 }
 
+export function FinishRoute() {
+  const { setModal, modalState } = useApp()
+  const [notes, setNotes] = useState('')
+  const history = useHistory()
+
+  async function handleFinish() {
+    getCollection('Routes')
+      .doc(modalState.route.id)
+      .set({ status: 9, notes }, { merge: true })
+      .then(() => setModal())
+      .then(() => history.push(`/routes/${modalState.route.id}/completed`))
+  }
+
+  return (
+    <>
+      <Text type="secondary-header" color="black">
+        Finish Route
+      </Text>
+      <Spacer height={4} />
+      <Button
+        type="tertiary"
+        color="blue"
+        handler={() => setModal('RouteMenu')}
+      >
+        &lt; Back to Route Options
+      </Button>
+      <Input
+        label="Route notes..."
+        animation={false}
+        type="textarea"
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+      />
+      <Button
+        type="primary"
+        color="green"
+        size="large"
+        fullWidth
+        handler={handleFinish}
+      >
+        Confirm Finish Route
+      </Button>
+    </>
+  )
+}
+
 export function CancelStop() {
   const [notes, setNotes] = useState('')
   const { setModal, modalState } = useApp()
@@ -671,7 +717,7 @@ export function RouteActionButton() {
   const { route_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
-  const { modalState } = useApp()
+  const { modalState, setModal } = useApp()
 
   async function handleBegin() {
     await setFirestoreData(['Routes', modalState.route.id], {
@@ -733,6 +779,12 @@ export function RouteActionButton() {
       } else
         return <ActionButton handler={handleClaim}>Claim Route</ActionButton>
     }
+  } else if (modalState.route.status === 3) {
+    return (
+      <ActionButton handler={() => setModal('FinishRoute')}>
+        Finish Route
+      </ActionButton>
+    )
   }
   return null
 }

@@ -6,6 +6,7 @@ import {
   CancelStop,
   ContactAdmin,
   DropRoute,
+  FinishRoute,
   RouteMenu,
   StopMenu,
 } from 'components/Route/Route.children'
@@ -23,6 +24,8 @@ export function Modal() {
         return <DropRoute />
       case 'CancelRoute':
         return <CancelRoute />
+      case 'FinishRoute':
+        return <FinishRoute />
       case 'CancelStop':
         return <CancelStop />
       case 'ContactAdmin':

@@ -25,6 +25,7 @@ export function Routes({ initial_filter }) {
   const [filterByDriver, setFilterByDriver] = useState(false)
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
+
   function getRouteWeight(routeId) {
     const deliveredWeight = deliveries.filter(r => r.route_id === routeId)
     let totalWeight = 0
@@ -35,6 +36,7 @@ export function Routes({ initial_filter }) {
     }
     return totalWeight
   }
+
   useEffect(() => {
     async function addData() {
       const full_data = []
@@ -119,11 +121,13 @@ export function Routes({ initial_filter }) {
 
   function StatusIndicator({ route }) {
     if (route.status === 9) {
-      return <i id="StatusIndicator" className="fa fa-check" />
+      return <div className="Routes-route-status">✅</div>
     } else if (route.status === 0) {
-      return <i id="StatusIndicator" className="fa fa-times" />
+      return <div className="Routes-route-status">❌</div>
+    } else if (route.status === 1) {
+      return <div className="Routes-route-status">🗓</div>
     } else if (route.status === 3) {
-      return <i id="StatusIndicator" className="fa fa-clock-o" />
+      return <div className="Routes-route-status">🚛</div>
     } else return null
   }
 
@@ -223,14 +227,21 @@ export function Routes({ initial_filter }) {
                   <div>
                     <Text type="section-header" color="black" wrap={false}>
                       {r.driver.name || 'Unassigned Route'}
-                      {r.status === 9 && (
-                        <span> - {getRouteWeight(r.id)} lbs.</span>
-                      )}
                     </Text>
                     <Text type="small" color="blue">
                       {moment(r.time_start).format('ddd, MMM Do, h:mma')}
                     </Text>
+
+                    {r.status === 9 && (
+                      <>
+                        <Spacer height={4} />
+                        <Text type="small" color="green">
+                          {getRouteWeight(r.id)} lbs. delivered
+                        </Text>
+                      </>
+                    )}
                   </div>
+                  <StatusIndicator route={r} />
                 </div>
                 <Spacer height={12} />
                 <Text type="small" color="grey" classList={['pickups']}>
