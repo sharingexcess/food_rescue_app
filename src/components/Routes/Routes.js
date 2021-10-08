@@ -196,7 +196,7 @@ export function Routes({ initial_filter }) {
           </Text>
           <Spacer height={16} />
           {admin ? (
-            <Link to="/admin/create-route">
+            <Link to="/">
               <Button>Back to Home Page</Button>
             </Link>
           ) : null}
