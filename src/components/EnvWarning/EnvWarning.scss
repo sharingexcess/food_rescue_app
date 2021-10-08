@@ -13,6 +13,7 @@
   justify-content: flex-start;
   align-items: center;
   transition: width 0.2s ease;
+  cursor: pointer;
 
   &.expanded {
     width: calc(100vw - 32px);
