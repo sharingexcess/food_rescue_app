@@ -1,0 +1,31 @@
+#EnvWarning {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  height: 48px;
+  width: 48px;
+  border-radius: 24px;
+  background: var(--se-red-primary);
+  box-shadow: var(--se-shadow-medium);
+  z-index: 50;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  transition: width 0.2s ease;
+
+  &.expanded {
+    width: calc(100vw - 32px);
+  }
+  .section-header {
+    height: 48px;
+    width: 48px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .small {
+    flex-grow: 1;
+  }
+}

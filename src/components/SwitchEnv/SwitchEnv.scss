@@ -5,22 +5,10 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  text-align: center;
 
-  h1 {
-    font-size: 32px;
-    width: 100%;
-    text-align: center;
-  }
-
-  a {
-    width: 100%;
-  }
-
-  p {
-    margin-top: 8px;
+  .icon {
+    font-size: 96px;
     margin-bottom: 32px;
-    color: var(--primary);
-    width: 100%;
-    text-align: center;
   }
 }

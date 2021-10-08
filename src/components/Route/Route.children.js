@@ -490,17 +490,67 @@ export function Stop({ stops, s, i }) {
         }
       ).then(() => window.open(generateDirectionsLink(s.location), '_blank'))
     }
+    async function handleSkip() {
+      const org = organizations.find(o => o.id === s.org_id)
+      if (org.org_type === 'home delivery') {
+        handleSubmitHomeDelivery()
+      } else {
+        const baseURL = location.pathname.includes('routes')
+          ? 'routes'
+          : 'history'
+        setFirestoreData(
+          [s.type === 'delivery' ? 'Deliveries' : 'Pickups', s.id],
+          {
+            status: 3,
+            driver_left_at: createServerTimestamp(),
+          }
+        ).then(() => history.push(`/${baseURL}/${route_id}/${s.type}/${s.id}`))
+      }
+    }
+
     return (
-      <Button
-        type="primary"
-        color="blue"
-        size="large"
-        fullWidth
-        handler={handleClick}
-      >
-        Get Directions
-      </Button>
+      <>
+        <Button
+          type="primary"
+          color="blue"
+          size="large"
+          fullWidth
+          handler={handleClick}
+        >
+          Get Directions
+        </Button>
+        <Spacer height={16} />
+        <Button
+          type="tertiary"
+          color="blue"
+          size="medium"
+          fullWidth
+          handler={handleSkip}
+        >
+          Skip to Finish {s.type}
+        </Button>
+      </>
     )
+  }
+
+  function handleSubmitHomeDelivery() {
+    const pickup = pickups.find(p => p.route_id === route.id)
+    const weight = pickup.report.weight
+    const percent_of_total_dropped = 1 / (route.stops.length - 1)
+    setFirestoreData(['Deliveries', s.id], {
+      report: {
+        percent_of_total_dropped: parseInt(percent_of_total_dropped),
+        weight: isNaN(weight)
+          ? 0
+          : Math.round(weight * percent_of_total_dropped),
+        created_at: createServerTimestamp(),
+        updated_at: createServerTimestamp(),
+      },
+      time_finished: createServerTimestamp(),
+      status: 9,
+    })
+      .then(() => history.push(`/routes/${route_id}`))
+      .catch(e => console.error('Error writing document: ', e))
   }
 
   function StopReportButton() {
@@ -518,24 +568,6 @@ export function Stop({ stops, s, i }) {
       ).then(() => history.push(`/${baseURL}/${route_id}/${s.type}/${s.id}`))
     }
 
-    function handleSubmitHomeDelivery() {
-      const pickup = pickups.find(p => p.route_id === route.id)
-      const weight = pickup.report.weight
-      const percent_of_total_dropped = weight / (route.stops.length - 1)
-      setFirestoreData(['Deliveries', s.id], {
-        report: {
-          percent_of_total_dropped: parseInt(percent_of_total_dropped),
-          weight: isNaN(weight) ? 0 : weight,
-          created_at: createServerTimestamp(),
-          updated_at: createServerTimestamp(),
-        },
-        time_finished: createServerTimestamp(),
-        status: 9,
-      })
-        .then(() => history.push(`/routes/${route_id}`))
-        .catch(e => console.error('Error writing document: ', e))
-    }
-
     function handleClick() {
       const org = organizations.find(o => o.id === s.org_id)
       if (org.org_type === 'home delivery') {
@@ -551,7 +583,7 @@ export function Stop({ stops, s, i }) {
         fullWidth
         handler={handleClick}
       >
-        Finish {s.type}
+        Finish {s.type} Report
       </Button>
     )
   }

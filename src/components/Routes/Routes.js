@@ -220,7 +220,6 @@ export function Routes({ initial_filter }) {
                   {r.driver && (
                     <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
                   )}
-                  <StatusIndicator route={r} />
                   <div>
                     <Text type="section-header" color="black" wrap={false}>
                       {r.driver.name || 'Unassigned Route'}

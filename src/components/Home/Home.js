@@ -61,20 +61,11 @@ export function Home() {
         />
         <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
         <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
-
-        {window.location.href === 'https://sharingexcess.web.app/' ? (
-          <Tile
-            name="Test Environment"
-            icon="fa-flask"
-            link="/admin/switchenv"
-          />
-        ) : (
-          <Tile
-            name="Prod Environment"
-            icon="fa-rocket"
-            link="/admin/switchenv"
-          />
-        )}
+        <Tile
+          name="Switch Environments"
+          icon="fa-rocket"
+          link="/admin/switch-environment"
+        />
       </>
     )
   }
@@ -89,11 +80,11 @@ export function Home() {
     <NewDriver />
   ) : (
     <main id="Home">
-      <Text type="secondary-header" color="white" align="center">
+      <Text type="secondary-header" color="white" align="center" shadow>
         {header}
       </Text>
       {stats ? (
-        <Text type="subheader" color="white" align="center">
+        <Text type="subheader" color="white" align="center" shadow>
           <span>{stats.routes}</span> route{stats.routes === 1 ? '' : 's'}{' '}
           driven, <span>{stats.weight}</span> lbs. rescued
         </Text>
