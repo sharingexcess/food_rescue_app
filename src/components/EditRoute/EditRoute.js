@@ -279,7 +279,7 @@ export function EditRoute() {
       field
     )
   }
-  function Stop({ s, onMove}) {
+  function Stop({ s, onMove }) {
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
@@ -524,29 +524,24 @@ export function EditRoute() {
     }
 
     function handleMove(id, direction) {
-      // console.log(word)
-     
-      const position = formData.stops.findIndex((i) => i.id === id);
-
-      console.log('position',position)
-      console.log('id', id)
-      console.log('direction', direction)
-
+      const stops = formData.stops
+      const position = stops.findIndex(i => i.id === id)
       if (position < 0) {
-        throw new Error("Given item not found.")
-      } else if (direction === -1 && position === 0 || direction === 1 && position === formData.stops.length - 1) {
-        return // canot move outside of array
+        throw new Error('Stop not found')
+      } else if (
+        (direction === -1 && position === 0) ||
+        (direction === 1 && position === stops.length - 1)
+      ) {
+        return
       }
-      const item = formData.stops[position] 
-      const newItems = formData.stops.filter((i) => i.id !== id)
-      newItems.splice(position + direction, 0, item)
+      const stop = stops[position]
+      const newStops = stops.filter(i => i.id !== id)
+      newStops.splice(position + direction, 0, stop)
 
       setFormData({
         ...formData,
-        stops: [...newItems],
+        stops: [...newStops],
       })
-
-      
     }
 
     function CancelButton() {
@@ -579,8 +574,8 @@ export function EditRoute() {
 
     return confirmedTimes ? (
       <>
-        {formData.stops.map((s) => (
-          <Stop s={s} key={s.id} onMove={handleMove}  />
+        {formData.stops.map(s => (
+          <Stop s={s} key={s.id} onMove={handleMove} />
         ))}
         <section id="AddStop">
           {list === 'pickups' ? (
