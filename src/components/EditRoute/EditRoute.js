@@ -279,7 +279,7 @@ export function EditRoute() {
       field
     )
   }
-  function Stop({ s }) {
+  function Stop({ s, onMove}) {
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
@@ -331,6 +331,8 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
+        <button onClick={() => onMove(s.id, 1)}>Press Down</button>
+        <button onClick={() => onMove(s.id, -1)}>Press Up</button>
       </Card>
     )
   }
@@ -521,6 +523,32 @@ export function EditRoute() {
       ) : null
     }
 
+    function handleMove(id, direction) {
+      // console.log(word)
+     
+      const position = formData.stops.findIndex((i) => i.id === id);
+
+      console.log('position',position)
+      console.log('id', id)
+      console.log('direction', direction)
+
+      if (position < 0) {
+        throw new Error("Given item not found.")
+      } else if (direction === -1 && position === 0 || direction === 1 && position === formData.stops.length - 1) {
+        return // canot move outside of array
+      }
+      const item = formData.stops[position] 
+      const newItems = formData.stops.filter((i) => i.id !== id)
+      newItems.splice(position + direction, 0, item)
+
+      setFormData({
+        ...formData,
+        stops: [...newItems],
+      })
+
+      
+    }
+
     function CancelButton() {
       return list ? (
         <Button
@@ -551,8 +579,8 @@ export function EditRoute() {
 
     return confirmedTimes ? (
       <>
-        {formData.stops.map(s => (
-          <Stop s={s} key={s.id} />
+        {formData.stops.map((s) => (
+          <Stop s={s} key={s.id} onMove={handleMove}  />
         ))}
         <section id="AddStop">
           {list === 'pickups' ? (
