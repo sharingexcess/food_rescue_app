@@ -140,7 +140,7 @@ export function Routes({ initial_filter }) {
     } else return null
   }
 
-  return routes && routes.length ? (
+  return routes ? (
     <main id="Routes">
       <Text type="section-header" color="white" align="center">
         {location.pathname === '/routes'
