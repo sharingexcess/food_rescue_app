@@ -114,7 +114,7 @@ export function Profile({ handleUpdateClick, inForm }) {
         defaultCountry="US"
       />
       {button && (
-        <Button onClick={handleUpdate} disabled={button !== 'update profile'}>
+        <Button handler={handleUpdate} disabled={button !== 'update profile'}>
           {button}
         </Button>
       )}

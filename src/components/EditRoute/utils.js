@@ -54,6 +54,13 @@ export function getDefaultStartTime() {
     .format('yyyy-MM-DDTkk:mm')
 }
 
+export function getDefaultEndTime() {
+  return moment(new Date())
+    .startOf('hour')
+    .add(4, 'hour')
+    .format('yyyy-MM-DDTkk:mm')
+}
+
 export function getDefaultEndRecurring() {
   return moment(new Date())
     .startOf('hour')
@@ -75,6 +82,12 @@ export const formFields = [
     label: 'Start Time',
     id: 'time_start',
     type: 'datetime-local',
+  },
+  {
+    label: 'End Time',
+    id: 'time_end',
+    type: 'datetime-local',
+    preReq: 'time_start',
   },
   {
     label: 'Select a driver...',

@@ -57,6 +57,7 @@ export function Organization() {
             <Card classList={['Organization-location']}>
               <Text type="section-header" color="black">
                 {loc.address1}
+                {loc.name && ` (${loc.name})`}
               </Text>
               {loc.is_philabundance_partner && (
                 <p className="philabundance">Philabundance Partner</p>

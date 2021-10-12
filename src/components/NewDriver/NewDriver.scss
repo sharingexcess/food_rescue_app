@@ -6,7 +6,6 @@
   a {
     width: 100%;
     .NewDriver-section {
-      @include card;
       margin: 8px 0;
       flex-direction: row;
       justify-content: flex-start;

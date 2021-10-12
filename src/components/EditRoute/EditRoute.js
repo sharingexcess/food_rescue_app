@@ -9,6 +9,7 @@ import {
   getDefaultStartTime,
   getDefaultEndRecurring,
   getExistingRouteData,
+  getDefaultEndTime,
 } from './utils'
 import UserIcon from 'assets/user.svg'
 import {
@@ -40,6 +41,7 @@ export function EditRoute() {
     driver_name: '',
     driver_id: null,
     time_start: getDefaultStartTime(),
+    time_end: getDefaultEndTime(),
     end_recurring: getDefaultEndRecurring(),
     stops: [],
     original_route_id: '',
@@ -229,7 +231,16 @@ export function EditRoute() {
         setSuggestions
       )
     }
-    if (field.id === 'driver_name') {
+    if (field.id === 'time_start') {
+      // automatically set time end 2 hrs later
+      const time_end = new Date(e.target.value)
+      time_end.setTime(time_end.getTime() + 2 * 60 * 60 * 1000)
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value,
+        time_end: moment(time_end).format('yyyy-MM-DDTHH:mm'),
+      })
+    } else if (field.id === 'driver_name') {
       setFormData({
         ...formData,
         driver: {},
@@ -256,7 +267,7 @@ export function EditRoute() {
   }
   function Stop({ s }) {
     function generateStopTitle() {
-      return `${s.org.name} (${s.location.address1})`
+      return `${s.org.name} (${s.location.name || s.location.address1})`
     }
 
     function StopAddress() {
@@ -344,7 +355,11 @@ export function EditRoute() {
           <Text type="subheader" color="white" shadow>
             {isRecurring
               ? moment(formData.time_start).format('dddd') + ', Recurring'
-              : moment(formData.time_start).format('dddd, MMMM D, h:mma')}
+              : `${moment(formData.time_start).format('dddd, MMMM D, h:mma')}${
+                  formData.time_end
+                    ? ' - ' + moment(formData.time_end).format('h:mma')
+                    : null
+                } `}
           </Text>
         </div>
         <Button

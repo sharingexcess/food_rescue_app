@@ -167,7 +167,14 @@ export function EditLocation() {
           <Spacer height={32} />
           <Input
             type="text"
-            label="Apartment/Unit Number"
+            label="Location Nickname (optional)"
+            element_id="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          <Input
+            type="text"
+            label="Apartment/Unit Number (optional)"
             element_id="address2"
             value={formData.address2}
             onChange={handleChange}
@@ -216,7 +223,7 @@ export function EditLocation() {
           />
           <Input
             type="tel"
-            label="Secondary Contact Phone"
+            label="Secondary Phone (optional)"
             element_id="secondary_contact_phone"
             value={formData.secondary_contact_phone}
             onChange={handleChange}

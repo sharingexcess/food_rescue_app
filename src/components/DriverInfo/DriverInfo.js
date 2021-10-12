@@ -3,6 +3,7 @@ import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from 'helpers'
 import { Link } from 'react-router-dom'
+import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function DriverInfo() {
   const history = useHistory()
@@ -17,9 +18,14 @@ export function DriverInfo() {
     <main id="DriverInfo">
       {user.completed_driver_info ? (
         <>
-          <p>You've already completed this document.</p>
+          <Text type="paragraph" color="white" shadow>
+            You've already completed this document.
+          </Text>
+          <Spacer height={16} />
           <Link to="/">
-            <button>Back to Home</button>
+            <Button type="primary" color="white" handler={handleComplete}>
+              Back to Home
+            </Button>
           </Link>
         </>
       ) : (
@@ -30,9 +36,9 @@ export function DriverInfo() {
           />
           <br />
           <br />
-          <button onClick={handleComplete}>
+          <Button type="primary" color="white" handler={handleComplete}>
             I've submitted the Availability Form
-          </button>
+          </Button>
         </>
       )}
     </main>

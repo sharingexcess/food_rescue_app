@@ -51,7 +51,7 @@ export function updateFieldSuggestions(
 // loadSuggestionsOnInit: a boolean defining whether the suggestionQuery should be run before the user enters any input
 export const formFields = [
   {
-    label: 'Donor Network',
+    label: 'Donor Organization',
     id: 'org_name',
     preReq: null,
     type: 'text',

@@ -9,7 +9,7 @@ import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
 export function Menu({ isOpen, setIsOpen }) {
   const { pathname } = useLocation()
   // get current user state from AuthContext
-  const { user, admin, handleLogout, handleLogin } = useAuth()
+  const { user, admin, permission, handleLogout, handleLogin } = useAuth()
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -90,8 +90,12 @@ export function Menu({ isOpen, setIsOpen }) {
       <UserProfile />
       <div id="MenuContent">
         <ul>
-          <MenuLink label="Routes" url="/routes" />
-          <MenuLink label="History" url="/history" />
+          {permission ? (
+            <>
+              <MenuLink label="Routes" url="/routes" />
+              <MenuLink label="History" url="/history" />
+            </>
+          ) : null}
           {admin ? (
             <>
               <MenuLink label="New Route" url="/admin/create-route" />

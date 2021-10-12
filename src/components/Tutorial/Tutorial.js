@@ -2,6 +2,7 @@ import React from 'react'
 import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from 'helpers'
+import { Button } from '@sharingexcess/designsystem'
 
 export function Tutorial() {
   const history = useHistory()
@@ -89,7 +90,9 @@ export function Tutorial() {
         </div>
       </section>
       <br />
-      <button onClick={handleComplete}>I've completed the Tutorial</button>
+      <Button type="primary" color="white" handler={handleComplete}>
+        I've completed the Tutorial
+      </Button>
     </main>
   )
 }
