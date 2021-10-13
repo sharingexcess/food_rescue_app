@@ -82,7 +82,7 @@ function RescueAppRoutes() {
               <Header />
               <EnvWarning />
               <Switch>
-                {/*  Public Routes */}
+                {/* Public Routes */}
                 <PublicRoute exact path="/">
                   <Home />
                 </PublicRoute>

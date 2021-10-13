@@ -257,7 +257,12 @@ export function Routes({ initial_filter }) {
                   ⬆️{'  '}
                   {r.stops
                     .filter(s => s.type === 'pickup')
-                    .map(s => `${s.org.name} (${s.location.address1})`)
+                    .map(
+                      s =>
+                        `${s.org.name} (${
+                          s.location.name || s.location.address1
+                        })`
+                    )
                     .join('\n')}
                 </Text>
                 <Spacer height={8} />
@@ -265,7 +270,12 @@ export function Routes({ initial_filter }) {
                   ⬇️{'  '}
                   {r.stops
                     .filter(s => s.type === 'delivery')
-                    .map(s => `${s.org.name} (${s.location.address1})`)
+                    .map(
+                      s =>
+                        `${s.org.name} (${
+                          s.location.name || s.location.address1
+                        })`
+                    )
                     .join('\n')}
                 </Text>
                 {r.notes ? (

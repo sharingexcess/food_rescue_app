@@ -2,6 +2,7 @@ import React from 'react'
 import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from 'helpers'
+import { Button } from '@sharingexcess/designsystem'
 
 export function Liability() {
   const history = useHistory()
@@ -121,7 +122,9 @@ export function Liability() {
           Sharing Excess deems appropriate.
         </p>
       </section>
-      <button onClick={handleComplete}>I agree to the above terms.</button>
+      <Button type="primary" color="white" handler={handleComplete}>
+        I agree to the above terms.
+      </Button>
     </main>
   )
 }

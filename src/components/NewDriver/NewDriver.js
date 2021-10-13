@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from 'hooks'
-import { Menu, Header } from 'components'
+import { Menu } from 'components'
+import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function NewDriver() {
   const { user } = useAuth()
@@ -37,27 +38,26 @@ export function NewDriver() {
   return (
     <main id="NewDriver">
       <Menu />
-      <Header text="Welcome to SE!" />
-      <br />
-      <p>
+      <Text type="secondary-header" color="white" shadow>
+        Welcome to Sharing Excess!
+      </Text>
+      <Spacer height={8} />
+      <Text type="paragraph" color="white" shadow>
         {user.completed_driver_info &&
         user.completed_food_safety &&
         user.completed_liability_release
           ? "You've completed all the onboarding steps!\n\nHang tight while we approve your info, and grant you permission to start rescuing food."
           : 'Complete the onboarding steps below to begin rescuing food as soon as possible.'}
-      </p>
-      <br />
-      <br />
+      </Text>
+      <Spacer height={16} />
       {sections.map(s => (
         <Link to={s.page} key={s.name}>
-          <div
-            className={`NewDriver-section${s.completed ? ' completed' : ''}`}
-          >
+          <Card classList={['NewDriver-section', s.completed && 'completed']}>
             <i
               className={s.completed ? 'fa fa-check' : 'fa fa-clipboard-list'}
             />
             {s.name}
-          </div>
+          </Card>
         </Link>
       ))}
     </main>

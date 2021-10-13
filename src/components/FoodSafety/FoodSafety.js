@@ -2,6 +2,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
+import { Button } from '@sharingexcess/designsystem'
 
 export function FoodSafety() {
   const history = useHistory()
@@ -268,9 +269,10 @@ export function FoodSafety() {
           <li>Recycle any leftover packaging</li>
         </ol>
       </section>
-      <button onClick={handleComplete}>
+
+      <Button type="primary" color="white" handler={handleComplete}>
         I've read the Food Safety Guidelines
-      </button>
+      </Button>
     </main>
   )
 }

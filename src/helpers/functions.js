@@ -82,7 +82,7 @@ export async function updateGoogleCalendarEvent(data) {
       : 'Unassigned Food Rescue',
     location: `${data.stops[0].location.address1}, ${data.stops[0].location.city}, ${data.stops[0].location.state} ${data.stops[0].location.zip_code}`,
     description: `Stops on Route: ${data.stops
-      .map(s => `${s.org.name} (${s.location.address1})`)
+      .map(s => `${s.org.name} (${s.location.name || s.location.address1})`)
       .join(', ')}${data.notes ? `\n\nNotes: ${data.notes}` : ''}`,
     start: {
       dateTime: new Date(data.time_start).toISOString(),
