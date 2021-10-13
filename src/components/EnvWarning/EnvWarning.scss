@@ -14,6 +14,7 @@
   align-items: center;
   transition: width 0.2s ease;
   cursor: pointer;
+  padding-right: 24px;
 
   &.expanded {
     width: calc(100vw - 32px);
