@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from 'hooks'
-import { Menu } from 'components'
 import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function NewDriver() {
@@ -37,7 +36,6 @@ export function NewDriver() {
 
   return (
     <main id="NewDriver">
-      <Menu />
       <Text type="secondary-header" color="white" shadow>
         Welcome to Sharing Excess!
       </Text>
