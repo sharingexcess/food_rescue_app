@@ -22,8 +22,8 @@ export function Tutorial() {
           <li>Log onto app and click on assigned route guidance. </li>
         </ul>
         <div>
-          <img src="/tutorial-home.png" alt="Home" />
-          <img src="/tutorial-routes.png" alt="Routes" />
+          <img src="/tutorial-home.jpg" alt="Home" />
+          <img src="/tutorial-routes.jpg" alt="Routes" />
         </div>
       </section>
       <section id="pickup">
@@ -50,8 +50,8 @@ export function Tutorial() {
           <li>Safely pack food in the vehicle.</li>
         </ul>
         <div>
-          <img src="/tutorial-route.png" alt="Route" />
-          <img src="/tutorial-report.png" alt="Report" />
+          <img src="/tutorial-route.jpg" alt="Route" />
+          <img src="/tutorial-report.jpg" alt="Report" />
         </div>
       </section>
       <section id="delivery">
@@ -85,8 +85,8 @@ export function Tutorial() {
           </li>
         </ul>
         <div>
-          <img src="/tutorial-percentage.png" alt="Percentage Dropoff" />
-          <img src="/tutorial-completed.png" alt="Completed" />
+          <img src="/tutorial-percentage.jpg" alt="Percentage Dropoff" />
+          <img src="/tutorial-completed.jpg" alt="Completed" />
         </div>
       </section>
       <br />
