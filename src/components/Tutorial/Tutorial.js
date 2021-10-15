@@ -15,6 +15,30 @@ export function Tutorial() {
 
   return (
     <main id="Tutorial">
+      <section id="save1">
+        <h3>0. Save Rescue App to Home Screen (iOS)</h3>
+        <ul>
+          <li>Tap the share icon (a box with an arrow pointing upwards) at the bottom of the screen.</li>
+          <li>Scroll down until you see the option "Add to Home Screen" and tap it. </li>
+          <li>Tap Add in the top-right corner of the screen </li>
+        </ul>
+        <div>
+          <img src="/tutorial-ios-actions.jpg" alt="Home" />
+          <img src="/tutorial-ios-add.jpg" alt="Routes" />
+        </div>
+      </section>
+      <section id="save2">
+        <h3>0. Save Rescue App to Home Screen (Android)</h3>
+        <ul>
+          <li>Tap the menu icon (3 dots) in the upper right-hand corner.</li>
+          <li>On the side menu that popped up, tap the option "Add to Home screen." </li>
+          <li>Tap Add on the bottom-right corner of the pop up. </li>
+        </ul>
+        <div>
+          <img src="/tutorial-android-actions.jpg" alt="Home" />
+          <img src="/tutorial-android-add.jpg" alt="Routes" />
+        </div>
+      </section>
       <section id="start">
         <h3>1. Before You Start</h3>
         <ul>
