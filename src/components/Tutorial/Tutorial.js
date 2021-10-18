@@ -15,6 +15,32 @@ export function Tutorial() {
 
   return (
     <main id="Tutorial">
+      <section id="save1">
+        <h3>0. Save Rescue App to Home Screen (iOS)</h3>
+        <ul>
+          <li>Tap the share icon (a box with an arrow pointing upwards) at the bottom of the screen, which brings up a list of options.</li>
+          <li>Scroll down until you see the option "Add to Home Screen" and tap it. </li>
+          <li>On the next screen, tap "Add" on the top-right corner of the screen. </li>
+          <li>Now you will have a new app on your home screen that leads you to the website. </li>
+        </ul>
+        <div>
+          <img src="/tutorial-ios-actions.jpg" alt="Home" />
+          <img src="/tutorial-ios-add.jpg" alt="Routes" />
+        </div>
+      </section>
+      <section id="save2">
+        <h3>0. Save Rescue App to Home Screen (Android)</h3>
+        <ul>
+          <li>Tap the menu icon (3 dots) in the upper right-hand corner, which brings up a side menu.</li>
+          <li>On the side menu that popped up, tap the option "Add to Home screen."</li>
+          <li>On the new pop up, tap "Add" on the bottom-right corner.</li>
+          <li>Now you will have a new app on your home screen that leads you to the website.</li>
+        </ul>
+        <div>
+          <img src="/tutorial-android-actions.jpg" alt="Home" />
+          <img src="/tutorial-android-add.jpg" alt="Routes" />
+        </div>
+      </section>
       <section id="start">
         <h3>1. Before You Start</h3>
         <ul>
@@ -22,8 +48,8 @@ export function Tutorial() {
           <li>Log onto app and click on assigned route guidance. </li>
         </ul>
         <div>
-          <img src="/tutorial-home.png" alt="Home" />
-          <img src="/tutorial-routes.png" alt="Routes" />
+          <img src="/tutorial-home.jpg" alt="Home" />
+          <img src="/tutorial-routes.jpg" alt="Routes" />
         </div>
       </section>
       <section id="pickup">
@@ -50,8 +76,8 @@ export function Tutorial() {
           <li>Safely pack food in the vehicle.</li>
         </ul>
         <div>
-          <img src="/tutorial-route.png" alt="Route" />
-          <img src="/tutorial-report.png" alt="Report" />
+          <img src="/tutorial-route.jpg" alt="Route" />
+          <img src="/tutorial-report.jpg" alt="Report" />
         </div>
       </section>
       <section id="delivery">
@@ -85,8 +111,8 @@ export function Tutorial() {
           </li>
         </ul>
         <div>
-          <img src="/tutorial-percentage.png" alt="Percentage Dropoff" />
-          <img src="/tutorial-completed.png" alt="Completed" />
+          <img src="/tutorial-percentage.jpg" alt="Percentage Dropoff" />
+          <img src="/tutorial-completed.jpg" alt="Completed" />
         </div>
       </section>
       <br />
