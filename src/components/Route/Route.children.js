@@ -74,15 +74,15 @@ export function RouteMenu() {
   const { setModal, modalState } = useApp()
   const { user, admin } = useAuth()
 
-  function RouteOption(props) {
+  function RouteOption({name, modalName}) {
     return (
       <Button
         type="tertiary"
         color="blue"
         size="large"
-        handler={() => setModal(props.modalName)}
+        handler={() => setModal(modalName)}
       >
-        {props.name}
+        {name}
       </Button>
     )
   }
