@@ -91,7 +91,12 @@ In order to avoid merge conflicts, we use the following patterns to work togethe
 - To start a new branch, ensure you have the latest version of the `master` branch. Do this by returning to the `master` branch with command `git checkout master` and pull any new changes using `git pull origin master`.
 - To create a new branch, use `git checkout -b myNewBranch`
 - When your branch is ready for prime time, open a `Pull Request` following these steps:
-  1.  Use `git add -A`, then `git commit -m "comment describing changes"`,
+  1.  Use `git add -A`
+  2.  Use `git commit -m "comment describing changes"`
+  3.  Use `git push`. This will return the following command `git push --set-upstream origin myNewBranch`
+  4.  Run the above command
+  5.  In the rescue repository in GitHub, you should now see a message that states "myNewBranch had recent pushes." Press the "Compare & pull request" button
+  6.  Add reviewers to your pull request and wait for any approvals, comments, or change requests before merging your branch to master!
 - **Never merge a branch directly into master without a pull request.** Committing or merging directly to master will automatically deploy code to the development endpoint, and should never occur without a reviewed pull request with approval.
 - If you need to continue working on a branch while master is updated, use `rebase` to move your branch up to the latest version. First, checkout and pull the latest version of `master`. Then, checkout your branch, and run `git rebase master`. Follow the prompts to resolve any conflicts, and after the rebase is complete, use `git push origin myBranchName -f` to force update your branch remotely.
 
