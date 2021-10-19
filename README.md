@@ -4,11 +4,11 @@
 
 ## Contributors
 
-Ryan McHenry
-Abdullah Dawud
-Sam Nguyen
-Armando Parra
-Luke Shin
+Ryan McHenry \
+Luke Shin \
+Abdullah Dawud \
+Sam Nguyen \
+Armando Parra 
 
 ## Tech Stack 🤖
 
