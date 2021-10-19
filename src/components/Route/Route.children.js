@@ -228,7 +228,7 @@ export function DropRoute() {
         fullWidth
         handler={handleUnassign}
       >
-        Confirm Cancel Route
+        Confirm Drop Route
       </Button>
     </>
   )
@@ -281,7 +281,7 @@ export function CancelRoute() {
         fullWidth
         handler={handleCancel}
       >
-        Confirm Drop Route
+        Confirm Cancel Route
       </Button>
     </>
   )
