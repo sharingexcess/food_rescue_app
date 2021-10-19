@@ -430,7 +430,7 @@ export function Stop({ stops, s, i }) {
     const headerText =
       s.type && s.status && route
         ? s.type === 'delivery'
-          ? `⬇️ DELIVERY${
+          ? `⬇ DELIVERY${
               route.status !== 0
                 ? ' (' +
                   STOP_STATUSES[s.status].replace('_', ' ').toUpperCase() +
