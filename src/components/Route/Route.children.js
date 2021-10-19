@@ -74,6 +74,19 @@ export function RouteMenu() {
   const { setModal, modalState } = useApp()
   const { user, admin } = useAuth()
 
+  function RouteOption(props) {
+    return (
+      <Button
+        type="tertiary"
+        color="blue"
+        size="large"
+        handler={() => setModal(props.modalName)}
+      >
+        {props.name}
+      </Button>
+    )
+  }
+
   return (
     <div id="RouteMenu">
       <Text type="secondary-header" color="black">
@@ -81,68 +94,51 @@ export function RouteMenu() {
       </Text>
       <Spacer height={8} />
       <ul>
+        {user.id === modalState.route.driver_id || admin ? (
+          <>
+            <li>
+              <RouteOption 
+                modalName="FinishRoute" 
+                name="Force Finish Route"
+              />
+            </li>
+          </>
+        ) : null}
+
         {user.id === modalState.route.driver_id ? (
           <>
             <li>
-              <Button
-                type="tertiary"
-                color="blue"
-                size="large"
-                handler={() => setModal('FinishRoute')}
-              >
-                Force Finish Route
-              </Button>
+              <RouteOption 
+                modalName="DropRoute" 
+                name="Drop Route" 
+              />
             </li>
             <li>
-              <Button
-                type="tertiary"
-                color="blue"
-                size="large"
-                handler={() => setModal('DropRoute')}
-              >
-                Drop Route
-              </Button>
-            </li>
-            <li>
-              <Button
-                type="tertiary"
-                color="blue"
-                size="large"
-                handler={() => setModal('ContactAdmin')}
-              >
-                Contact Admin
-              </Button>
+              <RouteOption 
+                modalName="ContactAdmin" 
+                name="Contact Admin" 
+              />
             </li>
           </>
         ) : null}
         {admin ? (
           <>
             <li>
-              <Button
-                type="tertiary"
-                color="blue"
-                size="large"
-                handler={() => setModal('FinishRoute')}
-              >
-                Force Finish Route
-              </Button>
-            </li>
-            <li>
               <Link to={`/routes/${modalState.route.id}/edit`}>
-                <Button type="tertiary" color="blue" size="large">
+                <Button 
+                  type="tertiary" 
+                  color="blue" 
+                  size="large"
+                >
                   Edit Route
                 </Button>
               </Link>
             </li>
             <li>
-              <Button
-                type="tertiary"
-                color="blue"
-                size="large"
-                handler={() => setModal('CancelRoute')}
-              >
-                Cancel Route
-              </Button>
+              <RouteOption 
+                modalName="CancelRoute" 
+                name="Cancel Route" 
+              />
             </li>
           </>
         ) : null}
