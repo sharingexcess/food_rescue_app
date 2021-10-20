@@ -106,12 +106,9 @@ export function Menu({ isOpen, setIsOpen }) {
               <MenuLink label="Organizations" url="/admin/organizations" />
               <MenuLink label="Users" url="/admin/users" />
             </>
-          ) : (
-            <>
-              <MenuLink label="Food Safety" url="/food-safety" />
-              <MenuLink label="Tutorial" url="/tutorial" />
-            </>
-          )}
+          ) : null}
+          <MenuLink label="Food Safety" url="/food-safety" />
+          <MenuLink label="Tutorial" url="/tutorial" />
           <li
             onClick={() => {
               setIsOpen(false)

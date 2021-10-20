@@ -74,7 +74,7 @@ export function RouteMenu() {
   const { setModal, modalState } = useApp()
   const { user, admin } = useAuth()
 
-  function RouteOption({name, modalName}) {
+  function RouteOption({ name, modalName }) {
     return (
       <Button
         type="tertiary"
@@ -97,10 +97,7 @@ export function RouteMenu() {
         {user.id === modalState.route.driver_id || admin ? (
           <>
             <li>
-              <RouteOption 
-                modalName="FinishRoute" 
-                name="Force Finish Route"
-              />
+              <RouteOption modalName="FinishRoute" name="Force Finish Route" />
             </li>
           </>
         ) : null}
@@ -108,16 +105,10 @@ export function RouteMenu() {
         {user.id === modalState.route.driver_id ? (
           <>
             <li>
-              <RouteOption 
-                modalName="DropRoute" 
-                name="Drop Route" 
-              />
+              <RouteOption modalName="DropRoute" name="Drop Route" />
             </li>
             <li>
-              <RouteOption 
-                modalName="ContactAdmin" 
-                name="Contact Admin" 
-              />
+              <RouteOption modalName="ContactAdmin" name="Contact Admin" />
             </li>
           </>
         ) : null}
@@ -125,20 +116,13 @@ export function RouteMenu() {
           <>
             <li>
               <Link to={`/routes/${modalState.route.id}/edit`}>
-                <Button 
-                  type="tertiary" 
-                  color="blue" 
-                  size="large"
-                >
+                <Button type="tertiary" color="blue" size="large">
                   Edit Route
                 </Button>
               </Link>
             </li>
             <li>
-              <RouteOption 
-                modalName="CancelRoute" 
-                name="Cancel Route" 
-              />
+              <RouteOption modalName="CancelRoute" name="Cancel Route" />
             </li>
           </>
         ) : null}

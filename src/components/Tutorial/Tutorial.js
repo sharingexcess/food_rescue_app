@@ -3,6 +3,7 @@ import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from 'helpers'
 import { Button } from '@sharingexcess/designsystem'
+import { Link } from 'react-router-dom'
 
 export function Tutorial() {
   const history = useHistory()
@@ -136,9 +137,17 @@ export function Tutorial() {
         </div>
       </section>
       <br />
-      <Button type="primary" color="white" handler={handleComplete}>
-        I've completed the Tutorial
-      </Button>
+      {user && !user.completed_app_tutorial ? (
+        <Button type="primary" color="white" handler={handleComplete}>
+          I've completed the Tutorial
+        </Button>
+      ) : (
+        <Link to="/">
+          <Button type="primary" color="white">
+            Back to Home
+          </Button>
+        </Link>
+      )}
     </main>
   )
 }
