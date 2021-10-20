@@ -52,13 +52,13 @@ firebase.initializeApp(FIREBASE_CONFIG)
 // handle installed on home screen
 let debounce
 if (window.matchMedia('(display-mode: standalone)').matches) {
-  window.scrollTo({ top: 48, behavior: 'smooth' })
+  window.scrollTo({ top: 54, behavior: 'smooth' })
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY < 48) {
+    if (window.scrollY < 54) {
       if (debounce) window.clearTimeout(debounce)
       debounce = window.setTimeout(
-        () => window.scrollTo({ top: 48, behavior: 'smooth' }),
+        () => window.scrollTo({ top: 54, behavior: 'smooth' }),
         50
       )
     }
