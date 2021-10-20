@@ -74,7 +74,7 @@ export function RouteMenu() {
   const { setModal, modalState } = useApp()
   const { user, admin } = useAuth()
 
-  function RouteOption({name, modalName}) {
+  function RouteOption({ name, modalName }) {
     return (
       <Button
         type="tertiary"
@@ -97,10 +97,7 @@ export function RouteMenu() {
         {user.id === modalState.route.driver_id || admin ? (
           <>
             <li>
-              <RouteOption 
-                modalName="FinishRoute" 
-                name="Force Finish Route"
-              />
+              <RouteOption modalName="FinishRoute" name="Force Finish Route" />
             </li>
           </>
         ) : null}
@@ -108,16 +105,10 @@ export function RouteMenu() {
         {user.id === modalState.route.driver_id ? (
           <>
             <li>
-              <RouteOption 
-                modalName="DropRoute" 
-                name="Drop Route" 
-              />
+              <RouteOption modalName="DropRoute" name="Drop Route" />
             </li>
             <li>
-              <RouteOption 
-                modalName="ContactAdmin" 
-                name="Contact Admin" 
-              />
+              <RouteOption modalName="ContactAdmin" name="Contact Admin" />
             </li>
           </>
         ) : null}
@@ -125,20 +116,13 @@ export function RouteMenu() {
           <>
             <li>
               <Link to={`/routes/${modalState.route.id}/edit`}>
-                <Button 
-                  type="tertiary" 
-                  color="blue" 
-                  size="large"
-                >
+                <Button type="tertiary" color="blue" size="large">
                   Edit Route
                 </Button>
               </Link>
             </li>
             <li>
-              <RouteOption 
-                modalName="CancelRoute" 
-                name="Cancel Route" 
-              />
+              <RouteOption modalName="CancelRoute" name="Cancel Route" />
             </li>
           </>
         ) : null}
@@ -174,7 +158,7 @@ export function StopMenu() {
 
 export function DropRoute() {
   const { setModal, modalState } = useApp()
-  const [notes, setNotes] = useState()
+  const [notes, setNotes] = useState('')
 
   async function handleUnassign() {
     const event = await updateGoogleCalendarEvent({
@@ -489,22 +473,28 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopAddress() {
-    return (
+    const button = (
+      <Button
+        classList={['Route-stop-address-button']}
+        type="tertiary"
+        size="small"
+        color={isActiveStop ? 'blue' : 'white'}
+      >
+        <div>🏢</div>
+        <Spacer width={16} />
+        {s.location.address1}
+        {s.location.address2 && ` - ${s.location.address2}`}
+        <br />
+        {s.location.city}, {s.location.state} {s.location.zip_code}
+      </Button>
+    )
+
+    return s.status && s.status !== 9 ? (
       <ExternalLink to={generateDirectionsLink(s.location)}>
-        <Button
-          classList={['Route-stop-address-button']}
-          type="tertiary"
-          size="small"
-          color={isActiveStop ? 'blue' : 'white'}
-        >
-          <div>🏢</div>
-          <Spacer width={16} />
-          {s.location.address1}
-          {s.location.address2 && ` - ${s.location.address2}`}
-          <br />
-          {s.location.city}, {s.location.state} {s.location.zip_code}
-        </Button>
+        {button}
       </ExternalLink>
+    ) : (
+      button
     )
   }
 
@@ -724,14 +714,20 @@ export function Stop({ stops, s, i }) {
       ) : null}
     </Card>
   )
-  return s.status === 9 ? linkToReport(stopCard) : stopCard
+
+  // Make the Card Clickable as a link to the Stop Report
+  // if the stop is already completed (s.status === 9)
+  // or if the route is already completed (route.status === 9)
+  return s.status === 9 || (route && route.status === 9)
+    ? linkToReport(stopCard)
+    : stopCard
 }
 
 export function RouteActionButton() {
   const { route_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
-  const { modalState, setModal } = useApp()
+  const { modalState } = useApp()
 
   async function handleBegin() {
     await setFirestoreData(['Routes', modalState.route.id], {
@@ -793,12 +789,6 @@ export function RouteActionButton() {
       } else
         return <ActionButton handler={handleClaim}>Claim Route</ActionButton>
     }
-  } else if (modalState.route.status === 3) {
-    return (
-      <ActionButton handler={() => setModal('FinishRoute')}>
-        Finish Route
-      </ActionButton>
-    )
   }
   return null
 }

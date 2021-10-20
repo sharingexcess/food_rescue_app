@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Loading, Input } from 'components'
 import { createServerTimestamp, setFirestoreData } from 'helpers'
@@ -8,9 +8,14 @@ import validator from 'validator'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
+  const route = useFirestore('routes', route_id)
   const { admin } = useAuth()
   const history = useHistory()
   const pickup = useFirestore('pickups', pickup_id)
+  const deliveries = useFirestore(
+    'deliveries',
+    useCallback(d => d.pickup_ids.includes(pickup_id), [pickup_id])
+  )
   const [formData, setFormData] = useState({
     dairy: 0,
     bakery: 0,
@@ -26,11 +31,7 @@ export function PickupReport({ customSubmitHandler }) {
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
-  const resetInput = e => {
-    if (e.target.value === '0') {
-      e.target.value = ''
-    }
-  }
+
   useEffect(() => {
     pickup && pickup.report
       ? setFormData(formData => ({ ...formData, ...pickup.report }))
@@ -41,13 +42,12 @@ export function PickupReport({ customSubmitHandler }) {
     setFormData(formData => ({ ...formData, weight: sumWeight(formData) }))
   }, [errors])
 
-  function canEdit() {
-    return [1, 3, 6].includes(pickup.status) || admin
-  }
+  const canEdit = (pickup && [1, 3, 6].includes(pickup.status)) || admin
+
   function sumWeight(object) {
     let sum = 0
     for (const field in object) {
-      if (field === 'weight' || field === 'notes') {
+      if (['weight', 'notes', 'created_at', 'updated_at'].includes(field)) {
         //pass
       } else {
         sum += parseFloat(object[field])
@@ -55,17 +55,21 @@ export function PickupReport({ customSubmitHandler }) {
     }
     return sum
   }
+
   function handleChange(e) {
-    // TODO: take the sum of all the field
+    const updated = {
+      ...formData,
+      [e.target.id]: parseInt(e.target.value) || 0,
+    }
+    updated.weight = sumWeight(updated)
     setErrors([])
     setShowErrors(false)
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    })
+    setFormData(updated)
     setChanged(true)
   }
+
   function validateFormData(data) {
+    const currErrors = []
     if (
       data.dairy +
         data.bakery +
@@ -77,13 +81,15 @@ export function PickupReport({ customSubmitHandler }) {
         data.other ===
       0
     ) {
-      errors.push('Invalid Input: number of items must be greater than zero')
+      currErrors.push(
+        'Invalid Input: number of items must be greater than zero'
+      )
     }
     if (isNaN(data.weight) || /\s/g.test(data.weight)) {
-      errors.push('Invalid Input: Total Weight is not a number')
+      currErrors.push('Invalid Input: Total Weight is not a number')
     }
     if (data.weight <= 0) {
-      errors.push('Invalid Input: Total Weight must be greater than zero')
+      currErrors.push('Invalid Input: Total Weight must be greater than zero')
     }
     for (const field in data) {
       if (
@@ -93,14 +99,15 @@ export function PickupReport({ customSubmitHandler }) {
         field !== 'updated_at' &&
         !validator.isInt(data[field].toString())
       ) {
-        errors.push('Invalid Input: Item weight must be whole number')
+        currErrors.push('Invalid Input: Item weight must be whole number')
         break
       }
     }
 
-    if (errors.length === 0) {
+    if (currErrors.length === 0) {
       return true
     }
+    setErrors(currErrors)
     return false
   }
 
@@ -113,6 +120,26 @@ export function PickupReport({ customSubmitHandler }) {
   function handleSubmit(event, data) {
     event.preventDefault()
     if (validateFormData(data)) {
+      if (route.status === 9) {
+        // handle updating completed route
+        try {
+          for (const d of deliveries) {
+            setFirestoreData(['Deliveries', d.id], {
+              report: {
+                updated_at: createServerTimestamp(),
+                weight:
+                  (d.report.percent_of_total_dropped / 100) * formData.weight,
+              },
+            })
+          }
+        } catch (e) {
+          console.error(e)
+          alert(
+            'Whoops! Unable to recalculate analytics data for this route. Contact an admin with this route_id!'
+          )
+        }
+      }
+
       setFirestoreData(['Pickups', pickup_id], {
         report: {
           dairy: parseInt(data.dairy),
@@ -140,6 +167,7 @@ export function PickupReport({ customSubmitHandler }) {
   }
 
   if (!pickup) return <Loading text="Loading report" />
+
   return (
     <main id="PickupReport">
       <Text
@@ -177,10 +205,9 @@ export function PickupReport({ customSubmitHandler }) {
               <input
                 id={field}
                 type="number"
-                value={formData[field]}
-                onFocus={resetInput}
+                value={formData[field] === 0 ? '' : formData[field]}
                 onChange={handleChange}
-                readOnly={!canEdit()}
+                readOnly={!canEdit}
               />
             </section>
           ) : null
@@ -189,12 +216,21 @@ export function PickupReport({ customSubmitHandler }) {
         <Text
           classList={['PickupReport-field-label']}
           type="section-header"
-          color="Black"
+          color="white"
+          shadow
         >
           Total Weight
         </Text>
         {isNaN(formData.weight) ? (
-          <h4>Weight cannot be blank</h4>
+          <Text
+            classList={['PickupReport-field-label']}
+            type="small"
+            color="white"
+            align="right"
+            shadow
+          >
+            Error calculating weight!
+          </Text>
         ) : (
           <h6>{formData.weight}</h6>
         )}
@@ -206,10 +242,10 @@ export function PickupReport({ customSubmitHandler }) {
         row={3}
         value={formData.notes}
         onChange={handleChange}
-        readOnly={!canEdit()}
+        readOnly={!canEdit}
       />
       <FormError />
-      {changed && canEdit() ? (
+      {changed && canEdit ? (
         <Button
           type="primary"
           color="white"

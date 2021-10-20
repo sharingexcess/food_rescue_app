@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
 import { Button } from '@sharingexcess/designsystem'
@@ -269,10 +269,17 @@ export function FoodSafety() {
           <li>Recycle any leftover packaging</li>
         </ol>
       </section>
-
-      <Button type="primary" color="white" handler={handleComplete}>
-        I've read the Food Safety Guidelines
-      </Button>
+      {user && !user.completed_app_tutorial ? (
+        <Button type="primary" color="white" handler={handleComplete}>
+          I've read the Food Safety Guidelines
+        </Button>
+      ) : (
+        <Link to="/">
+          <Button type="primary" color="white">
+            Back to Home
+          </Button>
+        </Link>
+      )}
     </main>
   )
 }

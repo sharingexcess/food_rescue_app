@@ -36,23 +36,25 @@ export function Route() {
 
   useEffect(() => {
     // handle auto completing a route when all stops are finished
-    let completed_deliveries = 0
-    const route_deliveries = deliveries.filter(d => d.route_id === route_id)
-    if (route_deliveries.length && !location.pathname.includes('history')) {
-      for (const d of route_deliveries) {
-        if (d.status === 9 || d.status === 0) completed_deliveries++
-      }
-      if (
-        completed_deliveries === route_deliveries.length &&
-        allFoodDelivered(stops)
-      ) {
-        setFirestoreData(['Routes', route_id], {
-          status: 9,
-          time_finished: firebase.firestore.FieldValue.serverTimestamp(),
-        }).then(() => history.push(`/routes/${route_id}/completed`))
+    if (route && route.status !== 9) {
+      let completed_deliveries = 0
+      const route_deliveries = deliveries.filter(d => d.route_id === route_id)
+      if (route_deliveries.length && !location.pathname.includes('history')) {
+        for (const d of route_deliveries) {
+          if (d.status === 9 || d.status === 0) completed_deliveries++
+        }
+        if (
+          completed_deliveries === route_deliveries.length &&
+          allFoodDelivered(stops)
+        ) {
+          setFirestoreData(['Routes', route_id], {
+            status: 9,
+            time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+          }).then(() => history.push(`/routes/${route_id}/completed`))
+        }
       }
     }
-  }, [deliveries, route_id, stops]) // eslint-disable-line
+  }, [deliveries, route_id, stops, route]) // eslint-disable-line
 
   useEffect(() => {
     // handle populating full pickup and delivery info based on stop ids

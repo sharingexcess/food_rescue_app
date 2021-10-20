@@ -3,6 +3,7 @@ import { useAuth } from 'hooks'
 import { useHistory } from 'react-router'
 import { setFirestoreData } from 'helpers'
 import { Button } from '@sharingexcess/designsystem'
+import { Link } from 'react-router-dom'
 
 export function Tutorial() {
   const history = useHistory()
@@ -18,10 +19,21 @@ export function Tutorial() {
       <section id="save1">
         <h3>0. Save Rescue App to Home Screen (iOS)</h3>
         <ul>
-          <li>Tap the share icon (a box with an arrow pointing upwards) at the bottom of the screen, which brings up a list of options.</li>
-          <li>Scroll down until you see the option "Add to Home Screen" and tap it. </li>
-          <li>On the next screen, tap "Add" on the top-right corner of the screen. </li>
-          <li>Now you will have a new app on your home screen that leads you to the website. </li>
+          <li>
+            Tap the share icon (a box with an arrow pointing upwards) at the
+            bottom of the screen, which brings up a list of options.
+          </li>
+          <li>
+            Scroll down until you see the option "Add to Home Screen" and tap
+            it.{' '}
+          </li>
+          <li>
+            On the next screen, tap "Add" on the top-right corner of the screen.{' '}
+          </li>
+          <li>
+            Now you will have a new app on your home screen that leads you to
+            the website.{' '}
+          </li>
         </ul>
         <div>
           <img src="/tutorial-ios-actions.jpg" alt="Home" />
@@ -31,10 +43,19 @@ export function Tutorial() {
       <section id="save2">
         <h3>0. Save Rescue App to Home Screen (Android)</h3>
         <ul>
-          <li>Tap the menu icon (3 dots) in the upper right-hand corner, which brings up a side menu.</li>
-          <li>On the side menu that popped up, tap the option "Add to Home screen."</li>
+          <li>
+            Tap the menu icon (3 dots) in the upper right-hand corner, which
+            brings up a side menu.
+          </li>
+          <li>
+            On the side menu that popped up, tap the option "Add to Home
+            screen."
+          </li>
           <li>On the new pop up, tap "Add" on the bottom-right corner.</li>
-          <li>Now you will have a new app on your home screen that leads you to the website.</li>
+          <li>
+            Now you will have a new app on your home screen that leads you to
+            the website.
+          </li>
         </ul>
         <div>
           <img src="/tutorial-android-actions.jpg" alt="Home" />
@@ -116,9 +137,17 @@ export function Tutorial() {
         </div>
       </section>
       <br />
-      <Button type="primary" color="white" handler={handleComplete}>
-        I've completed the Tutorial
-      </Button>
+      {user && !user.completed_app_tutorial ? (
+        <Button type="primary" color="white" handler={handleComplete}>
+          I've completed the Tutorial
+        </Button>
+      ) : (
+        <Link to="/">
+          <Button type="primary" color="white">
+            Back to Home
+          </Button>
+        </Link>
+      )}
     </main>
   )
 }

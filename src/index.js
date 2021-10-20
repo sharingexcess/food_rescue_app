@@ -80,6 +80,7 @@ function RescueAppRoutes() {
           <Firestore>
             <App>
               <Header />
+              <Modal />
               <EnvWarning />
               <Switch>
                 {/* Public Routes */}
@@ -134,7 +135,6 @@ function RescueAppRoutes() {
                   <DeliveryReport />
                 </DriverRoute>
                 <DriverRoute exact path="/routes/:route_id">
-                  <Modal />
                   <Route />
                 </DriverRoute>
                 <DriverRoute exact path="/routes/:route_id/pickup/:pickup_id">
