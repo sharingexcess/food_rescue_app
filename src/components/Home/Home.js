@@ -22,7 +22,7 @@ export function Home() {
     return (
       <Link to={link}>
         <Card classList={['Home-tile']}>
-          <i className={`fa ${icon}`} />
+          <div className="Home-tile-icon">{icon}</div>
           <Text type="paragraph" color="black" align="center" bold>
             {name}
           </Text>
@@ -34,10 +34,10 @@ export function Home() {
   function DriverTiles() {
     return (
       <>
-        <Tile name="Routes" icon="fa-route" link="/routes" />
-        <Tile name="History" icon="fa-clock" link="/history" />
-        <Tile name="Contact" icon="fa-question" link="/contact" />
-        <Tile name="Profile" icon="fa-user" link="/profile" />
+        <Tile name="Routes" icon="🚛" link="/routes" />
+        <Tile name="History" icon="🕰" link="/history" />
+        <Tile name="Contact" icon="🤔" link="/contact" />
+        <Tile name="Profile" icon="💁‍♀️" link="/profile" />
       </>
     )
   }
@@ -46,24 +46,24 @@ export function Home() {
     if (!admin) return null
     return (
       <>
-        <Tile name="Calendar" icon="fa-calendar" link="/calendar" />
-        <Tile name="Routes" icon="fa-route" link="/routes" />
-        <Tile name="New Route" icon="fa-plus" link="/admin/create-route" />
+        <Tile name="Calendar" icon="🗓" link="/calendar" />
+        <Tile name="Routes" icon="🚛" link="/routes" />
+        <Tile name="New Route" icon="➕" link="/admin/create-route" />
         <Tile
           name="New Direct Donation"
-          icon="fas fa-clipboard-check"
+          icon="🏃"
           link="admin/create-direct-donation"
         />
         <Tile
           name="Manage Organizations"
-          icon="fa-map-marked-alt"
+          icon="🏢"
           link="/admin/organizations"
         />
-        <Tile name="Manage Users" icon="fa-users" link="/admin/users" />
-        <Tile name="Analytics" icon="fa-chart-bar" link="/admin/analytics" />
+        <Tile name="Manage Users" icon="👨‍👩‍👧‍👦" link="/admin/users" />
+        <Tile name="Analytics" icon="📊" link="/admin/analytics" />
         <Tile
           name="Switch Environments"
-          icon="fa-rocket"
+          icon="🔄"
           link="/admin/switch-environment"
         />
       </>

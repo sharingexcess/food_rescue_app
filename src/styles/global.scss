@@ -1,10 +1,13 @@
 /* use this file for all global app styles, should not be specific to components, pages, or views */
-
 @mixin page {
   padding: 120px 16px 108px 16px;
+  min-height: 100vh;
+  @media all and (display-mode: standalone) {
+    padding: 168px 16px 108px 16px;
+    min-height: calc(100vh + 48px);
+  }
   width: 100%;
   max-width: 800px;
-  min-height: 100vh;
   margin: auto;
   animation: fade-in 0.32s ease forwards;
   z-index: 1;

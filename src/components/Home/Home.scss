@@ -38,17 +38,20 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-
-      i {
-        font-size: 64px;
-        margin: 32px;
-        color: var(--primary);
+      transition: all 0.2s ease;
+      .se-text {
+        transition: all 0.2s ease;
+      }
+      @include hover {
+        transform: translateY(-2px);
+        .se-text {
+          color: var(--se-blue-primary);
+        }
       }
 
-      h4 {
-        font-size: 18px;
-        text-align: center;
-        width: 100%;
+      .Home-tile-icon {
+        font-size: 72px;
+        margin: 32px;
       }
     }
   }
