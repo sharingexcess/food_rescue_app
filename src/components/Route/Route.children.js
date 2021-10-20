@@ -724,14 +724,20 @@ export function Stop({ stops, s, i }) {
       ) : null}
     </Card>
   )
-  return s.status === 9 ? linkToReport(stopCard) : stopCard
+
+  // Make the Card Clickable as a link to the Stop Report
+  // if the stop is already completed (s.status === 9)
+  // or if the route is already completed (route.status === 9)
+  return s.status === 9 || (route && route.status === 9)
+    ? linkToReport(stopCard)
+    : stopCard
 }
 
 export function RouteActionButton() {
   const { route_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
-  const { modalState, setModal } = useApp()
+  const { modalState } = useApp()
 
   async function handleBegin() {
     await setFirestoreData(['Routes', modalState.route.id], {
@@ -793,12 +799,6 @@ export function RouteActionButton() {
       } else
         return <ActionButton handler={handleClaim}>Claim Route</ActionButton>
     }
-  } else if (modalState.route.status === 3) {
-    return (
-      <ActionButton handler={() => setModal('FinishRoute')}>
-        Finish Route
-      </ActionButton>
-    )
   }
   return null
 }
