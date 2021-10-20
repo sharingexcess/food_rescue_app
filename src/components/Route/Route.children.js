@@ -174,7 +174,7 @@ export function StopMenu() {
 
 export function DropRoute() {
   const { setModal, modalState } = useApp()
-  const [notes, setNotes] = useState()
+  const [notes, setNotes] = useState('')
 
   async function handleUnassign() {
     const event = await updateGoogleCalendarEvent({
