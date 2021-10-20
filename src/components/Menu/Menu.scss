@@ -41,7 +41,7 @@
     right: 0;
     &.open {
       transform: translateX(0px);
-      box-shadow: 0 0 0 10000px #00000066;
+      box-shadow: var(--se-shadow-large);
     }
     &.closed {
       transform: translateX(300px);
