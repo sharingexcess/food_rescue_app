@@ -8,16 +8,16 @@ export function generateGreeting(name) {
     : null
   let prefix, suffix
   if (curHr < 4) {
-    prefix = 'Get some sleep\n'
+    prefix = 'Get some sleep'
     suffix = '😴'
   } else if (curHr < 7) {
-    prefix = "You're up early\n"
+    prefix = "You're up early"
     suffix = '☕️'
   } else if (curHr < 12) {
-    prefix = 'Good Morning\n'
+    prefix = 'Good Morning'
     suffix = `☀️`
   } else {
-    prefix = "How's it going\n"
+    prefix = "How's it going"
     suffix = `😊`
   }
   return formattedName
