@@ -117,14 +117,14 @@ export function PickupReport({ customSubmitHandler }) {
     } else return null
   }
 
-  function handleSubmit(event, data) {
+  async function handleSubmit(event, data) {
     event.preventDefault()
     if (validateFormData(data)) {
       if (route.status === 9) {
         // handle updating completed route
         try {
           for (const d of deliveries) {
-            setFirestoreData(['Deliveries', d.id], {
+            await setFirestoreData(['Deliveries', d.id], {
               report: {
                 updated_at: createServerTimestamp(),
                 weight:
