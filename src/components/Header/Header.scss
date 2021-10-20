@@ -1,6 +1,9 @@
 header#Header {
   position: absolute;
   top: 0;
+  @media all and (display-mode: standalone) {
+    top: 32px;
+  }
   left: 0;
   width: 100%;
   padding: 24px 16px;

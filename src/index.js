@@ -49,6 +49,22 @@ Sentry.init({
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
+// handle installed on home screen
+let debounce
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  window.scrollTo({ top: 48, behavior: 'smooth' })
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY < 48) {
+      if (debounce) window.clearTimeout(debounce)
+      debounce = window.setTimeout(
+        () => window.scrollTo({ top: 48, behavior: 'smooth' }),
+        50
+      )
+    }
+  })
+}
+
 function DriverRoute({ children, exact, path }) {
   const { permission } = useAuth()
   return permission ? (

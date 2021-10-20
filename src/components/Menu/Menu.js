@@ -84,10 +84,11 @@ export function Menu({ isOpen, setIsOpen }) {
       </button>
     )
   }
-
   return user ? (
     <>
-      {isOpen ? <div id="MenuBackground" onClick={closeMenu} /> : null}
+      {isOpen && isMobile ? (
+        <div id="MenuBackground" onClick={closeMenu} />
+      ) : null}
       <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
         <UserProfile />
         <div id="MenuContent">
