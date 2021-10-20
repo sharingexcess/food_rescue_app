@@ -12,6 +12,10 @@ export function PickupReport({ customSubmitHandler }) {
   const { admin } = useAuth()
   const history = useHistory()
   const pickup = useFirestore('pickups', pickup_id)
+  const pickupsOnRoute = useFirestore(
+    'pickups',
+    useCallback(p => p.route_id === route_id, [route_id])
+  )
   const deliveries = useFirestore(
     'deliveries',
     useCallback(d => d.pickup_ids.includes(pickup_id), [pickup_id])
@@ -117,18 +121,27 @@ export function PickupReport({ customSubmitHandler }) {
     } else return null
   }
 
-  function handleSubmit(event, data) {
+  async function handleSubmit(event, data) {
     event.preventDefault()
     if (validateFormData(data)) {
       if (route.status === 9) {
         // handle updating completed route
         try {
           for (const d of deliveries) {
-            setFirestoreData(['Deliveries', d.id], {
+            const otherPickupsInDelivery = pickupsOnRoute.filter(
+              p =>
+                d.pickup_ids.includes(p.id) &&
+                p.id !== pickup_id &&
+                p.status === 9
+            )
+            let totalWeight = formData.weight
+            for (const pickup of otherPickupsInDelivery) {
+              totalWeight += pickup.report.weight
+            }
+            await setFirestoreData(['Deliveries', d.id], {
               report: {
                 updated_at: createServerTimestamp(),
-                weight:
-                  (d.report.percent_of_total_dropped / 100) * formData.weight,
+                weight: (d.report.percent_of_total_dropped / 100) * totalWeight,
               },
             })
           }
