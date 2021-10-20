@@ -8,6 +8,7 @@
   margin: auto;
   animation: fade-in 0.32s ease forwards;
   z-index: 1;
+  overflow-x: hidden;
 
   @include desktop {
     padding-left: 314px;

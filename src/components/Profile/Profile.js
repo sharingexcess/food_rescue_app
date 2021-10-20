@@ -92,7 +92,13 @@ export function Profile({ handleUpdateClick, inForm }) {
         <WarningText text="Please update your phone number and preferred pronouns" />
       )}
       <img src={profile.icon} alt={profile.name} />
-      <Text type="section-header" color="white" shadow align="center">
+      <Text
+        type="section-header"
+        color="white"
+        shadow
+        align="center"
+        wrap={false}
+      >
         {profile.email}
       </Text>
       <Input

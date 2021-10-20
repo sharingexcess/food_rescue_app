@@ -1,3 +1,13 @@
+#MenuBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: var(--se-black-transparent);
+  z-index: 21;
+}
+
 #Menu {
   position: fixed;
   background: var(--foreground);
@@ -31,7 +41,7 @@
     right: 0;
     &.open {
       transform: translateX(0px);
-      box-shadow: var(--se-shadow-large);
+      box-shadow: 0 0 0 10000px #00000066;
     }
     &.closed {
       transform: translateX(300px);

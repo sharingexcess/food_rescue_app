@@ -86,45 +86,51 @@ export function Menu({ isOpen, setIsOpen }) {
   }
 
   return user ? (
-    <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
-      <UserProfile />
-      <div id="MenuContent">
-        <ul>
-          {permission ? (
-            <>
-              <MenuLink label="Routes" url="/routes" />
-              <MenuLink label="History" url="/history" />
-            </>
-          ) : null}
-          {admin ? (
-            <>
-              <MenuLink label="New Route" url="/admin/create-route" />
-              <MenuLink
-                label="New Direct Donation"
-                url="/admin/create-direct-donation"
-              />
-              <MenuLink label="Organizations" url="/admin/organizations" />
-              <MenuLink label="Users" url="/admin/users" />
-            </>
-          ) : null}
-          <MenuLink label="Food Safety" url="/food-safety" />
-          <MenuLink label="Tutorial" url="/tutorial" />
-          <li
-            onClick={() => {
-              setIsOpen(false)
-              handleLogout()
-            }}
-          >
-            <Text type="subheader" color="black" classList={['Menu-link']}>
-              Logout
-            </Text>
-          </li>
-        </ul>
-      </div>
-      <nav>
-        <ExternalLink to="/privacy">privacy policy</ExternalLink>
-        <ExternalLink to="/tos">terms of service</ExternalLink>
-      </nav>
-    </aside>
+    <>
+      {isOpen ? <div id="MenuBackground" onClick={closeMenu} /> : null}
+      <aside id="Menu" className={isOpen ? 'open' : 'closed'}>
+        <UserProfile />
+        <div id="MenuContent">
+          <ul>
+            {permission ? (
+              <>
+                <MenuLink label="Routes" url="/routes" />
+                <MenuLink label="History" url="/history" />
+              </>
+            ) : null}
+            {admin ? (
+              <>
+                <MenuLink label="New Route" url="/admin/create-route" />
+                <MenuLink
+                  label="New Direct Donation"
+                  url="/admin/create-direct-donation"
+                />
+                <MenuLink label="Organizations" url="/admin/organizations" />
+                <MenuLink label="Users" url="/admin/users" />
+              </>
+            ) : (
+              <>
+                <MenuLink label="Food Safety" url="/food-safety" />
+                <MenuLink label="Tutorial" url="/tutorial" />
+              </>
+            )}
+            <li
+              onClick={() => {
+                setIsOpen(false)
+                handleLogout()
+              }}
+            >
+              <Text type="subheader" color="black" classList={['Menu-link']}>
+                Logout
+              </Text>
+            </li>
+          </ul>
+        </div>
+        <nav>
+          <ExternalLink to="/privacy">privacy policy</ExternalLink>
+          <ExternalLink to="/tos">terms of service</ExternalLink>
+        </nav>
+      </aside>{' '}
+    </>
   ) : null
 }
