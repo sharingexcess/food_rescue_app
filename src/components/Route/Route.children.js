@@ -489,22 +489,28 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopAddress() {
-    return (
+    const button = (
+      <Button
+        classList={['Route-stop-address-button']}
+        type="tertiary"
+        size="small"
+        color={isActiveStop ? 'blue' : 'white'}
+      >
+        <div>🏢</div>
+        <Spacer width={16} />
+        {s.location.address1}
+        {s.location.address2 && ` - ${s.location.address2}`}
+        <br />
+        {s.location.city}, {s.location.state} {s.location.zip_code}
+      </Button>
+    )
+
+    return s.status && s.status !== 9 ? (
       <ExternalLink to={generateDirectionsLink(s.location)}>
-        <Button
-          classList={['Route-stop-address-button']}
-          type="tertiary"
-          size="small"
-          color={isActiveStop ? 'blue' : 'white'}
-        >
-          <div>🏢</div>
-          <Spacer width={16} />
-          {s.location.address1}
-          {s.location.address2 && ` - ${s.location.address2}`}
-          <br />
-          {s.location.city}, {s.location.state} {s.location.zip_code}
-        </Button>
+        {button}
       </ExternalLink>
+    ) : (
+      button
     )
   }
 

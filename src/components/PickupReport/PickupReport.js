@@ -44,10 +44,11 @@ export function PickupReport({ customSubmitHandler }) {
   function canEdit() {
     return [1, 3, 6].includes(pickup.status) || admin
   }
+
   function sumWeight(object) {
     let sum = 0
     for (const field in object) {
-      if (field === 'weight' || field === 'notes') {
+      if (['weight', 'notes', 'created_at', 'updated_at'].includes(field)) {
         //pass
       } else {
         sum += parseFloat(object[field])
@@ -55,16 +56,20 @@ export function PickupReport({ customSubmitHandler }) {
     }
     return sum
   }
+
   function handleChange(e) {
     // TODO: take the sum of all the field
+    const updated = {
+      ...formData,
+      [e.target.id]: parseInt(e.target.value) || 0,
+    }
+    updated.weight = sumWeight(updated)
     setErrors([])
     setShowErrors(false)
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    })
+    setFormData(updated)
     setChanged(true)
   }
+
   function validateFormData(data) {
     if (
       data.dairy +
@@ -177,7 +182,7 @@ export function PickupReport({ customSubmitHandler }) {
               <input
                 id={field}
                 type="number"
-                value={formData[field]}
+                value={formData[field] === 0 ? '' : formData[field]}
                 onFocus={resetInput}
                 onChange={handleChange}
                 readOnly={!canEdit()}
@@ -189,12 +194,21 @@ export function PickupReport({ customSubmitHandler }) {
         <Text
           classList={['PickupReport-field-label']}
           type="section-header"
-          color="Black"
+          color="white"
+          shadow
         >
           Total Weight
         </Text>
         {isNaN(formData.weight) ? (
-          <h4>Weight cannot be blank</h4>
+          <Text
+            classList={['PickupReport-field-label']}
+            type="small"
+            color="white"
+            align="right"
+            shadow
+          >
+            Error calculating weight!
+          </Text>
         ) : (
           <h6>{formData.weight}</h6>
         )}
