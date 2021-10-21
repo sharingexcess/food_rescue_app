@@ -282,6 +282,7 @@ export function EditRoute() {
     )
   }
   function Stop({ s, onMove, handleCardSelection }) {
+    const isSelectedCard = isSelectedCardId === s.id
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
@@ -312,11 +313,7 @@ export function EditRoute() {
 
     return (
       <Card
-        classList={[
-          'Stop',
-          s.type,
-          isSelectedCardId === s.id && 'selected-card',
-        ]}
+        classList={['Stop', s.type, isSelectedCard && 'selected-card']}
         onClick={() => handleCardSelection(s.id)}
       >
         <div>
@@ -339,9 +336,7 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
-        {isSelectedCardId === s.id && (
-          <ReorderSteps onMove={onMove} id={s.id} />
-        )}
+        {isSelectedCard && <ReorderSteps onMove={onMove} id={s.id} />}
       </Card>
     )
   }
