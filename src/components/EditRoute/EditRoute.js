@@ -13,6 +13,7 @@ import {
 } from './utils'
 import UserIcon from 'assets/user.svg'
 import {
+  deleteFirestoreData,
   generateStopId,
   getCollection,
   setFirestoreData,
@@ -59,6 +60,7 @@ export function EditRoute() {
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
   const [canRender, setCanRender] = useState(route_id ? false : true)
+  const [deletedStops, setDeletedStops] = useState([])
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     if (drivers && route_id) {
@@ -104,6 +106,17 @@ export function EditRoute() {
   async function handleCreateRoute(formData, route_id) {
     setWorking(true)
     if (route_id) {
+      const existing = getExistingRouteData(route_id)
+      if (existing) {
+        // if this is an existing route with pre-created stops,
+        // make sure we delete any old and now deleted pickups and deliveries
+        for (const stop of deletedStops) {
+          await deleteFirestoreData([
+            stop.type === 'pickup' ? 'Pickups' : 'Deliveries',
+            stop.id,
+          ])
+        }
+      }
       for (const [index, stop] of formData.stops.entries()) {
         if (stop.type === 'pickup') {
           await setFirestoreData(['Pickups', stop.id], {
@@ -201,11 +214,12 @@ export function EditRoute() {
     return sliced.map(j => j.id)
   }
 
-  function handleRemoveStop(id) {
+  async function handleRemoveStop(id, type) {
     setFormData({
       ...formData,
       stops: formData.stops.filter(s => s.id !== id),
     })
+    setDeletedStops(currDeletedStops => [...currDeletedStops, { id, type }])
   }
 
   function isValidRoute() {
@@ -299,7 +313,10 @@ export function EditRoute() {
       <Card classList={['Stop', s.type]}>
         <div>
           {s.can_delete !== false && (
-            <i className="fa fa-times" onClick={() => handleRemoveStop(s.id)} />
+            <i
+              className="fa fa-times"
+              onClick={() => handleRemoveStop(s.id, s.type)}
+            />
           )}
           <Text
             type="small-header"
