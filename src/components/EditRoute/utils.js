@@ -133,6 +133,7 @@ export const getExistingRouteData = async route_id => {
     .get()
     .then(result => result.docs.map(doc => doc.data()))
   const myRoute = routes.find(route => route.id === route_id)
+  if (!myRoute) return null
   const driver = myRoute.driver_id
     ? await getCollection('Users')
         .doc(myRoute.driver_id)
@@ -152,26 +153,31 @@ export const getExistingRouteData = async route_id => {
     .get()
     .then(result => result.docs.map(doc => doc.data()))
 
-  const newStops = myRoute.stops.map(route_stop => {
-    const stopCategory = route_stop.type === 'pickup' ? pickups : deliveries
-    const stopData = stopCategory.find(stop => stop.id === route_stop.id)
-    // We can get location_id and org_id from this stopData
-    const organizationData = organizations.find(
-      org => org.id === stopData.org_id
-    )
-    const locationData = locations.find(loc => loc.id === stopData.location_id)
+  const newStops = myRoute.stops
+    .map(route_stop => {
+      const stopCategory = route_stop.type === 'pickup' ? pickups : deliveries
+      const stopData = stopCategory.find(stop => stop.id === route_stop.id)
+      if (!stopData) return null
+      // We can get location_id and org_id from this stopData
+      const organizationData = organizations.find(
+        org => org.id === stopData.org_id
+      )
+      const locationData = locations.find(
+        loc => loc.id === stopData.location_id
+      )
 
-    return {
-      ...route_stop,
-      location: locationData,
-      location_id: stopData.location_id,
-      org: organizationData,
-      org_id: stopData.org_id,
-      org_name: organizationData.name,
-      can_delete: stopData.status !== 9,
-      status: stopData.status,
-    }
-  })
+      return {
+        ...route_stop,
+        location: locationData,
+        location_id: stopData.location_id,
+        org: organizationData,
+        org_id: stopData.org_id,
+        org_name: organizationData.name,
+        can_delete: stopData.status !== 9,
+        status: stopData.status,
+      }
+    })
+    .filter(Boolean) // filter out all null values
 
   const routeData = {
     driver: Object.keys(driver).length ? driver : null,

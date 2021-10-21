@@ -74,6 +74,21 @@ export async function setFirestoreData(identifier, value) {
   return await query.set(value, { merge: true })
 }
 
+export async function deleteFirestoreData(identifier) {
+  let next = 'doc'
+  let query = getCollection(identifier.shift())
+  while (identifier.length) {
+    if (next === 'doc') {
+      query = query.doc(identifier.shift())
+      next = 'collection'
+    } else {
+      query = query.collection(identifier.shift())
+      next = 'doc'
+    }
+  }
+  return await query.delete()
+}
+
 export async function updateGoogleCalendarEvent(data) {
   const resource = {
     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
