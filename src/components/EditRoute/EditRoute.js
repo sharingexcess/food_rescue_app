@@ -57,7 +57,6 @@ export function EditRoute() {
   const [confirmedTimes, setConfirmedTime] = useState(route_id ? true : null)
   const [errors, setErrors] = useState([])
   const [isRecurring, setRecurring] = useState(false)
-  const [isSelectedCard, setSelectedCard] = useState(false)
   const [isSelectedCardId, setSelectedCardId] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
@@ -281,7 +280,7 @@ export function EditRoute() {
       field
     )
   }
-  function Stop({ s, onMove, handleTest }) {
+  function Stop({ s, onMove, handleCardSelection }) {
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
@@ -317,7 +316,7 @@ export function EditRoute() {
           s.type,
           isSelectedCardId == s.id && 'selected-card',
         ]}
-        onClick={() => handleTest(s.id)}
+        onClick={() => handleCardSelection(s.id)}
       >
         <div>
           {s.can_delete !== false && (
@@ -561,15 +560,8 @@ export function EditRoute() {
 
     }
 
-    function testFunction(id) {
-      // if (isSelectedCardId == id) {
-      //   setSelectedCardId(null)
-      // } else {
-      //   setSelectedCardId(id)
-      // }
-
+    function selectCard(id) {
       setSelectedCardId(id)
-     
         setSelectedCardId((state) => {
           return state;
         });
@@ -606,7 +598,7 @@ export function EditRoute() {
     return confirmedTimes ? (
       <>
         {formData.stops.map(s => (
-          <Stop s={s} key={s.id} onMove={handleMove} handleTest={testFunction}/>
+          <Stop s={s} key={s.id} onMove={handleMove} handleCardSelection={selectCard}/>
         ))}
         <section id="AddStop">
           {list === 'pickups' ? (
