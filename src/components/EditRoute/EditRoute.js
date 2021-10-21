@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState} from 'react'
 import firebase from 'firebase/app'
 import { useParams, useHistory } from 'react-router-dom'
 import {
@@ -57,6 +57,8 @@ export function EditRoute() {
   const [confirmedTimes, setConfirmedTime] = useState(route_id ? true : null)
   const [errors, setErrors] = useState([])
   const [isRecurring, setRecurring] = useState(false)
+  const [isSelectedCard, setSelectedCard] = useState(false)
+  const [isSelectedCardId, setSelectedCardId] = useState("")
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
   const [canRender, setCanRender] = useState(route_id ? false : true)
@@ -279,11 +281,11 @@ export function EditRoute() {
       field
     )
   }
-  function Stop({ s, onMove }) {
+  function Stop({ s, onMove, handleTest }) {
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
-
+   
     function StopAddress() {
       function generateDirectionsLink(addressObj) {
         const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
@@ -310,7 +312,7 @@ export function EditRoute() {
     }
 
     return (
-      <Card classList={['Stop', s.type]}>
+      <Card classList={['Stop', s.type,  isSelectedCardId == s.id  && 'selected-card']} onClick={()=> handleTest(s.id)}>
         <div>
           {s.can_delete !== false && (
             <i
@@ -331,8 +333,8 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
-        <button onClick={() => onMove(s.id, 1)}>Press Down</button>
-        <button onClick={() => onMove(s.id, -1)}>Press Up</button>
+        {isSelectedCardId == s.id  &&  <button onClick={() => onMove(s.id, 1)}>Press Down</button>}
+        {isSelectedCardId == s.id  &&  <button onClick={() => onMove(s.id, -1)}>Press Up</button>}
       </Card>
     )
   }
@@ -544,6 +546,30 @@ export function EditRoute() {
       })
     }
 
+    function testFunction(id) {
+      if (isSelectedCardId == id) {
+        setSelectedCardId(null)
+      } else {
+        setSelectedCardId(id)
+      }
+     
+      // setSelectedCard(isSelectedCard => !isSelectedCard);
+      // console.log(isSelectedCardId, 'selected')
+        setSelectedCardId((state) => {
+          console.log(state);
+          
+          return state;
+        });
+      // setSelectedCard((state) => {
+      //   console.log(state); 
+        
+      //   return state;
+      // });
+
+ 
+
+    }
+
     function CancelButton() {
       return list ? (
         <Button
@@ -575,7 +601,7 @@ export function EditRoute() {
     return confirmedTimes ? (
       <>
         {formData.stops.map(s => (
-          <Stop s={s} key={s.id} onMove={handleMove} />
+          <Stop s={s} key={s.id} onMove={handleMove} handleTest={testFunction}/>
         ))}
         <section id="AddStop">
           {list === 'pickups' ? (

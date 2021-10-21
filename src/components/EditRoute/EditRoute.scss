@@ -62,7 +62,9 @@
     justify-content: center;
     align-items: center;
   }
-
+  .selected-card {
+    border: 2px blue solid;
+  } 
   .Stop {
     margin-bottom: 16px;
 
