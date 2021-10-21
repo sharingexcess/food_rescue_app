@@ -31,6 +31,7 @@ import {
   ExternalLink,
   Card,
 } from '@sharingexcess/designsystem'
+import { ReorderSteps } from 'components/ReorderSteps/ReoderSteps'
 
 export function EditRoute() {
   const history = useHistory()
@@ -339,14 +340,15 @@ export function EditRoute() {
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
         {isSelectedCardId === s.id && (
-          <div className="reorder-button-container">
-            <button className="reorder-button" onClick={() => onMove(s.id, -1)}>
-              <i className="fas fa-chevron-up" />
-            </button>
-            <button className="reorder-button" onClick={() => onMove(s.id, 1)}>
-              <i className="fas fa-chevron-down" />
-            </button>
-          </div>
+          <ReorderSteps onMove={onMove} id={s.id} />
+          // <div className="reorder-button-container">
+          //   <button className="reorder-button" onClick={() => onMove(s.id, -1)}>
+          //     <i className="fas fa-chevron-up" />
+          //   </button>
+          //   <button className="reorder-button" onClick={() => onMove(s.id, 1)}>
+          //     <i className="fas fa-chevron-down" />
+          //   </button>
+          // </div>
         )}
       </Card>
     )

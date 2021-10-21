@@ -1,0 +1,18 @@
+#ReorderSteps{
+  .reorder-button-container {
+    display: flex;
+    justify-content: center;
+    .reorder-button {
+      background: blue;
+      border:0;
+      border-radius: 3px;
+      margin: 5px;
+    }
+    .fa-chevron-down, .fa-chevron-up {
+      color: white;
+    }
+  }
+  .selected-card {
+    border: 4px blue solid;
+  } 
+}
