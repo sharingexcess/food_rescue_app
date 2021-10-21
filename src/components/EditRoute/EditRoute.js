@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import { useParams, useHistory } from 'react-router-dom'
 import {
@@ -314,7 +314,7 @@ export function EditRoute() {
         classList={[
           'Stop',
           s.type,
-          isSelectedCardId == s.id && 'selected-card',
+          isSelectedCardId === s.id && 'selected-card',
         ]}
         onClick={() => handleCardSelection(s.id)}
       >
@@ -338,7 +338,7 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
-        {isSelectedCardId == s.id && (
+        {isSelectedCardId === s.id && (
           <div className="reorder-button-container">
             <button className="reorder-button" onClick={() => onMove(s.id, -1)}>
               <i className="fas fa-chevron-up" />
@@ -557,14 +557,13 @@ export function EditRoute() {
         ...formData,
         stops: [...newStops],
       })
-
     }
 
     function selectCard(id) {
       setSelectedCardId(id)
-        setSelectedCardId((state) => {
-          return state;
-        });
+      setSelectedCardId(state => {
+        return state
+      })
     }
 
     function CancelButton() {
@@ -598,7 +597,12 @@ export function EditRoute() {
     return confirmedTimes ? (
       <>
         {formData.stops.map(s => (
-          <Stop s={s} key={s.id} onMove={handleMove} handleCardSelection={selectCard}/>
+          <Stop
+            s={s}
+            key={s.id}
+            onMove={handleMove}
+            handleCardSelection={selectCard}
+          />
         ))}
         <section id="AddStop">
           {list === 'pickups' ? (
