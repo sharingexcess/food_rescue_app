@@ -562,11 +562,13 @@ export function EditRoute() {
     }
 
     function testFunction(id) {
-      if (isSelectedCardId == id) {
-        setSelectedCardId(null)
-      } else {
-        setSelectedCardId(id)
-      }
+      // if (isSelectedCardId == id) {
+      //   setSelectedCardId(null)
+      // } else {
+      //   setSelectedCardId(id)
+      // }
+
+      setSelectedCardId(id)
      
         setSelectedCardId((state) => {
           return state;
