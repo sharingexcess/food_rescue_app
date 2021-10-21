@@ -58,7 +58,7 @@ export function EditRoute() {
   const [errors, setErrors] = useState([])
   const [isRecurring, setRecurring] = useState(false)
   const [isSelectedCard, setSelectedCard] = useState(false)
-  const [isSelectedCardId, setSelectedCardId] = useState("")
+  const [isSelectedCardId, setSelectedCardId] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
   const [canRender, setCanRender] = useState(route_id ? false : true)
@@ -285,7 +285,6 @@ export function EditRoute() {
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
-   
     function StopAddress() {
       function generateDirectionsLink(addressObj) {
         const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
@@ -312,7 +311,14 @@ export function EditRoute() {
     }
 
     return (
-      <Card classList={['Stop', s.type,  isSelectedCardId == s.id  && 'selected-card']} onClick={()=> handleTest(s.id)}>
+      <Card
+        classList={[
+          'Stop',
+          s.type,
+          isSelectedCardId == s.id && 'selected-card',
+        ]}
+        onClick={() => handleTest(s.id)}
+      >
         <div>
           {s.can_delete !== false && (
             <i
@@ -333,8 +339,16 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
-        {isSelectedCardId == s.id  &&  <button onClick={() => onMove(s.id, 1)}>Press Down</button>}
-        {isSelectedCardId == s.id  &&  <button onClick={() => onMove(s.id, -1)}>Press Up</button>}
+        {isSelectedCardId == s.id && (
+          <div className="reorder-button-container">
+            <button className="reorder-button" onClick={() => onMove(s.id, -1)}>
+              <i className="fas fa-chevron-up" />
+            </button>
+            <button className="reorder-button" onClick={() => onMove(s.id, 1)}>
+              <i className="fas fa-chevron-down" />
+            </button>
+          </div>
+        )}
       </Card>
     )
   }
@@ -544,6 +558,7 @@ export function EditRoute() {
         ...formData,
         stops: [...newStops],
       })
+
     }
 
     function testFunction(id) {
@@ -553,21 +568,9 @@ export function EditRoute() {
         setSelectedCardId(id)
       }
      
-      // setSelectedCard(isSelectedCard => !isSelectedCard);
-      // console.log(isSelectedCardId, 'selected')
         setSelectedCardId((state) => {
-          console.log(state);
-          
           return state;
         });
-      // setSelectedCard((state) => {
-      //   console.log(state); 
-        
-      //   return state;
-      // });
-
- 
-
     }
 
     function CancelButton() {
