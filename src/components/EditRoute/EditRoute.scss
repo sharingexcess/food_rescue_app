@@ -62,11 +62,7 @@
     justify-content: center;
     align-items: center;
   }
-
-  .selected-card {
-    border: 4px blue solid;
-  } 
-
+  
   .Stop {
     margin-bottom: 16px;
 
@@ -79,21 +75,6 @@
       color: var(--se-black);
       z-index: 2;
     }
-    .reorder-button-container {
-      display: flex;
-      justify-content: center;
-      .reorder-button {
-        background: blue;
-        border:0;
-        border-radius: 3px;
-        margin: 5px;
-      }
-      .fa-chevron-down, .fa-chevron-up {
-        color: white;
-      }
-    }
-    
-
     .Route-stop-address-button {
       display: flex;
       align-items: center;

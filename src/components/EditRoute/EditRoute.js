@@ -341,14 +341,6 @@ export function EditRoute() {
         </div>
         {isSelectedCardId === s.id && (
           <ReorderSteps onMove={onMove} id={s.id} />
-          // <div className="reorder-button-container">
-          //   <button className="reorder-button" onClick={() => onMove(s.id, -1)}>
-          //     <i className="fas fa-chevron-up" />
-          //   </button>
-          //   <button className="reorder-button" onClick={() => onMove(s.id, 1)}>
-          //     <i className="fas fa-chevron-down" />
-          //   </button>
-          // </div>
         )}
       </Card>
     )
