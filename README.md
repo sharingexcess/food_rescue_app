@@ -1,6 +1,6 @@
 # Sharing Excess Food Rescue Web Application
 
-![Sharing Excess Logo](public/logo192.png)
+![Sharing Excess Logo](public/icon.png)
 
 ## Contributors
 
