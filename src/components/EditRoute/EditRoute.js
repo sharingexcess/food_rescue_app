@@ -281,7 +281,7 @@ export function EditRoute() {
       field
     )
   }
-  function Stop({ s, onMove, handleCardSelection }) {
+  function Stop({ s, onMove, handleCardSelection, position, lengthOfStops }) {
     const isSelectedCard = isSelectedCardId === s.id
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
@@ -336,7 +336,14 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
-        {isSelectedCard && <ReorderSteps onMove={onMove} id={s.id} />}
+        {isSelectedCard && (
+          <ReorderSteps
+            position={position}
+            onMove={onMove}
+            id={s.id}
+            lengthOfStops={lengthOfStops}
+          />
+        )}
       </Card>
     )
   }
@@ -527,9 +534,18 @@ export function EditRoute() {
       ) : null
     }
 
+    function getStops() {
+      return formData.stops
+    }
+
+    function getPosition(id) {
+      const stops = getStops()
+      return stops.findIndex(i => i.id === id)
+    }
+
     function handleMove(id, direction) {
-      const stops = formData.stops
-      const position = stops.findIndex(i => i.id === id)
+      const stops = getStops()
+      const position = getPosition(id)
       if (position < 0) {
         throw new Error('Stop not found')
       } else if (
@@ -590,6 +606,8 @@ export function EditRoute() {
             s={s}
             key={s.id}
             onMove={handleMove}
+            position={getPosition}
+            lengthOfStops={formData.stops.length}
             handleCardSelection={selectCard}
           />
         ))}
