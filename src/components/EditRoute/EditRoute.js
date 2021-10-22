@@ -534,17 +534,13 @@ export function EditRoute() {
       ) : null
     }
 
-    function getStops() {
-      return formData.stops
-    }
-
     function getPosition(id) {
-      const stops = getStops()
+      const stops = formData.stops
       return stops.findIndex(i => i.id === id)
     }
 
     function handleMove(id, direction) {
-      const stops = getStops()
+      const stops = formData.stops
       const position = getPosition(id)
       if (position < 0) {
         throw new Error('Stop not found')
