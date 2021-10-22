@@ -31,7 +31,7 @@ import {
   ExternalLink,
   Card,
 } from '@sharingexcess/designsystem'
-import { ReorderSteps } from 'components/ReorderSteps/ReoderSteps'
+import { ReorderStops } from 'components/ReorderStops/ReorderStops'
 
 export function EditRoute() {
   const history = useHistory()
@@ -337,7 +337,7 @@ export function EditRoute() {
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
         {isSelectedCard && (
-          <ReorderSteps
+          <ReorderStops
             position={position}
             onMove={onMove}
             id={s.id}

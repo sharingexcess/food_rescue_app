@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export function ReorderSteps({ onMove, id, position, lengthOfStops }) {
+export function ReorderStops({ onMove, id, position, lengthOfStops }) {
   const UP = -1
   const DOWN = 1
   const [isDisabledUpButton, setDisabledUpButton] = useState(false)
