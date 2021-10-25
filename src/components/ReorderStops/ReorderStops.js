@@ -1,3 +1,4 @@
+import { Button } from '@sharingexcess/designsystem'
 import React, { useState, useEffect } from 'react'
 
 export function ReorderStops({ onMove, id, position, lengthOfStops }) {
@@ -16,25 +17,24 @@ export function ReorderStops({ onMove, id, position, lengthOfStops }) {
   }, [id, position, lengthOfStops])
 
   return (
-    <div className="reorder-button-container">
-      <button
+    <div id="ReorderStops">
+      <Button
+        color="blue"
+        size="small"
+        id="ReorderStops-up-button"
         disabled={isDisabledUpButton}
-        className={`${
-          isDisabledUpButton ? 'disabled-button' : 'reorder-button'
-        }`}
-        onClick={() => onMove(id, UP)}
+        handler={() => onMove(id, UP)}
       >
-        <i className="fas fa-chevron-up" />
-      </button>
-      <button
+        ⬆️ Move Up
+      </Button>
+      <Button
+        color="blue"
+        size="small"
         disabled={isDisabledDownButton}
-        className={`${
-          isDisabledDownButton ? 'disabled-button' : 'reorder-button'
-        }`}
-        onClick={() => onMove(id, DOWN)}
+        handler={() => onMove(id, DOWN)}
       >
-        <i className="fas fa-chevron-down" />
-      </button>
+        ⬇️ Move Down
+      </Button>
     </div>
   )
 }
