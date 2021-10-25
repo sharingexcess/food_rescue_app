@@ -30,6 +30,7 @@ import {
 import UserIcon from 'assets/user.svg'
 import moment from 'moment'
 
+
 export function RouteHeader() {
   const { setModal } = useApp()
   const { route_id } = useParams()
@@ -407,6 +408,14 @@ export function Stop({ stops, s, i }) {
     return admin || (route && user && user.uid === route.driver_id)
   }
 
+  function StatusIndicator({ route }) {
+    if (route.status === 9) {
+      return <div className="Routes-route-status">✅</div>
+    } else {
+      return <div className="Routes-route-status">❌</div>
+    }
+  }
+
   function StopHeader() {
     const headerText =
       s.type && s.status && route
@@ -431,6 +440,7 @@ export function Stop({ stops, s, i }) {
 
     return (
       <div className="Route-stop-header">
+        
         <Text
           type="small-header"
           color={
@@ -453,6 +463,7 @@ export function Stop({ stops, s, i }) {
             <i className="fa fa-ellipsis-v" />
           </Button>
         )}
+        <StatusIndicator route={s}/>
       </div>
     )
   }
@@ -683,6 +694,8 @@ export function Stop({ stops, s, i }) {
       </Link>
     )
   }
+
+  
 
   const stopCard = (
     <Card
