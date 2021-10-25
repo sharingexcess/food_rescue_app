@@ -31,6 +31,7 @@ import {
   ExternalLink,
   Card,
 } from '@sharingexcess/designsystem'
+import { ReorderStops } from 'components/ReorderStops/ReorderStops'
 
 export function EditRoute() {
   const history = useHistory()
@@ -57,6 +58,7 @@ export function EditRoute() {
   const [confirmedTimes, setConfirmedTime] = useState(route_id ? true : null)
   const [errors, setErrors] = useState([])
   const [isRecurring, setRecurring] = useState(false)
+  const [isSelectedCardId, setSelectedCardId] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
   const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
   const [canRender, setCanRender] = useState(route_id ? false : true)
@@ -279,11 +281,11 @@ export function EditRoute() {
       field
     )
   }
-  function Stop({ s }) {
+  function Stop({ s, onMove, handleCardSelection, position, lengthOfStops }) {
+    const isSelectedCard = isSelectedCardId === s.id
     function generateStopTitle() {
       return `${s.org.name} (${s.location.name || s.location.address1})`
     }
-
     function StopAddress() {
       function generateDirectionsLink(addressObj) {
         const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
@@ -310,7 +312,10 @@ export function EditRoute() {
     }
 
     return (
-      <Card classList={['Stop', s.type]}>
+      <Card
+        classList={['Stop', s.type, isSelectedCard && 'selected-card']}
+        onClick={() => handleCardSelection(s.id)}
+      >
         <div>
           {s.can_delete !== false && (
             <i
@@ -331,6 +336,14 @@ export function EditRoute() {
           <StopAddress />
           <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
+        {isSelectedCard && (
+          <ReorderStops
+            position={position}
+            onMove={onMove}
+            id={s.id}
+            lengthOfStops={lengthOfStops}
+          />
+        )}
       </Card>
     )
   }
@@ -521,6 +534,39 @@ export function EditRoute() {
       ) : null
     }
 
+    function getPosition(id) {
+      const stops = formData.stops
+      return stops.findIndex(i => i.id === id)
+    }
+
+    function handleMove(id, direction) {
+      const stops = formData.stops
+      const position = getPosition(id)
+      if (position < 0) {
+        throw new Error('Stop not found')
+      } else if (
+        (direction === -1 && position === 0) ||
+        (direction === 1 && position === stops.length - 1)
+      ) {
+        return
+      }
+      const stop = stops[position]
+      const newStops = stops.filter(i => i.id !== id)
+      newStops.splice(position + direction, 0, stop)
+
+      setFormData({
+        ...formData,
+        stops: [...newStops],
+      })
+    }
+
+    function selectCard(id) {
+      setSelectedCardId(id)
+      setSelectedCardId(state => {
+        return state
+      })
+    }
+
     function CancelButton() {
       return list ? (
         <Button
@@ -552,7 +598,14 @@ export function EditRoute() {
     return confirmedTimes ? (
       <>
         {formData.stops.map(s => (
-          <Stop s={s} key={s.id} />
+          <Stop
+            s={s}
+            key={s.id}
+            onMove={handleMove}
+            position={getPosition}
+            lengthOfStops={formData.stops.length}
+            handleCardSelection={selectCard}
+          />
         ))}
         <section id="AddStop">
           {list === 'pickups' ? (
