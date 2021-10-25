@@ -259,9 +259,14 @@ export function Routes({ initial_filter }) {
                     .filter(s => s.type === 'pickup')
                     .map(
                       s =>
+                      s.status !== 0
+                        ?
                         `${s.org.name} (${
                           s.location.name || s.location.address1
                         })`
+                        : `${s.org.name} (${
+                          s.location.name || s.location.address1
+                        }) - Cancelled`
                     )
                     .join('\n')}
                 </Text>
