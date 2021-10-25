@@ -63,10 +63,11 @@
     align-items: center;
   }
   .selected-card {
-    border: 4px blue solid;
-  } 
+    border: 4px var(--se-blue-primary) solid;
+  }
   .Stop {
     margin-bottom: 16px;
+    cursor: pointer;
 
     .fa-times {
       position: absolute;

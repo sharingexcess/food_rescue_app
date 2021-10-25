@@ -20,7 +20,14 @@ import {
   updateGoogleCalendarEvent,
 } from 'helpers'
 import moment from 'moment'
-import { EditDelivery, EditPickup, Input, Ellipsis, Loading } from 'components'
+import {
+  EditDelivery,
+  EditPickup,
+  Input,
+  Ellipsis,
+  Loading,
+  ReorderStops,
+} from 'components'
 import { useFirestore } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
 import { OrganizationHours } from '../Organization/utils'
@@ -31,7 +38,6 @@ import {
   ExternalLink,
   Card,
 } from '@sharingexcess/designsystem'
-import { ReorderStops } from 'components/ReorderStops/ReorderStops'
 
 export function EditRoute() {
   const history = useHistory()
@@ -64,6 +70,7 @@ export function EditRoute() {
   const [canRender, setCanRender] = useState(route_id ? false : true)
   const [deletedStops, setDeletedStops] = useState([])
   // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(async () => {
     if (drivers && route_id) {
       const existingRouteData = await getExistingRouteData(route_id)
@@ -86,6 +93,12 @@ export function EditRoute() {
         driver: drivers.find(i => i.id === formData.driver_id),
       })
   }, [formData.driver_id, drivers]) // eslint-disable-line
+
+  function deselectStop(e) {
+    if (e.target.id === 'EditRoute') {
+      setSelectedCardId(null)
+    }
+  }
 
   function handleAddPickup(pickup) {
     setList(false)
@@ -528,7 +541,12 @@ export function EditRoute() {
       }
 
       return isValidRoute() && !list ? (
-        <Button id="EditRoute-submit" size="large" handler={handleSubmit}>
+        <Button
+          id="EditRoute-submit"
+          size="large"
+          type="secondary"
+          handler={handleSubmit}
+        >
           {generateSubmitButtonText()}
         </Button>
       ) : null
@@ -625,7 +643,7 @@ export function EditRoute() {
   }
 
   return (
-    <main id="EditRoute">
+    <main id="EditRoute" onClick={deselectStop}>
       {canRender ? (
         <>
           {confirmedTimes ? <Driver /> : SelectDriver()}
