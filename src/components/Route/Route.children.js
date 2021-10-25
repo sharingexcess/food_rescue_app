@@ -411,9 +411,9 @@ export function Stop({ stops, s, i }) {
   function StatusIndicator({ route }) {
     if (route.status === 9) {
       return <div className="Routes-route-status">✅</div>
-    } else {
+    } else if (route.status === 0 ) {
       return <div className="Routes-route-status">❌</div>
-    }
+    } else return null
   }
 
   function StopHeader() {
