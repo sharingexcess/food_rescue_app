@@ -401,7 +401,7 @@ export function EditRoute() {
               : `${moment(formData.time_start).format('dddd, MMMM D, h:mma')}${
                   formData.time_end
                     ? ' - ' + moment(formData.time_end).format('h:mma')
-                    : null
+                    : ''
                 } `}
           </Text>
         </div>

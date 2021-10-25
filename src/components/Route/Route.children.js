@@ -661,12 +661,12 @@ export function Stop({ stops, s, i }) {
         <Spacer height={8} />
         <StopAddress />
         <Spacer height={8} />
-        <Text type="paragraph" color="white">
+        <Text classList={['StopSummary-notes']} type="paragraph" color="white">
           {s.status === 9 &&
             s.report.weight +
               ' lbs. ' +
               (s.type === 'pickup' ? 'rescued' : 'delivered')}
-          {s.report.notes && `"${s.report.notes}"`}
+          {s.report.notes && `\n"${s.report.notes}"`}
         </Text>
       </>
     )

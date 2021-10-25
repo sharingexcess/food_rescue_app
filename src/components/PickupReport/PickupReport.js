@@ -63,7 +63,10 @@ export function PickupReport({ customSubmitHandler }) {
   function handleChange(e) {
     const updated = {
       ...formData,
-      [e.target.id]: parseInt(e.target.value) || 0,
+      [e.target.id]:
+        e.target.id === 'notes'
+          ? e.target.value
+          : parseInt(e.target.value) || 0,
     }
     updated.weight = sumWeight(updated)
     setErrors([])
