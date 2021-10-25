@@ -41,6 +41,10 @@
     .Stop {
       margin-bottom: 16px;
 
+      .StopSummary-notes {
+        white-space: pre-line;
+      }
+
       .Route-stop-header {
         display: flex;
         justify-content: flex-start;
