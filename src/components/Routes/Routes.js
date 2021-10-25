@@ -140,6 +140,14 @@ export function Routes({ initial_filter }) {
     } else return null
   }
 
+  function generateStopLabel(stop) {
+    if (stop.status === 0) {
+      return `${stop.org.name} (${stop.location.name || stop.location.address1}) - Cancelled`
+    } else {
+      return `${stop.org.name} (${stop.location.name || stop.location.address1})`
+    }
+  }
+
   return routes ? (
     <main id="Routes">
       <Text type="section-header" color="white" align="center">
@@ -257,17 +265,7 @@ export function Routes({ initial_filter }) {
                   ⬆️{'  '}
                   {r.stops
                     .filter(s => s.type === 'pickup')
-                    .map(
-                      s =>
-                      s.status !== 0
-                        ?
-                        `${s.org.name} (${
-                          s.location.name || s.location.address1
-                        })`
-                        : `${s.org.name} (${
-                          s.location.name || s.location.address1
-                        }) - Cancelled`
-                    )
+                    .map(stop => generateStopLabel(stop))
                     .join('\n')}
                 </Text>
                 <Spacer height={8} />
