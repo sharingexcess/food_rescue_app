@@ -408,11 +408,15 @@ export function Stop({ stops, s, i }) {
     return admin || (route && user && user.uid === route.driver_id)
   }
 
-  function StatusIndicator({ route }) {
+  function RouteStatusIndicator({ route }) {
     if (route.status === 9) {
-      return <div className="Routes-route-status">✅</div>
-    } else if (route.status === 0 ) {
-      return <div className="Routes-route-status">❌</div>
+      return <div className="Routes-stop-status">✅</div>
+    } else if (route.status === 0) {
+      return <div className="Routes-stop-status">❌</div>
+    } else if (route.status === 1) {
+      return <div className="Routes-stop-status">🗓</div>
+    } else if (route.status === 3) {
+      return <div className="Routes-stop-status">🚛</div>
     } else return null
   }
 
@@ -463,7 +467,7 @@ export function Stop({ stops, s, i }) {
             <i className="fa fa-ellipsis-v" />
           </Button>
         )}
-        <StatusIndicator route={s}/>
+        <RouteStatusIndicator route={s}/>
       </div>
     )
   }
