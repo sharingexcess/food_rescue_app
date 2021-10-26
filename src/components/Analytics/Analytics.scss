@@ -2,12 +2,23 @@
   @include page;
 
   #Tabs {
-    display: flex;
+    display: block;
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 16px;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 10px;
+    position: relative;
+    margin-top: -20px;
+    box-shadow: 0px 5px rgba(0, 0, 0, 0.2);
     button {
-      margin: 0 4px;
+      margin: 4px 6px;
+      margin-bottom: 5px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 5px 0px rgba(0,0,0,0.2);
+      border: none;
+      font-size: 17px;
       &.inactive {
         background: var(--white);
         color: var(--blue);
@@ -55,6 +66,7 @@
     td {
       padding: 4px;
       word-wrap: break-word;
+      color: #fff;
       ul {
         padding-right: 8px;
         li {
