@@ -148,6 +148,24 @@ export function Routes({ initial_filter }) {
     }
   }
 
+  function generateDeliveryWeight(delivery) {
+    if (typeof delivery.report !== 'undefined') {
+      if (delivery.report.hasOwnProperty('weight')) {
+        return `${delivery.org.name} (${
+          delivery.location.name || delivery.location.address1
+        }) - ${delivery.report.weight} lbs`
+      } else {
+        return `${delivery.org.name} (${
+          delivery.location.name || delivery.location.address1
+        }) - 0 lbs`
+      }
+    } else {
+      return `${delivery.org.name} (${
+        delivery.location.name || delivery.location.address1
+      }) - 0 lbs`
+    }
+  }
+
   return routes ? (
     <main id="Routes">
       <Text type="section-header" color="white" align="center">
@@ -273,12 +291,7 @@ export function Routes({ initial_filter }) {
                   ⬇️{'  '}
                   {r.stops
                     .filter(s => s.type === 'delivery')
-                    .map(
-                      s =>
-                        `${s.org.name} (${
-                          s.location.name || s.location.address1
-                        })`
-                    )
+                    .map(s => generateDeliveryWeight(s))
                     .join('\n')}
                 </Text>
                 {r.notes ? (
