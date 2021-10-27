@@ -149,20 +149,26 @@ export function Routes({ initial_filter }) {
   }
 
   function generateDeliveryWeight(delivery) {
-    if (typeof delivery.report !== 'undefined') {
-      if (delivery.report.hasOwnProperty('weight')) {
-        return `${delivery.org.name} (${
-          delivery.location.name || delivery.location.address1
-        }) - ${delivery.report.weight} lbs`
+    if (delivery.status === 0) {
+      return `${delivery.org.name} (${
+        delivery.location.name || delivery.location.address1
+      }) - Cancelled`
+    } else {
+      if (delivery.report) {
+        if (delivery.report.weight) {
+          return `${delivery.org.name} (${
+            delivery.location.name || delivery.location.address1
+          }) - ${delivery.report.weight} lbs.`
+        } else {
+          return `${delivery.org.name} (${
+            delivery.location.name || delivery.location.address1
+          }) - 0 lbs.`
+        }
       } else {
         return `${delivery.org.name} (${
           delivery.location.name || delivery.location.address1
-        }) - 0 lbs`
+        }) - 0 lbs.`
       }
-    } else {
-      return `${delivery.org.name} (${
-        delivery.location.name || delivery.location.address1
-      }) - 0 lbs`
     }
   }
 
