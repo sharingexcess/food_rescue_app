@@ -140,6 +140,38 @@ export function Routes({ initial_filter }) {
     } else return null
   }
 
+  function generateStopLabel(stop) {
+    if (stop.status === 0) {
+      return `${stop.org.name} (${stop.location.name || stop.location.address1}) - Cancelled`
+    } else {
+      return `${stop.org.name} (${stop.location.name || stop.location.address1})`
+    }
+  }
+
+  function generateDeliveryWeight(delivery) {
+    if (delivery.status === 0) {
+      return `${delivery.org.name} (${
+        delivery.location.name || delivery.location.address1
+      }) - Cancelled`
+    } else {
+      if (delivery.report) {
+        if (delivery.report.weight) {
+          return `${delivery.org.name} (${
+            delivery.location.name || delivery.location.address1
+          }) - ${delivery.report.weight} lbs.`
+        } else {
+          return `${delivery.org.name} (${
+            delivery.location.name || delivery.location.address1
+          }) - 0 lbs.`
+        }
+      } else {
+        return `${delivery.org.name} (${
+          delivery.location.name || delivery.location.address1
+        }) - 0 lbs.`
+      }
+    }
+  }
+
   return routes ? (
     <main id="Routes">
       <Text type="section-header" color="white" align="center">
@@ -257,12 +289,7 @@ export function Routes({ initial_filter }) {
                   ⬆️{'  '}
                   {r.stops
                     .filter(s => s.type === 'pickup')
-                    .map(
-                      s =>
-                        `${s.org.name} (${
-                          s.location.name || s.location.address1
-                        })`
-                    )
+                    .map(stop => generateStopLabel(stop))
                     .join('\n')}
                 </Text>
                 <Spacer height={8} />
@@ -270,12 +297,7 @@ export function Routes({ initial_filter }) {
                   ⬇️{'  '}
                   {r.stops
                     .filter(s => s.type === 'delivery')
-                    .map(
-                      s =>
-                        `${s.org.name} (${
-                          s.location.name || s.location.address1
-                        })`
-                    )
+                    .map(s => generateDeliveryWeight(s))
                     .join('\n')}
                 </Text>
                 {r.notes ? (
