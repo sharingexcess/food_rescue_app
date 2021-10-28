@@ -3,19 +3,18 @@
 
   #Tabs {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
     margin-bottom: 16px;
+    padding-bottom: 10px;
+    position: relative;
+    margin-top: -20px;
     button {
-      margin: 0 4px;
-      &.inactive {
-        background: var(--white);
-        color: var(--blue);
-      }
-      &.active {
-        background: var(--blue);
-        color: var(--white);
-      }
+      margin: 4px;
+      font-size: 16px;
+      flex-grow: 1;
+      padding: 6px 8px;
     }
   }
 
@@ -48,6 +47,9 @@
   table {
     width: 100%;
     table-layout: fixed;
+    background: var(--se-white);
+    font-size: 12px;
+    text-align: left;
     thead {
       font-weight: 900;
       color: var(--primary);
@@ -55,6 +57,7 @@
     td {
       padding: 4px;
       word-wrap: break-word;
+      color: var(--se-black);
       ul {
         padding-right: 8px;
         li {
@@ -66,7 +69,6 @@
   }
 
   .Styling {
-    text-align: center;
     td {
       border: 2px solid var(--text);
     }

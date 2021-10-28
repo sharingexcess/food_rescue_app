@@ -340,7 +340,7 @@ export function EditRoute() {
             type="small-header"
             color={s.type === 'pickup' ? 'green' : 'red'}
           >
-            {s.type === 'pickup' ? '⬆️ PICKUP' : '⬇️ DELIVERY'}
+            {s.type === 'pickup' ? '🟩 PICKUP' : '🟥 DELIVERY'}
           </Text>
           <Text type="section-header" color="black">
             {generateStopTitle()}

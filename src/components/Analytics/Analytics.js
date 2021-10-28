@@ -10,6 +10,7 @@ import {
 } from './utils'
 import { Input } from 'components'
 import { useFirestore } from 'hooks'
+import { Button } from '@sharingexcess/designsystem'
 
 export function Analytics() {
   const [tab, setTab] = useState('TotalAnalytics')
@@ -362,7 +363,6 @@ export function Analytics() {
     return (
       <>
         <section id="OrgName">
-          <h2>Filter by Network</h2>
           <Input
             type="text"
             label="Network name"
@@ -372,7 +372,6 @@ export function Analytics() {
         </section>
 
         <section id="Filters">
-          <h2>Filter by Types</h2>
           <select value={filter} onChange={e => setFilter(e.target.value)}>
             <option value="all">All</option>
             <option value="donor">Donors</option>
@@ -461,44 +460,58 @@ export function Analytics() {
   return (
     <main id="Analytics">
       <section id="Tabs">
-        <button
-          className={tab === 'TotalAnalytics' ? 'active' : 'inactive'}
-          onClick={() => setTab('TotalAnalytics')}
+        <Button
+          size="small"
+          type="primary"
+          color={tab === 'TotalAnalytics' ? 'blue' : 'white'}
+          classList={tab === 'TotalAnalytics' ? ['active'] : ['inactive']}
+          handler={() => setTab('TotalAnalytics')}
         >
           Impact
-        </button>
-        <button
-          className={tab === 'RouteAnalytics' ? 'active' : 'inactive'}
-          onClick={() => setTab('RouteAnalytics')}
+        </Button>
+        <Button
+          size="small"
+          type="primary"
+          color={tab === 'RouteAnalytics' ? 'blue' : 'white'}
+          classList={tab === 'RouteAnalytics' ? ['active'] : ['inactive']}
+          handler={() => setTab('RouteAnalytics')}
         >
           Routes
-        </button>
-        <button
-          className={tab === 'DriverAnalytics' ? 'active' : 'inactive'}
-          onClick={() => setTab('DriverAnalytics')}
+        </Button>
+        <Button
+          size="small"
+          type="primary"
+          color={tab === 'DriverAnalytics' ? 'blue' : 'white'}
+          classList={tab === 'DriverAnalytics' ? ['active'] : ['inactive']}
+          handler={() => setTab('DriverAnalytics')}
         >
           Drivers
-        </button>
-        <button
-          className={tab === 'OrgAnalytics' ? 'active' : 'inactive'}
-          onClick={() => {
+        </Button>
+        <Button
+          size="small"
+          type="primary"
+          color={tab === 'OrgAnalytics' ? 'blue' : 'white'}
+          classList={tab === 'OrgAnalytics' ? ['active'] : ['inactive']}
+          handler={() => {
             setTab('OrgAnalytics')
           }}
         >
           Networks
-        </button>
-        <button
-          className={tab === 'DirectDonations' ? 'active' : 'inactive'}
-          onClick={() => {
+        </Button>
+        <Button
+          size="small"
+          type="primary"
+          color={tab === 'DirectDonations' ? 'blue' : 'white'}
+          classList={tab === 'DirectDonations' ? ['active'] : ['inactive']}
+          handler={() => {
             setTab('DirectDonations')
           }}
         >
           Direct Donations
-        </button>
+        </Button>
       </section>
 
       <section id="DateRanges">
-        <h2>Filter by Date</h2>
         <Input
           type="datetime-local"
           label="From..."
@@ -514,7 +527,6 @@ export function Analytics() {
       </section>
       {!['OrgAnalytics', 'TotalAnalytics', 'DirectDonations'].includes(tab) ? (
         <section id="DriverName">
-          <h2>Filter by Driver</h2>
           <Input
             type="text"
             label="Driver's name"
