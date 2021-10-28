@@ -142,9 +142,13 @@ export function Routes({ initial_filter }) {
 
   function generateStopLabel(stop) {
     if (stop.status === 0) {
-      return `${stop.org.name} (${stop.location.name || stop.location.address1}) - Cancelled`
+      return `${stop.org.name} (${
+        stop.location.name || stop.location.address1
+      }) - Cancelled`
     } else {
-      return `${stop.org.name} (${stop.location.name || stop.location.address1})`
+      return `${stop.org.name} (${
+        stop.location.name || stop.location.address1
+      })`
     }
   }
 
@@ -153,7 +157,7 @@ export function Routes({ initial_filter }) {
       return `${delivery.org.name} (${
         delivery.location.name || delivery.location.address1
       }) - Cancelled`
-    } else {
+    } else if (delivery.status === 9) {
       if (delivery.report) {
         if (delivery.report.weight) {
           return `${delivery.org.name} (${
@@ -169,6 +173,10 @@ export function Routes({ initial_filter }) {
           delivery.location.name || delivery.location.address1
         }) - 0 lbs.`
       }
+    } else {
+      return `${delivery.org.name} (${
+        delivery.location.name || delivery.location.address1
+      })`
     }
   }
 
