@@ -71,8 +71,8 @@ export function EditRoute() {
   const [deletedStops, setDeletedStops] = useState([])
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
-  useEffect(async () => {
-    if (drivers && route_id) {
+  useEffect(() => {
+    async function getExistingRouteData() {
       const existingRouteData = await getExistingRouteData(route_id)
       setFormData(prevFormData => ({
         ...prevFormData,
@@ -84,6 +84,7 @@ export function EditRoute() {
       }))
       setCanRender(true)
     }
+    drivers && route_id && getExistingRouteData()
   }, [route_id, drivers])
 
   useEffect(() => {

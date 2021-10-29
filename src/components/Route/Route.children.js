@@ -693,6 +693,7 @@ export function Stop({ stops, s, i }) {
       <Spacer height={4} />
       <Text type="section-header" color={isActiveStop ? 'black' : 'white'}>
         {s.org.name}
+        {s.location.name ? ` (${s.location.name})` : ''}
       </Text>
       {isActiveStop ? (
         <StopDetails />
