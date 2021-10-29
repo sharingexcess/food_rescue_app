@@ -8,7 +8,7 @@ import { generateStopId, setFirestoreData } from 'helpers'
 import { generateDirectDonationId } from './utils'
 import { Input, EditDelivery, PickupReport, EditPickup } from 'components'
 import { useAuth } from 'hooks'
-import { Text } from '@sharingexcess/designsystem'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditDirectDonation() {
   const { user } = useAuth()
@@ -84,7 +84,14 @@ export function EditDirectDonation() {
   return (
     <main id="EditDirectDonation">
       <Text type="section-header" color="white" shadow>
-        Donation Date + Time
+        New Direct Donation
+      </Text>
+      <Text type="subheader" color="white" shadow>
+        Use this form to register a donation without a route or driver.
+      </Text>
+      <Spacer height={24} />
+      <Text type="section-header" color="white" shadow>
+        Date + Time
       </Text>
       <section id="Time">
         <Input

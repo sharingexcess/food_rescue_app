@@ -86,6 +86,13 @@ export function Users() {
     <Loading text="Loading users" />
   ) : (
     <main id="Users">
+      <Text type="section-header" color="white" shadow>
+        Users
+      </Text>
+      <Text type="subheader" color="white" shadow>
+        Use the filters below to sort and search users by name and permission
+        level.
+      </Text>
       <Input
         label="Search..."
         onChange={handleSearch}

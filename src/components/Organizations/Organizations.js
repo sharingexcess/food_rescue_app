@@ -3,14 +3,13 @@ import { Link } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
 import { getImageFromStorage } from 'helpers'
 import { Input, Loading } from 'components'
-import { useFirestore, useIsMobile } from 'hooks'
+import { useFirestore } from 'hooks'
 import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 const org_icon_urls = {}
 
 export function Organizations() {
   const organizations = useFirestore('organizations')
-  const isMobile = useIsMobile()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState()
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function
@@ -42,11 +41,14 @@ export function Organizations() {
   if (!organizations.length) return <Loading text="Loading organizations" />
   return (
     <main id="Organizations">
+      <Text type="section-header" color="white" shadow>
+        Organizations
+      </Text>
+      <Text type="subheader" color="white" shadow>
+        Use the filters below to sort and search organizations by name and type.
+      </Text>
+      <Spacer height={32} />
       <section id="Filters">
-        <Text type="section-header" color="white" shadow>
-          {filter || 'all'} Organizations
-        </Text>
-        {isMobile && <br />}
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="">Filter by type...</option>
           <option value="donor">Donors</option>
