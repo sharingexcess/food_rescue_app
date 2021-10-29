@@ -1,43 +1,38 @@
 #Liability {
   @include page;
-  padding: 96px 16px 192px 16px;
 
-  h1 {
-    font-size: 22px;
-    margin-bottom: 8px;
-  }
-
-  p {
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 20px;
-  }
-
-  section {
-    @include card;
-  }
-
-  li {
-    margin-left: 16px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    line-height: 20px;
-    font-size: 16px;
-  }
-
-  .green {
-    color: var(--green);
-  }
-
-  .red {
-    color: var(--red);
-  }
-
-  .row {
+  #Liability-buttons {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
 
-    .column-50 {
-      flex: 50%;
+  .se-button {
+    margin: 12px 12px 0 0;
+    padding: 6px 16px;
+    flex-shrink: 1;
+    label {
+      cursor: pointer;
     }
   }
+
+  #Liability-file-upload {
+    display: none;
+  }
+
+  @include mobile {
+    flex-direction: column;
+    .se-button {
+      width: 100%;
+      align-items: center;
+    }
+  }
+}
+
+#Liability-pdf {
+  width: 64%;
+  max-width: 400px;
+  border: none;
+  height: 100%;
+  box-shadow: var(--se-shadow-large);
 }

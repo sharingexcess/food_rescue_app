@@ -80,6 +80,7 @@ export function Input({
             disabled={readOnly}
             placeholder=""
             value={value}
+            checked={type === 'checkbox' ? value : undefined}
             onFocus={!shouldNotMoveLabel() ? () => setIsUsed(true) : null}
             onBlur={
               !shouldNotMoveLabel()

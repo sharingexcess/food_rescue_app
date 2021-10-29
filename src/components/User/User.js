@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Loading } from 'components'
+import { Input, Loading } from 'components'
 import { useParams } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
 import {
@@ -8,9 +8,10 @@ import {
   UserEmail,
   UserAdminPermissions,
   handleUserIcon,
+  UserDriverAvailability,
 } from './utils'
 import { useFirestore } from 'hooks'
-import { Spacer, Text } from '@sharingexcess/designsystem'
+import { Button, ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function User() {
   // get the user id from the current url parameters
@@ -50,6 +51,56 @@ export function User() {
       </div>
       <Spacer height={32} />
       <UserAdminPermissions profile={profile} />
+
+      <Spacer height={32} />
+      {profile.driver_liability_release ? (
+        <ExternalLink to={profile.driver_liability_release}>
+          <Button type="primary" color="white">
+            Download Liability Release
+          </Button>
+        </ExternalLink>
+      ) : (
+        <Text color="white" shadow>
+          This user has not completed a liability release.
+        </Text>
+      )}
+
+      <Spacer height={32} />
+      <Text type="section-header" color="white" shadow>
+        Rescue Availability
+      </Text>
+      <Spacer height={8} />
+      <UserDriverAvailability profile={profile} />
+      <Input
+        element_id="vehicle_make_model"
+        label="Vehicle Make + Model"
+        value={profile.vehicle_make_model}
+        readOnly
+      />
+      <Input
+        element_id="drivers_license_state"
+        label="Driver's License State"
+        value={profile.drivers_license_state}
+        readOnly
+      />
+      <Input
+        element_id="drivers_license_number"
+        label="Driver's License Number"
+        value={profile.drivers_license_number}
+        readOnly
+      />
+      <Input
+        element_id="drivers_insurance_provider"
+        label="Insurance Provider"
+        value={profile.drivers_insurance_provider}
+        readOnly
+      />
+      <Input
+        element_id="drivers_insurance_policy_number"
+        label="Insurance Policy Number"
+        value={profile.drivers_insurance_policy_number}
+        readOnly
+      />
     </main>
     // View Driver Document button currently has no functionality
   )

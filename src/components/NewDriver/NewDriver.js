@@ -6,31 +6,42 @@ import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 export function NewDriver() {
   const { user } = useAuth()
 
+  const completed_availability =
+    user.driver_availability &&
+    Object.keys(user.driver_availability).filter(
+      key => user.driver_availability[key]
+    ).length
+
   const sections = [
     {
       name: 'Complete your Profile',
       page: '/profile',
-      completed: user.name && user.phone && user.pronouns,
+      completed:
+        user.name &&
+        user.phone &&
+        user.pronouns &&
+        completed_availability &&
+        user.driver_availability &&
+        user.vehicle_make_model &&
+        user.drivers_license_number &&
+        user.drivers_license_state &&
+        user.drivers_insurance_policy_number &&
+        user.drivers_insurance_provider,
     },
     {
       name: 'Liability Release',
       page: '/liability',
-      completed: user.completed_liability_release,
+      completed: user.driver_liability_release,
     },
     {
-      name: 'Driver Information',
-      page: '/driver-info',
-      completed: user.completed_driver_info,
+      name: 'App Tutorial',
+      page: '/tutorial',
+      completed: user.completed_app_tutorial,
     },
     {
       name: 'Food Safety Training',
       page: '/food-safety',
       completed: user.completed_food_safety,
-    },
-    {
-      name: 'Food Rescue App Tutorial',
-      page: '/tutorial',
-      completed: user.completed_app_tutorial,
     },
   ]
 
@@ -43,7 +54,7 @@ export function NewDriver() {
       <Text type="paragraph" color="white" shadow>
         {user.completed_driver_info &&
         user.completed_food_safety &&
-        user.completed_liability_release
+        user.driver_liability_release
           ? "You've completed all the onboarding steps!\n\nHang tight while we approve your info, and grant you permission to start rescuing food."
           : 'Complete the onboarding steps below to begin rescuing food as soon as possible.'}
       </Text>

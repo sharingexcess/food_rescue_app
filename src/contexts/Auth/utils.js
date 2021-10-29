@@ -1,6 +1,10 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { getFirestoreData, setFirestoreData } from 'helpers'
+import {
+  getFirestoreData,
+  setFirestoreData,
+  createServerTimestamp,
+} from 'helpers'
 
 export async function getAuthenticatedUser() {
   const provider = new firebase.auth.GoogleAuthProvider()
@@ -12,16 +16,17 @@ export async function updatePublicUserProfile(user) {
   // fetch existing data matching this user id
   const existing_user = await getFirestoreData(['Users', user.id])
   // update Users Collection with this new login info
-  const update_payload = {
-    id: user.uid,
-    email: user.email,
-    name: existing_user !== undefined ? existing_user.name : user.displayName,
-    icon: existing_user !== undefined ? existing_user.icon : user.photoURL,
-    created_at:
-      existing_user !== undefined
-        ? existing_user.created_at
-        : firebase.firestore.FieldValue.serverTimestamp(),
-    last_login: firebase.firestore.FieldValue.serverTimestamp(),
+  if (!existing_user) {
+    setFirestoreData(['Users', user.uid], {
+      id: user.uid,
+      email: user.email,
+      name: user.displayName,
+      icon: user.photoURL,
+      access_level: 'none',
+      created_at: createServerTimestamp(),
+    })
   }
-  setFirestoreData(['Users', user.uid], update_payload)
+  setFirestoreData(['Users', user.uid], {
+    last_login: createServerTimestamp(),
+  })
 }

@@ -8,6 +8,8 @@ import {
 import { useAuth } from 'hooks'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useEffect, useState } from 'react'
+import { availability } from 'components/Profile/utils'
+import { Input } from 'components'
 
 export function handleUserIcon(icon, callback) {
   if (icon && !isValidURL(icon)) {
@@ -112,7 +114,11 @@ export function UserAdminPermissions({ profile }) {
   }, [accessLevel]) // eslint-disable-line
 
   if (user.uid === profile.id) {
-    return <p id="isAdmin">You are currently logged in as this user.</p>
+    return (
+      <Text color="white" id="isAdmin">
+        You are currently logged in as this user.
+      </Text>
+    )
   } else
     return (
       <div id="AccessLevel">
@@ -130,4 +136,24 @@ export function UserAdminPermissions({ profile }) {
         </select>
       </div>
     )
+}
+
+export function UserDriverAvailability({ profile }) {
+  return profile.driver_availability ? (
+    <div id="User-driver-availability">
+      {availability.map(i => (
+        <Input
+          key={i.label}
+          element_id={i.element_id}
+          label={i.label}
+          type="checkbox"
+          value={profile.driver_availability[i.data_id]}
+        />
+      ))}
+    </div>
+  ) : (
+    <Text color="white" shadow>
+      This user has not filled out their availability.
+    </Text>
+  )
 }
