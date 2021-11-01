@@ -3,11 +3,12 @@ import { getImageFromStorage, isValidURL } from 'helpers'
 import { Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
 import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function Routes({ initial_filter }) {
+  const history = useHistory()
   const { user, admin } = useAuth()
   const locations = useFirestore('locations')
   const location = useLocation()
@@ -25,6 +26,17 @@ export function Routes({ initial_filter }) {
   const [filterByDriver, setFilterByDriver] = useState(false)
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
+
+  useEffect(() => {
+    // check if there are any "filter" query params
+    // if there are, then setFilter("that parameter")
+    const filterSearchParam = new URLSearchParams(window.location.search).get(
+      'filter'
+    )
+    if (filterSearchParam) {
+      setFilter(filterSearchParam)
+    }
+  }, [])
 
   function getRouteWeight(routeId) {
     const deliveredWeight = deliveries.filter(r => r.route_id === routeId)
@@ -72,16 +84,24 @@ export function Routes({ initial_filter }) {
 
   useEffect(() => {
     if (filter === 'driver') {
+      history.replace('history?filter=driver')
       setFilterByDriver(true)
       setFilterByDate(false)
     } else if (filter === 'date') {
+      history.replace('history?filter=date')
       setFilterByDriver(false)
       setFilterByDate(true)
+    } else if (filter === 'mine') {
+      history.replace('history?filter=mine')
+    } else if (filter === 'unassigned') {
+      history.replace('history?filter=unassigned')
     } else {
+      history.replace('history')
       setFilterByDriver(false)
       setFilterByDate(false)
     }
-  }, [filter])
+  }, [filter]) // eslint-disable-line
+
   function handleSearchByDriver(e) {
     setSearchByDriver(e.target.value)
   }
