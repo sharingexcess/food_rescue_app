@@ -8,7 +8,7 @@ import {
   addDays,
   getDefaultStartTime,
   getDefaultEndRecurring,
-  getExistingRouteData,
+  fetchExistingRouteData,
   getDefaultEndTime,
 } from './utils'
 import UserIcon from 'assets/user.svg'
@@ -73,7 +73,7 @@ export function EditRoute() {
 
   useEffect(() => {
     async function getExistingRouteData() {
-      const existingRouteData = await getExistingRouteData(route_id)
+      const existingRouteData = await fetchExistingRouteData(route_id)
       setFormData(prevFormData => ({
         ...prevFormData,
         ...existingRouteData,
@@ -84,6 +84,7 @@ export function EditRoute() {
       }))
       setCanRender(true)
     }
+    console.log(drivers, route_id)
     drivers && route_id && getExistingRouteData()
   }, [route_id, drivers])
 
@@ -122,7 +123,7 @@ export function EditRoute() {
   async function handleCreateRoute(formData, route_id) {
     setWorking(true)
     if (route_id) {
-      const existing = getExistingRouteData(route_id)
+      const existing = fetchExistingRouteData(route_id)
       if (existing) {
         // if this is an existing route with pre-created stops,
         // make sure we delete any old and now deleted pickups and deliveries

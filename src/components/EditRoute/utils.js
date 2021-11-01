@@ -128,7 +128,7 @@ export const formFieldsRecurring = [
   },
 ]
 
-export const getExistingRouteData = async route_id => {
+export const fetchExistingRouteData = async route_id => {
   const routes = await getCollection('Routes')
     .get()
     .then(result => result.docs.map(doc => doc.data()))
