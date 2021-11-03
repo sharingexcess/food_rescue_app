@@ -66,7 +66,7 @@ export function Home() {
           icon="🔄"
           link="/admin/switch-environment"
         />
-        <Tile name="History" icon="⌛" link="history" />
+        <Tile name="History" icon="⌛" link="/history" />
       </>
     )
   }
