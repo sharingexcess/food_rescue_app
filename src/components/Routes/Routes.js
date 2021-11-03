@@ -180,6 +180,34 @@ export function Routes({ initial_filter }) {
     }
   }
 
+  function generateRouteStart(route) {
+    const r_startTime = route.time_started
+      ? route.time_started.toDate()
+      : 'Not found'
+
+    if (route.status === 9) {
+      return `Start Time: ${
+        r_startTime === 'Not found'
+          ? r_startTime
+          : moment(r_startTime).format('h:mma')
+      }`
+    }
+  }
+
+  function generateRouteStop(route) {
+    const r_endTime = route.time_finished
+      ? route.time_finished.toDate()
+      : 'Not found'
+
+    if (route.status === 9) {
+      return `End Time: ${
+        r_endTime === 'Not found'
+          ? r_endTime
+          : moment(r_endTime).format('h:mma')
+      }`
+    }
+  }
+
   return routes ? (
     <main id="Routes">
       <Text type="section-header" color="white" align="center">
@@ -252,6 +280,7 @@ export function Routes({ initial_filter }) {
         </div>
       ) : (
         filterAndSortRoutes(routes).map(r => {
+          console.log(r.time_started ? r.time_started.toDate() : 'Not found')
           return (
             <Link
               to={
@@ -280,7 +309,11 @@ export function Routes({ initial_filter }) {
                     <Text type="small" color="blue">
                       {moment(r.time_start).format('ddd, MMM Do, h:mma')}
                     </Text>
-
+                    <Text type="small" color="blue">
+                      {generateRouteStart(r)}
+                      <br></br>
+                      {generateRouteStop(r)}
+                    </Text>
                     {r.status === 9 && (
                       <>
                         <Spacer height={4} />
