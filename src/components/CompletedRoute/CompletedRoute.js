@@ -33,6 +33,7 @@ export function CompletedRoute() {
     if (notes) {
       await setFirestoreData(['Routes', route_id], {
         notes,
+        updated_at: createServerTimestamp(),
       })
     }
     history.push('/')

@@ -50,6 +50,7 @@ export function Route() {
           setFirestoreData(['Routes', route_id], {
             status: 9,
             time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: createServerTimestamp(),
           }).then(() => history.push(`/routes/${route_id}/completed`))
         }
       }
