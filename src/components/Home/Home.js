@@ -35,7 +35,7 @@ export function Home() {
     return (
       <>
         <Tile name="Routes" icon="🚛" link="/routes" />
-        <Tile name="History" icon="🕰" link="/history" />
+        <Tile name="History" icon="⌛" link="/history" />
         <Tile name="Contact" icon="🤔" link="/contact" />
         <Tile name="Profile" icon="💁‍♀️" link="/profile" />
       </>
@@ -66,6 +66,7 @@ export function Home() {
           icon="🔄"
           link="/admin/switch-environment"
         />
+        <Tile name="History" icon="⌛" link="history" />
       </>
     )
   }
