@@ -3,7 +3,7 @@ import { Link, Redirect, useParams, useHistory } from 'react-router-dom'
 import { useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
-import { setFirestoreData } from 'helpers'
+import { setFirestoreData, createServerTimestamp } from 'helpers'
 
 export function CompletedRoute() {
   const { route_id } = useParams()
