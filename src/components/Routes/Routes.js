@@ -142,11 +142,13 @@ export function Routes({ initial_filter }) {
 
   return routes ? (
     <main id="Routes">
-      <Text type="section-header" color="white" align="center">
-        {location.pathname === '/routes'
-          ? 'Viewing Current Routes'
-          : 'Viewing Past Routes'}
-      </Text>
+      <div className='routesHeader'>
+        <Text type="section-header" color="white" align="center">
+          {location.pathname === '/routes'
+            ? 'Viewing Current Routes'
+            : 'Viewing Past Routes'}
+        </Text>
+      </div>
       <Spacer height={32} />
       <section id="Filters">
         <select
