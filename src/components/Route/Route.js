@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
-import { setFirestoreData } from 'helpers'
+import { setFirestoreData, createServerTimestamp } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
 import { useFirestore, useAuth, useApp } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
@@ -50,6 +50,7 @@ export function Route() {
           setFirestoreData(['Routes', route_id], {
             status: 9,
             time_finished: firebase.firestore.FieldValue.serverTimestamp(),
+            updated_at: createServerTimestamp(),
           }).then(() => history.push(`/routes/${route_id}/completed`))
         }
       }

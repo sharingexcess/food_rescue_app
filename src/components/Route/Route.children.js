@@ -171,6 +171,7 @@ export function DropRoute() {
       driver_id: null,
       google_calendar_event_id: event.id,
       notes: `Route dropped by ${modalState.route.driver.name}: "${notes}"`,
+      updated_at: createServerTimestamp(),
     })
     for (const stop of modalState.route.stops) {
       const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
@@ -734,6 +735,7 @@ export function RouteActionButton() {
     await setFirestoreData(['Routes', modalState.route.id], {
       status: 3,
       time_started: createServerTimestamp(),
+      updated_at: createServerTimestamp(),
     })
   }
 
@@ -747,6 +749,7 @@ export function RouteActionButton() {
       driver_id: user.uid,
       google_calendar_event_id: event.id,
       notes: null,
+      updated_at: createServerTimestamp(),
     })
     for (const stop of modalState.route.stops) {
       const collection = stop.type === 'pickup' ? 'Pickups' : 'Deliveries'
@@ -834,6 +837,7 @@ export function BackupDelivery() {
               ...modalState.route.stops.map(s => ({ type: s.type, id: s.id })),
               { type: 'delivery', id: stop_id },
             ],
+            updated_at: createServerTimestamp(),
           })
           setWorking(false)
         }
