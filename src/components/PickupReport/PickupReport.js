@@ -19,16 +19,7 @@ export function PickupReport({ customSubmitHandler }) {
   )
   const deliveries = useFirestore(
     'deliveries',
-    useCallback(
-      d => {
-        if (!d.pickup_ids) {
-          console.log(d)
-          debugger
-        }
-        return d.pickup_ids.includes(pickup_id)
-      },
-      [pickup_id]
-    )
+    useCallback(d => d.pickup_ids.includes(pickup_id), [pickup_id])
   )
   const [formData, setFormData] = useState({
     dairy: 0,
