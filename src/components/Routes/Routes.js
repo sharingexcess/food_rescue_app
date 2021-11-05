@@ -206,10 +206,13 @@ export function Routes({ initial_filter }) {
 
   return routes ? (
     <main id="Routes">
-      <Text type="section-header" color="white" align="center" shadow>
+      <Text type="section-header" color="white" shadow>
+        {location.pathname === '/routes' ? 'Current Routes' : 'Past Routes'}
+      </Text>
+      <Text type="subheader" color="white" shadow>
         {location.pathname === '/routes'
-          ? 'Viewing Current Routes'
-          : 'Viewing Past Routes'}
+          ? 'All routes below are scheduled, or currently in progress.'
+          : 'All routes below are completed, or cancelled.'}
       </Text>
       <Spacer height={32} />
       <section id="Filters">

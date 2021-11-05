@@ -59,7 +59,7 @@ export function Menu({ isOpen, setIsOpen }) {
 
     return user ? (
       <div id="UserProfile">
-        <Link to="/profile">
+        <Link to="/profile" onClick={() => setIsOpen(false)}>
           <img
             src={user.photoURL || UserIcon}
             id="ProfileImg"

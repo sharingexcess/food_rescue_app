@@ -38,4 +38,21 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  #User-driver-availability {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .Input {
+      width: 48%;
+      margin: 8px 0;
+      justify-content: flex-end;
+      align-items: center;
+      input {
+        -webkit-appearance: checkbox;
+      }
+    }
+  }
 }

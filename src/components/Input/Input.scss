@@ -27,6 +27,26 @@
     }
   }
 
+  &.checkbox {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: left;
+    height: 24px;
+
+    label {
+      position: relative;
+      color: var(--se-white);
+      padding: 8px;
+
+      &.focused {
+        font-size: 18px;
+        padding: 8px;
+        color: var(--se-white);
+      }
+    }
+  }
+
   label {
     color: var(--se-grey-primary);
     z-index: 2;
@@ -86,6 +106,13 @@
     -webkit-appearance: none;
     &::-webkit-calendar-picker-indicator {
       filter: invert(1);
+    }
+
+    &[type='checkbox'] {
+      background: none;
+      -webkit-appearance: checkbox;
+      box-shadow: none;
+      width: unset;
     }
   }
 }

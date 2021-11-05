@@ -646,6 +646,14 @@ export function EditRoute() {
 
   return (
     <main id="EditRoute" onClick={deselectStop}>
+      <Text type="section-header" color="white" shadow>
+        {route_id ? 'Edit Route' : 'Create Route'}
+      </Text>
+      <Text type="subheader" color="white" shadow>
+        Use this form to schedule a driver for pickups within a specific time
+        window.
+      </Text>
+      <Spacer height={24} />
       {canRender ? (
         <>
           {confirmedTimes ? <Driver /> : SelectDriver()}

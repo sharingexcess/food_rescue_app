@@ -269,7 +269,7 @@ export function FoodSafety() {
           <li>Recycle any leftover packaging</li>
         </ol>
       </section>
-      {user && !user.completed_app_tutorial ? (
+      {user && !user.completed_food_safety ? (
         <Button type="primary" color="white" handler={handleComplete}>
           I've read the Food Safety Guidelines
         </Button>
