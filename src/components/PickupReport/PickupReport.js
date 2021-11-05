@@ -77,27 +77,11 @@ export function PickupReport({ customSubmitHandler }) {
   }
 
   function validateFormData(data) {
-    const currErrors = []
-    if (
-      data.dairy +
-        data.bakery +
-        data.produce +
-        data['meat/Fish'] +
-        data['non-perishable'] +
-        data['prepared/Frozen'] +
-        data['mixed groceries'] +
-        data.other ===
-      0
-    ) {
-      currErrors.push(
-        'Invalid Input: number of items must be greater than zero'
-      )
-    }
     if (isNaN(data.weight) || /\s/g.test(data.weight)) {
       currErrors.push('Invalid Input: Total Weight is not a number')
     }
-    if (data.weight <= 0) {
-      currErrors.push('Invalid Input: Total Weight must be greater than zero')
+    if (data.weight < 0) {
+      errors.push('Invalid Input: Total Weight must be greater than zero')
     }
     for (const field in data) {
       if (
@@ -105,9 +89,10 @@ export function PickupReport({ customSubmitHandler }) {
         field !== 'notes' &&
         field !== 'created_at' &&
         field !== 'updated_at' &&
-        !validator.isInt(data[field].toString())
+        !validator.isInt(data[field].toString()) &&
+        data.field < 0
       ) {
-        currErrors.push('Invalid Input: Item weight must be whole number')
+        errors.push('Invalid Input: Item weight is not valid')
         break
       }
     }
