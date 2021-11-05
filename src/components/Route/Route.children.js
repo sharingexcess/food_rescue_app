@@ -30,7 +30,6 @@ import {
 import UserIcon from 'assets/user.svg'
 import moment from 'moment'
 
-
 export function RouteHeader() {
   const { setModal } = useApp()
   const { route_id } = useParams()
@@ -444,7 +443,6 @@ export function Stop({ stops, s, i }) {
 
     return (
       <div className="Route-stop-header">
-        
         <Text
           type="small-header"
           color={
@@ -467,7 +465,7 @@ export function Stop({ stops, s, i }) {
             <i className="fa fa-ellipsis-v" />
           </Button>
         )}
-        <RouteStatusIndicator route={s}/>
+        <RouteStatusIndicator route={s} />
       </div>
     )
   }
@@ -698,8 +696,6 @@ export function Stop({ stops, s, i }) {
       </Link>
     )
   }
-
-  
 
   const stopCard = (
     <Card
