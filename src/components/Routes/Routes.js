@@ -142,13 +142,11 @@ export function Routes({ initial_filter }) {
 
   return routes ? (
     <main id="Routes">
-      <div className='routesHeader'>
-        <Text type="section-header" color="white" align="center">
-          {location.pathname === '/routes'
-            ? 'Viewing Current Routes'
-            : 'Viewing Past Routes'}
-        </Text>
-      </div>
+      <Text type="section-header" color="white" align="center" shadow>
+        {location.pathname === '/routes'
+          ? 'Viewing Current Routes'
+          : 'Viewing Past Routes'}
+      </Text>
       <Spacer height={32} />
       <section id="Filters">
         <select
@@ -256,7 +254,7 @@ export function Routes({ initial_filter }) {
                 </div>
                 <Spacer height={12} />
                 <Text type="small" color="grey" classList={['pickups']}>
-                🟩{'  '}
+                  🟩{'  '}
                   {r.stops
                     .filter(s => s.type === 'pickup')
                     .map(
@@ -269,7 +267,7 @@ export function Routes({ initial_filter }) {
                 </Text>
                 <Spacer height={8} />
                 <Text type="small" color="grey" classList={['deliveries']}>
-                🟥{'  '}
+                  🟥{'  '}
                   {r.stops
                     .filter(s => s.type === 'delivery')
                     .map(
