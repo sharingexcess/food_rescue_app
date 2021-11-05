@@ -10,6 +10,7 @@ import {
   RouteMenu,
   StopMenu,
 } from 'components/Route/Route.children'
+import { Caluculator } from 'components'
 
 export function Modal() {
   const { modal, setModal } = useApp()
@@ -30,6 +31,8 @@ export function Modal() {
         return <CancelStop />
       case 'ContactAdmin':
         return <ContactAdmin />
+      case 'Calculator':
+        return <Caluculator />
       default:
         return null
     }

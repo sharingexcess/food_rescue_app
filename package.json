@@ -4,6 +4,8 @@
   "version": "2.0.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
     "@sentry/react": "^5.30.0",
     "@sentry/tracing": "^5.30.0",
     "@sharingexcess/designsystem": "^1.2.2",
@@ -19,6 +21,7 @@
     "react-phone-number-input": "^3.1.18",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
+    "simple-react-calculator": "^0.2.1",
     "validator": "^13.5.2"
   },
   "scripts": {
