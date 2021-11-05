@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Loading, Input } from 'components'
 import { createServerTimestamp, setFirestoreData } from 'helpers'
-import { useFirestore, useAuth } from 'hooks'
+import { useFirestore, useAuth, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
+  const { setModal } = useApp()
   const route = useFirestore('routes', route_id)
   const { admin } = useAuth()
   const history = useHistory()
@@ -18,7 +19,16 @@ export function PickupReport({ customSubmitHandler }) {
   )
   const deliveries = useFirestore(
     'deliveries',
-    useCallback(d => d.pickup_ids.includes(pickup_id), [pickup_id])
+    useCallback(
+      d => {
+        if (!d.pickup_ids) {
+          console.log(d)
+          debugger
+        }
+        return d.pickup_ids.includes(pickup_id)
+      },
+      [pickup_id]
+    )
   )
   const [formData, setFormData] = useState({
     dairy: 0,
@@ -186,15 +196,22 @@ export function PickupReport({ customSubmitHandler }) {
 
   return (
     <main id="PickupReport">
-      <Text
-        classList={['PickupReport-field-label']}
-        type="primary-header"
-        color="white"
-        align="center"
-        shadow
-      >
-        Input Category Weight in Pounds
+      <Text type="section-header" color="white" shadow>
+        Pickup Report
       </Text>
+      <Spacer height={4} />
+      <Text type="subheader" color="white" shadow>
+        Use this form to enter data on what food was available for rescue.
+      </Text>
+      <Spacer height={16} />
+      <Button
+        fullWidth
+        color="white"
+        type="primary"
+        handler={() => setModal('Calculator')}
+      >
+        Open Calculator
+      </Button>
       <Spacer height={32} />
 
       {Object.keys(formData)
@@ -210,12 +227,7 @@ export function PickupReport({ customSubmitHandler }) {
         .map(field =>
           !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
             <section key={field}>
-              <Text
-                classList={['PickupReport-field-label']}
-                type="section-header"
-                color="white"
-                shadow
-              >
+              <Text type="small-header" color="white" shadow>
                 {field}
               </Text>
               <input
@@ -229,22 +241,11 @@ export function PickupReport({ customSubmitHandler }) {
           ) : null
         )}
       <section className="weight">
-        <Text
-          classList={['PickupReport-field-label']}
-          type="section-header"
-          color="white"
-          shadow
-        >
+        <Text type="section-header" color="white" shadow>
           Total Weight
         </Text>
         {isNaN(formData.weight) ? (
-          <Text
-            classList={['PickupReport-field-label']}
-            type="small"
-            color="white"
-            align="right"
-            shadow
-          >
+          <Text type="small" color="white" align="right" shadow>
             Error calculating weight!
           </Text>
         ) : (

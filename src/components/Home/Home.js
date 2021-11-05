@@ -46,27 +46,27 @@ export function Home() {
     if (!admin) return null
     return (
       <>
-        <Tile name="Calendar" icon="🗓" link="/calendar" />
         <Tile name="Routes" icon="🚛" link="/routes" />
+        <Tile name="History" icon="⌛" link="/history" />
         <Tile name="New Route" icon="➕" link="/admin/create-route" />
         <Tile
           name="New Direct Donation"
           icon="🏃"
           link="admin/create-direct-donation"
         />
+        <Tile name="Calendar" icon="🗓" link="/calendar" />
+        <Tile name="Analytics" icon="📊" link="/admin/analytics" />
         <Tile
           name="Manage Organizations"
           icon="🏢"
           link="/admin/organizations"
         />
         <Tile name="Manage Users" icon="👨‍👩‍👧‍👦" link="/admin/users" />
-        <Tile name="Analytics" icon="📊" link="/admin/analytics" />
         <Tile
           name="Switch Environments"
           icon="🔄"
           link="/admin/switch-environment"
         />
-        <Tile name="History" icon="⌛" link="/history" />
       </>
     )
   }
