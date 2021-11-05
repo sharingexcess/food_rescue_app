@@ -14,7 +14,8 @@ export async function getAuthenticatedUser() {
 
 export async function updatePublicUserProfile(user) {
   // fetch existing data matching this user id
-  const existing_user = await getFirestoreData(['Users', user.id])
+  const existing_user = await getFirestoreData(['Users', user.uid])
+  console.log(user, existing_user)
   // update Users Collection with this new login info
   if (!existing_user) {
     setFirestoreData(['Users', user.uid], {
