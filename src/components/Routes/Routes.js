@@ -182,7 +182,7 @@ export function Routes({ initial_filter }) {
 
   return routes ? (
     <main id="Routes">
-      <Text type="section-header" color="white" align="center">
+      <Text type="section-header" color="white" align="center" shadow>
         {location.pathname === '/routes'
           ? 'Viewing Current Routes'
           : 'Viewing Past Routes'}
