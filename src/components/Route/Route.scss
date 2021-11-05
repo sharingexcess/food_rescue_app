@@ -40,6 +40,7 @@
   .Stops {
     .Stop {
       margin-bottom: 16px;
+      justify-content: space-between;
 
       .StopSummary-notes {
         white-space: pre-line;
@@ -47,14 +48,20 @@
 
       .Route-stop-header {
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
+
         #Route-stop-edit-button {
           margin-left: auto;
           height: 32px;
           width: 32px;
           padding: 0;
         }
+      }
+
+      .Routes-stop-status {
+        font-size: 28px;
+        margin-bottom: auto;
       }
 
       .Route-stop-instructions {
