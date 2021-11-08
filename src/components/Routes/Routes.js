@@ -3,11 +3,12 @@ import { getImageFromStorage, isValidURL } from 'helpers'
 import { Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
 import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function Routes({ initial_filter }) {
+  const history = useHistory()
   const { user, admin } = useAuth()
   const locations = useFirestore('locations')
   const location = useLocation()
@@ -25,6 +26,26 @@ export function Routes({ initial_filter }) {
   const [filterByDriver, setFilterByDriver] = useState(false)
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'all' : 'mine')
+  const [isInitialRender, setIsInitialRender] = useState(true)
+
+  useEffect(() => {
+    // check if there are any "filter" query params
+    // if there are, then setFilter("that parameter")
+
+    let searchParams = new URLSearchParams(window.location.search)
+    const filterSearchParam = searchParams.get('filter')
+    if (filterSearchParam) {
+      setFilter(filterSearchParam)
+    }
+    const driverSearchParam = searchParams.get('driver')
+    if (driverSearchParam) {
+      setSearchByDriver(driverSearchParam)
+    }
+    const dateSearchParam = searchParams.get('date')
+    if (dateSearchParam) {
+      setSearchByDate(dateSearchParam)
+    }
+  }, [])
 
   function getRouteWeight(routeId) {
     const deliveredWeight = deliveries.filter(r => r.route_id === routeId)
@@ -71,23 +92,47 @@ export function Routes({ initial_filter }) {
   ])
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
     if (filter === 'driver') {
+      params.set('filter', 'driver')
+      if (searchByDriver) {
+        params.set('driver', searchByDriver)
+      }
+      params.delete('date')
+      history.replace(`/history?${params.toString()}`)
       setFilterByDriver(true)
       setFilterByDate(false)
     } else if (filter === 'date') {
+      params.set('filter', 'date')
+      if (searchByDate) {
+        params.set('date', searchByDate)
+      }
+      params.delete('driver')
+      history.replace(`/history?${params.toString()}`)
       setFilterByDriver(false)
       setFilterByDate(true)
+    } else if (filter === 'mine') {
+      history.replace('history?filter=mine')
+    } else if (filter === 'unassigned') {
+      history.replace('history?filter=unassigned')
+    } else if (isInitialRender) {
+      setIsInitialRender(false)
     } else {
+      history.replace('history')
       setFilterByDriver(false)
       setFilterByDate(false)
     }
-  }, [filter])
+  }, [filter]) // eslint-disable-line
+
   function handleSearchByDriver(e) {
     setSearchByDriver(e.target.value)
+    history.replace(`history?filter=driver&driver=${e.target.value}`)
   }
   function handleSearchByDate(e) {
     setSearchByDate(e.target.value)
+    history.replace(`history?filter=date&date=${e.target.value}`)
   }
+
   function filterAndSortRoutes(routes) {
     return filter === 'mine'
       ? routes
