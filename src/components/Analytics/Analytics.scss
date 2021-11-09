@@ -14,11 +14,10 @@
   #CurrentMonthPounds {
     /* Rectangle 36 */
 
-    position: absolute;
-    width: 63%;
-    height: 363px;
+    display: flex;
+    padding: 10px;
+    position: relative;
 
-    /* white */
     background: #ffffff;
     border: 1px solid #000000;
     box-sizing: border-box;
@@ -26,20 +25,14 @@
 
     #Content {
       /* Current Month Pounds */
-
-      position: absolute;
       width: 50%;
-      height: 284px;
-      left: 49px;
-      top: 37px;
-      bottom: 42px;
-      border: 1px solid #000000;
+      margin: 4px;
 
       select {
         border: 1px solid #e6e8ea;
         box-sizing: border-box;
         border-radius: 4px;
-
+        display: block;
         font-family: Montserrat;
         font-style: normal;
         font-weight: 500;
@@ -89,16 +82,6 @@
         content: '\a';
         white-space: pre;
       }
-    }
-
-    #Graph {
-      width: 50%;
-      height: 284px;
-      left: 49px;
-      top: 37px;
-      bottom: 42px;
-      border: 1px solid #000000;
-      float: right;
     }
   }
 }

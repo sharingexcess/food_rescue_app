@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { div } from '@sharingexcess/designsystem'
-
 function CurrentMonthPounds() {
   const totalMonthPounds = 341358.51
   const emissionsReduced = 10000000
@@ -12,7 +10,7 @@ function CurrentMonthPounds() {
     <main id="Analytics">
       <section id="CurrentMonthPounds">
         <section id="Content">
-          <select style={{ display: 'block' }}>
+          <select>
             <option> Current Month Pounds</option>
           </select>
           <select>
@@ -45,7 +43,8 @@ function CurrentMonthPounds() {
             <div id="Label">Fair Market Value</div>
           </section>
         </section>
-        <section id="Graph">yes</section>
+
+        <section id="Content"> Graph can go here</section>
       </section>
     </main>
   )
