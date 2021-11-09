@@ -10,4 +10,61 @@
       font-weight: 700;
     }
   }
+
+  #CurrentMonthPounds {
+    /* Rectangle 36 */
+
+    position: absolute;
+    width: 912px;
+    height: 363px;
+
+    /* white */
+    background: #ffffff;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    #Content {
+      /* Current Month Pounds */
+
+      position: absolute;
+      width: 802px;
+      height: 284px;
+      left: 49px;
+      right: 61;
+      top: 37px;
+      bottom: 42px;
+
+      select {
+        border: 1px solid #e6e8ea;
+        box-sizing: border-box;
+        border-radius: 4px;
+
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 18px;
+        /* identical to box height, or 150% */
+
+        /* grey-dark */
+
+        color: #53575a;
+      }
+      #TotalMonthPounds {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 800;
+        font-size: 40px;
+        line-height: 64px;
+        /* identical to box height, or 160% */
+
+        text-align: center;
+
+        /* green-primary */
+
+        color: #4ea528;
+      }
+    }
+  }
 }
