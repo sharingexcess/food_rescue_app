@@ -15,7 +15,7 @@
     /* Rectangle 36 */
 
     position: absolute;
-    width: 912px;
+    width: 63%;
     height: 363px;
 
     /* white */
@@ -28,12 +28,12 @@
       /* Current Month Pounds */
 
       position: absolute;
-      width: 802px;
+      width: 50%;
       height: 284px;
       left: 49px;
-      right: 61;
       top: 37px;
       bottom: 42px;
+      border: 1px solid #000000;
 
       select {
         border: 1px solid #e6e8ea;
@@ -57,14 +57,48 @@
         font-weight: 800;
         font-size: 40px;
         line-height: 64px;
-        /* identical to box height, or 160% */
-
         text-align: center;
-
-        /* green-primary */
-
         color: #4ea528;
       }
+
+      #MonthReport {
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 18px;
+
+        /* small */
+
+        #Value {
+          color: #4ea528;
+          float: left;
+        }
+
+        #Value::after {
+          content: '\00a0';
+        }
+
+        #Label {
+          color: black;
+          float: left;
+        }
+      }
+
+      #MonthReport::after {
+        content: '\a';
+        white-space: pre;
+      }
+    }
+
+    #Graph {
+      width: 50%;
+      height: 284px;
+      left: 49px;
+      top: 37px;
+      bottom: 42px;
+      border: 1px solid #000000;
+      float: right;
     }
   }
 }
