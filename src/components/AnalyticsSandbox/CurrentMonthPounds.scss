@@ -1,11 +1,8 @@
 #Revamp {
   @include page;
   #CurrentMonthPounds {
-    /* Rectangle 36 */
-
     display: flex;
     padding: 10px;
-    position: relative;
 
     background: #ffffff;
     border: 1px solid #000000;
@@ -15,7 +12,7 @@
     #Content {
       /* Current Month Pounds */
       width: 50%;
-      margin: 4px;
+      margin: 15px;
 
       select {
         border: 1px solid #e6e8ea;
@@ -34,6 +31,10 @@
 
       div {
         display: flex;
+      }
+
+      section {
+        align-items: center;
       }
     }
   }

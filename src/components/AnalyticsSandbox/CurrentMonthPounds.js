@@ -1,4 +1,14 @@
-import { Pie, PieChart, BarChart, XAxis, YAxis, Bar } from 'recharts'
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  BarChart,
+  XAxis,
+  YAxis,
+  Bar,
+  ResponsiveContainer,
+} from 'recharts'
 import { Text } from '@sharingexcess/designsystem'
 
 export function CurrentMonthPounds() {
@@ -7,34 +17,15 @@ export function CurrentMonthPounds() {
   const retailValue = 1000000
   const fairMarketValue = 1000000
 
-  const data01 = [
-    {
-      name: 'Group A',
-      value: 400,
-    },
-    {
-      name: 'Group B',
-      value: 300,
-    },
-    {
-      name: 'Group C',
-      value: 300,
-    },
-    {
-      name: 'Group D',
-      value: 200,
-    },
-    {
-      name: 'Group E',
-      value: 278,
-    },
-    {
-      name: 'Group F',
-      value: 189,
-    },
+  const piedata = [
+    { name: 'Group A', value: 33343.5 },
+    { name: 'Group B', value: 74590 },
+    { name: 'Group C', value: 234425 },
   ]
 
-  const data = [{ name: 'A', x: 12, y: 23, z: 122 }]
+  const bardata = [{ name: 'A', x: 13, y: 23 }]
+
+  const COLORS = ['#216810', '#9DA1A4', '#4EA528']
 
   return (
     <main id="Revamp">
@@ -58,11 +49,11 @@ export function CurrentMonthPounds() {
             <option>November</option>
             <option>December</option>
           </select>
-          <div>
+          <section>
             <Text type="secondary-header" color="green" align="center">
               {totalMonthPounds}
             </Text>
-          </div>
+          </section>
           <div id="MonthReport">
             <Text type="small" color="green">
               {emissionsReduced}
@@ -73,7 +64,7 @@ export function CurrentMonthPounds() {
           </div>
           <div>
             <Text type="small" color="green">
-              ${retailValue}{' '}
+              ${retailValue}
             </Text>
             <Text type="small" color="black">
               Retail Value
@@ -81,7 +72,7 @@ export function CurrentMonthPounds() {
           </div>
           <div>
             <Text type="small" color="green">
-              ${fairMarketValue}{' '}
+              ${fairMarketValue}
             </Text>
             <Text type="small" color="black">
               Fair Market Value
@@ -89,25 +80,38 @@ export function CurrentMonthPounds() {
           </div>
         </section>
 
-        <section id="Content">
-          <PieChart width={300} height={180}>
-            <Pie
-              data={data01}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={50}
-              fill="#8884d8"
-              label
-            />
-          </PieChart>
-          <BarChart layout="vertical" width={300} height={100} data={data}>
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category" scale="band" />
-            <Bar dataKey="x" stackId="a" barSize={20} fill="#8884d8" />
-            <Bar dataKey="y" stackId="a" barSize={20} fill="#82ca9d" />
-          </BarChart>
+        <section
+          id="Content"
+          style={{ background: '#E6E8EA', padding: '20px' }}
+        >
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
+                dataKey="value"
+                isAnimationActive="true"
+                data={piedata}
+                outerRadius={80}
+                fill="#8884d8"
+                label
+              >
+                {piedata.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Legend style={{ align: 'center' }} />
+            </PieChart>
+          </ResponsiveContainer>
+          <ResponsiveContainer width="90%" height={100}>
+            <BarChart layout="vertical" data={bardata}>
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" scale="band" />
+              <Bar dataKey="x" stackId="a" barSize={20} fill="#9DA1A4" />
+              <Bar dataKey="y" stackId="a" barSize={20} fill="#4EA528" />
+            </BarChart>
+          </ResponsiveContainer>
         </section>
       </section>
     </main>
