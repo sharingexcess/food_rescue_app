@@ -43,8 +43,6 @@ import { EmojiProvider } from 'react-apple-emojis'
 import emojiData from 'react-apple-emojis/lib/data.json'
 import './styles/index.scss'
 
-import CurrentMonthPounds from 'components/AnalyticsSandbox/CurrentMonthPounds'
-
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,

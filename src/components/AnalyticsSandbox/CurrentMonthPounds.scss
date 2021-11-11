@@ -1,0 +1,40 @@
+#Revamp {
+  @include page;
+  #CurrentMonthPounds {
+    /* Rectangle 36 */
+
+    display: flex;
+    padding: 10px;
+    position: relative;
+
+    background: #ffffff;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    #Content {
+      /* Current Month Pounds */
+      width: 50%;
+      margin: 4px;
+
+      select {
+        border: 1px solid #e6e8ea;
+        box-sizing: border-box;
+        border-radius: 4px;
+        display: block;
+        font-family: Montserrat;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 18px;
+        margin-bottom: 8px;
+
+        color: #53575a;
+      }
+
+      div {
+        display: flex;
+      }
+    }
+  }
+}
