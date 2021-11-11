@@ -324,7 +324,6 @@ export function Routes({ initial_filter }) {
         </div>
       ) : (
         filterAndSortRoutes(routes).map(r => {
-          console.log(r.time_started ? r.time_started.toDate() : 'Not found')
           return (
             <Link
               to={
