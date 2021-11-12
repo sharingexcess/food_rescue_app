@@ -47,7 +47,7 @@ export function Header() {
           {path_components.length > 0 ? (
             <Link to={back_url}>
               <Button
-                type="tertiary"
+                type="primary"
                 size="small"
                 color="white"
                 id="Header-back-link"
@@ -60,6 +60,7 @@ export function Header() {
         {isMobile ? <UserProfile /> : null}
       </header>
       <Menu isOpen={menuOpen} setIsOpen={setMenuOpen} />
+      
     </>
   )
 }
