@@ -31,8 +31,7 @@ export function Routes({ initial_filter }) {
   useEffect(() => {
     // check if there are any "filter" query params
     // if there are, then setFilter("that parameter")
-
-    let searchParams = new URLSearchParams(window.location.search)
+    const searchParams = new URLSearchParams(window.location.search)
     const filterSearchParam = searchParams.get('filter')
     if (filterSearchParam) {
       setFilter(filterSearchParam)
@@ -93,13 +92,14 @@ export function Routes({ initial_filter }) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
+    const rootPath = window.location.pathname
     if (filter === 'driver') {
       params.set('filter', 'driver')
       if (searchByDriver) {
         params.set('driver', searchByDriver)
       }
       params.delete('date')
-      history.replace(`/history?${params.toString()}`)
+      history.replace(`${rootPath}?${params.toString()}`)
       setFilterByDriver(true)
       setFilterByDate(false)
     } else if (filter === 'date') {
@@ -108,17 +108,17 @@ export function Routes({ initial_filter }) {
         params.set('date', searchByDate)
       }
       params.delete('driver')
-      history.replace(`/history?${params.toString()}`)
+      history.replace(`${rootPath}?${params.toString()}`)
       setFilterByDriver(false)
       setFilterByDate(true)
     } else if (filter === 'mine') {
-      history.replace('history?filter=mine')
+      history.replace(`${rootPath}?filter=mine`)
     } else if (filter === 'unassigned') {
-      history.replace('history?filter=unassigned')
+      history.replace(`${rootPath}?filter=unassigned`)
     } else if (isInitialRender) {
       setIsInitialRender(false)
     } else {
-      history.replace('history')
+      history.replace(`${rootPath}`)
       setFilterByDriver(false)
       setFilterByDate(false)
     }
