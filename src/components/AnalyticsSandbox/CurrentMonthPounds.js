@@ -3,6 +3,7 @@ import {
   Legend,
   Pie,
   PieChart,
+  Tooltip,
   BarChart,
   XAxis,
   YAxis,
@@ -30,8 +31,8 @@ export function CurrentMonthPounds() {
   return (
     <main id="Revamp">
       <section id="CurrentMonthPounds">
-        <section id="Content" style={{ marginLeft: '20px' }}>
-          <select>
+        <section id="Content" style={{ marginLeft: '5%' }}>
+          <select style={{ marginTop: '3%' }}>
             <option>Current Month Pounds</option>
             <option>Current Year Pounds</option>
           </select>
@@ -87,8 +88,8 @@ export function CurrentMonthPounds() {
           id="Content"
           style={{
             background: '#E6E8EA',
-            paddingTop: '20px',
-            marginRight: '20px',
+            paddingTop: '2%',
+            marginRight: '5%',
           }}
         >
           <Text type="graph-title" color="black" align="center">
@@ -111,6 +112,7 @@ export function CurrentMonthPounds() {
                 ))}
               </Pie>
               <Legend align="center" iconType="circle" iconSize="12" />
+              <Tooltip />
             </PieChart>
           </ResponsiveContainer>
 

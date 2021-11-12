@@ -10,8 +10,8 @@
 
     #Content {
       width: 50%;
-      margin-top: 35px;
-      margin-bottom: 35px;
+      margin-top: 4%;
+      margin-bottom: 4%;
 
       select {
         border: 1px solid #e6e8ea;
@@ -23,16 +23,15 @@
         font-weight: 500;
         font-size: 12px;
         line-height: 18px;
-        margin-bottom: 8px;
-        padding-right: 25px;
+        margin-bottom: 2%;
+        padding-right: 6%;
 
         color: #53575a;
       }
 
       #CurrentMonthPoundsLabel {
-        height: 50%;
-        vertical-align: bottom;
-        // border: 1px solid #000000;
+        margin-top: 10%;
+        margin-bottom: 10%;
       }
 
       section {
