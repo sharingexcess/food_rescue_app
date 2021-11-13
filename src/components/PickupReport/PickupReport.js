@@ -79,6 +79,7 @@ export function PickupReport({ customSubmitHandler }) {
   }
 
   function validateFormData(data) {
+    const currErrors = []
     if (isNaN(data.weight) || /\s/g.test(data.weight)) {
       currErrors.push('Invalid Input: Total Weight is not a number')
     }

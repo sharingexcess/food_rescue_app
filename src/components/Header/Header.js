@@ -60,7 +60,6 @@ export function Header() {
         {isMobile ? <UserProfile /> : null}
       </header>
       <Menu isOpen={menuOpen} setIsOpen={setMenuOpen} />
-      
     </>
   )
 }
