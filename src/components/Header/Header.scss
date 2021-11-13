@@ -1,5 +1,5 @@
 header#Header {
-  position: fixed;
+  position: absolute;
   top: 0;
   @media all and (display-mode: standalone) {
     top: 48px;
@@ -13,10 +13,6 @@ header#Header {
   animation: fade-in 0.32s ease forwards;
   z-index: 20;
   transition: all 0.2s ease;
-
-  @media only screen and (max-device-width: 480px) {
-    background: linear-gradient( to top right, rgba(123, 218, 83, 1), rgba(62, 113, 40, 1) );
-  }
 
   @include desktop {
     padding: 32px;

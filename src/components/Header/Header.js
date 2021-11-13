@@ -47,7 +47,7 @@ export function Header() {
           {path_components.length > 0 ? (
             <Link to={back_url}>
               <Button
-                type="primary"
+                type="tertiary"
                 size="small"
                 color="white"
                 id="Header-back-link"
