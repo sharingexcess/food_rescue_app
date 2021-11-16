@@ -11,8 +11,37 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { Text } from '@sharingexcess/designsystem'
+import { useFirestore } from 'hooks'
+import { useState, useCallback } from 'react'
 
 export function CurrentMonthPounds() {
+  const Months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+
+  const [CurrentMonth, setCurrentMonth] = useState(
+    Months[new Date().getMonth()]
+  )
+
+  const deliveries = useFirestore(
+    'deliveries',
+    useCallback(r => r.status === 9 && r.report, [])
+  )
+  const pickups = useFirestore(
+    'pickups',
+    useCallback(r => r.status === 9 && r.report, [])
+  )
   const totalMonthPounds = 341358.51
   const emissionsReduced = 10000000
   const retailValue = 1000000
@@ -28,6 +57,10 @@ export function CurrentMonthPounds() {
 
   const COLORS = ['#216810', '#9DA1A4', '#4EA528']
 
+  const onChange = e => {
+    setCurrentMonth(e.target.value)
+  }
+
   return (
     <main id="Revamp">
       <section id="CurrentMonthPounds">
@@ -36,19 +69,16 @@ export function CurrentMonthPounds() {
             <option>Current Month Pounds</option>
             <option>Current Year Pounds</option>
           </select>
-          <select>
-            <option>January</option>
-            <option>February</option>
-            <option>March</option>
-            <option>April</option>
-            <option>May</option>
-            <option>June</option>
-            <option>July</option>
-            <option>August</option>
-            <option>September</option>
-            <option>October</option>
-            <option>November</option>
-            <option>December</option>
+          <select onChange={onChange} id="Month">
+            {Months.map(month =>
+              month !== CurrentMonth ? (
+                <option key={month}>{month}</option>
+              ) : (
+                <option key={month} selected="selected">
+                  {month}
+                </option>
+              )
+            )}
           </select>
           <Text
             id="CurrentMonthPoundsLabel"
@@ -93,7 +123,7 @@ export function CurrentMonthPounds() {
           }}
         >
           <Text type="graph-title" color="black" align="center">
-            Breakdown of pounds in July 2021
+            Breakdown of pounds in {CurrentMonth} 2021
           </Text>
           <ResponsiveContainer width="100%" height={150}>
             <PieChart margin={{ top: 10, right: 5, bottom: 10, left: 5 }}>
