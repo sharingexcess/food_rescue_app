@@ -14,8 +14,8 @@ export function Landing() {
         </Text>
         <Spacer height={4} />
         <Text type="subheader" color="white" shadow align="center">
-          Partnering with over 150 local nonprofits, we've delivered over
-          3,000,000 lbs. of food since 2018.
+          Partnering with over 170 nonprofits, we've delivered over 5,000,000
+          lbs. of food since 2018.
         </Text>
         <Spacer height={16} />
         <Button size="large" fullWidth handler={handleLogin}>
