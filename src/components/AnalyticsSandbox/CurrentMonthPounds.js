@@ -11,11 +11,12 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { Text } from '@sharingexcess/designsystem'
+import { useCallback, useState } from 'react'
 import { useFirestore } from 'hooks'
-import { useState, useCallback } from 'react'
+import { formatLargeNumber } from 'helpers'
 
 export function CurrentMonthPounds() {
-  const Months = [
+  const months = [
     'January',
     'February',
     'March',
@@ -30,55 +31,142 @@ export function CurrentMonthPounds() {
     'December',
   ]
 
-  const [CurrentMonth, setCurrentMonth] = useState(
-    Months[new Date().getMonth()]
-  )
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth())
 
   const deliveries = useFirestore(
     'deliveries',
-    useCallback(r => r.status === 9 && r.report, [])
+    useCallback(
+      d => {
+        if (d.status === 9) {
+          const deliveryDate =
+            d.time_finished && d.time_finished.toDate
+              ? d.time_finished.toDate() // handle firestore date objects
+              : new Date(d.time_finished) // handle date strings created manually
+          return deliveryDate.getMonth() === currentMonth
+        } else return false
+      },
+      [currentMonth]
+    )
   )
+
   const pickups = useFirestore(
     'pickups',
-    useCallback(r => r.status === 9 && r.report, [])
+    useCallback(
+      p => {
+        if (p.status === 9) {
+          const pickupDate =
+            p.time_finished && p.time_finished.toDate
+              ? p.time_finished.toDate() // handle firestore date objects
+              : new Date(p.time_finished) // handle date strings created manually
+          return pickupDate.getMonth() === currentMonth
+        } else return false
+      },
+      [currentMonth]
+    )
   )
-  const totalMonthPounds = 341358.51
-  const emissionsReduced = 10000000
+
+  function findTotalWeight(a, type, i) {
+    if (i <= 0) return 0
+    return findTotalWeight(a, type, i - 1) + a[i - 1].report[type]
+  }
+
+  // (total, currentDelivery) => total + currentDelivery.report.weight,
+  //   0
+  // )
+  const totalMonthDeliveryPounds = findTotalWeight(
+    deliveries,
+    'weight',
+    deliveries.length
+  )
+
+  // pickups.reduce((total, p) => total + p.report.weight, 0)
+  const totalMonthPickupPounds = findTotalWeight(
+    pickups,
+    'weight',
+    pickups.length
+  )
+
+  const bakeryWeightPercentage =
+    findTotalWeight(pickups, 'bakery', pickups.length) / totalMonthPickupPounds
+
+  const dairyWeightPercentage =
+    findTotalWeight(pickups, 'dairy', pickups.length) / totalMonthPickupPounds
+
+  const meatWeightPercentage =
+    findTotalWeight(pickups, 'meat/Fish', pickups.length) /
+    totalMonthPickupPounds
+
+  const mixedGroceriesWeightPercentage =
+    findTotalWeight(pickups, 'mixed Groceries', pickups.length) /
+    totalMonthPickupPounds
+
+  const nonPerishablesWeightPercentage =
+    findTotalWeight(pickups, 'non-perishable', pickups.length) /
+    totalMonthPickupPounds
+
+  const preparedsWeightPercentage =
+    findTotalWeight(pickups, 'prepared/Frozen', pickups.length) /
+    totalMonthPickupPounds
+
+  // pickups.reduce((total, p) => total + p.report.produce, 0)
+  const produceWeightPercentage =
+    findTotalWeight(pickups, 'produce', pickups.length) / totalMonthPickupPounds
+
+  const otherPerishablesWeightPercentage =
+    findTotalWeight(pickups, 'other', pickups.length) / totalMonthPickupPounds
+
+  const emissionsReduced = 3.66 * totalMonthDeliveryPounds
   const retailValue = 1000000
   const fairMarketValue = 1000000
+  const forecast = 460000
+  console.log(pickups[0])
 
   const piedata = [
-    { name: 'Warehosue Outgoing', value: 33343.5 },
-    { name: 'Food Rescue', value: 74590 },
-    { name: 'Direct Link', value: 234425 },
+    { name: 'Warehosue Outgoing', value: 0 },
+    {
+      name: 'Food Rescue',
+      value: deliveries.reduce(
+        (total, d) => (d.route_id ? total + d.report.weight : total),
+        0
+      ),
+    },
+    {
+      name: 'Direct Link',
+      value: deliveries.reduce(
+        (total, d) => (d.direct_donation_id ? total + d.report.weight : total),
+        0
+      ),
+    },
   ]
 
-  const bardata = [{ name: 'July 2021', x: 13, y: 23 }]
+  const bardata = [
+    {
+      name: months[currentMonth],
+      actual: totalMonthDeliveryPounds,
+      forecast: forecast,
+    },
+  ]
 
   const COLORS = ['#216810', '#9DA1A4', '#4EA528']
 
   const onChange = e => {
-    setCurrentMonth(e.target.value)
+    setCurrentMonth(parseInt(e.target.value))
   }
 
   return (
     <main id="Revamp">
       <section id="CurrentMonthPounds">
-        <section id="Content" style={{ marginLeft: '5%' }}>
+        <section id="Content">
           <select style={{ marginTop: '3%' }}>
             <option>Current Month Pounds</option>
             <option>Current Year Pounds</option>
           </select>
-          <select onChange={onChange} id="Month">
-            {Months.map(month =>
-              month !== CurrentMonth ? (
-                <option key={month}>{month}</option>
-              ) : (
-                <option key={month} selected="selected">
-                  {month}
-                </option>
-              )
-            )}
+          <select value={currentMonth} onChange={onChange} id="Month">
+            {months.map((month, i) => (
+              <option value={i} key={month}>
+                {months[i]}
+              </option>
+            ))}
           </select>
           <Text
             id="CurrentMonthPoundsLabel"
@@ -86,11 +174,11 @@ export function CurrentMonthPounds() {
             color="green"
             align="center"
           >
-            {totalMonthPounds}
+            {formatLargeNumber(totalMonthDeliveryPounds)} lbs.
           </Text>
           <section>
             <Text type="small" color="green">
-              {emissionsReduced}
+              {formatLargeNumber(emissionsReduced)}
             </Text>
             <Text type="small" color="black">
               Emissions Reduced in Pounds
@@ -118,12 +206,11 @@ export function CurrentMonthPounds() {
           id="Content"
           style={{
             background: '#E6E8EA',
-            paddingTop: '2%',
-            marginRight: '5%',
+            padding: '2%',
           }}
         >
           <Text type="graph-title" color="black" align="center">
-            Breakdown of pounds in {CurrentMonth} 2021
+            Breakdown of pounds in {months[currentMonth]} 2021
           </Text>
           <ResponsiveContainer width="100%" height={150}>
             <PieChart margin={{ top: 10, right: 5, bottom: 10, left: 5 }}>
@@ -135,14 +222,16 @@ export function CurrentMonthPounds() {
                 fill="#8884d8"
               >
                 {piedata.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                  <>
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  </>
                 ))}
               </Pie>
-              <Legend align="center" iconType="circle" iconSize="12" />
               <Tooltip />
+              <Legend align="center" iconType="circle" iconSize="12" />
             </PieChart>
           </ResponsiveContainer>
 
@@ -153,8 +242,9 @@ export function CurrentMonthPounds() {
             <BarChart layout="vertical" data={bardata}>
               <XAxis type="number" />
               <YAxis dataKey="name" type="category" scale="band" />
-              <Bar dataKey="x" stackId="a" barSize={15} fill="#9DA1A4" />
-              <Bar dataKey="y" stackId="a" barSize={15} fill="#4EA528" />
+              <Bar dataKey="actual" barSize={15} fill="#9DA1A4" />
+              <Bar dataKey="forecast" barSize={15} fill="#4EA528" />
+              <Tooltip />
             </BarChart>
           </ResponsiveContainer>
         </section>
