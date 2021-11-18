@@ -1,0 +1,71 @@
+#PoundsInDateRange {
+  @include page;
+  height: 1260px;
+  padding-top: 72px;
+  z-index: -1;
+
+  a {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+
+  iframe {
+    width: 100%;
+    margin-top: 16px;
+    z-index: -1;
+    height: 100%;
+  }
+
+  .canvas {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .InputSection {
+    display: flex;
+    margin-left: 5%;
+    width: 95%;
+    .Input {
+      input {
+        background: none;
+        height: 100%;
+        position: absolute;
+        border: 0;
+        border-radius: 8px;
+        background: var(--foreground);
+        padding: 28px 8px 16px 12px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        width: 95%;
+        z-index: 1;
+        transition: border 0.1s ease;
+        -webkit-appearance: none;
+      }
+    }
+  }
+  .header {
+    .se-text {
+      margin-left: 5%;
+    }
+  }
+
+  .pounds {
+    .se-text {
+      text-align: center;
+    }
+  }
+
+  .details {
+    .se-text {
+      margin-left: 5%;
+    }
+  }
+
+  .graph {
+    background: var(--se-grey-light);
+    border-radius: 8px;
+    margin: 20px;
+  }
+}
