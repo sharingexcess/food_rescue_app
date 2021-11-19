@@ -142,3 +142,7 @@ export function generateStopId(stop) {
 
 export const createServerTimestamp = () =>
   firebase.firestore.FieldValue.serverTimestamp()
+
+export function formatLargeNumber(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}

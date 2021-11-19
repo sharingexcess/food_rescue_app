@@ -34,6 +34,7 @@ import {
   SwitchEnv,
   Modal,
   EnvWarning,
+  CumulativePounds,
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -102,6 +103,9 @@ function RescueAppRoutes() {
                 {/* Public Routes */}
                 <PublicRoute exact path="/">
                   <Home />
+                </PublicRoute>
+                <PublicRoute exact path="/analytics-sandbox">
+                  <CumulativePounds />
                 </PublicRoute>
                 <PublicRoute exact path="/profile">
                   <Profile />
