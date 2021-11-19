@@ -119,9 +119,8 @@ export function CurrentMonthPounds() {
   const retailValue = 1000000
   const fairMarketValue = 1000000
   const forecast = 460000
-  console.log(pickups[0])
 
-  const piedata = [
+  const breadkdownOfPounds = [
     { name: 'Warehosue Outgoing', value: 0 },
     {
       name: 'Food Rescue',
@@ -139,7 +138,7 @@ export function CurrentMonthPounds() {
     },
   ]
 
-  const bardata = [
+  const forecastVsActualPerformance = [
     {
       name: months[currentMonth],
       actual: totalMonthDeliveryPounds,
@@ -213,15 +212,15 @@ export function CurrentMonthPounds() {
             Breakdown of pounds in {months[currentMonth]} 2021
           </Text>
           <ResponsiveContainer width="100%" height={150}>
-            <PieChart margin={{ top: 10, right: 5, bottom: 10, left: 5 }}>
+            <PieChart margin={{ bottom: 10, top: -10 }}>
               <Pie
                 dataKey="value"
                 isAnimationActive="true"
-                data={piedata}
+                data={breadkdownOfPounds}
                 outerRadius={40}
                 fill="#8884d8"
               >
-                {piedata.map((entry, index) => (
+                {breadkdownOfPounds.map((entry, index) => (
                   <>
                     <Cell
                       key={`cell-${index}`}
@@ -234,19 +233,20 @@ export function CurrentMonthPounds() {
               <Legend align="center" iconType="circle" iconSize="12" />
             </PieChart>
           </ResponsiveContainer>
-
-          <Text type="graph-title" color="black" align="center">
-            Forecast versus Actual Performance
-          </Text>
-          <ResponsiveContainer width="90%" height={60}>
-            <BarChart layout="vertical" data={bardata}>
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" scale="band" />
-              <Bar dataKey="actual" barSize={15} fill="#9DA1A4" />
-              <Bar dataKey="forecast" barSize={15} fill="#4EA528" />
-              <Tooltip />
-            </BarChart>
-          </ResponsiveContainer>
+          <div id="BarChart">
+            <Text type="graph-title" color="black" align="center">
+              Forecast versus Actual Performance
+            </Text>
+            <ResponsiveContainer width="90%" height={100}>
+              <BarChart layout="vertical" data={forecastVsActualPerformance}>
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={76} />
+                <Bar dataKey="actual" barSize={15} fill="#9DA1A4" />
+                <Bar dataKey="forecast" barSize={15} fill="#4EA528" />
+                <Tooltip />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </section>
       </section>
     </main>
