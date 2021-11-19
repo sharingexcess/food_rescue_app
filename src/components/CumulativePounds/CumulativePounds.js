@@ -12,8 +12,38 @@ import {
   Bar,
 } from 'recharts'
 import { useFirestore } from 'hooks'
-import { formatLargeNumber } from 'helpers'
+import { calculateCategoryRatios, formatLargeNumber } from 'helpers'
 import { useEffect } from 'react/cjs/react.development'
+const categories = [
+  'bakery',
+  'dairy',
+  'meat/Fish',
+  'mixed groceries',
+  'non-perishable',
+  'prepared/Frozen',
+  'produce',
+  'other',
+]
+const retailValues = {
+  bakery: 2.36,
+  dairy: 1.28,
+  'meat/Fish': 4.4,
+  'mixed groceries': 2.31,
+  'non-perishable': 3.19,
+  'prepared/Frozen': 4.13,
+  produce: 1.57,
+  other: 2.31,
+}
+const fairMarketValues = {
+  bakery: 2.14,
+  dairy: 1.42,
+  'meat/Fish': 2.77,
+  'mixed groceries': 1.62,
+  'non-perishable': 2.13,
+  'prepared/Frozen': 2.17,
+  produce: 1.13,
+  other: 1.62,
+}
 const data = [
   {
     name: 'Aug',
@@ -85,11 +115,19 @@ const renderLineChart = (
 )
 
 export function CumulativePounds() {
+  const [retailValue, setRetailValue] = useState(0)
+  const [fairMarketValue, setFairMarketValue] = useState(0)
   const [cumulativeWeight, setCumulativeWeight] = useState(0)
+  const [categoryRatios, setCategoryRatios] = useState(0)
 
   const deliveries = useFirestore(
     'deliveries',
     useCallback(delivery => delivery.status === 9, [])
+  )
+
+  const pickups = useFirestore(
+    'pickups',
+    useCallback(pickup => pickup.status === 9, [])
   )
 
   useEffect(() => {
@@ -105,6 +143,27 @@ export function CumulativePounds() {
       setCumulativeWeight(generateCumulativeWeight())
     }
   }, [deliveries])
+
+  useEffect(() => {
+    if (pickups.length) {
+      setCategoryRatios(calculateCategoryRatios(pickups))
+    }
+  }, [pickups])
+
+  useEffect(() => {
+    let totalRetail = 0
+    let totalFairMarket = 0
+    for (const category of categories) {
+      const categoryWeight = cumulativeWeight * categoryRatios[category]
+      const categoryRetailValue = categoryWeight * retailValues[category]
+      const categoryFairMarketValue =
+        categoryWeight * fairMarketValues[category]
+      totalRetail += categoryRetailValue
+      totalFairMarket += categoryFairMarketValue
+    }
+    setRetailValue(totalRetail)
+    setFairMarketValue(totalFairMarket)
+  }, [cumulativeWeight, categoryRatios])
 
   return (
     <main id="CumulativePounds">
@@ -122,19 +181,19 @@ export function CumulativePounds() {
         <div className="CumulativePoundsDetailsSection">
           <div className="CumulativePoundsDetails">
             <Text type="small" color="green">
-              12,582,77.3
+              {formatLargeNumber(cumulativeWeight * 3.66)} lbs.
             </Text>
             <Text type="small">&nbsp; Emmisions Reduced in Pounds</Text>
           </div>
           <div className="CumulativePoundsDetails">
             <Text type="small" color="green">
-              1,000,000
+              ${formatLargeNumber(retailValue)}
             </Text>
             <Text type="small">&nbsp; Retail Value</Text>
           </div>
           <div className="CumulativePoundsDetails">
             <Text type="small" color="green">
-              1,000,000
+              ${formatLargeNumber(fairMarketValue)}
             </Text>
             <div className="class"></div>
             <Text type="small">&nbsp; Fair Market Value</Text>

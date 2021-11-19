@@ -144,5 +144,46 @@ export const createServerTimestamp = () =>
   firebase.firestore.FieldValue.serverTimestamp()
 
 export function formatLargeNumber(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  if (parts[1] && parts[1].length > 2) {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
+}
+
+const categories = [
+  'bakery',
+  'dairy',
+  'meat/Fish',
+  'mixed groceries',
+  'non-perishable',
+  'prepared/Frozen',
+  'produce',
+  'other',
+]
+
+export function calculateCategoryRatios(pickups) {
+  let totalWeight = 0
+  const totals = {
+    bakery: 0,
+    dairy: 0,
+    'meat/Fish': 0,
+    'mixed groceries': 0,
+    'non-perishable': 0,
+    'prepared/Frozen': 0,
+    produce: 0,
+    other: 0,
+  }
+  const ratios = {}
+  for (const p of pickups) {
+    totalWeight += p.report.weight
+    for (const category of categories) {
+      totals[category] += p.report[category]
+    }
+  }
+  for (const category of categories) {
+    ratios[category] = totals[category] / totalWeight
+  }
+  return ratios
 }
