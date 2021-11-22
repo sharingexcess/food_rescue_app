@@ -79,7 +79,7 @@ export function PoundsInDateRange() {
       value: 2000,
     },
     {
-      name: 'NP',
+      name: 'Non-persihable ',
       value: 500,
     },
     {
@@ -133,7 +133,7 @@ export function PoundsInDateRange() {
     if (deliveries.length) {
       setPoundsInRange(generatePoundsInRange())
     }
-  }, [deliveries])
+  }, [routes, deliveries, poundsInRange, categoryRatios])
 
   useEffect(() => {
     if (pickups.length) {
