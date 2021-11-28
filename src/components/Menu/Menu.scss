@@ -1,8 +1,8 @@
 #MenuBackground {
   position: fixed;
-  top: 0;
+  top: -100vh;
   left: 0;
-  height: 100vh;
+  height: 300vh;
   width: 100vw;
   background: var(--se-black-transparent);
   z-index: 21;

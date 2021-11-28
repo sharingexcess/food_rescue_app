@@ -8,7 +8,7 @@
     "@emotion/styled": "^11.3.0",
     "@sentry/react": "^5.30.0",
     "@sentry/tracing": "^5.30.0",
-    "@sharingexcess/designsystem": "^1.2.2",
+    "@sharingexcess/designsystem": "^1.2.8",
     "apexcharts": "^3.27.3",
     "firebase": "^8.2.1",
     "google-map-react": "^2.1.9",
