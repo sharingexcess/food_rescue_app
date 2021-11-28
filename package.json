@@ -1,7 +1,7 @@
 {
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.5.0",
@@ -21,6 +21,7 @@
     "react-phone-number-input": "^3.1.18",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
+    "recharts": "^2.1.6",
     "simple-react-calculator": "^0.2.1",
     "validator": "^13.5.2"
   },
@@ -29,7 +30,7 @@
     "dev": "cp environments/.env.dev .env.local && react-scripts start",
     "prod": "cp environments/.env.prod .env.local && react-scripts start",
     "build": "react-scripts build",
-    "deploy:prod": "node scripts/prod_deploy.js",
+    "deploy": "node scripts/prod_deploy.js",
     "rollback": "node scripts/prod_emergency_rollback.js"
   },
   "browserslist": {
@@ -45,7 +46,9 @@
     ]
   },
   "devDependencies": {
+    "@sentry/cli": "^1.71.0",
     "colors": "^1.4.0",
+    "dotenv": "^10.0.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.3.0",
     "git-state": "^4.1.0",

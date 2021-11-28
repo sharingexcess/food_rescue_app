@@ -37,13 +37,14 @@ import {
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
-import { FIREBASE_CONFIG, SENTRY_DSN } from './helpers/constants'
+import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV } from 'helpers'
 import './styles/index.scss'
 
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,
   integrations: [new Integrations.BrowserTracing()],
+  env: SENTRY_ENV,
 })
 
 // This function call connects us to Firebase and initializes all of our API access

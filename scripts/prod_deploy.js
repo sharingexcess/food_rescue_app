@@ -3,8 +3,38 @@ const crypto = require('crypto')
 const colors = require('colors')
 const { series } = require('async')
 const git = require('git-state')
+
+require('dotenv').config({ path: 'environments/.env.prod' }) // eslint-disable-line
+
 const ENCODED_PASS_CODE =
   '10a35f32b13f533407ce443ab0d4aa5d734db37586c95e1e3bd116227b695ca1'
+
+function getVersion() {
+  // eslint-disable-next-line
+  var pjson = require('../package.json')
+  console.log(pjson.version)
+  return pjson.version
+}
+
+async function confirmVersion() {
+  console.log(`\n\nCurrent Version is: ${getVersion()}`)
+  // eslint-disable-next-line
+  const rl = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  })
+
+  return new Promise(resolve => {
+    rl.question(
+      colors.cyan('\n\nEnter "yee" to confirm this is a new version number: '),
+      res => {
+        rl.close()
+        const input = res.toLowerCase()
+        resolve(input === 'yee')
+      }
+    )
+  })
+}
 
 async function validateGitState() {
   return new Promise(res => {
@@ -77,44 +107,69 @@ async function runCommand(command, callback) {
 }
 
 async function main() {
-  const valid_git_state = await validateGitState()
-  if (!valid_git_state) return
-  const approved = await requestPassCodeAuthorization()
-  if (approved) {
-    series(
-      [
-        callback =>
-          runCommand(
-            'cp environments/.env.prod .env.production.local',
-            callback
-          ),
-        callback => runCommand('rm -rf build', callback),
-        callback => runCommand('rm -rf node_modules', callback),
-        callback => runCommand('npm ci', callback),
-        callback => runCommand('npm run build', callback),
-        callback => runCommand('rm .env.production.local', callback),
-        callback =>
-          runCommand(
-            'cp environments/firebase.prod.json firebase.json',
-            callback
-          ),
-        callback => runCommand('firebase use prod', callback),
-        callback =>
-          runCommand('firebase deploy --only hosting:sharingexcess', callback),
-        callback =>
-          runCommand(
-            'cp environments/firebase.dev.json firebase.json',
-            callback
-          ),
-        callback => runCommand('firebase use default', callback),
-      ],
-      err => {
-        err
-          ? console.error('Error in deployment:', err)
-          : console.log(colors.green.bold('\n\nDEPLOYMENT SUCCESSFUL!\n'))
+  if (await confirmVersion()) {
+    if (await validateGitState()) {
+      if (await requestPassCodeAuthorization()) {
+        series(
+          [
+            callback =>
+              runCommand(
+                'cp environments/.env.prod .env.production.local',
+                callback
+              ),
+            callback => runCommand('rm -rf build', callback),
+            callback => runCommand('rm -rf node_modules', callback),
+            callback => runCommand('npm ci', callback),
+            callback => runCommand('npm run build', callback),
+            callback => runCommand('rm .env.production.local', callback),
+            callback =>
+              runCommand(
+                'cp environments/firebase.prod.json firebase.json',
+                callback
+              ),
+            callback => runCommand('firebase use prod', callback),
+            callback =>
+              runCommand(
+                'firebase deploy --only hosting:sharingexcess',
+                callback
+              ),
+            callback =>
+              runCommand(
+                'cp environments/firebase.dev.json firebase.json',
+                callback
+              ),
+            callback => runCommand('firebase use default', callback),
+            callback =>
+              runCommand(
+                `SENTRY_AUTH_TOKEN=${
+                  process.env.SENTRY_AUTH_TOKEN
+                } sentry-cli releases --org sharingexcess -p rescue new ${getVersion()}`,
+                callback
+              ),
+            callback =>
+              runCommand(
+                `SENTRY_AUTH_TOKEN=${
+                  process.env.SENTRY_AUTH_TOKEN
+                } sentry-cli releases --org sharingexcess -p rescue deploys ${getVersion()} new -e production`,
+                callback
+              ),
+            callback =>
+              runCommand(
+                `SENTRY_AUTH_TOKEN=${
+                  process.env.SENTRY_AUTH_TOKEN
+                } sentry-cli releases --org sharingexcess -p rescue finalize ${getVersion()}`,
+                callback
+              ),
+          ],
+          err => {
+            err
+              ? console.error('Error in deployment:', err)
+              : console.log(colors.green.bold('\n\nDEPLOYMENT SUCCESSFUL!\n'))
+          }
+        )
       }
-    )
-  } else console.log('Invalid pass code. Exiting...')
+    } else console.log('Invalid pass code. Exiting...')
+  } else console.log('No worries fam, cancelling deploy...')
 }
 
 main()

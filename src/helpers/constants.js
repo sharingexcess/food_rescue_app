@@ -10,7 +10,8 @@ export const FIREBASE_CONFIG = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 }
 
-export const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN_KEY
+export const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN
+export const SENTRY_ENV = process.env.REACT_APP_SENTRY_ENV
 
 export const IS_DEV_ENVIRONMENT = process.env.REACT_APP_FIREBASE_ENV === 'dev'
 
