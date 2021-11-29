@@ -34,28 +34,6 @@ export function CurrentMonthPounds() {
   const [currentYear, setCurrentYear] = useState(new Date().getYear() + 1900)
   const [years, setYears] = useState([])
 
-<<<<<<< HEAD
-  const filterByCurrentMonth = useCallback(
-    stop => {
-      if (stop.status === 9 && stop.time_finished) {
-        const date =
-          stop.time_finished && stop.time_finished.toDate
-            ? stop.time_finished.toDate() // handle firestore date objects
-            : new Date(stop.time_finished) // handle date strings created manually
-        console.log(date.getMonth(), date.getYear(), currentMonth, currentYear)
-        return (
-          date.getMonth() === currentMonth &&
-          date.getYear() + 1900 === currentYear
-        )
-      } else return false
-    },
-    [currentMonth, currentYear]
-  )
-
-  const deliveries = useFirestore('deliveries', filterByCurrentMonth)
-
-  const pickups = useFirestore('pickups', filterByCurrentMonth)
-=======
   const deliveries = useFirestore(
     'deliveries',
     useCallback(
@@ -107,7 +85,6 @@ export function CurrentMonthPounds() {
       [currentMonth, monthOrYear, currentYear]
     )
   )
->>>>>>> 41b6aa3... Added Pounds by Year
 
   useEffect(() => {
     function generateTotalWeight(a, type, length) {
@@ -150,15 +127,9 @@ export function CurrentMonthPounds() {
   useEffect(() => {
     let totalRetail = 0
     let totalFairMarket = 0
-<<<<<<< HEAD
     for (const category of FOOD_CATEGORIES) {
       const categoryWeight = totalMonthDeliveryPounds * categoryRatios[category]
       const categoryRetailValue = categoryWeight * FOOD_RETAIL_VALUES[category]
-=======
-    for (const category of categories) {
-      const categoryWeight = totalDeliveryPounds * categoryRatios[category]
-      const categoryRetailValue = categoryWeight * retailValues[category]
->>>>>>> 41b6aa3... Added Pounds by Year
       const categoryFairMarketValue =
         categoryWeight * FOOD_FAIR_MARKET_VALUES[category]
       totalRetail += categoryRetailValue
@@ -193,13 +164,8 @@ export function CurrentMonthPounds() {
 
   const forecastVsActualPerformance = [
     {
-<<<<<<< HEAD
       name: MONTHS[currentMonth],
       actual: totalMonthDeliveryPounds,
-=======
-      name: months[currentMonth],
-      actual: totalDeliveryPounds,
->>>>>>> 41b6aa3... Added Pounds by Year
       forecast: forecast,
     },
   ]
@@ -215,13 +181,10 @@ export function CurrentMonthPounds() {
     else setMonthOrYear(true)
   }
 
-<<<<<<< HEAD
-=======
   const yearChange = e => {
     setCurrentYear(years[parseInt(e.target.value)])
   }
 
->>>>>>> 41b6aa3... Added Pounds by Year
   return (
     <main id="Revamp">
       <section id="CurrentMonthPounds">
@@ -300,11 +263,9 @@ export function CurrentMonthPounds() {
             padding: '2%',
           }}
         >
-<<<<<<< HEAD
           <Text type="graph-title" color="black" align="center">
             Breakdown of pounds in {MONTHS[currentMonth]} 2021
           </Text>
-=======
           {monthOrYear ? (
             <Text type="graph-title" color="black" align="center">
               Breakdown of pounds in {months[currentMonth]} 2021
@@ -314,7 +275,6 @@ export function CurrentMonthPounds() {
               Breakdown of pounds in {currentYear}{' '}
             </Text>
           )}
->>>>>>> 41b6aa3... Added Pounds by Year
           <ResponsiveContainer width="100%" height={150}>
             <PieChart margin={{ bottom: 10, top: -10 }}>
               <Pie
