@@ -22,7 +22,6 @@ export const IS_PWA = window.matchMedia('(display-mode: standalone)').matches
 // 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
 export const MOBILE_THRESHOLD = 600
 
-<<<<<<< HEAD
 export const FORMSPREE_FORM_ID = 'xlezdgjl'
 
 export const GOOGLE_MAPS_URL =
@@ -109,43 +108,6 @@ export const RECIPIENT_TYPES = {
   POPUP: 'popup',
   HOLDING: 'holding',
   OTHER: 'other',
-=======
-export const SERVER_URL = process.env.REACT_APP_CLOUD_FUNCTION_BASE_UR
-
-export const ROUTE_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
-}
-
-export const FOOD_CATEGORIES = [
-  'bakery',
-  'dairy',
-  'meat/Fish',
-  'mixed groceries',
-  'non-perishable',
-  'prepared/Frozen',
-  'produce',
-  'other',
-]
-
-export const FOOD_RETAIL_VALUES = {
-  bakery: 2.36,
-  dairy: 1.28,
-  'meat/Fish': 4.4,
-  'mixed groceries': 2.31,
-  'non-perishable': 3.19,
-  'prepared/Frozen': 4.13,
-  produce: 1.57,
-  other: 2.31,
->>>>>>> 6c54b42... working on code cleaning
 }
 
 export const FOOD_FAIR_MARKET_VALUES = {
@@ -158,11 +120,10 @@ export const FOOD_FAIR_MARKET_VALUES = {
   produce: 1.13,
   other: 1.62,
 }
-<<<<<<< HEAD
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
 export const DEFAULT_DB_LIMIT = moment().subtract(7, 'days').toDate()
-=======
+
 export const MONTHS = [
   'January',
   'February',
@@ -177,4 +138,3 @@ export const MONTHS = [
   'November',
   'December',
 ]
->>>>>>> 6c54b42... working on code cleaning

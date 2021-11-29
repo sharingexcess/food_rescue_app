@@ -28,11 +28,13 @@ export function CurrentMonthPounds() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth())
   const [retailValue, setRetailValue] = useState(0)
   const [fairMarketValue, setFairMarketValue] = useState(0)
-  const [totalMonthDeliveryPounds, setTotalMonthDeliveryPounds] = useState(0)
+  const [totalDeliveryPounds, setTotalDeliveryPounds] = useState(0)
   const [categoryRatios, setCategoryRatios] = useState(0)
-  const [monthOrYear, setMonthOrYear] = useState(true)
+  const [monthOrYear, setMonthOrYear] = useState(true) // true - Monthly Pounds shown; false - Yearly Pounds shown
   const [currentYear, setCurrentYear] = useState(new Date().getYear() + 1900)
+  const [years, setYears] = useState([])
 
+<<<<<<< HEAD
   const filterByCurrentMonth = useCallback(
     stop => {
       if (stop.status === 9 && stop.time_finished) {
@@ -53,6 +55,59 @@ export function CurrentMonthPounds() {
   const deliveries = useFirestore('deliveries', filterByCurrentMonth)
 
   const pickups = useFirestore('pickups', filterByCurrentMonth)
+=======
+  const deliveries = useFirestore(
+    'deliveries',
+    useCallback(
+      d => {
+        if (monthOrYear) {
+          if (d.status === 9) {
+            const deliveryDate =
+              d.time_finished && d.time_finished.toDate
+                ? d.time_finished.toDate() // handle firestore date objects
+                : new Date(d.time_finished) // handle date strings created manually
+            return deliveryDate.getMonth() === currentMonth
+          } else return false
+        } else {
+          if (d.status === 9) {
+            const deliveryDate =
+              d.time_finished && d.time_finished.toDate
+                ? d.time_finished.toDate()
+                : new Date(d.time_finished)
+            return deliveryDate.getYear() + 1900 === currentYear
+          } else return false
+        }
+      },
+      [currentMonth, monthOrYear, currentYear]
+    )
+  )
+
+  const pickups = useFirestore(
+    'pickups',
+    useCallback(
+      p => {
+        if (monthOrYear) {
+          if (p.status === 9) {
+            const pickupDate =
+              p.time_finished && p.time_finished.toDate
+                ? p.time_finished.toDate() // handle firestore date objects
+                : new Date(p.time_finished) // handle date strings created manually
+            return pickupDate.getMonth() === currentMonth
+          } else return false
+        } else {
+          if (p.status === 9) {
+            const deliveryDate =
+              p.time_finished && p.time_finished.toDate
+                ? p.time_finished.toDate()
+                : new Date(p.time_finished)
+            return deliveryDate.getYear() + 1900 === currentYear
+          } else return false
+        }
+      },
+      [currentMonth, monthOrYear, currentYear]
+    )
+  )
+>>>>>>> 41b6aa3... Added Pounds by Year
 
   useEffect(() => {
     function generateTotalWeight(a, type, length) {
@@ -61,26 +116,49 @@ export function CurrentMonthPounds() {
         generateTotalWeight(a, type, length - 1) + a[length - 1].report[type]
       )
     }
-
-    if (deliveries.length)
-      setTotalMonthDeliveryPounds(
-        generateTotalWeight(deliveries, 'weight', deliveries.length)
-      )
-    else {
-      setTotalMonthDeliveryPounds(0)
+    if (monthOrYear) {
+      if (deliveries.length)
+        setTotalDeliveryPounds(
+          generateTotalWeight(deliveries, 'weight', deliveries.length)
+        )
+      else {
+        setTotalDeliveryPounds(0)
+      }
+    } else {
+      if (deliveries.length)
+        setTotalDeliveryPounds(
+          generateTotalWeight(deliveries, 'weight', deliveries.length)
+        )
+      else {
+        setTotalDeliveryPounds(0)
+      }
     }
-  }, [deliveries])
+  }, [deliveries, monthOrYear])
 
   useEffect(() => {
     if (pickups.length) setCategoryRatios(calculateCategoryRatios(pickups))
   }, [pickups])
 
   useEffect(() => {
+    const updatedYears = []
+    for (let i = 2016; i <= currentYear; i++) {
+      updatedYears.push(i)
+    }
+    setYears(updatedYears)
+  }, [])
+
+  useEffect(() => {
     let totalRetail = 0
     let totalFairMarket = 0
+<<<<<<< HEAD
     for (const category of FOOD_CATEGORIES) {
       const categoryWeight = totalMonthDeliveryPounds * categoryRatios[category]
       const categoryRetailValue = categoryWeight * FOOD_RETAIL_VALUES[category]
+=======
+    for (const category of categories) {
+      const categoryWeight = totalDeliveryPounds * categoryRatios[category]
+      const categoryRetailValue = categoryWeight * retailValues[category]
+>>>>>>> 41b6aa3... Added Pounds by Year
       const categoryFairMarketValue =
         categoryWeight * FOOD_FAIR_MARKET_VALUES[category]
       totalRetail += categoryRetailValue
@@ -88,7 +166,7 @@ export function CurrentMonthPounds() {
     }
     setRetailValue(totalRetail)
     setFairMarketValue(totalFairMarket)
-  }, [totalMonthDeliveryPounds, categoryRatios])
+  }, [totalDeliveryPounds, categoryRatios])
 
   const forecast = 460000
 
@@ -115,8 +193,13 @@ export function CurrentMonthPounds() {
 
   const forecastVsActualPerformance = [
     {
+<<<<<<< HEAD
       name: MONTHS[currentMonth],
       actual: totalMonthDeliveryPounds,
+=======
+      name: months[currentMonth],
+      actual: totalDeliveryPounds,
+>>>>>>> 41b6aa3... Added Pounds by Year
       forecast: forecast,
     },
   ]
@@ -132,6 +215,13 @@ export function CurrentMonthPounds() {
     else setMonthOrYear(true)
   }
 
+<<<<<<< HEAD
+=======
+  const yearChange = e => {
+    setCurrentYear(years[parseInt(e.target.value)])
+  }
+
+>>>>>>> 41b6aa3... Added Pounds by Year
   return (
     <main id="Revamp">
       <section id="CurrentMonthPounds">
@@ -148,13 +238,26 @@ export function CurrentMonthPounds() {
                     {MONTHS[i]}
                   </option>
                 ))}
-              </select>{' '}
+              </select>
             </>
           ) : (
-            <select style={{ marginTop: '3%' }} onChange={monthOrYearChange}>
-              <option>Current Month Pounds</option>
-              <option selected="selected">Current Year Pounds</option>
-            </select>
+            <>
+              <select style={{ marginTop: '3%' }} onChange={monthOrYearChange}>
+                <option>Current Month Pounds</option>
+                <option selected="selected">Current Year Pounds</option>
+              </select>
+              <select
+                value={years.indexOf(currentYear)}
+                onChange={yearChange}
+                id="Year"
+              >
+                {years.map((year, i) => (
+                  <option value={i} key={year}>
+                    {years[i]}
+                  </option>
+                ))}
+              </select>
+            </>
           )}
           <Text
             id="CurrentMonthPoundsLabel"
@@ -162,11 +265,11 @@ export function CurrentMonthPounds() {
             color="green"
             align="center"
           >
-            {formatLargeNumber(totalMonthDeliveryPounds)} lbs.
+            {formatLargeNumber(totalDeliveryPounds)} lbs.
           </Text>
           <section>
             <Text type="small" color="green">
-              {formatLargeNumber(totalMonthDeliveryPounds * 3.66)} lbs.
+              {formatLargeNumber(totalDeliveryPounds * 3.66)} lbs.
             </Text>
             <Text type="small" color="black">
               Emissions Reduced in Pounds
@@ -197,9 +300,21 @@ export function CurrentMonthPounds() {
             padding: '2%',
           }}
         >
+<<<<<<< HEAD
           <Text type="graph-title" color="black" align="center">
             Breakdown of pounds in {MONTHS[currentMonth]} 2021
           </Text>
+=======
+          {monthOrYear ? (
+            <Text type="graph-title" color="black" align="center">
+              Breakdown of pounds in {months[currentMonth]} 2021
+            </Text>
+          ) : (
+            <Text type="graph-title" color="black" align="center">
+              Breakdown of pounds in {currentYear}{' '}
+            </Text>
+          )}
+>>>>>>> 41b6aa3... Added Pounds by Year
           <ResponsiveContainer width="100%" height={150}>
             <PieChart margin={{ bottom: 10, top: -10 }}>
               <Pie
