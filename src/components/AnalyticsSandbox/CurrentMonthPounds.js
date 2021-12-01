@@ -9,6 +9,9 @@ import {
   YAxis,
   Bar,
   ResponsiveContainer,
+  Line,
+  LineChart,
+  CartesianGrid,
 } from 'recharts'
 import { Text } from '@sharingexcess/designsystem'
 import { useCallback, useEffect, useState } from 'react'
@@ -38,22 +41,16 @@ export function CurrentMonthPounds() {
     'deliveries',
     useCallback(
       d => {
-        if (monthOrYear) {
-          if (d.status === 9) {
-            const deliveryDate =
-              d.time_finished && d.time_finished.toDate
-                ? d.time_finished.toDate() // handle firestore date objects
-                : new Date(d.time_finished) // handle date strings created manually
+        if (d.status === 9) {
+          const deliveryDate =
+            d.time_finished && d.time_finished.toDate
+              ? d.time_finished.toDate() // handle firestore date objects
+              : new Date(d.time_finished) // handle date strings created manually
+          if (monthOrYear) {
             return deliveryDate.getMonth() === currentMonth
-          } else return false
-        } else {
-          if (d.status === 9) {
-            const deliveryDate =
-              d.time_finished && d.time_finished.toDate
-                ? d.time_finished.toDate()
-                : new Date(d.time_finished)
+          } else {
             return deliveryDate.getYear() + 1900 === currentYear
-          } else return false
+          }
         }
       },
       [currentMonth, monthOrYear, currentYear]
@@ -64,23 +61,17 @@ export function CurrentMonthPounds() {
     'pickups',
     useCallback(
       p => {
-        if (monthOrYear) {
-          if (p.status === 9) {
-            const pickupDate =
-              p.time_finished && p.time_finished.toDate
-                ? p.time_finished.toDate() // handle firestore date objects
-                : new Date(p.time_finished) // handle date strings created manually
+        if (p.status === 9) {
+          const pickupDate =
+            p.time_finished && p.time_finished.toDate
+              ? p.time_finished.toDate() // handle firestore date objects
+              : new Date(p.time_finished) // handle date strings created manually
+          if (monthOrYear) {
             return pickupDate.getMonth() === currentMonth
-          } else return false
-        } else {
-          if (p.status === 9) {
-            const deliveryDate =
-              p.time_finished && p.time_finished.toDate
-                ? p.time_finished.toDate()
-                : new Date(p.time_finished)
-            return deliveryDate.getYear() + 1900 === currentYear
-          } else return false
-        }
+          } else {
+            return pickupDate.getYear() + 1900 === currentYear
+          }
+        } else return false
       },
       [currentMonth, monthOrYear, currentYear]
     )
@@ -93,24 +84,14 @@ export function CurrentMonthPounds() {
         generateTotalWeight(a, type, length - 1) + a[length - 1].report[type]
       )
     }
-    if (monthOrYear) {
-      if (deliveries.length)
-        setTotalDeliveryPounds(
-          generateTotalWeight(deliveries, 'weight', deliveries.length)
-        )
-      else {
-        setTotalDeliveryPounds(0)
-      }
-    } else {
-      if (deliveries.length)
-        setTotalDeliveryPounds(
-          generateTotalWeight(deliveries, 'weight', deliveries.length)
-        )
-      else {
-        setTotalDeliveryPounds(0)
-      }
+    if (deliveries.length)
+      setTotalDeliveryPounds(
+        generateTotalWeight(deliveries, 'weight', deliveries.length)
+      )
+    else {
+      setTotalDeliveryPounds(0)
     }
-  }, [deliveries, monthOrYear])
+  }, [deliveries])
 
   useEffect(() => {
     if (pickups.length) setCategoryRatios(calculateCategoryRatios(pickups))
@@ -141,7 +122,7 @@ export function CurrentMonthPounds() {
 
   const forecast = 460000
 
-  const breadkdownOfPounds = [
+  const breakdownOfPounds = [
     {
       name: 'Warehosue Outgoing',
       value: deliveries.reduce(
@@ -280,11 +261,11 @@ export function CurrentMonthPounds() {
               <Pie
                 dataKey="value"
                 isAnimationActive="true"
-                data={breadkdownOfPounds}
+                data={breakdownOfPounds}
                 outerRadius={40}
                 fill="#8884d8"
               >
-                {breadkdownOfPounds.map((entry, index) => (
+                {breakdownOfPounds.map((entry, index) => (
                   <>
                     <Cell
                       key={`cell-${index}`}
