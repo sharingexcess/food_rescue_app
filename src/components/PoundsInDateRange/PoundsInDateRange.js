@@ -53,40 +53,6 @@ export function PoundsInDateRange() {
   const [poundsInRange, setPoundsInRange] = useState(0)
   const [categoryRatios, setCategoryRatios] = useState(0)
 
-  const data = [
-    {
-      name: 'Produce',
-      value: 40000,
-    },
-    {
-      name: 'Bakery',
-      value: 13000,
-    },
-    {
-      name: 'Meat',
-      value: 9000,
-    },
-    {
-      name: 'Mixed',
-      value: 8000,
-    },
-    {
-      name: 'Prepared',
-      value: 8500,
-    },
-    {
-      name: 'Dairy',
-      value: 2000,
-    },
-    {
-      name: 'Non-persihable ',
-      value: 500,
-    },
-    {
-      name: 'Other',
-      value: 450,
-    },
-  ]
   const routesOriginal = useFirestore(
     'routes',
     useCallback(r => r.status === 9, [])
@@ -156,6 +122,72 @@ export function PoundsInDateRange() {
     setFairMarketValue(totalFairMarket)
   }, [poundsInRange, categoryRatios])
 
+  function findTotalWeight(a, type, i) {
+    if (i <= 0) return 0
+    return findTotalWeight(a, type, i - 1) + a[i - 1].report[type]
+  }
+
+  const bakeryTotal = findTotalWeight(pickups, 'bakery', pickups.length)
+
+  const dairyTotal = findTotalWeight(pickups, 'dairy', pickups.length)
+
+  const meatTotal = findTotalWeight(pickups, 'meat/Fish', pickups.length)
+  const mixedGroceriesTotal = findTotalWeight(
+    pickups,
+    'mixed Groceries',
+    pickups.length
+  )
+  const nonPerishablesTotal = findTotalWeight(
+    pickups,
+    'non-perishable',
+    pickups.length
+  )
+
+  const preparedTotal = findTotalWeight(
+    pickups,
+    'prepared/Frozen',
+    pickups.length
+  )
+  // pickups.reduce((total, p) => total + p.report.produce, 0)
+  const produceTotal = findTotalWeight(pickups, 'produce', pickups.length)
+
+  const otherTotal = findTotalWeight(pickups, 'other', pickups.length)
+
+  const graphData = [
+    {
+      name: 'Produce',
+      value: produceTotal,
+    },
+    {
+      name: 'Bakery',
+      value: bakeryTotal,
+    },
+    {
+      name: 'Meat',
+      value: meatTotal,
+    },
+    {
+      name: 'Mixed',
+      value: mixedGroceriesTotal,
+    },
+    {
+      name: 'Prepared',
+      value: preparedTotal,
+    },
+    {
+      name: 'Dairy',
+      value: dairyTotal,
+    },
+    {
+      name: 'Non-persihable ',
+      value: nonPerishablesTotal,
+    },
+    {
+      name: 'Other',
+      value: otherTotal,
+    },
+  ]
+
   return (
     <main id="PoundsInDateRange">
       <div class="canvas">
@@ -209,11 +241,11 @@ export function PoundsInDateRange() {
             <BarChart
               width={300}
               height={300}
-              data={data}
+              data={graphData}
               margin={{ top: 20, bottom: 10 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" scaleToFit={true} />
+              <XAxis dataKey="name" scaleToFit={true} interval={0} />
               <YAxis />
               <Tooltip />
               <Legend />
