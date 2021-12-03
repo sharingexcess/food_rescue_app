@@ -9,9 +9,6 @@ import {
   YAxis,
   Bar,
   ResponsiveContainer,
-  Line,
-  LineChart,
-  CartesianGrid,
 } from 'recharts'
 import { Text } from '@sharingexcess/designsystem'
 import { useCallback, useEffect, useState } from 'react'
@@ -36,6 +33,11 @@ export function CurrentMonthPounds() {
   const [monthOrYear, setMonthOrYear] = useState(true) // true - Monthly Pounds shown; false - Yearly Pounds shown
   const [currentYear, setCurrentYear] = useState(new Date().getYear() + 1900)
   const [years, setYears] = useState([])
+  const [breakdownOfPounds, setBreakdownOfPounds] = useState([])
+  const [
+    forecastVsActualPerformance,
+    setForecastVsActualPerformance,
+  ] = useState([])
 
   const deliveries = useFirestore(
     'deliveries',
@@ -98,14 +100,6 @@ export function CurrentMonthPounds() {
   }, [pickups])
 
   useEffect(() => {
-    const updatedYears = []
-    for (let i = 2016; i <= currentYear; i++) {
-      updatedYears.push(i)
-    }
-    setYears(updatedYears)
-  }, [])
-
-  useEffect(() => {
     let totalRetail = 0
     let totalFairMarket = 0
     for (const category of FOOD_CATEGORIES) {
@@ -120,39 +114,107 @@ export function CurrentMonthPounds() {
     setFairMarketValue(totalFairMarket)
   }, [totalDeliveryPounds, categoryRatios])
 
-  const forecast = 460000
+  useEffect(() => {
+    const tempBreakdownOfPounds = [
+      {
+        name: 'Warehosue Outgoing',
+        value: deliveries.reduce(
+          (total, d) =>
+            d.direct_donation_id ? total + d.report.weight : total,
+          0
+        ),
+      },
+      {
+        name: 'Food Rescue',
+        value: deliveries.reduce(
+          (total, d) => (d.route_id ? total + d.report.weight : total),
+          0
+        ),
+      },
+    ]
+    setBreakdownOfPounds(tempBreakdownOfPounds)
+  }, [deliveries])
 
-  const breakdownOfPounds = [
-    {
-      name: 'Warehosue Outgoing',
-      value: deliveries.reduce(
-        (total, d) => (d.direct_donation_id ? total + d.report.weight : total),
-        0
-      ),
-    },
-    {
-      name: 'Food Rescue',
-      value: deliveries.reduce(
-        (total, d) => (d.route_id ? total + d.report.weight : total),
-        0
-      ),
-    },
-    {
-      name: 'Direct Link',
-      value: 0,
-    },
-  ]
+  useEffect(() => {
+    const tempforecastVsActualPerformance = [
+      {
+        name: monthOrYear ? months[currentMonth] : currentYear,
+        actual: totalDeliveryPounds,
+        forecast: 15000,
+      },
+    ]
 
-  const forecastVsActualPerformance = [
-    {
-      name: MONTHS[currentMonth],
-      actual: totalMonthDeliveryPounds,
-      forecast: forecast,
-    },
-  ]
+    setForecastVsActualPerformance(tempforecastVsActualPerformance)
+  }, [monthOrYear, currentMonth, currentYear, totalDeliveryPounds])
 
-  const COLORS = ['#216810', '#9DA1A4', '#4EA528']
+  useEffect(() => {
+    const updatedYears = []
+    for (let i = 2016; i <= new Date().getYear() + 1900; i++) {
+      updatedYears.push(i)
+    }
+    setYears(updatedYears)
+  }, [])
 
+  const RADIAN = Math.PI / 180
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    value,
+    index,
+  }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 1.3
+    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+    const y = cy + radius * Math.sin(-midAngle * RADIAN)
+
+    return (
+      <>
+        <text
+          fontFamily="Montserrat"
+          fontSize="80%"
+          key={index}
+          x={x}
+          y={y - 13}
+          fill="black"
+          textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central"
+        >
+          {formatLargeNumber(value)}
+        </text>
+        <text
+          fontFamily="Montserrat"
+          fontSize="80%"
+          key={index + 1}
+          x={x}
+          y={y}
+          fill={COLORS[index]}
+          textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central"
+        >
+          {formatLargeNumber(percent * 100)} %
+        </text>
+      </>
+    )
+  }
+
+  const BarChartTooltip = ({ active, payload, label }) => {
+    if (active && payload && label) {
+      return (
+        <div>
+          <Text color="grey" type="small">
+            Actual: {formatLargeNumber(payload[0]['payload']['actual'])}
+          </Text>
+          <Text color="green" type="small">
+            Forecast: {formatLargeNumber(payload[0]['payload']['forecast'])}
+          </Text>
+        </div>
+      )
+    }
+    return null
+  }
   const monthChange = e => {
     setCurrentMonth(parseInt(e.target.value))
   }
@@ -256,14 +318,16 @@ export function CurrentMonthPounds() {
               Breakdown of pounds in {currentYear}{' '}
             </Text>
           )}
-          <ResponsiveContainer width="100%" height={150}>
+          <ResponsiveContainer width="100%" height={175}>
             <PieChart margin={{ bottom: 10, top: -10 }}>
               <Pie
                 dataKey="value"
                 isAnimationActive="true"
                 data={breakdownOfPounds}
                 outerRadius={40}
-                fill="#8884d8"
+                isAnimationActive={false}
+                labelLine={false}
+                label={renderCustomizedLabel}
               >
                 {breakdownOfPounds.map((entry, index) => (
                   <>
@@ -274,7 +338,6 @@ export function CurrentMonthPounds() {
                   </>
                 ))}
               </Pie>
-              <Tooltip />
               <Legend align="center" iconType="circle" iconSize="12" />
             </PieChart>
           </ResponsiveContainer>
@@ -288,7 +351,7 @@ export function CurrentMonthPounds() {
                 <YAxis dataKey="name" type="category" width={76} />
                 <Bar dataKey="actual" barSize={15} fill="#9DA1A4" />
                 <Bar dataKey="forecast" barSize={15} fill="#4EA528" />
-                <Tooltip />
+                <Tooltip content={<BarChartTooltip />} />
               </BarChart>
             </ResponsiveContainer>
           </div>
