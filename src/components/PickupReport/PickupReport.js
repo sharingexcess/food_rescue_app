@@ -8,7 +8,7 @@ import validator from 'validator'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
-  const { setModal } = useApp()
+  const { setModal, setModalState } = useApp()
   const route = useFirestore('routes', route_id)
   const { admin } = useAuth()
   const history = useHistory()
@@ -187,7 +187,10 @@ export function PickupReport({ customSubmitHandler }) {
         fullWidth
         color="white"
         type="primary"
-        handler={() => setModal('Calculator')}
+        handler={() => {
+          setModal('Calculator')
+          setModalState({ setFormData: setFormData })
+        }}
       >
         Open Calculator
       </Button>

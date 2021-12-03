@@ -2,16 +2,28 @@
 import { useState } from 'react'
 import { Input } from 'components'
 import { Button } from '@sharingexcess/designsystem'
+import { useApp } from 'hooks'
 
 export function Caluculator() {
   const [weight, setWeight] = useState(0)
   const [category, setCategory] = useState(0)
+  const { setModal, modalState } = useApp()
+  console.log(modalState)
   function handleWeightChange(e) {
-    setWeight(parseInt(e.target.value))
+    setWeight(parseInt(e.target.value) || 0)
   }
 
   function handleCategoryChange(e) {
     setCategory(e.target.value)
+  }
+
+  function handleAddToReport() {
+    modalState.setFormData(currentData => ({
+      ...currentData,
+      [category]: currentData[category] + weight,
+    }))
+    setWeight(0)
+    setCategory('')
   }
 
   return (
@@ -33,10 +45,20 @@ export function Caluculator() {
         <option value="produce">Produce</option>
         <option value="other">Other</option>
       </select>
-      <Button type="primary" color="green" size="large">
+      <Button
+        type="primary"
+        color="green"
+        size="large"
+        handler={handleAddToReport}
+      >
         Add Weight to Report
       </Button>
-      <Button type="tertiary" color="green" size="medium">
+      <Button
+        type="tertiary"
+        color="green"
+        size="medium"
+        handler={() => setModal(false)}
+      >
         I'm done
       </Button>
     </div>
