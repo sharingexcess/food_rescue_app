@@ -179,8 +179,24 @@ export function PickupReport({ customSubmitHandler }) {
         Pickup Report
       </Text>
       <Spacer height={4} />
+
       <Text type="subheader" color="white" shadow>
-        Use this form to enter data on what food was available for rescue.
+        Please request scale from donor prior to filling out this report. Weigh
+        each box, noting that box's variety, and fill in total pounds for each
+        category below.<br></br> <br></br>
+        For additional instructions on how to fill out the pickup report, press
+        the i button.
+        <Button
+          id="Pickup-report-instructions"
+          type="tertiary"
+          color="white"
+          handler={() => {
+            setModal('PickupReportInstructions')
+            setModalState({ setFormData: setFormData })
+          }}
+        >
+          <i className="fa fa-info-circle" />
+        </Button>
       </Text>
       <Spacer height={16} />
       <Button
