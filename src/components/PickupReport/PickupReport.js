@@ -192,7 +192,6 @@ export function PickupReport({ customSubmitHandler }) {
           color="white"
           handler={() => {
             setModal('PickupReportInstructions')
-            setModalState({ setFormData: setFormData })
           }}
         >
           <i className="fa fa-info-circle" />
