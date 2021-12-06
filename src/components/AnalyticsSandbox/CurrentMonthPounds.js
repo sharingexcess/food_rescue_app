@@ -47,9 +47,14 @@ export function CurrentMonthPounds() {
           const deliveryDate =
             d.time_finished && d.time_finished.toDate
               ? d.time_finished.toDate() // handle firestore date objects
-              : new Date(d.time_finished) // handle date strings created manually
+              : d.time_finished
+              ? new Date(d.time_finished) // handle date strings created manually
+              : d.report.created_at.toDate() //handle deliveries without time_finished
           if (monthOrYear) {
-            return deliveryDate.getMonth() === currentMonth
+            return (
+              deliveryDate.getMonth() === currentMonth &&
+              deliveryDate.getYear() + 1900 === currentYear
+            )
           } else {
             return deliveryDate.getYear() + 1900 === currentYear
           }
@@ -69,7 +74,10 @@ export function CurrentMonthPounds() {
               ? p.time_finished.toDate() // handle firestore date objects
               : new Date(p.time_finished) // handle date strings created manually
           if (monthOrYear) {
-            return pickupDate.getMonth() === currentMonth
+            return (
+              pickupDate.getMonth() === currentMonth &&
+              pickupDate.getYear() + 1900 === currentYear
+            )
           } else {
             return pickupDate.getYear() + 1900 === currentYear
           }
@@ -200,7 +208,7 @@ export function CurrentMonthPounds() {
     )
   }
 
-  const BarChartTooltip = ({ active, payload, label }) => {
+  function BarChartTooltip({ active, payload, label }) {
     if (active && payload && label) {
       return (
         <div>
@@ -215,16 +223,16 @@ export function CurrentMonthPounds() {
     }
     return null
   }
-  const monthChange = e => {
+  function monthChange(e) {
     setCurrentMonth(parseInt(e.target.value))
   }
 
-  const monthOrYearChange = e => {
+  function monthOrYearChange() {
     if (monthOrYear) setMonthOrYear(false)
     else setMonthOrYear(true)
   }
 
-  const yearChange = e => {
+  function yearChange(e) {
     setCurrentYear(years[parseInt(e.target.value)])
   }
 
@@ -242,6 +250,17 @@ export function CurrentMonthPounds() {
                 {MONTHS.map((month, i) => (
                   <option value={i} key={month}>
                     {MONTHS[i]}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={years.indexOf(currentYear)}
+                onChange={yearChange}
+                id="Year"
+              >
+                {years.map((year, i) => (
+                  <option value={i} key={year}>
+                    {years[i]}
                   </option>
                 ))}
               </select>
@@ -322,7 +341,6 @@ export function CurrentMonthPounds() {
             <PieChart margin={{ bottom: 10, top: -10 }}>
               <Pie
                 dataKey="value"
-                isAnimationActive="true"
                 data={breakdownOfPounds}
                 outerRadius={40}
                 isAnimationActive={false}
