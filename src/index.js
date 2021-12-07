@@ -39,6 +39,7 @@ import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
 import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV } from 'helpers'
 import './styles/index.scss'
+import { UpdateDB } from 'update_db'
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -96,6 +97,7 @@ function RescueAppRoutes() {
           {/* Auth component handles login and will show a login page if no user is authenticated */}
           <Firestore>
             <App>
+              <UpdateDB />
               <Header />
               <Modal />
               <EnvWarning />

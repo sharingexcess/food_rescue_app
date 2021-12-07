@@ -78,3 +78,183 @@ export const CLOUD_FUNCTION_URLS = {
   deleteCalendarEvent:
     process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'deleteCalendarEvent',
 }
+
+/*
+
+TODO: recurring routes? original_stop_id? is_philabundance_partner?
+
+Route {
+
+  id
+  handler_id
+  google_calendar_event_id
+  is_wholesale
+  is_direct_link
+
+  status
+  notes
+  time_created
+  time_updated
+  time_range_start
+  time_range_finish
+  time_started
+  time_finished
+  stops[]
+
+  dairy
+  bakery
+  produce
+  meat_fish
+  nonperishable
+  prepared_frozen
+  mixed
+  other
+  total_weight
+
+}
+
+
+
+
+
+Pickup {
+
+  id
+  driver_id
+  route_id
+  organization_id
+  location_id
+
+  status
+  notes
+  time_created
+  time_updated
+  time_started
+  time_arrived
+  time_finished
+  route_stop_index
+
+  dairy
+  bakery
+  produce
+  meat_fish
+  nonperishable
+  prepared_frozen
+  mixed
+  other
+  total_weight
+
+}
+
+
+
+Delivery {
+
+  id
+  driver_id
+  route_id
+  organization_id
+  location_id
+
+  status
+  notes
+  time_created
+  time_updated
+  time_started
+  time_arrived
+  time_finished
+  route_stop_index
+
+  dairy
+  bakery
+  produce
+  meat_fish
+  nonperishable
+  prepared_frozen
+  mixed
+  other
+  total_weight
+  percent_of_total_in_vehicle
+
+}
+
+Organization {
+  id
+  name
+  primary_location_id
+  type (food_bank, community_fridge, home_delivery, retail, wholesale, se_warehouse)
+}
+
+Location {
+  id
+  nickname
+  organization_id
+
+  address1
+  address2
+  city
+  state
+  zip
+  lat
+  lng
+
+  contact_name
+  contact_email
+  contact_phone
+  instructions
+  notes
+
+  sun_open
+  sun_close
+  mon_open
+  mon_close
+  tue_open
+  tue_close
+  wed_open
+  wed_close
+  thu_open
+  thu_close
+  fri_open
+  fri_close
+  sat_open
+  sat_close
+}
+
+User {
+  id
+  is_driver
+  is_admin
+  name
+  icon
+  email
+  phone
+  pronouns
+
+  time_created
+  time_updated
+  time_granted_access
+  time_last_login
+  granted_access_by
+
+  insurance_policy_number
+  insurance_provider
+  license_number
+  license_state
+
+  available_sun_am
+  available_sun_pm
+  available_mon_am
+  available_mon_pm
+  available_tue_am
+  available_tue_pm
+  available_wed_am
+  available_wed_pm
+  available_thu_am
+  available_thu_pm
+  available_fri_am
+  available_fri_pm
+  available_sat_am
+  available_sat_pm
+}
+
+*/

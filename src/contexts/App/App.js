@@ -8,7 +8,6 @@ function App({ children }) {
   const { pathname } = useLocation()
   const [modal, setModal] = useState()
   const [modalState, setModalState] = useState()
-
   useEffect(() => {
     // handle clearing modalState on pathname change
     setModalState()
