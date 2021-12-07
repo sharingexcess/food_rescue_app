@@ -7,6 +7,10 @@ FirestoreContext.displayName = 'Firestore'
 
 function Firestore({ children }) {
   const [routes] = useCollectionData(getCollection('Routes'))
+  const [retail_rescues] = useCollectionData(getCollection('retail_rescues'))
+  const [wholesale_rescues] = useCollectionData(
+    getCollection('wholesale_rescues')
+  )
   const [pickups] = useCollectionData(getCollection('Pickups'))
   const [deliveries] = useCollectionData(getCollection('Deliveries'))
   const [users] = useCollectionData(getCollection('Users').orderBy('name'))
@@ -22,6 +26,8 @@ function Firestore({ children }) {
     <FirestoreContext.Provider
       value={{
         routes,
+        retail_rescues,
+        wholesale_rescues,
         pickups,
         deliveries,
         users,

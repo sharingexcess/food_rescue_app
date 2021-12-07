@@ -63,7 +63,7 @@ export const ROUTE_STATUSES = {
   0: 'cancelled',
   1: 'scheduled',
   2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
+  3: 'active',
   4: 'UNDEFINED_STATUS',
   5: 'UNDEFINED_STATUS',
   6: 'UNDEFINED_STATUS',
@@ -81,35 +81,67 @@ export const CLOUD_FUNCTION_URLS = {
 
 /*
 
-TODO: recurring routes? original_stop_id? is_philabundance_partner?
+TODO: recurring routes? original_stop_id? is_philabundance_partner? route_id structure? do all routes fit into either retail, wholesale, or direct_link?
 
-Route {
+retail_rescue {
 
   id
   handler_id
   google_calendar_event_id
-  is_wholesale
   is_direct_link
-
   status
   notes
-  time_created
-  time_updated
-  time_range_start
-  time_range_finish
-  time_started
-  time_finished
-  stops[]
+  stop_ids
 
-  dairy
-  bakery
-  produce
-  meat_fish
-  nonperishable
-  prepared_frozen
-  mixed
-  other
-  total_weight
+  timestamps {
+    created
+    updated
+    started
+    finished
+    scheduled_start
+    scheduled_finish
+  }
+
+  impact_data {
+    dairy
+    bakery
+    produce
+    meat_fish
+    non_perishable
+    prepared_frozen
+    mixed
+    other
+    total_weight
+  }
+
+}
+
+
+wholesale_rescue {
+
+  id
+  handler_id
+  is_direct_link
+  notes
+  pickup_id
+  delivery_id
+
+  timestamps {
+    created
+    updated
+  }
+
+  impact_data {
+    dairy
+    bakery
+    produce
+    meat_fish
+    non_perishable
+    prepared_frozen
+    mixed
+    other
+    total_weight
+  }
 
 }
 
@@ -117,75 +149,88 @@ Route {
 
 
 
-Pickup {
+pickup {
 
   id
-  driver_id
-  route_id
+  handler_id
+  rescue_id
+  rescue_type (wholesale/retail)
+  organization_id
+  location_id
+  status
+  notes
+  delivery_ids
+
+  timestamps {
+    created
+    updated
+    started
+    arrived
+    finished
+  }
+
+  impact_data {
+    dairy
+    bakery
+    produce
+    meat_fish
+    non_perishable
+    prepared_frozen
+    mixed
+    other
+    total_weight
+  }
+
+}
+
+
+
+delivery {
+
+  id
+  handler_id
+  rescue_id
+  rescue_type (wholesale/retail)
   organization_id
   location_id
 
-  status
-  notes
-  time_created
-  time_updated
-  time_started
-  time_arrived
-  time_finished
-  route_stop_index
+  timestamps {
+    created
+    updated
+    started
+    arrived
+    finished
+  }
 
-  dairy
-  bakery
-  produce
-  meat_fish
-  nonperishable
-  prepared_frozen
-  mixed
-  other
-  total_weight
-
-}
-
-
-
-Delivery {
-
-  id
-  driver_id
-  route_id
-  organization_id
-  location_id
-
-  status
-  notes
-  time_created
-  time_updated
-  time_started
-  time_arrived
-  time_finished
-  route_stop_index
-
-  dairy
-  bakery
-  produce
-  meat_fish
-  nonperishable
-  prepared_frozen
-  mixed
-  other
-  total_weight
-  percent_of_total_in_vehicle
+  impact_data {
+    dairy
+    bakery
+    produce
+    meat_fish
+    non_perishable
+    prepared_frozen
+    mixed
+    other
+    total_weight
+    percent_of_total_dropped
+  }
 
 }
 
-Organization {
+organization {
   id
   name
   primary_location_id
-  type (food_bank, community_fridge, home_delivery, retail, wholesale, se_warehouse)
+  type (food_bank, community_fridge, home_delivery, retail, wholesale, holding)
+
+  timestamps {
+    created
+    updated
+  }
+
 }
 
-Location {
+location {
   id
   nickname
   organization_id
@@ -204,23 +249,32 @@ Location {
   instructions
   notes
 
-  sun_open
-  sun_close
-  mon_open
-  mon_close
-  tue_open
-  tue_close
-  wed_open
-  wed_close
-  thu_open
-  thu_close
-  fri_open
-  fri_close
-  sat_open
-  sat_close
+  timestamps {
+    created
+    updated
+  }
+
+
+  hours {
+    sun_open
+    sun_close
+    mon_open
+    mon_close
+    tue_open
+    tue_close
+    wed_open
+    wed_close
+    thu_open
+    thu_close
+    fri_open
+    fri_close
+    sat_open
+    sat_close
+  }
+
 }
 
-User {
+user {
   id
   is_driver
   is_admin
@@ -229,32 +283,37 @@ User {
   email
   phone
   pronouns
-
-  time_created
-  time_updated
-  time_granted_access
-  time_last_login
   granted_access_by
+
+  timestamps {
+    created
+    updated
+    granted_access
+    last_login
+  }
 
   insurance_policy_number
   insurance_provider
   license_number
   license_state
 
-  available_sun_am
-  available_sun_pm
-  available_mon_am
-  available_mon_pm
-  available_tue_am
-  available_tue_pm
-  available_wed_am
-  available_wed_pm
-  available_thu_am
-  available_thu_pm
-  available_fri_am
-  available_fri_pm
-  available_sat_am
-  available_sat_pm
+  availability {
+    sun_am
+    sun_pm
+    mon_am
+    mon_pm
+    tue_am
+    tue_pm
+    wed_am
+    wed_pm
+    thu_am
+    thu_pm
+    fri_am
+    fri_pm
+    sat_am
+    sat_pm
+  }
+
 }
 
 */
