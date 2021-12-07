@@ -22,7 +22,6 @@ import {
   MONTHS,
   filterCompletedStopsByDateRange,
 } from 'helpers'
-import moment from 'moment'
 
 export function CurrentMonthPounds() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth())
@@ -111,7 +110,7 @@ export function CurrentMonthPounds() {
     let totalRetail = 0
     let totalFairMarket = 0
     for (const category of FOOD_CATEGORIES) {
-      const categoryWeight = totalMonthDeliveryPounds * categoryRatios[category]
+      const categoryWeight = totalDeliveryPounds * categoryRatios[category]
       const categoryRetailValue = categoryWeight * FOOD_RETAIL_VALUES[category]
       const categoryFairMarketValue =
         categoryWeight * FOOD_FAIR_MARKET_VALUES[category]
@@ -146,12 +145,11 @@ export function CurrentMonthPounds() {
   useEffect(() => {
     const tempforecastVsActualPerformance = [
       {
-        name: monthOrYear ? months[currentMonth] : currentYear,
+        name: monthOrYear ? MONTHS[currentMonth] : currentYear,
         actual: totalDeliveryPounds,
         forecast: 15000,
       },
     ]
-
     setForecastVsActualPerformance(tempforecastVsActualPerformance)
   }, [monthOrYear, currentMonth, currentYear, totalDeliveryPounds])
 
@@ -162,9 +160,9 @@ export function CurrentMonthPounds() {
     }
     setYears(updatedYears)
   }, [])
-
+  const COLORS = ['#216810', '#4EA528', '#9DA1A4']
   const RADIAN = Math.PI / 180
-  const renderCustomizedLabel = ({
+  function renderCustomizedLabel({
     cx,
     cy,
     midAngle,
@@ -173,7 +171,7 @@ export function CurrentMonthPounds() {
     percent,
     value,
     index,
-  }) => {
+  }) {
     const radius = innerRadius + (outerRadius - innerRadius) * 1.3
     const x = cx + radius * Math.cos(-midAngle * RADIAN)
     const y = cy + radius * Math.sin(-midAngle * RADIAN)
@@ -229,7 +227,10 @@ export function CurrentMonthPounds() {
 
   function monthOrYearChange() {
     if (monthOrYear) setMonthOrYear(false)
-    else setMonthOrYear(true)
+    else {
+      setMonthOrYear(true)
+      setCurrentYear(new Date().getYear() + 1900)
+    }
   }
 
   function yearChange(e) {
@@ -302,7 +303,7 @@ export function CurrentMonthPounds() {
           </section>
           <section>
             <Text type="small" color="green">
-              ${formatLargeNumber(retailValue)}
+              ${retailValue ? formatLargeNumber(retailValue) : 0}
             </Text>
             <Text type="small" color="black">
               Retail Value
@@ -310,7 +311,7 @@ export function CurrentMonthPounds() {
           </section>
           <section>
             <Text type="small" color="green">
-              ${formatLargeNumber(fairMarketValue)}
+              ${fairMarketValue ? formatLargeNumber(fairMarketValue) : 0}
             </Text>
             <Text type="small" color="black">
               Fair Market Value
