@@ -13,57 +13,18 @@ import {
 import { Text } from '@sharingexcess/designsystem'
 import { useCallback, useEffect, useState } from 'react'
 import { useFirestore } from 'hooks'
-import { formatLargeNumber, calculateCategoryRatios } from 'helpers'
-
-const categories = [
-  'bakery',
-  'dairy',
-  'meat/Fish',
-  'mixed groceries',
-  'non-perishable',
-  'prepared/Frozen',
-  'produce',
-  'other',
-]
-
-const retailValues = {
-  bakery: 2.36,
-  dairy: 1.28,
-  'meat/Fish': 4.4,
-  'mixed groceries': 2.31,
-  'non-perishable': 3.19,
-  'prepared/Frozen': 4.13,
-  produce: 1.57,
-  other: 2.31,
-}
-
-const fairMarketValues = {
-  bakery: 2.14,
-  dairy: 1.42,
-  'meat/Fish': 2.77,
-  'mixed groceries': 1.62,
-  'non-perishable': 2.13,
-  'prepared/Frozen': 2.17,
-  produce: 1.13,
-  other: 1.62,
-}
+import {
+  formatLargeNumber,
+  calculateCategoryRatios,
+  FOOD_CATEGORIES,
+  FOOD_RETAIL_VALUES,
+  FOOD_FAIR_MARKET_VALUES,
+  MONTHS,
+  filterCompletedStopsByDateRange,
+} from 'helpers'
+import moment from 'moment'
 
 export function CurrentMonthPounds() {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
-
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth())
   const [retailValue, setRetailValue] = useState(0)
   const [fairMarketValue, setFairMarketValue] = useState(0)
@@ -72,37 +33,26 @@ export function CurrentMonthPounds() {
   const [monthOrYear, setMonthOrYear] = useState(true)
   const [currentYear, setCurrentYear] = useState(new Date().getYear() + 1900)
 
-  const deliveries = useFirestore(
-    'deliveries',
-    useCallback(
-      d => {
-        if (d.status === 9) {
-          const deliveryDate =
-            d.time_finished && d.time_finished.toDate
-              ? d.time_finished.toDate() // handle firestore date objects
-              : new Date(d.time_finished) // handle date strings created manually
-          return deliveryDate.getMonth() === currentMonth
-        } else return false
-      },
-      [currentMonth]
-    )
+  const filterByCurrentMonth = useCallback(
+    stop => {
+      if (stop.status === 9 && stop.time_finished) {
+        const date =
+          stop.time_finished && stop.time_finished.toDate
+            ? stop.time_finished.toDate() // handle firestore date objects
+            : new Date(stop.time_finished) // handle date strings created manually
+        console.log(date.getMonth(), date.getYear(), currentMonth, currentYear)
+        return (
+          date.getMonth() === currentMonth &&
+          date.getYear() + 1900 === currentYear
+        )
+      } else return false
+    },
+    [currentMonth, currentYear]
   )
 
-  const pickups = useFirestore(
-    'pickups',
-    useCallback(
-      p => {
-        if (p.status === 9) {
-          const pickupDate =
-            p.time_finished && p.time_finished.toDate
-              ? p.time_finished.toDate() // handle firestore date objects
-              : new Date(p.time_finished) // handle date strings created manually
-          return pickupDate.getMonth() === currentMonth
-        } else return false
-      },
-      [currentMonth]
-    )
-  )
+  const deliveries = useFirestore('deliveries', filterByCurrentMonth)
+
+  const pickups = useFirestore('pickups', filterByCurrentMonth)
 
   useEffect(() => {
     function generateTotalWeight(a, type, length) {
@@ -128,11 +78,11 @@ export function CurrentMonthPounds() {
   useEffect(() => {
     let totalRetail = 0
     let totalFairMarket = 0
-    for (const category of categories) {
+    for (const category of FOOD_CATEGORIES) {
       const categoryWeight = totalMonthDeliveryPounds * categoryRatios[category]
-      const categoryRetailValue = categoryWeight * retailValues[category]
+      const categoryRetailValue = categoryWeight * FOOD_RETAIL_VALUES[category]
       const categoryFairMarketValue =
-        categoryWeight * fairMarketValues[category]
+        categoryWeight * FOOD_FAIR_MARKET_VALUES[category]
       totalRetail += categoryRetailValue
       totalFairMarket += categoryFairMarketValue
     }
@@ -165,7 +115,7 @@ export function CurrentMonthPounds() {
 
   const forecastVsActualPerformance = [
     {
-      name: months[currentMonth],
+      name: MONTHS[currentMonth],
       actual: totalMonthDeliveryPounds,
       forecast: forecast,
     },
@@ -182,7 +132,6 @@ export function CurrentMonthPounds() {
     else setMonthOrYear(true)
   }
 
-  console.log(currentYear)
   return (
     <main id="Revamp">
       <section id="CurrentMonthPounds">
@@ -194,9 +143,9 @@ export function CurrentMonthPounds() {
                 <option>Current Year Pounds</option>
               </select>
               <select value={currentMonth} onChange={monthChange} id="Month">
-                {months.map((month, i) => (
+                {MONTHS.map((month, i) => (
                   <option value={i} key={month}>
-                    {months[i]}
+                    {MONTHS[i]}
                   </option>
                 ))}
               </select>{' '}
@@ -249,7 +198,7 @@ export function CurrentMonthPounds() {
           }}
         >
           <Text type="graph-title" color="black" align="center">
-            Breakdown of pounds in {months[currentMonth]} 2021
+            Breakdown of pounds in {MONTHS[currentMonth]} 2021
           </Text>
           <ResponsiveContainer width="100%" height={150}>
             <PieChart margin={{ bottom: 10, top: -10 }}>
