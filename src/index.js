@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route as PublicRoute, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import firebase from 'firebase/app'
@@ -19,10 +19,10 @@ import {
   PickupReport,
   Privacy,
   Profile,
-  Routes,
+  RetailRescues,
   Terms,
   Tutorial,
-  Route,
+  RetailRescue,
   EditDirectDonation,
   EditOrganization,
   Organizations,
@@ -39,7 +39,6 @@ import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
 import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV } from 'helpers'
 import './styles/index.scss'
-import { UpdateDB } from 'update_db'
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -67,12 +66,26 @@ if (window.matchMedia('(display-mode: standalone)').matches) {
   })
 }
 
+function PublicRoute({ children, exact, path }) {
+  return (
+    <Route exact={exact} path={path}>
+      <Header />
+      {children}
+      <Modal />
+      <EnvWarning />
+    </Route>
+  )
+}
+
 function DriverRoute({ children, exact, path }) {
   const { permission } = useAuth()
   return permission ? (
-    <PublicRoute exact={exact} path={path}>
+    <Route exact={exact} path={path}>
+      <Header />
       {children}
-    </PublicRoute>
+      <Modal />
+      <EnvWarning />
+    </Route>
   ) : (
     <Error message="Only registered users have permission to view this page." />
   )
@@ -81,9 +94,12 @@ function DriverRoute({ children, exact, path }) {
 function AdminRoute({ children, exact, path }) {
   const { admin } = useAuth()
   return admin ? (
-    <PublicRoute exact={exact} path={path}>
+    <Route exact={exact} path={path}>
+      <Header />
       {children}
-    </PublicRoute>
+      <Modal />
+      <EnvWarning />
+    </Route>
   ) : (
     <Error message="Only admins have permission to view this page." />
   )
@@ -97,10 +113,6 @@ function RescueAppRoutes() {
           {/* Auth component handles login and will show a login page if no user is authenticated */}
           <Firestore>
             <App>
-              <UpdateDB />
-              <Header />
-              <Modal />
-              <EnvWarning />
               <Switch>
                 {/* Public Routes */}
                 <PublicRoute exact path="/">
@@ -135,11 +147,11 @@ function RescueAppRoutes() {
                 <DriverRoute exact path="/calendar">
                   <Calendar />
                 </DriverRoute>
-                <DriverRoute exact path="/routes">
-                  <Routes initial_filter={r => [1, 3].includes(r.status)} />
+                <DriverRoute exact path="/rescues">
+                  <RetailRescues />
                 </DriverRoute>
-                <DriverRoute exact path="/history">
-                  <Routes initial_filter={r => [0, 9].includes(r.status)} />
+                <DriverRoute exact path="/rescues/:rescue_id">
+                  <RetailRescue />
                 </DriverRoute>
                 <DriverRoute exact path="/history/:route_id">
                   <Route />

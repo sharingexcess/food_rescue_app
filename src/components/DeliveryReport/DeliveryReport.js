@@ -13,7 +13,7 @@ export function DeliveryReport() {
   const delivery = useFirestore('deliveries', delivery_id)
   const deliveries = useFirestore('deliveries')
   const pickups = useFirestore('pickups')
-  const routes = useFirestore('routes')
+  const retail_rescues = useFirestore('retail_rescues')
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',
@@ -31,7 +31,7 @@ export function DeliveryReport() {
   useEffect(() => {
     async function calculateWeight() {
       let updated_weight = 0
-      const route = routes.find(r => r.id === delivery.route_id)
+      const route = retail_rescues.find(r => r.id === delivery.route_id)
       const stop_index = route.stops.findIndex(stop => stop.id === delivery_id)
       for (let i = route.stops.length - 1; i >= 0; i--) {
         const stop = route.stops[i]
@@ -51,7 +51,7 @@ export function DeliveryReport() {
     if (delivery && delivery.pickup_ids && delivery.pickup_ids.length) {
       calculateWeight()
     }
-  }, [delivery, delivery_id, routes, pickups]) //eslint-disable-line react-hooks/exhaustive-deps
+  }, [delivery, delivery_id, retail_rescues, pickups]) //eslint-disable-line react-hooks/exhaustive-deps
 
   function canEdit() {
     return [1, 3, 6].includes(delivery.status) || admin

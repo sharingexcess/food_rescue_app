@@ -140,5 +140,4 @@ export function generateStopId(stop) {
     .toLowerCase()
 }
 
-export const createServerTimestamp = () =>
-  firebase.firestore.FieldValue.serverTimestamp()
+export const createTimestamp = () => new Date().toString()

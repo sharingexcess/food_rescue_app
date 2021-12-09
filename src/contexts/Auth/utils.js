@@ -1,10 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import {
-  getFirestoreData,
-  setFirestoreData,
-  createServerTimestamp,
-} from 'helpers'
+import { getFirestoreData, setFirestoreData, createTimestamp } from 'helpers'
 
 export async function getAuthenticatedUser() {
   const provider = new firebase.auth.GoogleAuthProvider()
@@ -23,10 +19,10 @@ export async function updatePublicUserProfile(user) {
       name: user.displayName,
       icon: user.photoURL,
       access_level: 'none',
-      created_at: createServerTimestamp(),
+      created_at: createTimestamp(),
     })
   }
   setFirestoreData(['Users', user.uid], {
-    last_login: createServerTimestamp(),
+    last_login: createTimestamp(),
   })
 }

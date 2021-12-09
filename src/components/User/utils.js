@@ -1,6 +1,6 @@
 import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 import {
-  createServerTimestamp,
+  createTimestamp,
   getImageFromStorage,
   isValidURL,
   setFirestoreData,
@@ -107,7 +107,7 @@ export function UserAdminPermissions({ profile }) {
     if (accessLevel !== profile.access_level) {
       setFirestoreData(['Users', profile.id], {
         access_level: accessLevel,
-        updated_at: createServerTimestamp(),
+        updated_at: createTimestamp(),
         granted_access_by: user.name,
       })
     }

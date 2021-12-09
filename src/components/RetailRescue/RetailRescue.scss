@@ -1,4 +1,4 @@
-#Route {
+#RetailRescue {
   @include page;
 
   .buttons {
@@ -29,7 +29,7 @@
       margin-right: 16px;
     }
 
-    #Route-edit-button {
+    #RetailRescue-edit-button {
       margin-left: auto;
       height: 32px;
       width: 32px;
@@ -46,12 +46,12 @@
         white-space: pre-line;
       }
 
-      .Route-stop-header {
+      .RetailRescue-stop-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
 
-        #Route-stop-edit-button {
+        #RetailRescue-stop-edit-button {
           margin-left: auto;
           height: 32px;
           width: 32px;
@@ -59,19 +59,19 @@
         }
       }
 
-      .Routes-stop-status {
+      .RetailRescues-stop-status {
         font-size: 28px;
         margin-bottom: auto;
       }
 
-      .Route-stop-instructions {
+      .RetailRescue-stop-instructions {
         span {
           font-weight: 700;
         }
       }
 
-      .Route-stop-address-button,
-      .Route-stop-phone-button {
+      .RetailRescue-stop-address-button,
+      .RetailRescue-stop-phone-button {
         display: flex;
         align-items: center;
         justify-content: flex-start;

@@ -1,4 +1,4 @@
-#Routes {
+#RetailRescues {
   @include page;
 
   .no-routes {
@@ -48,13 +48,13 @@
     align-items: center;
     margin: 8px 0;
 
-    .Routes-route-header {
+    .RetailRescues-route-header {
       width: 100%;
       max-width: 100%;
       display: flex;
       align-items: center;
 
-      .Routes-route-status {
+      .RetailRescues-route-status {
         font-size: 28px;
         margin-left: auto;
         margin-bottom: auto;

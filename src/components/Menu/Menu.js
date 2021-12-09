@@ -95,8 +95,7 @@ export function Menu({ isOpen, setIsOpen }) {
           <ul>
             {permission ? (
               <>
-                <MenuLink label="Routes" url="/routes" />
-                <MenuLink label="History" url="/history" />
+                <MenuLink label="Rescues" url="/rescues" />
               </>
             ) : null}
             {admin ? (

@@ -1,7 +1,6 @@
-import { ROUTE_STATUSES, setFirestoreData } from 'helpers'
+import { RESCUE_STATUSES, setFirestoreData } from 'helpers'
 import { useFirestore } from 'hooks'
 import moment from 'moment'
-import React from 'react'
 
 export function UpdateDB() {
   const routes = useFirestore('routes')
@@ -10,9 +9,205 @@ export function UpdateDB() {
   const wholesale_rescues = useFirestore('wholesale_rescues')
   const pickups = useFirestore('pickups')
   const deliveries = useFirestore('deliveries')
+  // const orgs = useFirestore('organizations')
+  // const locs = useFirestore('locations')
+  // const users = useFirestore('users')
 
-  function handleClick() {
-    updatePickups(pickups)
+  // function handleClick() {
+  //   console.log('runnin...')
+  //   updateUsers(users)
+  // }
+
+  async function updateUsers(users) {
+    if (!users || !users.length) {
+      alert('users not populated')
+    }
+
+    const failed = []
+
+    for (const i of users) {
+      try {
+        const user = {
+          id: i.id,
+          is_driver: i.access_level === 'driver' || i.access_level === 'admin',
+          is_admin: i.access_level === 'admin',
+          name: i.name,
+          icon: i.icon || null,
+          email: i.email,
+          phone: normalizePhoneNumber(i.phone),
+          pronouns: i.pronouns || null,
+
+          onboarding: {
+            completed_app_tutorial:
+              i.access_level === 'admin' || i.completed_app_tutorial || false,
+            completed_food_safety:
+              i.access_level === 'admin' || i.completed_food_safety || false,
+          },
+
+          driver_info: {
+            insurance_policy_number: i.drivers_insurance_policy_number || null,
+            insurance_provider: i.drivers_insurance_provider || null,
+            license_number: i.drivers_license_number || null,
+            license_state: i.drivers_license_state || null,
+            liability_release_url: i.drivers_liability_release || null,
+            vehicle_make_model: i.vehicle_make_model || null,
+          },
+
+          availability: {
+            sun_am: i.driver_availability
+              ? i.driver_availability.sun_am
+              : false,
+            sun_pm: i.driver_availability
+              ? i.driver_availability.sun_pm
+              : false,
+            mon_am: i.driver_availability
+              ? i.driver_availability.mon_am
+              : false,
+            mon_pm: i.driver_availability
+              ? i.driver_availability.mon_pm
+              : false,
+            tue_am: i.driver_availability
+              ? i.driver_availability.tue_am
+              : false,
+            tue_pm: i.driver_availability
+              ? i.driver_availability.tue_pm
+              : false,
+            wed_am: i.driver_availability
+              ? i.driver_availability.wed_am
+              : false,
+            wed_pm: i.driver_availability
+              ? i.driver_availability.wed_pm
+              : false,
+            thu_am: i.driver_availability
+              ? i.driver_availability.thu_am
+              : false,
+            thu_pm: i.driver_availability
+              ? i.driver_availability.thu_pm
+              : false,
+            fri_am: i.driver_availability
+              ? i.driver_availability.fri_am
+              : false,
+            fri_pm: i.driver_availability
+              ? i.driver_availability.fri_pm
+              : false,
+            sat_am: i.driver_availability
+              ? i.driver_availability.sat_am
+              : false,
+            sat_pm: i.driver_availability
+              ? i.driver_availability.sat_pm
+              : false,
+          },
+          timestamps: {
+            created: normalizeTimestamp(i.created_at || new Date(Date.now())),
+            updated: normalizeTimestamp(i.updated_at || new Date(Date.now())),
+            last_active: normalizeTimestamp(
+              i.last_login || i.updated_at || i.created_at
+            ),
+          },
+        }
+        console.log(user)
+        await setFirestoreData(['users', i.id], user)
+      } catch (e) {
+        console.error('Error while writing', i.id, e)
+        failed.push(i)
+      }
+    }
+    failed.length && console.log('Failed to write:', failed)
+    console.log('done!')
+  }
+
+  async function updateLocations(locs) {
+    if (!locs || !locs.length) {
+      alert('locs not populated')
+    }
+
+    const failed = []
+
+    for (const i of locs) {
+      try {
+        const location = {
+          id: i.id,
+          nickname: i.name || null,
+          organization_id: i.org_id,
+          notes: i.upon_arrival_instructions || null,
+
+          address: {
+            address1: i.address1,
+            address2: i.address2,
+            city: i.city,
+            zip: i.zip_code,
+            lat: i.lat || null,
+            lng: i.lng || null,
+          },
+
+          contact: {
+            name: i.contact_name || null,
+            email: i.contact_email || null,
+            phone: i.contact_phone || null,
+          },
+
+          timestamps: {
+            created: normalizeTimestamp(i.created_at || new Date(Date.now())),
+            updated: normalizeTimestamp(i.updated_at || new Date(Date.now())),
+          },
+
+          hours: {
+            sun_open: null,
+            sun_close: null,
+            mon_open: null,
+            mon_close: null,
+            tue_open: null,
+            tue_close: null,
+            wed_open: null,
+            wed_close: null,
+            thu_open: null,
+            thu_close: null,
+            fri_open: null,
+            fri_close: null,
+            sat_open: null,
+            sat_close: null,
+          },
+        }
+        console.log(location)
+        await setFirestoreData(['locations', i.id], location)
+      } catch (e) {
+        console.error('Error while writing', i.id, e)
+        failed.push(i)
+      }
+    }
+    failed.length && console.log('Failed to write:', failed)
+    console.log('done!')
+  }
+
+  async function updateOrganizations(orgs) {
+    if (!orgs || !orgs.length) {
+      alert('orgs not populated')
+    }
+
+    const failed = []
+
+    for (const i of orgs) {
+      try {
+        const org = {
+          id: i.id,
+          name: i.name,
+          icon: i.icon,
+          primary_location_id: i.primary_location || null,
+          type: 'recipient',
+          timestamps: {
+            created: normalizeTimestamp(i.created_at || new Date(Date.now())),
+            updated: normalizeTimestamp(i.updated_at || new Date(Date.now())),
+          },
+        }
+        console.log(org)
+        await setFirestoreData(['organizations', i.id], org)
+      } catch (e) {
+        console.error('Error while writing', i.id, e)
+        failed.push(i)
+      }
+    }
+    failed.length && console.log('Failed to write:', failed)
+    console.log('done!')
   }
 
   async function updateDeliveries(deliveries) {
@@ -82,6 +277,7 @@ export function UpdateDB() {
           mixed: 0,
           other: 0,
           total_weight: 0,
+          percent_of_total_dropped: 0,
         }
 
         if (i.report && i.report.percent_of_total_dropped) {
@@ -126,12 +322,12 @@ export function UpdateDB() {
         const delivery = {
           id: i.id,
           handler_id: i.driver_id || i.handler_id,
-          rescue_id: i.route_id || i.direct_donation_id,
+          icon: i.route_id || i.direct_donation_id,
           rescue_type: i.route_id ? 'retail' : 'wholesale',
           is_direct_link: parent && parent.is_direct_link,
           organization_id: i.org_id,
           location_id: i.location_id,
-          status: ROUTE_STATUSES[i.status],
+          status: RESCUE_STATUSES[i.status],
           notes: i.notes || null,
           pickup_ids,
           timestamps: {
@@ -240,7 +436,7 @@ export function UpdateDB() {
           is_direct_link: parent && parent.is_direct_link,
           location_id: i.location_id,
           organization_id: i.org_id,
-          status: ROUTE_STATUSES[i.status],
+          status: RESCUE_STATUSES[i.status],
           notes: i.notes || null,
           delivery_ids,
           timestamps: {
@@ -263,7 +459,7 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updateWholesaleRescues() {
+  async function updateWholesaleRescues(dds) {
     if (!dds || !dds.length) {
       alert('direct donations not populated')
     }
@@ -272,34 +468,6 @@ export function UpdateDB() {
 
     for (const i of dds) {
       try {
-        let impact_data = {
-          dairy: 0,
-          bakery: 0,
-          produce: 0,
-          meat_fish: 0,
-          non_perishable: 0,
-          prepared_frozen: 0,
-          mixed: 0,
-          other: 0,
-          total_weight: 0,
-        }
-
-        const p = pickups.find(p => p.id === i.pickup_id)
-
-        if (p && p.report) {
-          impact_data = {
-            dairy: p.report.dairy,
-            bakery: p.report.bakery,
-            produce: p.report.produce,
-            meat_fish: p.report['meat/Fish'],
-            mixed: p.report['mixed groceries'],
-            non_perishable: p.report['non-perishable'],
-            prepared_frozen: p.report['prepared/Frozen'],
-            other: p.report.other,
-            total_weight: p.report.weight,
-          }
-        }
-
         const rescue = {
           id: i.id,
           handler_id: i.handler_id,
@@ -311,7 +479,6 @@ export function UpdateDB() {
             created: normalizeTimestamp(i.created_at),
             updated: normalizeTimestamp(i.created_at),
           },
-          impact_data,
         }
 
         await setFirestoreData(['wholesale_rescues', i.id], rescue)
@@ -324,7 +491,7 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updateRetailRescues() {
+  async function updateRetailRescues(routes) {
     if (!routes || !routes.length) {
       alert('routes not populated')
     }
@@ -333,41 +500,12 @@ export function UpdateDB() {
 
     for (const i of routes) {
       try {
-        const impact_data = {
-          dairy: 0,
-          bakery: 0,
-          produce: 0,
-          meat_fish: 0,
-          non_perishable: 0,
-          prepared_frozen: 0,
-          mixed: 0,
-          other: 0,
-          total_weight: 0,
-        }
-
-        if (i.status === 9) {
-          const route_pickups = pickups.filter(
-            p => p.route_id === i.id && p.report && p.status === 9
-          )
-          for (const p of route_pickups) {
-            impact_data.dairy += p.report.dairy
-            impact_data.bakery += p.report.bakery
-            impact_data.produce += p.report.produce
-            impact_data.meat_fish += p.report['meat/Fish']
-            impact_data.mixed += p.report['mixed groceries']
-            impact_data.non_perishable += p.report['non-perishable']
-            impact_data.prepared_frozen += p.report['prepared/Frozen']
-            impact_data.other += p.report.other
-            impact_data.total_weight += p.report.weight
-          }
-        }
-
         const rescue = {
           id: i.id,
           handler_id: i.driver_id,
           google_calendar_event_id: i.google_calendar_event_id,
           is_direct_link: false,
-          status: ROUTE_STATUSES[i.status],
+          status: RESCUE_STATUSES[i.status],
           notes: i.notes || null,
           stop_ids: i.stops.map(s => s.id),
           timestamps: {
@@ -380,7 +518,6 @@ export function UpdateDB() {
             started: normalizeTimestamp(i.time_started),
             finished: normalizeTimestamp(i.time_finished),
           },
-          impact_data,
         }
 
         await setFirestoreData(['retail_rescues', i.id], rescue)
@@ -390,6 +527,7 @@ export function UpdateDB() {
       }
     }
     failed.length && console.log('Failed to write:', failed)
+    console.log('done!')
   }
 
   function normalizeTimestamp(t) {
@@ -402,5 +540,10 @@ export function UpdateDB() {
       : null
   }
 
-  return <button onClick={handleClick}>run handler</button>
+  function normalizePhoneNumber(phone) {
+    if (!phone) return null
+    return phone.replace('+1', '').replace(/[^a-zA-Z0-9]/g, '')
+  }
+  return null
+  // return <button onClick={handleClick}>run handler</button>
 }

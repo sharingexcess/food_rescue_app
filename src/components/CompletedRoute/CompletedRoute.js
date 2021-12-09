@@ -3,7 +3,7 @@ import { Link, Redirect, useParams, useHistory } from 'react-router-dom'
 import { useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
-import { setFirestoreData, createServerTimestamp } from 'helpers'
+import { setFirestoreData, createTimestamp } from 'helpers'
 
 export function CompletedRoute() {
   const { route_id } = useParams()
@@ -33,7 +33,7 @@ export function CompletedRoute() {
     if (notes) {
       await setFirestoreData(['Routes', route_id], {
         notes,
-        updated_at: createServerTimestamp(),
+        updated_at: createTimestamp(),
       })
     }
     history.push('/')

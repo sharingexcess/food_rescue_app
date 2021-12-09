@@ -20,46 +20,7 @@ export const IS_PWA = window.matchMedia('(display-mode: standalone)').matches
 // 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
 export const MOBILE_THRESHOLD = 600
 
-export const PICKUP_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
-}
-
-export const DELIVERY_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
-}
-
-export const STOP_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
-}
-
-export const ROUTE_STATUSES = {
+export const RESCUE_STATUSES = {
   0: 'cancelled',
   1: 'scheduled',
   2: 'UNDEFINED_STATUS',
@@ -102,18 +63,6 @@ retail_rescue {
     scheduled_finish
   }
 
-  impact_data {
-    dairy
-    bakery
-    produce
-    meat_fish
-    non_perishable
-    prepared_frozen
-    mixed
-    other
-    total_weight
-  }
-
 }
 
 
@@ -129,18 +78,6 @@ wholesale_rescue {
   timestamps {
     created
     updated
-  }
-
-  impact_data {
-    dairy
-    bakery
-    produce
-    meat_fish
-    non_perishable
-    prepared_frozen
-    mixed
-    other
-    total_weight
   }
 
 }
@@ -220,8 +157,9 @@ delivery {
 organization {
   id
   name
+  icon
   primary_location_id
-  type (food_bank, community_fridge, home_delivery, retail, wholesale, holding)
+  type (recipient, community_fridge, home_delivery, retail_donor, wholesale_donor, holding)
 
   timestamps {
     created
@@ -283,19 +221,26 @@ user {
   email
   phone
   pronouns
-  granted_access_by
+
+  onboarding {
+    completed_app_tutorial
+    completed_food_safety
+  }
 
   timestamps {
     created
     updated
-    granted_access
-    last_login
+    last_active
   }
-
-  insurance_policy_number
-  insurance_provider
-  license_number
-  license_state
+  
+  driver_info {
+    insurance_policy_number
+    insurance_provider
+    license_number
+    license_state
+    liability_release
+    vehicle_make_model
+  }
 
   availability {
     sun_am

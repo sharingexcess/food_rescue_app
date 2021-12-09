@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Loading, Input } from 'components'
-import { createServerTimestamp, setFirestoreData } from 'helpers'
+import { createTimestamp, setFirestoreData } from 'helpers'
 import { useFirestore, useAuth, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
@@ -137,7 +137,7 @@ export function PickupReport({ customSubmitHandler }) {
             }
             await setFirestoreData(['Deliveries', d.id], {
               report: {
-                updated_at: createServerTimestamp(),
+                updated_at: createTimestamp(),
                 weight: (d.report.percent_of_total_dropped / 100) * totalWeight,
               },
             })
@@ -162,12 +162,12 @@ export function PickupReport({ customSubmitHandler }) {
           other: parseInt(data.other),
           weight: parseInt(data.weight),
           notes: data.notes,
-          created_at: pickup.completed_at || createServerTimestamp(),
-          updated_at: createServerTimestamp(),
+          created_at: pickup.completed_at || createTimestamp(),
+          updated_at: createTimestamp(),
         },
         status: 9,
-        time_finished: createServerTimestamp(),
-        driver_completed_at: createServerTimestamp(),
+        time_finished: createTimestamp(),
+        driver_completed_at: createTimestamp(),
       })
         .then(() => history.push(`/routes/${route_id}`))
         .catch(e => console.error('Error writing document: ', e))

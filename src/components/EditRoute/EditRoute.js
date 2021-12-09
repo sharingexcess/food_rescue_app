@@ -84,7 +84,6 @@ export function EditRoute() {
       }))
       setCanRender(true)
     }
-    console.log(drivers, route_id)
     drivers && route_id && getExistingRouteData()
   }, [route_id, drivers])
 

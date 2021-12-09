@@ -2,32 +2,32 @@ import React from 'react'
 import { Button, Modal as ModalWrapper } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
 import {
-  CancelRoute,
+  CancelRetailRescue,
   CancelStop,
   ContactAdmin,
-  DropRoute,
-  FinishRoute,
-  RouteMenu,
+  DropRetailRescue,
+  FinishRetailRescue,
+  RetailRescueMenu,
   StopMenu,
+  Caluculator,
 } from 'components/Route/Route.children'
 import { PickupReportInstructions } from 'components/PickupReportInstructions/PickupReportInstructions'
-import { Caluculator } from 'components'
 
 export function Modal() {
   const { modal, setModal } = useApp()
 
   const renderContent = () => {
     switch (modal) {
-      case 'RouteMenu':
-        return <RouteMenu />
+      case 'RetailRescueMenu':
+        return <RetailRescueMenu />
       case 'StopMenu':
         return <StopMenu />
-      case 'DropRoute':
-        return <DropRoute />
-      case 'CancelRoute':
-        return <CancelRoute />
-      case 'FinishRoute':
-        return <FinishRoute />
+      case 'DropRetailRescue':
+        return <DropRetailRescue />
+      case 'CancelRetailRescue':
+        return <CancelRetailRescue />
+      case 'FinishRetailRescue':
+        return <FinishRetailRescue />
       case 'CancelStop':
         return <CancelStop />
       case 'ContactAdmin':
@@ -47,7 +47,7 @@ export function Modal() {
     <ModalWrapper id="Modal" close={close}>
       {renderContent()}
       <Button
-        id="Route-modal-close"
+        id="RetailRescue-modal-close"
         type="tertiary"
         color="black"
         size="large"

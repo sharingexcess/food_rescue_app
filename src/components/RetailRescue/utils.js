@@ -1,6 +1,6 @@
 export function generateDirectionsLink(addressObj) {
   const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
-  return `${base_url}${addressObj.address1}+${addressObj.city}+${addressObj.state}+${addressObj.zip_code}`
+  return `${base_url}${addressObj.address1}+${addressObj.city}+${addressObj.state}+${addressObj.zip}`
 }
 
 export function allFoodDelivered(stops) {
@@ -31,11 +31,15 @@ export function areAllStopsCompleted(stops) {
 }
 
 export function getNextIncompleteStopIndex(route, stops) {
-  if (route.status !== 3) return null
+  if (route.status !== 'active') return null
   let index
   for (const [idx, j] of route.stops.entries()) {
     const stop = stops.find(s => j.id === s.id)
-    if (stop && stop.status && ![0, 9].includes(stop.status)) {
+    if (
+      stop &&
+      stop.status &&
+      !['cancelled', 'completed'].includes(stop.status)
+    ) {
       index = idx
       break
     }
