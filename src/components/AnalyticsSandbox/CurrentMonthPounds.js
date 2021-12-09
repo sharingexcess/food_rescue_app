@@ -110,7 +110,9 @@ export function CurrentMonthPounds() {
     let totalRetail = 0
     let totalFairMarket = 0
     for (const category of FOOD_CATEGORIES) {
-      const categoryWeight = totalDeliveryPounds * categoryRatios[category]
+      const categoryWeight = categoryRatios[category]
+        ? totalDeliveryPounds * categoryRatios[category]
+        : 0
       const categoryRetailValue = categoryWeight * FOOD_RETAIL_VALUES[category]
       const categoryFairMarketValue =
         categoryWeight * FOOD_FAIR_MARKET_VALUES[category]
@@ -147,7 +149,7 @@ export function CurrentMonthPounds() {
       {
         name: monthOrYear ? MONTHS[currentMonth] : currentYear,
         actual: totalDeliveryPounds,
-        forecast: 15000,
+        forecast: monthOrYear ? FORECASTED_VALUES[currentMonth] : 4000000,
       },
     ]
     setForecastVsActualPerformance(tempforecastVsActualPerformance)
@@ -160,8 +162,7 @@ export function CurrentMonthPounds() {
     }
     setYears(updatedYears)
   }, [])
-  const COLORS = ['#216810', '#4EA528', '#9DA1A4']
-  const RADIAN = Math.PI / 180
+
   function renderCustomizedLabel({
     cx,
     cy,
@@ -172,6 +173,7 @@ export function CurrentMonthPounds() {
     value,
     index,
   }) {
+    const RADIAN = Math.PI / 180
     const radius = innerRadius + (outerRadius - innerRadius) * 1.3
     const x = cx + radius * Math.cos(-midAngle * RADIAN)
     const y = cy + radius * Math.sin(-midAngle * RADIAN)
@@ -211,10 +213,11 @@ export function CurrentMonthPounds() {
       return (
         <div>
           <Text color="grey" type="small">
-            Actual: {formatLargeNumber(payload[0]['payload']['actual'])}
+            Actual: {formatLargeNumber(payload[0]['payload']['actual'])} lbs.
           </Text>
           <Text color="green" type="small">
-            Forecast: {formatLargeNumber(payload[0]['payload']['forecast'])}
+            Forecast: {formatLargeNumber(payload[0]['payload']['forecast'])}{' '}
+            lbs.
           </Text>
         </div>
       )
@@ -226,10 +229,12 @@ export function CurrentMonthPounds() {
   }
 
   function monthOrYearChange() {
-    if (monthOrYear) setMonthOrYear(false)
-    else {
-      setMonthOrYear(true)
+    if (monthOrYear) {
       setCurrentYear(new Date().getYear() + 1900)
+      setMonthOrYear(false)
+    } else {
+      setCurrentYear(new Date().getYear() + 1900)
+      setMonthOrYear(true)
     }
   }
 
