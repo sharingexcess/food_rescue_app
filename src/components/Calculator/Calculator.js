@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useState } from 'react'
 import { Input } from 'components'
-import { Button } from '@sharingexcess/designsystem'
+import { Button, Text, Spacer } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
 
 export function Caluculator() {
@@ -28,6 +28,9 @@ export function Caluculator() {
 
   return (
     <div id="Calculator">
+      <Text type="subheader" color="black" align="center">
+        Input weight and select category of each box.
+      </Text>
       <Input
         type="tel"
         value={weight}
@@ -45,6 +48,7 @@ export function Caluculator() {
         <option value="produce">Produce</option>
         <option value="other">Other</option>
       </select>
+      <Spacer />
       <Button
         type="primary"
         color="green"
@@ -53,6 +57,7 @@ export function Caluculator() {
       >
         Add Weight to Report
       </Button>
+      <Spacer />
       <Button
         type="tertiary"
         color="green"

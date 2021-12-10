@@ -207,7 +207,7 @@ export function PickupReport({ customSubmitHandler }) {
           setModalState({ setFormData: setFormData })
         }}
       >
-        Open Calculator
+        Open Bulk Pickup Input Tool
       </Button>
       <Spacer height={32} />
 
