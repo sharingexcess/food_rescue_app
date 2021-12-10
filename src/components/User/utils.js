@@ -103,15 +103,19 @@ export function UserAdminPermissions({ profile }) {
   const { user } = useAuth()
   const [accessLevel, setAccessLevel] = useState(profile.access_level)
 
+  const [isAdmin, setIsAdmin] = useState(profile.is_admin)
+  const [isDriver, setIsDriver] = useState(profile.is_driver)
+
   useEffect(() => {
-    if (accessLevel !== profile.access_level) {
-      setFirestoreData(['Users', profile.id], {
-        access_level: accessLevel,
+    if (isDriver !== profile.is_driver || isAdmin !== profile.is_admin) {
+      setFirestoreData(['users', profile.id], {
+        is_admin: isAdmin,
+        is_driver: isDriver,
         updated_at: createTimestamp(),
         granted_access_by: user.name,
       })
     }
-  }, [accessLevel]) // eslint-disable-line
+  }, [isAdmin, isDriver]) // eslint-disable-line
 
   if (user.uid === profile.id) {
     return (
@@ -126,14 +130,30 @@ export function UserAdminPermissions({ profile }) {
           Access Level
         </Text>
         <Spacer height={8} />
-        <select
+        {/* <select
           value={accessLevel}
           onChange={e => setAccessLevel(e.target.value)}
         >
           <option value="none">No Access</option>
           <option value="driver">Driver Access</option>
           <option value="admin">Admin Access</option>
-        </select>
+        </select> */}
+
+        {/* Suggestion for changing Access Level */}
+        <Input
+          key="driver"
+          value={isDriver}
+          label="Driver"
+          type="checkbox"
+          onChange={e => setIsDriver(e.target.checked)}
+        />
+        <Input
+          key="admin"
+          value={isAdmin}
+          label="Admin"
+          type="checkbox"
+          onChange={e => setIsAdmin(e.target.checked)}
+        />
       </div>
     )
 }

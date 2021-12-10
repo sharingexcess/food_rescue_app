@@ -58,9 +58,7 @@ export function Users() {
   ]
 
   function filterByPermissions(array) {
-    const filteredByAdmin = !showAdmin
-      ? array.filter(i => i.access_level !== 'admin')
-      : array
+    const filteredByAdmin = !showAdmin ? array.filter(i => i.is_admin) : array
     const filteredByDriver = !showDriver
       ? filteredByAdmin.filter(i => i.access_level !== 'driver')
       : filteredByAdmin
