@@ -101,8 +101,6 @@ export function UserEmail({ profile }) {
 
 export function UserAdminPermissions({ profile }) {
   const { user } = useAuth()
-  const [accessLevel, setAccessLevel] = useState(profile.access_level)
-
   const [isAdmin, setIsAdmin] = useState(profile.is_admin)
   const [isDriver, setIsDriver] = useState(profile.is_driver)
 

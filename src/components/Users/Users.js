@@ -58,12 +58,12 @@ export function Users() {
   ]
 
   function filterByPermissions(array) {
-    const filteredByAdmin = !showAdmin ? array.filter(i => i.is_admin) : array
+    const filteredByAdmin = !showAdmin ? array.filter(i => !i.is_admin) : array
     const filteredByDriver = !showDriver
-      ? filteredByAdmin.filter(i => i.access_level !== 'driver')
+      ? filteredByAdmin.filter(i => !i.is_driver || i.is_admin)
       : filteredByAdmin
     const filteredByNoAccess = !showNoAccess
-      ? filteredByDriver.filter(i => i.access_level !== 'none')
+      ? filteredByDriver.filter(i => i.is_driver || i.is_admin)
       : filteredByDriver
     return filteredByNoAccess
   }
@@ -126,9 +126,9 @@ export function Users() {
                 {user.email}
               </Text>
             </div>
-            {user.access_level === 'admin' ? (
+            {user.is_admin ? (
               <i className="access-level fa fa-crown" />
-            ) : user.access_level === 'driver' ? (
+            ) : user.is_driver && !user.is_admin ? (
               <i className="access-level fa fa-truck" />
             ) : null}
           </Card>
