@@ -26,6 +26,14 @@ function Auth({ children }) {
   const [db_user, setDbUser] = useState()
 
   useEffect(() => {
+    // if (db_user) {
+    //   setFirestoreData(['users', db_user.id], {
+    //     timestamps: { ...db_user.timestamps, last_active: createTimestamp() },
+    //   })
+    // }
+  }, [db_user])
+
+  useEffect(() => {
     if (auth_user) {
       getCollection('Users')
         .doc(auth_user.uid)

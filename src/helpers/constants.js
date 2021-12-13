@@ -43,6 +43,25 @@ export const CLOUD_FUNCTION_URLS = {
 /*
 
 TODO: recurring routes? original_stop_id? is_philabundance_partner? route_id structure? do all routes fit into either retail, wholesale, or direct_link?
+SE Data Updates
+
+Needs UI Work:
+- [ ] Direct Link for all routes/retail rescue
+- [ ] Pickup - time started
+- [ ] Pickup - time arrived
+- [ ] Pickup - validate all time stamps are populated on completion
+- [ ] User timestamps
+- [ ] Phone input
+- [ ] Access level
+- [ ] Onboarding checks
+- [ ] Rerun-deliveries
+- [ ] ADD IS_DELETED TO LOCATION
+
+
+Data Validation/Backfilling
+- [ ] Time stamps for pickups
+
+
 
 retail_rescue {
 
@@ -82,10 +101,6 @@ wholesale_rescue {
 
 }
 
-
-
-
-
 pickup {
 
   id
@@ -119,8 +134,6 @@ pickup {
   }
 
 }
-
-
 
 delivery {
 
@@ -230,7 +243,7 @@ user {
   timestamps {
     created
     updated
-    last_active
+    last_active // in auth.js in a useEffect for only first render
   }
   
   driver_info {

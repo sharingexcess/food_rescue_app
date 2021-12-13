@@ -8,7 +8,6 @@ import {
   Text,
 } from '@sharingexcess/designsystem'
 import { EditDelivery, GoogleMap, Input } from 'components'
-import firebase from 'firebase/app'
 import {
   CLOUD_FUNCTION_URLS,
   createTimestamp,
@@ -19,7 +18,7 @@ import {
   updateGoogleCalendarEvent,
 } from 'helpers'
 import { useAuth, useFirestore, useApp } from 'hooks'
-import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import {
   areAllStopsCompleted,
   generateDirectionsLink,

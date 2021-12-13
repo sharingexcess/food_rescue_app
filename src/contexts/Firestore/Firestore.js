@@ -59,7 +59,6 @@ function Firestore({ children }) {
           stop.type = stop.delivery_ids ? 'pickup' : 'delivery'
           r.stops.push(stop)
         }
-        delete r.stop_ids
         r.driver = users.find(u => u.id === r.handler_id) || {}
         if (r.driver.icon && !isValidURL(r.driver.icon)) {
           r.driver.icon = await getImageFromStorage(r.driver.icon)

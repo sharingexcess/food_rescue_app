@@ -34,8 +34,7 @@ export function Home() {
   function DriverTiles() {
     return (
       <>
-        <Tile name="Routes" icon="🚛" link="/routes" />
-        <Tile name="History" icon="⌛" link="/history" />
+        <Tile name="Rescues" icon="🚛" link="/rescues" />
         <Tile name="Contact" icon="🤔" link="/contact" />
         <Tile name="Profile" icon="💁‍♀️" link="/profile" />
       </>
@@ -46,9 +45,8 @@ export function Home() {
     if (!admin) return null
     return (
       <>
-        <Tile name="Routes" icon="🚛" link="/routes" />
-        <Tile name="History" icon="⌛" link="/history" />
-        <Tile name="New Route" icon="➕" link="/admin/create-route" />
+        <Tile name="Rescues" icon="🚛" link="/rescues" />
+        <Tile name="New Rescue" icon="➕" link="/admin/create-route" />
         <Tile
           name="New Direct Donation"
           icon="🏃"
