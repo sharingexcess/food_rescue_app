@@ -33,11 +33,13 @@ export function Profile() {
       sat_am: false,
       sat_pm: false,
     },
-    vehicle_make_model: '',
-    drivers_license_number: '',
-    drivers_license_state: '',
-    drivers_insurance_policy_number: '',
-    drivers_insurance_provider: '',
+    driver_info: {
+      vehicle_make_model: '',
+      license_number: '',
+      license_state: '',
+      insurance_policy_number: '',
+      insurance_provider: '',
+    },
   })
   const [button, setButton] = useState()
   const [error, setError] = useState()
@@ -49,7 +51,7 @@ export function Profile() {
         name: profile.name,
         phone: profile.phone || '',
         pronouns: profile.pronouns || '',
-        driver_availability: profile.driver_availability || {
+        driver_availability: profile.availability || {
           sun_am: false,
           sun_pm: false,
           mon_am: false,
@@ -65,12 +67,14 @@ export function Profile() {
           sat_am: false,
           sat_pm: false,
         },
-        vehicle_make_model: profile.vehicle_make_model || '',
-        drivers_license_number: profile.drivers_license_number || '',
-        drivers_license_state: profile.drivers_license_state || '',
-        drivers_insurance_policy_number:
-          profile.drivers_insurance_policy_number || '',
-        drivers_insurance_provider: profile.drivers_insurance_provider || '',
+        driver_info: {
+          vehicle_make_model: profile.vehicle_make_model || '',
+          license_number: profile.drivers_license_number || '',
+          license_state: profile.drivers_license_state || '',
+          insurance_policy_number:
+            profile.drivers_insurance_policy_number || '',
+          insurance_provider: profile.drivers_insurance_provider || '',
+        },
       })
     }
   }, [profile, formData, button])
@@ -118,7 +122,7 @@ export function Profile() {
 
   function handleUpdate() {
     if (validateInformation()) {
-      setFirestoreData(['Users', user.id], formData)
+      setFirestoreData(['users', user.id], formData)
         .then(() => {
           setButton('profile updated!')
           setTimeout(() => setButton(), 2000)

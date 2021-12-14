@@ -18,7 +18,8 @@ export async function updatePublicUserProfile(user) {
       email: user.email,
       name: user.displayName,
       icon: user.photoURL,
-      access_level: 'none',
+      is_admin: false,
+      is_driver: false,
       created_at: createTimestamp(),
     })
   }

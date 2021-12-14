@@ -4,7 +4,7 @@ import 'firebase/auth'
 import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHistory } from 'react-router-dom'
-import { getCollection } from 'helpers'
+import { createTimestamp, getCollection, setFirestoreData } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
 import { Loading } from 'components'
 
@@ -26,16 +26,19 @@ function Auth({ children }) {
   const [db_user, setDbUser] = useState()
 
   useEffect(() => {
-    // if (db_user) {
-    //   setFirestoreData(['users', db_user.id], {
-    //     timestamps: { ...db_user.timestamps, last_active: createTimestamp() },
-    //   })
-    // }
+    if (db_user) {
+      setFirestoreData(['users', db_user.id], {
+        timestamps: {
+          ...db_user.timestamps,
+          last_active: createTimestamp(),
+        },
+      })
+    }
   }, [db_user])
 
   useEffect(() => {
     if (auth_user) {
-      getCollection('Users')
+      getCollection('users')
         .doc(auth_user.uid)
         .onSnapshot(doc => setDbUser(doc.data()))
     }
@@ -70,12 +73,12 @@ function Auth({ children }) {
       <AuthContext.Provider
         value={{
           user: auth_user ? { ...auth_user, ...db_user } : null,
-          admin: db_user && db_user.access_level === 'admin',
-          driver: db_user && db_user.access_level === 'driver',
+          admin: db_user && db_user.is_admin,
+          driver: db_user && db_user.is_driver,
           permission: db_user
-            ? db_user.access_level === 'none'
+            ? !db_user.is_admin && !db_user.is_driver
               ? null
-              : db_user.access_level
+              : db_user.is_driver
             : null,
           handleLogout,
           handleLogin,
