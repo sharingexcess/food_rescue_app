@@ -72,33 +72,33 @@ export function User() {
       <Spacer height={8} />
       <UserDriverAvailability profile={profile} />
       <Input
-        element_id="vehicle_make_model"
+        element_id="driver_info.make_model"
         label="Vehicle Make + Model"
-        value={profile.vehicle_make_model}
+        value={profile.driver_info.vehicle_make_model}
         readOnly
       />
       <Input
-        element_id="drivers_license_state"
+        element_id="driver_info.license_state"
         label="Driver's License State"
-        value={profile.drivers_license_state}
+        value={profile.driver_info.license_state}
         readOnly
       />
       <Input
-        element_id="drivers_license_number"
+        element_id="driver_info.license_number"
         label="Driver's License Number"
-        value={profile.drivers_license_number}
+        value={profile.driver_info.license_number}
         readOnly
       />
       <Input
-        element_id="drivers_insurance_provider"
+        element_id="driver_info.insurance_provider"
         label="Insurance Provider"
-        value={profile.drivers_insurance_provider}
+        value={profile.driver_info.insurance_provider}
         readOnly
       />
       <Input
-        element_id="drivers_insurance_policy_number"
+        element_id="driver_info.insurance_policy_number"
         label="Insurance Policy Number"
-        value={profile.drivers_insurance_policy_number}
+        value={profile.driver_info.insurance_policy_number}
         readOnly
       />
     </main>

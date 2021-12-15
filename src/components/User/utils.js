@@ -157,7 +157,7 @@ export function UserAdminPermissions({ profile }) {
 }
 
 export function UserDriverAvailability({ profile }) {
-  return profile.driver_availability ? (
+  return profile.availability ? (
     <div id="User-driver-availability">
       {availability.map(i => (
         <Input
@@ -165,7 +165,7 @@ export function UserDriverAvailability({ profile }) {
           element_id={i.element_id}
           label={i.label}
           type="checkbox"
-          value={profile.driver_availability[i.data_id]}
+          value={profile.availability[i.data_id]}
         />
       ))}
     </div>

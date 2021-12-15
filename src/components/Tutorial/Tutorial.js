@@ -10,7 +10,9 @@ export function Tutorial() {
   const { user } = useAuth()
 
   function handleComplete() {
-    setFirestoreData(['Users', user.id], { completed_app_tutorial: true })
+    setFirestoreData(['users', user.id], {
+      onboarding: { completed_app_tutorial: true },
+    })
     history.push('/')
   }
 
@@ -137,7 +139,7 @@ export function Tutorial() {
         </div>
       </section>
       <br />
-      {user && !user.completed_app_tutorial ? (
+      {user && !user.onboarding.completed_app_tutorial ? (
         <Button type="primary" color="white" handler={handleComplete}>
           I've completed the Tutorial
         </Button>

@@ -135,7 +135,7 @@ export const fetchExistingRouteData = async route_id => {
   const myRoute = routes.find(route => route.id === route_id)
   if (!myRoute) return null
   const driver = myRoute.driver_id
-    ? await getCollection('Users')
+    ? await getCollection('users')
         .doc(myRoute.driver_id)
         .get()
         .then(result => result.data())

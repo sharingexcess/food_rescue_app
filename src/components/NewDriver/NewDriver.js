@@ -7,10 +7,8 @@ export function NewDriver() {
   const { user } = useAuth()
 
   const completed_availability =
-    user.driver_availability &&
-    Object.keys(user.driver_availability).filter(
-      key => user.driver_availability[key]
-    ).length
+    user.availability &&
+    Object.keys(user.availability).filter(key => user.availability[key]).length
 
   const sections = [
     {
@@ -21,27 +19,27 @@ export function NewDriver() {
         user.phone &&
         user.pronouns &&
         completed_availability &&
-        user.driver_availability &&
-        user.vehicle_make_model &&
-        user.drivers_license_number &&
-        user.drivers_license_state &&
-        user.drivers_insurance_policy_number &&
-        user.drivers_insurance_provider,
+        user.availability &&
+        user.driver_info.vehicle_make_model &&
+        user.driver_info.license_number &&
+        user.driver_info.license_state &&
+        user.driver_info.insurance_policy_number &&
+        user.driver_info.insurance_provider,
     },
     {
       name: 'Liability Release',
       page: '/liability',
-      completed: user.driver_liability_release,
+      completed: user.onboarding.completed_liability_release,
     },
     {
       name: 'App Tutorial',
       page: '/tutorial',
-      completed: user.completed_app_tutorial,
+      completed: user.onboarding.completed_app_tutorial,
     },
     {
       name: 'Food Safety Training',
       page: '/food-safety',
-      completed: user.completed_food_safety,
+      completed: user.onboarding.completed_food_safety,
     },
   ]
 
@@ -52,9 +50,18 @@ export function NewDriver() {
       </Text>
       <Spacer height={8} />
       <Text type="paragraph" color="white" shadow>
-        {user.completed_driver_info &&
-        user.completed_food_safety &&
-        user.driver_liability_release
+        {user.name &&
+        user.phone &&
+        user.pronouns &&
+        completed_availability &&
+        user.availability &&
+        user.driver_info.vehicle_make_model &&
+        user.driver_info.license_number &&
+        user.driver_info.license_state &&
+        user.driver_info.insurance_policy_number &&
+        user.driver_info.insurance_provider &&
+        user.onboarding.completed_food_safety &&
+        user.onboarding.completed_liability_release
           ? "You've completed all the onboarding steps!\n\nHang tight while we approve your info, and grant you permission to start rescuing food."
           : 'Complete the onboarding steps below to begin rescuing food as soon as possible.'}
       </Text>

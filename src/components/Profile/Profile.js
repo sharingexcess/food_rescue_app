@@ -17,7 +17,7 @@ export function Profile() {
     name: '',
     phone: '',
     pronouns: '',
-    driver_availability: {
+    availability: {
       sun_am: false,
       sun_pm: false,
       mon_am: false,
@@ -51,7 +51,7 @@ export function Profile() {
         name: profile.name,
         phone: profile.phone || '',
         pronouns: profile.pronouns || '',
-        driver_availability: profile.availability || {
+        availability: profile.availability || {
           sun_am: false,
           sun_pm: false,
           mon_am: false,
@@ -68,12 +68,12 @@ export function Profile() {
           sat_pm: false,
         },
         driver_info: {
-          vehicle_make_model: profile.vehicle_make_model || '',
-          license_number: profile.drivers_license_number || '',
-          license_state: profile.drivers_license_state || '',
+          vehicle_make_model: profile.driver_info.vehicle_make_model || '',
+          license_number: profile.driver_info.license_number || '',
+          license_state: profile.driver_info.license_state || '',
           insurance_policy_number:
-            profile.drivers_insurance_policy_number || '',
-          insurance_provider: profile.drivers_insurance_provider || '',
+            profile.driver_info.insurance_policy_number || '',
+          insurance_provider: profile.driver_info.insurance_provider || '',
         },
       })
     }
@@ -99,9 +99,17 @@ export function Profile() {
     if (e.target.id.includes('availability_')) {
       setFormData({
         ...formData,
-        driver_availability: {
-          ...formData.driver_availability,
+        availability: {
+          ...formData.availability,
           [e.target.id.replace('availability_', '')]: e.target.checked,
+        },
+      })
+    } else if (e.target.id.includes('driver_')) {
+      setFormData({
+        ...formData,
+        driver_info: {
+          ...formData.driver_info,
+          [e.target.id.replace('driver_', '')]: e.target.value,
         },
       })
     } else {
@@ -180,39 +188,39 @@ export function Profile() {
             element_id={i.element_id}
             label={i.label}
             type="checkbox"
-            value={formData.driver_availability[i.data_id]}
+            value={formData.availability[i.data_id]}
             onChange={handleChange}
           />
         ))}
       </div>
       <Input
-        element_id="vehicle_make_model"
+        element_id="driver_vehicle_make_model"
         label="Vehicle Make + Model"
-        value={formData.vehicle_make_model}
+        value={formData.driver_info.vehicle_make_model}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_license_state"
+        element_id="driver_license_state"
         label="Driver's License State"
-        value={formData.drivers_license_state}
+        value={formData.driver_info.license_state}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_license_number"
+        element_id="driver_license_number"
         label="Driver's License Number"
-        value={formData.drivers_license_number}
+        value={formData.driver_info.license_number}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_insurance_provider"
+        element_id="driver_insurance_provider"
         label="Insurance Provider"
-        value={formData.drivers_insurance_provider}
+        value={formData.driver_info.insurance_provider}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_insurance_policy_number"
+        element_id="driver_insurance_policy_number"
         label="Insurance Policy Number"
-        value={formData.drivers_insurance_policy_number}
+        value={formData.driver_info.insurance_policy_number}
         onChange={handleChange}
       />
       {button && (

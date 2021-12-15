@@ -40,7 +40,10 @@ function Auth({ children }) {
     if (auth_user) {
       getCollection('users')
         .doc(auth_user.uid)
-        .onSnapshot(doc => setDbUser(doc.data()))
+        .onSnapshot(doc => {
+          const user = doc.data()
+          setDbUser(user)
+        })
     }
   }, [auth_user])
 
@@ -67,14 +70,13 @@ function Auth({ children }) {
       </main>
     )
   }
-
   function AuthWrapper({ children }) {
     return (
       <AuthContext.Provider
         value={{
           user: auth_user ? { ...auth_user, ...db_user } : null,
           admin: db_user && db_user.is_admin,
-          driver: db_user && db_user.is_driver,
+          driver: db_user && db_user.is_driver && !db_user.is_admin,
           permission: db_user
             ? !db_user.is_admin && !db_user.is_driver
               ? null

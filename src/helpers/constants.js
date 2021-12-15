@@ -242,6 +242,7 @@ user {
   onboarding {
     completed_app_tutorial
     completed_food_safety
+    completed_liability_release
   }
 
   timestamps {
@@ -255,7 +256,6 @@ user {
     insurance_provider
     license_number
     license_state
-    liability_release
     vehicle_make_model
   }
 
