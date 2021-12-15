@@ -11,7 +11,7 @@ import {
   UserDriverAvailability,
 } from './utils'
 import { useFirestore } from 'hooks'
-import { Button, ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
+import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function User() {
   // get the user id from the current url parameters
@@ -53,12 +53,10 @@ export function User() {
       <UserAdminPermissions profile={profile} />
 
       <Spacer height={32} />
-      {profile.driver_liability_release ? (
-        <ExternalLink to={profile.driver_liability_release}>
-          <Button type="primary" color="white">
-            Download Liability Release
-          </Button>
-        </ExternalLink>
+      {profile.onboarding.completed_liability_release ? (
+        <Text color="white" shadow>
+          This user has signed the liability release form.
+        </Text>
       ) : (
         <Text color="white" shadow>
           This user has not completed a liability release.
