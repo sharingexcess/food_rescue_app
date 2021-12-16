@@ -55,20 +55,23 @@
       max-width: 64px;
       @include ellipsis;
 
-      &.donor {
-        background-color: var(--red);
-      }
       &.recipient {
         background-color: var(--green);
       }
       &.community {
         background-color: var(--blue);
       }
-      &.warehouse {
-        background-color: var(--yellow);
-      }
       &.home {
         background-color: var(--blue);
+      }
+      &.retail {
+        background-color: var(--red);
+      }
+      &.wholesale {
+        background-color: var(--purple);
+      }
+      &.holding {
+        background-color: var(--yellow);
       }
     }
   }

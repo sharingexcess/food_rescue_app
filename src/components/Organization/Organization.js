@@ -24,7 +24,8 @@ export function Organization() {
     useFirestore(
       'locations',
       useCallback(
-        i => i.org_id === id && (!i.is_deleted || i.is_deleted === false),
+        i =>
+          i.organization_id === id && (!i.is_deleted || i.is_deleted === false),
         [id]
       )
     ) || []
@@ -48,6 +49,7 @@ export function Organization() {
         <Text type="section-header" color="white" shadow>
           Locations
         </Text>
+
         {sortByPrimary(locations).map(loc => (
           <Link
             key={loc.name}
@@ -56,23 +58,23 @@ export function Organization() {
           >
             <Card classList={['Organization-location']}>
               <Text type="section-header" color="black">
-                {loc.address1}
-                {loc.name && ` (${loc.name})`}
+                {loc.address.address1}
+                {loc.nickname && ` (${loc.nickname})`}
               </Text>
-              {loc.is_philabundance_partner && (
-                <p className="philabundance">Philabundance Partner</p>
-              )}
-              {loc.address2 && (
+              {/* {loc.is_philabundance_partner && (
+                  <p className="philabundance">Philabundance Partner</p>
+                )} */}
+              {loc.address.address2 && (
                 <Text type="paragraph" color="grey">
-                  {loc.address2}
+                  {loc.address.address2}
                 </Text>
               )}
               <Text type="paragraph" color="grey">
-                {loc.city}, {loc.state} {loc.zip_code}
+                {loc.address.city}, {loc.address.state} {loc.address.zip}
               </Text>
               <LocationPhone loc={loc} />
-              <OrganizationHours org={loc} org_type={org.org_type} />
-              {loc.id === org.primary_location && (
+              <OrganizationHours org={loc} org_type={org.type} />
+              {loc.id === org.primary_location_id && (
                 <i className="primary fa fa-star" />
               )}
             </Card>
@@ -92,9 +94,6 @@ export function Organization() {
             {org.name}
           </Text>
           <Spacer height={8} />
-          <OrganizationContact org={org} />
-          <OrganizationPhone org={org} />
-          <OrganizationEmail org={org} />
           <Spacer height={16} />
           <Link to={`/admin/organizations/${id}/edit`}>
             <Button type="secondary">Edit Org Details</Button>

@@ -1,5 +1,5 @@
 import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
-import { getImageFromStorage, isValidURL } from 'helpers'
+import { getImageFromStorage, isValidURL, formatPhoneNumber } from 'helpers'
 import moment from 'moment'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 
@@ -45,10 +45,10 @@ export function OrganizationPhone({ org }) {
 }
 
 export function LocationPhone({ loc }) {
-  if (loc.contact_phone) {
+  if (loc.contact.phone) {
     return (
       <Text type="paragraph" color="blue">
-        Contact Phone: {formatPhoneNumberIntl(loc.contact_phone)}
+        Contact Phone: {formatPhoneNumber(loc.contact.phone)}
       </Text>
     )
   } else return null

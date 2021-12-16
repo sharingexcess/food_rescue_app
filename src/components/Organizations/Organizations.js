@@ -33,9 +33,7 @@ export function Organizations() {
     const filtered_by_search = array.filter(i =>
       i.name.toLowerCase().includes(search.toLowerCase())
     )
-    return filtered_by_search.filter(i =>
-      filter ? i.org_type === filter : true
-    )
+    return filtered_by_search.filter(i => (filter ? i.type === filter : true))
   }
 
   if (!organizations.length) return <Loading text="Loading organizations" />
@@ -51,11 +49,12 @@ export function Organizations() {
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="">Filter by type...</option>
-          <option value="donor">Donors</option>
           <option value="recipient">Recipients</option>
-          <option value="community fridge">Community Fridges</option>
-          <option value="warehouse">Warehouse</option>
+          <option value="communty fridge">Community Fridges</option>
           <option value="home delivery">Home Deliveries</option>
+          <option value="retail donor">Retail Donors</option>
+          <option value="wholesale donor">Wholesale Donors</option>
+          <option value="holding">Holdings</option>
         </select>
         <Link to="/admin/create-organization">
           <Button type="secondary" color="white">
@@ -83,20 +82,22 @@ export function Organizations() {
             </Text>
             <h2
               className={
-                org.org_type === 'donor'
-                  ? 'donor'
-                  : org.org_type === 'recipient'
+                org.type === 'recipient'
                   ? 'recipient'
-                  : org.org_type === 'warehouse'
-                  ? 'warehouse'
-                  : org.org_type === 'community'
+                  : org.type === 'community fridge'
                   ? 'community'
-                  : org.org_type === 'home'
+                  : org.type === 'home delivery'
                   ? 'home'
-                  : 'community'
+                  : org.type === 'retail_donor'
+                  ? 'retail'
+                  : org.type === 'wholesale_donor'
+                  ? 'wholesale'
+                  : org.type === 'holding'
+                  ? 'holding'
+                  : 'wholesale'
               }
             >
-              {org.org_type}
+              {org.type}
             </h2>
           </Card>
         </Link>

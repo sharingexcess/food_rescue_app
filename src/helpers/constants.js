@@ -208,6 +208,7 @@ location {
   nickname
   organization_id
 
+  address{
   address1
   address2
   city
@@ -215,7 +216,7 @@ location {
   zip
   lat
   lng
-
+  }
   contact_name
   contact_email
   contact_phone

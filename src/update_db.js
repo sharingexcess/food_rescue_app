@@ -134,6 +134,7 @@ export function UpdateDB() {
           address: {
             address1: i.address1,
             address2: i.address2,
+            state: i.state,
             city: i.city,
             zip: i.zip_code,
             lat: i.lat || null,
