@@ -1,8 +1,6 @@
-import { useApp } from 'hooks'
 import { Text } from '@sharingexcess/designsystem'
 
 export function PickupReportInstructions() {
-  const { setModal, modalState } = useApp()
   return (
     <div id="PickUpReportInstructions">
       <Text type="subheader" color="black">

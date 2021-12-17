@@ -51,6 +51,11 @@ export function PickupReport({ customSubmitHandler }) {
 
   const canEdit = (pickup && [1, 3, 6].includes(pickup.status)) || admin
 
+  function openEasyEntry(field) {
+    setModal('Calculator')
+    setModalState({ setFormData, sumWeight, field })
+  }
+
   function sumWeight(object) {
     let sum = 0
     for (const field in object) {
@@ -197,18 +202,6 @@ export function PickupReport({ customSubmitHandler }) {
           <i className="fa fa-info-circle" />
         </Button>
       </Text>
-      <Spacer height={16} />
-      <Button
-        fullWidth
-        color="white"
-        type="primary"
-        handler={() => {
-          setModal('Calculator')
-          setModalState({ setFormData: setFormData })
-        }}
-      >
-        Open Bulk Pickup Input Tool
-      </Button>
       <Spacer height={32} />
 
       {Object.keys(formData)
@@ -234,6 +227,14 @@ export function PickupReport({ customSubmitHandler }) {
                 onChange={handleChange}
                 readOnly={!canEdit}
               />
+              <Button
+                type="primary"
+                color="white"
+                size="small"
+                handler={() => openEasyEntry(field)}
+              >
+                +
+              </Button>
             </section>
           ) : null
         )}
