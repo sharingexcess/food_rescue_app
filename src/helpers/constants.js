@@ -42,7 +42,11 @@ export const CLOUD_FUNCTION_URLS = {
 
 /*
 
-TODO: recurring routes? original_stop_id? is_philabundance_partner? route_id structure? do all routes fit into either retail, wholesale, or direct_link?
+TODO:
+check for original_stop_id
+is_philabundance_partner => location
+define either tool as wholesale or retail
+
 SE Data Updates
 
 Needs UI Work:
@@ -167,12 +171,30 @@ delivery {
 
 }
 
-organization {
+donor {
   id
   name
   icon
   primary_location_id
-  type (recipient, community_fridge, home_delivery, retail_donor, wholesale_donor, holding)
+  type (
+    retail_donor, wholesale_donor, holding, other
+  )
+
+  timestamps {
+    created
+    updated
+  }
+
+}
+
+recipient {
+  id
+  name
+  icon
+  primary_location_id
+  type (
+    food_bank, distribution_agency, community_fridge, home_delivery, popup, holding, other
+  )
 
   timestamps {
     created
@@ -203,24 +225,6 @@ location {
   timestamps {
     created
     updated
-  }
-
-
-  hours {
-    sun_open
-    sun_close
-    mon_open
-    mon_close
-    tue_open
-    tue_close
-    wed_open
-    wed_close
-    thu_open
-    thu_close
-    fri_open
-    fri_close
-    sat_open
-    sat_close
   }
 
 }
