@@ -10,6 +10,7 @@ import {
   RouteMenu,
   StopMenu,
 } from 'components/Route/Route.children'
+import { PickupReportInstructions } from 'components/PickupReportInstructions/PickupReportInstructions'
 import { Caluculator } from 'components'
 
 export function Modal() {
@@ -33,6 +34,8 @@ export function Modal() {
         return <ContactAdmin />
       case 'Calculator':
         return <Caluculator />
+      case 'PickupReportInstructions':
+        return <PickupReportInstructions />
       default:
         return null
     }

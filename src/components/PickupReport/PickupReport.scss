@@ -1,14 +1,21 @@
 #PickupReport {
   @include page;
 
+  #Pickup-report-instructions {
+    margin-left: auto;
+    height: 32px;
+    width: 32px;
+    padding: 0;
+  }
   section {
     position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 8px 0;
 
     .se-text {
+      margin-right: auto;
       text-transform: capitalize;
       font-size: 18px;
     }
@@ -25,8 +32,16 @@
       border-radius: 8px;
       align-items: center;
       text-align: center;
-      margin: 0 8px;
+      margin: 0 12px;
       border: 0;
+    }
+
+    button {
+      height: 24px;
+      width: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     &.weight {
@@ -35,7 +50,7 @@
         font-size: 20px;
       }
       h6 {
-        width: 96px;
+        width: 124px;
         height: 48px;
         font-size: 18px;
         font-weight: 900;

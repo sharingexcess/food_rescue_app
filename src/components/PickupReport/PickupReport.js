@@ -8,7 +8,7 @@ import validator from 'validator'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, route_id } = useParams()
-  const { setModal } = useApp()
+  const { setModal, setModalState } = useApp()
   const route = useFirestore('routes', route_id)
   const { admin } = useAuth()
   const history = useHistory()
@@ -50,6 +50,11 @@ export function PickupReport({ customSubmitHandler }) {
   }, [errors])
 
   const canEdit = (pickup && [1, 3, 6].includes(pickup.status)) || admin
+
+  function openEasyEntry(field) {
+    setModal('Calculator')
+    setModalState({ setFormData, sumWeight, field })
+  }
 
   function sumWeight(object) {
     let sum = 0
@@ -179,18 +184,24 @@ export function PickupReport({ customSubmitHandler }) {
         Pickup Report
       </Text>
       <Spacer height={4} />
+
       <Text type="subheader" color="white" shadow>
-        Use this form to enter data on what food was available for rescue.
+        Please request scale from donor prior to filling out this report. Weigh
+        each box, noting that box's variety, and fill in total pounds for each
+        category below.<br></br> <br></br>
+        For additional instructions on how to fill out the pickup report, press
+        the i button.
+        <Button
+          id="Pickup-report-instructions"
+          type="tertiary"
+          color="white"
+          handler={() => {
+            setModal('PickupReportInstructions')
+          }}
+        >
+          <i className="fa fa-info-circle" />
+        </Button>
       </Text>
-      <Spacer height={16} />
-      <Button
-        fullWidth
-        color="white"
-        type="primary"
-        handler={() => setModal('Calculator')}
-      >
-        Open Calculator
-      </Button>
       <Spacer height={32} />
 
       {Object.keys(formData)
@@ -216,6 +227,14 @@ export function PickupReport({ customSubmitHandler }) {
                 onChange={handleChange}
                 readOnly={!canEdit}
               />
+              <Button
+                type="primary"
+                color="white"
+                size="small"
+                handler={() => openEasyEntry(field)}
+              >
+                +
+              </Button>
             </section>
           ) : null
         )}
