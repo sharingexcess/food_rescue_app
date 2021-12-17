@@ -1,7 +1,7 @@
 {
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.5.0",
