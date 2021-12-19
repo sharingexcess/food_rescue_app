@@ -8,7 +8,7 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  Area,
+  label,
   Bar,
 } from 'recharts'
 import { useFirestore } from 'hooks'
@@ -47,58 +47,58 @@ const fairMarketValues = {
 const data = [
   {
     name: 'Aug',
-    uv: 1500000,
-    pv: 1000000,
+    'Cumulative Retail': 1500000,
+    'Total SE Pounds': 1000000,
   },
   {
     name: 'Sept',
-    uv: 1700000,
-    pv: 1200000,
+    'Cumulative Retail': 1700000,
+    'Total SE Pounds': 1200000,
   },
   {
     name: 'Nov',
-    uv: 1650000,
-    pv: 1200000,
+    'Cumulative Retail': 1650000,
+    'Total SE Pounds': 1200000,
   },
   {
     name: 'Dec',
-    uv: 2000000,
-    pv: 1600000,
+    'Cumulative Retail': 2000000,
+    'Total SE Pounds': 1600000,
   },
   {
     name: '2022',
-    uv: 2100000,
-    pv: 1800000,
+    'Cumulative Retail': 2100000,
+    'Total SE Pounds': 1800000,
   },
   {
     name: 'Feb',
-    uv: 1900000,
-    pv: 2100000,
+    'Cumulative Retail': 1900000,
+    'Total SE Pounds': 2100000,
   },
   {
     name: 'Mar',
-    uv: 2300000,
-    pv: 2400000,
+    'Cumulative Retail': 2300000,
+    'Total SE Pounds': 2400000,
   },
   {
     name: 'Apr',
-    uv: 2500000,
-    pv: 2600000,
+    'Cumulative Retail': 2500000,
+    'Total SE Pounds': 2600000,
   },
   {
     name: 'May',
-    uv: 2600000,
-    pv: 3000000,
+    'Cumulative Retail': 2600000,
+    'Total SE Pounds': 3000000,
   },
   {
     name: 'Jun',
-    uv: 2700000,
-    pv: 3100000,
+    'Cumulative Retail': 2700000,
+    'Total SE Pounds': 3100000,
   },
   {
     name: 'Jul',
-    uv: 5000000,
-    pv: 3300000,
+    'Cumulative Retail': 5000000,
+    'Total SE Pounds': 3300000,
   },
 ]
 const renderLineChart = (
@@ -108,9 +108,8 @@ const renderLineChart = (
     <Tooltip />
     <Legend />
     <CartesianGrid stroke="#f5f5f5" />
-    <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
-    <Bar dataKey="pv" barSize={20} fill="grey" />
-    <Line type="monotone" dataKey="uv" stroke="green" />
+    <Bar dataKey="Total SE Pounds" barSize={20} fill="grey" />
+    <Line type="monotone" dataKey="Cumulative Retail" stroke="green" />
   </ComposedChart>
 )
 
@@ -198,6 +197,9 @@ export function CumulativePounds() {
             <div className="class"></div>
             <Text type="small">&nbsp; Fair Market Value</Text>
           </div>
+        </div>
+        <div className="graphTitle">
+          <Text type="graph-title">Cumulative Value Ending July 2021</Text>
         </div>
         <div className="CummulativePoundsGraph">{renderLineChart}</div>
       </div>
