@@ -1,17 +1,16 @@
 import React from 'react'
 import { Button, Modal as ModalWrapper } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
+import { AddToCategory, PickupReportInstructions } from 'components'
 import {
-  CancelRetailRescue,
-  CancelStop,
-  ContactAdmin,
   DropRetailRescue,
   FinishRetailRescue,
   RetailRescueMenu,
   StopMenu,
-  Caluculator,
-} from 'components/Route/Route.children'
-import { PickupReportInstructions } from 'components/PickupReportInstructions/PickupReportInstructions'
+  ContactAdmin,
+  CancelStop,
+  CancelRetailRescue,
+} from 'components/RetailRescue/RetailRescue.children'
 
 export function Modal() {
   const { modal, setModal } = useApp()
@@ -32,8 +31,8 @@ export function Modal() {
         return <CancelStop />
       case 'ContactAdmin':
         return <ContactAdmin />
-      case 'Calculator':
-        return <Caluculator />
+      case 'AddToCategory':
+        return <AddToCategory />
       case 'PickupReportInstructions':
         return <PickupReportInstructions />
       default:

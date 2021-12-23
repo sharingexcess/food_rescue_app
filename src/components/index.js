@@ -1,5 +1,5 @@
 export * from './Analytics/Analytics'
-export * from './Calculator/Calculator'
+export * from './AddToCategory/AddToCategory'
 export * from './Calendar/Calendar'
 export * from './CompletedRoute/CompletedRoute'
 export * from './ContactUs/ContactUs'

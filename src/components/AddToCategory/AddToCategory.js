@@ -4,7 +4,7 @@ import { Input } from 'components'
 import { Button, Text, Spacer } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
 
-export function Caluculator() {
+export function AddToCategory() {
   const [weight, setWeight] = useState(0)
   const { setModal, modalState } = useApp()
 
@@ -25,7 +25,7 @@ export function Caluculator() {
   }
 
   return (
-    <div id="Calculator">
+    <div id="AddToCategory">
       <Text type="secondary-header" color="black" align="left">
         Add Weight to {modalState.field}
       </Text>

@@ -52,7 +52,7 @@ export function PickupReport({ customSubmitHandler }) {
   const canEdit = (pickup && [1, 3, 6].includes(pickup.status)) || admin
 
   function openEasyEntry(field) {
-    setModal('Calculator')
+    setModal('AddToCategory')
     setModalState({ setFormData, sumWeight, field })
   }
 
