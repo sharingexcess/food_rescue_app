@@ -1,7 +1,7 @@
 @import '../contexts/Auth/Auth.scss';
 @import '../components/Analytics/Analytics.scss';
 @import '../components/Calendar/Calendar.scss';
-@import '../components/CompletedRoute/CompletedRoute.scss';
+@import '../components/CompletedRescue/CompletedRescue.scss';
 @import '../components/ContactUs/ContactUs.scss';
 @import '../components/DeliveryReport/DeliveryReport.scss';
 @import '../components/DriverInfo/DriverInfo.scss';
@@ -12,10 +12,9 @@
 @import '../components/EditLocation/EditLocation.scss';
 @import '../components/EditOrganization/EditOrganization.scss';
 @import '../components/EditPickup/EditPickup.scss';
-@import '../components/EditRoute/EditRoute.scss';
+@import '../components/EditRescue/EditRescue.scss';
 @import '../components/Error/Error.scss';
 @import '../components/FoodSafety/FoodSafety.scss';
-@import '../components/Footer/Footer.scss';
 @import '../components/GoogleMap/GoogleMap.scss';
 @import '../components/Header/Header.scss';
 @import '../components/Home/Home.scss';
@@ -31,8 +30,8 @@
 @import '../components/Privacy/Privacy.scss';
 @import '../components/Profile/Profile.scss';
 @import '../components/ReorderStops/ReorderStops.scss';
-@import '../components/RetailRescue/RetailRescue.scss';
-@import '../components/RetailRescues/RetailRescues.scss';
+@import '../components/Rescue/Rescue.scss';
+@import '../components/Rescues/Rescues.scss';
 @import '../components/SwitchEnv/SwitchEnv.scss';
 @import '../components/Terms/Terms.scss';
 @import '../components/Tutorial/Tutorial.scss';

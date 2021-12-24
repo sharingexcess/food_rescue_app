@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
 import { getImageFromStorage } from 'helpers'
@@ -9,7 +9,12 @@ import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 const org_icon_urls = {}
 
 export function Organizations() {
-  const organizations = useFirestore('organizations')
+  const donors = useFirestore('donors')
+  const recipients = useFirestore('recipients')
+  const organizations = useMemo(() => [...donors, ...recipients], [
+    donors,
+    recipients,
+  ])
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState()
   const [, updated] = useState() // use this as a way to force re-render by calling a setState function

@@ -4,17 +4,24 @@ import { useAuth, useFirestore } from 'hooks'
 import { generateDriverStats, generateGreeting } from './utils'
 import { Landing, NewDriver } from 'components'
 import { Card, Text } from '@sharingexcess/designsystem'
+import { STATUSES } from 'helpers'
 
 export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin, permission } = useAuth()
   const my_routes = useFirestore(
     'routes',
-    useCallback(r => r.driver_id === user.uid && r.status === 9, []) // eslint-disable-line
+    useCallback(
+      r => r.driver_id === user.uid && r.status === STATUSES.COMPLETED,
+      [user.uid]
+    ) // eslint-disable-line
   )
   const my_deliveries = useFirestore(
     'deliveries',
-    useCallback(d => d.driver_id === user.uid && d.status === 9, []) // eslint-disable-line
+    useCallback(
+      d => d.driver_id === user.uid && d.status === STATUSES.COMPLETED,
+      [user.uid]
+    ) // eslint-disable-line
   )
   const stats = generateDriverStats(my_routes, my_deliveries)
 

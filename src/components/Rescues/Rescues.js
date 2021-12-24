@@ -5,12 +5,13 @@ import UserIcon from 'assets/user.svg'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
 import { Card, Spacer, Text } from '@sharingexcess/designsystem'
+import { STATUSES } from 'helpers'
 
-export function RetailRescues() {
+export function Rescues() {
   const history = useHistory()
   const { user, admin } = useAuth()
   const location = useLocation()
-  const retail_rescues = useFirestore('retail_rescues')
+  const rescues = useFirestore('rescues')
   const deliveries = useFirestore('deliveries')
   const [searchByDriver, setSearchByDriver] = useState('')
   const [searchByDate, setSearchByDate] = useState(
@@ -43,10 +44,7 @@ export function RetailRescues() {
     const rescue_deliveries = deliveries.filter(d => d.rescue_id === rescue_id)
     let totalWeight = 0
     for (const rd of rescue_deliveries) {
-      totalWeight +=
-        rd.impact_data && rd.impact_data.total_weight
-          ? rd.impact_data.total_weight
-          : 0
+      totalWeight += rd.impact_data_total_weight || 0
     }
     return totalWeight
   }
@@ -94,28 +92,26 @@ export function RetailRescues() {
     history.replace(`history?filter=date&date=${e.target.value}`)
   }
 
-  function filterAndSortRetailRescues(retail_rescues) {
+  function filterAndSortRescues(rescues) {
     const byDate = (a, b) =>
-      new Date(b.timestamps.scheduled_start) -
-      new Date(a.timestamps.scheduled_start)
+      new Date(b.timestamp_scheduled_start) -
+      new Date(a.timestamp_scheduled_start)
 
     switch (filter) {
       case 'active':
-        return retail_rescues
+        return rescues
           .filter(r => ['scheduled', 'active'].includes(r.status))
           .sort(byDate)
       case 'past':
-        return retail_rescues
+        return rescues
           .filter(r => ['completed', 'cancelled'].includes(r.status))
           .sort(byDate)
       case 'mine':
-        return retail_rescues
-          .filter(r => r.handler_id === user.uid)
-          .sort(byDate)
+        return rescues.filter(r => r.handler_id === user.uid).sort(byDate)
       case 'unassigned':
-        return retail_rescues.filter(r => !r.handler_id).sort(byDate)
+        return rescues.filter(r => !r.handler_id).sort(byDate)
       case 'driver':
-        return retail_rescues
+        return rescues
           .filter(
             r =>
               r.driver.name !== undefined &&
@@ -123,67 +119,59 @@ export function RetailRescues() {
           )
           .sort(byDate)
       case 'date':
-        return retail_rescues
+        return rescues
           .filter(
             r =>
-              moment(r.timestamps.scheduled_start).format('yyyy-MM-DD') ===
+              moment(r.timestamp_scheduled_start).format('yyyy-MM-DD') ===
               searchByDate
           )
           .sort(byDate)
       default:
-        return retail_rescues.sort(byDate)
+        return rescues.sort(byDate)
     }
   }
 
   function StatusIndicator({ rescue }) {
-    if (rescue.status === 'completed') {
-      return <div className="RetailRescues-route-status">✅</div>
-    } else if (rescue.status === 'cancelled') {
-      return <div className="RetailRescues-route-status">❌</div>
-    } else if (rescue.status === 'scheduled') {
-      return <div className="RetailRescues-route-status">🗓</div>
-    } else if (rescue.status === 'active') {
-      return <div className="RetailRescues-route-status">🚛</div>
+    if (rescue.status === STATUSES.COMPLETED) {
+      return <div className="Rescues-route-status">✅</div>
+    } else if (rescue.status === STATUSES.CANCELLED) {
+      return <div className="Rescues-route-status">❌</div>
+    } else if (rescue.status === STATUSES.SCHEDULED) {
+      return <div className="Rescues-route-status">🗓</div>
+    } else if (rescue.status === STATUSES.ACTIVE) {
+      return <div className="Rescues-route-status">🚛</div>
     } else return null
   }
 
   function generateStopLabel(stop) {
     return `${stop.organization.name} (${
-      stop.location.nickname || stop.location.address?.address1
-    })${stop.status === 'cancelled' ? ' - Cancelled' : ''}`
+      stop.location.nickname || stop.location.address1
+    })${stop.status === STATUSES.CANCELLED ? ' - Cancelled' : ''}`
   }
 
   function generateDeliveryWeight(delivery) {
     const baseText = `${delivery.organization.name} (${
-      delivery.location.nickname || delivery.location.address?.address1
+      delivery.location.nickname || delivery.location.address1
     })`
-    if (delivery.status === 'cancelled') {
+    if (delivery.status === STATUSES.CANCELLED) {
       return `${baseText} - Cancelled`
-    } else if (delivery.status === 'completed') {
-      if (delivery.impact_data?.total_weight) {
-        return `${baseText} - ${delivery.impact_data.total_weight} lbs.`
-      } else {
-        return `${baseText} - 0 lbs.`
-      }
+    } else if (delivery.status === STATUSES.COMPLETED) {
+      return `${baseText} - ${delivery.impact_data_total_weight} lbs.`
     } else return `${baseText}`
   }
 
   function generateRescueStart(rescue) {
-    const start = rescue.timestamps.started
-      ? rescue.timestamps.started.toDate()
-      : 'No start time'
+    const start = rescue.timestamp_logged_start || 'No start time'
 
-    if (rescue.status === 'completed') {
+    if (rescue.status === STATUSES.COMPLETED) {
       return start === 'No start time' ? start : moment(start).format('h:mma')
     }
   }
 
   function generateRescueFinish(rescue) {
-    const r_endTime = rescue.time_finished
-      ? rescue.time_finished.toDate()
-      : 'No end time'
+    const r_endTime = rescue.timestamp_logged_finish || 'No end time'
 
-    if (rescue.status === 9) {
+    if (rescue.status === STATUSES.COMPLETED) {
       return r_endTime === 'No end time'
         ? r_endTime
         : moment(r_endTime).format('h:mma')
@@ -194,7 +182,7 @@ export function RetailRescues() {
     return (
       <Link to={`/rescues/${r.id}`} key={r.id}>
         <Card classList={['Route']}>
-          <div className="RetailRescues-route-header">
+          <div className="Rescues-route-header">
             {r.driver && (
               <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
             )}
@@ -203,15 +191,15 @@ export function RetailRescues() {
                 {r.driver.name || 'Unassigned Route'}
               </Text>
               <Text type="small" color="blue">
-                {r.status === 'complete'
-                  ? `${moment(r.timestamps.scheduled_start).format(
+                {r.status === STATUSES.COMPLETED
+                  ? `${moment(r.timestamp_scheduled_start).format(
                       'ddd, MMM Do'
                     )}, ${generateRescueStart(r)} - ${generateRescueFinish(r)}`
-                  : moment(r.timestamps.scheduled_start).format(
+                  : moment(r.timestamp_scheduled_start).format(
                       'ddd, MMM Do, h:mma'
                     )}
               </Text>
-              {r.status === 'completed' && (
+              {r.status === STATUSES.COMPLETED && (
                 <>
                   <Spacer height={4} />
                   <Text type="small" color="green">
@@ -249,9 +237,9 @@ export function RetailRescues() {
     )
   }
 
-  return retail_rescues ? (
-    <main id="RetailRescues">
-      <Text type="section-header" id="RetailRescues-title" color="white" shadow>
+  return rescues ? (
+    <main id="Rescues">
+      <Text type="section-header" id="Rescues-title" color="white" shadow>
         Retail Rescues
       </Text>
       <Text type="subheader" color="white" shadow>
@@ -278,16 +266,14 @@ export function RetailRescues() {
           {admin === true ? (
             <option value="date">Rescues by Date</option>
           ) : null}
-          {/*  Only adding these filters to RetailRescues page */}
+          {/*  Only adding these filters to Rescues page */}
           {location.pathname === '/routes' ? (
             <>
               {admin === true ? (
-                <option value="incomplete">
-                  Show Incomplete RetailRescues
-                </option>
+                <option value="incomplete">Show Incomplete Rescues</option>
               ) : null}
               {admin === true ? (
-                <option value="happening">Show Ongoing RetailRescues</option>
+                <option value="happening">Show Ongoing Rescues</option>
               ) : null}
             </>
           ) : null}
@@ -310,9 +296,9 @@ export function RetailRescues() {
           animation={false}
         />
       ) : null}
-      {!retail_rescues.length ? (
+      {!rescues.length ? (
         <Loading text="Loading rescues" />
-      ) : !filterAndSortRetailRescues(retail_rescues).length ? (
+      ) : !filterAndSortRescues(rescues).length ? (
         <div className="no-routes">
           <div className="icon">🤷‍♀️</div>
           <Text type="secondary-header" color="white" shadow align="center">
@@ -326,9 +312,7 @@ export function RetailRescues() {
           </Text>
         </div>
       ) : (
-        filterAndSortRetailRescues(retail_rescues).map(r => (
-          <RescueCard key={r.id} r={r} />
-        ))
+        filterAndSortRescues(rescues).map(r => <RescueCard key={r.id} r={r} />)
       )}
     </main>
   ) : (

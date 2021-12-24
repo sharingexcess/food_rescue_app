@@ -1,5 +1,5 @@
 import GoogleMapReact from 'google-map-react'
-import { generateDirectionsLink } from './utils'
+import { generateDirectionsLink } from 'helpers'
 
 const defaultAddress = {
   lat: 39.952583,
@@ -10,7 +10,15 @@ const defaultAddress = {
 
 export function GoogleMap({ address = defaultAddress, style, zoom = 15 }) {
   function openDirections() {
-    window.open(generateDirectionsLink(address), '_blank')
+    window.open(
+      generateDirectionsLink(
+        address.address1,
+        address.city,
+        address.state,
+        address.zip
+      ),
+      '_blank'
+    )
   }
 
   function Marker() {

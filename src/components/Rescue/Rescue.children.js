@@ -16,58 +16,50 @@ import {
   getCollection,
   setFirestoreData,
   updateGoogleCalendarEvent,
+  generateDirectionsLink,
+  STATUSES,
+  FOOD_CATEGORIES,
+  RECIPIENT_TYPES,
 } from 'helpers'
 import { useAuth, useFirestore, useApp } from 'hooks'
 import { Link, useHistory, useParams } from 'react-router-dom'
-import {
-  areAllStopsCompleted,
-  generateDirectionsLink,
-  getNextIncompleteStopIndex,
-} from './utils'
+import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
 import moment from 'moment'
 
-export function RetailRescueHeader() {
+export function RescueHeader() {
   const { setModal } = useApp()
   const { rescue_id } = useParams()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
-  return retail_rescue ? (
+  return rescue ? (
     <div id="Driver" type="secondary">
       <Image
-        src={retail_rescue.driver ? retail_rescue.driver.icon : UserIcon}
-        alt={
-          retail_rescue.driver
-            ? retail_rescue.driver.name
-            : 'No assigned driver'
-        }
+        src={rescue.driver ? rescue.driver.icon : UserIcon}
+        alt={rescue.driver ? rescue.driver.name : 'No assigned driver'}
       />
       <div>
         <Text type="small-header" color="white" shadow>
-          {retail_rescue.status.toUpperCase()} RESCUE
+          {rescue.status.toUpperCase()} RESCUE
         </Text>
         <Text type="section-header" color="white" shadow>
-          {retail_rescue.driver
-            ? retail_rescue.driver.name
-            : 'No assigned driver'}
+          {rescue.driver ? rescue.driver.name : 'No assigned driver'}
         </Text>
         <Text type="small" color="white" shadow>
-          {moment(retail_rescue.timestamps.scheduled_start).format(
-            'ddd, MMM D, h:mma'
-          )}{' '}
-          ({retail_rescue.stops.length} total stops)
+          {moment(rescue.timestamp_scheduled_start).format('ddd, MMM D, h:mma')}{' '}
+          ({rescue.stops.length} total stops)
         </Text>
-        {retail_rescue.notes ? (
+        {rescue.notes ? (
           <Text type="small" color="white" shadow>
-            Notes: {retail_rescue.notes}
+            Notes: {rescue.notes}
           </Text>
         ) : null}
       </div>
       <Button
-        id="RetailRescue-edit-button"
+        id="Rescue-edit-button"
         type="secondary"
         color="white"
-        handler={() => setModal('RetailRescueMenu')}
+        handler={() => setModal('RescueMenu')}
       >
         <i className="fa fa-ellipsis-v" />
       </Button>
@@ -75,13 +67,13 @@ export function RetailRescueHeader() {
   ) : null
 }
 
-export function RetailRescueMenu() {
+export function RescueMenu() {
   const { setModal } = useApp()
   const { user, admin } = useAuth()
   const { rescue_id } = useParams()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
-  function RetailRescueOption({ name, modalName }) {
+  function RescueOption({ name, modalName }) {
     return (
       <Button
         type="tertiary"
@@ -94,37 +86,31 @@ export function RetailRescueMenu() {
     )
   }
 
-  return retail_rescue ? (
-    <div id="RetailRescueMenu">
+  return rescue ? (
+    <div id="RescueMenu">
       <Text type="secondary-header" color="black">
         Rescue Options
       </Text>
       <Spacer height={8} />
       <ul>
-        {user.id === retail_rescue.handler_id || admin ? (
+        {user.id === rescue.handler_id || admin ? (
           <>
             <li>
-              <RetailRescueOption
-                modalName="FinishRetailRescue"
+              <RescueOption
+                modalName="FinishRescue"
                 name="Force Finish Rescue"
               />
             </li>
           </>
         ) : null}
 
-        {user.id === retail_rescue.handler_id ? (
+        {user.id === rescue.handler_id ? (
           <>
             <li>
-              <RetailRescueOption
-                modalName="DropRetailRescue"
-                name="Drop Rescue"
-              />
+              <RescueOption modalName="DropRescue" name="Drop Rescue" />
             </li>
             <li>
-              <RetailRescueOption
-                modalName="ContactAdmin"
-                name="Contact Admin"
-              />
+              <RescueOption modalName="ContactAdmin" name="Contact Admin" />
             </li>
           </>
         ) : null}
@@ -138,10 +124,7 @@ export function RetailRescueMenu() {
               </Link>
             </li>
             <li>
-              <RetailRescueOption
-                modalName="CancelRetailRescue"
-                name="Cancel RetailRescue"
-              />
+              <RescueOption modalName="CancelRescue" name="Cancel Rescue" />
             </li>
           </>
         ) : null}
@@ -175,28 +158,29 @@ export function StopMenu() {
   )
 }
 
-export function DropRetailRescue() {
+export function DropRescue() {
   const { setModal } = useApp()
   const [notes, setNotes] = useState('')
   const { rescue_id } = useParams()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
   async function handleUnassign() {
     const event = await updateGoogleCalendarEvent({
-      ...retail_rescue,
+      ...rescue,
       driver: null,
-      notes: `RetailRescue dropped by ${retail_rescue.driver.name}: "${notes}"`,
+      notes: `Rescue dropped by ${rescue.driver.name}: "${notes}"`,
     })
-    await setFirestoreData(['retail_rescues', retail_rescue.id], {
+    await setFirestoreData(['rescues', rescue.id], {
       handler_id: null,
       google_calendar_event_id: event.id,
-      notes: `Rescue dropped by ${retail_rescue.driver.name}: "${notes}"`,
-      updated_at: createTimestamp(),
+      notes: `Rescue dropped by ${rescue.driver.name}: "${notes}"`,
+      timestamp_updated: createTimestamp(),
     })
-    for (const stop of retail_rescue.stops) {
+    for (const stop of rescue.stops) {
       const collection = stop.type === 'pickup' ? 'pickups' : 'deliveries'
       setFirestoreData([collection, stop.id], {
         handler_id: null,
+        timestamp_updated: createTimestamp(),
       })
     }
     setModal()
@@ -211,7 +195,7 @@ export function DropRetailRescue() {
       <Button
         type="tertiary"
         color="blue"
-        handler={() => setModal('RetailRescueMenu')}
+        handler={() => setModal('RescueMenu')}
       >
         &lt; Back to Rescue Options
       </Button>
@@ -235,22 +219,22 @@ export function DropRetailRescue() {
   )
 }
 
-export function CancelRetailRescue() {
+export function CancelRescue() {
   const { setModal } = useApp()
   const [notes, setNotes] = useState()
   const { rescue_id } = useParams()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
   async function handleCancel() {
-    getCollection('RetailRescues')
-      .doc(retail_rescue.id)
-      .set({ status: 'cancelled', notes }, { merge: true })
+    getCollection('rescues')
+      .doc(rescue.id)
+      .set({ status: STATUSES.CANCELLED, notes }, { merge: true })
       .then(() => {
         fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
           method: 'POST',
           body: JSON.stringify({
             calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-            eventId: retail_rescue.google_calendar_event_id,
+            eventId: rescue.google_calendar_event_id,
           }),
         }).catch(e => console.error('Error deleting calendar event:', e))
       })
@@ -266,12 +250,12 @@ export function CancelRetailRescue() {
       <Button
         type="tertiary"
         color="blue"
-        handler={() => setModal('RetailRescueMenu')}
+        handler={() => setModal('RescueMenu')}
       >
         &lt; Back to Rescue Options
       </Button>
       <Input
-        label="Why can't you complete this retail_rescue?"
+        label="Why can't you complete this rescue?"
         animation={false}
         type="textarea"
         value={notes}
@@ -290,17 +274,17 @@ export function CancelRetailRescue() {
   )
 }
 
-export function FinishRetailRescue() {
+export function FinishRescue() {
   const { setModal } = useApp()
   const [notes, setNotes] = useState('')
   const history = useHistory()
   const { rescue_id } = useParams()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
   async function handleFinish() {
-    getCollection('retail_rescues')
-      .doc(retail_rescue.id)
-      .set({ status: 'completed', notes }, { merge: true })
+    getCollection('rescues')
+      .doc(rescue.id)
+      .set({ status: STATUSES.COMPLETED, notes }, { merge: true })
       .then(() => setModal())
       .then(() => history.push(`/rescues/${rescue_id}/completed`))
   }
@@ -314,7 +298,7 @@ export function FinishRetailRescue() {
       <Button
         type="tertiary"
         color="blue"
-        handler={() => setModal('RetailRescueMenu')}
+        handler={() => setModal('RescueMenu')}
       >
         &lt; Back to Rescue Options
       </Button>
@@ -349,10 +333,8 @@ export function CancelStop() {
       .doc(modalState.stop.id)
       .set(
         {
-          status: 'cancelled',
-          report: modalState.stop.report
-            ? { ...modalState.stop.report, notes }
-            : { notes },
+          status: STATUSES.CANCELLED,
+          notes,
         },
         { merge: true }
       )
@@ -395,7 +377,7 @@ export function ContactAdmin() {
       <Button
         type="tertiary"
         color="blue"
-        handler={() => setModal('RetailRescueMenu')}
+        handler={() => setModal('RescueMenu')}
       >
         &lt; Back to Rescue Options
       </Button>
@@ -415,45 +397,38 @@ export function Stop({ stops, s, i }) {
   const history = useHistory()
   const { rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
-  const { user, admin } = useAuth()
+  const rescue = useFirestore('rescues', rescue_id)
   const pickups = useFirestore('pickups')
-  const organizations = useFirestore('organizations')
 
-  const isActiveStop = retail_rescue
-    ? i === getNextIncompleteStopIndex(retail_rescue, stops)
+  const isActiveStop = rescue
+    ? i === getNextIncompleteStopIndex(rescue, stops)
     : false
+  const isCompletedStop = [STATUSES.COMPLETED, STATUSES.CANCELLED].includes(
+    s.status
+  )
 
-  const isCompletedStop = s.status === 'completed' || s.status === 'cancelled'
-
-  function hasEditPermissions() {
-    return (
-      admin || (retail_rescue && user && user.uid === retail_rescue.handler_id)
-    )
-  }
-
-  function RetailRescueStatusIndicator({ retail_rescue }) {
-    if (retail_rescue.status === 'completed') {
-      return <div className="RetailRescues-stop-status">✅</div>
-    } else if (retail_rescue.status === 'cancelled') {
-      return <div className="RetailRescues-stop-status">❌</div>
-    } else if (retail_rescue.status === 'scheduled') {
-      return <div className="RetailRescues-stop-status">🗓</div>
-    } else if (retail_rescue.status === 'active') {
-      return <div className="RetailRescues-stop-status">🚛</div>
+  function RescueStatusIndicator({ rescue }) {
+    if (rescue.status === STATUSES.COMPLETED) {
+      return <div className="Rescues-stop-status">✅</div>
+    } else if (rescue.status === STATUSES.CANCELLED) {
+      return <div className="Rescues-stop-status">❌</div>
+    } else if (rescue.status === STATUSES.SCHEDULED) {
+      return <div className="Rescues-stop-status">🗓</div>
+    } else if (rescue.status === STATUSES.ACTIVE) {
+      return <div className="Rescues-stop-status">🚛</div>
     } else return null
   }
 
   function StopHeader() {
     const headerText =
-      s.type && s.status && retail_rescue
+      s.type && s.status && rescue
         ? s.type === 'delivery'
           ? `🟥 DELIVERY (${s.status.toUpperCase()})`
           : `🟩 PICKUP (${s.status.toUpperCase()})`
         : 'loading...'
 
     return (
-      <div className="RetailRescue-stop-header">
+      <div className="Rescue-stop-header">
         <Text
           type="small-header"
           color={
@@ -464,7 +439,7 @@ export function Stop({ stops, s, i }) {
         </Text>
         {!isCompletedStop && (
           <Button
-            id="RetailRescue-stop-edit-button"
+            id="Rescue-stop-edit-button"
             type="tertiary"
             size="large"
             color={isActiveStop ? 'black' : 'white'}
@@ -476,7 +451,7 @@ export function Stop({ stops, s, i }) {
             <i className="fa fa-ellipsis-v" />
           </Button>
         )}
-        <RetailRescueStatusIndicator retail_rescue={s} />
+        <RescueStatusIndicator rescue={s} />
       </div>
     )
   }
@@ -488,7 +463,7 @@ export function Stop({ stops, s, i }) {
         <Text
           type="small"
           color="black"
-          classList={['RetailRescue-stop-instructions']}
+          classList={['Rescue-stop-instructions']}
         >
           <span>Instructions: </span>
           {s.location.notes}
@@ -498,10 +473,10 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopAddress() {
-    const { address1, address2, city, state, zip } = s.location.address
+    const { address1, address2, city, state, zip } = s.location
     const button = (
       <Button
-        classList={['RetailRescue-stop-address-button']}
+        classList={['Rescue-stop-address-button']}
         type="tertiary"
         size="small"
         color={isActiveStop ? 'blue' : 'white'}
@@ -515,8 +490,15 @@ export function Stop({ stops, s, i }) {
       </Button>
     )
 
-    return s.status && s.status !== 9 ? (
-      <ExternalLink to={generateDirectionsLink(s.location.address)}>
+    return s.status && s.status !== STATUSES.COMPLETED ? (
+      <ExternalLink
+        to={generateDirectionsLink(
+          s.location.address1,
+          s.location.city,
+          s.location.state,
+          s.location.zip
+        )}
+      >
         {button}
       </ExternalLink>
     ) : (
@@ -525,10 +507,10 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopContact({ name, number }) {
-    return (
-      <ExternalLink to={`tel:${s.location.contact.phone}`}>
+    return number ? (
+      <ExternalLink to={`tel:${s.location.contact_phone}`}>
         <Button
-          classList={['RetailRescue-stop-phone-button']}
+          classList={['Rescue-stop-phone-button']}
           type="tertiary"
           size="small"
           color="blue"
@@ -539,16 +521,12 @@ export function Stop({ stops, s, i }) {
           {name && ` (ask for ${name})`}
         </Button>
       </ExternalLink>
-    )
+    ) : null
   }
 
   function StopMap() {
-    return s.location.address.lat && s.location.address.lng ? (
-      <GoogleMap
-        address={s.location.address}
-        style={{ height: 200 }}
-        zoom={14}
-      />
+    return s.location.lat && s.location.lng ? (
+      <GoogleMap address={s.location} style={{ height: 200 }} zoom={14} />
     ) : null
   }
 
@@ -557,23 +535,30 @@ export function Stop({ stops, s, i }) {
       setFirestoreData(
         [s.type === 'delivery' ? 'deliveries' : 'pickups', s.id],
         {
-          status: 'active',
-          driver_left_at: createTimestamp(),
+          status: STATUSES.ACTIVE,
+          timestamp_started: createTimestamp(),
         }
       ).then(() =>
-        window.open(generateDirectionsLink(s.location.address), '_blank')
+        window.open(
+          generateDirectionsLink(
+            s.location.address1,
+            s.location.city,
+            s.location.state,
+            s.location.zip
+          ),
+          '_blank'
+        )
       )
     }
     async function handleSkip() {
-      const org = organizations.find(o => o.id === s.org_id)
-      if (org.org_type === 'home_delivery') {
+      if (s.organization.type === RECIPIENT_TYPES.HOME_DELIVERY) {
         handleSubmitHomeDelivery()
       } else {
         setFirestoreData(
           [s.type === 'delivery' ? 'deliveries' : 'pickups', s.id],
           {
-            status: 'active',
-            driver_left_at: createTimestamp(),
+            status: STATUSES.ACTIVE,
+            timestamp_started: createTimestamp(),
           }
         ).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
       }
@@ -606,20 +591,24 @@ export function Stop({ stops, s, i }) {
   }
 
   function handleSubmitHomeDelivery() {
-    const pickup = pickups.find(p => p.rescue_id === retail_rescue.id)
-    const weight = pickup.report.total_weight
-    const percent_of_total_dropped = 1 / (retail_rescue.stops.length - 1)
+    const pickup = pickups.find(p => p.rescue_id === rescue.id)
+    const percent_of_total_dropped = 1 / (rescue.stops.length - 1)
     setFirestoreData(['deliveries', s.id], {
-      impact_data: {
-        percent_of_total_dropped: parseInt(percent_of_total_dropped),
-        weight: isNaN(weight)
-          ? 0
-          : Math.round(weight * percent_of_total_dropped),
-        created_at: createTimestamp(),
-        updated_at: createTimestamp(),
-      },
-      time_finished: createTimestamp(),
-      status: 'completed',
+      // calculate percentage based weight totals for each food category
+      ...FOOD_CATEGORIES.reduce(
+        (a, b) => (b[a] = Math.round(pickup[a] * percent_of_total_dropped)),
+        {}
+      ),
+      impact_data_percent_of_total_dropped: parseInt(percent_of_total_dropped),
+      impact_data_total_weight:
+        Math.round(
+          pickup.impact_data_total_weight *
+            (parseInt(percent_of_total_dropped) / 100)
+        ) || 0,
+      timestamp_created: createTimestamp(),
+      timestamp_updated: createTimestamp(),
+      timestamp_finished: createTimestamp(),
+      status: STATUSES.COMPLETED,
     })
       .then(() => history.push(`/rescues/${rescue_id}`))
       .catch(e => console.error('Error writing document: ', e))
@@ -630,15 +619,17 @@ export function Stop({ stops, s, i }) {
       setFirestoreData(
         [s.type === 'delivery' ? 'deliveries' : 'pickups', s.id],
         {
-          status: 'arrived',
+          status: STATUSES.ACTIVE,
           driver_arrived_at: createTimestamp(),
         }
       ).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
     }
 
     function handleClick() {
-      const org = organizations.find(o => o.id === s.org_id)
-      if (org.org_type === 'home_delivery') {
+      if (
+        s.type === 'delivery' &&
+        s.organization.type === RECIPIENT_TYPES.HOME_DELIVERY
+      ) {
         handleSubmitHomeDelivery()
       } else handleOpenReport()
     }
@@ -665,15 +656,15 @@ export function Stop({ stops, s, i }) {
         <StopAddress />
         <Spacer height={8} />
         <StopContact
-          name={s.location.contact.name}
-          number={s.location.contact.phone}
+          name={s.location.contact_name}
+          number={s.location.contact_phone}
         />
         <StopInstructions />
         <Spacer height={16} />
         <StopMap />
         <Spacer height={24} />
-        {s.status === 1 && <StopDirectionsButton />}
-        {(s.status === 3 || s.status === 6) && <StopReportButton />}
+        {s.status === STATUSES.SCHEDULED && <StopDirectionsButton />}
+        {s.status === STATUSES.ACTIVE && <StopReportButton />}
       </>
     )
   }
@@ -686,7 +677,7 @@ export function Stop({ stops, s, i }) {
         <Spacer height={8} />
         <Text classList={['StopSummary-notes']} type="paragraph" color="white">
           {s.status === 'completed' &&
-            s.impact_data.total_weight +
+            s.impact_data_total_weight +
               ' lbs. ' +
               (s.type === 'pickup' ? 'rescued' : 'delivered')}
           {s.notes && `\n"${s.notes}"`}
@@ -731,42 +722,39 @@ export function Stop({ stops, s, i }) {
     </Card>
   )
 
-  // Make the Card Clickable as a link to the Stop Report
-  // if the stop is already completed (s.status === 9)
-  // or if the retail_rescue is already completed (retail_rescue.status === 9)
-  return s.status === 'completed' ||
-    (retail_rescue && retail_rescue.status === 'completed')
+  return s.status === STATUSES.COMPLETED ||
+    (rescue && rescue.status === STATUSES.COMPLETED)
     ? linkToReport(stopCard)
     : stopCard
 }
 
-export function RetailRescueActionButton() {
+export function RescueActionButton() {
   const { rescue_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
   async function handleBegin() {
-    await setFirestoreData(['RetailRescues', retail_rescue.id], {
-      status: 'active',
-      time_started: createTimestamp(),
-      updated_at: createTimestamp(),
+    await setFirestoreData(['rescues', rescue.id], {
+      status: STATUSES.ACTIVE,
+      timestamp_logged_start: createTimestamp(),
+      timestamp_updated: createTimestamp(),
     })
   }
 
   async function handleClaim() {
     const event = await updateGoogleCalendarEvent({
-      ...retail_rescue,
+      ...rescue,
       notes: null,
       driver: drivers.find(d => d.id === user.uid),
     })
-    setFirestoreData(['retail_rescues', retail_rescue.id], {
+    setFirestoreData(['rescues', rescue.id], {
       handler_id: user.uid,
       google_calendar_event_id: event.id,
-      notes: null,
-      updated_at: createTimestamp(),
+      notes: '',
+      timestamp_updated: createTimestamp(),
     })
-    for (const stop of retail_rescue.stops) {
+    for (const stop of rescue.stops) {
       const collection = stop.type === 'pickup' ? 'pickups' : 'deliveries'
       setFirestoreData([collection, stop.id], {
         handler_id: user.uid,
@@ -794,12 +782,10 @@ export function RetailRescueActionButton() {
       button
     )
   }
-  if (!retail_rescue) return null
-  if (retail_rescue.status === 'scheduled') {
-    if (retail_rescue.driver) {
-      return (
-        <ActionButton handler={handleBegin}>Start RetailRescue</ActionButton>
-      )
+  if (!rescue) return null
+  if (rescue.status === STATUSES.SCHEDULED) {
+    if (rescue.driver) {
+      return <ActionButton handler={handleBegin}>Start Rescue</ActionButton>
     } else {
       if (admin) {
         return (
@@ -818,21 +804,21 @@ export function BackupDelivery() {
   const [willFind, setWillFind] = useState()
   const [working, setWorking] = useState(false)
   const { rescue_id } = useParams()
-  const retail_rescue = useFirestore('retail_rescues', rescue_id)
+  const rescue = useFirestore('rescues', rescue_id)
 
-  if (areAllStopsCompleted(retail_rescue.stops)) {
+  if (rescue && areAllStopsCompleted(rescue.stops)) {
     let lastStop
-    for (const s of retail_rescue.stops) {
+    for (const s of rescue.stops) {
       if (
-        s.status === 'completed' &&
-        (!lastStop || s.timestamps.finished > lastStop.timestamps.finished)
+        s.status === STATUSES.COMPLETED &&
+        (!lastStop || s.timestamp_finished > lastStop.timestamp_finished)
       )
         lastStop = s
     }
     if (
       lastStop &&
-      (!lastStop.impact_data.total_weight ||
-        lastStop.impact_data.percent_of_total_dropped < 100 ||
+      (!lastStop.impact_data_total_weight ||
+        lastStop.impact_data_percent_of_total_dropped < 100 ||
         lastStop.type === 'pickup')
     ) {
       async function addBackupDelivery(stop) {
@@ -841,18 +827,29 @@ export function BackupDelivery() {
           const stop_id = generateStopId(stop)
           await setFirestoreData(['deliveries', stop_id], {
             id: stop_id,
-            organization_id: stop.organization_id,
+            recipient_id: stop.recipient_id,
             location_id: stop.location_id,
-            handler_id: retail_rescue.handler_id,
-            created_at: createTimestamp(),
-            updated_at: createTimestamp(),
-            status: 'scheduled',
-            pickup_ids: lastStop.pickup_ids || lastStop.id,
+            handler_id: rescue.handler_id,
+            timestamp_created: createTimestamp(),
+            timestamp_updated: createTimestamp(),
+            timestamp_started: null,
+            timestamp_finished: null,
+            status: STATUSES.SCHEDULED,
             rescue_id,
+            impact_data_dairy: 0,
+            impact_data_bakery: 0,
+            impact_data_produce: 0,
+            impact_data_meat_fish: 0,
+            impact_data_non_perishable: 0,
+            impact_data_prepared_frozen: 0,
+            impact_data_mixed: 0,
+            impact_data_other: 0,
+            impact_data_total_weight: 0,
+            impact_data_percent_of_total_dropped: 0,
           })
-          await setFirestoreData(['retail_rescues', rescue_id], {
-            stop_ids: [...retail_rescue.stops.map(s => s.id), stop_id],
-            updated_at: createTimestamp(),
+          await setFirestoreData(['rescues', rescue_id], {
+            stop_ids: [...rescue.stops.map(s => s.id), stop_id],
+            timestamp_updated: createTimestamp(),
           })
           setWorking(false)
         }
@@ -863,20 +860,15 @@ export function BackupDelivery() {
             <>
               <EditDelivery handleSubmit={addBackupDelivery} />
               <br />
-              <button
-                className="yellow small"
-                onClick={() => setWillFind(false)}
-              >
-                cancel
-              </button>
+              <Button handler={() => setWillFind(false)}>cancel</Button>
             </>
           ) : (
             <>
-              <Text type="section-header" color="white" shadow>
+              <Text type="section-header" color="white" shadow align="center">
                 Looks like you have left over food!
               </Text>
-              <Text type="paragraph" color="white" shadow>
-                Add another delivery location to finish your retail_rescue.
+              <Text type="paragraph" color="white" shadow align="center">
+                Add another delivery location to finish your rescue.
               </Text>
               <Button handler={() => setWillFind(true)}>
                 Add Another Delivery

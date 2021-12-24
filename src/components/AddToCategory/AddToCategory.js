@@ -16,7 +16,7 @@ export function AddToCategory() {
     modalState.setFormData(currentData => ({
       ...currentData,
       [modalState.field]: currentData[modalState.field] + weight,
-      weight: modalState.sumWeight({
+      impact_data_total_weight: modalState.sumWeight({
         ...currentData,
         [modalState.field]: currentData[modalState.field] + weight,
       }),

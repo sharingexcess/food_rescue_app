@@ -1,25 +1,25 @@
 import firebase from 'firebase/app'
 import { v4 as generateUniqueId } from 'uuid'
-import { getCollection } from 'helpers'
+import { getCollection, setFirestoreData, STATUSES } from 'helpers'
 import moment from 'moment'
 
-export function createPickup(event, formData, history) {
+export async function createPickup(event, formData, history) {
   event.preventDefault()
   const id = generateUniqueId()
-  getCollection('Pickups')
-    .doc(id)
-    .set({
+  try {
+    await setFirestoreData(['pickups', id], {
       id,
       org_id: formData.org_id,
       location_id: formData.location_id,
       time_start: formData.time_start,
       time_end: formData.time_end,
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
-      updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-      status: 0,
+      status: STATUSES.CANCELLED,
     })
-    .then(() => history.push(`/`))
-    .catch(e => console.error('Error writing document: ', e))
+    history.push(`/`)
+  } catch (e) {
+    console.error('Error writing document: ', e)
+  }
 }
 
 export function updateFieldSuggestions(
@@ -40,32 +40,18 @@ export function updateFieldSuggestions(
     }
   }
 }
-export function addDays(time) {
-  return moment(new Date(time))
-    .startOf('hour')
-    .add(1, 'week')
-    .format('yyyy-MM-DDTkk:mm')
-}
 
 export function getDefaultStartTime() {
   return moment(new Date())
     .startOf('hour')
-    .add(2, 'hour')
+    .add(1, 'hour')
     .format('yyyy-MM-DDTkk:mm')
 }
 
 export function getDefaultEndTime() {
   return moment(new Date())
     .startOf('hour')
-    .add(4, 'hour')
-    .format('yyyy-MM-DDTkk:mm')
-}
-
-export function getDefaultEndRecurring() {
-  return moment(new Date())
-    .startOf('hour')
-    .add(2, 'week')
-    .add(2, 'hour')
+    .add(3, 'hour')
     .format('yyyy-MM-DDTkk:mm')
 }
 
@@ -79,6 +65,14 @@ export function getDefaultEndRecurring() {
 // loadSuggestionsOnInit: a boolean defining whether the suggestionQuery should be run before the user enters any input
 export const formFields = [
   {
+    label: 'Rescue Type',
+    id: 'type',
+    type: 'select',
+    handleSelect: value => ({
+      type: value,
+    }),
+  },
+  {
     label: 'Start Time',
     id: 'time_start',
     type: 'datetime-local',
@@ -91,40 +85,20 @@ export const formFields = [
   },
   {
     label: 'Select a driver...',
-    id: 'driver_name',
+    id: 'handler_name',
     preReq: 'time_start',
     type: 'text',
     suggestionQuery: (name, drivers) =>
       drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
     handleSelect: user => ({
-      driver_name: user.name,
-      driver_id: user.id,
+      handler_name: user.name,
+      handler_id: user.id,
     }),
   },
-]
-
-export const formFieldsRecurring = [
   {
-    label: 'Start Time',
-    id: 'time_start',
-    type: 'datetime-local',
-  },
-  {
-    label: 'End Recurring On',
-    id: 'end_recurring',
-    preReq: 'time_start',
-    type: 'datetime-local',
-  },
-  {
-    label: 'Select a driver...',
-    id: 'driver_name',
-    type: 'text',
-    suggestionQuery: (name, drivers) =>
-      drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
-    handleSelect: user => ({
-      driver_name: user.name,
-      driver_id: user.id,
-    }),
+    label: 'This is a direct link rescue',
+    id: 'is_direct_link',
+    type: 'checkbox',
   },
 ]
 
@@ -134,9 +108,9 @@ export const fetchExistingRouteData = async route_id => {
     .then(result => result.docs.map(doc => doc.data()))
   const myRoute = routes.find(route => route.id === route_id)
   if (!myRoute) return null
-  const driver = myRoute.driver_id
+  const driver = myRoute.handler_id
     ? await getCollection('users')
-        .doc(myRoute.driver_id)
+        .doc(myRoute.handler_id)
         .get()
         .then(result => result.data())
     : {}
@@ -181,11 +155,10 @@ export const fetchExistingRouteData = async route_id => {
 
   const routeData = {
     driver: Object.keys(driver).length ? driver : null,
-    driver_id: myRoute.driver_id,
-    driver_name: driver.name,
+    handler_id: myRoute.handler_id,
+    handler_name: driver.name,
     time_start: myRoute.time_start,
     time_end: myRoute.time_end,
-    end_recurring: getDefaultEndRecurring(),
     stops: newStops,
     created_at: myRoute.created_at,
     status: myRoute.status,
@@ -194,18 +167,18 @@ export const fetchExistingRouteData = async route_id => {
 }
 
 export const getTimeConflictInfo = (
-  driver_id,
+  handler_id,
   time_start,
   time_end,
   routes
 ) => {
   let checkInfo = { hasConflict: false, conflictRoutes: [] }
-  if (!driver_id) {
+  if (!handler_id) {
     return checkInfo
   } else {
     const driverRoutes = routes.filter(
       route =>
-        route.driver_id === driver_id &&
+        route.handler_id === handler_id &&
         route.status !== 9 &&
         ((moment(route.time_start) <= moment(time_start) &&
           moment(time_start) < moment(route.time_end)) ||

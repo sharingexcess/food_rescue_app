@@ -1,11 +1,11 @@
-#CompletedRoute {
+#CompletedRescue {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   @include page;
 
-  #CompletedRoute-icon {
+  #CompletedRescue-icon {
     font-size: 96px;
     color: var(--se-white);
     margin-bottom: 16px;

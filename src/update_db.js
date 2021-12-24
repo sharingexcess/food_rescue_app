@@ -3,29 +3,29 @@ import { useFirestore } from 'hooks'
 import moment from 'moment'
 
 export function UpdateDB() {
-  const routes = useFirestore('routes')
-  const dds = useFirestore('direct_donations')
-  const retail_rescues = useFirestore('retail_rescues')
-  const wholesale_rescues = useFirestore('wholesale_rescues')
-  const pickups = useFirestore('pickups')
-  const deliveries = useFirestore('deliveries')
-  // const orgs = useFirestore('organizations')
-  // const locs = useFirestore('locations')
-  // const users = useFirestore('users')
+  const Routes = useFirestore('Routes')
+  const dds = useFirestore('DirectDonations')
+  // const retail_rescues = useFirestore('retail_rescues')
+  // const wholesale_rescues = useFirestore('wholesale_rescues')
+  const Pickups = useFirestore('Pickups')
+  // const Deliveries = useFirestore('Deliveries')
+  const Orgs = useFirestore('Organizations')
+  // const Locs = useFirestore('Locations')
+  // const Users = useFirestore('Users')
 
-  // function handleClick() {
-  //   console.log('runnin...')
-  //   updateUsers(users)
-  // }
+  function handleClick() {
+    console.log('doing nothing...')
+    // updateRetailRescues(Routes)
+  }
 
-  async function updateUsers(users) {
-    if (!users || !users.length) {
-      alert('users not populated')
+  async function updateUsers(Users) {
+    if (!Users || !Users.length) {
+      alert('Users not populated')
     }
 
     const failed = []
 
-    for (const i of users) {
+    for (const i of Users) {
       try {
         const user = {
           id: i.id,
@@ -37,75 +37,73 @@ export function UpdateDB() {
           phone: normalizePhoneNumber(i.phone),
           pronouns: i.pronouns || null,
 
-          onboarding: {
-            completed_app_tutorial:
-              i.access_level === 'admin' || i.completed_app_tutorial || false,
-            completed_food_safety:
-              i.access_level === 'admin' || i.completed_food_safety || false,
-          },
+          // onboarding
+          completed_app_tutorial: true,
+          completed_food_safety: true,
+          completed_liability_release: true,
 
-          driver_info: {
-            insurance_policy_number: i.drivers_insurance_policy_number || null,
-            insurance_provider: i.drivers_insurance_provider || null,
-            license_number: i.drivers_license_number || null,
-            license_state: i.drivers_license_state || null,
-            liability_release_url: i.drivers_liability_release || null,
-            vehicle_make_model: i.vehicle_make_model || null,
-          },
+          // driver info
+          insurance_policy_number: i.drivers_insurance_policy_number || null,
+          insurance_provider: i.drivers_insurance_provider || null,
+          license_number: i.drivers_license_number || null,
+          license_state: i.drivers_license_state || null,
+          vehicle_make_model: i.vehicle_make_model || null,
 
-          availability: {
-            sun_am: i.driver_availability
-              ? i.driver_availability.sun_am
-              : false,
-            sun_pm: i.driver_availability
-              ? i.driver_availability.sun_pm
-              : false,
-            mon_am: i.driver_availability
-              ? i.driver_availability.mon_am
-              : false,
-            mon_pm: i.driver_availability
-              ? i.driver_availability.mon_pm
-              : false,
-            tue_am: i.driver_availability
-              ? i.driver_availability.tue_am
-              : false,
-            tue_pm: i.driver_availability
-              ? i.driver_availability.tue_pm
-              : false,
-            wed_am: i.driver_availability
-              ? i.driver_availability.wed_am
-              : false,
-            wed_pm: i.driver_availability
-              ? i.driver_availability.wed_pm
-              : false,
-            thu_am: i.driver_availability
-              ? i.driver_availability.thu_am
-              : false,
-            thu_pm: i.driver_availability
-              ? i.driver_availability.thu_pm
-              : false,
-            fri_am: i.driver_availability
-              ? i.driver_availability.fri_am
-              : false,
-            fri_pm: i.driver_availability
-              ? i.driver_availability.fri_pm
-              : false,
-            sat_am: i.driver_availability
-              ? i.driver_availability.sat_am
-              : false,
-            sat_pm: i.driver_availability
-              ? i.driver_availability.sat_pm
-              : false,
-          },
-          timestamps: {
-            created: normalizeTimestamp(i.created_at || new Date(Date.now())),
-            updated: normalizeTimestamp(i.updated_at || new Date(Date.now())),
-            last_active: normalizeTimestamp(
-              i.last_login || i.updated_at || i.created_at
-            ),
-          },
+          // availability
+          availability_sun_am: i.driver_availability
+            ? i.driver_availability.sun_am
+            : false,
+          availability_sun_pm: i.driver_availability
+            ? i.driver_availability.sun_pm
+            : false,
+          availability_mon_am: i.driver_availability
+            ? i.driver_availability.mon_am
+            : false,
+          availability_mon_pm: i.driver_availability
+            ? i.driver_availability.mon_pm
+            : false,
+          availability_tue_am: i.driver_availability
+            ? i.driver_availability.tue_am
+            : false,
+          availability_tue_pm: i.driver_availability
+            ? i.driver_availability.tue_pm
+            : false,
+          availability_wed_am: i.driver_availability
+            ? i.driver_availability.wed_am
+            : false,
+          availability_wed_pm: i.driver_availability
+            ? i.driver_availability.wed_pm
+            : false,
+          availability_thu_am: i.driver_availability
+            ? i.driver_availability.thu_am
+            : false,
+          availability_thu_pm: i.driver_availability
+            ? i.driver_availability.thu_pm
+            : false,
+          availability_fri_am: i.driver_availability
+            ? i.driver_availability.fri_am
+            : false,
+          availability_fri_pm: i.driver_availability
+            ? i.driver_availability.fri_pm
+            : false,
+          availability_sat_am: i.driver_availability
+            ? i.driver_availability.sat_am
+            : false,
+          availability_sat_pm: i.driver_availability
+            ? i.driver_availability.sat_pm
+            : false,
+
+          timestamp_created: normalizeTimestamp(
+            i.created_at || new Date(Date.now())
+          ),
+          timestamp_updated: normalizeTimestamp(
+            i.updated_at || new Date(Date.now())
+          ),
+          timestamp_last_active: normalizeTimestamp(
+            i.last_login || i.updated_at || i.created_at
+          ),
         }
-        console.log(user)
+        // console.log(user)
         await setFirestoreData(['users', i.id], user)
       } catch (e) {
         console.error('Error while writing', i.id, e)
@@ -116,58 +114,41 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updateLocations(locs) {
-    if (!locs || !locs.length) {
-      alert('locs not populated')
+  async function updateLocations(Locs) {
+    if (!Locs || !Locs.length) {
+      alert('Locs not populated')
     }
 
     const failed = []
 
-    for (const i of locs) {
+    for (const i of Locs) {
       try {
+        const parent = Orgs.find(j => j.id === i.org_id)
         const location = {
           id: i.id,
           nickname: i.name || null,
-          organization_id: i.org_id,
+          parent_type: parent.type === 'donor' ? 'donor' : 'recipient',
+          parent_id: i.org_id,
           notes: i.upon_arrival_instructions || null,
 
-          address: {
-            address1: i.address1,
-            address2: i.address2,
-            state: i.state,
-            city: i.city,
-            zip: i.zip_code,
-            lat: i.lat || null,
-            lng: i.lng || null,
-          },
+          address1: i.address1,
+          address2: i.address2,
+          state: i.state,
+          city: i.city,
+          zip: i.zip_code,
+          lat: i.lat || null,
+          lng: i.lng || null,
 
-          contact: {
-            name: i.contact_name || null,
-            email: i.contact_email || null,
-            phone: i.contact_phone || null,
-          },
+          contact_name: i.contact_name || null,
+          contact_email: i.contact_email || null,
+          contact_phone: i.contact_phone || null,
 
-          timestamps: {
-            created: normalizeTimestamp(i.created_at || new Date(Date.now())),
-            updated: normalizeTimestamp(i.updated_at || new Date(Date.now())),
-          },
-
-          hours: {
-            sun_open: null,
-            sun_close: null,
-            mon_open: null,
-            mon_close: null,
-            tue_open: null,
-            tue_close: null,
-            wed_open: null,
-            wed_close: null,
-            thu_open: null,
-            thu_close: null,
-            fri_open: null,
-            fri_close: null,
-            sat_open: null,
-            sat_close: null,
-          },
+          timestamp_created: normalizeTimestamp(
+            i.created_at || new Date(Date.now())
+          ),
+          timestamp_updated: normalizeTimestamp(
+            i.updated_at || new Date(Date.now())
+          ),
         }
         console.log(location)
         await setFirestoreData(['locations', i.id], location)
@@ -180,28 +161,47 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updateOrganizations(orgs) {
-    if (!orgs || !orgs.length) {
-      alert('orgs not populated')
+  async function updateOrganizations(Orgs) {
+    if (!Orgs || !Orgs.length) {
+      alert('Orgs not populated')
     }
 
     const failed = []
 
-    for (const i of orgs) {
+    for (const i of Orgs) {
       try {
-        const org = {
-          id: i.id,
-          name: i.name,
-          icon: i.icon,
-          primary_location_id: i.primary_location || null,
-          type: 'recipient',
-          timestamps: {
-            created: normalizeTimestamp(i.created_at || new Date(Date.now())),
-            updated: normalizeTimestamp(i.updated_at || new Date(Date.now())),
-          },
+        const type = i.org_type === 'donor' ? 'donors' : 'recipients'
+        if (type === 'donor') {
+          const donor = {
+            id: i.id,
+            name: i.name,
+            icon: i.icon,
+            type: 'retail_donor',
+            timestamp_created: normalizeTimestamp(
+              i.created_at || new Date(Date.now())
+            ),
+            timestamp_updated: normalizeTimestamp(
+              i.updated_at || new Date(Date.now())
+            ),
+          }
+          console.log(type, donor)
+          await setFirestoreData([type, i.id], donor)
+        } else {
+          const recipient = {
+            id: i.id,
+            name: i.name,
+            icon: i.icon,
+            type: 'food_bank',
+            timestamp_created: normalizeTimestamp(
+              i.created_at || new Date(Date.now())
+            ),
+            timestamp_updated: normalizeTimestamp(
+              i.updated_at || new Date(Date.now())
+            ),
+          }
+          console.log(type, recipient)
+          await setFirestoreData([type, i.id], recipient)
         }
-        console.log(org)
-        await setFirestoreData(['organizations', i.id], org)
       } catch (e) {
         console.error('Error while writing', i.id, e)
         failed.push(i)
@@ -211,32 +211,25 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updateDeliveries(deliveries) {
-    if (!deliveries || !deliveries.length) {
-      alert('deliveries not populated')
+  async function updateDeliveries(Deliveries) {
+    if (!Deliveries || !Deliveries.length) {
+      alert('Deliveries not populated')
     }
 
     const failed = []
 
-    for (const i of deliveries) {
+    for (const i of Deliveries) {
       try {
         const pickup_ids = []
         const parent = i.route_id
-          ? retail_rescues.find(r => r.id === i.route_id)
-          : wholesale_rescues.find(d => d.id === i.direct_donation_id)
+          ? Routes.find(r => r.id === i.route_id)
+          : dds.find(d => d.id === i.direct_donation_id)
 
         if (!parent) {
-          console.log(
-            'no parent found',
-            i,
-            retail_rescues,
-            wholesale_rescues,
-            routes,
-            dds
-          )
+          console.log('no parent found', i)
           continue
         } else if (i.route_id) {
-          const route = routes.find(r => r.id === i.route_id)
+          const route = Routes.find(r => r.id === i.route_id)
           // we populate the array of delivery ids
           // by iterating over the list of stop in the route,
           let stop_index
@@ -253,7 +246,7 @@ export function UpdateDB() {
               } else {
                 // unless we find a delivery where the entire load is dropped,
                 // meaning we've looked far enough back, and no other pickups are relevant
-                const d = deliveries.find(d => d.id === route.stops[j].id)
+                const d = Deliveries.find(d => d.id === route.stops[j].id)
                 if (
                   d &&
                   d.report &&
@@ -269,23 +262,23 @@ export function UpdateDB() {
         }
 
         const impact_data = {
-          dairy: 0,
-          bakery: 0,
-          produce: 0,
-          meat_fish: 0,
-          non_perishable: 0,
-          prepared_frozen: 0,
-          mixed: 0,
-          other: 0,
-          total_weight: 0,
-          percent_of_total_dropped: 0,
+          impact_data_dairy: 0,
+          impact_data_bakery: 0,
+          impact_data_produce: 0,
+          impact_data_meat_fish: 0,
+          impact_data_non_perishable: 0,
+          impact_data_prepared_frozen: 0,
+          impact_data_mixed: 0,
+          impact_data_other: 0,
+          impact_data_total_weight: 0,
+          impact_data_percent_of_total_dropped: 0,
         }
 
         if (i.report && i.report.percent_of_total_dropped) {
           impact_data.percent_of_total_dropped =
             i.report.percent_of_total_dropped
 
-          const pickups_in_delivery = pickups.filter(p =>
+          const pickups_in_delivery = Pickups.filter(p =>
             pickup_ids.includes(p.id)
           )
 
@@ -294,27 +287,31 @@ export function UpdateDB() {
           }
 
           for (const p of pickups_in_delivery) {
-            impact_data.dairy += adjustForPercentOfTotalDropped(p.report.dairy)
-            impact_data.bakery += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_dairy += adjustForPercentOfTotalDropped(
+              p.report.dairy
+            )
+            impact_data.impact_data_bakery += adjustForPercentOfTotalDropped(
               p.report.bakery
             )
-            impact_data.produce += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_produce += adjustForPercentOfTotalDropped(
               p.report.produce
             )
-            impact_data.meat_fish += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_meat_fish += adjustForPercentOfTotalDropped(
               p.report['meat/Fish']
             )
-            impact_data.mixed += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_mixed += adjustForPercentOfTotalDropped(
               p.report['mixed groceries']
             )
-            impact_data.non_perishable += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_non_perishable += adjustForPercentOfTotalDropped(
               p.report['non-perishable']
             )
-            impact_data.prepared_frozen += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_prepared_frozen += adjustForPercentOfTotalDropped(
               p.report['prepared/Frozen']
             )
-            impact_data.other += adjustForPercentOfTotalDropped(p.report.other)
-            impact_data.total_weight += adjustForPercentOfTotalDropped(
+            impact_data.impact_data_other += adjustForPercentOfTotalDropped(
+              p.report.other
+            )
+            impact_data.impact_data_total_weight += adjustForPercentOfTotalDropped(
               p.report.weight
             )
           }
@@ -322,24 +319,25 @@ export function UpdateDB() {
 
         const delivery = {
           id: i.id,
-          handler_id: i.driver_id || i.handler_id,
-          icon: i.route_id || i.direct_donation_id,
-          rescue_type: i.route_id ? 'retail' : 'wholesale',
-          is_direct_link: parent && parent.is_direct_link,
-          organization_id: i.org_id,
+          handler_id: i.driver_id || i.handler_id || null,
+          rescue_id: i.route_id || i.direct_donation_id,
+          is_direct_link: (parent && parent.is_direct_link) || false,
+          recipient_id: i.org_id,
           location_id: i.location_id,
           status: RESCUE_STATUSES[i.status],
-          notes: i.notes || null,
-          pickup_ids,
-          timestamps: {
-            created: normalizeTimestamp(i.created_at),
-            updated: normalizeTimestamp(i.updated_at),
-            started: normalizeTimestamp(i.driver_left_at || i.time_finished),
-            arrived: normalizeTimestamp(i.driver_arrived_at || i.time_finished),
-            finished: normalizeTimestamp(i.time_finished),
-          },
-          impact_data,
+          notes: i.notes || '',
+
+          timestamp_created: normalizeTimestamp(i.created_at),
+          timestamp_updated: normalizeTimestamp(i.updated_at),
+          timestamp_started: normalizeTimestamp(
+            i.driver_left_at || i.time_finished || i.updated_at
+          ),
+          timestamp_finished: normalizeTimestamp(
+            i.time_finished || i.updated_at
+          ),
+          ...impact_data,
         }
+
         console.log(delivery)
         await setFirestoreData(['deliveries', i.id], delivery)
       } catch (e) {
@@ -351,103 +349,67 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updatePickups(pickups) {
-    if (!pickups || !pickups.length) {
-      alert('pickups not populated')
+  async function updatePickups(Pickups) {
+    if (!Pickups || !Pickups.length) {
+      alert('Pickups not populated')
     }
 
     const failed = []
 
-    for (const i of pickups) {
+    for (const i of Pickups) {
       try {
-        const delivery_ids = []
         const parent = i.route_id
-          ? retail_rescues.find(r => r.id === i.route_id)
-          : wholesale_rescues.find(d => d.id === i.direct_donation_id)
+          ? Routes.find(r => r.id === i.route_id)
+          : dds.find(d => d.id === i.direct_donation_id)
         if (!parent) {
-          console.log(
-            'no parent found',
-            i,
-            retail_rescues,
-            wholesale_rescues,
-            routes,
-            dds
-          )
+          console.log('no parent found', i)
           continue
-        }
-        if (i.route_id) {
-          const route = routes.find(r => r.id === i.route_id)
-          // we populate the array of delivery ids
-          // by iterating over the list of stop in the route,
-          let stop_index
-          for (let j = 0; j < route.stops.length; j++) {
-            if (route.stops[j].id === i.id) {
-              // first finding the index of our pickup,
-              stop_index = j
-              continue
-            }
-            if (stop_index) {
-              // then adding the id of ever subsequent delivery
-              if (route.stops[j].type === 'delivery') {
-                delivery_ids.push(route.stops[j].id)
-                // until we find one where the entire load is dropped,
-                // meaning our pickup weight is fully accounted for
-                const d = deliveries.find(d => d.id === route.stops[j].id)
-                if (d.report && d.report.percent_of_total_dropped === 100) {
-                  break
-                }
-              }
-            }
-          }
-        } else if (i.direct_donation_id) {
-          delivery_ids.push(parent.delivery_id)
         }
 
         let impact_data = {
-          dairy: 0,
-          bakery: 0,
-          produce: 0,
-          meat_fish: 0,
-          non_perishable: 0,
-          prepared_frozen: 0,
-          mixed: 0,
-          other: 0,
-          total_weight: 0,
+          impact_data_dairy: 0,
+          impact_data_bakery: 0,
+          impact_data_produce: 0,
+          impact_data_meat_fish: 0,
+          impact_data_non_perishable: 0,
+          impact_data_prepared_frozen: 0,
+          impact_data_mixed: 0,
+          impact_data_other: 0,
+          impact_data_total_weight: 0,
         }
 
         if (i.report) {
           impact_data = {
-            dairy: i.report.dairy || 0,
-            bakery: i.report.bakery || 0,
-            produce: i.report.produce || 0,
-            meat_fish: i.report['meat/Fish'] || 0,
-            mixed: i.report['mixed groceries'] || 0,
-            non_perishable: i.report['non-perishable'] || 0,
-            prepared_frozen: i.report['prepared/Frozen'] || 0,
-            other: i.report.other || 0,
-            total_weight: i.report.weight || 0,
+            impact_data_dairy: i.report.dairy || 0,
+            impact_data_bakery: i.report.bakery || 0,
+            impact_data_produce: i.report.produce || 0,
+            impact_data_meat_fish: i.report['meat/Fish'] || 0,
+            impact_data_mixed: i.report['mixed groceries'] || 0,
+            impact_data_non_perishable: i.report['non-perishable'] || 0,
+            impact_data_prepared_frozen: i.report['prepared/Frozen'] || 0,
+            impact_data_other: i.report.other || 0,
+            impact_data_total_weight: i.report.weight || 0,
           }
         }
 
         const pickup = {
           id: i.id,
-          handler_id: i.driver_id || i.handler_id,
+          handler_id: i.driver_id || i.handler_id || null,
           rescue_id: i.route_id || i.direct_donation_id,
-          rescue_type: i.route_id ? 'retail' : 'wholesale',
-          is_direct_link: parent && parent.is_direct_link,
+          is_direct_link: (parent && parent.is_direct_link) || false,
+          donor_id: i.org_id,
           location_id: i.location_id,
-          organization_id: i.org_id,
           status: RESCUE_STATUSES[i.status],
-          notes: i.notes || null,
-          delivery_ids,
-          timestamps: {
-            created: normalizeTimestamp(i.created_at),
-            updated: normalizeTimestamp(i.updated_at),
-            started: normalizeTimestamp(i.driver_left_at || i.time_finished),
-            arrived: normalizeTimestamp(i.driver_arrived_at || i.time_finished),
-            finished: normalizeTimestamp(i.time_finished),
-          },
-          impact_data,
+          notes: i.notes || '',
+          timestamp_created: normalizeTimestamp(i.created_at),
+          timestamp_updated: normalizeTimestamp(i.updated_at),
+          timestamp_started: normalizeTimestamp(
+            i.driver_left_at || i.time_finished || i.updated_at
+          ),
+          timestamp_finished: normalizeTimestamp(
+            i.time_finished || i.updated_at
+          ),
+          ...impact_data,
         }
         console.log(pickup)
         await setFirestoreData(['pickups', i.id], pickup)
@@ -471,18 +433,22 @@ export function UpdateDB() {
       try {
         const rescue = {
           id: i.id,
+          type: 'wholesale',
           handler_id: i.handler_id,
-          pickup_id: i.pickup_id,
-          delivery_id: i.delivery_id,
-          is_direct_link: i.notes.toLowerCase().includes('direct link'),
-          notes: i.notes || null,
-          timestamps: {
-            created: normalizeTimestamp(i.created_at),
-            updated: normalizeTimestamp(i.created_at),
-          },
+          stop_ids: [i.pickup_id, i.delivery_id],
+          google_calendar_event_id: null,
+          is_direct_link: false,
+          status: 'completed',
+          notes: i.notes || '',
+          timestamp_created: normalizeTimestamp(i.created_at),
+          timestamp_updated: normalizeTimestamp(i.created_at),
+          timestamp_logged_start: normalizeTimestamp(i.created_at),
+          timestamp_logged_finish: normalizeTimestamp(i.created_at),
+          timestamp_scheduled_start: normalizeTimestamp(i.created_at),
+          timestamp_scheduled_finish: normalizeTimestamp(i.created_at),
         }
-
-        await setFirestoreData(['wholesale_rescues', i.id], rescue)
+        console.log(rescue)
+        await setFirestoreData(['rescues', i.id], rescue)
       } catch (e) {
         console.error('Error while writing', i.id, e)
         failed.push(i)
@@ -492,36 +458,35 @@ export function UpdateDB() {
     console.log('done!')
   }
 
-  async function updateRetailRescues(routes) {
-    if (!routes || !routes.length) {
-      alert('routes not populated')
+  async function updateRetailRescues(Routes) {
+    if (!Routes || !Routes.length) {
+      alert('Routes not populated')
     }
 
     const failed = []
 
-    for (const i of routes) {
+    for (const i of Routes) {
       try {
         const rescue = {
           id: i.id,
+          type: 'retail',
           handler_id: i.driver_id,
           google_calendar_event_id: i.google_calendar_event_id,
           is_direct_link: false,
           status: RESCUE_STATUSES[i.status],
-          notes: i.notes || null,
+          notes: i.notes || '',
           stop_ids: i.stops.map(s => s.id),
-          timestamps: {
-            created: normalizeTimestamp(i.created_at),
-            updated: normalizeTimestamp(i.updated_at),
-            scheduled_start: normalizeTimestamp(i.time_start),
-            scheduled_finish: normalizeTimestamp(
-              i.time_end || moment(i.time_start).add(2, 'hours').toDate()
-            ),
-            started: normalizeTimestamp(i.time_started),
-            finished: normalizeTimestamp(i.time_finished),
-          },
+          timestamp_created: normalizeTimestamp(i.created_at),
+          timestamp_updated: normalizeTimestamp(i.updated_at),
+          timestamp_scheduled_start: normalizeTimestamp(i.time_start),
+          timestamp_scheduled_finish: normalizeTimestamp(
+            i.time_end || moment(i.time_start).add(2, 'hours').toDate()
+          ),
+          timestamp_logged_start: normalizeTimestamp(i.time_started),
+          timestamp_logged_finish: normalizeTimestamp(i.time_finished),
         }
-
-        await setFirestoreData(['retail_rescues', i.id], rescue)
+        console.log(rescue)
+        await setFirestoreData(['rescues', i.id], rescue)
       } catch (e) {
         console.error('Error while writing', i.id, e)
         failed.push(i)
@@ -545,6 +510,6 @@ export function UpdateDB() {
     if (!phone) return null
     return phone.replace('+1', '').replace(/[^a-zA-Z0-9]/g, '')
   }
-  return null
-  // return <button onClick={handleClick}>run handler</button>
+
+  return <button onClick={handleClick}>run handler</button>
 }

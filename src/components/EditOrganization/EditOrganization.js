@@ -8,8 +8,6 @@ import UserIcon from 'assets/user.svg'
 import { handleOrgIcon, initializeFormData } from './utils'
 import { getCollection } from 'helpers'
 import validator from 'validator'
-import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
 import { Input } from 'components'
 import { useFirestore } from 'hooks'
 import { Button } from '@sharingexcess/designsystem'
@@ -76,8 +74,7 @@ export function EditOrganization() {
       formData.org_type !== 'warehouse' &&
       formData.org_type !== 'home delivery' &&
       formData.org_type !== 'community fridge' &&
-      (!formData.default_contact_phone ||
-        !isPossiblePhoneNumber(formData.default_contact_phone))
+      !formData.default_contact_phone
     ) {
       errors.push('Invalid Data Input: Contact Phone Number is invalid')
     }
@@ -167,26 +164,6 @@ export function EditOrganization() {
         element_id="name"
         value={formData.name}
         onChange={handleChange}
-      />
-      <Input
-        type="text"
-        label="Contact Name"
-        element_id="default_contact_name"
-        value={formData.default_contact_name}
-        onChange={handleChange}
-      />
-      <Input
-        type="email"
-        label="Contact Email"
-        element_id="default_contact_email"
-        value={formData.default_contact_email}
-        onChange={handleChange}
-      />
-      <PhoneInput
-        placeholder="Phone Number"
-        value={formData.default_contact_phone}
-        onChange={handlePhoneInputChange}
-        defaultCountry="US"
       />
       <Input
         type="select"

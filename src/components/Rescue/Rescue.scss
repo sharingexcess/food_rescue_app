@@ -1,4 +1,4 @@
-#RetailRescue {
+#Rescue {
   @include page;
 
   .buttons {
@@ -29,7 +29,7 @@
       margin-right: 16px;
     }
 
-    #RetailRescue-edit-button {
+    #Rescue-edit-button {
       margin-left: auto;
       height: 32px;
       width: 32px;
@@ -46,12 +46,12 @@
         white-space: pre-line;
       }
 
-      .RetailRescue-stop-header {
+      .Rescue-stop-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
 
-        #RetailRescue-stop-edit-button {
+        #Rescue-stop-edit-button {
           margin-left: auto;
           height: 32px;
           width: 32px;
@@ -59,19 +59,19 @@
         }
       }
 
-      .RetailRescues-stop-status {
+      .Rescues-stop-status {
         font-size: 28px;
         margin-bottom: auto;
       }
 
-      .RetailRescue-stop-instructions {
+      .Rescue-stop-instructions {
         span {
           font-weight: 700;
         }
       }
 
-      .RetailRescue-stop-address-button,
-      .RetailRescue-stop-phone-button {
+      .Rescue-stop-address-button,
+      .Rescue-stop-phone-button {
         display: flex;
         align-items: center;
         justify-content: flex-start;

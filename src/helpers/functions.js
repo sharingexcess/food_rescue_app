@@ -2,7 +2,11 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/storage'
 import 'firebase/firestore'
-import { CLOUD_FUNCTION_URLS } from './constants'
+import {
+  CLOUD_FUNCTION_URLS,
+  FOOD_CATEGORIES,
+  GOOGLE_MAPS_URL,
+} from './constants'
 import { v4 as generateUniqueId } from 'uuid'
 
 // takes a path to an image in firebase storage and returns the full fetch-able url
@@ -97,7 +101,12 @@ export async function updateGoogleCalendarEvent(data) {
       : 'Unassigned Food Rescue',
     location: `${data.stops[0].location.address1}, ${data.stops[0].location.city}, ${data.stops[0].location.state} ${data.stops[0].location.zip_code}`,
     description: `Stops on Route: ${data.stops
-      .map(s => `${s.org.name} (${s.location.name || s.location.address1})`)
+      .map(
+        s =>
+          `${s.donor ? s.donor.name : s.recipient.name} (${
+            s.location.name || s.location.address1
+          })`
+      )
       .join(', ')}${data.notes ? `\n\nNotes: ${data.notes}` : ''}`,
     start: {
       dateTime: new Date(data.time_start).toISOString(),
@@ -135,9 +144,51 @@ export async function updateGoogleCalendarEvent(data) {
 }
 
 export function generateStopId(stop) {
-  return `${stop.org.name}_${generateUniqueId()}`
+  return `${stop.donor_name || stop.recipient_name}_${generateUniqueId()}`
     .replace(/[^A-Z0-9]/gi, '_')
     .toLowerCase()
 }
 
-export const createTimestamp = () => new Date().toString()
+export const createTimestamp = d =>
+  d ? new Date(d).toString() : new Date().toString()
+
+export function generateDirectionsLink(address1, city, state, zip) {
+  return `${GOOGLE_MAPS_URL}${address1}+${city}+${state}+${zip}`
+}
+
+export async function updateImpactDataForRescue(rescue) {
+  const { stops } = rescue
+
+  const current_load = {
+    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+  }
+  for (const stop of stops) {
+    if (stop.type === 'pickup') {
+      for (const category in current_load) {
+        current_load[category] += stop[category]
+      }
+    } else {
+      if (stop.impact_data_percent_of_total_dropped) {
+        const impact_data = {}
+        const percent_dropped = stop.impact_data_percent_of_total_dropped / 100
+        const load_weight = Object.values(current_load).reduce(
+          (a, b) => a + b,
+          0
+        )
+        for (const category in current_load) {
+          impact_data[category] = Math.round(
+            current_load[category] * percent_dropped
+          )
+          current_load[category] -= impact_data[category]
+        }
+        impact_data.impact_data_total_weight = Math.round(
+          load_weight * percent_dropped
+        )
+        await setFirestoreData(['deliveries', stop.id], {
+          ...impact_data,
+          timestamp_updated: createTimestamp(),
+        })
+      }
+    }
+  }
+}

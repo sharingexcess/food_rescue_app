@@ -4,7 +4,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/storage'
 import moment from 'moment'
-import { generateStopId, setFirestoreData } from 'helpers'
+import { generateStopId, setFirestoreData, STATUSES } from 'helpers'
 import { generateDirectDonationId } from './utils'
 import { Input, EditDelivery, PickupReport, EditPickup } from 'components'
 import { useAuth } from 'hooks'
@@ -35,7 +35,7 @@ export function EditDirectDonation() {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp(),
       time_finished: time,
-      status: 9,
+      status: STATUSES.COMPLETED,
       report: {
         dairy: parseInt(data.dairy),
         bakery: parseInt(data.bakery),
@@ -59,7 +59,7 @@ export function EditDirectDonation() {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp(),
       time_finished: time,
-      status: 9,
+      status: STATUSES.COMPLETED,
       pickup_ids: [pickup_id],
       report: {
         percent_of_total_dropped: 100,

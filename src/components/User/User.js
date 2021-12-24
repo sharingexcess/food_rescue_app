@@ -53,7 +53,7 @@ export function User() {
       <UserAdminPermissions profile={profile} />
 
       <Spacer height={32} />
-      {profile.onboarding.completed_liability_release ? (
+      {profile.completed_liability_release ? (
         <Text color="white" shadow>
           This user has signed the liability release form.
         </Text>
@@ -70,33 +70,33 @@ export function User() {
       <Spacer height={8} />
       <UserDriverAvailability profile={profile} />
       <Input
-        element_id="driver_info.make_model"
+        element_id="vehicle_make_model"
         label="Vehicle Make + Model"
-        value={profile.driver_info.vehicle_make_model}
+        value={profile.vehicle_make_model}
         readOnly
       />
       <Input
-        element_id="driver_info.license_state"
+        element_id="license_state"
         label="Driver's License State"
-        value={profile.driver_info.license_state}
+        value={profile.license_state}
         readOnly
       />
       <Input
-        element_id="driver_info.license_number"
+        element_id="license_number"
         label="Driver's License Number"
-        value={profile.driver_info.license_number}
+        value={profile.license_number}
         readOnly
       />
       <Input
-        element_id="driver_info.insurance_provider"
+        element_id="insurance_provider"
         label="Insurance Provider"
-        value={profile.driver_info.insurance_provider}
+        value={profile.insurance_provider}
         readOnly
       />
       <Input
-        element_id="driver_info.insurance_policy_number"
+        element_id="insurance_policy_number"
         label="Insurance Policy Number"
-        value={profile.driver_info.insurance_policy_number}
+        value={profile.insurance_policy_number}
         readOnly
       />
     </main>

@@ -28,17 +28,15 @@ export function updateFieldSuggestions(
 export const formFields = [
   {
     label: 'Recipient Network',
-    id: 'org_name',
+    id: 'recipient_name',
     preReq: null,
     type: 'text',
-    suggestionQuery: (name, organizations) =>
-      organizations.filter(o =>
-        o.name.toLowerCase().includes(name.toLowerCase())
-      ),
-    handleSelect: org => ({
-      org,
-      org_name: org.name,
-      org_id: org.id,
+    suggestionQuery: (name = '', recipients) =>
+      recipients.filter(r => r.name.toLowerCase().includes(name.toLowerCase())),
+    handleSelect: recipient => ({
+      recipient,
+      recipient_name: recipient.name,
+      recipient_id: recipient.id,
       location_id: '',
     }),
     loadSuggestionsOnInit: false,
@@ -46,10 +44,10 @@ export const formFields = [
   {
     label: 'Organization Location',
     id: 'location_id',
-    preReq: 'org_id',
+    preReq: 'recipient_id',
     type: 'select',
-    suggestionQuery: (org_id, locations) =>
-      locations.filter(l => l.org_id === org_id),
+    suggestionQuery: (recipient_id, locations) =>
+      locations.filter(l => l.parent_id === recipient_id),
     handleSelect: loc => (loc ? { location: loc, location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },

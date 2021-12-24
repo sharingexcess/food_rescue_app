@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
-import 'firebase/firestore'
 import { getCollection } from 'helpers'
 import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
@@ -64,10 +61,7 @@ export function EditLocation() {
     if (formData.address1 === '') {
       updatedErrors.push('Missing Address')
     }
-    if (
-      formData.contact_phone &&
-      !isPossiblePhoneNumber(formData.contact_phone)
-    ) {
+    if (formData.contact_phone) {
       updatedErrors.push('Contact Phone Number is invalid')
     }
     setErrors(updatedErrors)
@@ -215,11 +209,12 @@ export function EditLocation() {
             value={formData.contact_name}
             onChange={handleChange}
           />
-          <PhoneInput
-            placeholder="Contact Phone"
+          <Input
+            type="tel"
+            label="Phone Number"
+            element_id="contact_phone"
             value={formData.contact_phone}
-            onChange={handlePhoneInputChange}
-            defaultCountry="US"
+            onChange={handleChange}
           />
           <Input
             type="tel"

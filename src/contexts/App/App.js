@@ -1,3 +1,5 @@
+import { createTimestamp, setFirestoreData } from 'helpers'
+import { useAuth } from 'hooks'
 import { useState, createContext, useEffect } from 'react'
 import { useLocation } from 'react-router'
 
@@ -8,6 +10,16 @@ function App({ children }) {
   const { pathname } = useLocation()
   const [modal, setModal] = useState()
   const [modalState, setModalState] = useState()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    if (user) {
+      setFirestoreData(['users', user.id], {
+        timestamp_last_active: createTimestamp(),
+      })
+    }
+  }, [user])
+
   useEffect(() => {
     // handle clearing modalState on pathname change
     setModalState()

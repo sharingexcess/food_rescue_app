@@ -2,15 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
 import { Loading } from 'components'
-import {
-  handleOrgIcon,
-  sortByPrimary,
-  OrganizationContact,
-  OrganizationEmail,
-  OrganizationPhone,
-  LocationPhone,
-  OrganizationHours,
-} from './utils'
+import { handleOrgIcon, LocationPhone } from './utils'
 import { useFirestore } from 'hooks'
 import { Button, Card, Spacer, Text } from '@sharingexcess/designsystem'
 
@@ -50,7 +42,7 @@ export function Organization() {
           Locations
         </Text>
 
-        {sortByPrimary(locations).map(loc => (
+        {locations.map(loc => (
           <Link
             key={loc.name}
             className="wrapper"
@@ -73,7 +65,6 @@ export function Organization() {
                 {loc.address.city}, {loc.address.state} {loc.address.zip}
               </Text>
               <LocationPhone loc={loc} />
-              <OrganizationHours org={loc} org_type={org.type} />
               {loc.id === org.primary_location_id && (
                 <i className="primary fa fa-star" />
               )}

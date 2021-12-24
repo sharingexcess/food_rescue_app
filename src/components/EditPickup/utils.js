@@ -1,6 +1,5 @@
-import firebase from 'firebase/app'
 import { v4 as generateUniqueId } from 'uuid'
-import { getCollection } from 'helpers'
+import { getCollection, STATUSES } from 'helpers'
 
 export function createPickup(event, formData, history) {
   event.preventDefault()
@@ -9,14 +8,12 @@ export function createPickup(event, formData, history) {
     .doc(id)
     .set({
       id,
-      org_id: formData.org_id,
+      donor_id: formData.donor_id,
       location_id: formData.location_id,
       time_start: formData.time_start,
       time_end: formData.time_end,
-      created_at: firebase.firestore.FieldValue.serverTimestamp(),
-      updated_at: firebase.firestore.FieldValue.serverTimestamp(),
       route_id: '',
-      status: 0,
+      status: STATUSES.CANCELLED,
     })
     .then(() => history.push(`/`))
     .catch(e => console.error('Error writing document: ', e))
@@ -52,17 +49,15 @@ export function updateFieldSuggestions(
 export const formFields = [
   {
     label: 'Donor Organization',
-    id: 'org_name',
+    id: 'donor_name',
     preReq: null,
     type: 'text',
-    suggestionQuery: (name, organizations) =>
-      organizations.filter(o =>
-        o.name.toLowerCase().includes(name.toLowerCase())
-      ),
-    handleSelect: org => ({
-      org,
-      org_name: org.name,
-      org_id: org.id,
+    suggestionQuery: (name = '', donors) =>
+      donors.filter(o => o.name.toLowerCase().includes(name.toLowerCase())),
+    handleSelect: donor => ({
+      donor,
+      donor_name: donor.name,
+      donor_id: donor.id,
       location_id: '',
     }),
     loadSuggestionsOnInit: false,
@@ -70,10 +65,10 @@ export const formFields = [
   {
     label: 'Organization Location',
     id: 'location_id',
-    preReq: 'org_id',
+    preReq: 'donor_id',
     type: 'select',
-    suggestionQuery: (org_id, locations) =>
-      locations.filter(l => l.org_id === org_id),
+    suggestionQuery: (donor_id, locations) =>
+      locations.filter(l => l.parent_id === donor_id),
     handleSelect: loc => (loc ? { location: loc, location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },

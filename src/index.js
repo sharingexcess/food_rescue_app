@@ -6,11 +6,11 @@ import { Integrations } from '@sentry/tracing'
 import firebase from 'firebase/app'
 import {
   Calendar,
-  CompletedRoute,
+  CompletedRescue,
   ContactUs,
   DeliveryReport,
   DriverInfo,
-  EditRoute,
+  EditRescue,
   Error,
   FoodSafety,
   Header,
@@ -19,10 +19,10 @@ import {
   PickupReport,
   Privacy,
   Profile,
-  RetailRescues,
+  Rescues,
   Terms,
   Tutorial,
-  RetailRescue,
+  Rescue,
   EditDirectDonation,
   EditOrganization,
   Organizations,
@@ -148,46 +148,31 @@ function RescueAppRoutes() {
                   <Calendar />
                 </DriverRoute>
                 <DriverRoute exact path="/rescues">
-                  <RetailRescues />
+                  <Rescues />
                 </DriverRoute>
                 <DriverRoute exact path="/rescues/:rescue_id">
-                  <RetailRescue />
+                  <Rescue />
                 </DriverRoute>
-                <DriverRoute exact path="/history/:route_id">
-                  <Route />
-                </DriverRoute>
-                <DriverRoute exact path="/history/:route_id/pickup/:pickup_id">
+                <DriverRoute exact path="/rescues/:rescue_id/pickup/:pickup_id">
                   <PickupReport />
                 </DriverRoute>
                 <DriverRoute
                   exact
-                  path="/history/:route_id/delivery/:delivery_id"
+                  path="/rescues/:rescue_id/delivery/:delivery_id"
                 >
                   <DeliveryReport />
                 </DriverRoute>
-                <DriverRoute exact path="/routes/:route_id">
-                  <Route />
+                <DriverRoute exact path="/rescues/:rescue_id/edit">
+                  <EditRescue />
                 </DriverRoute>
-                <DriverRoute exact path="/routes/:route_id/pickup/:pickup_id">
-                  <PickupReport />
-                </DriverRoute>
-                <DriverRoute
-                  exact
-                  path="/routes/:route_id/delivery/:delivery_id"
-                >
-                  <DeliveryReport />
-                </DriverRoute>
-                <DriverRoute exact path="/routes/:route_id/edit">
-                  <EditRoute />
-                </DriverRoute>
-                <DriverRoute exact path="/routes/:route_id/completed">
-                  <CompletedRoute />
+                <DriverRoute exact path="/rescues/:rescue_id/completed">
+                  <CompletedRescue />
                 </DriverRoute>
 
                 {/* Admin Routes */}
 
-                <AdminRoute exact path="/admin/create-route">
-                  <EditRoute />
+                <AdminRoute exact path="/admin/create-rescue">
+                  <EditRescue />
                 </AdminRoute>
                 <AdminRoute exact path="/admin/create-direct-donation">
                   <EditDirectDonation />

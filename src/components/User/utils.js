@@ -1,12 +1,12 @@
 import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 import {
   createTimestamp,
+  formatPhoneNumber,
   getImageFromStorage,
   isValidURL,
   setFirestoreData,
 } from 'helpers'
 import { useAuth } from 'hooks'
-import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useEffect, useState } from 'react'
 import { availability } from 'components/Profile/utils'
 import { Input } from 'components'
@@ -46,7 +46,7 @@ export function UserPhone({ profile }) {
         <div>📱</div>
         <Spacer width={8} />
         <ExternalLink to={`tel:${profile.phone}`}>
-          {formatPhoneNumberIntl(profile.phone)}
+          {formatPhoneNumber(profile.phone)}
         </ExternalLink>
       </Text>
     )
@@ -157,7 +157,7 @@ export function UserAdminPermissions({ profile }) {
 }
 
 export function UserDriverAvailability({ profile }) {
-  return profile.availability ? (
+  return (
     <div id="User-driver-availability">
       {availability.map(i => (
         <Input
@@ -165,13 +165,10 @@ export function UserDriverAvailability({ profile }) {
           element_id={i.element_id}
           label={i.label}
           type="checkbox"
-          value={profile.availability[i.data_id]}
+          value={profile[i.element_id]}
+          onChange={() => {}} // do nothing
         />
       ))}
     </div>
-  ) : (
-    <Text color="white" shadow>
-      This user has not filled out their availability.
-    </Text>
   )
 }

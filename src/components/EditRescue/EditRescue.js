@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import firebase from 'firebase/app'
 import { useParams, useHistory } from 'react-router-dom'
 import {
   updateFieldSuggestions,
   formFields,
-  formFieldsRecurring,
-  addDays,
   getDefaultStartTime,
-  getDefaultEndRecurring,
   fetchExistingRouteData,
   getDefaultEndTime,
 } from './utils'
 import UserIcon from 'assets/user.svg'
 import {
+  createTimestamp,
   deleteFirestoreData,
+  generateDirectionsLink,
   generateStopId,
   getCollection,
   setFirestoreData,
+  STATUSES,
   updateGoogleCalendarEvent,
 } from 'helpers'
 import moment from 'moment'
@@ -30,7 +29,6 @@ import {
 } from 'components'
 import { useFirestore } from 'hooks'
 import { v4 as generateUUID } from 'uuid'
-import { OrganizationHours } from '../Organization/utils'
 import {
   Button,
   Spacer,
@@ -39,64 +37,63 @@ import {
   Card,
 } from '@sharingexcess/designsystem'
 
-export function EditRoute() {
+export function EditRescue() {
   const history = useHistory()
   const drivers = useFirestore('users')
-  const { route_id } = useParams()
+  const { rescue_id } = useParams()
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
-    driver_name: '',
-    driver_id: null,
+    handler_name: '',
+    handler_id: null,
     time_start: getDefaultStartTime(),
     time_end: getDefaultEndTime(),
-    end_recurring: getDefaultEndRecurring(),
+    type: 'retail',
+    is_direct_link: false,
     stops: [],
-    original_route_id: '',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
-    driver_name: [],
-    driver_id: [],
+    type: ['retail', 'wholesale'],
+    handler_name: [],
+    handler_id: [],
   })
-  const [list, setList] = useState(route_id ? null : 'pickups')
+  const [list, setList] = useState(rescue_id ? null : 'pickups')
   const [working, setWorking] = useState()
-  const [confirmedTimes, setConfirmedTime] = useState(route_id ? true : null)
+  const [confirmedTimes, setConfirmedTime] = useState(rescue_id ? true : null)
   const [errors, setErrors] = useState([])
-  const [isRecurring, setRecurring] = useState(false)
   const [isSelectedCardId, setSelectedCardId] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
-  const selectedFormFields = isRecurring ? formFieldsRecurring : formFields
-  const [canRender, setCanRender] = useState(route_id ? false : true)
+  const [canRender, setCanRender] = useState(rescue_id ? false : true)
   const [deletedStops, setDeletedStops] = useState([])
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     async function getExistingRouteData() {
-      const existingRouteData = await fetchExistingRouteData(route_id)
+      const existingRouteData = await fetchExistingRouteData(rescue_id)
       setFormData(prevFormData => ({
         ...prevFormData,
         ...existingRouteData,
       }))
       setSuggestions(prevSuggestions => ({
         ...prevSuggestions,
-        driver_name: null,
+        handler_name: null,
       }))
       setCanRender(true)
     }
-    drivers && route_id && getExistingRouteData()
-  }, [route_id, drivers])
+    drivers && rescue_id && getExistingRouteData()
+  }, [rescue_id, drivers])
 
   useEffect(() => {
-    formData.driver_id &&
+    formData.handler_id &&
       setFormData({
         ...formData,
-        driver: drivers.find(i => i.id === formData.driver_id),
+        driver: drivers.find(i => i.id === formData.handler_id),
       })
-  }, [formData.driver_id, drivers]) // eslint-disable-line
+  }, [formData.handler_id, drivers]) // eslint-disable-line
 
   function deselectStop(e) {
-    if (e.target.id === 'EditRoute') {
+    if (e.target.id === 'EditRescue') {
       setSelectedCardId(null)
     }
   }
@@ -119,10 +116,10 @@ export function EditRoute() {
     })
   }
 
-  async function handleCreateRoute(formData, route_id) {
+  async function handleCreateRoute(formData, rescue_id) {
     setWorking(true)
-    if (route_id) {
-      const existing = fetchExistingRouteData(route_id)
+    if (rescue_id) {
+      const existing = fetchExistingRouteData(rescue_id)
       if (existing) {
         // if this is an existing route with pre-created stops,
         // make sure we delete any old and now deleted pickups and deliveries
@@ -133,40 +130,54 @@ export function EditRoute() {
           ])
         }
       }
-      for (const [index, stop] of formData.stops.entries()) {
+      for (const stop of formData.stops) {
         if (stop.type === 'pickup') {
-          await setFirestoreData(['Pickups', stop.id], {
+          await setFirestoreData(['pickups', stop.id], {
             id: stop.id,
-            original_stop_id: stop.original_stop_id
-              ? stop.original_stop_id
-              : '',
-            org_id: stop.org_id,
+            handler_id: formData.handler_id,
+            rescue_id,
+            donor_id: stop.donor_id,
             location_id: stop.location_id,
-            driver_id: formData.driver_id,
-            created_at:
-              stop.created_at ||
-              firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: stop.status || 1,
-            route_id,
+            status: stop.status || STATUSES.SCHEDULED,
+            timestamp_created: stop.timestamp_created || createTimestamp(),
+            timestamp_updated: createTimestamp(),
+            timestamp_started: stop.timestamp_started || null,
+            timestamp_arrived: stop.timestamp_arrived || null,
+            timestamp_finished: stop.timestamp_finished || null,
+            impact_data_dairy: stop.impact_data_dairy || 0,
+            impact_data_bakery: stop.impact_data_bakery || 0,
+            impact_data_produce: stop.impact_data_produce || 0,
+            impact_data_meat_fish: stop.impact_data_meat_fish || 0,
+            impact_data_non_perishable: stop.impact_data_non_perishable || 0,
+            impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
+            impact_data_mixed: stop.impact_data_mixed || 0,
+            impact_data_other: stop.impact_data_other || 0,
+            impact_data_total_weight: stop.impact_data_total_weight || 0,
           })
         } else if (stop.type === 'delivery') {
-          const pickup_ids = getPickupsInDelivery(index)
-          await setFirestoreData(['Deliveries', stop.id], {
+          await setFirestoreData(['deliveries', stop.id], {
             id: stop.id,
-            org_id: stop.org_id,
-            original_stop_id: stop.original_stop_id
-              ? stop.original_stop_id
-              : '',
+            handler_id: formData.handler_id,
+            rescue_id,
+            recipient_id: stop.recipient_id,
             location_id: stop.location_id,
-            driver_id: formData.driver_id,
-            created_at:
-              stop.created_at ||
-              firebase.firestore.FieldValue.serverTimestamp(),
-            updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-            status: stop.status || 1,
-            pickup_ids,
-            route_id,
+            status: stop.status || STATUSES.SCHEDULED,
+            timestamp_created: stop.timestamp_created || createTimestamp(),
+            timestamp_updated: createTimestamp(),
+            timestamp_started: stop.timestamp_started || null,
+            timestamp_arrived: stop.timestamp_arrived || null,
+            timestamp_finished: stop.timestamp_finished || null,
+            impact_data_dairy: stop.impact_data_dairy || 0,
+            impact_data_bakery: stop.impact_data_bakery || 0,
+            impact_data_produce: stop.impact_data_produce || 0,
+            impact_data_meat_fish: stop.impact_data_meat_fish || 0,
+            impact_data_non_perishable: stop.impact_data_non_perishable || 0,
+            impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
+            impact_data_mixed: stop.impact_data_mixed || 0,
+            impact_data_other: stop.impact_data_other || 0,
+            impact_data_total_weight: stop.impact_data_total_weight || 0,
+            impact_data_percent_of_total_dropped:
+              stop.impact_data_percent_of_total_dropped || 0,
           })
         }
       }
@@ -177,28 +188,33 @@ export function EditRoute() {
         alert('Error creating Google Calendar event. Please contact support!')
         return
       }
-      getCollection('Routes')
-        .doc(route_id)
-        .set({
-          id: route_id,
-          google_calendar_event_id: event.id,
-          driver_id: formData.driver_id,
-          time_start: formData.time_start,
-          stops: formData.stops.map(s => ({ id: s.id, type: s.type })),
-          created_at:
-            formData.created_at ||
-            firebase.firestore.FieldValue.serverTimestamp(),
-          updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-          status: formData.status || 1,
-        })
-        .then(() => history.push(`/routes/${route_id}`))
+      const rescue = {
+        id: rescue_id,
+        type: formData.type,
+        handler_id: formData.handler_id,
+        google_calendar_event_id: event.id,
+        stop_ids: formData.stops.map(s => s.id),
+        is_direct_link: formData.is_direct_link,
+        status: STATUSES.SCHEDULED,
+        notes: '',
+        timestamp_created: createTimestamp(),
+        timestamp_updated: createTimestamp(),
+        timestamp_scheduled_start: createTimestamp(formData.time_start),
+        timestamp_scheduled_finish: createTimestamp(formData.time_end),
+        timestamp_logged_start: null,
+        timestamp_logged_finish: null,
+      }
+      getCollection('rescues')
+        .doc(rescue_id)
+        .set(rescue)
+        .then(() => history.push(`/rescues/${rescue_id}`))
       setWorking(false)
     }
   }
 
-  async function generateRouteId() {
+  async function generateRescueId() {
     const createId = () =>
-      `${formData.driver ? formData.driver.name + '_' : ''}${generateUUID()}`
+      `${generateUUID()}`
         .replace(/[^A-Z0-9]/gi, '_')
         .replace(' ', '_')
         .toLowerCase()
@@ -216,18 +232,6 @@ export function EditRoute() {
       idExists = await exists(uniqId)
     }
     return uniqId
-  }
-  function getPickupsInDelivery(index) {
-    const sliced = formData.stops.slice(0, index)
-    for (let i = index - 1; i >= 0; i--) {
-      if (sliced[i].type === 'delivery') {
-        if (sliced.slice(i + 1, sliced.length).length < 1) {
-          // this is delivery shares pickups with another delivery, continue
-          sliced.pop()
-        } else return sliced.slice(i + 1, sliced.length).map(j => j.id)
-      }
-    }
-    return sliced.map(j => j.id)
   }
 
   async function handleRemoveStop(id, type) {
@@ -270,17 +274,17 @@ export function EditRoute() {
         [e.target.id]: e.target.value,
         time_end: moment(time_end).format('yyyy-MM-DDTHH:mm'),
       })
-    } else if (field.id === 'driver_name') {
+    } else if (field.id === 'handler_name') {
       setFormData({
         ...formData,
         driver: {},
-        driver_id: '',
-        driver_name: e.target.value,
+        handler_id: '',
+        handler_name: e.target.value,
       })
     } else setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
-  function handleSelect(e, selected, field) {
+  function handleSelect(_e, selected, field) {
     if (field.type !== 'select') {
       setSuggestions({ ...suggestions, [field.id]: null })
     }
@@ -295,19 +299,24 @@ export function EditRoute() {
       field
     )
   }
+
   function Stop({ s, onMove, handleCardSelection, position, lengthOfStops }) {
     const isSelectedCard = isSelectedCardId === s.id
     function generateStopTitle() {
-      return `${s.org.name} (${s.location.name || s.location.address1})`
+      return `${s.donor ? s.donor.name : s.recipient.name} (${
+        s.location.name || s.location.address1
+      })`
     }
     function StopAddress() {
-      function generateDirectionsLink(addressObj) {
-        const base_url = 'https://www.google.com/maps/dir/?api=1&destination='
-        return `${base_url}${addressObj.address1}+${addressObj.city}+${addressObj.state}+${addressObj.zip_code}`
-      }
-
       return (
-        <ExternalLink to={generateDirectionsLink(s.location)}>
+        <ExternalLink
+          to={generateDirectionsLink(
+            s.location.address1,
+            s.location.city,
+            s.location.state,
+            s.location.zip
+          )}
+        >
           <Button
             classList={['Route-stop-address-button']}
             type="tertiary"
@@ -348,7 +357,6 @@ export function EditRoute() {
           </Text>
           <Spacer height={8} />
           <StopAddress />
-          <OrganizationHours org={s.location} org_type={s.org.org_type} />
         </div>
         {isSelectedCard && (
           <ReorderStops
@@ -363,20 +371,13 @@ export function EditRoute() {
   }
 
   function validateFormData() {
-    if (isRecurring === false) {
-      if (!moment(formData.time_start).isValid()) {
-        errors.push('Invalid Data Input: Start Time is invalid')
-      }
-      if (errors.length === 0) {
-        return true
-      }
-      return false
-    } else {
-      if (errors.length === 0) {
-        return true
-      }
-      return false
+    if (!moment(formData.time_start).isValid()) {
+      errors.push('Invalid Data Input: Start Time is invalid')
     }
+    if (errors.length === 0) {
+      return true
+    }
+    return false
   }
 
   function FormError() {
@@ -387,27 +388,25 @@ export function EditRoute() {
 
   function Driver() {
     return (
-      <div id="EditRoute-driver">
+      <div id="EditRescue-driver">
         <img
           src={formData.driver ? formData.driver.icon : UserIcon}
           alt={formData.driver ? formData.driver.name : 'Unassigned Route'}
         />
-        <div id="EditRoute-driver-info">
+        <div id="EditRescue-driver-info">
           <Text type="secondary-header" color="white" shadow>
             {formData.driver ? formData.driver.name : 'Unassigned Route'}
           </Text>
           <Text type="subheader" color="white" shadow>
-            {isRecurring
-              ? moment(formData.time_start).format('dddd') + ', Recurring'
-              : `${moment(formData.time_start).format('dddd, MMMM D, h:mma')}${
-                  formData.time_end
-                    ? ' - ' + moment(formData.time_end).format('h:mma')
-                    : ''
-                } `}
+            {`${moment(formData.time_start).format('dddd, MMMM D, h:mma')}${
+              formData.time_end
+                ? ' - ' + moment(formData.time_end).format('h:mma')
+                : ''
+            } `}
           </Text>
         </div>
         <Button
-          id="EditRoute-driver-edit"
+          id="EditRescue-driver-edit"
           type="secondary"
           handler={() => setConfirmedTime(false)}
         >
@@ -418,25 +417,6 @@ export function EditRoute() {
   }
 
   function SelectDriver() {
-    function SetRecurringRoute() {
-      return !route_id ? (
-        <div id="Recurring">
-          <input
-            type="checkbox"
-            id="is_recurring"
-            name="is_recurring"
-            checked={isRecurring}
-            onChange={() => setRecurring(!isRecurring)}
-          />
-          <Spacer width={4} />
-          <Text type="subheader" color="white">
-            {' '}
-            Recurring Route
-          </Text>
-        </div>
-      ) : null
-    }
-
     function ConfirmTimesButton() {
       function handleClick() {
         if (validateFormData()) {
@@ -448,7 +428,7 @@ export function EditRoute() {
         formData.time_start &&
         canRender && (
           <Button
-            id="EditRoute-confirm-button"
+            id="EditRescue-confirm-button"
             type="primary"
             color="white"
             handler={handleClick}
@@ -461,8 +441,7 @@ export function EditRoute() {
 
     return (
       <>
-        <SetRecurringRoute />
-        {selectedFormFields.map(field =>
+        {formFields.map(field =>
           (!field.preReq || formData[field.preReq]) && canRender ? (
             <Input
               key={field.id}
@@ -491,50 +470,22 @@ export function EditRoute() {
     function SubmitButton() {
       async function handleSubmit() {
         if (working) return
-        const original_route_id =
-          route_id || (await generateRouteId(formData.time_start))
+        const original_rescue_id =
+          rescue_id || (await generateRescueId(formData.time_start))
         const FirstFormData = {
           ...formData,
-          original_route_id: original_route_id,
+          original_rescue_id: original_rescue_id,
         }
-        handleCreateRoute(FirstFormData, original_route_id)
-        if (isRecurring === true) {
-          let updatedTimeStart = addDays(formData.time_start)
-          let iteration = 1
-          while (
-            moment(updatedTimeStart).isSameOrBefore(formData.end_recurring)
-          ) {
-            const route_id = await generateRouteId(updatedTimeStart)
-            const updatedStops = []
-            for (const stop of formData.stops) {
-              const original_stop_id = stop.id
-              const updatedStop = {
-                ...stop,
-                id: original_stop_id + iteration.toString(),
-                original_stop_id: original_stop_id,
-              }
-              updatedStops.push(updatedStop)
-            }
-            const recurrenceFormData = {
-              ...formData,
-              time_start: updatedTimeStart,
-              original_route_id: original_route_id,
-              stops: updatedStops,
-            }
-            handleCreateRoute(recurrenceFormData, route_id)
-            updatedTimeStart = addDays(updatedTimeStart)
-            iteration += 1
-          }
-        }
+        handleCreateRoute(FirstFormData, original_rescue_id)
       }
 
       function generateSubmitButtonText() {
         return working ? (
           <>
-            {route_id ? 'Updating Route' : 'Creating Route'}
+            {rescue_id ? 'Updating Route' : 'Creating Route'}
             <Ellipsis />
           </>
-        ) : route_id ? (
+        ) : rescue_id ? (
           'Update Route'
         ) : (
           'Create Route'
@@ -543,7 +494,7 @@ export function EditRoute() {
 
       return isValidRoute() && !list ? (
         <Button
-          id="EditRoute-submit"
+          id="EditRescue-submit"
           size="large"
           type="secondary"
           handler={handleSubmit}
@@ -589,7 +540,7 @@ export function EditRoute() {
     function CancelButton() {
       return list ? (
         <Button
-          id="EditRoute-cancel"
+          id="EditRescue-cancel"
           type="secondary"
           handler={() => setList()}
         >
@@ -600,7 +551,7 @@ export function EditRoute() {
 
     function AddPickupButton() {
       return !list ? (
-        <Button id="EditRoute-add-pickup" handler={() => setList('pickups')}>
+        <Button id="EditRescue-add-pickup" handler={() => setList('pickups')}>
           Add Pickup
         </Button>
       ) : null
@@ -608,7 +559,10 @@ export function EditRoute() {
 
     function AddDeliveryButton() {
       return formData.stops.length && !list ? (
-        <Button id="EditRoute-add-delivery" handler={() => setList('delivery')}>
+        <Button
+          id="EditRescue-add-delivery"
+          handler={() => setList('delivery')}
+        >
           Add Delivery
         </Button>
       ) : null
@@ -633,7 +587,7 @@ export function EditRoute() {
             <EditDelivery handleSubmit={handleAddDelivery} />
           ) : null}
         </section>
-        <div id="EditRoute-buttons">
+        <div id="EditRescue-buttons">
           <CancelButton />
           <AddPickupButton />
           <AddDeliveryButton />
@@ -644,9 +598,9 @@ export function EditRoute() {
   }
 
   return (
-    <main id="EditRoute" onClick={deselectStop}>
+    <main id="EditRescue" onClick={deselectStop}>
       <Text type="section-header" color="white" shadow>
-        {route_id ? 'Edit Route' : 'Create Route'}
+        {rescue_id ? 'Edit Rescue' : 'Create Rescue'}
       </Text>
       <Text type="subheader" color="white" shadow>
         Use this form to schedule a driver for pickups within a specific time

@@ -5,24 +5,24 @@ import { useFirestore } from 'hooks'
 import { Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditPickup({ handleSubmit, title }) {
-  const organizations = useFirestore('organizations')
+  const donors = useFirestore('donors')
   const locations = useFirestore('locations')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
-    org_name: '',
-    org_id: null,
+    donor_name: '',
+    donor_id: null,
     location_id: '',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
-    org_name: [],
-    org_id: [],
+    donor_name: [],
+    donor_id: [],
     location_id: [],
   })
 
   useEffect(() => {
-    if (formData.org_id && formData.location_id) {
+    if (formData.donor_id && formData.location_id) {
       handleSubmit(formData)
     }
   }, [formData, handleSubmit])
@@ -31,7 +31,7 @@ export function EditPickup({ handleSubmit, title }) {
     if (field.suggestionQuery) {
       updateFieldSuggestions(
         e.target.value,
-        field.id === 'org_name' ? organizations : locations,
+        field.id === 'donor_name' ? donors : locations,
         field,
         suggestions,
         setSuggestions
@@ -53,7 +53,7 @@ export function EditPickup({ handleSubmit, title }) {
       if (field.loadSuggestionsOnInit && !formData[field.id]) {
         const updatedSuggestions = updateFieldSuggestions(
           formData[field.preReq],
-          field.id === 'org_name' ? organizations : locations,
+          field.id === 'donor_name' ? donors : locations,
           field,
           suggestions,
           setSuggestions

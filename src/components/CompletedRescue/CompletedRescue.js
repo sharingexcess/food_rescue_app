@@ -3,49 +3,49 @@ import { Link, Redirect, useParams, useHistory } from 'react-router-dom'
 import { useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
-import { setFirestoreData, createTimestamp } from 'helpers'
+import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
 
-export function CompletedRoute() {
-  const { route_id } = useParams()
+export function CompletedRescue() {
+  const { rescue_id } = useParams()
   const history = useHistory()
   const [notes, setNotes] = useState('')
-  const route = useFirestore('routes', route_id)
+  const rescue = useFirestore('rescues', rescue_id)
   const deliveries = useFirestore(
     'deliveries',
-    useCallback(d => d.route_id === route_id, [route_id])
+    useCallback(d => d.rescue_id === rescue_id, [rescue_id])
   )
 
   useEffect(() => {
-    if (route && route.notes) {
-      setNotes(route.notes)
+    if (rescue && rescue.notes) {
+      setNotes(rescue.notes)
     }
-  }, [route])
+  }, [rescue])
 
   function calculateWeight() {
     return deliveries
       ? deliveries
-          .map(d => (d.report ? d.report.weight || 0 : 0))
+          .map(d => d.impact_data_total_weight)
           .reduce((a, b) => a + b, 0)
       : 0
   }
 
   async function handleSubmitRouteNotes() {
     if (notes) {
-      await setFirestoreData(['Routes', route_id], {
+      await setFirestoreData(['rescues', rescue_id], {
         notes,
-        updated_at: createTimestamp(),
+        timestamp_updated: createTimestamp(),
       })
     }
     history.push('/')
   }
 
-  return !route ? (
+  return !rescue ? (
     <Loading />
-  ) : route.status !== 9 ? (
-    <Redirect to={`/routes/${route_id}`} />
+  ) : rescue.status !== STATUSES.COMPLETED ? (
+    <Redirect to={`/rescues/${rescue_id}`} />
   ) : (
-    <main id="CompletedRoute">
-      <div id="CompletedRoute-icon">🎉</div>
+    <main id="CompletedRescue">
+      <div id="CompletedRescue-icon">🎉</div>
       <Spacer height={32} />
       <Text type="primary-header" color="white" shadow align="center">
         Route Completed!

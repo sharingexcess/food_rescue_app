@@ -3,30 +3,30 @@ import { Button, Modal as ModalWrapper } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
 import { AddToCategory, PickupReportInstructions } from 'components'
 import {
-  DropRetailRescue,
-  FinishRetailRescue,
-  RetailRescueMenu,
+  DropRescue,
+  FinishRescue,
+  RescueMenu,
   StopMenu,
   ContactAdmin,
   CancelStop,
-  CancelRetailRescue,
-} from 'components/RetailRescue/RetailRescue.children'
+  CancelRescue,
+} from 'components/Rescue/Rescue.children'
 
 export function Modal() {
   const { modal, setModal } = useApp()
 
   const renderContent = () => {
     switch (modal) {
-      case 'RetailRescueMenu':
-        return <RetailRescueMenu />
+      case 'RescueMenu':
+        return <RescueMenu />
       case 'StopMenu':
         return <StopMenu />
-      case 'DropRetailRescue':
-        return <DropRetailRescue />
-      case 'CancelRetailRescue':
-        return <CancelRetailRescue />
-      case 'FinishRetailRescue':
-        return <FinishRetailRescue />
+      case 'DropRescue':
+        return <DropRescue />
+      case 'CancelRescue':
+        return <CancelRescue />
+      case 'FinishRescue':
+        return <FinishRescue />
       case 'CancelStop':
         return <CancelStop />
       case 'ContactAdmin':
@@ -46,7 +46,7 @@ export function Modal() {
     <ModalWrapper id="Modal" close={close}>
       {renderContent()}
       <Button
-        id="RetailRescue-modal-close"
+        id="Rescue-modal-close"
         type="tertiary"
         color="black"
         size="large"

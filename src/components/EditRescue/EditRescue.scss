@@ -1,12 +1,12 @@
-#EditRoute {
+#EditRescue {
   @include page;
 
-  #EditRoute-confirm-button {
+  #EditRescue-confirm-button {
     margin: auto;
     display: block;
   }
 
-  #EditRoute-buttons {
+  #EditRescue-buttons {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -16,21 +16,26 @@
       margin: 16px;
     }
 
-    #EditRoute-add-pickup {
+    #EditRescue-add-pickup {
       color: var(--se-green-primary);
     }
-    #EditRoute-add-delivery {
+    #EditRescue-add-delivery {
       color: var(--se-red-primary);
     }
-    #EditRoute-cancel {
+    #EditRescue-cancel {
       flex-grow: 0;
     }
-    #EditRoute-submit {
+    #EditRescue-submit {
       width: 100%;
     }
   }
 
-  #EditRoute-driver {
+  .Input.checkbox {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #EditRescue-driver {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -48,7 +53,7 @@
       margin-right: 16px;
     }
 
-    #EditRoute-driver-edit {
+    #EditRescue-driver-edit {
       margin-left: auto;
       @include mobile {
         width: 100%;
@@ -57,14 +62,10 @@
     }
   }
 
-  #Recurring {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   .selected-card {
     border: 4px var(--se-blue-primary) solid;
   }
+
   .Stop {
     margin-bottom: 16px;
     cursor: pointer;
