@@ -105,18 +105,20 @@ export function Menu({ isOpen, setIsOpen }) {
                   url="/admin/create-rescue"
                 />
                 <MenuLink
-                  label="✍️&nbsp;&nbsp;Log Donation"
+                  label="✍️&nbsp;&nbsp;Log Rescue"
                   url="/admin/create-direct-donation"
                 />
                 <MenuLink
                   label="🏢&nbsp;&nbsp;Organizations"
                   url="/admin/organizations"
                 />
-                <MenuLink label="🙆&nbsp;&nbsp;Users" url="/admin/users" />
+                <MenuLink label="👪&nbsp;&nbsp;Users" url="/admin/users" />
               </>
             )}
             <MenuLink label="🍎&nbsp;&nbsp;Food Safety" url="/food-safety" />
             <MenuLink label="💡&nbsp;&nbsp;Tutorial" url="/tutorial" />
+            <MenuLink label="🙋&nbsp;&nbsp;Help" url="/contact" />
+
             <li
               onClick={() => {
                 setIsOpen(false)

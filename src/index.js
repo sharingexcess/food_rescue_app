@@ -38,6 +38,8 @@ import {
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
 import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV } from 'helpers'
+import { EmojiProvider } from 'react-apple-emojis'
+import emojiData from 'react-apple-emojis/lib/data.json'
 import './styles/index.scss'
 
 Sentry.init({
@@ -108,125 +110,130 @@ function AdminRoute({ children, exact, path }) {
 function RescueAppRoutes() {
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
-      <BrowserRouter>
-        <Auth>
-          {/* Auth component handles login and will show a login page if no user is authenticated */}
-          <Firestore>
-            <App>
-              <Switch>
-                {/* Public Routes */}
-                <PublicRoute exact path="/">
-                  <Home />
-                </PublicRoute>
-                <PublicRoute exact path="/profile">
-                  <Profile />
-                </PublicRoute>
-                <PublicRoute exact path="/privacy">
-                  <Privacy />
-                </PublicRoute>
-                <PublicRoute exact path="/tos">
-                  <Terms />
-                </PublicRoute>
-                <PublicRoute exact path="/contact">
-                  <ContactUs />
-                </PublicRoute>
-                <PublicRoute exact path="/food-safety">
-                  <FoodSafety />
-                </PublicRoute>
-                <PublicRoute exact path="/liability">
-                  <Liability />
-                </PublicRoute>
-                <PublicRoute exact path="/driver-info">
-                  <DriverInfo />
-                </PublicRoute>
-                <PublicRoute exact path="/tutorial">
-                  <Tutorial />
-                </PublicRoute>
+      <EmojiProvider data={emojiData}>
+        <BrowserRouter>
+          <Auth>
+            {/* Auth component handles login and will show a login page if no user is authenticated */}
+            <Firestore>
+              <App>
+                <Switch>
+                  {/* Public Routes */}
+                  <PublicRoute exact path="/">
+                    <Home />
+                  </PublicRoute>
+                  <PublicRoute exact path="/profile">
+                    <Profile />
+                  </PublicRoute>
+                  <PublicRoute exact path="/privacy">
+                    <Privacy />
+                  </PublicRoute>
+                  <PublicRoute exact path="/tos">
+                    <Terms />
+                  </PublicRoute>
+                  <PublicRoute exact path="/contact">
+                    <ContactUs />
+                  </PublicRoute>
+                  <PublicRoute exact path="/food-safety">
+                    <FoodSafety />
+                  </PublicRoute>
+                  <PublicRoute exact path="/liability">
+                    <Liability />
+                  </PublicRoute>
+                  <PublicRoute exact path="/driver-info">
+                    <DriverInfo />
+                  </PublicRoute>
+                  <PublicRoute exact path="/tutorial">
+                    <Tutorial />
+                  </PublicRoute>
 
-                {/* Driver Routes */}
-                <DriverRoute exact path="/calendar">
-                  <Calendar />
-                </DriverRoute>
-                <DriverRoute exact path="/rescues">
-                  <Rescues />
-                </DriverRoute>
-                <DriverRoute exact path="/rescues/:rescue_id">
-                  <Rescue />
-                </DriverRoute>
-                <DriverRoute exact path="/rescues/:rescue_id/pickup/:pickup_id">
-                  <PickupReport />
-                </DriverRoute>
-                <DriverRoute
-                  exact
-                  path="/rescues/:rescue_id/delivery/:delivery_id"
-                >
-                  <DeliveryReport />
-                </DriverRoute>
-                <DriverRoute exact path="/rescues/:rescue_id/edit">
-                  <EditRescue />
-                </DriverRoute>
-                <DriverRoute exact path="/rescues/:rescue_id/completed">
-                  <CompletedRescue />
-                </DriverRoute>
+                  {/* Driver Routes */}
+                  <DriverRoute exact path="/calendar">
+                    <Calendar />
+                  </DriverRoute>
+                  <DriverRoute exact path="/rescues">
+                    <Rescues />
+                  </DriverRoute>
+                  <DriverRoute exact path="/rescues/:rescue_id">
+                    <Rescue />
+                  </DriverRoute>
+                  <DriverRoute
+                    exact
+                    path="/rescues/:rescue_id/pickup/:pickup_id"
+                  >
+                    <PickupReport />
+                  </DriverRoute>
+                  <DriverRoute
+                    exact
+                    path="/rescues/:rescue_id/delivery/:delivery_id"
+                  >
+                    <DeliveryReport />
+                  </DriverRoute>
+                  <DriverRoute exact path="/rescues/:rescue_id/edit">
+                    <EditRescue />
+                  </DriverRoute>
+                  <DriverRoute exact path="/rescues/:rescue_id/completed">
+                    <CompletedRescue />
+                  </DriverRoute>
 
-                {/* Admin Routes */}
+                  {/* Admin Routes */}
 
-                <AdminRoute exact path="/admin/create-rescue">
-                  <EditRescue />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/create-direct-donation">
-                  <EditDirectDonation />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/create-organization">
-                  <EditOrganization />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/organizations">
-                  <Organizations />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/organizations/:id">
-                  {/* adding a colon creates a variable url parameter */}
-                  {/* we can access that variable using const { id } = useParams() */}
-                  <Organization />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/organizations/:id/edit">
-                  <EditOrganization />
-                </AdminRoute>
-                <AdminRoute
-                  exact
-                  path="/admin/organizations/:id/create-location"
-                >
-                  <EditLocation />
-                </AdminRoute>
-                <AdminRoute
-                  exact
-                  path="/admin/organizations/:id/location/:loc_id"
-                >
-                  <EditLocation />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/users">
-                  <Users />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/users/:id">
-                  <User />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/analytics">
-                  <Analytics />
-                </AdminRoute>
-                <AdminRoute exact path="/admin/switch-environment">
-                  <SwitchEnv />
-                </AdminRoute>
+                  <AdminRoute exact path="/admin/create-rescue">
+                    <EditRescue />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/create-direct-donation">
+                    <EditDirectDonation />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/create-organization">
+                    <EditOrganization />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/organizations">
+                    <Organizations />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/organizations/:id">
+                    {/* adding a colon creates a variable url parameter */}
+                    {/* we can access that variable using const { id } = useParams() */}
+                    <Organization />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/organizations/:id/edit">
+                    <EditOrganization />
+                  </AdminRoute>
+                  <AdminRoute
+                    exact
+                    path="/admin/organizations/:id/create-location"
+                  >
+                    <EditLocation />
+                  </AdminRoute>
+                  <AdminRoute
+                    exact
+                    path="/admin/organizations/:id/location/:loc_id"
+                  >
+                    <EditLocation />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/users">
+                    <Users />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/users/:id">
+                    <User />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/analytics">
+                    <Analytics />
+                  </AdminRoute>
+                  <AdminRoute exact path="/admin/switch-environment">
+                    <SwitchEnv />
+                  </AdminRoute>
 
-                {/* Catch All */}
-                <Route>
-                  {/* This route has no path, and therefore will be the 'catch all' */}
-                  <Error />
-                  {/* this 404 page component will render if the url does not match any other routes */}
-                </Route>
-              </Switch>
-            </App>
-          </Firestore>
-        </Auth>
-      </BrowserRouter>
+                  {/* Catch All */}
+                  <Route>
+                    {/* This route has no path, and therefore will be the 'catch all' */}
+                    <Error />
+                    {/* this 404 page component will render if the url does not match any other routes */}
+                  </Route>
+                </Switch>
+              </App>
+            </Firestore>
+          </Auth>
+        </BrowserRouter>
+      </EmojiProvider>
     </Sentry.ErrorBoundary>
   )
 }

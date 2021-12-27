@@ -5,6 +5,7 @@ import { generateDriverStats, generateGreeting } from './utils'
 import { Landing, NewDriver } from 'components'
 import { Card, Text } from '@sharingexcess/designsystem'
 import { STATUSES } from 'helpers'
+import { Emoji } from 'react-apple-emojis'
 
 export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
@@ -12,15 +13,15 @@ export function Home() {
   const my_routes = useFirestore(
     'routes',
     useCallback(
-      r => r.driver_id === user.uid && r.status === STATUSES.COMPLETED,
-      [user.uid]
+      r => r.driver_id === user && user.uid && r.status === STATUSES.COMPLETED,
+      [user]
     ) // eslint-disable-line
   )
   const my_deliveries = useFirestore(
     'deliveries',
     useCallback(
-      d => d.driver_id === user.uid && d.status === STATUSES.COMPLETED,
-      [user.uid]
+      d => d.driver_id === user && user.uid && d.status === STATUSES.COMPLETED,
+      [user]
     ) // eslint-disable-line
   )
   const stats = generateDriverStats(my_routes, my_deliveries)
@@ -29,7 +30,8 @@ export function Home() {
     return (
       <Link to={link}>
         <Card classList={['Home-tile']}>
-          <div className="Home-tile-icon">{icon}</div>
+          {/* <div className="Home-tile-icon">{icon}</div> */}
+          <Emoji name={icon} />
           <Text type="paragraph" color="black" align="center" bold>
             {name}
           </Text>
@@ -41,9 +43,10 @@ export function Home() {
   function DriverTiles() {
     return (
       <>
-        <Tile name="Rescues" icon="🚛" link="/rescues" />
-        <Tile name="Contact" icon="🤔" link="/contact" />
-        <Tile name="Profile" icon="💁‍♀️" link="/profile" />
+        <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
+        <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
+        <Tile name="Profile" icon="woman-tipping-hand" link="/profile" />
+        <Tile name="Help" icon="person-raising-hand" link="/contact" />
       </>
     )
   }
@@ -52,26 +55,22 @@ export function Home() {
     if (!admin) return null
     return (
       <>
-        <Tile name="Rescues" icon="🚛" link="/rescues" />
-        <Tile name="New Rescue" icon="➕" link="/admin/create-route" />
+        <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
+        <Tile name="Schedule Rescue" icon="plus" link="/admin/create-rescue" />
         <Tile
-          name="New Direct Donation"
-          icon="🏃"
+          name="Log Rescue"
+          icon="writing-hand"
           link="admin/create-direct-donation"
         />
-        <Tile name="Calendar" icon="🗓" link="/calendar" />
-        <Tile name="Analytics" icon="📊" link="/admin/analytics" />
+        <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
+        <Tile name="Analytics" icon="bar-chart" link="/admin/analytics" />
+        <Tile name="Users" icon="family" link="/admin/users" />
         <Tile
-          name="Manage Organizations"
-          icon="🏢"
+          name="Organizations"
+          icon="office-building"
           link="/admin/organizations"
         />
-        <Tile name="Manage Users" icon="👨‍👩‍👧‍👦" link="/admin/users" />
-        <Tile
-          name="Switch Environments"
-          icon="🔄"
-          link="/admin/switch-environment"
-        />
+        <Tile name="Help" icon="person-raising-hand" link="/contact" />
       </>
     )
   }
