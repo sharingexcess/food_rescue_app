@@ -1,17 +1,13 @@
 import { Text } from '@sharingexcess/designsystem'
-import { getImageFromStorage, isValidURL, formatPhoneNumber } from 'helpers'
-
-export function handleOrgIcon(icon, callback) {
-  if (icon && !isValidURL(icon)) {
-    getImageFromStorage(icon).then(url => callback(url))
-  }
-}
+import { formatPhoneNumber } from 'helpers'
+import { Emoji } from 'react-apple-emojis'
 
 export function LocationPhone({ loc }) {
-  if (loc.contact.phone) {
+  if (loc.contact_phone) {
     return (
-      <Text type="paragraph" color="blue">
-        Contact Phone: {formatPhoneNumber(loc.contact.phone)}
+      <Text type="small" color="blue">
+        <Emoji name="telephone-receiver" width={16} />{' '}
+        {formatPhoneNumber(loc.contact_phone)}
       </Text>
     )
   } else return null

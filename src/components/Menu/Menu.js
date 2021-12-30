@@ -3,7 +3,6 @@ import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
 import { useAuth, useFirestore, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
-import { MOBILE_THRESHOLD } from 'helpers'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
 
 export function Menu({ isOpen, setIsOpen }) {
@@ -74,7 +73,7 @@ export function Menu({ isOpen, setIsOpen }) {
             <AdminIndicator />
           </div>
         </Link>
-        {window.innerWidth > MOBILE_THRESHOLD ? null : (
+        {isMobile ? null : (
           <i id="Close" className="fa fa-times" onClick={closeMenu} />
         )}
       </div>
@@ -96,6 +95,7 @@ export function Menu({ isOpen, setIsOpen }) {
             {permission ? (
               <>
                 <MenuLink label="🚛&nbsp;&nbsp;Rescues" url="/rescues" />
+                <MenuLink label="🗓&nbsp;&nbsp;Calendar" url="/calendar" />
               </>
             ) : null}
             {admin && (
@@ -106,13 +106,17 @@ export function Menu({ isOpen, setIsOpen }) {
                 />
                 <MenuLink
                   label="✍️&nbsp;&nbsp;Log Rescue"
-                  url="/admin/create-direct-donation"
+                  url="/admin/log-rescue"
                 />
                 <MenuLink
                   label="🏢&nbsp;&nbsp;Organizations"
                   url="/admin/organizations"
                 />
                 <MenuLink label="👪&nbsp;&nbsp;Users" url="/admin/users" />
+                <MenuLink
+                  label="📊&nbsp;&nbsp;Analytics"
+                  url="/admin/analytics"
+                />
               </>
             )}
             <MenuLink label="🍎&nbsp;&nbsp;Food Safety" url="/food-safety" />

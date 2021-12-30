@@ -57,11 +57,7 @@ export function Home() {
       <>
         <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
         <Tile name="Schedule Rescue" icon="plus" link="/admin/create-rescue" />
-        <Tile
-          name="Log Rescue"
-          icon="writing-hand"
-          link="admin/create-direct-donation"
-        />
+        <Tile name="Log Rescue" icon="writing-hand" link="admin/log-rescue" />
         <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
         <Tile name="Analytics" icon="bar-chart" link="/admin/analytics" />
         <Tile name="Users" icon="family" link="/admin/users" />

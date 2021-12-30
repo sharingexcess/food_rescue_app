@@ -29,7 +29,7 @@ export function PickupReport({ customSubmitHandler }) {
   const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
-    pickup
+    pickup && pickup.id
       ? setFormData(formData => ({
           ...formData,
           ...FOOD_CATEGORIES.reduce(

@@ -27,16 +27,18 @@ export function updateFieldSuggestions(
 // loadSuggestionsOnInit: a boolean defining whether the suggestionQuery should be run before the user enters any input
 export const formFields = [
   {
-    label: 'Recipient Network',
-    id: 'recipient_name',
+    label: 'Recipient Organization',
+    id: 'organization_name',
     preReq: null,
     type: 'text',
-    suggestionQuery: (name = '', recipients) =>
-      recipients.filter(r => r.name.toLowerCase().includes(name.toLowerCase())),
-    handleSelect: recipient => ({
-      recipient,
-      recipient_name: recipient.name,
-      recipient_id: recipient.id,
+    suggestionQuery: (name = '', organizations) =>
+      organizations.filter(r =>
+        r.name.toLowerCase().includes(name.toLowerCase())
+      ),
+    handleSelect: organization => ({
+      organization,
+      organization_name: organization.name,
+      organization_id: organization.id,
       location_id: '',
     }),
     loadSuggestionsOnInit: false,
@@ -44,10 +46,10 @@ export const formFields = [
   {
     label: 'Organization Location',
     id: 'location_id',
-    preReq: 'recipient_id',
+    preReq: 'organization_id',
     type: 'select',
-    suggestionQuery: (recipient_id, locations) =>
-      locations.filter(l => l.parent_id === recipient_id),
+    suggestionQuery: (organization_id, locations) =>
+      locations.filter(l => l.organization_id === organization_id),
     handleSelect: loc => (loc ? { location: loc, location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },

@@ -12,20 +12,20 @@ import {
   CLOUD_FUNCTION_URLS,
   createTimestamp,
   formatPhoneNumber,
-  generateStopId,
-  getCollection,
   setFirestoreData,
   updateGoogleCalendarEvent,
   generateDirectionsLink,
   STATUSES,
   FOOD_CATEGORIES,
   RECIPIENT_TYPES,
+  generateUniqueId,
 } from 'helpers'
 import { useAuth, useFirestore, useApp } from 'hooks'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
 import moment from 'moment'
+import { Emoji } from 'react-apple-emojis'
 
 export function RescueHeader() {
   const { setModal } = useApp()
@@ -46,8 +46,11 @@ export function RescueHeader() {
           {rescue.driver ? rescue.driver.name : 'No assigned driver'}
         </Text>
         <Text type="small" color="white" shadow>
-          {moment(rescue.timestamp_scheduled_start).format('ddd, MMM D, h:mma')}{' '}
-          ({rescue.stops.length} total stops)
+          {moment(rescue.timestamp_scheduled_start).format(
+            'ddd, MMM D, h:mma '
+          )}
+          {rescue.timestamp_scheduled_finish &&
+            moment(rescue.timestamp_scheduled_finish).format(' - h:mma ')}
         </Text>
         {rescue.notes ? (
           <Text type="small" color="white" shadow>
@@ -226,19 +229,22 @@ export function CancelRescue() {
   const rescue = useFirestore('rescues', rescue_id)
 
   async function handleCancel() {
-    getCollection('rescues')
-      .doc(rescue.id)
-      .set({ status: STATUSES.CANCELLED, notes }, { merge: true })
-      .then(() => {
-        fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
-          method: 'POST',
-          body: JSON.stringify({
-            calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-            eventId: rescue.google_calendar_event_id,
-          }),
-        }).catch(e => console.error('Error deleting calendar event:', e))
+    try {
+      await setFirestoreData(['rescues', rescue.id], {
+        status: STATUSES.CANCELLED,
+        notes,
       })
-      .then(() => setModal())
+      await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+        method: 'POST',
+        body: JSON.stringify({
+          calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+          eventId: rescue.google_calendar_event_id,
+        }),
+      })
+      setModal()
+    } catch (e) {
+      console.error('Error deleting calendar event:', e)
+    }
   }
 
   return (
@@ -282,11 +288,12 @@ export function FinishRescue() {
   const rescue = useFirestore('rescues', rescue_id)
 
   async function handleFinish() {
-    getCollection('rescues')
-      .doc(rescue.id)
-      .set({ status: STATUSES.COMPLETED, notes }, { merge: true })
-      .then(() => setModal())
-      .then(() => history.push(`/rescues/${rescue_id}/completed`))
+    await setFirestoreData(['rescues', rescue.id], {
+      status: STATUSES.COMPLETED,
+      notes,
+    })
+    setModal()
+    history.push(`/rescues/${rescue_id}/completed`)
   }
 
   return (
@@ -326,19 +333,14 @@ export function CancelStop() {
   const [notes, setNotes] = useState('')
   const { setModal, modalState } = useApp()
 
-  function handleCancel() {
+  async function handleCancel() {
     const collection =
       modalState.stop.type === 'pickup' ? 'pickups' : 'deliveries'
-    getCollection(collection)
-      .doc(modalState.stop.id)
-      .set(
-        {
-          status: STATUSES.CANCELLED,
-          notes,
-        },
-        { merge: true }
-      )
-      .then(() => setModal())
+    await setFirestoreData([collection, modalState.stop.id], {
+      status: STATUSES.CANCELLED,
+      notes,
+    })
+    setModal()
   }
 
   return (
@@ -420,13 +422,6 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopHeader() {
-    const headerText =
-      s.type && s.status && rescue
-        ? s.type === 'delivery'
-          ? `🟥 DELIVERY (${s.status.toUpperCase()})`
-          : `🟩 PICKUP (${s.status.toUpperCase()})`
-        : 'loading...'
-
     return (
       <div className="Rescue-stop-header">
         <Text
@@ -435,7 +430,7 @@ export function Stop({ stops, s, i }) {
             isActiveStop ? (s.type === 'pickup' ? 'green' : 'red') : 'white'
           }
         >
-          {headerText}
+          {s.type === 'delivery' ? 'DELIVERY' : 'PICKUP'}
         </Text>
         {!isCompletedStop && (
           <Button
@@ -479,10 +474,10 @@ export function Stop({ stops, s, i }) {
         classList={['Rescue-stop-address-button']}
         type="tertiary"
         size="small"
-        color={isActiveStop ? 'blue' : 'white'}
+        color={'blue'}
       >
-        <div>🏢</div>
-        <Spacer width={16} />
+        <Emoji name="round-pushpin" width={20} />
+        <Spacer width={8} />
         {address1}
         {address2 && ` - ${address2}`}
         <br />
@@ -515,8 +510,8 @@ export function Stop({ stops, s, i }) {
           size="small"
           color="blue"
         >
-          <div>📞</div>
-          <Spacer width={16} />
+          <Emoji name="telephone-receiver" width={20} />
+          <Spacer width={8} />
           {formatPhoneNumber(number)}
           {name && ` (ask for ${name})`}
         </Button>
@@ -551,7 +546,7 @@ export function Stop({ stops, s, i }) {
       )
     }
     async function handleSkip() {
-      if (s.organization.type === RECIPIENT_TYPES.HOME_DELIVERY) {
+      if (s.organization.subtype === RECIPIENT_TYPES.HOME_DELIVERY) {
         handleSubmitHomeDelivery()
       } else {
         setFirestoreData(
@@ -591,21 +586,26 @@ export function Stop({ stops, s, i }) {
   }
 
   function handleSubmitHomeDelivery() {
+    // BAKED IN ASSUMPTION: home delivery rescues will only ever have 1 pickup
     const pickup = pickups.find(p => p.rescue_id === rescue.id)
     const percent_of_total_dropped = 1 / (rescue.stops.length - 1)
     setFirestoreData(['deliveries', s.id], {
       // calculate percentage based weight totals for each food category
+      // ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {})
       ...FOOD_CATEGORIES.reduce(
-        (a, b) => (b[a] = Math.round(pickup[a] * percent_of_total_dropped)),
+        (acc, curr) => (
+          (acc[curr] = Math.round(pickup[curr] * percent_of_total_dropped)), acc
+        ),
         {}
       ),
-      impact_data_percent_of_total_dropped: parseInt(percent_of_total_dropped),
+      impact_data_percent_of_total_dropped: Math.round(
+        percent_of_total_dropped * 100
+      ),
       impact_data_total_weight:
         Math.round(
-          pickup.impact_data_total_weight *
-            (parseInt(percent_of_total_dropped) / 100)
+          pickup.impact_data_total_weight * percent_of_total_dropped
         ) || 0,
-      timestamp_created: createTimestamp(),
+      timestamp_started: createTimestamp(),
       timestamp_updated: createTimestamp(),
       timestamp_finished: createTimestamp(),
       status: STATUSES.COMPLETED,
@@ -628,7 +628,7 @@ export function Stop({ stops, s, i }) {
     function handleClick() {
       if (
         s.type === 'delivery' &&
-        s.organization.type === RECIPIENT_TYPES.HOME_DELIVERY
+        s.organization.subtype === RECIPIENT_TYPES.HOME_DELIVERY
       ) {
         handleSubmitHomeDelivery()
       } else handleOpenReport()
@@ -675,7 +675,9 @@ export function Stop({ stops, s, i }) {
         <Spacer height={8} />
         <StopAddress />
         <Spacer height={8} />
-        <Text classList={['StopSummary-notes']} type="paragraph" color="white">
+        <Text classList={['StopSummary-notes']} type="small" color="white">
+          <Emoji name="pencil" width={20} />
+          <Spacer width={8} />
           {s.status === 'completed' &&
             s.impact_data_total_weight +
               ' lbs. ' +
@@ -705,7 +707,11 @@ export function Stop({ stops, s, i }) {
     >
       <StopHeader />
       <Spacer height={4} />
-      <Text type="section-header" color={isActiveStop ? 'black' : 'white'}>
+      <Text
+        type="section-header"
+        color={isActiveStop ? 'black' : 'white'}
+        shadow={!isActiveStop}
+      >
         {s.organization.name}
         {s.location.nickname ? ` (${s.location.nickname})` : ''}
       </Text>
@@ -824,10 +830,10 @@ export function BackupDelivery() {
       async function addBackupDelivery(stop) {
         if (!working) {
           setWorking(true)
-          const stop_id = generateStopId(stop)
+          const stop_id = await generateUniqueId('deliveries')
           await setFirestoreData(['deliveries', stop_id], {
             id: stop_id,
-            recipient_id: stop.recipient_id,
+            organization_id: stop.organization_id,
             location_id: stop.location_id,
             handler_id: rescue.handler_id,
             timestamp_created: createTimestamp(),

@@ -1,28 +1,44 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { updateFieldSuggestions, formFields } from './utils'
 import { useFirestore } from 'hooks'
 import { Input } from 'components'
 import { Spacer, Text } from '@sharingexcess/designsystem'
+import { generateUniqueId } from 'helpers'
 
 export function EditDelivery({ handleSubmit, title }) {
-  const recipients = useFirestore('recipients')
-  const locations = useFirestore('locations')
+  const recipients = useFirestore(
+    'organizations',
+    useCallback(i => i.type === 'recipient', [])
+  )
+  const locations = useFirestore(
+    'locations',
+    useCallback(i => !i.is_deleted, [])
+  )
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
-    recipient_name: '',
-    recipient_id: null,
+    organization_name: '',
+    organization_id: null,
     location_id: '',
+    type: 'delivery',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
-    recipient_name: [],
-    recipient_id: [],
+    organization_name: [],
+    organization_id: [],
     location_id: [],
   })
 
   useEffect(() => {
-    if (formData.recipient_id && formData.location_id) {
+    async function addIdToFormData() {
+      const id = await generateUniqueId('pickups')
+      setFormData(data => ({ ...data, id }))
+    }
+    addIdToFormData()
+  }, [])
+
+  useEffect(() => {
+    if (formData.organization_id && formData.location_id) {
       handleSubmit(formData)
     }
   }, [formData, handleSubmit])
@@ -31,7 +47,7 @@ export function EditDelivery({ handleSubmit, title }) {
     if (field.suggestionQuery) {
       updateFieldSuggestions(
         e.target.value,
-        field.id === 'recipient_name' ? recipients : locations,
+        field.id === 'organization_name' ? recipients : locations,
         field,
         suggestions,
         setSuggestions
@@ -53,7 +69,7 @@ export function EditDelivery({ handleSubmit, title }) {
       if (field.loadSuggestionsOnInit && !formData[field.id]) {
         const updatedSuggestions = updateFieldSuggestions(
           formData[field.preReq],
-          field.id === 'recipient_name' ? recipients : locations,
+          field.id === 'organization_name' ? recipients : locations,
           field,
           suggestions,
           setSuggestions

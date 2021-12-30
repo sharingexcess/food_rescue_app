@@ -1,28 +1,44 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Input } from 'components'
 import { updateFieldSuggestions, formFields } from './utils'
 import { useFirestore } from 'hooks'
 import { Spacer, Text } from '@sharingexcess/designsystem'
+import { generateUniqueId } from 'helpers'
 
 export function EditPickup({ handleSubmit, title }) {
-  const donors = useFirestore('donors')
-  const locations = useFirestore('locations')
+  const donors = useFirestore(
+    'organizations',
+    useCallback(i => i.type === 'donor', [])
+  )
+  const locations = useFirestore(
+    'locations',
+    useCallback(i => !i.is_deleted, [])
+  )
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
-    donor_name: '',
-    donor_id: null,
+    organization_name: '',
+    organization_id: null,
     location_id: '',
+    type: 'pickup',
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
-    donor_name: [],
-    donor_id: [],
+    organization_name: [],
+    organization_id: [],
     location_id: [],
   })
 
   useEffect(() => {
-    if (formData.donor_id && formData.location_id) {
+    async function addIdToFormData() {
+      const id = await generateUniqueId('pickups')
+      setFormData(data => ({ ...data, id }))
+    }
+    addIdToFormData()
+  }, [])
+
+  useEffect(() => {
+    if (formData.organization_id && formData.location_id) {
       handleSubmit(formData)
     }
   }, [formData, handleSubmit])
@@ -31,7 +47,7 @@ export function EditPickup({ handleSubmit, title }) {
     if (field.suggestionQuery) {
       updateFieldSuggestions(
         e.target.value,
-        field.id === 'donor_name' ? donors : locations,
+        field.id === 'organization_name' ? donors : locations,
         field,
         suggestions,
         setSuggestions
@@ -53,7 +69,7 @@ export function EditPickup({ handleSubmit, title }) {
       if (field.loadSuggestionsOnInit && !formData[field.id]) {
         const updatedSuggestions = updateFieldSuggestions(
           formData[field.preReq],
-          field.id === 'donor_name' ? donors : locations,
+          field.id === 'organization_name' ? donors : locations,
           field,
           suggestions,
           setSuggestions

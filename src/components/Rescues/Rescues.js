@@ -254,17 +254,21 @@ export function Rescues() {
         >
           {admin === true ? (
             <>
-              <option value="active">Active Rescues</option>
-              <option value="past">Past Rescues</option>
+              <option value="active">Active Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
+              <option value="past">Past Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
             </>
           ) : null}
-          <option value="mine">My Rescues</option>
-          <option value="unassigned">Unassigned Rescues</option>
+          <option value="mine">My Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
+          <option value="unassigned">
+            Available Rescues&nbsp;&nbsp;&nbsp;⬇️
+          </option>
           {admin === true ? (
-            <option value="driver">Rescues by Driver</option>
+            <option value="driver">
+              Rescues by Driver&nbsp;&nbsp;&nbsp;⬇️
+            </option>
           ) : null}
           {admin === true ? (
-            <option value="date">Rescues by Date</option>
+            <option value="date">Rescues by Date&nbsp;&nbsp;&nbsp;⬇️</option>
           ) : null}
           {/*  Only adding these filters to Rescues page */}
           {location.pathname === '/routes' ? (

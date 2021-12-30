@@ -12,6 +12,7 @@ export function Input({
   readOnly,
   inherited_ref,
   animation = true,
+  autoFocus = false,
 }) {
   const [isUsed, setIsUsed] = useState(type === 'select' ? true : false)
   const shouldNotMoveLabel = () =>
@@ -37,6 +38,7 @@ export function Input({
             name="no" //prevent autoComplete
             rows={3}
             wrap="hard"
+            autoFocus={autoFocus}
             onChange={onChange}
             value={value}
             onFocus={() => setIsUsed(true)}
@@ -62,7 +64,7 @@ export function Input({
                     {s.address1
                       ? `${s.name ? s.name + ' - ' : ''}${s.address1}, ${
                           s.city
-                        }, ${s.state}, ${s.zip_code}`
+                        }, ${s.state}, ${s.zip}`
                       : s}
                   </option>
                 ))
@@ -74,6 +76,7 @@ export function Input({
             autoComplete="off" //prevent autoComplete
             name="no" //prevent autoComplete
             type={type}
+            autoFocus={autoFocus}
             ref={inherited_ref}
             onChange={onChange}
             readOnly={readOnly}

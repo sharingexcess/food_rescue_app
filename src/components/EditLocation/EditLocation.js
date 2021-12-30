@@ -1,38 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { getCollection } from 'helpers'
+import {
+  createTimestamp,
+  generateUniqueId,
+  removeSpecialCharacters,
+  setFirestoreData,
+} from 'helpers'
 import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
 import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditLocation() {
-  const { id, loc_id } = useParams()
+  const { organization_id, location_id } = useParams()
   const history = useHistory()
-  const organization = useFirestore('organizations', id)
-  const location = useFirestore('locations', loc_id)
+  const organization = useFirestore('organizations', organization_id)
+  const location = useFirestore('locations', location_id)
   const [formData, setFormData] = useState({
-    name: '',
     address1: '',
     address2: '',
-    city: '',
-    state: '',
-    zip_code: '',
     contact_name: '',
+    contact_email: '',
     contact_phone: '',
-    secondary_contact_phone: '',
-    upon_arrival_instructions: '',
-    is_philabundance_partner: '',
-    time_open: '',
-    time_close: '',
-    receive_start: '',
-    receive_end: '',
+    notes: '',
+    nickname: '',
+    is_philabundance_partner: false,
   })
-  const [isPrimary, setIsPrimary] = useState(
-    loc_id && organization ? organization.primary_location === loc_id : false
-  )
-  const [errors, setErrors] = useState([])
-  const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   useEffect(() => {
@@ -44,80 +37,48 @@ export function EditLocation() {
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
-    setErrors([])
-    setShowErrors(false)
-  }
-
-  function handlePhoneInputChange(changeValue) {
-    setFormData(prevData => {
-      return { ...prevData, contact_phone: changeValue }
-    })
-    setErrors([])
-    setShowErrors(false)
   }
 
   function validateFormData() {
-    const updatedErrors = [...errors]
-    if (formData.address1 === '') {
-      updatedErrors.push('Missing Address')
+    if (!formData.lat || !formData.lng) {
+      window.alert('Address is not complete!')
     }
-    if (formData.contact_phone) {
-      updatedErrors.push('Contact Phone Number is invalid')
+    if (!formData.contact_phone) {
+      window.alert('Phone number is required when adding a location!')
+      return false
     }
-    setErrors(updatedErrors)
-    return updatedErrors.length === 0
+    return true
   }
 
   async function handleSubmit() {
-    const is_valid = validateFormData()
-    if (is_valid) {
-      const new_loc_id = loc_id || (await generateLocationId())
-      if (new_loc_id) {
-        if (isPrimary || !organization.primary_location) {
-          getCollection('Organizations')
-            .doc(id)
-            .set({ primary_location: new_loc_id }, { merge: true })
-        }
-        getCollection('Locations')
-          .doc(new_loc_id)
-          .set(
-            {
-              id: new_loc_id,
-              org_id: id,
-              ...formData,
-            },
-            { merge: true }
-          )
-          .then(() => history.push(`/admin/organizations/${id}`))
-          .catch(e => console.error('Error writing document: ', e))
+    if (validateFormData()) {
+      try {
+        const new_location_id =
+          location_id || (await generateUniqueId('locations'))
+        await setFirestoreData(['locations', new_location_id], {
+          id: new_location_id,
+          organization_id,
+          ...formData,
+          contact_phone: removeSpecialCharacters(formData.contact_phone),
+          timestamp_created: location.timestamp_created || createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        })
+        history.push(`/admin/organizations/${organization_id}`)
+      } catch (e) {
+        console.error('Error writing document: ', e)
       }
     }
   }
 
-  async function generateLocationId() {
-    const uniq_id = `${organization.name}_${formData.address1}${
-      formData.address2 ? '_' + formData.address2 : ''
-    }`
-      .replace(/[^A-Z0-9]/gi, '_')
-      .toLowerCase()
-    const exists = await getCollection('Locations')
-      .doc(uniq_id)
-      .get()
-      .then(res => res.data())
-    if (exists) {
-      alert('A location at this address already exists!')
-      return null
-    } else return uniq_id
-  }
-
-  function FormError() {
-    if (showErrors === true) {
-      return errors.map(error => (
-        <p id="FormError" key={error}>
-          {error}
-        </p>
-      ))
-    } else return null
+  async function handleDelete() {
+    if (
+      window.confirm(`Are you sure you want to delete ${location.address1}?`)
+    ) {
+      await setFirestoreData(['locations', location_id], {
+        is_deleted: true,
+      })
+      history.push('/admin/organizations')
+    }
   }
 
   function handleReceiveAddress(address) {
@@ -128,7 +89,7 @@ export function EditLocation() {
   ) : (
     <main id="EditLocation">
       <Text type="secondary-header" color="white" shadow>
-        Edit Location
+        {!location_id ? 'Create Location' : 'Edit Location'}
       </Text>
       <Text type="subheader" color="white" shadow>
         Use this form to save a location for the {organization.name}{' '}
@@ -148,7 +109,7 @@ export function EditLocation() {
             <Text type="section-header" color="white" shadow>
               {formData.address1}
               <br />
-              {`${formData.city}, ${formData.state} ${formData.zip_code}`}
+              {`${formData.city}, ${formData.state} ${formData.zip}`}
             </Text>
             <Button
               id="EditLocation-address-clear-button"
@@ -158,48 +119,12 @@ export function EditLocation() {
               Clear Address
             </Button>
           </div>
-          <Spacer height={32} />
+          <Spacer height={16} />
           <Input
             type="text"
-            label="Location Nickname (optional)"
-            element_id="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <Input
-            type="text"
-            label="Apartment/Unit Number (optional)"
+            label="Apartment Number (optional)"
             element_id="address2"
             value={formData.address2}
-            onChange={handleChange}
-          />
-          <Input
-            type="time"
-            label="Open"
-            element_id="time_open"
-            value={formData.time_open}
-            onChange={handleChange}
-          />
-          <Input
-            type="time"
-            label="Close"
-            element_id="time_close"
-            value={formData.time_close}
-            onChange={handleChange}
-          />
-          <h4>Pickup/Receive Hours</h4>
-          <Input
-            type="time"
-            label="Start"
-            element_id="receive_start"
-            value={formData.receive_start}
-            onChange={handleChange}
-          />
-          <Input
-            type="time"
-            label="End"
-            element_id="receive_end"
-            value={formData.receive_end}
             onChange={handleChange}
           />
           <Input
@@ -210,6 +135,13 @@ export function EditLocation() {
             onChange={handleChange}
           />
           <Input
+            type="text"
+            label="Contact Email"
+            element_id="contact_email"
+            value={formData.contact_email}
+            onChange={handleChange}
+          />
+          <Input
             type="tel"
             label="Phone Number"
             element_id="contact_phone"
@@ -217,31 +149,19 @@ export function EditLocation() {
             onChange={handleChange}
           />
           <Input
-            type="tel"
-            label="Secondary Phone (optional)"
-            element_id="secondary_contact_phone"
-            value={formData.secondary_contact_phone}
+            type="textarea"
+            label="Notes + Instructions"
+            element_id="notes"
+            value={formData.notes}
             onChange={handleChange}
           />
           <Input
-            type="textarea"
-            label="Arrival Instructions"
-            element_id="upon_arrival_instructions"
-            value={formData.upon_arrival_instructions}
+            type="text"
+            label="Location Nickname (optional)"
+            element_id="nickname"
+            value={formData.nickname}
             onChange={handleChange}
           />
-          <div className="is_primary">
-            <input
-              type="checkbox"
-              id="is_primary"
-              name="is_primary"
-              checked={isPrimary}
-              onChange={() => setIsPrimary(!isPrimary)}
-            />
-            <Text type="paragraph" color="white" shadow>
-              Make this the Network's Primary Address
-            </Text>
-          </div>
           <div className="is_philabundance_partner">
             <input
               type="checkbox"
@@ -256,19 +176,15 @@ export function EditLocation() {
               }
             />
             <Text type="paragraph" color="white" shadow>
-              Make this Network a Philabundance Partner
+              This location is a Philabundance Partner
             </Text>
           </div>
-          <FormError />
           <Spacer height={16} />
           <div id="EditLocation-buttons">
-            <Button
-              type="primary"
-              handler={() => {
-                handleSubmit()
-                setShowErrors(true)
-              }}
-            >
+            <Button type="secondary" handler={handleDelete}>
+              Delete Location
+            </Button>
+            <Button type="primary" handler={handleSubmit}>
               Save Location
             </Button>
           </div>

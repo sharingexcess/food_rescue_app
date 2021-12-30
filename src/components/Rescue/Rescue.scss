@@ -42,14 +42,35 @@
       margin-bottom: 16px;
       justify-content: space-between;
 
+      .section-header {
+        @include mobile {
+          font-size: 18px;
+        }
+      }
+
       .StopSummary-notes {
         white-space: pre-line;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
       }
 
       .Rescue-stop-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        .small-header {
+          font-weight: 500;
+          &.red,
+          &.green {
+            font-weight: 700;
+          }
+        }
+
+        img {
+          margin-right: 4px;
+        }
 
         #Rescue-stop-edit-button {
           margin-left: auto;
@@ -60,8 +81,7 @@
       }
 
       .Rescues-stop-status {
-        font-size: 28px;
-        margin-bottom: auto;
+        font-size: 20px;
       }
 
       .Rescue-stop-instructions {
@@ -76,9 +96,7 @@
         align-items: center;
         justify-content: flex-start;
         text-align: left;
-        div {
-          font-size: 20px;
-        }
+        text-decoration: underline;
       }
 
       .se-button.type-primary {
@@ -194,7 +212,6 @@
   }
 
   .se-button.type-tertiary {
-    text-transform: capitalize;
     white-space: pre-wrap;
   }
 }

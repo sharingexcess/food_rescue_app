@@ -1,24 +1,3 @@
-import { v4 as generateUniqueId } from 'uuid'
-import { getCollection, STATUSES } from 'helpers'
-
-export function createPickup(event, formData, history) {
-  event.preventDefault()
-  const id = generateUniqueId()
-  getCollection('Pickups')
-    .doc(id)
-    .set({
-      id,
-      donor_id: formData.donor_id,
-      location_id: formData.location_id,
-      time_start: formData.time_start,
-      time_end: formData.time_end,
-      route_id: '',
-      status: STATUSES.CANCELLED,
-    })
-    .then(() => history.push(`/`))
-    .catch(e => console.error('Error writing document: ', e))
-}
-
 export function updateFieldSuggestions(
   queryValue,
   data,
@@ -49,15 +28,17 @@ export function updateFieldSuggestions(
 export const formFields = [
   {
     label: 'Donor Organization',
-    id: 'donor_name',
+    id: 'organization_name',
     preReq: null,
     type: 'text',
-    suggestionQuery: (name = '', donors) =>
-      donors.filter(o => o.name.toLowerCase().includes(name.toLowerCase())),
-    handleSelect: donor => ({
-      donor,
-      donor_name: donor.name,
-      donor_id: donor.id,
+    suggestionQuery: (name = '', organizations) =>
+      organizations.filter(o =>
+        o.name.toLowerCase().includes(name.toLowerCase())
+      ),
+    handleSelect: organization => ({
+      organization,
+      organization_name: organization.name,
+      organization_id: organization.id,
       location_id: '',
     }),
     loadSuggestionsOnInit: false,
@@ -65,10 +46,10 @@ export const formFields = [
   {
     label: 'Organization Location',
     id: 'location_id',
-    preReq: 'donor_id',
+    preReq: 'organization_id',
     type: 'select',
-    suggestionQuery: (donor_id, locations) =>
-      locations.filter(l => l.parent_id === donor_id),
+    suggestionQuery: (organization_id, locations) =>
+      locations.filter(l => l.organization_id === organization_id),
     handleSelect: loc => (loc ? { location: loc, location_id: loc.id } : null),
     loadSuggestionsOnInit: true,
   },

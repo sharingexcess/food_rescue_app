@@ -23,7 +23,7 @@ import {
   Terms,
   Tutorial,
   Rescue,
-  EditDirectDonation,
+  LogRescue,
   EditOrganization,
   Organizations,
   Organization,
@@ -180,8 +180,8 @@ function RescueAppRoutes() {
                   <AdminRoute exact path="/admin/create-rescue">
                     <EditRescue />
                   </AdminRoute>
-                  <AdminRoute exact path="/admin/create-direct-donation">
-                    <EditDirectDonation />
+                  <AdminRoute exact path="/admin/log-rescue">
+                    <LogRescue />
                   </AdminRoute>
                   <AdminRoute exact path="/admin/create-organization">
                     <EditOrganization />
@@ -189,26 +189,32 @@ function RescueAppRoutes() {
                   <AdminRoute exact path="/admin/organizations">
                     <Organizations />
                   </AdminRoute>
-                  <AdminRoute exact path="/admin/organizations/:id">
-                    {/* adding a colon creates a variable url parameter */}
-                    {/* we can access that variable using const { id } = useParams() */}
+
+                  <AdminRoute
+                    exact
+                    path="/admin/organizations/:organization_id"
+                  >
                     <Organization />
                   </AdminRoute>
-                  <AdminRoute exact path="/admin/organizations/:id/edit">
+                  <AdminRoute
+                    exact
+                    path="/admin/organizations/:organization_id/edit"
+                  >
                     <EditOrganization />
                   </AdminRoute>
                   <AdminRoute
                     exact
-                    path="/admin/organizations/:id/create-location"
+                    path="/admin/organizations/:organization_id/create-location"
                   >
                     <EditLocation />
                   </AdminRoute>
                   <AdminRoute
                     exact
-                    path="/admin/organizations/:id/location/:loc_id"
+                    path="/admin/organizations/:organization_id/location/:location_id"
                   >
                     <EditLocation />
                   </AdminRoute>
+
                   <AdminRoute exact path="/admin/users">
                     <Users />
                   </AdminRoute>

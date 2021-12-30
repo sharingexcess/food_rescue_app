@@ -27,7 +27,8 @@ export function AddToCategory() {
   return (
     <div id="AddToCategory">
       <Text type="secondary-header" color="black" align="left">
-        Add Weight to {modalState.field}
+        Add Weight to{' '}
+        {modalState.field.replace('impact_data_', '').replace('_', ' ')}
       </Text>
       <Spacer height={8} />
       <Text type="small" color="grey" align="left">
@@ -39,6 +40,7 @@ export function AddToCategory() {
         value={weight === 0 ? '' : weight}
         onChange={handleWeightChange}
         label="Enter weight..."
+        autoFocus
       ></Input>
       <Spacer />
       <Button

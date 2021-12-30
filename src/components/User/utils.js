@@ -1,21 +1,9 @@
 import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
-import {
-  createTimestamp,
-  formatPhoneNumber,
-  getImageFromStorage,
-  isValidURL,
-  setFirestoreData,
-} from 'helpers'
+import { createTimestamp, formatPhoneNumber, setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
 import { useEffect, useState } from 'react'
 import { availability } from 'components/Profile/utils'
 import { Input } from 'components'
-
-export function handleUserIcon(icon, callback) {
-  if (icon && !isValidURL(icon)) {
-    getImageFromStorage(icon).then(url => callback(url))
-  }
-}
 
 export function UserPronouns({ profile }) {
   return (
@@ -124,20 +112,9 @@ export function UserAdminPermissions({ profile }) {
   } else
     return (
       <div id="AccessLevel">
-        <Text type="section-header" color="white" shadow>
+        <Text type="section-header" color="white" shadow align="center">
           Access Level
         </Text>
-        <Spacer height={8} />
-        {/* <select
-          value={accessLevel}
-          onChange={e => setAccessLevel(e.target.value)}
-        >
-          <option value="none">No Access</option>
-          <option value="driver">Driver Access</option>
-          <option value="admin">Admin Access</option>
-        </select> */}
-
-        {/* Suggestion for changing Access Level */}
         <Input
           key="driver"
           value={isDriver}

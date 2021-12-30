@@ -1,26 +1,4 @@
-import firebase from 'firebase/app'
-import { v4 as generateUniqueId } from 'uuid'
-import { getCollection, setFirestoreData, STATUSES } from 'helpers'
 import moment from 'moment'
-
-export async function createPickup(event, formData, history) {
-  event.preventDefault()
-  const id = generateUniqueId()
-  try {
-    await setFirestoreData(['pickups', id], {
-      id,
-      org_id: formData.org_id,
-      location_id: formData.location_id,
-      time_start: formData.time_start,
-      time_end: formData.time_end,
-      created_at: firebase.firestore.FieldValue.serverTimestamp(),
-      status: STATUSES.CANCELLED,
-    })
-    history.push(`/`)
-  } catch (e) {
-    console.error('Error writing document: ', e)
-  }
-}
 
 export function updateFieldSuggestions(
   queryValue,
@@ -65,28 +43,20 @@ export function getDefaultEndTime() {
 // loadSuggestionsOnInit: a boolean defining whether the suggestionQuery should be run before the user enters any input
 export const formFields = [
   {
-    label: 'Rescue Type',
-    id: 'type',
-    type: 'select',
-    handleSelect: value => ({
-      type: value,
-    }),
-  },
-  {
     label: 'Start Time',
-    id: 'time_start',
+    id: 'timestamp_scheduled_start',
     type: 'datetime-local',
   },
   {
     label: 'End Time',
-    id: 'time_end',
+    id: 'timestamp_scheduled_finish',
     type: 'datetime-local',
-    preReq: 'time_start',
+    preReq: 'timestamp_scheduled_start',
   },
   {
     label: 'Select a driver...',
     id: 'handler_name',
-    preReq: 'time_start',
+    preReq: 'timestamp_scheduled_start',
     type: 'text',
     suggestionQuery: (name, drivers) =>
       drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
@@ -102,92 +72,19 @@ export const formFields = [
   },
 ]
 
-export const fetchExistingRouteData = async route_id => {
-  const routes = await getCollection('Routes')
-    .get()
-    .then(result => result.docs.map(doc => doc.data()))
-  const myRoute = routes.find(route => route.id === route_id)
-  if (!myRoute) return null
-  const driver = myRoute.handler_id
-    ? await getCollection('users')
-        .doc(myRoute.handler_id)
-        .get()
-        .then(result => result.data())
-    : {}
-  const deliveries = await getCollection('Deliveries')
-    .get()
-    .then(result => result.docs.map(doc => doc.data()))
-  const pickups = await getCollection('Pickups')
-    .get()
-    .then(result => result.docs.map(doc => doc.data()))
-  const locations = await getCollection('Locations')
-    .get()
-    .then(result => result.docs.map(doc => doc.data()))
-  const organizations = await getCollection('Organizations')
-    .get()
-    .then(result => result.docs.map(doc => doc.data()))
+export const fetchExistingRescueData = async (rescue_id, rescues) => {
+  const rescue = rescues.find(r => r.id === rescue_id)
+  if (!rescue) return null
 
-  const newStops = myRoute.stops
-    .map(route_stop => {
-      const stopCategory = route_stop.type === 'pickup' ? pickups : deliveries
-      const stopData = stopCategory.find(stop => stop.id === route_stop.id)
-      if (!stopData) return null
-      // We can get location_id and org_id from this stopData
-      const organizationData = organizations.find(
-        org => org.id === stopData.org_id
-      )
-      const locationData = locations.find(
-        loc => loc.id === stopData.location_id
-      )
-
-      return {
-        ...route_stop,
-        location: locationData,
-        location_id: stopData.location_id,
-        org: organizationData,
-        org_id: stopData.org_id,
-        org_name: organizationData.name,
-        can_delete: stopData.status !== 9,
-        status: stopData.status,
-      }
-    })
-    .filter(Boolean) // filter out all null values
-
-  const routeData = {
-    driver: Object.keys(driver).length ? driver : null,
-    handler_id: myRoute.handler_id,
-    handler_name: driver.name,
-    time_start: myRoute.time_start,
-    time_end: myRoute.time_end,
-    stops: newStops,
-    created_at: myRoute.created_at,
-    status: myRoute.status,
+  const rescue_data = {
+    driver: Object.keys(rescue.driver).length ? rescue.driver : null,
+    handler_id: rescue.handler_id,
+    handler_name: rescue.driver.name || null,
+    timestamp_scheduled_start: rescue.timestamp_scheduled_start,
+    timestamp_scheduled_finish: rescue.timestamp_scheduled_finish,
+    stops: rescue.stops,
+    timestamp_created: rescue.timestamp_created,
+    status: rescue.status,
   }
-  return routeData
-}
-
-export const getTimeConflictInfo = (
-  handler_id,
-  time_start,
-  time_end,
-  routes
-) => {
-  let checkInfo = { hasConflict: false, conflictRoutes: [] }
-  if (!handler_id) {
-    return checkInfo
-  } else {
-    const driverRoutes = routes.filter(
-      route =>
-        route.handler_id === handler_id &&
-        route.status !== 9 &&
-        ((moment(route.time_start) <= moment(time_start) &&
-          moment(time_start) < moment(route.time_end)) ||
-          (moment(route.time_start) >= moment(time_start) &&
-            moment(route.time_start) < moment(time_end)))
-    )
-    if (driverRoutes.length > 0) {
-      checkInfo = { hasConflict: true, conflictRoutes: [...driverRoutes] }
-    }
-    return checkInfo
-  }
+  return rescue_data
 }

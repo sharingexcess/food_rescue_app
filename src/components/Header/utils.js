@@ -5,7 +5,7 @@ export const generateHeaderText = path_components => {
 
   let back_label =
     path_components.length > 1
-      ? path_components[path_components.length - 2].replace('admin', 'home')
+      ? path_components[path_components.length - 2].replace('admin', 'Home')
       : 'Home'
 
   let back_url =
@@ -42,23 +42,41 @@ export const generateHeaderText = path_components => {
   }
 
   if (path_components.length > 2 && path_components[2] === 'completed') {
-    title = 'Completed Route'
-    back_label = 'route'
+    title = 'Completed Rescue'
+    back_label = 'Rescue'
   }
 
   if (path_components[1] === 'organizations' && path_components.length > 2) {
     title = 'Organization'
-    back_label = 'organizations'
+    back_label = 'Organizations'
+    back_url = `/admin/organizations`
   }
 
   if (path_components[1] === 'organizations' && path_components.length > 3) {
+    title = 'Edit Organization'
+    back_label = 'Organizations'
+    back_url = `/${path_components.slice(0, 3).join('/')}`
+  }
+
+  if (path_components[1] === 'organizations' && path_components.length > 4) {
     title = 'Location'
-    back_label = 'organization'
+    back_label = 'Organization'
+    back_url = `/${path_components.slice(0, 3).join('/')}`
+  }
+
+  if (
+    path_components[1] === 'organizations' &&
+    path_components.length > 4 &&
+    path_components[4] === 'edit'
+  ) {
+    title = 'Edit Organization'
+    back_label = 'Organization'
+    back_url = `/${path_components.slice(0, 4).join('/')}`
   }
 
   if (path_components[1] === 'users' && path_components.length > 2) {
     title = 'User'
-    back_label = 'users'
+    back_label = 'Users'
   }
 
   return { title, back_label, back_url }

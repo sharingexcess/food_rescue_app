@@ -1,7 +1,6 @@
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import { setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
-import 'firebase/storage'
 import { Link, useHistory } from 'react-router-dom'
 import { Input } from 'components'
 

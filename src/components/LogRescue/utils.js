@@ -1,11 +1,3 @@
-import { getImageFromStorage, isValidURL } from 'helpers'
-
-export function handleOrgIcon(icon, callback) {
-  if (icon && !isValidURL(icon)) {
-    getImageFromStorage(icon).then(url => callback(url))
-  }
-}
-
 export function initializeFormData(org, callback) {
   callback({
     name: org.name,

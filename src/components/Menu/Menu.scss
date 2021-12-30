@@ -153,6 +153,12 @@
         @include hover {
           color: var(--se-blue-primary);
         }
+
+        @include mobile {
+          font-size: 16px;
+          font-weight: 500;
+          padding: 2px 0;
+        }
       }
     }
   }

@@ -176,7 +176,7 @@ export function UpdateDB() {
             id: i.id,
             name: i.name,
             icon: i.icon,
-            type: 'retail_donor',
+            type: 'retail',
             timestamp_created: normalizeTimestamp(
               i.created_at || new Date(Date.now())
             ),

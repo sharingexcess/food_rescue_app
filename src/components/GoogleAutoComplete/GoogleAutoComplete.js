@@ -29,7 +29,7 @@ export function GoogleAutoComplete({ handleSelect }) {
           state: addressObject.address_components.find(a =>
             a.types.includes('administrative_area_level_1')
           ).short_name,
-          zip_code: addressObject.address_components.find(a =>
+          zip: addressObject.address_components.find(a =>
             a.types.includes('postal_code')
           ).long_name,
           lat: addressObject.geometry.location.lat(),

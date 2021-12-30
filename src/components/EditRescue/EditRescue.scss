@@ -40,7 +40,11 @@
     justify-content: flex-start;
     align-items: center;
     padding: 24px 0;
-    flex-wrap: wrap;
+    .secondary-header {
+      @include mobile {
+        font-size: 24px;
+      }
+    }
 
     img {
       width: 64px;
@@ -57,7 +61,7 @@
       margin-left: auto;
       @include mobile {
         width: 100%;
-        margin: 16px 0;
+        margin: 8px 0;
       }
     }
   }
@@ -70,6 +74,11 @@
     margin-bottom: 16px;
     cursor: pointer;
 
+    .section-header {
+      font-size: 18px;
+      margin-top: 8px;
+    }
+
     .fa-times {
       position: absolute;
       top: 16px;
@@ -79,7 +88,7 @@
       color: var(--se-black);
       z-index: 2;
     }
-    .Route-stop-address-button {
+    .Rescue-stop-address-button {
       display: flex;
       align-items: center;
       justify-content: flex-start;

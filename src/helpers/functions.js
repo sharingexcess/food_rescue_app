@@ -1,18 +1,16 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/storage'
-import 'firebase/firestore'
 import {
   CLOUD_FUNCTION_URLS,
   FOOD_CATEGORIES,
   GOOGLE_MAPS_URL,
 } from './constants'
-import { v4 as generateUniqueId } from 'uuid'
+import { setFirestoreData } from './firebase'
 
-// takes a path to an image in firebase storage and returns the full fetch-able url
-export async function getImageFromStorage(path) {
-  const ref = firebase.storage().ref()
-  return await ref.child(path).getDownloadURL()
+export function removeSpecialCharacters(str) {
+  return str.replace(/[^A-Z0-9]/gi, '')
+}
+
+export function prettyPrintDbFieldName(field_name = '') {
+  return field_name.replace('_', ' ')
 }
 
 // takes a phone number as a string, removes all formatting and returns in format (***) ***-****
@@ -28,101 +26,31 @@ export function formatPhoneNumber(phoneNumberString) {
   return null
 }
 
-// returns true if a string is a valid URL and false if not
-export function isValidURL(str) {
-  let url
-  try {
-    url = new URL(str)
-  } catch (_) {
-    return false
-  }
-
-  return url.protocol === 'http:' || url.protocol === 'https:'
-}
-
-export function getCollection(name) {
-  return firebase.firestore().collection(name)
-}
-
-export async function getFirestoreData(identifier) {
-  let next = 'doc'
-  let query = getCollection(identifier.shift())
-  while (identifier.length) {
-    if (next === 'doc') {
-      query = query.doc(identifier.shift())
-      next = 'collection'
-    } else {
-      query = query.collection(identifier.shift())
-      next = 'doc'
-    }
-  }
-  return await query
-    .get()
-    .then(res =>
-      res.data ? res.data() : res.docs ? res.docs.map(doc => doc.data()) : res
-    )
-}
-
-export async function setFirestoreData(identifier, value) {
-  let next = 'doc'
-  let query = getCollection(identifier.shift())
-  while (identifier.length) {
-    if (next === 'doc') {
-      query = query.doc(identifier.shift())
-      next = 'collection'
-    } else {
-      query = query.collection(identifier.shift())
-      next = 'doc'
-    }
-  }
-  return await query.set(value, { merge: true })
-}
-
-export async function deleteFirestoreData(identifier) {
-  let next = 'doc'
-  let query = getCollection(identifier.shift())
-  while (identifier.length) {
-    if (next === 'doc') {
-      query = query.doc(identifier.shift())
-      next = 'collection'
-    } else {
-      query = query.collection(identifier.shift())
-      next = 'doc'
-    }
-  }
-  return await query.delete()
-}
-
 export async function updateGoogleCalendarEvent(data) {
   const resource = {
     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
     summary: data.driver
       ? `Food Rescue: ${data.driver.name} ${data.driver.phone}`
       : 'Unassigned Food Rescue',
-    location: `${data.stops[0].location.address1}, ${data.stops[0].location.city}, ${data.stops[0].location.state} ${data.stops[0].location.zip_code}`,
+    location: `${data.stops[0].location.address1}, ${data.stops[0].location.city}, ${data.stops[0].location.state} ${data.stops[0].location.zip}`,
     description: `Stops on Route: ${data.stops
       .map(
         s =>
-          `${s.donor ? s.donor.name : s.recipient.name} (${
-            s.location.name || s.location.address1
+          `${s.organization.name} (${
+            s.location.nickname || s.location.address1
           })`
       )
       .join(', ')}${data.notes ? `\n\nNotes: ${data.notes}` : ''}`,
     start: {
-      dateTime: new Date(data.time_start).toISOString(),
+      dateTime: new Date(data.timestamp_scheduled_start).toISOString(),
       timeZone: 'America/New_York',
     },
     end: {
-      dateTime: new Date(
-        new Date(data.time_start).setHours(
-          new Date(data.time_start).getHours() + 1
-        )
-      ).toISOString(),
+      dateTime: new Date(data.timestamp_scheduled_finish).toISOString(),
       timeZone: 'America/New_York',
     },
     attendees: [data.driver ? { email: data.driver.email } : ''],
   }
-
   if (data.google_calendar_event_id) {
     await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
       method: 'POST',
@@ -141,12 +69,6 @@ export async function updateGoogleCalendarEvent(data) {
     .catch(e => console.error('Error creating event:', e))
 
   return event
-}
-
-export function generateStopId(stop) {
-  return `${stop.donor_name || stop.recipient_name}_${generateUniqueId()}`
-    .replace(/[^A-Z0-9]/gi, '_')
-    .toLowerCase()
 }
 
 export const createTimestamp = d =>

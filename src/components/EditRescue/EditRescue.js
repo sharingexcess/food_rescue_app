@@ -4,7 +4,7 @@ import {
   updateFieldSuggestions,
   formFields,
   getDefaultStartTime,
-  fetchExistingRouteData,
+  fetchExistingRescueData,
   getDefaultEndTime,
 } from './utils'
 import UserIcon from 'assets/user.svg'
@@ -12,8 +12,7 @@ import {
   createTimestamp,
   deleteFirestoreData,
   generateDirectionsLink,
-  generateStopId,
-  getCollection,
+  generateUniqueId,
   setFirestoreData,
   STATUSES,
   updateGoogleCalendarEvent,
@@ -28,7 +27,6 @@ import {
   ReorderStops,
 } from 'components'
 import { useFirestore } from 'hooks'
-import { v4 as generateUUID } from 'uuid'
 import {
   Button,
   Spacer,
@@ -36,9 +34,11 @@ import {
   ExternalLink,
   Card,
 } from '@sharingexcess/designsystem'
+import { Emoji } from 'react-apple-emojis'
 
 export function EditRescue() {
   const history = useHistory()
+  const rescues = useFirestore('rescues')
   const drivers = useFirestore('users')
   const { rescue_id } = useParams()
   const [formData, setFormData] = useState({
@@ -46,15 +46,14 @@ export function EditRescue() {
     // others can and should be initialized as null
     handler_name: '',
     handler_id: null,
-    time_start: getDefaultStartTime(),
-    time_end: getDefaultEndTime(),
+    timestamp_scheduled_start: getDefaultStartTime(),
+    timestamp_scheduled_finish: getDefaultEndTime(),
     type: 'retail',
     is_direct_link: false,
     stops: [],
   })
   const [suggestions, setSuggestions] = useState({
     // these will populate the dropdown suggestions for each input
-    type: ['retail', 'wholesale'],
     handler_name: [],
     handler_id: [],
   })
@@ -69,11 +68,14 @@ export function EditRescue() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    async function getExistingRouteData() {
-      const existingRouteData = await fetchExistingRouteData(rescue_id)
+    async function getExistingRescueData() {
+      const existingRescueData = await fetchExistingRescueData(
+        rescue_id,
+        rescues
+      )
       setFormData(prevFormData => ({
         ...prevFormData,
-        ...existingRouteData,
+        ...existingRescueData,
       }))
       setSuggestions(prevSuggestions => ({
         ...prevSuggestions,
@@ -81,8 +83,8 @@ export function EditRescue() {
       }))
       setCanRender(true)
     }
-    drivers && rescue_id && getExistingRouteData()
-  }, [rescue_id, drivers])
+    drivers && rescues && rescue_id && getExistingRescueData()
+  }, [rescues, rescue_id, drivers])
 
   useEffect(() => {
     formData.handler_id &&
@@ -98,34 +100,33 @@ export function EditRescue() {
     }
   }
 
-  function handleAddPickup(pickup) {
-    setList(false)
-    const id = generateStopId(pickup)
+  async function handleAddPickup(pickup) {
+    setList()
     setFormData({
       ...formData,
-      stops: [...formData.stops, { ...pickup, id, type: 'pickup' }],
+      stops: [...formData.stops, pickup],
     })
   }
 
-  function handleAddDelivery(delivery) {
-    setList(false)
-    const id = generateStopId(delivery)
+  async function handleAddDelivery(delivery) {
+    setList()
     setFormData({
       ...formData,
-      stops: [...formData.stops, { ...delivery, id, type: 'delivery' }],
+      stops: [...formData.stops, delivery],
     })
   }
 
-  async function handleCreateRoute(formData, rescue_id) {
+  async function handleCreateRescue() {
     setWorking(true)
-    if (rescue_id) {
-      const existing = fetchExistingRouteData(rescue_id)
+    const new_rescue_id = rescue_id || (await generateUniqueId('rescues'))
+    if (new_rescue_id) {
+      const existing = rescues.find(i => i.id === new_rescue_id)
       if (existing) {
-        // if this is an existing route with pre-created stops,
+        // if this is an existing rescue with pre-created stops,
         // make sure we delete any old and now deleted pickups and deliveries
         for (const stop of deletedStops) {
           await deleteFirestoreData([
-            stop.type === 'pickup' ? 'Pickups' : 'Deliveries',
+            stop.type === 'pickup' ? 'pickups' : 'deliveries',
             stop.id,
           ])
         }
@@ -135,14 +136,13 @@ export function EditRescue() {
           await setFirestoreData(['pickups', stop.id], {
             id: stop.id,
             handler_id: formData.handler_id,
-            rescue_id,
-            donor_id: stop.donor_id,
+            rescue_id: new_rescue_id,
+            organization_id: stop.organization_id,
             location_id: stop.location_id,
             status: stop.status || STATUSES.SCHEDULED,
             timestamp_created: stop.timestamp_created || createTimestamp(),
             timestamp_updated: createTimestamp(),
             timestamp_started: stop.timestamp_started || null,
-            timestamp_arrived: stop.timestamp_arrived || null,
             timestamp_finished: stop.timestamp_finished || null,
             impact_data_dairy: stop.impact_data_dairy || 0,
             impact_data_bakery: stop.impact_data_bakery || 0,
@@ -158,14 +158,13 @@ export function EditRescue() {
           await setFirestoreData(['deliveries', stop.id], {
             id: stop.id,
             handler_id: formData.handler_id,
-            rescue_id,
-            recipient_id: stop.recipient_id,
+            rescue_id: new_rescue_id,
+            organization_id: stop.organization_id,
             location_id: stop.location_id,
             status: stop.status || STATUSES.SCHEDULED,
             timestamp_created: stop.timestamp_created || createTimestamp(),
             timestamp_updated: createTimestamp(),
             timestamp_started: stop.timestamp_started || null,
-            timestamp_arrived: stop.timestamp_arrived || null,
             timestamp_finished: stop.timestamp_finished || null,
             impact_data_dairy: stop.impact_data_dairy || 0,
             impact_data_bakery: stop.impact_data_bakery || 0,
@@ -189,49 +188,34 @@ export function EditRescue() {
         return
       }
       const rescue = {
-        id: rescue_id,
-        type: formData.type,
+        id: new_rescue_id,
         handler_id: formData.handler_id,
         google_calendar_event_id: event.id,
         stop_ids: formData.stops.map(s => s.id),
         is_direct_link: formData.is_direct_link,
-        status: STATUSES.SCHEDULED,
-        notes: '',
-        timestamp_created: createTimestamp(),
+        status: existing ? existing.status : STATUSES.SCHEDULED,
+        notes: existing ? existing.notes : '',
+        timestamp_created: existing
+          ? existing.timestamp_created
+          : createTimestamp(),
         timestamp_updated: createTimestamp(),
-        timestamp_scheduled_start: createTimestamp(formData.time_start),
-        timestamp_scheduled_finish: createTimestamp(formData.time_end),
-        timestamp_logged_start: null,
-        timestamp_logged_finish: null,
+        timestamp_scheduled_start: createTimestamp(
+          formData.timestamp_scheduled_start
+        ),
+        timestamp_scheduled_finish: createTimestamp(
+          formData.timestamp_scheduled_finish
+        ),
+        timestamp_logged_start: existing
+          ? existing.timestamp_logged_start
+          : null,
+        timestamp_logged_finish: existing
+          ? existing.timestamp_logged_finish
+          : null,
       }
-      getCollection('rescues')
-        .doc(rescue_id)
-        .set(rescue)
-        .then(() => history.push(`/rescues/${rescue_id}`))
+      await setFirestoreData(['rescues', new_rescue_id], rescue)
       setWorking(false)
+      history.push(`/rescues/${new_rescue_id}`)
     }
-  }
-
-  async function generateRescueId() {
-    const createId = () =>
-      `${generateUUID()}`
-        .replace(/[^A-Z0-9]/gi, '_')
-        .replace(' ', '_')
-        .toLowerCase()
-
-    const exists = async id =>
-      await getCollection('Routes')
-        .doc(id)
-        .get()
-        .then(res => res.data())
-
-    let uniqId
-    let idExists = true
-    while (idExists) {
-      uniqId = createId()
-      idExists = await exists(uniqId)
-    }
-    return uniqId
   }
 
   async function handleRemoveStop(id, type) {
@@ -242,7 +226,7 @@ export function EditRescue() {
     setDeletedStops(currDeletedStops => [...currDeletedStops, { id, type }])
   }
 
-  function isValidRoute() {
+  function isValidRescue() {
     if (
       formData.stops.find(s => s.type === 'pickup') &&
       formData.stops.find(s => s.type === 'delivery') &&
@@ -265,14 +249,18 @@ export function EditRescue() {
         setSuggestions
       )
     }
-    if (field.id === 'time_start') {
+    if (field.id === 'timestamp_scheduled_start') {
       // automatically set time end 2 hrs later
-      const time_end = new Date(e.target.value)
-      time_end.setTime(time_end.getTime() + 2 * 60 * 60 * 1000)
+      const timestamp_scheduled_finish = new Date(e.target.value)
+      timestamp_scheduled_finish.setTime(
+        timestamp_scheduled_finish.getTime() + 2 * 60 * 60 * 1000
+      )
       setFormData({
         ...formData,
         [e.target.id]: e.target.value,
-        time_end: moment(time_end).format('yyyy-MM-DDTHH:mm'),
+        timestamp_scheduled_finish: moment(timestamp_scheduled_finish).format(
+          'yyyy-MM-DDTHH:mm'
+        ),
       })
     } else if (field.id === 'handler_name') {
       setFormData({
@@ -302,11 +290,13 @@ export function EditRescue() {
 
   function Stop({ s, onMove, handleCardSelection, position, lengthOfStops }) {
     const isSelectedCard = isSelectedCardId === s.id
+
     function generateStopTitle() {
-      return `${s.donor ? s.donor.name : s.recipient.name} (${
-        s.location.name || s.location.address1
+      return `${s.organization.name} (${
+        s.location.nickname || s.location.address1
       })`
     }
+
     function StopAddress() {
       return (
         <ExternalLink
@@ -318,17 +308,17 @@ export function EditRescue() {
           )}
         >
           <Button
-            classList={['Route-stop-address-button']}
+            classList={['Rescue-stop-address-button']}
             type="tertiary"
             size="small"
             color="blue"
           >
-            <div>🏢</div>
-            <Spacer width={16} />
+            <Emoji name="round-pushpin" width={20} />
+            <Spacer width={8} />
             {s.location.address1}
             {s.location.address2 && ` - ${s.location.address2}`}
             <br />
-            {s.location.city}, {s.location.state} {s.location.zip_code}
+            {s.location.city}, {s.location.state} {s.location.zip}
           </Button>
         </ExternalLink>
       )
@@ -340,17 +330,15 @@ export function EditRescue() {
         onClick={() => handleCardSelection(s.id)}
       >
         <div>
-          {s.can_delete !== false && (
-            <i
-              className="fa fa-times"
-              onClick={() => handleRemoveStop(s.id, s.type)}
-            />
-          )}
+          <i
+            className="fa fa-times"
+            onClick={() => handleRemoveStop(s.id, s.type)}
+          />
           <Text
             type="small-header"
             color={s.type === 'pickup' ? 'green' : 'red'}
           >
-            {s.type === 'pickup' ? '🟩 PICKUP' : '🟥 DELIVERY'}
+            {s.type === 'pickup' ? 'PICKUP' : 'DELIVERY'}
           </Text>
           <Text type="section-header" color="black">
             {generateStopTitle()}
@@ -371,7 +359,7 @@ export function EditRescue() {
   }
 
   function validateFormData() {
-    if (!moment(formData.time_start).isValid()) {
+    if (!moment(formData.timestamp_scheduled_start).isValid()) {
       errors.push('Invalid Data Input: Start Time is invalid')
     }
     if (errors.length === 0) {
@@ -391,27 +379,30 @@ export function EditRescue() {
       <div id="EditRescue-driver">
         <img
           src={formData.driver ? formData.driver.icon : UserIcon}
-          alt={formData.driver ? formData.driver.name : 'Unassigned Route'}
+          alt={formData.driver ? formData.driver.name : 'Unassigned Rescue'}
         />
         <div id="EditRescue-driver-info">
           <Text type="secondary-header" color="white" shadow>
-            {formData.driver ? formData.driver.name : 'Unassigned Route'}
+            {formData.driver ? formData.driver.name : 'Unassigned Rescue'}
           </Text>
           <Text type="subheader" color="white" shadow>
-            {`${moment(formData.time_start).format('dddd, MMMM D, h:mma')}${
-              formData.time_end
-                ? ' - ' + moment(formData.time_end).format('h:mma')
+            {`${moment(formData.timestamp_scheduled_start).format(
+              'ddd, MMM D, h:mma'
+            )}${
+              formData.timestamp_scheduled_finish
+                ? ' - ' +
+                  moment(formData.timestamp_scheduled_finish).format('h:mma')
                 : ''
             } `}
           </Text>
+          <Button
+            id="EditRescue-driver-edit"
+            type="secondary"
+            handler={() => setConfirmedTime(false)}
+          >
+            Update Rescue Info
+          </Button>
         </div>
-        <Button
-          id="EditRescue-driver-edit"
-          type="secondary"
-          handler={() => setConfirmedTime(false)}
-        >
-          Update Route Info
-        </Button>
       </div>
     )
   }
@@ -425,7 +416,7 @@ export function EditRescue() {
       }
 
       return (
-        formData.time_start &&
+        formData.timestamp_scheduled_start &&
         canRender && (
           <Button
             id="EditRescue-confirm-button"
@@ -468,36 +459,26 @@ export function EditRescue() {
 
   function SelectStops() {
     function SubmitButton() {
-      async function handleSubmit() {
-        if (working) return
-        const original_rescue_id =
-          rescue_id || (await generateRescueId(formData.time_start))
-        const FirstFormData = {
-          ...formData,
-          original_rescue_id: original_rescue_id,
-        }
-        handleCreateRoute(FirstFormData, original_rescue_id)
-      }
-
       function generateSubmitButtonText() {
         return working ? (
           <>
-            {rescue_id ? 'Updating Route' : 'Creating Route'}
+            {rescue_id ? 'Updating Rescue' : 'Creating Rescue'}
             <Ellipsis />
           </>
         ) : rescue_id ? (
-          'Update Route'
+          'Update Rescue'
         ) : (
-          'Create Route'
+          'Create Rescue'
         )
       }
 
-      return isValidRoute() && !list ? (
+      return isValidRescue() && !list ? (
         <Button
           id="EditRescue-submit"
           size="large"
           type="secondary"
-          handler={handleSubmit}
+          disabled={working}
+          handler={handleCreateRescue}
         >
           {generateSubmitButtonText()}
         </Button>
@@ -505,8 +486,7 @@ export function EditRescue() {
     }
 
     function getPosition(id) {
-      const stops = formData.stops
-      return stops.findIndex(i => i.id === id)
+      return formData.stops.findIndex(i => i.id === id)
     }
 
     function handleMove(id, direction) {
@@ -599,14 +579,6 @@ export function EditRescue() {
 
   return (
     <main id="EditRescue" onClick={deselectStop}>
-      <Text type="section-header" color="white" shadow>
-        {rescue_id ? 'Edit Rescue' : 'Create Rescue'}
-      </Text>
-      <Text type="subheader" color="white" shadow>
-        Use this form to schedule a driver for pickups within a specific time
-        window.
-      </Text>
-      <Spacer height={24} />
       {canRender ? (
         <>
           {confirmedTimes ? <Driver /> : SelectDriver()}

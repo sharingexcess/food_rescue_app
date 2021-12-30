@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import 'firebase/firestore'
 import {
   createTimestamp,
   setFirestoreData,
@@ -71,7 +70,6 @@ export function DeliveryReport() {
         timestamp_updated: createTimestamp(),
         status: STATUSES.COMPLETED,
       }
-      console.log(delivery)
       await setFirestoreData(['deliveries', delivery_id], delivery)
       setSubmitted(true)
       // This logic will trigger a useEffect above to redirect after the rescue object updates

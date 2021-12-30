@@ -2,7 +2,7 @@
   @include page;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
 
   .wrapper {
@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     a {
       text-decoration: underline;
     }
@@ -34,9 +34,19 @@
   }
   #AccessLevel {
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .section-header {
+      width: 100%;
+    }
+
+    .Input {
+      width: 48%;
+      justify-content: center;
+      margin: 12px 0;
+    }
   }
 
   #User-driver-availability {
@@ -50,9 +60,14 @@
       margin: 8px 0;
       justify-content: flex-end;
       align-items: center;
+      justify-content: center;
       input {
         -webkit-appearance: checkbox;
       }
     }
+  }
+
+  .Input {
+    margin: 12px 0;
   }
 }

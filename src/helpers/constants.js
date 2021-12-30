@@ -49,6 +49,20 @@ export const FOOD_CATEGORIES = [
   'impact_data_other',
 ]
 
+export const ORG_TYPE_ICONS = {
+  retail: 'department-store',
+  wholesale: 'package',
+  holding: 'palms-up-together',
+  other: 'red-question-mark',
+  food_bank: 'red-apple',
+  agency: 'briefcase',
+  popup: 'person-raising-hand',
+  community_fridge: 'cityscape',
+  home_delivery: 'house',
+}
+
+export const ORG_TYPES = ['donor', 'recipient']
+
 export const STATUSES = {
   CANCELLED: 'cancelled',
   SCHEDULED: 'scheduled',
@@ -112,7 +126,6 @@ Data Validation/Backfilling
 rescue {
 
   id
-  type ( retail | wholesale )
   handler_id
   google_calendar_event_id
   stop_ids
@@ -136,7 +149,7 @@ pickup {
   id
   handler_id
   rescue_id
-  donor_id
+  organization_id
   location_id
   status
   notes
@@ -191,43 +204,29 @@ delivery {
 }
 
 
+organization {
 
-donor {
   id
   name
-  icon
-  type (
-    retail_donor, wholesale_donor, holding, other
+  type (donor, recipient)
+  subtype (
+    retail, wholesale, food_bank, agency, community_fridge, home_delivery, popup, holding, other
   )
 
   timestamp_created
   timestamp_updated
 
-}
-
-
-
-recipient {
-  id
-  name
-  icon
-  type (
-    food_bank, distribution_agency, community_fridge, home_delivery, popup, holding, other
-  )
-
-  timestamp_created
-  timestamp_updated
+  is_deleted
 
 }
 
 
 
 location {
+
   id
   nickname
-  parent_type
-  parent_id
-
+  organization_id
 
   address1
   address2
@@ -245,6 +244,8 @@ location {
 
   timestamp_created
   timestamp_updated
+
+  is_deleted
 
 }
 
