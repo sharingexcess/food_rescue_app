@@ -25,10 +25,10 @@ export function generateGreeting(name) {
     : `${prefix} ${suffix}`
 }
 
-export function generateDriverStats(my_routes, my_deliveries) {
-  const routes = my_routes.length
+export function generateDriverStats(my_rescues, my_deliveries) {
+  const rescues = my_rescues.length
   const weight = my_deliveries
-    .map(d => (d.report ? d.report.weight : 0))
+    .map(d => d.impact_data_total_weight)
     .reduce((a, b) => a + b, 0)
-  return { routes, weight }
+  return { rescues, weight }
 }

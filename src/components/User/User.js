@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Input, Loading } from 'components'
 import { useParams } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'

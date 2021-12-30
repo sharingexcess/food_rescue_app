@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
@@ -12,7 +12,10 @@ export function Rescues() {
   const { user, admin } = useAuth()
   const location = useLocation()
   const rescues = useFirestore('rescues')
-  const deliveries = useFirestore('deliveries')
+  const deliveries = useFirestore(
+    'stops',
+    useCallback(i => i.type === 'delivery', [])
+  )
   const [searchByDriver, setSearchByDriver] = useState('')
   const [searchByDate, setSearchByDate] = useState(
     moment(new Date()).format('yyyy-MM-DD')
@@ -212,7 +215,7 @@ export function Rescues() {
           </div>
           <Spacer height={12} />
           <Text type="small" color="grey" classList={['pickups']}>
-            🟩{'  '}
+            🏋️{'  '}
             {r.stops
               .filter(s => s.type === 'pickup')
               .map(stop => generateStopLabel(stop))
@@ -220,7 +223,7 @@ export function Rescues() {
           </Text>
           <Spacer height={8} />
           <Text type="small" color="grey" classList={['deliveries']}>
-            🟥{'  '}
+            ✔️{'  '}
             {r.stops
               .filter(s => s.type === 'delivery')
               .map(s => generateDeliveryWeight(s))

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   Button,
   Card,
@@ -180,8 +180,7 @@ export function DropRescue() {
       timestamp_updated: createTimestamp(),
     })
     for (const stop of rescue.stops) {
-      const collection = stop.type === 'pickup' ? 'pickups' : 'deliveries'
-      setFirestoreData([collection, stop.id], {
+      setFirestoreData(['stops', stop.id], {
         handler_id: null,
         timestamp_updated: createTimestamp(),
       })
@@ -334,9 +333,7 @@ export function CancelStop() {
   const { setModal, modalState } = useApp()
 
   async function handleCancel() {
-    const collection =
-      modalState.stop.type === 'pickup' ? 'pickups' : 'deliveries'
-    await setFirestoreData([collection, modalState.stop.id], {
+    await setFirestoreData(['stops', modalState.stop.id], {
       status: STATUSES.CANCELLED,
       notes,
     })
@@ -400,7 +397,10 @@ export function Stop({ stops, s, i }) {
   const { rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
   const rescue = useFirestore('rescues', rescue_id)
-  const pickups = useFirestore('pickups')
+  const pickups = useFirestore(
+    'stops',
+    useCallback(i => i.type === 'pickup', [])
+  )
 
   const isActiveStop = rescue
     ? i === getNextIncompleteStopIndex(rescue, stops)
@@ -527,13 +527,10 @@ export function Stop({ stops, s, i }) {
 
   function StopDirectionsButton() {
     async function handleClick() {
-      setFirestoreData(
-        [s.type === 'delivery' ? 'deliveries' : 'pickups', s.id],
-        {
-          status: STATUSES.ACTIVE,
-          timestamp_started: createTimestamp(),
-        }
-      ).then(() =>
+      setFirestoreData(['stops', s.id], {
+        status: STATUSES.ACTIVE,
+        timestamp_started: createTimestamp(),
+      }).then(() =>
         window.open(
           generateDirectionsLink(
             s.location.address1,
@@ -549,13 +546,10 @@ export function Stop({ stops, s, i }) {
       if (s.organization.subtype === RECIPIENT_TYPES.HOME_DELIVERY) {
         handleSubmitHomeDelivery()
       } else {
-        setFirestoreData(
-          [s.type === 'delivery' ? 'deliveries' : 'pickups', s.id],
-          {
-            status: STATUSES.ACTIVE,
-            timestamp_started: createTimestamp(),
-          }
-        ).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
+        setFirestoreData(['stops', s.id], {
+          status: STATUSES.ACTIVE,
+          timestamp_started: createTimestamp(),
+        }).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
       }
     }
 
@@ -589,12 +583,12 @@ export function Stop({ stops, s, i }) {
     // BAKED IN ASSUMPTION: home delivery rescues will only ever have 1 pickup
     const pickup = pickups.find(p => p.rescue_id === rescue.id)
     const percent_of_total_dropped = 1 / (rescue.stops.length - 1)
-    setFirestoreData(['deliveries', s.id], {
+    setFirestoreData(['stops', s.id], {
       // calculate percentage based weight totals for each food category
       // ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {})
       ...FOOD_CATEGORIES.reduce(
         (acc, curr) => (
-          (acc[curr] = Math.round(pickup[curr] * percent_of_total_dropped)), acc
+          (acc[curr] = Math.round(pickup[curr] * percent_of_total_dropped)), acc // eslint-disable-line
         ),
         {}
       ),
@@ -616,13 +610,10 @@ export function Stop({ stops, s, i }) {
 
   function StopReportButton() {
     function handleOpenReport() {
-      setFirestoreData(
-        [s.type === 'delivery' ? 'deliveries' : 'pickups', s.id],
-        {
-          status: STATUSES.ACTIVE,
-          driver_arrived_at: createTimestamp(),
-        }
-      ).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
+      setFirestoreData(['stops', s.id], {
+        status: STATUSES.ACTIVE,
+        driver_arrived_at: createTimestamp(),
+      }).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
     }
 
     function handleClick() {
@@ -761,8 +752,7 @@ export function RescueActionButton() {
       timestamp_updated: createTimestamp(),
     })
     for (const stop of rescue.stops) {
-      const collection = stop.type === 'pickup' ? 'pickups' : 'deliveries'
-      setFirestoreData([collection, stop.id], {
+      setFirestoreData(['stops', stop.id], {
         handler_id: user.uid,
       })
     }
@@ -830,9 +820,10 @@ export function BackupDelivery() {
       async function addBackupDelivery(stop) {
         if (!working) {
           setWorking(true)
-          const stop_id = await generateUniqueId('deliveries')
-          await setFirestoreData(['deliveries', stop_id], {
+          const stop_id = await generateUniqueId('stops')
+          await setFirestoreData(['stops', stop_id], {
             id: stop_id,
+            type: 'delivery',
             organization_id: stop.organization_id,
             location_id: stop.location_id,
             handler_id: rescue.handler_id,

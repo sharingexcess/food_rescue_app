@@ -14,7 +14,7 @@ export function DeliveryReport() {
   const { delivery_id, rescue_id } = useParams()
   const rescue = useFirestore('rescues', rescue_id)
   const history = useHistory()
-  const delivery = useFirestore('deliveries', delivery_id)
+  const delivery = useFirestore('stops', delivery_id)
   const [formData, setFormData] = useState({
     impact_data_percent_of_total_dropped: 100,
     notes: '',
@@ -70,7 +70,7 @@ export function DeliveryReport() {
         timestamp_updated: createTimestamp(),
         status: STATUSES.COMPLETED,
       }
-      await setFirestoreData(['deliveries', delivery_id], delivery)
+      await setFirestoreData(['stops', delivery_id], delivery)
       setSubmitted(true)
       // This logic will trigger a useEffect above to redirect after the rescue object updates
     } catch (e) {

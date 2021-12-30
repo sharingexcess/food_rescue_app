@@ -106,7 +106,7 @@ export async function updateImpactDataForRescue(rescue) {
         impact_data.impact_data_total_weight = Math.round(
           load_weight * percent_dropped
         )
-        await setFirestoreData(['deliveries', stop.id], {
+        await setFirestoreData(['stops', stop.id], {
           ...impact_data,
           timestamp_updated: createTimestamp(),
         })

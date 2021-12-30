@@ -11,8 +11,10 @@ export function CompletedRescue() {
   const [notes, setNotes] = useState('')
   const rescue = useFirestore('rescues', rescue_id)
   const deliveries = useFirestore(
-    'deliveries',
-    useCallback(d => d.rescue_id === rescue_id, [rescue_id])
+    'stops',
+    useCallback(i => i.type === 'delivery' && i.rescue_id === rescue_id, [
+      rescue_id,
+    ])
   )
 
   useEffect(() => {

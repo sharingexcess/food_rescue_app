@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
@@ -17,7 +17,10 @@ export function Rescue() {
   const { admin } = useAuth()
   const history = useHistory()
   const rescue = useFirestore('rescues', rescue_id)
-  const deliveries = useFirestore('deliveries')
+  const deliveries = useFirestore(
+    'stops',
+    useCallback(i => i.type === 'delivery', [])
+  )
 
   useEffect(() => {
     // handle auto completing a rescue when all stops are finished

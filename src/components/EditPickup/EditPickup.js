@@ -31,7 +31,7 @@ export function EditPickup({ handleSubmit, title }) {
 
   useEffect(() => {
     async function addIdToFormData() {
-      const id = await generateUniqueId('pickups')
+      const id = await generateUniqueId('stops')
       setFormData(data => ({ ...data, id }))
     }
     addIdToFormData()

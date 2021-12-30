@@ -18,7 +18,7 @@ export function PickupReport({ customSubmitHandler }) {
   const rescue = useFirestore('rescues', rescue_id)
   const { admin } = useAuth()
   const history = useHistory()
-  const pickup = useFirestore('pickups', pickup_id)
+  const pickup = useFirestore('stops', pickup_id)
   const [formData, setFormData] = useState({
     ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
     impact_data_total_weight: 0,
@@ -122,7 +122,7 @@ export function PickupReport({ customSubmitHandler }) {
     event.preventDefault()
     if (validateFormData(data)) {
       try {
-        await setFirestoreData(['pickups', pickup_id], {
+        await setFirestoreData(['stops', pickup_id], {
           ...formData,
           status: STATUSES.COMPLETED,
           timestamp_updated: createTimestamp(),

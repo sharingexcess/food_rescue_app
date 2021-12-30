@@ -25,11 +25,12 @@ export function LogRescue() {
     event.preventDefault()
 
     const rescue_id = await generateUniqueId('rescues')
-    const pickup_id = await generateUniqueId('pickups')
-    const delivery_id = await generateUniqueId('deliveries')
+    const pickup_id = await generateUniqueId('stops')
+    const delivery_id = await generateUniqueId('stops')
 
-    await setFirestoreData(['pickups', pickup_id], {
+    await setFirestoreData(['stops', pickup_id], {
       id: pickup_id,
+      type: 'pickup',
       handler_id: user.uid,
       rescue_id: rescue_id,
       organization_id: donor.organization_id,
@@ -51,8 +52,9 @@ export function LogRescue() {
       notes: data.notes,
     }).catch(e => console.error('Error writing document: ', e))
 
-    await setFirestoreData(['deliveries', delivery_id], {
+    await setFirestoreData(['stops', delivery_id], {
       id: delivery_id,
+      type: 'delivery',
       handler_id: user.uid,
       rescue_id: rescue_id,
       organization_id: donor.organization_id,

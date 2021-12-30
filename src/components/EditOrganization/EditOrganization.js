@@ -4,7 +4,6 @@ import {
   createTimestamp,
   DONOR_TYPES,
   generateUniqueId,
-  getCollection,
   ORG_TYPES,
   RECIPIENT_TYPES,
   setFirestoreData,
@@ -22,7 +21,6 @@ export function EditOrganization() {
     subtype: '',
   })
   const org = useFirestore('organizations', organization_id)
-  const locations = useFirestore('locations')
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)

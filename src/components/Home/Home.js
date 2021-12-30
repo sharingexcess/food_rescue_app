@@ -10,21 +10,24 @@ import { Emoji } from 'react-apple-emojis'
 export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin, permission } = useAuth()
-  const my_routes = useFirestore(
-    'routes',
+  const my_rescues = useFirestore(
+    'rescues',
     useCallback(
-      r => r.driver_id === user && user.uid && r.status === STATUSES.COMPLETED,
+      r => r.handler_id === user.uid && r.status === STATUSES.COMPLETED,
       [user]
     ) // eslint-disable-line
   )
   const my_deliveries = useFirestore(
-    'deliveries',
+    'stops',
     useCallback(
-      d => d.driver_id === user && user.uid && d.status === STATUSES.COMPLETED,
+      i =>
+        i.type === 'delivery' &&
+        i.handler_id === user.uid &&
+        i.status === STATUSES.COMPLETED,
       [user]
     ) // eslint-disable-line
   )
-  const stats = generateDriverStats(my_routes, my_deliveries)
+  const stats = generateDriverStats(my_rescues, my_deliveries)
 
   function Tile({ name, icon, link }) {
     return (
@@ -72,7 +75,7 @@ export function Home() {
   }
 
   const header = user
-    ? generateGreeting(user.displayName, my_routes, my_deliveries)
+    ? generateGreeting(user.displayName, my_rescues, my_deliveries)
     : null
 
   return !user ? (
@@ -86,7 +89,7 @@ export function Home() {
       </Text>
       {stats ? (
         <Text type="subheader" color="white" align="center" shadow>
-          <span>{stats.routes}</span> route{stats.routes === 1 ? '' : 's'}{' '}
+          <span>{stats.rescues}</span> rescue{stats.rescues === 1 ? '' : 's'}{' '}
           driven, <span>{stats.weight}</span> lbs. rescued
         </Text>
       ) : null}

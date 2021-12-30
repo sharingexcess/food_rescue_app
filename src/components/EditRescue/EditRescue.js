@@ -125,59 +125,7 @@ export function EditRescue() {
         // if this is an existing rescue with pre-created stops,
         // make sure we delete any old and now deleted pickups and deliveries
         for (const stop of deletedStops) {
-          await deleteFirestoreData([
-            stop.type === 'pickup' ? 'pickups' : 'deliveries',
-            stop.id,
-          ])
-        }
-      }
-      for (const stop of formData.stops) {
-        if (stop.type === 'pickup') {
-          await setFirestoreData(['pickups', stop.id], {
-            id: stop.id,
-            handler_id: formData.handler_id,
-            rescue_id: new_rescue_id,
-            organization_id: stop.organization_id,
-            location_id: stop.location_id,
-            status: stop.status || STATUSES.SCHEDULED,
-            timestamp_created: stop.timestamp_created || createTimestamp(),
-            timestamp_updated: createTimestamp(),
-            timestamp_started: stop.timestamp_started || null,
-            timestamp_finished: stop.timestamp_finished || null,
-            impact_data_dairy: stop.impact_data_dairy || 0,
-            impact_data_bakery: stop.impact_data_bakery || 0,
-            impact_data_produce: stop.impact_data_produce || 0,
-            impact_data_meat_fish: stop.impact_data_meat_fish || 0,
-            impact_data_non_perishable: stop.impact_data_non_perishable || 0,
-            impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
-            impact_data_mixed: stop.impact_data_mixed || 0,
-            impact_data_other: stop.impact_data_other || 0,
-            impact_data_total_weight: stop.impact_data_total_weight || 0,
-          })
-        } else if (stop.type === 'delivery') {
-          await setFirestoreData(['deliveries', stop.id], {
-            id: stop.id,
-            handler_id: formData.handler_id,
-            rescue_id: new_rescue_id,
-            organization_id: stop.organization_id,
-            location_id: stop.location_id,
-            status: stop.status || STATUSES.SCHEDULED,
-            timestamp_created: stop.timestamp_created || createTimestamp(),
-            timestamp_updated: createTimestamp(),
-            timestamp_started: stop.timestamp_started || null,
-            timestamp_finished: stop.timestamp_finished || null,
-            impact_data_dairy: stop.impact_data_dairy || 0,
-            impact_data_bakery: stop.impact_data_bakery || 0,
-            impact_data_produce: stop.impact_data_produce || 0,
-            impact_data_meat_fish: stop.impact_data_meat_fish || 0,
-            impact_data_non_perishable: stop.impact_data_non_perishable || 0,
-            impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
-            impact_data_mixed: stop.impact_data_mixed || 0,
-            impact_data_other: stop.impact_data_other || 0,
-            impact_data_total_weight: stop.impact_data_total_weight || 0,
-            impact_data_percent_of_total_dropped:
-              stop.impact_data_percent_of_total_dropped || 0,
-          })
+          await deleteFirestoreData(['stops', stop.id])
         }
       }
 
@@ -187,6 +135,37 @@ export function EditRescue() {
         alert('Error creating Google Calendar event. Please contact support!')
         return
       }
+
+      for (const stop of formData.stops) {
+        const s = {
+          id: stop.id,
+          type: stop.type,
+          handler_id: formData.handler_id,
+          rescue_id: new_rescue_id,
+          organization_id: stop.organization_id,
+          location_id: stop.location_id,
+          status: stop.status || STATUSES.SCHEDULED,
+          timestamp_created: stop.timestamp_created || createTimestamp(),
+          timestamp_updated: createTimestamp(),
+          timestamp_started: stop.timestamp_started || null,
+          timestamp_finished: stop.timestamp_finished || null,
+          impact_data_dairy: stop.impact_data_dairy || 0,
+          impact_data_bakery: stop.impact_data_bakery || 0,
+          impact_data_produce: stop.impact_data_produce || 0,
+          impact_data_meat_fish: stop.impact_data_meat_fish || 0,
+          impact_data_non_perishable: stop.impact_data_non_perishable || 0,
+          impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
+          impact_data_mixed: stop.impact_data_mixed || 0,
+          impact_data_other: stop.impact_data_other || 0,
+          impact_data_total_weight: stop.impact_data_total_weight || 0,
+        }
+        if (stop.type === 'delivery') {
+          s.impact_data_percent_of_total_dropped =
+            stop.impact_data_percent_of_total_dropped || 0
+        }
+        await setFirestoreData(['stops', stop.id], s)
+      }
+
       const rescue = {
         id: new_rescue_id,
         handler_id: formData.handler_id,
