@@ -4,7 +4,7 @@ import 'firebase/auth'
 import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHistory } from 'react-router-dom'
-import { createTimestamp, getCollection, setFirestoreData } from 'helpers'
+import { createTimestamp, getCollection } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
 import { Loading } from 'components'
 
@@ -26,24 +26,11 @@ function Auth({ children }) {
   const [db_user, setDbUser] = useState()
 
   useEffect(() => {
-    if (db_user) {
-      setFirestoreData(['users', db_user.id], {
-        timestamps: {
-          ...db_user.timestamps,
-          last_active: createTimestamp(),
-        },
-      })
-    }
-  }, [db_user])
-
-  useEffect(() => {
     if (auth_user) {
-      getCollection('users')
-        .doc(auth_user.uid)
-        .onSnapshot(doc => {
-          const user = doc.data()
-          setDbUser(user)
-        })
+      const userRef = getCollection('users').doc(auth_user.uid)
+      userRef
+        .update({ timestamp_last_active: createTimestamp() })
+        .then(() => userRef.onSnapshot(doc => setDbUser(doc.data())))
     }
   }, [auth_user])
 

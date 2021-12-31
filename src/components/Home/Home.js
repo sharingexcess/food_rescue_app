@@ -62,7 +62,7 @@ export function Home() {
         <Tile name="Schedule Rescue" icon="plus" link="/admin/create-rescue" />
         <Tile name="Log Rescue" icon="writing-hand" link="admin/log-rescue" />
         <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
-        <Tile name="Analytics" icon="bar-chart" link="/admin/analytics" />
+        {/* <Tile name="Analytics" icon="bar-chart" link="/admin/analytics" /> */}
         <Tile name="Users" icon="family" link="/admin/users" />
         <Tile
           name="Organizations"

@@ -1,19 +1,31 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useMemo, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { getCollection } from 'helpers'
-import { useEffect } from 'react/cjs/react.development'
+import moment from 'moment'
 
 const FirestoreContext = createContext()
 FirestoreContext.displayName = 'Firestore'
 
 function Firestore({ children }) {
-  const [rescues_raw] = useCollectionData(
-    getCollection('rescues').orderBy('timestamp_scheduled_start')
-  )
+  const [limit, setLimit] = useState(moment().subtract(7, 'days').toDate())
   const [rescues, setRescues] = useState()
-  const [stops] = useCollectionData(
-    getCollection('stops').orderBy('timestamp_updated')
+  const rescuesQuery = useMemo(
+    () =>
+      getCollection('rescues')
+        .where('timestamp_scheduled_start', '>=', limit)
+        .orderBy('timestamp_scheduled_start', 'desc'),
+    [limit]
   )
+  const [rescues_raw] = useCollectionData(rescuesQuery)
+
+  const stopsQuery = useMemo(
+    () =>
+      getCollection('stops')
+        .where('timestamp_scheduled_start', '>=', limit)
+        .orderBy('timestamp_scheduled_start', 'desc'),
+    [limit]
+  )
+  const [stops] = useCollectionData(stopsQuery)
   const [organizations] = useCollectionData(
     getCollection('organizations').orderBy('name')
   )
@@ -56,14 +68,31 @@ function Firestore({ children }) {
     }
   }, [rescues_raw, organizations, locations, stops, users])
 
+  function loadMoreData() {
+    setLimit(moment(limit).subtract(1, 'month').startOf('month').toDate())
+  }
+
+  function loadAllData() {
+    // To view all data, we move the time limit back arbitrarily far
+    setLimit(moment(limit).subtract(10, 'years').toDate())
+  }
+
+  const loadedAllData = useMemo(() => {
+    // no data exists before 2018
+    return limit < new Date('2018-1-1')
+  }, [limit])
+
   return (
     <FirestoreContext.Provider
       value={{
-        rescues,
         stops,
+        rescues,
         users,
         organizations,
         locations,
+        loadMoreData,
+        loadAllData,
+        loadedAllData,
       }}
     >
       {children}

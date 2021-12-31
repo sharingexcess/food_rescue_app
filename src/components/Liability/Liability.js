@@ -10,7 +10,7 @@ export function Liability() {
 
   function agreeToLiability(e) {
     setFirestoreData(['users', user.id], {
-      onboarding: { completed_liability_release: true },
+      completed_liability_release: true,
     })
     history.push('/')
   }
@@ -139,11 +139,11 @@ export function Liability() {
       <Input
         label="Agree to Liability release form"
         type="checkbox"
-        value={user.onboarding.completed_liability_release}
+        value={user.completed_liability_release}
         onChange={agreeToLiability}
       />
 
-      {user && user.onboarding.completed_liability_release ? (
+      {user && user.completed_liability_release ? (
         <Link to="/">
           <Button size="small">Back to Home</Button>
         </Link>

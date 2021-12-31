@@ -6,10 +6,6 @@ import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 export function NewDriver() {
   const { user } = useAuth()
 
-  const completed_availability =
-    user.availability &&
-    Object.keys(user.availability).filter(key => user.availability[key]).length
-
   const sections = [
     {
       name: 'Complete your Profile',
@@ -18,7 +14,6 @@ export function NewDriver() {
         user.name &&
         user.phone &&
         user.pronouns &&
-        completed_availability &&
         user.availability &&
         user.driver_info.vehicle_make_model &&
         user.driver_info.license_number &&
@@ -29,17 +24,17 @@ export function NewDriver() {
     {
       name: 'Liability Release',
       page: '/liability',
-      completed: user.onboarding.completed_liability_release,
+      completed: user.completed_liability_release,
     },
     {
       name: 'App Tutorial',
       page: '/tutorial',
-      completed: user.onboarding.completed_app_tutorial,
+      completed: user.completed_app_tutorial,
     },
     {
       name: 'Food Safety Training',
       page: '/food-safety',
-      completed: user.onboarding.completed_food_safety,
+      completed: user.completed_food_safety,
     },
   ]
 
@@ -53,15 +48,14 @@ export function NewDriver() {
         {user.name &&
         user.phone &&
         user.pronouns &&
-        completed_availability &&
         user.availability &&
-        user.driver_info.vehicle_make_model &&
-        user.driver_info.license_number &&
-        user.driver_info.license_state &&
-        user.driver_info.insurance_policy_number &&
-        user.driver_info.insurance_provider &&
-        user.onboarding.completed_food_safety &&
-        user.onboarding.completed_liability_release
+        user.vehicle_make_model &&
+        user.license_number &&
+        user.license_state &&
+        user.insurance_policy_number &&
+        user.insurance_provider &&
+        user.completed_food_safety &&
+        user.completed_liability_release
           ? "You've completed all the onboarding steps!\n\nHang tight while we approve your info, and grant you permission to start rescuing food."
           : 'Complete the onboarding steps below to begin rescuing food as soon as possible.'}
       </Text>

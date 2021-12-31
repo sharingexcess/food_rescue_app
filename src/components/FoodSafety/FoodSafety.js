@@ -10,7 +10,7 @@ export function FoodSafety() {
 
   function handleComplete() {
     setFirestoreData(['users', user.id], {
-      onboarding: { completed_food_safety: true },
+      completed_food_safety: true,
     })
     history.push('/')
   }
@@ -271,7 +271,7 @@ export function FoodSafety() {
           <li>Recycle any leftover packaging</li>
         </ol>
       </section>
-      {user && !user.onboarding.completed_food_safety ? (
+      {user && !user.completed_food_safety ? (
         <Button type="primary" color="white" handler={handleComplete}>
           I've read the Food Safety Guidelines
         </Button>

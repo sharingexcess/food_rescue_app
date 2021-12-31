@@ -1,3 +1,4 @@
+import moment from 'moment'
 import {
   CLOUD_FUNCTION_URLS,
   FOOD_CATEGORIES,
@@ -71,8 +72,9 @@ export async function updateGoogleCalendarEvent(data) {
   return event
 }
 
-export const createTimestamp = d =>
-  d ? new Date(d).toString() : new Date().toString()
+export const createTimestamp = d => (d ? new Date(d) : new Date())
+
+export const formatTimestamp = (t, format) => moment(t.toDate()).format(format)
 
 export function generateDirectionsLink(address1, city, state, zip) {
   return `${GOOGLE_MAPS_URL}${address1}+${city}+${state}+${zip}`
@@ -90,9 +92,9 @@ export async function updateImpactDataForRescue(rescue) {
         current_load[category] += stop[category]
       }
     } else {
-      if (stop.impact_data_percent_of_total_dropped) {
+      if (stop.percent_of_total_dropped) {
         const impact_data = {}
-        const percent_dropped = stop.impact_data_percent_of_total_dropped / 100
+        const percent_dropped = stop.percent_of_total_dropped / 100
         const load_weight = Object.values(current_load).reduce(
           (a, b) => a + b,
           0

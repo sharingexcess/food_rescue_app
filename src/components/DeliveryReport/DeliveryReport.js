@@ -16,7 +16,7 @@ export function DeliveryReport() {
   const history = useHistory()
   const delivery = useFirestore('stops', delivery_id)
   const [formData, setFormData] = useState({
-    impact_data_percent_of_total_dropped: 100,
+    percent_of_total_dropped: 100,
     notes: '',
   })
   const [changed, setChanged] = useState(false)
@@ -37,8 +37,7 @@ export function DeliveryReport() {
     delivery
       ? setFormData(formData => ({
           ...formData,
-          impact_data_percent_of_total_dropped:
-            delivery.impact_data_percent_of_total_dropped,
+          percent_of_total_dropped: delivery.percent_of_total_dropped,
         }))
       : setChanged(true)
   }, [delivery])
@@ -54,7 +53,7 @@ export function DeliveryReport() {
     setFormData({
       ...formData,
       [e.target.id]:
-        e.target.id === 'impact_data_percent_of_total_dropped'
+        e.target.id === 'percent_of_total_dropped'
           ? parseInt(e.target.value)
           : e.target.value,
     })
@@ -66,7 +65,7 @@ export function DeliveryReport() {
     try {
       const delivery = {
         ...formData,
-        timestamp_finished: createTimestamp(),
+        timestamp_logged_finish: createTimestamp(),
         timestamp_updated: createTimestamp(),
         status: STATUSES.COMPLETED,
       }
@@ -86,16 +85,16 @@ export function DeliveryReport() {
       </Text>
       <Spacer height={64} />
       <Text type="primary-header" color="white" align="center" shadow>
-        {parseInt(formData.impact_data_percent_of_total_dropped)}%
+        {parseInt(formData.percent_of_total_dropped)}%
       </Text>
       <input
-        id="impact_data_percent_of_total_dropped"
+        id="percent_of_total_dropped"
         type="range"
         min={0}
         max={100}
         step={1}
         label="How much of the load was dropped here?"
-        value={formData.impact_data_percent_of_total_dropped}
+        value={formData.percent_of_total_dropped}
         onChange={handleChange}
         disabled={!canEdit()}
       />

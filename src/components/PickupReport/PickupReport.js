@@ -126,7 +126,7 @@ export function PickupReport({ customSubmitHandler }) {
           ...formData,
           status: STATUSES.COMPLETED,
           timestamp_updated: createTimestamp(),
-          timestamp_finished: createTimestamp(),
+          timestamp_logged_finish: createTimestamp(),
         })
         if (rescue.status === STATUSES.COMPLETED) {
           await updateImpactDataForRescue(rescue)

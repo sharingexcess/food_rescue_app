@@ -11,7 +11,7 @@ export function Tutorial() {
 
   function handleComplete() {
     setFirestoreData(['users', user.id], {
-      onboarding: { completed_app_tutorial: true },
+      completed_app_tutorial: true,
     })
     history.push('/')
   }
@@ -139,7 +139,7 @@ export function Tutorial() {
         </div>
       </section>
       <br />
-      {user && !user.onboarding.completed_app_tutorial ? (
+      {user && !user.completed_app_tutorial ? (
         <Button type="primary" color="white" handler={handleComplete}>
           I've completed the Tutorial
         </Button>

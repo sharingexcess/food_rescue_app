@@ -113,10 +113,10 @@ export function Menu({ isOpen, setIsOpen }) {
                   url="/admin/organizations"
                 />
                 <MenuLink label="👪&nbsp;&nbsp;Users" url="/admin/users" />
-                <MenuLink
+                {/* <MenuLink
                   label="📊&nbsp;&nbsp;Analytics"
                   url="/admin/analytics"
-                />
+                /> */}
               </>
             )}
             <MenuLink label="🍎&nbsp;&nbsp;Food Safety" url="/food-safety" />

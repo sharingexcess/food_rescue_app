@@ -26,10 +26,7 @@ stop {
   status
   notes
   is_direct_link
-  timestamp_created
-  timestamp_updated
-  timestamp_started
-  timestamp_finished
+  percent_of_total_dropped
   impact_data_dairy
   impact_data_bakery
   impact_data_produce
@@ -39,7 +36,12 @@ stop {
   impact_data_mixed
   impact_data_other
   impact_data_total_weight
-  impact_data_percent_of_total_dropped
+  timestamp_created
+  timestamp_updated
+  timestamp_logged_start
+  timestamp_logged_finish
+  timestamp_scheduled_start
+  timestamp_scheduled_finish
 }
 
 organization {

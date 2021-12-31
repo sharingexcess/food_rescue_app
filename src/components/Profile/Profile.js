@@ -3,7 +3,11 @@ import { useAuth, useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import validator from 'validator'
 import { Button, Image, Spacer, Text } from '@sharingexcess/designsystem'
-import { createTimestamp, setFirestoreData } from 'helpers'
+import {
+  createTimestamp,
+  removeSpecialCharacters,
+  setFirestoreData,
+} from 'helpers'
 import { availability } from './utils'
 import { useHistory } from 'react-router'
 
@@ -43,7 +47,7 @@ export function Profile() {
     if (!button && !formData.name && profile && profile.name) {
       setFormData({
         name: profile.name,
-        phone: profile.phone || '',
+        phone: removeSpecialCharacters(profile.phone) || '',
         pronouns: profile.pronouns || '',
         available_sun_am: false,
         available_sun_pm: false,

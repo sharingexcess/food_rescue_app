@@ -19,12 +19,12 @@ import {
   FOOD_CATEGORIES,
   RECIPIENT_TYPES,
   generateUniqueId,
+  formatTimestamp,
 } from 'helpers'
 import { useAuth, useFirestore, useApp } from 'hooks'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
-import moment from 'moment'
 import { Emoji } from 'react-apple-emojis'
 
 export function RescueHeader() {
@@ -46,11 +46,12 @@ export function RescueHeader() {
           {rescue.driver ? rescue.driver.name : 'No assigned driver'}
         </Text>
         <Text type="small" color="white" shadow>
-          {moment(rescue.timestamp_scheduled_start).format(
+          {formatTimestamp(
+            rescue.timestamp_scheduled_start,
             'ddd, MMM D, h:mma '
           )}
           {rescue.timestamp_scheduled_finish &&
-            moment(rescue.timestamp_scheduled_finish).format(' - h:mma ')}
+            formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma ')}
         </Text>
         {rescue.notes ? (
           <Text type="small" color="white" shadow>
@@ -529,7 +530,7 @@ export function Stop({ stops, s, i }) {
     async function handleClick() {
       setFirestoreData(['stops', s.id], {
         status: STATUSES.ACTIVE,
-        timestamp_started: createTimestamp(),
+        timestamp_logged_start: createTimestamp(),
       }).then(() =>
         window.open(
           generateDirectionsLink(
@@ -548,7 +549,7 @@ export function Stop({ stops, s, i }) {
       } else {
         setFirestoreData(['stops', s.id], {
           status: STATUSES.ACTIVE,
-          timestamp_started: createTimestamp(),
+          timestamp_logged_start: createTimestamp(),
         }).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
       }
     }
@@ -592,16 +593,14 @@ export function Stop({ stops, s, i }) {
         ),
         {}
       ),
-      impact_data_percent_of_total_dropped: Math.round(
-        percent_of_total_dropped * 100
-      ),
+      percent_of_total_dropped: Math.round(percent_of_total_dropped * 100),
       impact_data_total_weight:
         Math.round(
           pickup.impact_data_total_weight * percent_of_total_dropped
         ) || 0,
-      timestamp_started: createTimestamp(),
+      timestamp_logged_start: createTimestamp(),
       timestamp_updated: createTimestamp(),
-      timestamp_finished: createTimestamp(),
+      timestamp_logged_finish: createTimestamp(),
       status: STATUSES.COMPLETED,
     })
       .then(() => history.push(`/rescues/${rescue_id}`))
@@ -807,14 +806,15 @@ export function BackupDelivery() {
     for (const s of rescue.stops) {
       if (
         s.status === STATUSES.COMPLETED &&
-        (!lastStop || s.timestamp_finished > lastStop.timestamp_finished)
+        (!lastStop ||
+          s.timestamp_logged_finish > lastStop.timestamp_logged_finish)
       )
         lastStop = s
     }
     if (
       lastStop &&
       (!lastStop.impact_data_total_weight ||
-        lastStop.impact_data_percent_of_total_dropped < 100 ||
+        lastStop.percent_of_total_dropped < 100 ||
         lastStop.type === 'pickup')
     ) {
       async function addBackupDelivery(stop) {
@@ -829,8 +829,8 @@ export function BackupDelivery() {
             handler_id: rescue.handler_id,
             timestamp_created: createTimestamp(),
             timestamp_updated: createTimestamp(),
-            timestamp_started: null,
-            timestamp_finished: null,
+            timestamp_logged_start: null,
+            timestamp_logged_finish: null,
             status: STATUSES.SCHEDULED,
             rescue_id,
             impact_data_dairy: 0,
@@ -842,7 +842,7 @@ export function BackupDelivery() {
             impact_data_mixed: 0,
             impact_data_other: 0,
             impact_data_total_weight: 0,
-            impact_data_percent_of_total_dropped: 0,
+            percent_of_total_dropped: 0,
           })
           await setFirestoreData(['rescues', rescue_id], {
             stop_ids: [...rescue.stops.map(s => s.id), stop_id],

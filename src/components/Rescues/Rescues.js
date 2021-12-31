@@ -1,15 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Input, Loading } from 'components'
+import { Ellipsis, Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
-import { Card, Spacer, Text } from '@sharingexcess/designsystem'
-import { STATUSES } from 'helpers'
+import {
+  Button,
+  Card,
+  FlexContainer,
+  Spacer,
+  Text,
+} from '@sharingexcess/designsystem'
+import { formatTimestamp, STATUSES } from 'helpers'
 
 export function Rescues() {
   const history = useHistory()
   const { user, admin } = useAuth()
+  const { loadMoreData, loadedAllData } = useFirestore()
   const location = useLocation()
   const rescues = useFirestore('rescues')
   const deliveries = useFirestore(
@@ -24,6 +31,11 @@ export function Rescues() {
   const [filterByDate, setFilterByDate] = useState(false)
   const [filter, setFilter] = useState(admin ? 'active' : 'mine')
   const [isInitialRender, setIsInitialRender] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  useEffect(() => {
+    setLoadingMore(false)
+  }, [rescues])
 
   useEffect(() => {
     // check if there are any "filter" query params
@@ -55,7 +67,10 @@ export function Rescues() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const rootPath = window.location.pathname
-    if (filter === 'driver') {
+    if (filter === 'past') {
+      params.set('filter', 'past')
+      history.replace(`${rootPath}?${params.toString()}`)
+    } else if (filter === 'driver') {
       params.set('filter', 'driver')
       if (searchByDriver) {
         params.set('driver', searchByDriver)
@@ -86,13 +101,18 @@ export function Rescues() {
     }
   }, [filter]) // eslint-disable-line
 
+  function handleLoadMore() {
+    setLoadingMore(true)
+    loadMoreData()
+  }
+
   function handleSearchByDriver(e) {
     setSearchByDriver(e.target.value)
-    history.replace(`history?filter=driver&driver=${e.target.value}`)
+    history.replace(`rescues?filter=driver&driver=${e.target.value}`)
   }
   function handleSearchByDate(e) {
     setSearchByDate(e.target.value)
-    history.replace(`history?filter=date&date=${e.target.value}`)
+    history.replace(`rescues?filter=date&date=${e.target.value}`)
   }
 
   function filterAndSortRescues(rescues) {
@@ -125,7 +145,7 @@ export function Rescues() {
         return rescues
           .filter(
             r =>
-              moment(r.timestamp_scheduled_start).format('yyyy-MM-DD') ===
+              formatTimestamp(r.timestamp_scheduled_start, 'yyyy-MM-DD') ===
               searchByDate
           )
           .sort(byDate)
@@ -164,20 +184,18 @@ export function Rescues() {
   }
 
   function generateRescueStart(rescue) {
-    const start = rescue.timestamp_logged_start || 'No start time'
-
     if (rescue.status === STATUSES.COMPLETED) {
-      return start === 'No start time' ? start : moment(start).format('h:mma')
+      return rescue.timestamp_logged_start
+        ? formatTimestamp(rescue.timestamp_logged_start, 'h:mma')
+        : 'No start time'
     }
   }
 
   function generateRescueFinish(rescue) {
-    const r_endTime = rescue.timestamp_logged_finish || 'No end time'
-
     if (rescue.status === STATUSES.COMPLETED) {
-      return r_endTime === 'No end time'
-        ? r_endTime
-        : moment(r_endTime).format('h:mma')
+      return rescue.timestamp_logged_finish
+        ? formatTimestamp(rescue.timestamp_logged_finish, 'h:mma')
+        : 'No end time'
     }
   }
 
@@ -195,10 +213,12 @@ export function Rescues() {
               </Text>
               <Text type="small" color="blue">
                 {r.status === STATUSES.COMPLETED
-                  ? `${moment(r.timestamp_scheduled_start).format(
+                  ? `${formatTimestamp(
+                      r.timestamp_scheduled_start,
                       'ddd, MMM Do'
                     )}, ${generateRescueStart(r)} - ${generateRescueFinish(r)}`
-                  : moment(r.timestamp_scheduled_start).format(
+                  : formatTimestamp(
+                      r.timestamp_scheduled_start,
                       'ddd, MMM Do, h:mma'
                     )}
               </Text>
@@ -210,6 +230,15 @@ export function Rescues() {
                   </Text>
                 </>
               )}
+
+              {r.notes ? (
+                <>
+                  <Spacer height={4} />
+                  <Text type="small" color="grey">
+                    Notes: {r.notes}
+                  </Text>
+                </>
+              ) : null}
             </div>
             <StatusIndicator rescue={r} />
           </div>
@@ -229,12 +258,6 @@ export function Rescues() {
               .map(s => generateDeliveryWeight(s))
               .join('\n')}
           </Text>
-          {r.notes ? (
-            <h6>
-              <span>Notes: </span>
-              {r.notes}
-            </h6>
-          ) : null}
         </Card>
       </Link>
     )
@@ -243,7 +266,7 @@ export function Rescues() {
   return rescues ? (
     <main id="Rescues">
       <Text type="section-header" id="Rescues-title" color="white" shadow>
-        Retail Rescues
+        Rescues
       </Text>
       <Text type="subheader" color="white" shadow>
         Select a rescue to view pickup, delivery, and impact data.
@@ -321,6 +344,16 @@ export function Rescues() {
       ) : (
         filterAndSortRescues(rescues).map(r => <RescueCard key={r.id} r={r} />)
       )}
+      <FlexContainer direction="vertical">
+        <Spacer height={16} />
+        <Button
+          handler={handleLoadMore}
+          disabled={loadingMore || loadedAllData}
+        >
+          Load{loadingMore && 'ing'} Older Rescues
+          {loadingMore && <Ellipsis />}
+        </Button>
+      </FlexContainer>
     </main>
   ) : (
     <Loading />

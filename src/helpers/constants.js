@@ -25,19 +25,6 @@ export const FORMSPREE_FORM_ID = 'xlezdgjl'
 export const GOOGLE_MAPS_URL =
   'https://www.google.com/maps/dir/?api=1&destination='
 
-export const RESCUE_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'active',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'UNDEFINED_STATUS',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
-}
-
 export const FOOD_CATEGORIES = [
   'impact_data_dairy',
   'impact_data_bakery',

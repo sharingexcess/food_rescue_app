@@ -147,8 +147,14 @@ export function EditRescue() {
           status: stop.status || STATUSES.SCHEDULED,
           timestamp_created: stop.timestamp_created || createTimestamp(),
           timestamp_updated: createTimestamp(),
-          timestamp_started: stop.timestamp_started || null,
-          timestamp_finished: stop.timestamp_finished || null,
+          timestamp_logged_start: stop.timestamp_logged_start || null,
+          timestamp_logged_finish: stop.timestamp_logged_finish || null,
+          timestamp_scheduled_start: createTimestamp(
+            formData.timestamp_scheduled_start
+          ),
+          timestamp_scheduled_finish: createTimestamp(
+            formData.timestamp_scheduled_finish
+          ),
           impact_data_dairy: stop.impact_data_dairy || 0,
           impact_data_bakery: stop.impact_data_bakery || 0,
           impact_data_produce: stop.impact_data_produce || 0,
@@ -160,8 +166,7 @@ export function EditRescue() {
           impact_data_total_weight: stop.impact_data_total_weight || 0,
         }
         if (stop.type === 'delivery') {
-          s.impact_data_percent_of_total_dropped =
-            stop.impact_data_percent_of_total_dropped || 0
+          s.percent_of_total_dropped = stop.percent_of_total_dropped || 0
         }
         await setFirestoreData(['stops', stop.id], s)
       }
