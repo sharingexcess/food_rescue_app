@@ -11,12 +11,12 @@
 #Menu {
   position: fixed;
   background: var(--foreground);
-  top: 0;
+  top: -100vh;
   left: 0;
+  height: 300vh;
   width: 250px;
   border: 0;
-  height: 100vh;
-  padding: 16px;
+  padding: calc(100vh + 16px) 16px;
   overflow-x: hidden;
   overflow-y: auto;
   display: flex;
