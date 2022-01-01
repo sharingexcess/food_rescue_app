@@ -10,9 +10,12 @@ import {
   FlexContainer,
   Spacer,
   Text,
+  Image,
 } from '@sharingexcess/designsystem'
 import { formatTimestamp, STATUSES } from 'helpers'
 import { Emoji } from 'react-apple-emojis'
+import PickupIcon from 'assets/pickup.png'
+import DeliveryIcon from 'assets/delivery.png'
 
 export function Rescues() {
   const history = useHistory()
@@ -263,7 +266,8 @@ export function Rescues() {
           </div>
           <Spacer height={12} />
           <Text type="small" color="grey" classList={['pickups']}>
-            🏋️{'  '}
+            <Image src={PickupIcon} />
+            {'  '}
             {r.stops
               .filter(s => s.type === 'pickup')
               .map(stop => generateStopLabel(stop))
@@ -271,7 +275,8 @@ export function Rescues() {
           </Text>
           <Spacer height={8} />
           <Text type="small" color="grey" classList={['deliveries']}>
-            ✔️{'  '}
+            <Image src={DeliveryIcon} />
+            {'  '}
             {r.stops
               .filter(s => s.type === 'delivery')
               .map(s => generateDeliveryWeight(s))
