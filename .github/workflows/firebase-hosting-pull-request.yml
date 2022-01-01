@@ -21,7 +21,7 @@ jobs:
           fi
         env:
           REACT_APP_FIREBASE_ENV: ${{secrets.REACT_APP_FIREBASE_ENV}}
-      - run: npm ci && npm i @sharingexcess/designsystem && CI=false npm run build
+      - run: npm rebuild node-sass && npm ci && npm i @sharingexcess/designsystem && CI=false npm run build
         env:
           REACT_APP_FIREBASE_API_KEY: ${{secrets.REACT_APP_FIREBASE_API_KEY}}
           REACT_APP_FIREBASE_OAUTH_CLIENT_ID: ${{secrets.REACT_APP_FIREBASE_OAUTH_CLIENT_ID}}
