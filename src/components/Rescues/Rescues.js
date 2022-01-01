@@ -20,7 +20,12 @@ import DeliveryIcon from 'assets/delivery.png'
 export function Rescues() {
   const history = useHistory()
   const { user, admin } = useAuth()
-  const { loadMoreData, loadAllData, loadedAllData } = useFirestore()
+  const {
+    loadMoreData,
+    loadAllData,
+    loadedAllData,
+    resetLimit,
+  } = useFirestore()
   const location = useLocation()
   const rescues = useFirestore('rescues')
   const deliveries = useFirestore(
@@ -36,6 +41,10 @@ export function Rescues() {
   const [filter, setFilter] = useState(admin ? 'active' : 'mine')
   const [isInitialRender, setIsInitialRender] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
+
+  useEffect(() => {
+    resetLimit()
+  }, []) // eslint-disable-line
 
   useEffect(() => {
     setLoadingMore(false)

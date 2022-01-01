@@ -1,13 +1,13 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { FIRST_RESCUE_IN_DB, getCollection } from 'helpers'
+import { DEFAULT_DB_LIMIT, FIRST_RESCUE_IN_DB, getCollection } from 'helpers'
 import moment from 'moment'
 
 const FirestoreContext = createContext()
 FirestoreContext.displayName = 'Firestore'
 
 function Firestore({ children }) {
-  const [limit, setLimit] = useState(moment().subtract(7, 'days').toDate())
+  const [limit, setLimit] = useState(DEFAULT_DB_LIMIT)
   const [rescues, setRescues] = useState()
   const rescuesQuery = useMemo(
     () =>
@@ -68,6 +68,10 @@ function Firestore({ children }) {
     }
   }, [rescues_raw, organizations, locations, stops, users])
 
+  function resetLimit() {
+    setLimit(DEFAULT_DB_LIMIT)
+  }
+
   function loadMoreData() {
     setLimit(moment(limit).subtract(1, 'month').startOf('month').toDate())
   }
@@ -100,6 +104,7 @@ function Firestore({ children }) {
         users,
         organizations,
         locations,
+        resetLimit,
         loadMoreData,
         loadAllData,
         loadedAllData,

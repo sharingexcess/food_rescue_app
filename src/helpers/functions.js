@@ -104,38 +104,41 @@ export function generateDirectionsLink(address1, city, state, zip) {
 }
 
 export async function updateImpactDataForRescue(rescue) {
-  const { stops } = rescue
+  return new Promise(async res => {
+    const { stops } = rescue
 
-  const current_load = {
-    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
-  }
-  for (const stop of stops) {
-    if (stop.type === 'pickup') {
-      for (const category in current_load) {
-        current_load[category] += stop[category]
-      }
-    } else {
-      if (stop.percent_of_total_dropped) {
-        const impact_data = {}
-        const percent_dropped = stop.percent_of_total_dropped / 100
-        const load_weight = Object.values(current_load).reduce(
-          (a, b) => a + b,
-          0
-        )
+    const current_load = {
+      ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+    }
+    for (const stop of stops) {
+      if (stop.type === 'pickup') {
         for (const category in current_load) {
-          impact_data[category] = Math.round(
-            current_load[category] * percent_dropped
-          )
-          current_load[category] -= impact_data[category]
+          current_load[category] += stop[category]
         }
-        impact_data.impact_data_total_weight = Math.round(
-          load_weight * percent_dropped
-        )
-        await setFirestoreData(['stops', stop.id], {
-          ...impact_data,
-          timestamp_updated: createTimestamp(),
-        })
+      } else {
+        if (stop.percent_of_total_dropped) {
+          const impact_data = {}
+          const percent_dropped = stop.percent_of_total_dropped / 100
+          const load_weight = Object.values(current_load).reduce(
+            (a, b) => a + b,
+            0
+          )
+          for (const category in current_load) {
+            impact_data[category] = Math.round(
+              current_load[category] * percent_dropped
+            )
+            current_load[category] -= impact_data[category]
+          }
+          impact_data.impact_data_total_weight = Math.round(
+            load_weight * percent_dropped
+          )
+          await setFirestoreData(['stops', stop.id], {
+            ...impact_data,
+            timestamp_updated: createTimestamp(),
+          })
+        }
       }
     }
-  }
+    res()
+  })
 }

@@ -1,6 +1,11 @@
 import React, { useCallback, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
+import {
+  setFirestoreData,
+  createTimestamp,
+  STATUSES,
+  updateImpactDataForRescue,
+} from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
 import { useFirestore, useAuth } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
@@ -24,29 +29,35 @@ export function Rescue() {
 
   useEffect(() => {
     // handle auto completing a rescue when all stops are finished
-    if (rescue && rescue.status !== STATUSES.COMPLETED) {
-      let completed_deliveries = 0
-      const rescue_deliveries = rescue.stops.filter(s => s.type === 'delivery')
-      if (rescue_deliveries.length) {
-        for (const d of rescue_deliveries) {
+    async function handleAutoCompleteRoute() {
+      if (rescue && rescue.status !== STATUSES.COMPLETED) {
+        let completed_deliveries = 0
+        const rescue_deliveries = rescue.stops.filter(
+          s => s.type === 'delivery'
+        )
+        if (rescue_deliveries.length) {
+          for (const d of rescue_deliveries) {
+            if (
+              d.status === STATUSES.COMPLETED ||
+              d.status === STATUSES.CANCELLED
+            )
+              completed_deliveries++
+          }
           if (
-            d.status === STATUSES.COMPLETED ||
-            d.status === STATUSES.CANCELLED
-          )
-            completed_deliveries++
-        }
-        if (
-          completed_deliveries === rescue_deliveries.length &&
-          allFoodDelivered(rescue.stops)
-        ) {
-          setFirestoreData(['rescues', rescue_id], {
-            status: STATUSES.COMPLETED,
-            timestamp_logged_finish: createTimestamp(),
-            timestamp_updated: createTimestamp(),
-          }).then(() => history.push(`/rescues/${rescue_id}/completed`))
+            completed_deliveries === rescue_deliveries.length &&
+            allFoodDelivered(rescue.stops)
+          ) {
+            await updateImpactDataForRescue(rescue)
+            setFirestoreData(['rescues', rescue_id], {
+              status: STATUSES.COMPLETED,
+              timestamp_logged_finish: createTimestamp(),
+              timestamp_updated: createTimestamp(),
+            }).then(() => history.push(`/rescues/${rescue_id}/completed`))
+          }
         }
       }
     }
+    handleAutoCompleteRoute()
   }, [deliveries, rescue_id, rescue]) // eslint-disable-line
 
   return (

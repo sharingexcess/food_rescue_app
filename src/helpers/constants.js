@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 // all exports should be of type 'const' with an all caps var name separated by underscores
 
 export const FIREBASE_CONFIG = {
@@ -94,3 +96,4 @@ export const CLOUD_FUNCTION_URLS = {
 }
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
+export const DEFAULT_DB_LIMIT = moment().subtract(7, 'days').toDate()
