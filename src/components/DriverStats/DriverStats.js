@@ -13,8 +13,8 @@ export function DriverStats() {
     'stops',
     useCallback(
       i =>
-        // i.handler_id === user.id &&
-        i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && // (Use Jacob's ID for testing)
+        i.handler_id === user.id &&
+        // i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && // (Use Jacob's ID for testing)
         i.status === STATUSES.COMPLETED,
       [user]
     )
