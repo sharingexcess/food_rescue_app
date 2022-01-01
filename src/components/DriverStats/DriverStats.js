@@ -15,6 +15,12 @@ export function DriverStats() {
       i =>
         i.handler_id === user.id &&
         // i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && // (Use Jacob's ID for testing)
+        // i.handler_id === 'jiBBxAvncBSNWwjizdmsxM7EALz1' && // Sarah DiPasquale
+        // i.handler_id === '1yxUOZ53OOg0T3SJ2SqolPI3UK12' && // Alex Havertine
+        // [
+        //   'sUqgP36KAiPgDaU7V4z8N0GirIc2',
+        //   'K2eYju4PtaejTIiOdHQrERMoRnk2',
+        // ].includes(i.handler_id) && // Evan Ehlers (he has 2 accounts)
         i.status === STATUSES.COMPLETED,
       [user]
     )
