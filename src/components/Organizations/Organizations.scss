@@ -1,6 +1,25 @@
 #Organizations {
   @include page;
 
+  select {
+    background: none;
+    height: 100%;
+    position: relative;
+    border: 0;
+    border-radius: 8px;
+    background: var(--se-white-transparent);
+    padding: 12px 8px 12px 16px;
+    text-transform: capitalize;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--se-white);
+    z-index: 1;
+    transition: border 0.1s ease;
+    -webkit-appearance: none;
+    cursor: pointer;
+    text-shadow: var(--se-shadow-small);
+  }
+
   .wrapper {
     width: 100%;
     display: inline;
@@ -28,12 +47,15 @@
     align-items: center;
     margin-bottom: 16px;
 
-    .se-text {
-      font-weight: 600;
-      font-size: 18px;
+    .section-header {
+      font-size: 16px;
     }
 
-    img {
+    .small {
+      text-transform: capitalize;
+    }
+
+    .Organization-icon {
       width: 64px;
       height: 64px;
       border-radius: 50%;
@@ -44,32 +66,9 @@
       flex-shrink: 0;
     }
 
-    h2 {
-      padding: 4px;
-      border-radius: 16px;
+    .Organization-type {
+      font-size: 10px;
       margin-left: auto;
-      font-size: 13px;
-      color: var(--white);
-      text-transform: capitalize;
-      overflow: hidden;
-      max-width: 64px;
-      @include ellipsis;
-
-      &.donor {
-        background-color: var(--red);
-      }
-      &.recipient {
-        background-color: var(--green);
-      }
-      &.community {
-        background-color: var(--blue);
-      }
-      &.warehouse {
-        background-color: var(--yellow);
-      }
-      &.home {
-        background-color: var(--blue);
-      }
     }
   }
 }

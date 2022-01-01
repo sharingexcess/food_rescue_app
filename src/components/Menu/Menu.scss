@@ -11,12 +11,12 @@
 #Menu {
   position: fixed;
   background: var(--foreground);
-  top: 0;
+  top: -100vh;
   left: 0;
+  height: 300vh;
   width: 250px;
   border: 0;
-  height: 100vh;
-  padding: 16px;
+  padding: calc(100vh + 16px) 16px;
   overflow-x: hidden;
   overflow-y: auto;
   display: flex;
@@ -31,6 +31,7 @@
   @include desktop {
     top: 112px;
     left: 32px;
+    padding: 16px;
     height: calc(100vh - 144px);
     border-radius: 8px;
     box-shadow: var(--se-shadow-large);
@@ -152,6 +153,12 @@
         cursor: pointer;
         @include hover {
           color: var(--se-blue-primary);
+        }
+
+        @include mobile {
+          font-size: 16px;
+          font-weight: 500;
+          padding: 2px 0;
         }
       }
     }

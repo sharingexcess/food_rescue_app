@@ -1,38 +1,27 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Loading, Input } from 'components'
-import { createServerTimestamp, setFirestoreData } from 'helpers'
+import {
+  createTimestamp,
+  FOOD_CATEGORIES,
+  setFirestoreData,
+  STATUSES,
+  updateImpactDataForRescue,
+} from 'helpers'
 import { useFirestore, useAuth, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
 
 export function PickupReport({ customSubmitHandler }) {
-  const { pickup_id, route_id } = useParams()
+  const { pickup_id, rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
-  const route = useFirestore('routes', route_id)
+  const rescue = useFirestore('rescues', rescue_id)
   const { admin } = useAuth()
   const history = useHistory()
-  const pickup = useFirestore('pickups', pickup_id)
-  const pickupsOnRoute = useFirestore(
-    'pickups',
-    useCallback(p => p.route_id === route_id, [route_id])
-  )
-  const deliveries = useFirestore(
-    'deliveries',
-    useCallback(d => d.pickup_ids && d.pickup_ids.includes(pickup_id), [
-      pickup_id,
-    ])
-  )
+  const pickup = useFirestore('stops', pickup_id)
   const [formData, setFormData] = useState({
-    dairy: 0,
-    bakery: 0,
-    produce: 0,
-    'meat/Fish': 0,
-    'non-perishable': 0,
-    'prepared/Frozen': 0,
-    'mixed groceries': 0,
-    other: 0,
-    weight: 0,
+    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+    impact_data_total_weight: 0,
     notes: '',
   })
   const [changed, setChanged] = useState(false)
@@ -40,29 +29,39 @@ export function PickupReport({ customSubmitHandler }) {
   const [showErrors, setShowErrors] = useState(false)
 
   useEffect(() => {
-    pickup && pickup.report
-      ? setFormData(formData => ({ ...formData, ...pickup.report }))
+    pickup && pickup.id
+      ? setFormData(formData => ({
+          ...formData,
+          ...FOOD_CATEGORIES.reduce(
+            (acc, curr) => ((acc[curr] = pickup[curr]), acc), // eslint-disable-line
+            {}
+          ),
+          impact_data_total_weight: pickup.impact_data_total_weight,
+        }))
       : setChanged(true)
   }, [pickup])
 
   useEffect(() => {
-    setFormData(formData => ({ ...formData, weight: sumWeight(formData) }))
+    setFormData(formData => ({
+      ...formData,
+      impact_data_total_weight: sumWeight(formData),
+    }))
   }, [errors])
 
   const canEdit = (pickup && [1, 3, 6].includes(pickup.status)) || admin
 
-  function openEasyEntry(field) {
-    setModal('Calculator')
+  function openAddToCategory(field) {
+    setModal('AddToCategory')
     setModalState({ setFormData, sumWeight, field })
   }
 
   function sumWeight(object) {
     let sum = 0
     for (const field in object) {
-      if (['weight', 'notes', 'created_at', 'updated_at'].includes(field)) {
+      if (['impact_data_total_weight', 'notes'].includes(field)) {
         //pass
       } else {
-        sum += parseFloat(object[field])
+        sum += parseInt(object[field])
       }
     }
     return sum
@@ -76,7 +75,7 @@ export function PickupReport({ customSubmitHandler }) {
           ? e.target.value
           : parseInt(e.target.value) || 0,
     }
-    updated.weight = sumWeight(updated)
+    updated.impact_data_total_weight = sumWeight(updated)
     setErrors([])
     setShowErrors(false)
     setFormData(updated)
@@ -85,22 +84,23 @@ export function PickupReport({ customSubmitHandler }) {
 
   function validateFormData(data) {
     const currErrors = []
-    if (isNaN(data.weight) || /\s/g.test(data.weight)) {
+    if (
+      isNaN(data.impact_data_total_weight) ||
+      /\s/g.test(data.impact_data_total_weight)
+    ) {
       currErrors.push('Invalid Input: Total Weight is not a number')
     }
-    if (data.weight < 0) {
+    if (data.impact_data_total_weight < 0) {
       errors.push('Invalid Input: Total Weight must be greater than zero')
     }
     for (const field in data) {
       if (
-        field !== 'weight' &&
+        field !== 'impact_data_total_weight' &&
         field !== 'notes' &&
-        field !== 'created_at' &&
-        field !== 'updated_at' &&
         !validator.isInt(data[field].toString()) &&
         data.field < 0
       ) {
-        errors.push('Invalid Input: Item weight is not valid')
+        errors.push('Invalid Input: Total Weight is not valid')
         break
       }
     }
@@ -121,56 +121,20 @@ export function PickupReport({ customSubmitHandler }) {
   async function handleSubmit(event, data) {
     event.preventDefault()
     if (validateFormData(data)) {
-      if (route.status === 9) {
-        // handle updating completed route
-        try {
-          for (const d of deliveries) {
-            const otherPickupsInDelivery = pickupsOnRoute.filter(
-              p =>
-                d.pickup_ids.includes(p.id) &&
-                p.id !== pickup_id &&
-                p.status === 9
-            )
-            let totalWeight = formData.weight
-            for (const pickup of otherPickupsInDelivery) {
-              totalWeight += pickup.report.weight
-            }
-            await setFirestoreData(['Deliveries', d.id], {
-              report: {
-                updated_at: createServerTimestamp(),
-                weight: (d.report.percent_of_total_dropped / 100) * totalWeight,
-              },
-            })
-          }
-        } catch (e) {
-          console.error(e)
-          alert(
-            'Whoops! Unable to recalculate analytics data for this route. Contact an admin with this route_id!'
-          )
+      try {
+        await setFirestoreData(['stops', pickup_id], {
+          ...formData,
+          status: STATUSES.COMPLETED,
+          timestamp_updated: createTimestamp(),
+          timestamp_logged_finish: createTimestamp(),
+        })
+        if (rescue.status === STATUSES.COMPLETED) {
+          await updateImpactDataForRescue(rescue)
         }
+        history.push(`/rescues/${rescue_id}`)
+      } catch (e) {
+        console.error('Error writing document: ', e)
       }
-
-      setFirestoreData(['Pickups', pickup_id], {
-        report: {
-          dairy: parseInt(data.dairy),
-          bakery: parseInt(data.bakery),
-          produce: parseInt(data.produce),
-          'meat/Fish': parseInt(data['meat/Fish']),
-          'non-perishable': parseInt(data['non-perishable']),
-          'prepared/Frozen': parseInt(data['prepared/Frozen']),
-          'mixed groceries': parseInt(data['mixed groceries']),
-          other: parseInt(data.other),
-          weight: parseInt(data.weight),
-          notes: data.notes,
-          created_at: pickup.completed_at || createServerTimestamp(),
-          updated_at: createServerTimestamp(),
-        },
-        status: 9,
-        time_finished: createServerTimestamp(),
-        driver_completed_at: createServerTimestamp(),
-      })
-        .then(() => history.push(`/routes/${route_id}`))
-        .catch(e => console.error('Error writing document: ', e))
     } else {
       setShowErrors(true)
     }
@@ -215,10 +179,10 @@ export function PickupReport({ customSubmitHandler }) {
           return a.localeCompare(b)
         })
         .map(field =>
-          !['weight', 'notes', 'created_at', 'updated_at'].includes(field) ? (
+          !['impact_data_total_weight', 'notes'].includes(field) ? (
             <section key={field}>
               <Text type="small-header" color="white" shadow>
-                {field}
+                {field.replace('impact_data_', '').replace('_', ' ')}
               </Text>
               <input
                 id={field}
@@ -231,7 +195,7 @@ export function PickupReport({ customSubmitHandler }) {
                 type="primary"
                 color="white"
                 size="small"
-                handler={() => openEasyEntry(field)}
+                handler={() => openAddToCategory(field)}
               >
                 +
               </Button>
@@ -242,12 +206,12 @@ export function PickupReport({ customSubmitHandler }) {
         <Text type="section-header" color="white" shadow>
           Total Weight
         </Text>
-        {isNaN(formData.weight) ? (
+        {isNaN(formData.impact_data_total_weight) ? (
           <Text type="small" color="white" align="right" shadow>
-            Error calculating weight!
+            Error calculating impact_data_total_weight!
           </Text>
         ) : (
-          <h6>{formData.weight}</h6>
+          <h6>{formData.impact_data_total_weight}</h6>
         )}
       </section>
       <Input

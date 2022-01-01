@@ -20,56 +20,70 @@ export const IS_PWA = window.matchMedia('(display-mode: standalone)').matches
 // 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
 export const MOBILE_THRESHOLD = 600
 
-export const PICKUP_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
+export const FORMSPREE_FORM_ID = 'xlezdgjl'
+
+export const GOOGLE_MAPS_URL =
+  'https://www.google.com/maps/dir/?api=1&destination='
+
+export const FOOD_CATEGORIES = [
+  'impact_data_dairy',
+  'impact_data_bakery',
+  'impact_data_produce',
+  'impact_data_meat_fish',
+  'impact_data_non_perishable',
+  'impact_data_prepared_frozen',
+  'impact_data_mixed',
+  'impact_data_other',
+]
+
+export const ORG_TYPE_ICONS = {
+  retail: 'department-store',
+  wholesale: 'package',
+  holding: 'palms-up-together',
+  other: 'red-question-mark',
+  food_bank: 'red-apple',
+  agency: 'briefcase',
+  popup: 'person-raising-hand',
+  community_fridge: 'cityscape',
+  home_delivery: 'house',
 }
 
-export const DELIVERY_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
+export const ORG_TYPES = ['donor', 'recipient']
+
+export const ORG_SUBTYPES = {
+  RETAIL: 'retail',
+  WHOLESALE: 'wholesale',
+  FOOD_BANK: 'food_bank',
+  AGENCY: 'agency',
+  HOME_DELIVERY: 'home_delivery',
+  COMMUNITY_FRIDGE: 'community_fridge',
+  POPUP: 'popup',
+  HOLDING: 'holding',
+  OTHER: 'other',
 }
 
-export const STOP_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'arrived',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
+export const STATUSES = {
+  CANCELLED: 'cancelled',
+  SCHEDULED: 'scheduled',
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
 }
 
-export const ROUTE_STATUSES = {
-  0: 'cancelled',
-  1: 'scheduled',
-  2: 'UNDEFINED_STATUS',
-  3: 'in_progress',
-  4: 'UNDEFINED_STATUS',
-  5: 'UNDEFINED_STATUS',
-  6: 'UNDEFINED_STATUS',
-  7: 'UNDEFINED_STATUS',
-  8: 'UNDEFINED_STATUS',
-  9: 'completed',
+export const DONOR_TYPES = {
+  RETAIL: 'retail',
+  WHOLESALE: 'wholesale',
+  HOLDING: 'holding',
+  OTHER: 'other',
+}
+
+export const RECIPIENT_TYPES = {
+  FOOD_BANK: 'food_bank',
+  AGENCY: 'agency',
+  HOME_DELIVERY: 'home_delivery',
+  COMMUNITY_FRIDGE: 'community_fridge',
+  POPUP: 'popup',
+  HOLDING: 'holding',
+  OTHER: 'other',
 }
 
 export const CLOUD_FUNCTION_URLS = {
@@ -78,3 +92,5 @@ export const CLOUD_FUNCTION_URLS = {
   deleteCalendarEvent:
     process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'deleteCalendarEvent',
 }
+
+export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB

@@ -3,7 +3,6 @@ import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
 import { useAuth, useFirestore, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
-import { MOBILE_THRESHOLD } from 'helpers'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
 
 export function Menu({ isOpen, setIsOpen }) {
@@ -74,7 +73,7 @@ export function Menu({ isOpen, setIsOpen }) {
             <AdminIndicator />
           </div>
         </Link>
-        {window.innerWidth > MOBILE_THRESHOLD ? null : (
+        {isMobile ? null : (
           <i id="Close" className="fa fa-times" onClick={closeMenu} />
         )}
       </div>
@@ -95,26 +94,35 @@ export function Menu({ isOpen, setIsOpen }) {
           <ul>
             {permission ? (
               <>
-                <MenuLink label="Routes" url="/routes" />
-                <MenuLink label="History" url="/history" />
+                <MenuLink label="🚛&nbsp;&nbsp;Rescues" url="/rescues" />
+                <MenuLink label="📊&nbsp;&nbsp;Your Stats" url="/stats" />
               </>
             ) : null}
-            {admin ? (
+            {admin && (
               <>
-                <MenuLink label="New Route" url="/admin/create-route" />
                 <MenuLink
-                  label="New Direct Donation"
-                  url="/admin/create-direct-donation"
+                  label="➕&nbsp;&nbsp;Schedule Rescue"
+                  url="/admin/create-rescue"
                 />
-                <MenuLink label="Organizations" url="/admin/organizations" />
-                <MenuLink label="Users" url="/admin/users" />
-              </>
-            ) : (
-              <>
-                <MenuLink label="Food Safety" url="/food-safety" />
-                <MenuLink label="Tutorial" url="/tutorial" />
+                <MenuLink
+                  label="✍️&nbsp;&nbsp;Log Rescue"
+                  url="/admin/log-rescue"
+                />
+                <MenuLink
+                  label="🏢&nbsp;&nbsp;Organizations"
+                  url="/admin/organizations"
+                />
+                <MenuLink label="👪&nbsp;&nbsp;Users" url="/admin/users" />
+                {/* <MenuLink
+                  label="📊&nbsp;&nbsp;Analytics"
+                  url="/admin/analytics"
+                /> */}
               </>
             )}
+            <MenuLink label="🍎&nbsp;&nbsp;Food Safety" url="/food-safety" />
+            <MenuLink label="💡&nbsp;&nbsp;Tutorial" url="/tutorial" />
+            <MenuLink label="🙋&nbsp;&nbsp;Help" url="/contact" />
+
             <li
               onClick={() => {
                 setIsOpen(false)
@@ -122,7 +130,7 @@ export function Menu({ isOpen, setIsOpen }) {
               }}
             >
               <Text type="subheader" color="black" classList={['Menu-link']}>
-                Logout
+                🚪&nbsp;&nbsp;Logout
               </Text>
             </li>
           </ul>

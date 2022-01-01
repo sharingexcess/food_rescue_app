@@ -104,3 +104,7 @@ textarea:read-only,
 *:disabled {
   cursor: not-allowed;
 }
+
+input[type='checkbox'] {
+  cursor: pointer;
+}

@@ -1,28 +1,21 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth, useFirestore } from 'hooks'
-import { generateDriverStats, generateGreeting } from './utils'
+import { useAuth } from 'hooks'
+import { generateGreeting } from './utils'
 import { Landing, NewDriver } from 'components'
-import { Card, Text } from '@sharingexcess/designsystem'
+import { Card, Spacer, Text } from '@sharingexcess/designsystem'
+import { Emoji } from 'react-apple-emojis'
 
 export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin, permission } = useAuth()
-  const my_routes = useFirestore(
-    'routes',
-    useCallback(r => r.driver_id === user.uid && r.status === 9, []) // eslint-disable-line
-  )
-  const my_deliveries = useFirestore(
-    'deliveries',
-    useCallback(d => d.driver_id === user.uid && d.status === 9, []) // eslint-disable-line
-  )
-  const stats = generateDriverStats(my_routes, my_deliveries)
 
   function Tile({ name, icon, link }) {
     return (
       <Link to={link}>
         <Card classList={['Home-tile']}>
-          <div className="Home-tile-icon">{icon}</div>
+          {/* <div className="Home-tile-icon">{icon}</div> */}
+          <Emoji name={icon} />
           <Text type="paragraph" color="black" align="center" bold>
             {name}
           </Text>
@@ -34,10 +27,10 @@ export function Home() {
   function DriverTiles() {
     return (
       <>
-        <Tile name="Routes" icon="🚛" link="/routes" />
-        <Tile name="History" icon="⌛" link="/history" />
-        <Tile name="Contact" icon="🤔" link="/contact" />
-        <Tile name="Profile" icon="💁‍♀️" link="/profile" />
+        <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
+        <Tile name="Your Stats" icon="bar-chart" link="/stats" />
+        <Tile name="Profile" icon="woman-tipping-hand" link="/profile" />
+        <Tile name="Help" icon="person-raising-hand" link="/contact" />
       </>
     )
   }
@@ -46,34 +39,23 @@ export function Home() {
     if (!admin) return null
     return (
       <>
-        <Tile name="Routes" icon="🚛" link="/routes" />
-        <Tile name="History" icon="⌛" link="/history" />
-        <Tile name="New Route" icon="➕" link="/admin/create-route" />
+        <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
+        <Tile name="Schedule Rescue" icon="plus" link="/admin/create-rescue" />
+        <Tile name="Log Rescue" icon="writing-hand" link="admin/log-rescue" />
+        <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
+        {/* <Tile name="Analytics" icon="bar-chart" link="/admin/analytics" /> */}
+        <Tile name="Users" icon="family" link="/admin/users" />
         <Tile
-          name="New Direct Donation"
-          icon="🏃"
-          link="admin/create-direct-donation"
-        />
-        <Tile name="Calendar" icon="🗓" link="/calendar" />
-        <Tile name="Analytics" icon="📊" link="/admin/analytics" />
-        <Tile
-          name="Manage Organizations"
-          icon="🏢"
+          name="Organizations"
+          icon="office-building"
           link="/admin/organizations"
         />
-        <Tile name="Manage Users" icon="👨‍👩‍👧‍👦" link="/admin/users" />
-        <Tile
-          name="Switch Environments"
-          icon="🔄"
-          link="/admin/switch-environment"
-        />
+        <Tile name="Help" icon="person-raising-hand" link="/contact" />
       </>
     )
   }
 
-  const header = user
-    ? generateGreeting(user.displayName, my_routes, my_deliveries)
-    : null
+  const header = user ? generateGreeting(user.displayName) : null
 
   return !user ? (
     <Landing />
@@ -84,12 +66,10 @@ export function Home() {
       <Text type="secondary-header" color="white" align="center" shadow>
         {header}
       </Text>
-      {stats ? (
-        <Text type="subheader" color="white" align="center" shadow>
-          <span>{stats.routes}</span> route{stats.routes === 1 ? '' : 's'}{' '}
-          driven, <span>{stats.weight}</span> lbs. rescued
-        </Text>
-      ) : null}
+      <Spacer height={4} />
+      <Text type="subheader" color="white" align="center" shadow>
+        Let's rescue some food today.
+      </Text>
       <section id="Tiles">{admin ? <AdminTiles /> : <DriverTiles />}</section>
     </main>
   )

@@ -1,21 +1,9 @@
 import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
-import {
-  createServerTimestamp,
-  getImageFromStorage,
-  isValidURL,
-  setFirestoreData,
-} from 'helpers'
+import { createTimestamp, formatPhoneNumber, setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
-import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useEffect, useState } from 'react'
 import { availability } from 'components/Profile/utils'
 import { Input } from 'components'
-
-export function handleUserIcon(icon, callback) {
-  if (icon && !isValidURL(icon)) {
-    getImageFromStorage(icon).then(url => callback(url))
-  }
-}
 
 export function UserPronouns({ profile }) {
   return (
@@ -46,7 +34,7 @@ export function UserPhone({ profile }) {
         <div>📱</div>
         <Spacer width={8} />
         <ExternalLink to={`tel:${profile.phone}`}>
-          {formatPhoneNumberIntl(profile.phone)}
+          {formatPhoneNumber(profile.phone)}
         </ExternalLink>
       </Text>
     )
@@ -101,17 +89,19 @@ export function UserEmail({ profile }) {
 
 export function UserAdminPermissions({ profile }) {
   const { user } = useAuth()
-  const [accessLevel, setAccessLevel] = useState(profile.access_level)
+  const [isAdmin, setIsAdmin] = useState(profile.is_admin)
+  const [isDriver, setIsDriver] = useState(profile.is_driver)
 
   useEffect(() => {
-    if (accessLevel !== profile.access_level) {
-      setFirestoreData(['Users', profile.id], {
-        access_level: accessLevel,
-        updated_at: createServerTimestamp(),
+    if (isDriver !== profile.is_driver || isAdmin !== profile.is_admin) {
+      setFirestoreData(['users', profile.id], {
+        is_admin: isAdmin,
+        is_driver: isDriver,
+        timestamps: { ...profile.timestamps, updated: createTimestamp() },
         granted_access_by: user.name,
       })
     }
-  }, [accessLevel]) // eslint-disable-line
+  }, [isAdmin, isDriver]) // eslint-disable-line
 
   if (user.uid === profile.id) {
     return (
@@ -122,24 +112,29 @@ export function UserAdminPermissions({ profile }) {
   } else
     return (
       <div id="AccessLevel">
-        <Text type="section-header" color="white" shadow>
+        <Text type="section-header" color="white" shadow align="center">
           Access Level
         </Text>
-        <Spacer height={8} />
-        <select
-          value={accessLevel}
-          onChange={e => setAccessLevel(e.target.value)}
-        >
-          <option value="none">No Access</option>
-          <option value="driver">Driver Access</option>
-          <option value="admin">Admin Access</option>
-        </select>
+        <Input
+          key="driver"
+          value={isDriver}
+          label="Driver"
+          type="checkbox"
+          onChange={e => setIsDriver(e.target.checked)}
+        />
+        <Input
+          key="admin"
+          value={isAdmin}
+          label="Admin"
+          type="checkbox"
+          onChange={e => setIsAdmin(e.target.checked)}
+        />
       </div>
     )
 }
 
 export function UserDriverAvailability({ profile }) {
-  return profile.driver_availability ? (
+  return (
     <div id="User-driver-availability">
       {availability.map(i => (
         <Input
@@ -147,13 +142,10 @@ export function UserDriverAvailability({ profile }) {
           element_id={i.element_id}
           label={i.label}
           type="checkbox"
-          value={profile.driver_availability[i.data_id]}
+          value={profile[i.element_id]}
+          onChange={() => {}} // do nothing
         />
       ))}
     </div>
-  ) : (
-    <Text color="white" shadow>
-      This user has not filled out their availability.
-    </Text>
   )
 }

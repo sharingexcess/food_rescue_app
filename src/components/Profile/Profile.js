@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useAuth, useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import validator from 'validator'
-import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
 import { Button, Image, Spacer, Text } from '@sharingexcess/designsystem'
-import { setFirestoreData } from 'helpers'
+import {
+  createTimestamp,
+  removeSpecialCharacters,
+  setFirestoreData,
+} from 'helpers'
 import { availability } from './utils'
 import { useHistory } from 'react-router'
 
@@ -17,27 +19,25 @@ export function Profile() {
     name: '',
     phone: '',
     pronouns: '',
-    driver_availability: {
-      sun_am: false,
-      sun_pm: false,
-      mon_am: false,
-      mon_pm: false,
-      tue_am: false,
-      tue_pm: false,
-      wed_am: false,
-      wed_pm: false,
-      thu_am: false,
-      thu_pm: false,
-      fri_am: false,
-      fri_pm: false,
-      sat_am: false,
-      sat_pm: false,
-    },
+    available_sun_am: false,
+    available_sun_pm: false,
+    available_mon_am: false,
+    available_mon_pm: false,
+    available_tue_am: false,
+    available_tue_pm: false,
+    available_wed_am: false,
+    available_wed_pm: false,
+    available_thu_am: false,
+    available_thu_pm: false,
+    available_fri_am: false,
+    available_fri_pm: false,
+    available_sat_am: false,
+    available_sat_pm: false,
     vehicle_make_model: '',
-    drivers_license_number: '',
-    drivers_license_state: '',
-    drivers_insurance_policy_number: '',
-    drivers_insurance_provider: '',
+    license_number: '',
+    license_state: '',
+    insurance_policy_number: '',
+    insurance_provider: '',
   })
   const [button, setButton] = useState()
   const [error, setError] = useState()
@@ -47,30 +47,27 @@ export function Profile() {
     if (!button && !formData.name && profile && profile.name) {
       setFormData({
         name: profile.name,
-        phone: profile.phone || '',
+        phone: removeSpecialCharacters(profile.phone) || '',
         pronouns: profile.pronouns || '',
-        driver_availability: profile.driver_availability || {
-          sun_am: false,
-          sun_pm: false,
-          mon_am: false,
-          mon_pm: false,
-          tue_am: false,
-          tue_pm: false,
-          wed_am: false,
-          wed_pm: false,
-          thu_am: false,
-          thu_pm: false,
-          fri_am: false,
-          fri_pm: false,
-          sat_am: false,
-          sat_pm: false,
-        },
+        available_sun_am: false,
+        available_sun_pm: false,
+        available_mon_am: false,
+        available_mon_pm: false,
+        available_tue_am: false,
+        available_tue_pm: false,
+        available_wed_am: false,
+        available_wed_pm: false,
+        available_thu_am: false,
+        available_thu_pm: false,
+        available_fri_am: false,
+        available_fri_pm: false,
+        available_sat_am: false,
+        available_sat_pm: false,
         vehicle_make_model: profile.vehicle_make_model || '',
-        drivers_license_number: profile.drivers_license_number || '',
-        drivers_license_state: profile.drivers_license_state || '',
-        drivers_insurance_policy_number:
-          profile.drivers_insurance_policy_number || '',
-        drivers_insurance_provider: profile.drivers_insurance_provider || '',
+        license_number: profile.license_number || '',
+        license_state: profile.license_state || '',
+        insurance_policy_number: profile.insurance_policy_number || '',
+        insurance_provider: profile.insurance_provider || '',
       })
     }
   }, [profile, formData, button])
@@ -82,7 +79,7 @@ export function Profile() {
     ) {
       setError("Please enter your Profile's Name")
       return false
-    } else if (!formData.phone || !isPossiblePhoneNumber(formData.phone)) {
+    } else if (!formData.phone) {
       setError(
         'Your phone may contain invalid characters or missing some digits'
       )
@@ -92,33 +89,19 @@ export function Profile() {
   }
 
   function handleChange(e) {
-    if (e.target.id.includes('availability_')) {
-      setFormData({
-        ...formData,
-        driver_availability: {
-          ...formData.driver_availability,
-          [e.target.id.replace('availability_', '')]: e.target.checked,
-        },
-      })
-    } else {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
-      })
-    }
-    setButton('Update Profile')
-  }
-
-  function handlePhoneInputChange(changeValue) {
-    setFormData(prevData => {
-      return { ...prevData, phone: changeValue }
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
     })
     setButton('Update Profile')
   }
 
   function handleUpdate() {
     if (validateInformation()) {
-      setFirestoreData(['Users', user.id], formData)
+      setFirestoreData(['users', user.id], {
+        ...formData,
+        timestamp_updated: createTimestamp(),
+      })
         .then(() => {
           setButton('profile updated!')
           setTimeout(() => setButton(), 2000)
@@ -158,11 +141,11 @@ export function Profile() {
         value={formData.pronouns}
         onChange={handleChange}
       />
-      <PhoneInput
-        placeholder="Phone Number"
+      <Input
+        element_id="phone"
+        label="Phone Number"
         value={formData.phone}
-        onChange={handlePhoneInputChange}
-        defaultCountry="US"
+        onChange={handleChange}
       />
       <Spacer height={16} />
       <Text type="section-header" color="white" shadow>
@@ -176,7 +159,7 @@ export function Profile() {
             element_id={i.element_id}
             label={i.label}
             type="checkbox"
-            value={formData.driver_availability[i.data_id]}
+            value={formData[i.element_id]}
             onChange={handleChange}
           />
         ))}
@@ -188,27 +171,27 @@ export function Profile() {
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_license_state"
+        element_id="license_state"
         label="Driver's License State"
-        value={formData.drivers_license_state}
+        value={formData.license_state}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_license_number"
+        element_id="license_number"
         label="Driver's License Number"
-        value={formData.drivers_license_number}
+        value={formData.license_number}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_insurance_provider"
+        element_id="insurance_provider"
         label="Insurance Provider"
-        value={formData.drivers_insurance_provider}
+        value={formData.insurance_provider}
         onChange={handleChange}
       />
       <Input
-        element_id="drivers_insurance_policy_number"
+        element_id="insurance_policy_number"
         label="Insurance Policy Number"
-        value={formData.drivers_insurance_policy_number}
+        value={formData.insurance_policy_number}
         onChange={handleChange}
       />
       {button && (

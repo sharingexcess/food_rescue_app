@@ -49,6 +49,7 @@
 
   label {
     color: var(--se-grey-primary);
+    text-transform: capitalize;
     z-index: 2;
     font-size: 18px;
     font-weight: 600;
@@ -73,7 +74,8 @@
     border: 0;
     border-radius: 8px;
     background: var(--foreground);
-    padding: 10px 8px 0 8px;
+    padding: 12px 8px 0 12px;
+    text-transform: capitalize;
     font-size: 18px;
     font-weight: 600;
     color: var(--text);

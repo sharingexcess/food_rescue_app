@@ -10,7 +10,7 @@ export function DriverInfo() {
   const { user } = useAuth()
 
   function handleComplete() {
-    setFirestoreData(['Users', user.id], { completed_driver_info: true })
+    setFirestoreData(['users', user.id], { completed_driver_info: true })
     history.push('/')
   }
 

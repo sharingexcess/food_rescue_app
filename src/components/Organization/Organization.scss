@@ -1,77 +1,33 @@
 #Organization {
   @include page;
 
-  .wrapper {
-    width: 100%;
+  #Organization-icon {
+    width: 96px;
   }
 
-  #Organization-info {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+  #Organization-details {
+    text-transform: capitalize;
+  }
 
-    @include mobile {
-      flex-direction: column;
-    }
-
-    img {
-      width: 148px;
-      height: 148px;
-      flex-shrink: 0;
-      background: var(--white);
-      padding: 4px;
-      border-radius: 50%;
-      object-fit: contain;
-      margin-right: 24px;
-      box-shadow: var(--se-shadow-medium);
-
-      @include mobile {
-        align-self: flex-start;
-        margin-bottom: 16px;
-      }
-    }
-
-    #Organization-info-text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      div {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-      }
-    }
+  #Organization-locations {
     a {
-      text-decoration: underline;
-    }
-  }
-
-  h4 {
-    margin-top: 48px;
-  }
-
-  #NoLocations {
-    width: 100%;
-    padding: 32px 16px 8px 16px;
-    text-align: center;
-  }
-
-  .Organization-location {
-    margin: 8px 0;
-
-    .primary {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      color: var(--yellow);
+      width: 100%;
     }
 
-    .philabundance {
-      position: absolute;
-      top: 36px;
-      right: 12px;
-      color: var(--yellow);
+    .Organization-location {
+      margin: 8px 0;
+
+      .Organization-location-header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        font-size: 16px;
+
+        .Organization-philabundance {
+          margin-left: auto;
+          height: 16px;
+        }
+      }
     }
   }
 }

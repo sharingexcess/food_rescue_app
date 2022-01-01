@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import UserIcon from 'assets/user.svg'
-import { getImageFromStorage, isValidURL } from 'helpers'
 import { Input, Loading } from 'components'
 import { useFirestore } from 'hooks'
 import { Card, Spacer, Text } from '@sharingexcess/designsystem'
-
-const user_icon_urls = {}
+import { Emoji } from 'react-apple-emojis'
 
 export function Users() {
   const users = useFirestore('users')
@@ -14,20 +12,6 @@ export function Users() {
   const [showAdmin, setShowAdmin] = useState(true)
   const [showDriver, setShowDriver] = useState(true)
   const [showNoAccess, setShowNoAccess] = useState(false)
-  const [, updated] = useState() // use this as a way to force re-render by calling a setState function
-
-  useEffect(() => {
-    async function updateImageSrc(user) {
-      if (user.icon && !isValidURL(user.icon)) {
-        const image = await getImageFromStorage(user.icon)
-        user_icon_urls[user.id] = image
-        updated(image)
-      }
-    }
-    for (const user of users) {
-      user.icon && updateImageSrc(user)
-    }
-  }, [users])
 
   function handleSearch(e) {
     setSearch(e.target.value)
@@ -58,14 +42,12 @@ export function Users() {
   ]
 
   function filterByPermissions(array) {
-    const filteredByAdmin = !showAdmin
-      ? array.filter(i => i.access_level !== 'admin')
-      : array
+    const filteredByAdmin = !showAdmin ? array.filter(i => !i.is_admin) : array
     const filteredByDriver = !showDriver
-      ? filteredByAdmin.filter(i => i.access_level !== 'driver')
+      ? filteredByAdmin.filter(i => !i.is_driver || i.is_admin)
       : filteredByAdmin
     const filteredByNoAccess = !showNoAccess
-      ? filteredByDriver.filter(i => i.access_level !== 'none')
+      ? filteredByDriver.filter(i => i.is_driver || i.is_admin)
       : filteredByDriver
     return filteredByNoAccess
   }
@@ -117,21 +99,26 @@ export function Users() {
         <Link key={user.id} className="wrapper" to={`/admin/users/${user.id}`}>
           <Card classList={['User']}>
             <img
-              src={user_icon_urls[user.id] || user.icon || UserIcon}
+              className="User-icon"
+              src={user.icon || UserIcon}
               alt={user.name}
             />
             <div>
               <Text type="section-header" color="black">
                 {user.name}
               </Text>
-              <Text type="paragraph" color="blue">
+              <Text type="small" color="blue">
                 {user.email}
               </Text>
             </div>
-            {user.access_level === 'admin' ? (
-              <i className="access-level fa fa-crown" />
-            ) : user.access_level === 'driver' ? (
-              <i className="access-level fa fa-truck" />
+            {user.is_admin ? (
+              <Emoji className="access-level" name="crown" size={32} />
+            ) : user.is_driver && !user.is_admin ? (
+              <Emoji
+                className="access-level"
+                name="articulated-lorry"
+                size={32}
+              />
             ) : null}
           </Card>
         </Link>

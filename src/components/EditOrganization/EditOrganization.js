@@ -1,49 +1,36 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import 'firebase/storage'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
-import UserIcon from 'assets/user.svg'
-import { handleOrgIcon, initializeFormData } from './utils'
-import { getCollection } from 'helpers'
-import validator from 'validator'
-import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
+import {
+  createTimestamp,
+  DONOR_TYPES,
+  generateUniqueId,
+  ORG_TYPES,
+  RECIPIENT_TYPES,
+  setFirestoreData,
+} from 'helpers'
 import { Input } from 'components'
 import { useFirestore } from 'hooks'
 import { Button } from '@sharingexcess/designsystem'
 
 export function EditOrganization() {
-  const { id } = useParams()
+  const { organization_id } = useParams()
   const history = useHistory()
   const [formData, setFormData] = useState({
     name: '',
-    default_contact_name: '',
-    default_contact_email: '',
-    default_contact_phone: '',
-    org_type: 'donor',
+    type: '',
+    subtype: '',
   })
-  const [org = {}] = useDocumentData(
-    id ? getCollection('Organizations').doc(id) : null
-  )
-  const locations = useFirestore('locations')
-  const [orgIconFullUrl, setOrgIconFullUrl] = useState()
-  const [file, setFile] = useState()
+  const org = useFirestore('organizations', organization_id)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   useEffect(() => {
-    if (org.name && !formData.name && isInitialLoad) {
+    if (org && org.name && !formData.name && isInitialLoad) {
       setIsInitialLoad(false)
-      initializeFormData(org, setFormData)
+      setFormData(formData => ({ ...formData, ...org }))
     }
   }, [org, formData, isInitialLoad])
-
-  useEffect(() => {
-    handleOrgIcon(org.icon, setOrgIconFullUrl)
-  }, [org.icon])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -51,35 +38,9 @@ export function EditOrganization() {
     setShowErrors(false)
   }
 
-  function handlePhoneInputChange(changeValue) {
-    setFormData(prevData => {
-      return { ...prevData, default_contact_phone: changeValue }
-    })
-    setErrors([])
-    setShowErrors(false)
-  }
-
   function validateFormData() {
     if (!formData.name) {
-      errors.push('Missing in form data: Network Name')
-    }
-    if (
-      !validator.isEmail(formData.default_contact_email) &&
-      !!formData.default_contact_email &&
-      formData.org_type !== 'community fridge' &&
-      formData.org_type !== 'warehouse' &&
-      formData.org_type !== 'home delivery'
-    ) {
-      errors.push('Invalid Data Input: Contact Email is invalid')
-    }
-    if (
-      formData.org_type !== 'warehouse' &&
-      formData.org_type !== 'home delivery' &&
-      formData.org_type !== 'community fridge' &&
-      (!formData.default_contact_phone ||
-        !isPossiblePhoneNumber(formData.default_contact_phone))
-    ) {
-      errors.push('Invalid Data Input: Contact Phone Number is invalid')
+      errors.push('Missing in form data: Organization Name')
     }
     if (errors.length === 0) {
       return true
@@ -89,61 +50,31 @@ export function EditOrganization() {
 
   async function handleSubmit() {
     if (validateFormData()) {
-      const org_id = id || (await generateOrgId(formData.name))
-      if (org_id) {
-        const icon = await handleFileUpload(org_id)
-        getCollection('Organizations')
-          .doc(org_id)
-          .set(
-            { ...formData, id: org_id, icon: icon || org.icon || null },
-            { merge: true }
-          )
-          .then(() => history.push(`/admin/organizations/${org_id}`))
-          .catch(e => console.error('Error writing document: ', e))
+      try {
+        const org_id =
+          organization_id || (await generateUniqueId('organizations'))
+        await setFirestoreData(['organizations', org_id], {
+          id: org_id,
+          name: formData.name,
+          type: formData.type,
+          subtype: formData.subtype,
+          timestamp_created: org.timestamp_created || createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        })
+        history.push(`/admin/organizations/${org_id}`)
+      } catch (e) {
+        console.error('Error writing document: ', e)
       }
     }
   }
 
   async function handleDelete() {
     if (window.confirm(`Are you sure you want to delete ${org.name}?`)) {
-      const org_id = id
-      const org_locations = locations.filter(l => l.org_id === org_id)
-      for (const loc of org_locations) {
-        await getCollection('Locations').doc(loc.id).delete()
-      }
-      getCollection('Organizations')
-        .doc(org_id)
-        .delete()
-        .then(() => history.push(`/admin/organizations`))
-        .catch(e => console.error('Error writing document: ', e))
+      await setFirestoreData(['organizations', organization_id], {
+        is_deleted: true,
+      })
+      history.push('/admin/organizations')
     }
-  }
-
-  async function generateOrgId(name) {
-    const uniq_id = name.replace(/[^A-Z0-9]/gi, '_').toLowerCase()
-    const exists = await getCollection('Organizations')
-      .doc(uniq_id)
-      .get()
-      .then(res => res.data())
-    if (exists) {
-      alert(
-        'An organization with this name already exists, please use a different name.'
-      )
-      return null
-    } else return uniq_id
-  }
-
-  function handleFileChange(e) {
-    setFile(e.target.files[0])
-  }
-
-  async function handleFileUpload(org_id = id) {
-    if (file) {
-      const ref = firebase.storage().ref()
-      const path = `/Organizations/${org_id}/assets/${file.name}`
-      await ref.child(path).put(file, { contentType: file.type })
-      return path
-    } else return null
   }
 
   function FormError() {
@@ -154,56 +85,42 @@ export function EditOrganization() {
 
   return (
     <main id="EditOrganization">
-      <section>
-        <img
-          src={file ? URL.createObjectURL(file) : orgIconFullUrl || UserIcon}
-          alt="org_icon"
-        />
-        <input type="file" onChange={handleFileChange} accept="image/*" />
-      </section>
       <Input
         type="text"
-        label="Network Name"
+        label="Organization Name"
         element_id="name"
         value={formData.name}
         onChange={handleChange}
       />
       <Input
-        type="text"
-        label="Contact Name"
-        element_id="default_contact_name"
-        value={formData.default_contact_name}
-        onChange={handleChange}
-      />
-      <Input
-        type="email"
-        label="Contact Email"
-        element_id="default_contact_email"
-        value={formData.default_contact_email}
-        onChange={handleChange}
-      />
-      <PhoneInput
-        placeholder="Phone Number"
-        value={formData.default_contact_phone}
-        onChange={handlePhoneInputChange}
-        defaultCountry="US"
-      />
-      <Input
         type="select"
-        label="Network Type"
-        element_id="org_type"
-        value={formData.org_type}
-        suggestions={[
-          'donor',
-          'recipient',
-          'community fridge',
-          'warehouse',
-          'home delivery',
-        ]}
+        label="Organization Type"
+        element_id="type"
+        value={formData.type}
+        suggestions={ORG_TYPES}
         onSuggestionClick={handleChange}
       />
+      {formData.type ? (
+        <Input
+          type="select"
+          label={`${formData.type} Type`}
+          element_id="subtype"
+          value={formData.subtype}
+          suggestions={
+            formData.type === 'donor'
+              ? Object.values(DONOR_TYPES)
+              : Object.values(RECIPIENT_TYPES)
+          }
+          onSuggestionClick={handleChange}
+        />
+      ) : null}
       <FormError />
       <div id="EditOrganization-buttons">
+        {organization_id && (
+          <Button type="secondary" color="white" handler={handleDelete}>
+            Delete Organization
+          </Button>
+        )}
         <Button
           type="primary"
           color="white"
@@ -212,13 +129,8 @@ export function EditOrganization() {
             setShowErrors(true)
           }}
         >
-          {id ? 'Update Organization' : 'Create Organization'}
+          {organization_id ? 'Update Organization' : 'Create Organization'}
         </Button>
-        {id && (
-          <Button type="secondary" color="white" handler={handleDelete}>
-            Delete Organization
-          </Button>
-        )}
       </div>
     </main>
   )

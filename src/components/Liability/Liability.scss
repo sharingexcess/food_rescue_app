@@ -1,10 +1,9 @@
 #Liability {
   @include page;
-
-  #Liability-buttons {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+  li {
+    margin-left: 20px;
+    list-style-type: disc;
+    color: white;
   }
 
   .se-button {
@@ -16,10 +15,6 @@
     }
   }
 
-  #Liability-file-upload {
-    display: none;
-  }
-
   @include mobile {
     flex-direction: column;
     .se-button {
@@ -27,12 +22,4 @@
       align-items: center;
     }
   }
-}
-
-#Liability-pdf {
-  width: 64%;
-  max-width: 400px;
-  border: none;
-  height: 100%;
-  box-shadow: var(--se-shadow-large);
 }

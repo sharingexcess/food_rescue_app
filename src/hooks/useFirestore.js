@@ -22,5 +22,7 @@ export const useFirestore = (collection, filter) => {
     }
   }, [data[collection], filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return filtered
+  if (!collection) {
+    return data
+  } else return filtered
 }

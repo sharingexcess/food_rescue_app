@@ -12,8 +12,10 @@ export function EnvWarning() {
         className={expanded ? 'expanded' : null}
         onClick={() => setExpanded(!expanded)}
       >
-        <div>!</div>
-        <Text type="small" color="white" shadow>
+        <Text type="section-header" color="white" shadow>
+          !
+        </Text>
+        <Text type="small" color="white" shadow align="center">
           You are currently in the development environment. This is not real
           data!
         </Text>

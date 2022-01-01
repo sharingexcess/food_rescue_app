@@ -10,7 +10,9 @@ export function Tutorial() {
   const { user } = useAuth()
 
   function handleComplete() {
-    setFirestoreData(['Users', user.id], { completed_app_tutorial: true })
+    setFirestoreData(['users', user.id], {
+      completed_app_tutorial: true,
+    })
     history.push('/')
   }
 

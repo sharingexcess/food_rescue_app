@@ -1,39 +1,41 @@
 import React from 'react'
 import { Button, Modal as ModalWrapper } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
+import { AddToCategory, PickupReportInstructions } from 'components'
 import {
-  CancelRoute,
-  CancelStop,
-  ContactAdmin,
-  DropRoute,
-  FinishRoute,
-  RouteMenu,
+  DropRescue,
+  FinishRescue,
+  RescueMenu,
   StopMenu,
-} from 'components/Route/Route.children'
-import { PickupReportInstructions } from 'components/PickupReportInstructions/PickupReportInstructions'
-import { Caluculator } from 'components'
+  ContactAdmin,
+  CancelStop,
+  CancelRescue,
+  AddRescueNotes,
+} from 'components/Rescue/Rescue.children'
 
 export function Modal() {
   const { modal, setModal } = useApp()
 
   const renderContent = () => {
     switch (modal) {
-      case 'RouteMenu':
-        return <RouteMenu />
+      case 'RescueMenu':
+        return <RescueMenu />
       case 'StopMenu':
         return <StopMenu />
-      case 'DropRoute':
-        return <DropRoute />
-      case 'CancelRoute':
-        return <CancelRoute />
-      case 'FinishRoute':
-        return <FinishRoute />
+      case 'DropRescue':
+        return <DropRescue />
+      case 'CancelRescue':
+        return <CancelRescue />
+      case 'FinishRescue':
+        return <FinishRescue />
       case 'CancelStop':
         return <CancelStop />
       case 'ContactAdmin':
         return <ContactAdmin />
-      case 'Calculator':
-        return <Caluculator />
+      case 'AddToCategory':
+        return <AddToCategory />
+      case 'AddRescueNotes':
+        return <AddRescueNotes />
       case 'PickupReportInstructions':
         return <PickupReportInstructions />
       default:
@@ -47,7 +49,7 @@ export function Modal() {
     <ModalWrapper id="Modal" close={close}>
       {renderContent()}
       <Button
-        id="Route-modal-close"
+        id="Rescue-modal-close"
         type="tertiary"
         color="black"
         size="large"

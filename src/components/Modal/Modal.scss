@@ -1,15 +1,18 @@
 #Modal {
-  #Route-modal-close {
+  #Rescue-modal-close {
     position: absolute;
     top: 12px;
     right: 12px;
   }
 
-  #RouteMenu,
+  #RescueMenu,
   #StopMenu {
     text-transform: capitalize;
     li {
-      margin: 8px 0;
+      margin: 16px 0;
+      button {
+        font-size: 14px;
+      }
     }
   }
 }
