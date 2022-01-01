@@ -31,6 +31,7 @@
   @include desktop {
     top: 112px;
     left: 32px;
+    padding: 16px;
     height: calc(100vh - 144px);
     border-radius: 8px;
     box-shadow: var(--se-shadow-large);

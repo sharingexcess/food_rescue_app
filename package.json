@@ -15,7 +15,6 @@
     "google-map-react": "^2.1.9",
     "moment": "^2.29.1",
     "nanoid": "^3.1.30",
-    "node-sass": "^4.14.1",
     "react": "^17.0.1",
     "react-apexcharts": "^1.3.9",
     "react-apple-emojis": "^2.1.1",
@@ -24,6 +23,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
     "recharts": "^2.1.6",
+    "sass": "^1.45.2",
     "validator": "^13.5.2"
   },
   "scripts": {
