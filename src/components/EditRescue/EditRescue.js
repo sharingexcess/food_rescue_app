@@ -128,7 +128,6 @@ export function EditRescue() {
           await deleteFirestoreData(['stops', stop.id])
         }
       }
-
       const event = await updateGoogleCalendarEvent(formData)
 
       if (!event.id) {

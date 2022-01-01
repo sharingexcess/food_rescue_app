@@ -1,3 +1,4 @@
+import { formatTimestamp } from 'helpers'
 import moment from 'moment'
 
 export function updateFieldSuggestions(
@@ -80,10 +81,15 @@ export const fetchExistingRescueData = async (rescue_id, rescues) => {
     driver: Object.keys(rescue.driver).length ? rescue.driver : null,
     handler_id: rescue.handler_id,
     handler_name: rescue.driver.name || null,
-    timestamp_scheduled_start: rescue.timestamp_scheduled_start,
-    timestamp_scheduled_finish: rescue.timestamp_scheduled_finish,
+    timestamp_scheduled_start: formatTimestamp(
+      rescue.timestamp_scheduled_start,
+      'yyyy-MM-DDTHH:mm'
+    ),
+    timestamp_scheduled_finish: formatTimestamp(
+      rescue.timestamp_scheduled_finish,
+      'yyyy-MM-DDTHH:mm'
+    ),
     stops: rescue.stops,
-    timestamp_created: rescue.timestamp_created,
     status: rescue.status,
   }
   return rescue_data

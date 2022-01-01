@@ -1,5 +1,5 @@
 import { Spacer, Text } from '@sharingexcess/designsystem'
-import { STATUSES } from 'helpers'
+import { ORG_SUBTYPES, STATUSES } from 'helpers'
 import { useAuth, useFirestore } from 'hooks'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { PoundsByMonthChart } from './PoundsByMonthChart'
@@ -13,19 +13,30 @@ export function DriverStats() {
     'stops',
     useCallback(
       i =>
-        i.handler_id === user.id &&
-        // i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && (Use Jacob's ID for testing)
+        // i.handler_id === user.id &&
+        i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && // (Use Jacob's ID for testing)
         i.status === STATUSES.COMPLETED,
       [user]
     )
   )
+  const organizations = useFirestore('organizations')
+
+  const filteredByHolding = useMemo(
+    () =>
+      driver_stops.filter(i => {
+        const org = organizations.find(o => i.organization_id === o.id)
+        return org.subtype !== ORG_SUBTYPES.HOLDING
+      }),
+    [organizations, driver_stops]
+  )
+
   const driver_pickups = useMemo(
-    () => driver_stops.filter(i => i.type === 'pickup'),
-    [driver_stops]
+    () => filteredByHolding.filter(i => i.type === 'pickup'),
+    [filteredByHolding]
   )
   const driver_deliveries = useMemo(
-    () => driver_stops.filter(i => i.type === 'delivery'),
-    [driver_stops]
+    () => filteredByHolding.filter(i => i.type === 'delivery'),
+    [filteredByHolding]
   )
 
   useEffect(() => loadAllData(), []) // eslint-disable-line

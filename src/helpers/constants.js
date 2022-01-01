@@ -50,6 +50,18 @@ export const ORG_TYPE_ICONS = {
 
 export const ORG_TYPES = ['donor', 'recipient']
 
+export const ORG_SUBTYPES = {
+  RETAIL: 'retail',
+  WHOLESALE: 'wholesale',
+  FOOD_BANK: 'food_bank',
+  AGENCY: 'agency',
+  HOME_DELIVERY: 'home_delivery',
+  COMMUNITY_FRIDGE: 'community_fridge',
+  POPUP: 'popup',
+  HOLDING: 'holding',
+  OTHER: 'other',
+}
+
 export const STATUSES = {
   CANCELLED: 'cancelled',
   SCHEDULED: 'scheduled',

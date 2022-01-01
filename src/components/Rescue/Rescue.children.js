@@ -27,6 +27,8 @@ import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
 import { Emoji } from 'react-apple-emojis'
 import { useEffect } from 'react/cjs/react.development'
+import PickupIcon from 'assets/pickup.png'
+import DeliveryIcon from 'assets/delivery.png'
 
 export function RescueHeader() {
   const { setModal } = useApp()
@@ -482,7 +484,17 @@ export function Stop({ stops, s, i }) {
             isActiveStop ? (s.type === 'pickup' ? 'green' : 'red') : 'white'
           }
         >
-          {s.type === 'delivery' ? 'DELIVERY' : 'PICKUP'}
+          {s.type === 'delivery' ? (
+            <>
+              <Image src={DeliveryIcon} />
+              DELIVERY
+            </>
+          ) : (
+            <>
+              <Image src={PickupIcon} />
+              PICKUP
+            </>
+          )}
         </Text>
         {!isCompletedStop && (
           <Button

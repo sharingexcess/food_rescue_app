@@ -62,6 +62,13 @@
 
         .small-header {
           font-weight: 500;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          .se-image {
+            width: 16px;
+            margin-right: 8px;
+          }
           &.red,
           &.green {
             font-weight: 700;
