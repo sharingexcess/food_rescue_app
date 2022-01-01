@@ -9,7 +9,10 @@
   #StopMenu {
     text-transform: capitalize;
     li {
-      margin: 8px 0;
+      margin: 16px 0;
+      button {
+        font-size: 14px;
+      }
     }
   }
 }

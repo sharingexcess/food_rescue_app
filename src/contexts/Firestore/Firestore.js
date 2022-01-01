@@ -39,9 +39,13 @@ function Firestore({ children }) {
       const full_data = []
       for (const rescue of rescues_raw) {
         const r = { ...rescue, stops: [] }
+        console.log(r)
         const rescue_stops = stops.filter(i => i.rescue_id === r.id)
         for (const s of r.stop_ids) {
+          console.log('looking at', r.id, 'stop', s)
+          console.log(stops, rescue_stops)
           const stop = rescue_stops.find(i => i.id === s) || {}
+          console.log('stop is', stop)
           stop.organization =
             organizations.find(o => o.id === stop.organization_id) || {}
           stop.location = locations.find(l => l.id === stop.location_id) || {}

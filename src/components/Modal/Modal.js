@@ -10,6 +10,7 @@ import {
   ContactAdmin,
   CancelStop,
   CancelRescue,
+  AddRescueNotes,
 } from 'components/Rescue/Rescue.children'
 
 export function Modal() {
@@ -33,6 +34,8 @@ export function Modal() {
         return <ContactAdmin />
       case 'AddToCategory':
         return <AddToCategory />
+      case 'AddRescueNotes':
+        return <AddRescueNotes />
       case 'PickupReportInstructions':
         return <PickupReportInstructions />
       default:

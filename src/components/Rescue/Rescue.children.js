@@ -26,6 +26,7 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
 import { Emoji } from 'react-apple-emojis'
+import { useEffect } from 'react/cjs/react.development'
 
 export function RescueHeader() {
   const { setModal } = useApp()
@@ -97,15 +98,13 @@ export function RescueMenu() {
       </Text>
       <Spacer height={8} />
       <ul>
+        <li>
+          <RescueOption modalName="AddRescueNotes" name="Add Notes to Rescue" />
+        </li>
         {user.id === rescue.handler_id || admin ? (
-          <>
-            <li>
-              <RescueOption
-                modalName="FinishRescue"
-                name="Force Finish Rescue"
-              />
-            </li>
-          </>
+          <li>
+            <RescueOption modalName="FinishRescue" name="Force Finish Rescue" />
+          </li>
         ) : null}
 
         {user.id === rescue.handler_id ? (
@@ -324,6 +323,58 @@ export function FinishRescue() {
         handler={handleFinish}
       >
         Confirm Finish Rescue
+      </Button>
+    </>
+  )
+}
+
+export function AddRescueNotes() {
+  const { setModal } = useApp()
+  const { rescue_id } = useParams()
+  const rescue = useFirestore('rescues', rescue_id)
+  const [notes, setNotes] = useState('')
+
+  useEffect(() => {
+    if (rescue && rescue.notes) {
+      setNotes(rescue.notes)
+    }
+  }, [rescue])
+
+  async function handleAddNotes() {
+    await setFirestoreData(['rescues', rescue.id], {
+      notes,
+    })
+    setModal()
+  }
+
+  return (
+    <>
+      <Text type="secondary-header" color="black">
+        Add Notes
+      </Text>
+      <Spacer height={4} />
+      <Button
+        type="tertiary"
+        color="blue"
+        handler={() => setModal('RescueMenu')}
+      >
+        &lt; Back to Rescue Options
+      </Button>
+      <Input
+        label="Rescue notes..."
+        animation={false}
+        type="textarea"
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+      />
+      <Button
+        type="primary"
+        color="green"
+        size="large"
+        fullWidth
+        handler={handleAddNotes}
+      >
+        Submit
       </Button>
     </>
   )
@@ -829,6 +880,8 @@ export function BackupDelivery() {
             handler_id: rescue.handler_id,
             timestamp_created: createTimestamp(),
             timestamp_updated: createTimestamp(),
+            timestamp_scheduled_start: rescue.timestamp_scheduled_start,
+            timestamp_scheduled_finish: rescue.timestamp_scheduled_finish,
             timestamp_logged_start: null,
             timestamp_logged_finish: null,
             status: STATUSES.SCHEDULED,
