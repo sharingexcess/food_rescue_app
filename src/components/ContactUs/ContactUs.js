@@ -48,7 +48,11 @@ export function ContactUs() {
       <Text type="paragraph" color="white" shadow>
         For immediate support, call Hannah at&nbsp;
         <ExternalLink to="tel:1-833-742-7397">1 (833) 742-7397</ExternalLink>
-        .&nbsp; Use the form below to submit any feedback to improve the app.
+        .&nbsp; Use the form below to submit any feedback to improve the app, or
+        feel free to shoot us an email at{' '}
+        <ExternalLink to="mailto:tech@sharingexcess.com">
+          tech@sharingexcess.com
+        </ExternalLink>
       </Text>
       <Spacer height={24} />
       <form onSubmit={handleSubmit}>

@@ -24,11 +24,3 @@ export function generateGreeting(name) {
     ? `${prefix}, ${formattedName} ${suffix}`
     : `${prefix} ${suffix}`
 }
-
-export function generateDriverStats(my_rescues, my_deliveries) {
-  const rescues = my_rescues.length
-  const weight = my_deliveries
-    .map(d => d.impact_data_total_weight)
-    .reduce((a, b) => a + b, 0)
-  return { rescues, weight }
-}

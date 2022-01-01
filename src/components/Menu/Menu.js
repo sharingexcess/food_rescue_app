@@ -95,7 +95,7 @@ export function Menu({ isOpen, setIsOpen }) {
             {permission ? (
               <>
                 <MenuLink label="🚛&nbsp;&nbsp;Rescues" url="/rescues" />
-                <MenuLink label="🗓&nbsp;&nbsp;Calendar" url="/calendar" />
+                <MenuLink label="📊&nbsp;&nbsp;Your Stats" url="/stats" />
               </>
             ) : null}
             {admin && (

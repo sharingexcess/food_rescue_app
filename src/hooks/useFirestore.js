@@ -3,9 +3,6 @@ import { useContext, useEffect, useState } from 'react'
 
 export const useFirestore = (collection, filter) => {
   const data = useContext(FirestoreContext)
-  if (!collection) {
-    return data
-  }
   const [filtered, setFiltered] = useState(
     !filter || Array.isArray(filter) || typeof filter === 'function' ? [] : null
   )
@@ -25,5 +22,7 @@ export const useFirestore = (collection, filter) => {
     }
   }, [data[collection], filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return filtered
+  if (!collection) {
+    return data
+  } else return filtered
 }

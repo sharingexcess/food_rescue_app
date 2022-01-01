@@ -1,6 +1,6 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { getCollection } from 'helpers'
+import { FIRST_RESCUE_IN_DB, getCollection } from 'helpers'
 import moment from 'moment'
 
 const FirestoreContext = createContext()
@@ -79,8 +79,18 @@ function Firestore({ children }) {
 
   const loadedAllData = useMemo(() => {
     // no data exists before 2018
-    return limit < new Date('2018-1-1')
-  }, [limit])
+    // we check to see that the limit is before 2018,
+    // and that the oldest known rescue in the DB
+    // has in fact been loaded
+    if (
+      limit < new Date('2018-1-1') &&
+      rescues &&
+      rescues.length &&
+      rescues.find(r => r.id === FIRST_RESCUE_IN_DB)
+    ) {
+      return true
+    } else return false
+  }, [limit, rescues])
 
   return (
     <FirestoreContext.Provider

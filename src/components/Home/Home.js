@@ -1,33 +1,14 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth, useFirestore } from 'hooks'
-import { generateDriverStats, generateGreeting } from './utils'
+import { useAuth } from 'hooks'
+import { generateGreeting } from './utils'
 import { Landing, NewDriver } from 'components'
-import { Card, Text } from '@sharingexcess/designsystem'
-import { STATUSES } from 'helpers'
+import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
 
 export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
   const { user, admin, permission } = useAuth()
-  const my_rescues = useFirestore(
-    'rescues',
-    useCallback(
-      r => r.handler_id === user.uid && r.status === STATUSES.COMPLETED,
-      [user]
-    ) // eslint-disable-line
-  )
-  const my_deliveries = useFirestore(
-    'stops',
-    useCallback(
-      i =>
-        i.type === 'delivery' &&
-        i.handler_id === user.uid &&
-        i.status === STATUSES.COMPLETED,
-      [user]
-    ) // eslint-disable-line
-  )
-  const stats = generateDriverStats(my_rescues, my_deliveries)
 
   function Tile({ name, icon, link }) {
     return (
@@ -47,7 +28,7 @@ export function Home() {
     return (
       <>
         <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
-        <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
+        <Tile name="Your Stats" icon="bar-chart" link="/stats" />
         <Tile name="Profile" icon="woman-tipping-hand" link="/profile" />
         <Tile name="Help" icon="person-raising-hand" link="/contact" />
       </>
@@ -74,9 +55,7 @@ export function Home() {
     )
   }
 
-  const header = user
-    ? generateGreeting(user.displayName, my_rescues, my_deliveries)
-    : null
+  const header = user ? generateGreeting(user.displayName) : null
 
   return !user ? (
     <Landing />
@@ -87,12 +66,10 @@ export function Home() {
       <Text type="secondary-header" color="white" align="center" shadow>
         {header}
       </Text>
-      {stats ? (
-        <Text type="subheader" color="white" align="center" shadow>
-          <span>{stats.rescues}</span> rescue{stats.rescues === 1 ? '' : 's'}{' '}
-          driven, <span>{stats.weight}</span> lbs. rescued
-        </Text>
-      ) : null}
+      <Spacer height={4} />
+      <Text type="subheader" color="white" align="center" shadow>
+        Let's rescue some food today.
+      </Text>
       <section id="Tiles">{admin ? <AdminTiles /> : <DriverTiles />}</section>
     </main>
   )

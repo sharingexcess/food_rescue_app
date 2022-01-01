@@ -34,6 +34,7 @@ import {
   SwitchEnv,
   Modal,
   EnvWarning,
+  DriverStats,
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -173,6 +174,9 @@ function RescueAppRoutes() {
                   </DriverRoute>
                   <DriverRoute exact path="/rescues/:rescue_id/completed">
                     <CompletedRescue />
+                  </DriverRoute>
+                  <DriverRoute exact path="/stats">
+                    <DriverStats />
                   </DriverRoute>
 
                   {/* Admin Routes */}

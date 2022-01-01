@@ -80,3 +80,5 @@ export const CLOUD_FUNCTION_URLS = {
   deleteCalendarEvent:
     process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'deleteCalendarEvent',
 }
+
+export const FIRST_RESCUE_IN_DB = 'evan_ehlers_2021_01_07t17_00'

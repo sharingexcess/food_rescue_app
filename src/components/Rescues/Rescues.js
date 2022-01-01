@@ -12,11 +12,12 @@ import {
   Text,
 } from '@sharingexcess/designsystem'
 import { formatTimestamp, STATUSES } from 'helpers'
+import { Emoji } from 'react-apple-emojis'
 
 export function Rescues() {
   const history = useHistory()
   const { user, admin } = useAuth()
-  const { loadMoreData, loadedAllData } = useFirestore()
+  const { loadMoreData, loadAllData, loadedAllData } = useFirestore()
   const location = useLocation()
   const rescues = useFirestore('rescues')
   const deliveries = useFirestore(
@@ -105,6 +106,10 @@ export function Rescues() {
     setLoadingMore(true)
     loadMoreData()
   }
+  function handleLoadAll() {
+    setLoadingMore(true)
+    loadAllData()
+  }
 
   function handleSearchByDriver(e) {
     setSearchByDriver(e.target.value)
@@ -126,11 +131,25 @@ export function Rescues() {
           .filter(r => ['scheduled', 'active'].includes(r.status))
           .sort(byDate)
       case 'past':
-        return rescues
-          .filter(r => ['completed', 'cancelled'].includes(r.status))
-          .sort(byDate)
+        return admin
+          ? rescues
+              .filter(r => ['completed', 'cancelled'].includes(r.status))
+              .sort(byDate)
+          : rescues
+              .filter(
+                r =>
+                  ['completed', 'cancelled'].includes(r.status) &&
+                  r.handler_id === user.uid
+              )
+              .sort(byDate)
       case 'mine':
-        return rescues.filter(r => r.handler_id === user.uid).sort(byDate)
+        return rescues
+          .filter(
+            r =>
+              r.handler_id === user.uid &&
+              [STATUSES.SCHEDULED, STATUSES.ACTIVE].includes(r.status)
+          )
+          .sort(byDate)
       case 'unassigned':
         return rescues.filter(r => !r.handler_id).sort(byDate)
       case 'driver':
@@ -281,10 +300,10 @@ export function Rescues() {
           {admin === true ? (
             <>
               <option value="active">Active Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
-              <option value="past">Past Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
             </>
           ) : null}
           <option value="mine">My Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
+          <option value="past">Past Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
           <option value="unassigned">
             Available Rescues&nbsp;&nbsp;&nbsp;⬇️
           </option>
@@ -327,30 +346,37 @@ export function Rescues() {
         />
       ) : null}
       {!rescues.length ? (
-        <Loading text="Loading rescues" />
+        <>
+          <Spacer height={64} />
+          <Loading text="Loading rescues" relative />
+        </>
       ) : !filterAndSortRescues(rescues).length ? (
         <div className="no-routes">
-          <div className="icon">🤷‍♀️</div>
+          <Emoji className="icon" name="woman-shrugging" />
+          <Spacer height={16} />
           <Text type="secondary-header" color="white" shadow align="center">
             No rescues found!
           </Text>
-          <Spacer height={8} />
+          <Spacer height={4} />
           <Text color="white" shadow align="center">
-            We looked through the database and came up with...
-            <br />
-            well, nothin.
+            You might need to load older rescues.
           </Text>
         </div>
       ) : (
         filterAndSortRescues(rescues).map(r => <RescueCard key={r.id} r={r} />)
       )}
-      <FlexContainer direction="vertical">
-        <Spacer height={16} />
+      <Spacer height={32} />
+      <FlexContainer primaryAlign="space-around">
+        {!(loadingMore || loadedAllData) && (
+          <Button type="secondary" handler={handleLoadAll}>
+            Load All Rescues
+          </Button>
+        )}
         <Button
           handler={handleLoadMore}
           disabled={loadingMore || loadedAllData}
         >
-          Load{loadingMore && 'ing'} Older Rescues
+          Load{loadingMore ? 'ing' : ' More'} Rescues
           {loadingMore && <Ellipsis />}
         </Button>
       </FlexContainer>
