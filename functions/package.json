@@ -16,7 +16,9 @@
   "dependencies": {
     "firebase-admin": "^9.4.2",
     "firebase-functions": "^3.13.0",
-    "googleapis": "^67.0.0"
+    "googleapis": "^67.0.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
