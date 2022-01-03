@@ -18,49 +18,24 @@
   }
 
   .InputSection {
-    display: flex;
-    margin-left: 5%;
-    width: 95%;
     .Input {
-      input {
-        background: none;
-        height: 100%;
-        position: absolute;
-        border: 0;
-        border-radius: 8px;
-        background: var(--foreground);
-        padding: 28px 8px 16px 12px;
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text);
-        width: 95%;
-        z-index: 1;
-        transition: border 0.1s ease;
-        -webkit-appearance: none;
-      }
-    }
-  }
-  .header {
-    .se-text {
-      margin-left: 5%;
+      width: calc(50% - 8px);
+      margin: 0 0 16px 0;
     }
   }
 
-  .pounds {
-    .se-text {
-      text-align: center;
-    }
+  #PoundsInDateRange-pounds {
+    width: auto;
   }
 
   .details {
-    .se-text {
-      margin-left: 5%;
-    }
+    flex-shrink: 1;
+    width: auto;
   }
 
-  .graph {
-    background: var(--se-grey-light);
+  .PoundsInDateRange-graph {
+    background: var(--se-white);
     border-radius: 8px;
-    margin: 20px;
+    box-shadow: var(--se-shadow-medium);
   }
 }

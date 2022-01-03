@@ -110,15 +110,11 @@ export const RECIPIENT_TYPES = {
   OTHER: 'other',
 }
 
-export const FOOD_FAIR_MARKET_VALUES = {
-  bakery: 2.14,
-  dairy: 1.42,
-  'meat/Fish': 2.77,
-  'mixed groceries': 1.62,
-  'non-perishable': 2.13,
-  'prepared/Frozen': 2.17,
-  produce: 1.13,
-  other: 1.62,
+export const CLOUD_FUNCTION_URLS = {
+  addCalendarEvent:
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'addCalendarEvent',
+  deleteCalendarEvent:
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'deleteCalendarEvent',
 }
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
@@ -139,19 +135,13 @@ export const MONTHS = [
   'December',
 ]
 
-export const COLORS = ['#216810', '#4EA528', '#9DA1A4']
-
-export const FORECASTED_VALUES = [
-  122500.64,
-  142511.77,
-  165791.81,
-  192874.78,
-  224381.9,
-  261035.87,
-  303677.45,
-  353284.77,
-  410995.7,
-  478134.02,
-  556239.74,
-  647104.44,
+export const COLORS = [
+  '#205a08',
+  '#307e0e',
+  '#4ea528',
+  '#6bcf3f',
+  '#8af55c',
+  '#b8ff9a',
 ]
+
+export const EMISSIONS_COEFFICIENT = 3.66

@@ -1,5 +1,9 @@
 import moment from 'moment'
-import { FOOD_CATEGORIES, GOOGLE_MAPS_URL, SERVER_URL } from './constants'
+import {
+  CLOUD_FUNCTION_URLS,
+  FOOD_CATEGORIES,
+  GOOGLE_MAPS_URL,
+} from './constants'
 import { setFirestoreData } from './firebase'
 
 export function removeSpecialCharacters(str) {
@@ -71,7 +75,7 @@ export async function updateGoogleCalendarEvent(data) {
     attendees: [data.driver ? { email: data.driver.email } : ''],
   }
   if (data.google_calendar_event_id) {
-    await fetch(`${SERVER_URL}deleteCalendarEvent`, {
+    await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
       method: 'POST',
       body: JSON.stringify({
         calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
@@ -80,7 +84,7 @@ export async function updateGoogleCalendarEvent(data) {
     }).catch(e => console.error('Error deleting original event:', e))
   }
 
-  const event = await fetch(`${SERVER_URL}addCalendarEvent`, {
+  const event = await fetch(CLOUD_FUNCTION_URLS.addCalendarEvent, {
     method: 'POST',
     body: JSON.stringify(resource),
   })
