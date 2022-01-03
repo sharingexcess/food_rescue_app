@@ -14,7 +14,7 @@ export function prettyPrintDbFieldName(field_name = '') {
   return field_name.replace('_', ' ')
 }
 
-export function formatLargeNumber(num, digits = 3) {
+export function shortenLargeNumber(num, digits = 3) {
   const lookup = [
     { value: 1, symbol: '' },
     { value: 1e3, symbol: 'k' },
@@ -141,4 +141,13 @@ export async function updateImpactDataForRescue(rescue) {
     }
     res()
   })
+}
+
+export function formatLargeNumber(x) {
+  const parts = x.toString().split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  if (parts[1] && parts[1].length > 2) {
+    parts[1] = parts[1].substring(0, 2)
+  }
+  return parts.join('.')
 }

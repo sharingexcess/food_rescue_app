@@ -38,16 +38,26 @@ export const FOOD_CATEGORIES = [
   'impact_data_other',
 ]
 
-export const ORG_TYPE_ICONS = {
-  retail: 'department-store',
-  wholesale: 'package',
-  holding: 'palms-up-together',
-  other: 'red-question-mark',
-  food_bank: 'red-apple',
-  agency: 'briefcase',
-  popup: 'person-raising-hand',
-  community_fridge: 'cityscape',
-  home_delivery: 'house',
+export const RETAIL_VALUES = {
+  impact_data_dairy: 1.28,
+  impact_data_bakery: 2.36,
+  impact_data_produce: 1.57,
+  impact_data_meat_fish: 4.4,
+  impact_data_non_perishable: 3.19,
+  impact_data_prepared_frozen: 4.13,
+  impact_data_mixed: 2.31,
+  impact_data_other: 2.31,
+}
+
+export const FAIR_MARKET_VALUES = {
+  impact_data_dairy: 1.42,
+  impact_data_bakery: 2.14,
+  impact_data_produce: 1.13,
+  impact_data_meat_fish: 2.77,
+  impact_data_non_perishable: 2.13,
+  impact_data_prepared_frozen: 2.17,
+  impact_data_mixed: 1.62,
+  impact_data_other: 1.62,
 }
 
 export const ORG_TYPES = ['donor', 'recipient']
@@ -62,6 +72,18 @@ export const ORG_SUBTYPES = {
   POPUP: 'popup',
   HOLDING: 'holding',
   OTHER: 'other',
+}
+
+export const ORG_TYPE_ICONS = {
+  retail: 'department-store',
+  wholesale: 'package',
+  holding: 'palms-up-together',
+  other: 'red-question-mark',
+  food_bank: 'red-apple',
+  agency: 'briefcase',
+  popup: 'person-raising-hand',
+  community_fridge: 'cityscape',
+  home_delivery: 'house',
 }
 
 export const STATUSES = {
