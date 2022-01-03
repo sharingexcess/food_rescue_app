@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useAuth, useFirestore, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
+import { VERSION } from 'helpers'
 
 export function Menu({ isOpen, setIsOpen }) {
   const { pathname } = useLocation()
@@ -73,9 +74,9 @@ export function Menu({ isOpen, setIsOpen }) {
             <AdminIndicator />
           </div>
         </Link>
-        {isMobile ? null : (
+        {isMobile ? (
           <i id="Close" className="fa fa-times" onClick={closeMenu} />
-        )}
+        ) : null}
       </div>
     ) : (
       <button className="login" onClick={handleLogin}>
@@ -136,10 +137,13 @@ export function Menu({ isOpen, setIsOpen }) {
           </ul>
         </div>
         <nav>
+          <ExternalLink to="https://github.com/sharingexcess/rescue">
+            v{VERSION}
+          </ExternalLink>
           <ExternalLink to="/privacy">privacy policy</ExternalLink>
           <ExternalLink to="/tos">terms of service</ExternalLink>
         </nav>
-      </aside>{' '}
+      </aside>
     </>
   ) : null
 }

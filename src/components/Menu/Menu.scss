@@ -167,12 +167,13 @@
     margin-top: auto;
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     padding: 8px 4px;
     a {
       font-size: 12px;
       color: var(--blue);
+      width: auto;
     }
   }
 }
