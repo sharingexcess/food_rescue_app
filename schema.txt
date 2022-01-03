@@ -94,18 +94,18 @@ user {
   license_number
   license_state
   vehicle_make_model
-  available_sun_am
-  available_sun_pm
-  available_mon_am
-  available_mon_pm
-  available_tue_am
-  available_tue_pm
-  available_wed_am
-  available_wed_pm
-  available_thu_am
-  available_thu_pm
-  available_fri_am
-  available_fri_pm
-  available_sat_am
-  available_sat_pm
+  availability_sun_am
+  availability_sun_pm
+  availability_mon_am
+  availability_mon_pm
+  availability_tue_am
+  availability_tue_pm
+  availability_wed_am
+  availability_wed_pm
+  availability_thu_am
+  availability_thu_pm
+  availability_fri_am
+  availability_fri_pm
+  availability_sat_am
+  availability_sat_pm
 }

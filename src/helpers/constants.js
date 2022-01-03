@@ -2,6 +2,8 @@ import moment from 'moment'
 
 // all exports should be of type 'const' with an all caps var name separated by underscores
 
+export const VERSION = process.env.REACT_APP_VERSION
+
 export const FIREBASE_CONFIG = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,

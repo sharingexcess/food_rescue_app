@@ -38,16 +38,18 @@ import {
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
-import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV } from 'helpers'
+import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import { EmojiProvider } from 'react-apple-emojis'
 import emojiData from 'react-apple-emojis/lib/data.json'
 import './styles/index.scss'
 
+console.log(process.env.REACT_APP_VERSION)
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,
   integrations: [new Integrations.BrowserTracing()],
   env: SENTRY_ENV,
+  release: VERSION,
 })
 
 // This function call connects us to Firebase and initializes all of our API access

@@ -14,12 +14,11 @@ export function NewDriver() {
         user.name &&
         user.phone &&
         user.pronouns &&
-        user.availability &&
-        user.driver_info.vehicle_make_model &&
-        user.driver_info.license_number &&
-        user.driver_info.license_state &&
-        user.driver_info.insurance_policy_number &&
-        user.driver_info.insurance_provider,
+        user.vehicle_make_model &&
+        user.license_number &&
+        user.license_state &&
+        user.insurance_policy_number &&
+        user.insurance_provider,
     },
     {
       name: 'Liability Release',
@@ -48,8 +47,6 @@ export function NewDriver() {
         {user.name &&
         user.phone &&
         user.pronouns &&
-        user.availability &&
-        user.vehicle_make_model &&
         user.license_number &&
         user.license_state &&
         user.insurance_policy_number &&
