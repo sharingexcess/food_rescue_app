@@ -8,7 +8,7 @@ import {
   STATUSES,
   updateImpactDataForRescue,
 } from 'helpers'
-import { useFirestore, useAuth, useApp } from 'hooks'
+import { useFirestore, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
 
@@ -16,7 +16,6 @@ export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
   const rescue = useFirestore('rescues', rescue_id)
-  const { admin } = useAuth()
   const history = useHistory()
   const pickup = useFirestore('stops', pickup_id)
   const [formData, setFormData] = useState({
@@ -38,7 +37,7 @@ export function PickupReport({ customSubmitHandler }) {
           ),
           impact_data_total_weight: pickup.impact_data_total_weight,
         }))
-      : setChanged(true)
+      : setChanged(true) // if this is a new report, display submit button immediately
   }, [pickup])
 
   useEffect(() => {
@@ -47,8 +46,6 @@ export function PickupReport({ customSubmitHandler }) {
       impact_data_total_weight: sumWeight(formData),
     }))
   }, [errors])
-
-  const canEdit = (pickup && [1, 3, 6].includes(pickup.status)) || admin
 
   function openAddToCategory(field) {
     setModal('AddToCategory')
@@ -189,7 +186,6 @@ export function PickupReport({ customSubmitHandler }) {
                 type="number"
                 value={formData[field] === 0 ? '' : formData[field]}
                 onChange={handleChange}
-                readOnly={!canEdit}
               />
               <Button
                 type="primary"
@@ -221,10 +217,9 @@ export function PickupReport({ customSubmitHandler }) {
         row={3}
         value={formData.notes}
         onChange={handleChange}
-        readOnly={!canEdit}
       />
       <FormError />
-      {changed && canEdit ? (
+      {changed ? (
         <Button
           type="primary"
           color="white"
