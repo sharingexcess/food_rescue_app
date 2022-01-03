@@ -12,7 +12,7 @@ export function allFoodDelivered(stops) {
         : (finalWeight -= stop.impact_data_total_weight)
     }
   }
-  return finalWeight === 0
+  return finalWeight < stops.length // allow a rounding error of up to 1 for each stop, equaling stops.length
 }
 
 export function areAllStopsCompleted(stops) {

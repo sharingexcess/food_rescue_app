@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   createTimestamp,
@@ -22,6 +22,22 @@ export function DeliveryReport() {
   const [changed, setChanged] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const { admin } = useAuth()
+
+  const currentLoad = useMemo(() => {
+    let weight = 0
+    if (rescue) {
+      for (const stop of rescue.stops) {
+        if (stop.type === 'pickup') {
+          weight += stop.impact_data_total_weight || 0
+        } else if (stop.id === delivery_id) {
+          break
+        } else {
+          weight -= stop.impact_data_total_weight || 0
+        }
+      }
+    }
+    return weight
+  }, [rescue, delivery_id])
 
   useEffect(() => {
     if (rescue && delivery.status === STATUSES.COMPLETED && submitted) {
@@ -81,7 +97,7 @@ export function DeliveryReport() {
   return (
     <main id="DeliveryReport">
       <Text type="section-header" color="white" align="center" shadow>
-        How much of your current load are you delivering?
+        How much of your current load ({currentLoad} lbs.) are you delivering?
       </Text>
       <Spacer height={64} />
       <Text type="primary-header" color="white" align="center" shadow>
