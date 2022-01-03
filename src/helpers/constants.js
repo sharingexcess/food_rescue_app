@@ -119,3 +119,29 @@ export const CLOUD_FUNCTION_URLS = {
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
 export const DEFAULT_DB_LIMIT = moment().subtract(7, 'days').toDate()
+
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
+export const COLORS = [
+  '#205a08',
+  '#307e0e',
+  '#4ea528',
+  '#6bcf3f',
+  '#8af55c',
+  '#b8ff9a',
+]
+
+export const EMISSIONS_COEFFICIENT = 3.66
