@@ -23,11 +23,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
     "recharts": "^2.1.6",
-<<<<<<< HEAD
     "sass": "^1.45.2",
-=======
-    "simple-react-calculator": "^0.2.1",
->>>>>>> 08b1523... Pounds In Date Range Progress
     "validator": "^13.5.2"
   },
   "scripts": {

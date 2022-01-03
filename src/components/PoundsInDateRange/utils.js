@@ -2,11 +2,15 @@ import moment from 'moment'
 
 export function getDefaultRangeStart() {
   return moment(new Date())
-    .startOf('hour')
-    .subtract(2, 'weeks')
+    .subtract(1, 'month')
+    .startOf('month')
     .format('yyyy-MM-DDTkk:mm')
+    .replace('24:00', '00:00')
 }
 
 export function getDefaultRangeEnd() {
-  return moment(new Date()).startOf('hour').format('yyyy-MM-DDTkk:mm')
+  return moment(new Date())
+    .startOf('month')
+    .format('yyyy-MM-DDTkk:mm')
+    .replace('24:00', '00:00')
 }

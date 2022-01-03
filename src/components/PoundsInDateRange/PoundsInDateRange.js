@@ -1,5 +1,5 @@
 import { Text } from '@sharingexcess/designsystem'
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect, useMemo } from 'react'
 import { getDefaultRangeStart, getDefaultRangeEnd } from './utils'
 import {
   BarChart,
@@ -12,202 +12,123 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { useFirestore } from 'hooks'
-import { calculateCategoryRatios, formatLargeNumber } from 'helpers'
-
-const categories = [
-  'bakery',
-  'dairy',
-  'meat/Fish',
-  'mixed groceries',
-  'non-perishable',
-  'prepared/Frozen',
-  'produce',
-  'other',
-]
-const retailValues = {
-  bakery: 2.36,
-  dairy: 1.28,
-  'meat/Fish': 4.4,
-  'mixed groceries': 2.31,
-  'non-perishable': 3.19,
-  'prepared/Frozen': 4.13,
-  produce: 1.57,
-  other: 2.31,
-}
-const fairMarketValues = {
-  bakery: 2.14,
-  dairy: 1.42,
-  'meat/Fish': 2.77,
-  'mixed groceries': 1.62,
-  'non-perishable': 2.13,
-  'prepared/Frozen': 2.17,
-  produce: 1.13,
-  other: 1.62,
-}
+import {
+  FAIR_MARKET_VALUES,
+  FOOD_CATEGORIES,
+  formatLargeNumber,
+  RETAIL_VALUES,
+  shortenLargeNumber,
+  STATUSES,
+} from 'helpers'
+import { Loading } from 'components'
 
 export function PoundsInDateRange() {
+  const { loadedAllData } = useFirestore()
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [retailValue, setRetailValue] = useState(0)
   const [fairMarketValue, setFairMarketValue] = useState(0)
-  const [poundsInRange, setPoundsInRange] = useState(0)
-  const [categoryRatios, setCategoryRatios] = useState(0)
-
-  const routesOriginal = useFirestore(
-    'routes',
-    useCallback(r => r.status === 9, [])
-  )
-  const [routes, setRoutes] = useState(routesOriginal)
+  const [categoryTotals, setCategoryTotals] = useState({})
 
   const deliveries = useFirestore(
-    'deliveries',
-    useCallback(delivery => delivery.status === 9 && delivery.report, [])
-  )
-
-  const pickups = useFirestore(
-    'pickups',
-    useCallback(pickup => pickup.status === 9 && pickup.report, [])
-  )
-
-  useEffect(() => {
-    if (rangeStart && rangeEnd) {
-      setRoutes(
-        routesOriginal.filter(
-          r =>
-            new Date(r.time_start) > new Date(rangeStart) &&
-            new Date(r.time_start) < new Date(rangeEnd)
+    'stops',
+    useCallback(
+      s => {
+        return (
+          s.type === 'delivery' &&
+          s.status === STATUSES.COMPLETED &&
+          s.timestamp_scheduled_start.toDate() > new Date(rangeStart) &&
+          s.timestamp_scheduled_start.toDate() < new Date(rangeEnd)
         )
-      )
-    } else {
-      setRoutes(routesOriginal)
-    }
-  }, [routesOriginal, rangeStart, rangeEnd])
+      },
+      [rangeStart, rangeEnd]
+    )
+  )
 
-  useEffect(() => {
-    function generatePoundsInRange() {
-      let total_weight = 0
-      routes.forEach(r => {
-        deliveries.forEach(d => {
-          if (d.route_id === r.id) {
-            total_weight += d.report.weight
-          }
-        })
-      })
-      return total_weight
-    }
-
-    if (deliveries.length) {
-      setPoundsInRange(generatePoundsInRange())
-    }
-  }, [routes, deliveries, poundsInRange, categoryRatios])
-
-  useEffect(() => {
-    if (pickups.length) {
-      setCategoryRatios(calculateCategoryRatios(pickups))
-    }
-  }, [pickups])
+  const poundsInRange = useMemo(() => {
+    let total_weight = 0
+    deliveries.forEach(d => {
+      total_weight += d.impact_data_total_weight
+    })
+    return total_weight
+  }, [deliveries])
 
   useEffect(() => {
     let totalRetail = 0
     let totalFairMarket = 0
-    for (const category of categories) {
-      const categoryWeight = poundsInRange * categoryRatios[category]
-      const categoryRetailValue = categoryWeight * retailValues[category]
+    const categoryTotals = {}
+    for (const category of FOOD_CATEGORIES) {
+      const categoryWeight = deliveries.reduce(
+        (total, curr) => total + (curr[category] || 0),
+        0
+      )
+      categoryTotals[category] = categoryWeight
+      const categoryRetailValue = categoryWeight * RETAIL_VALUES[category]
       const categoryFairMarketValue =
-        categoryWeight * fairMarketValues[category]
+        categoryWeight * FAIR_MARKET_VALUES[category]
       totalRetail += categoryRetailValue
       totalFairMarket += categoryFairMarketValue
     }
     setRetailValue(totalRetail)
     setFairMarketValue(totalFairMarket)
-  }, [poundsInRange, categoryRatios])
-
-  function findTotalWeight(a, type, i) {
-    if (i <= 0) return 0
-    return findTotalWeight(a, type, i - 1) + a[i - 1].report[type]
-  }
-
-  const bakeryTotal = findTotalWeight(pickups, 'bakery', pickups.length)
-
-  const dairyTotal = findTotalWeight(pickups, 'dairy', pickups.length)
-
-  const meatTotal = findTotalWeight(pickups, 'meat/Fish', pickups.length)
-  const mixedGroceriesTotal = findTotalWeight(
-    pickups,
-    'mixed Groceries',
-    pickups.length
-  )
-  const nonPerishablesTotal = findTotalWeight(
-    pickups,
-    'non-perishable',
-    pickups.length
-  )
-
-  const preparedTotal = findTotalWeight(
-    pickups,
-    'prepared/Frozen',
-    pickups.length
-  )
-  // pickups.reduce((total, p) => total + p.report.produce, 0)
-  const produceTotal = findTotalWeight(pickups, 'produce', pickups.length)
-
-  const otherTotal = findTotalWeight(pickups, 'other', pickups.length)
+    setCategoryTotals(categoryTotals)
+  }, [deliveries])
 
   const graphData = [
     {
       name: 'Produce',
-      value: produceTotal,
+      value: categoryTotals.impact_data_produce,
     },
     {
       name: 'Bakery',
-      value: bakeryTotal,
+      value: categoryTotals.impact_data_bakery,
     },
     {
       name: 'Meat',
-      value: meatTotal,
+      value: categoryTotals.impact_data_meat_fish,
     },
     {
       name: 'Mixed',
-      value: mixedGroceriesTotal,
+      value: categoryTotals.impact_data_mixed,
     },
     {
       name: 'Prepared',
-      value: preparedTotal,
+      value: categoryTotals.impact_data_prepared_frozen,
     },
     {
       name: 'Dairy',
-      value: dairyTotal,
+      value: categoryTotals.impact_data_dairy,
     },
     {
-      name: 'Non-persihable ',
-      value: nonPerishablesTotal,
+      name: 'NP',
+      value: categoryTotals.impact_data_non_perishable,
     },
     {
       name: 'Other',
-      value: otherTotal,
+      value: categoryTotals.impact_data_other,
     },
   ]
 
-  return (
+  return loadedAllData ? (
     <main id="PoundsInDateRange">
-      <div class="canvas">
-        <div class="header">
+      <div className="canvas">
+        <div className="header">
           <Text type="paragraph" color="black">
-            Pounds In Date Range ...
+            Pounds In Date Range
           </Text>
         </div>
 
-        <div class="InputSection">
-          <div class="Input">
-            <label class="focused">From...</label>
+        <div className="InputSection">
+          <div className="Input">
+            <label className="focused">From...</label>
             <input
               type="datetime-local"
               value={rangeStart}
               onChange={e => setRangeStart(e.target.value)}
             ></input>
           </div>
-          <div class="Input">
-            <label class="focused">To...</label>
+          <div className="Input">
+            <label className="focused">To...</label>
             <input
               type="datetime-local"
               value={rangeEnd}
@@ -215,12 +136,12 @@ export function PoundsInDateRange() {
             ></input>
           </div>
         </div>
-        <div class="pounds">
+        <div className="pounds">
           <Text type="secondary-header" color="green">
             {formatLargeNumber(poundsInRange)} lbs.
           </Text>
         </div>
-        <div class="details">
+        <div className="details">
           <Text type="small">
             {formatLargeNumber(poundsInRange * 3.66)} lbs. &nbsp; Emmisions
             Reduced in Pounds
@@ -236,7 +157,7 @@ export function PoundsInDateRange() {
             &nbsp; Fair Market Value
           </Text>
         </div>
-        <div class="graph">
+        <div className="graph">
           <ResponsiveContainer width="95%" height={300}>
             <BarChart
               width={300}
@@ -246,7 +167,7 @@ export function PoundsInDateRange() {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" scaleToFit={true} interval={0} />
-              <YAxis />
+              <YAxis tickFormatter={num => shortenLargeNumber(num)} />
               <Tooltip />
               <Legend />
               <Bar dataKey="value" fill="var(--primary)" barSize={30} />
@@ -255,5 +176,7 @@ export function PoundsInDateRange() {
         </div>
       </div>
     </main>
+  ) : (
+    <Loading relative text="Loading analytics data" />
   )
 }

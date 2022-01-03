@@ -1,6 +1,6 @@
 import { Text } from '@sharingexcess/designsystem'
 import { Loading } from 'components'
-import { formatLargeNumber, formatTimestamp } from 'helpers'
+import { shortenLargeNumber, formatTimestamp } from 'helpers'
 import { useFirestore, useIsMobile } from 'hooks'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -54,7 +54,7 @@ export function PoundsByMonthChart({ stops }) {
         <BarChart data={poundsByMonth}>
           <Bar dataKey="weight" fill="#E2CF45" radius={[4, 4, 0, 0]} />
           <XAxis dataKey="name" stroke="#fff" />
-          <YAxis stroke="#fff" tickFormatter={num => formatLargeNumber(num)} />
+          <YAxis stroke="#fff" tickFormatter={num => shortenLargeNumber(num)} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff44' }} />
         </BarChart>
       </ResponsiveContainer>
