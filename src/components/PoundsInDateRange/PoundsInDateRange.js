@@ -168,7 +168,7 @@ export function PoundsInDateRange() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" scaleToFit={true} interval={0} />
               <YAxis tickFormatter={num => shortenLargeNumber(num)} />
-              <Tooltip />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar dataKey="value" fill="var(--primary)" barSize={30} />
             </BarChart>
@@ -179,4 +179,22 @@ export function PoundsInDateRange() {
   ) : (
     <Loading relative text="Loading analytics data" />
   )
+}
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload
+    return (
+      <div className="Analytics-tooltip">
+        <Text type="paragraph" align="center" color="green">
+          {data.name}
+        </Text>
+        <Text type="small" align="center">
+          {data.value.toLocaleString()} lbs. rescued
+        </Text>
+      </div>
+    )
+  }
+
+  return null
 }

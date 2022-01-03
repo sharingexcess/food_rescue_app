@@ -14,7 +14,6 @@ export function Home() {
     return (
       <Link to={link}>
         <Card classList={['Home-tile']}>
-          {/* <div className="Home-tile-icon">{icon}</div> */}
           <Emoji name={icon} />
           <Text type="paragraph" color="black" align="center" bold>
             {name}
@@ -43,7 +42,11 @@ export function Home() {
         <Tile name="Schedule Rescue" icon="plus" link="/admin/create-rescue" />
         <Tile name="Log Rescue" icon="writing-hand" link="admin/log-rescue" />
         <Tile name="Calendar" icon="spiral-calendar" link="/calendar" />
-        {/* <Tile name="Analytics" icon="bar-chart" link="/admin/analytics" /> */}
+        <Tile
+          name="Analytics"
+          icon="chart-increasing"
+          link="/admin/analytics"
+        />
         <Tile name="Users" icon="family" link="/admin/users" />
         <Tile
           name="Organizations"
