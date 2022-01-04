@@ -44,8 +44,7 @@ stop {
   timestamp_scheduled_finish: timestamp - the date and time the rescue is scheduled to end
 }
 
-## organization 
-{
+organization {
  id: string - unique id of the organization
  name: string - the name of the organization
  type: string - describes if the organization is a donor or recipient
