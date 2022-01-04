@@ -1,117 +1,113 @@
-# Food Rescue App Database Schema
+Food Rescue App Database Schema
 
-## rescue 
-{
-- id: string - unique id of rescue
-- handler_id: string - id of the driver assigned to the rescue
-- google_calendar_event_id: string - id of google calendar event
-- stop_ids: array of strings - each string is an id of every stop made in the rescue
-- is_direct_link: boolean - tells if rescue is a direct link
-- status: string - describes status of current rescue (cancelled, scheduled, active, completed)
-- notes: string - notes the driver leaves while completing the rescue
-- timestamp_created: timestamp - the date and time the rescue was created
-- timestamp_updated: timestamp - the date and time when the rescue was last updated
-- timestamp_logged_start: timestamp - the date and time the driver began the rescue
-- timestamp_logged_finish: timestamp - the date and time the driver finished the rescue
-- timestamp_scheduled_start: timestamp - the date and time the rescue is scheduled to start
-- timestamp_scheduled_finish: timestamp - the date and time the rescue is scheduled to finish
+rescue {
+  id: string - unique id of rescue
+  handler_id: string - id of the driver assigned to the rescue
+  google_calendar_event_id: string - id of google calendar event
+  stop_ids: array of strings - each string is an id of every stop made in the rescue
+  is_direct_link: boolean - tells if rescue is a direct link
+  status: string - describes status of current rescue (cancelled, scheduled, active, completed)
+  notes: string - notes the driver leaves while completing the rescue
+  timestamp_created: timestamp - the date and time the rescue was created
+  timestamp_updated: timestamp - the date and time when the rescue was last updated
+  timestamp_logged_start: timestamp - the date and time the driver began the rescue
+  timestamp_logged_finish: timestamp - the date and time the driver finished the rescue
+  timestamp_scheduled_start: timestamp - the date and time the rescue is scheduled to start
+  timestamp_scheduled_finish: timestamp - the date and time the rescue is scheduled to finish
 }
 
-## stop 
-{
- - id: string - unique id of stop
- - type: string - describes if it is pick up or delivery
- - handler_id: string - gives the unique id of person assigned to rescue
- - rescue_id: string - gives the unique id of rescue it is part of
- - organization_id: string - gives the name of the organization for the rescue
- - location_id: string -  gives the the address of the organization
- - status: string - tells the state of the rescue from scheduled to completed
- - notes: string - gives any information to be noted about stop
- - is_direct_link: boolean - tells if the stop is a direct link
- - percent_of_total_dropped: integer - describes how much food was dropped off
- - impact_data_dairy: integer - gives the weight of dairy in pounds
- - impact_data_bakery: integer - gives the weight of bakery in pounds
- - impact_data_produce: integer - gives the weight of produce in pounds
- - impact_data_meat_fish: integer - gives the weight of meat and/or fish in pounds
- - impact_data_non_perishable: integer - gives the weight of non perishable in pounds
- - impact_data_prepared_frozen: integer - gives the weight of prepared frozen rescues in pounds
- - impact_data_mixed: integer - gives the weight of mixed rescues in pounds
- - impact_data_other: integer - gives the weight of other rescues in pounds
- - impact_data_total_weight: integer - gives the weight of rescues in pounds
- - timestamp_created: timestamp - the date and time the rescue was created
- - timestamp_updated: timestamp - the date and time the rescue was last updated
- - timestamp_logged_start: timestamp - the date and time the driver begins rescue
- - timestamp_logged_finish: timestamp - the date and time the driver finished yhe the rescue
- - timestamp_scheduled_start: timestamp - the date and time the rescue is scheduled to start
- - timestamp_scheduled_finish: timestamp - the date and time the rescue is scheduled to end
+stop {
+  id: string - unique id of stop
+  type: string - describes if it is pick up or delivery
+  handler_id: string - gives the unique id of person assigned to rescue
+  rescue_id: string - gives the unique id of rescue it is part of
+  organization_id: string - gives the name of the organization for the rescue
+  location_id: string -  gives the the address of the organization
+  status: string - tells the state of the rescue from scheduled to completed
+  notes: string - gives any information to be noted about stop
+  is_direct_link: boolean - tells if the stop is a direct link
+  percent_of_total_dropped: integer - describes how much food was dropped off
+  impact_data_dairy: integer - gives the weight of dairy in pounds
+  impact_data_bakery: integer - gives the weight of bakery in pounds
+  impact_data_produce: integer - gives the weight of produce in pounds
+  impact_data_meat_fish: integer - gives the weight of meat and/or fish in pounds
+  impact_data_non_perishable: integer - gives the weight of non perishable in pounds
+  impact_data_prepared_frozen: integer - gives the weight of prepared frozen rescues in pounds
+  impact_data_mixed: integer - gives the weight of mixed rescues in pounds
+  impact_data_other: integer - gives the weight of other rescues in pounds
+  impact_data_total_weight: integer - gives the weight of rescues in pounds
+  timestamp_created: timestamp - the date and time the rescue was created
+  timestamp_updated: timestamp - the date and time the rescue was last updated
+  timestamp_logged_start: timestamp - the date and time the driver begins rescue
+  timestamp_logged_finish: timestamp - the date and time the driver finished yhe the rescue
+  timestamp_scheduled_start: timestamp - the date and time the rescue is scheduled to start
+  timestamp_scheduled_finish: timestamp - the date and time the rescue is scheduled to end
 }
 
 ## organization 
 {
-- id: string - unique id of the organization
-- name: string - the name of the organization
-- type: string - describes if the organization is a donor or recipient
-- subtype: string - describes the type of donor or recipient the organization is 
-- (donor: wholesale, retail ; recipient: food banks, agencies, home deliveries, popups, community fridges)
-- timestamp_created: timestamp - time and date the organization was created
-- timestamp_updated: timestamp - time and date the organization was last updated
-- is_deleted: boolean - tells if the organization was deleted
+ id: string - unique id of the organization
+ name: string - the name of the organization
+ type: string - describes if the organization is a donor or recipient
+ subtype: string - describes the type of donor or recipient the organization is 
+ (donor: wholesale, retail ; recipient: food banks, agencies, home deliveries, popups, community fridges)
+ timestamp_created: timestamp - time and date the organization was created
+ timestamp_updated: timestamp - time and date the organization was last updated
+ is_deleted: boolean - tells if the organization was deleted
 }
 
-## location 
-{
-- id: string - unique id of the location
-- nickname: string - description of the location
-- organization_id: string - name of the organization of the rescue
-- address1: string - first line of the address
-- address2: string -  second line of the address
-- city: string - the city where the location is
-- state: string - the state where the city is
-- zip: string - the zip code of the location
-- lat: integer - the latitude of the location
-- lng: integer - the longitude of the location
-- contact_name: string - the name of the contact person of the location
-- contact_email: string - the email of the contact person of the location
-- contact_phone: string - the phone number of the location
-- notes: string - any information to be noted about the location
-- timestamp_created: timestamp - the date and time the rescue was created
-- timestamp_updated: timestamp - the date and time the rescue was last updated
-- is_deleted: boolean - describes if the location was deleted
+location {
+  id: string - unique id of the location
+  nickname: string - description of the location
+  organization_id: string - name of the organization of the rescue
+  address1: string - first line of the address
+  address2: string -  second line of the address
+  city: string - the city where the location is
+  state: string - the state where the city is
+  zip: string - the zip code of the location
+  lat: integer - the latitude of the location
+  lng: integer - the longitude of the location
+  contact_name: string - the name of the contact person of the location
+  contact_email: string - the email of the contact person of the location
+  contact_phone: string - the phone number of the location
+  notes: string - any information to be noted about the location
+  timestamp_created: timestamp - the date and time the rescue was created
+  timestamp_updated: timestamp - the date and time the rescue was last updated
+  is_deleted: boolean - describes if the location was deleted
 }
 
-## user 
-{
-- id: string - unique id of user
-- is_driver: boolean - tells if user is a driver
-- is_admin: boolean - tells if user is an admin
-- name: string - the user's name
-- icon: string - a link of the user's icon
-- email: string - the user's email
-- phone: string - the user's phone number
-- pronouns: string - the user's pronouns
-- completed_app_tutorial: boolean - tells if the user completed the app tutorial
-- completed_food_safety: boolean - tells if the user completed the food safety
-- completed_liability_release: boolean - tells if the the user accepted the liability release
-- timestamp_created: timestamp - the date and time the user was created
-- timestamp_updated: timestamp - the date and time the user was last updated
-- timestamp_last_active: timestamp - the date and time the user was last active
-- insurance_policy_number: string - the user's insurance policy number
-- insurance_provider: string - the user's insurance provider
-- license_number: string - the user's license number
-- license_state: string - where the user got their license
-- vehicle_make_model: string - the users' vehicle make/model
-- availability_sun_am: boolean - tells if the user is available Sunday morning
-- availability_sun_pm: boolean - tells if the user is available Sunday afternoon
-- availability_mon_am: boolean - tells if the user is available Monday morning
-- availability_mon_pm: boolean - tells if the user is available Monday afternoon
-- availability_tue_am: boolean - tells if the user is available Tuesday morning
-- availability_tue_pm: boolean - tells if the user is available Tuesday afternoon
-- availability_wed_am: boolean - tells if the user is available Wednesday morning
-- availability_wed_pm: boolean - tells if the user is available Wednesday afternoon
-- availability_thu_am: boolean - tells if the user is available Thursday morning
-- availability_thu_pm: boolean - tells if the user is available Thursday afternoon
-- availability_fri_am: boolean - tells if the user is available Friday morning
-- availability_fri_pm: boolean - tells if the user is available Friday afternoon
-- availability_sat_am: boolean - tells if the user is available Saturday morning
-- availability_sat_pm: boolean - tells if the user is available Saturday afternoon
+user{
+  id: string - unique id of user
+  is_driver: boolean - tells if user is a driver
+  is_admin: boolean - tells if user is an admin
+  name: string - the user's name
+  icon: string - a link of the user's icon
+  email: string - the user's email
+  phone: string - the user's phone number
+  pronouns: string - the user's pronouns
+  completed_app_tutorial: boolean - tells if the user completed the app tutorial
+  completed_food_safety: boolean - tells if the user completed the food safety
+  completed_liability_release: boolean - tells if the the user accepted the liability release
+  timestamp_created: timestamp - the date and time the user was created
+  timestamp_updated: timestamp - the date and time the user was last updated
+  timestamp_last_active: timestamp - the date and time the user was last active
+  insurance_policy_number: string - the user's insurance policy number
+  insurance_provider: string - the user's insurance provider
+  license_number: string - the user's license number
+  license_state: string - where the user got their license
+  vehicle_make_model: string - the users' vehicle make/model
+  availability_sun_am: boolean - tells if the user is available Sunday morning
+  availability_sun_pm: boolean - tells if the user is available Sunday afternoon
+  availability_mon_am: boolean - tells if the user is available Monday morning
+  availability_mon_pm: boolean - tells if the user is available Monday afternoon
+  availability_tue_am: boolean - tells if the user is available Tuesday morning
+  availability_tue_pm: boolean - tells if the user is available Tuesday afternoon
+  availability_wed_am: boolean - tells if the user is available Wednesday morning
+  availability_wed_pm: boolean - tells if the user is available Wednesday afternoon
+  availability_thu_am: boolean - tells if the user is available Thursday morning
+  availability_thu_pm: boolean - tells if the user is available Thursday afternoon
+  availability_fri_am: boolean - tells if the user is available Friday morning
+  availability_fri_pm: boolean - tells if the user is available Friday afternoon
+  availability_sat_am: boolean - tells if the user is available Saturday morning
+  availability_sat_pm: boolean - tells if the user is available Saturday afternoon
 }
