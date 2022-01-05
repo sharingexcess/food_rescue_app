@@ -47,6 +47,18 @@ export function PickupReport({ customSubmitHandler }) {
     }))
   }, [errors])
 
+  useEffect(() => {
+    const formDataString = JSON.stringify(formData)
+    window.sessionStorage.setItem(pickup, formDataString)
+  }, [formData])
+
+  useEffect(() => {
+    const savedFormData = window.sessionStorage.getItem(pickup)
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData))
+    }
+  }, [])
+
   function openAddToCategory(field) {
     setModal('AddToCategory')
     setModalState({ setFormData, sumWeight, field })
