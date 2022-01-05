@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Ellipsis, Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
-import { Link, useLocation, useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
 import {
   Button,
@@ -26,7 +26,6 @@ export function Rescues() {
     loadedAllData,
     resetLimit,
   } = useFirestore()
-  const location = useLocation()
   const rescues = useFirestore('rescues')
   const deliveries = useFirestore(
     'stops',
@@ -329,17 +328,6 @@ export function Rescues() {
           {admin === true ? (
             <option value="date">Rescues by Date&nbsp;&nbsp;&nbsp;⬇️</option>
           ) : null}
-          {/*  Only adding these filters to Rescues page */}
-          {location.pathname === '/routes' ? (
-            <>
-              {admin === true ? (
-                <option value="incomplete">Show Incomplete Rescues</option>
-              ) : null}
-              {admin === true ? (
-                <option value="happening">Show Ongoing Rescues</option>
-              ) : null}
-            </>
-          ) : null}
         </select>
       </section>
       {filterByDriver ? (
@@ -365,7 +353,7 @@ export function Rescues() {
           <Loading text="Loading rescues" relative />
         </>
       ) : !filterAndSortRescues(rescues).length ? (
-        <div className="no-routes">
+        <div className="no-rescues">
           <Emoji className="icon" name="woman-shrugging" />
           <Spacer height={16} />
           <Text type="secondary-header" color="white" shadow align="center">

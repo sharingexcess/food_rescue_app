@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   setFirestoreData,
@@ -26,38 +26,35 @@ export function Rescue() {
     'stops',
     useCallback(i => i.type === 'delivery', [])
   )
+  const [working, setWorking] = useState(false)
 
   useEffect(() => {
     // handle auto completing a rescue when all stops are finished
-    async function handleAutoCompleteRoute() {
+    async function handleAutoCompleteRescue() {
       if (rescue && rescue.status !== STATUSES.COMPLETED) {
-        let completed_deliveries = 0
         const rescue_deliveries = rescue.stops.filter(
           s => s.type === 'delivery'
         )
-        if (rescue_deliveries.length) {
-          for (const d of rescue_deliveries) {
-            if (
-              d.status === STATUSES.COMPLETED ||
-              d.status === STATUSES.CANCELLED
-            )
-              completed_deliveries++
+        for (const d of rescue_deliveries) {
+          if (![STATUSES.CANCELLED, STATUSES.COMPLETED].includes(d.status)) {
+            // this rescue is not yet complete, return early
+            return
           }
-          if (
-            completed_deliveries === rescue_deliveries.length &&
-            allFoodDelivered(rescue.stops)
-          ) {
-            await updateImpactDataForRescue(rescue)
-            setFirestoreData(['rescues', rescue_id], {
-              status: STATUSES.COMPLETED,
-              timestamp_logged_finish: createTimestamp(),
-              timestamp_updated: createTimestamp(),
-            }).then(() => history.push(`/rescues/${rescue_id}/completed`))
-          }
+        }
+        if (allFoodDelivered(rescue.stops) && !working) {
+          setWorking(true)
+          await updateImpactDataForRescue(rescue)
+          await setFirestoreData(['rescues', rescue_id], {
+            status: STATUSES.COMPLETED,
+            timestamp_logged_finish: createTimestamp(),
+            timestamp_updated: createTimestamp(),
+          })
+          setWorking(false)
+          history.push(`/rescues/${rescue_id}/completed`)
         }
       }
     }
-    handleAutoCompleteRoute()
+    handleAutoCompleteRescue()
   }, [deliveries, rescue_id, rescue]) // eslint-disable-line
 
   return (

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useAuth, useFirestore, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
-import { VERSION } from 'helpers'
+import { IS_DEV_ENVIRONMENT, VERSION } from 'helpers'
 
 export function Menu({ isOpen, setIsOpen }) {
   const { pathname } = useLocation()
@@ -139,8 +139,9 @@ export function Menu({ isOpen, setIsOpen }) {
         <nav>
           <ExternalLink to="https://github.com/sharingexcess/rescue">
             v{VERSION}
+            {IS_DEV_ENVIRONMENT ? ' (DEV)' : ''}
           </ExternalLink>
-          <ExternalLink to="/privacy">privacy policy</ExternalLink>
+          <ExternalLink to="/privacy">privacy</ExternalLink>
           <ExternalLink to="/tos">terms of service</ExternalLink>
         </nav>
       </aside>

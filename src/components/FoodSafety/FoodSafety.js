@@ -54,7 +54,7 @@ export function FoodSafety() {
           <li>Keep vehicle interior clean and free of personal items</li>
           <li>You must have a valid drivers license and proof of insurance</li>
         </ol>
-        <h3>Logging Routes</h3>
+        <h3>Logging Rescues</h3>
         <ol>
           <li>
             Be sure to fill out pickup and delivery reports in real time as you

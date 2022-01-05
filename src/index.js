@@ -43,7 +43,6 @@ import { EmojiProvider } from 'react-apple-emojis'
 import emojiData from 'react-apple-emojis/lib/data.json'
 import './styles/index.scss'
 
-console.log(process.env.REACT_APP_VERSION)
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,

@@ -39,7 +39,7 @@ export function Tutorial() {
         </ul>
         <div>
           <img src="/tutorial-ios-actions.jpg" alt="Home" />
-          <img src="/tutorial-ios-add.jpg" alt="Routes" />
+          <img src="/tutorial-ios-add.jpg" alt="Rescues" />
         </div>
       </section>
       <section id="save2">
@@ -61,7 +61,7 @@ export function Tutorial() {
         </ul>
         <div>
           <img src="/tutorial-android-actions.jpg" alt="Home" />
-          <img src="/tutorial-android-add.jpg" alt="Routes" />
+          <img src="/tutorial-android-add.jpg" alt="Rescues" />
         </div>
       </section>
       <section id="start">
@@ -72,7 +72,7 @@ export function Tutorial() {
         </ul>
         <div>
           <img src="/tutorial-home.jpg" alt="Home" />
-          <img src="/tutorial-routes.jpg" alt="Routes" />
+          <img src="/tutorial-routes.jpg" alt="Rescues" />
         </div>
       </section>
       <section id="pickup">

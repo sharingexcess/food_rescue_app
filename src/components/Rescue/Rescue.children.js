@@ -674,7 +674,6 @@ export function Stop({ stops, s, i }) {
     function handleOpenReport() {
       setFirestoreData(['stops', s.id], {
         status: STATUSES.ACTIVE,
-        driver_arrived_at: createTimestamp(),
       }).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
     }
 

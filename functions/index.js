@@ -118,7 +118,10 @@ exports.writeToGoogleSheets = functions
     // convert rescues into flattened spreadsheet rows
     // and replace unreadable IDs and data with data
     // gathered from other db tables
-    const rows = []
+    const rescue_rows = []
+    const pickup_rows = []
+    const delivery_rows = []
+
     for (const rescue of rescues) {
       // format all timestamps as readable strings
       console.log('rescue:', JSON.stringify(rescue))
@@ -164,6 +167,53 @@ exports.writeToGoogleSheets = functions
         rescue.stops = rescue_stops
           .map(s => `${s.organization.name} (${s.location.address1})`)
           .join(', ')
+
+        for (const s of rescue_stops) {
+          for (const key in s) {
+            if (key.includes('timestamp_') && s[key]) {
+              s[key] = moment(s[key].toDate())
+                .tz('America/New_York')
+                .format('dddd, MM/DD/YY, hh:mma')
+            }
+          }
+          const handler = users.find(i => i.id === s.handler_id) || {}
+          const organization =
+            organizations.find(i => i.id === s.organization_id) || {}
+          const location = locations.find(i => i.id === s.location_id) || {}
+          const address = `${location.address1}${
+            location.address2 ? ', ' + location.address2 : ''
+          }, ${location.city}, ${location.state}, ${location.zip}`
+
+          const row = [
+            s.id,
+            s.rescue_id,
+            handler.name || '',
+            organization.name || '',
+            address || '',
+            organization.subtype || '',
+            s.timestamp_scheduled_start || '',
+            s.timestamp_scheduled_finish || '',
+            s.timestamp_logged_start || '',
+            s.timestamp_logged_finish || '',
+            s.impact_data_dairy || 0,
+            s.impact_data_bakery || 0,
+            s.impact_data_produce || 0,
+            s.impact_data_meat_fish || 0,
+            s.impact_data_non_perishable || 0,
+            s.impact_data_prepared_frozen || 0,
+            s.impact_data_mixed || 0,
+            s.impact_data_other || 0,
+            s.impact_data_total_weight || 0,
+            s.notes || '',
+          ]
+          if (s.type === 'pickup') {
+            console.log('COMPLETE PICKUP ROW:', row)
+            pickup_rows.push(row)
+          } else {
+            console.log('COMPLETE DELIVERY ROW:', row)
+            delivery_rows.push(row)
+          }
+        }
 
         // calculate impact data for route
         const IMPACT_DATA_CATEGORIES = [
@@ -211,10 +261,10 @@ exports.writeToGoogleSheets = functions
         rescue.timestamp_logged_finish || '',
       ]
       console.log('COMPLETE ROW:', JSON.stringify(row))
-      rows.push(row)
+      rescue_rows.push(row)
     }
 
-    const headers = [
+    const rescue_headers = [
       'Rescue ID',
       'Handler',
       'Scheduled Start',
@@ -265,25 +315,142 @@ exports.writeToGoogleSheets = functions
     ]
 
     await jwtAuthPromise
-    const headersRange = `Rescues!A1:${columns[headers.length - 1]}1`
-    console.log('writing headers to range:', headersRange)
+
+    const rescueHeadersRange = `Rescues!A1:${
+      columns[rescue_headers.length - 1]
+    }1`
+    console.log('writing rescue headers to range:', rescueHeadersRange)
     await sheets.spreadsheets.values.update(
       {
         auth: jwtClient,
         spreadsheetId: spreadsheetId,
-        range: headersRange,
+        range: rescueHeadersRange,
         valueInputOption: 'RAW',
-        requestBody: { values: [headers] },
+        requestBody: { values: [rescue_headers] },
       },
       {}
     )
 
     let current_row = 2
-    while (rows.length) {
-      const body = rows.splice(0, Math.min(100, rows.length))
-      const range = `Rescues!A${current_row}:${columns[headers.length - 1]}${
-        current_row + body.length
-      }`
+    while (rescue_rows.length) {
+      const body = rescue_rows.splice(0, Math.min(100, rescue_rows.length))
+      const range = `Rescues!A${current_row}:${
+        columns[rescue_headers.length - 1]
+      }${current_row + body.length}`
+      await sheets.spreadsheets.values.update(
+        {
+          auth: jwtClient,
+          spreadsheetId: spreadsheetId,
+          range: range,
+          valueInputOption: 'RAW',
+          requestBody: { values: body },
+        },
+        {}
+      )
+      current_row += body.length
+    }
+
+    const pickup_headers = [
+      'Pickup ID',
+      'Rescue ID',
+      'Handler',
+      'Donor',
+      'Location',
+      'Donor Type',
+      'Scheduled Start',
+      'Scheduled Finish',
+      'Logged Start',
+      'Logged Finish',
+      'Pounds Rescued (dairy)',
+      'Pounds Rescued (bakery)',
+      'Pounds Rescued (produce)',
+      'Pounds Rescued (meat/fish)',
+      'Pounds Rescued (non-perishable)',
+      'Pounds Rescued (prepared/frozen)',
+      'Pounds Rescued (mixed)',
+      'Pounds Rescued (other)',
+      'Pounds Rescued (total)',
+      'Notes',
+    ]
+
+    const pickupHeadersRange = `Pickups!A1:${
+      columns[pickup_headers.length - 1]
+    }1`
+    console.log('writing rescue headers to range:', pickupHeadersRange)
+    await sheets.spreadsheets.values.update(
+      {
+        auth: jwtClient,
+        spreadsheetId: spreadsheetId,
+        range: pickupHeadersRange,
+        valueInputOption: 'RAW',
+        requestBody: { values: [pickup_headers] },
+      },
+      {}
+    )
+
+    current_row = 2
+    while (pickup_rows.length) {
+      const body = pickup_rows.splice(0, Math.min(100, pickup_rows.length))
+      const range = `Pickups!A${current_row}:${
+        columns[pickup_headers.length - 1]
+      }${current_row + body.length}`
+      await sheets.spreadsheets.values.update(
+        {
+          auth: jwtClient,
+          spreadsheetId: spreadsheetId,
+          range: range,
+          valueInputOption: 'RAW',
+          requestBody: { values: body },
+        },
+        {}
+      )
+      current_row += body.length
+    }
+
+    const delivery_headers = [
+      'Delivery ID',
+      'Rescue ID',
+      'Handler',
+      'Recipient',
+      'Location',
+      'Recipient Type',
+      'Scheduled Start',
+      'Scheduled Finish',
+      'Logged Start',
+      'Logged Finish',
+      'Pounds Rescued (dairy)',
+      'Pounds Rescued (bakery)',
+      'Pounds Rescued (produce)',
+      'Pounds Rescued (meat/fish)',
+      'Pounds Rescued (non-perishable)',
+      'Pounds Rescued (prepared/frozen)',
+      'Pounds Rescued (mixed)',
+      'Pounds Rescued (other)',
+      'Pounds Rescued (total)',
+      'Notes',
+    ]
+
+    const deliveryHeadersRange = `Deliveries!A1:${
+      columns[delivery_headers.length - 1]
+    }1`
+    console.log('writing rescue headers to range:', deliveryHeadersRange)
+    await sheets.spreadsheets.values.update(
+      {
+        auth: jwtClient,
+        spreadsheetId: spreadsheetId,
+        range: deliveryHeadersRange,
+        valueInputOption: 'RAW',
+        requestBody: { values: [delivery_headers] },
+      },
+      {}
+    )
+
+    current_row = 2
+    while (delivery_rows.length) {
+      const body = delivery_rows.splice(0, Math.min(100, delivery_rows.length))
+      const range = `Deliveries!A${current_row}:${
+        columns[delivery_headers.length - 1]
+      }${current_row + body.length}`
       await sheets.spreadsheets.values.update(
         {
           auth: jwtClient,
