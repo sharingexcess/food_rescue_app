@@ -59,7 +59,7 @@ export function EditLocation() {
           id: new_location_id,
           organization_id,
           ...formData,
-          contact_phone: removeSpecialCharacters(formData.contact_phone),
+          contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
           timestamp_created: location.timestamp_created || createTimestamp(),
           timestamp_updated: createTimestamp(),
         })

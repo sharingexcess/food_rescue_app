@@ -7,7 +7,7 @@ import {
 import { setFirestoreData } from './firebase'
 
 export function removeSpecialCharacters(str) {
-  return str.replace(/[^A-Z0-9]/gi, '')
+  return str ? str.replace(/[^A-Z0-9]/gi, '') : ''
 }
 
 export function prettyPrintDbFieldName(field_name = '') {

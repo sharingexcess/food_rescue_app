@@ -47,7 +47,7 @@ export function Profile() {
     if (!button && !formData.name && profile && profile.name) {
       setFormData({
         name: profile.name,
-        phone: removeSpecialCharacters(profile.phone) || '',
+        phone: removeSpecialCharacters(profile.phone || ''),
         pronouns: profile.pronouns || '',
         availability_sun_am: profile.availability_sun_am,
         availability_sun_pm: profile.availability_sun_pm,
@@ -73,16 +73,15 @@ export function Profile() {
   }, [profile, formData, button])
 
   function validateInformation() {
-    if (
-      !formData.name ||
-      !validator.isAlphanumeric(formData.name.split(' ')[0])
-    ) {
-      setError("Please enter your Profile's Name")
+    if (!formData.name) {
+      window.alert("Don't forget to enter your name!")
       return false
-    } else if (!formData.phone) {
-      setError(
-        'Your phone may contain invalid characters or missing some digits'
-      )
+      // } else if (!formData.phone) {
+      //   window.alert("Don't forget to enter your phone number!")
+      //   return false
+      // }
+    } else if (!formData.pronouns) {
+      window.alert("Don't forget to let us know your preferred pronouns!")
       return false
     }
     return true
