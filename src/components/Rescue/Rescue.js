@@ -31,7 +31,7 @@ export function Rescue() {
   useEffect(() => {
     // handle auto completing a rescue when all stops are finished
     async function handleAutoCompleteRescue() {
-      if (rescue && rescue.status !== STATUSES.COMPLETED) {
+      if (rescue && rescue.status === STATUSES.ACTIVE) {
         const rescue_deliveries = rescue.stops.filter(
           s => s.type === 'delivery'
         )
