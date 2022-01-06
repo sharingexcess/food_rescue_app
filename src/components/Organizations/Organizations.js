@@ -11,21 +11,30 @@ import {
   Text,
 } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
+import { useEffect } from 'react/cjs/react.development'
+import { useHistory } from 'react-router'
 
 export function Organizations() {
+  const history = useHistory()
   const organizations = useFirestore(
     'organizations',
     useCallback(i => !i.is_deleted, [])
   )
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('donor')
+  const [filter, setFilter] = useState(
+    new URLSearchParams(window.location.search).get('filter') || 'recipient'
+  )
+
+  useEffect(() => {
+    history.replace(`/admin/organizations?filter=${filter}`)
+  }, [filter]) // eslint-disable-line
 
   function handleSearch(e) {
     setSearch(e.target.value)
   }
 
   function filterByType(array) {
-    return array.filter(i => i.type === filter)
+    return filter === 'all' ? array : array.filter(i => i.type === filter)
   }
 
   function filterBySearch(array) {
@@ -40,10 +49,11 @@ export function Organizations() {
       <section id="Filters">
         <select value={filter} onChange={e => setFilter(e.target.value)}>
           <option value="">Filter by type...</option>
-          <option value="donor">Donors&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
           <option value="recipient">
             Recipients&nbsp;&nbsp;&nbsp;&nbsp;⬇️
           </option>
+          <option value="donor">Donors&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
+          <option value="all">All&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
         </select>
         <Link to="/admin/create-organization">
           <Button type="secondary" color="white">

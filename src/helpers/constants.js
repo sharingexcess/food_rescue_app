@@ -40,14 +40,16 @@ export const FOOD_CATEGORIES = [
   'impact_data_other',
 ]
 
+// Current values are from 2019 REFED values, to be updated whenever new literature is available
+// https://refed.org/downloads/ReFED-U.S.-Grocery-Retail-Value-to-Weight-Conversion-Factors.pdf
 export const RETAIL_VALUES = {
   impact_data_dairy: 1.28,
   impact_data_bakery: 2.36,
   impact_data_produce: 1.57,
   impact_data_meat_fish: 4.4,
   impact_data_non_perishable: 3.19,
-  impact_data_prepared_frozen: 4.13,
-  impact_data_mixed: 2.31,
+  impact_data_prepared_frozen: 5.89,
+  impact_data_mixed: 3.1,
   impact_data_other: 2.31,
 }
 
