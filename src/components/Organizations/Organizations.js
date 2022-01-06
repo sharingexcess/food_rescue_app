@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ORG_TYPE_ICONS, prettyPrintDbFieldName } from 'helpers'
 import { Input, Loading } from 'components'
@@ -11,7 +11,6 @@ import {
   Text,
 } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
-import { useEffect } from 'react/cjs/react.development'
 import { useHistory } from 'react-router'
 
 export function Organizations() {
