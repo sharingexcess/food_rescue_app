@@ -11,6 +11,13 @@ import {
 import { useFirestore, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
+import { isFormDataEqual } from './utils'
+
+const initFormData = {
+  ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+  impact_data_total_weight: 0,
+  notes: '',
+}
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
@@ -18,27 +25,48 @@ export function PickupReport({ customSubmitHandler }) {
   const rescue = useFirestore('rescues', rescue_id)
   const history = useHistory()
   const pickup = useFirestore('stops', pickup_id)
-  const [formData, setFormData] = useState({
-    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
-    impact_data_total_weight: 0,
-    notes: '',
-  })
+  const [formData, setFormData] = useState(initFormData)
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
+  const [updatedFromDb, setUpdatedFromDb] = useState(false)
+  const [working, setWorking] = useState(false)
 
   useEffect(() => {
-    pickup && pickup.id
-      ? setFormData(formData => ({
-          ...formData,
-          ...FOOD_CATEGORIES.reduce(
-            (acc, curr) => ((acc[curr] = pickup[curr]), acc), // eslint-disable-line
-            {}
-          ),
-          impact_data_total_weight: pickup.impact_data_total_weight,
-        }))
-      : setChanged(true) // if this is a new report, display submit button immediately
-  }, [pickup])
+    if (pickup && pickup.id && !updatedFromDb) {
+      setFormData(formData => ({
+        ...formData,
+        impact_data_dairy: pickup.impact_data_dairy,
+        impact_data_bakery: pickup.impact_data_bakery,
+        impact_data_produce: pickup.impact_data_produce,
+        impact_data_meat_fish: pickup.impact_data_meat_fish,
+        impact_data_non_perishable: pickup.impact_data_non_perishable,
+        impact_data_prepared_frozen: pickup.impact_data_prepared_frozen,
+        impact_data_mixed: pickup.impact_data_mixed,
+        impact_data_other: pickup.impact_data_other,
+        impact_data_total_weight: pickup.impact_data_total_weight,
+        notes: pickup.notes,
+      }))
+      setUpdatedFromDb(true)
+    }
+  }, [pickup, pickup_id, updatedFromDb])
+
+  useEffect(() => {
+    if (
+      !isFormDataEqual(formData, initFormData) &&
+      !isFormDataEqual(formData, pickup) &&
+      !working &&
+      changed
+    ) {
+      setWorking(true)
+      setFirestoreData(['stops', pickup_id], {
+        ...formData,
+        status: STATUSES.COMPLETED,
+        timestamp_updated: createTimestamp(),
+        timestamp_logged_finish: createTimestamp(),
+      }).then(() => setWorking(false))
+    }
+  }, [working, pickup, formData, pickup_id, changed])
 
   useEffect(() => {
     setFormData(formData => ({
