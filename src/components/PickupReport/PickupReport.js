@@ -11,6 +11,7 @@ import {
 import { useFirestore, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
+import { isFormDataEqual } from './utils'
 
 const initFormData = {
   ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
@@ -28,14 +29,11 @@ export function PickupReport({ customSubmitHandler }) {
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
-  const sessionStorageKey = `pick_up_${pickup_id}`
+  const [updatedFromDb, setUpdatedFromDb] = useState(false)
+  const [working, setWorking] = useState(false)
 
   useEffect(() => {
-    if (pickup && pickup.id) {
-      let savedFormData = window.sessionStorage.getItem(sessionStorageKey)
-      if (savedFormData) {
-        savedFormData = JSON.parse(savedFormData)
-      }
+    if (pickup && pickup.id && !updatedFromDb) {
       setFormData(formData => ({
         ...formData,
         impact_data_dairy: pickup.impact_data_dairy,
@@ -47,12 +45,28 @@ export function PickupReport({ customSubmitHandler }) {
         impact_data_mixed: pickup.impact_data_mixed,
         impact_data_other: pickup.impact_data_other,
         impact_data_total_weight: pickup.impact_data_total_weight,
-        ...savedFormData,
+        notes: pickup.notes,
       }))
-    } else {
-      setChanged(true) // if this is a new report, display submit button immediately
+      setUpdatedFromDb(true)
     }
-  }, [pickup, sessionStorageKey, pickup_id])
+  }, [pickup, pickup_id, updatedFromDb])
+
+  useEffect(() => {
+    if (
+      !isFormDataEqual(formData, initFormData) &&
+      !isFormDataEqual(formData, pickup) &&
+      !working &&
+      changed
+    ) {
+      setWorking(true)
+      setFirestoreData(['stops', pickup_id], {
+        ...formData,
+        status: STATUSES.COMPLETED,
+        timestamp_updated: createTimestamp(),
+        timestamp_logged_finish: createTimestamp(),
+      }).then(() => setWorking(false))
+    }
+  }, [working, pickup, formData, pickup_id, changed])
 
   useEffect(() => {
     setFormData(formData => ({
@@ -60,13 +74,6 @@ export function PickupReport({ customSubmitHandler }) {
       impact_data_total_weight: sumWeight(formData),
     }))
   }, [errors])
-
-  useEffect(() => {
-    const formDataString = JSON.stringify(formData)
-    if (formDataString !== JSON.stringify(initFormData)) {
-      window.sessionStorage.setItem(sessionStorageKey, formDataString)
-    }
-  }, [formData, pickup_id, sessionStorageKey])
 
   function openAddToCategory(field) {
     setModal('AddToCategory')
@@ -149,7 +156,6 @@ export function PickupReport({ customSubmitHandler }) {
         if (rescue.status === STATUSES.COMPLETED) {
           await updateImpactDataForRescue(rescue)
         }
-        window.sessionStorage.removeItem(sessionStorageKey)
         history.push(`/rescues/${rescue_id}`)
       } catch (e) {
         console.error('Error writing document: ', e)

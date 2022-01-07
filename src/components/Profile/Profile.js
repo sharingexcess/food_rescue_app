@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth, useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
-import validator from 'validator'
 import { Button, Image, Spacer, Text } from '@sharingexcess/designsystem'
 import {
   createTimestamp,

@@ -566,8 +566,8 @@ export function Stop({ stops, s, i }) {
   }
 
   function StopContact({ name, number }) {
-    return number ? (
-      <ExternalLink to={`tel:${s.location.contact_phone}`}>
+    return (
+      <ExternalLink to={number ? `tel:${number}` : null}>
         <Button
           classList={['Rescue-stop-phone-button']}
           type="tertiary"
@@ -576,11 +576,11 @@ export function Stop({ stops, s, i }) {
         >
           <Emoji name="telephone-receiver" width={20} />
           <Spacer width={8} />
-          {formatPhoneNumber(number)}
+          {number ? formatPhoneNumber(number) : 'No Phone Number'}
           {name && ` (ask for ${name})`}
         </Button>
       </ExternalLink>
-    ) : null
+    )
   }
 
   function StopMap() {
@@ -775,6 +775,11 @@ export function Stop({ stops, s, i }) {
         <>
           <Spacer height={8} />
           <StopAddress />
+          <Spacer height={8} />
+          <StopContact
+            name={s.location.contact_name}
+            number={s.location.contact_phone}
+          />
         </>
       )}
     </Card>
