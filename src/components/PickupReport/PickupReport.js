@@ -11,6 +11,7 @@ import {
 import { useFirestore, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
+import { useSessionStorageString } from 'react-use-window-sessionstorage'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
@@ -49,11 +50,13 @@ export function PickupReport({ customSubmitHandler }) {
 
   useEffect(() => {
     const formDataString = JSON.stringify(formData)
-    window.sessionStorage.setItem(pickup, formDataString)
+    window.sessionStorage.setItem(`pick_up_${pickup_id}`, formDataString)
+    //console.log(`formData_${formDataString}`)
   }, [formData])
 
   useEffect(() => {
-    const savedFormData = window.sessionStorage.getItem(pickup)
+    const savedFormData = window.sessionStorage.getItem(`pick_up_${pickup_id}`)
+    //console.log(`savedFormData_${savedFormData}`)
     if (savedFormData) {
       setFormData(JSON.parse(savedFormData))
     }
