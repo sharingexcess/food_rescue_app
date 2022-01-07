@@ -11,7 +11,6 @@ import {
 import { useFirestore, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
-import { useSessionStorageString } from 'react-use-window-sessionstorage'
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
