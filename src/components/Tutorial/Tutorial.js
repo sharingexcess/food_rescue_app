@@ -36,8 +36,8 @@ export function Tutorial() {
           </li>
         </ul>
         <div>
-          <img src="/tutorial-ios-actions.jpg" alt="Home" />
-          <img src="/tutorial-ios-add.jpg" alt="Routes" />
+          <img src="/tutorial-ios-actions2.jpg" alt="Home" />
+          <img src="/tutorial-ios-add2.jpg" alt="Routes" />
         </div>
       </section>
       <section id="save2">
@@ -66,11 +66,11 @@ export function Tutorial() {
         <h3>1. Before You Start</h3>
         <ul>
           <li>Ensure vehicle interior is clean and free of personal items. </li>
-          <li>Log onto app and click on assigned route guidance. </li>
+          <li>Log onto app and click on assigned rescue guidance. </li>
         </ul>
         <div>
-          <img src="/tutorial-home.jpg" alt="Home" />
-          <img src="/tutorial-routes.jpg" alt="Routes" />
+          <img src="/tutorial-home2.jpg" alt="Home" />
+          <img src="/tutorial-routes2.jpg" alt="Routes" />
         </div>
       </section>
       <section id="pickup">
@@ -80,7 +80,7 @@ export function Tutorial() {
             Click the Pick-up location in the app, press “Get Directions” which
             will open your GPS.
           </li>
-          <li>Head to the pick-up location to begin your route. </li>
+          <li>Head to the pick-up location to begin your rescue. </li>
           <li>
             Read the specific instructions for parking and site contacts.{' '}
           </li>
@@ -97,8 +97,8 @@ export function Tutorial() {
           <li>Safely pack food in the vehicle.</li>
         </ul>
         <div>
-          <img src="/tutorial-route.jpg" alt="Route" />
-          <img src="/tutorial-report.jpg" alt="Report" />
+          <img src="/tutorial-route2.jpg" alt="Route" />
+          <img src="/tutorial-report2.jpg" alt="Report" />
         </div>
       </section>
       <section id="delivery">
@@ -132,8 +132,8 @@ export function Tutorial() {
           </li>
         </ul>
         <div>
-          <img src="/tutorial-percentage.jpg" alt="Percentage Dropoff" />
-          <img src="/tutorial-completed.jpg" alt="Completed" />
+          <img src="/tutorial-percentage2.jpg" alt="Percentage Dropoff" />
+          <img src="/tutorial-completed2.jpg" alt="Completed" />
         </div>
       </section>
       <br />
