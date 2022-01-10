@@ -36,16 +36,16 @@ export function PickupReport({ customSubmitHandler }) {
     if (pickup && pickup.id && !updatedFromDb) {
       setFormData(formData => ({
         ...formData,
-        impact_data_dairy: pickup.impact_data_dairy,
-        impact_data_bakery: pickup.impact_data_bakery,
-        impact_data_produce: pickup.impact_data_produce,
-        impact_data_meat_fish: pickup.impact_data_meat_fish,
-        impact_data_non_perishable: pickup.impact_data_non_perishable,
-        impact_data_prepared_frozen: pickup.impact_data_prepared_frozen,
-        impact_data_mixed: pickup.impact_data_mixed,
-        impact_data_other: pickup.impact_data_other,
-        impact_data_total_weight: pickup.impact_data_total_weight,
-        notes: pickup.notes,
+        impact_data_dairy: pickup.impact_data_dairy || 0,
+        impact_data_bakery: pickup.impact_data_bakery || 0,
+        impact_data_produce: pickup.impact_data_produce || 0,
+        impact_data_meat_fish: pickup.impact_data_meat_fish || 0,
+        impact_data_non_perishable: pickup.impact_data_non_perishable || 0,
+        impact_data_prepared_frozen: pickup.impact_data_prepared_frozen || 0,
+        impact_data_mixed: pickup.impact_data_mixed || 0,
+        impact_data_other: pickup.impact_data_other || 0,
+        impact_data_total_weight: pickup.impact_data_total_weight || 0,
+        notes: pickup.notes || '',
       }))
       setUpdatedFromDb(true)
     }
@@ -58,6 +58,7 @@ export function PickupReport({ customSubmitHandler }) {
       !working &&
       changed
     ) {
+      console.log('updating automatically...')
       setWorking(true)
       setFirestoreData(['stops', pickup_id], {
         ...formData,
