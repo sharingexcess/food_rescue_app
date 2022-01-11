@@ -14,23 +14,24 @@ exports.analytics = async (request, response) => {
     console.log('running analytics')
     const { date_range_start, date_range_end, breakdown } = request.query
     console.log(date_range_start, date_range_end, breakdown)
-    const rescues = []
+
+    let rescues = []
     await db
       .collection('rescues')
       .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
       .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-      .where('status', '==', 'completed')
       .get()
       .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
+    rescues = rescues.filter(i => i.status === 'completed')
 
-    const stops = []
+    let stops = []
     await db
       .collection('stops')
       .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
       .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-      .where('status', '==', 'completed')
       .get()
       .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
+    stops = stops.filter(i => i.status === 'completed')
 
     const pickups = stops.filter(s => s.type === 'pickup')
     const deliveries = stops.filter(s => s.type === 'delivery')
