@@ -21,7 +21,8 @@
     "moment-timezone": "^0.5.34"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^7.28.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "firebase-functions-test": "^0.2.3"
   },
