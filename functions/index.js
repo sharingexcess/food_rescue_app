@@ -14,6 +14,12 @@ exports.writeToGoogleSheets = functions
   .timeZone('America/New_York')
   .onRun(writeToGoogleSheets)
 
+const backend_routes = express()
+backend_routes.use(cors({ origin: true }))
+
+backend_routes.post('/addCalendarEvent', addCalendarEvent)
+backend_routes.post('/deleteCalendarEvent', deleteCalendarEvent)
+
 const calendar_routes = express()
 calendar_routes.use(cors({ origin: true }))
 
@@ -23,6 +29,8 @@ calendar_routes.post('/delete', deleteCalendarEvent)
 const analytics_routes = express()
 analytics_routes.use(cors({ origin: true }))
 analytics_routes.get('/', analytics)
+
+exports.backend = functions.https.onRequest(backend_routes)
 
 exports.calendar = functions.https.onRequest(calendar_routes)
 
