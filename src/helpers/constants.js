@@ -116,9 +116,10 @@ export const RECIPIENT_TYPES = {
 
 export const CLOUD_FUNCTION_URLS = {
   addCalendarEvent:
-    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'addCalendarEvent',
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'calendar/add',
   deleteCalendarEvent:
-    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'deleteCalendarEvent',
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'calendar/delete',
+  analytics: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'analytics',
 }
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
