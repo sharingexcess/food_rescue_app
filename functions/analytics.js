@@ -19,6 +19,7 @@ exports.analytics = async (request, response) => {
       .collection('rescues')
       .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
       .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+      .where('status', '==', 'completed')
       .get()
       .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
 
@@ -27,6 +28,7 @@ exports.analytics = async (request, response) => {
       .collection('stops')
       .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
       .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+      .where('status', '==', 'completed')
       .get()
       .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
 
