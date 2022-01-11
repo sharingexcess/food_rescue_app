@@ -30,7 +30,9 @@ export function Analytics() {
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
   const [breakdown, setBreakdown] = useState(
-    decodeURIComponent(search.get('breakdown')) || 'Food Category'
+    search.get('breakdown')
+      ? decodeURIComponent(search.get('breakdown'))
+      : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
   const [apiData, setApiData] = useState()
@@ -53,11 +55,9 @@ export function Analytics() {
   useEffect(() => {
     setWorking(true)
     history.replace(`/admin/analytics?${query.split('?')[1]}`)
-    const start = performance.now()
     fetch(query)
       .then(res => res.json())
       .then(data => {
-        console.log((performance.now() - start) / 1000, data)
         setApiData(data)
         setWorking(false)
       })
@@ -167,7 +167,7 @@ export function Analytics() {
     return null
   }
 
-  return apiData && !working ? (
+  return (
     <main id="Analytics">
       <FlexContainer className="InputSection" primaryAlign="space-between">
         <Input
@@ -207,101 +207,114 @@ export function Analytics() {
         />
       </FlexContainer>
       <Spacer height={16} />
-      <FlexContainer primaryAlign="space-between">
-        <FlexContainer
-          direction="vertical"
-          secondaryAlign="start"
-          id="PoundsInDateRange-pounds"
-        >
-          <Text type="primary-header" color="white" shadow>
-            {formatLargeNumber(apiData.total_weight)} lbs.
-          </Text>
-          <Text color="white" shadow>
-            Total Food Rescued
-          </Text>
-        </FlexContainer>
-        <FlexContainer
-          direction="vertical"
-          secondaryAlign="end"
-          className="details"
-        >
-          <Text type="small" color="white" shadow>
-            {formatLargeNumber(apiData.emissions_reduced)} lbs. Emissions
-            Reduced
-          </Text>
 
-          <Text type="small" color="white" shadow>
-            ${formatLargeNumber(apiData.retail_value)} Total Retail Value
-          </Text>
+      {apiData && !working ? (
+        <>
+          <FlexContainer primaryAlign="space-between">
+            <FlexContainer
+              direction="vertical"
+              secondaryAlign="start"
+              id="PoundsInDateRange-pounds"
+            >
+              <Text type="primary-header" color="white" shadow>
+                {formatLargeNumber(apiData.total_weight)} lbs.
+              </Text>
+              <Text color="white" shadow>
+                Total Food Rescued
+              </Text>
+            </FlexContainer>
+            <FlexContainer
+              direction="vertical"
+              secondaryAlign="end"
+              className="details"
+            >
+              <Text type="small" color="white" shadow>
+                {formatLargeNumber(apiData.emissions_reduced)} lbs. Emissions
+                Reduced
+              </Text>
 
-          <Text type="small" color="white" shadow>
-            ${formatLargeNumber(apiData.fair_market_value)} Fair Market Value
-          </Text>
-        </FlexContainer>
-      </FlexContainer>
-      <Spacer height={32} />
-      <section className="PoundsInDateRange-graph">
-        <ResponsiveContainer width="100%" height={300}>
-          {chart === 'Bar Chart' ? (
-            <BarChart
-              width={300}
-              height={300}
-              data={graphData}
-              margin={{ top: 20, bottom: 10 }}
-            >
-              <XAxis dataKey="name" scaleToFit={true} interval={0} />
-              <YAxis tickFormatter={num => shortenLargeNumber(num)} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value" fill="var(--primary)" barSize={30} />
-            </BarChart>
-          ) : chart === 'Pie Chart' ? (
-            <PieChart width={400} height={400}>
-              <Pie data={graphData} outerRadius={120} dataKey="value">
-                {graphData.map((_entry, index) => (
-                  <Cell
-                    stroke={null}
-                    fill={COLORS[index % COLORS.length]}
-                    content={'hello'}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-            </PieChart>
-          ) : chart === 'Block Chart' ? (
-            <Treemap
-              data={graphData}
-              dataKey="value"
-              ratio={1 / 1}
-              content={<TreemapContent />}
-            >
-              <Tooltip content={<CustomTooltip />} />
-            </Treemap>
-          ) : (
-            <div id="Analytics-table">
-              <div className="Analytics-table-header">Name</div>
-              <div className="Analytics-table-header">Total Weight</div>
-              <div className="Analytics-table-header">% of Total</div>
-              {graphData.map((row, i) => (
-                <>
-                  <div key={`${i}-name`} className="Analytics-table-name">
-                    {row.name}
-                  </div>
-                  <div key={`${i}-total`} className="Analytics-table-total">
-                    {formatLargeNumber(row.value)} lbs.
-                  </div>
-                  <div key={`${i}-percent`} className="Analytics-table-percent">
-                    {((100 * row.value) / apiData.total_weight).toFixed(2)}%
-                  </div>
-                </>
-              ))}
-            </div>
-          )}
-        </ResponsiveContainer>
-      </section>
+              <Text type="small" color="white" shadow>
+                ${formatLargeNumber(apiData.retail_value)} Total Retail Value
+              </Text>
+
+              <Text type="small" color="white" shadow>
+                ${formatLargeNumber(apiData.fair_market_value)} Fair Market
+                Value
+              </Text>
+            </FlexContainer>
+          </FlexContainer>
+          <Spacer height={32} />
+          <section className="PoundsInDateRange-graph">
+            <ResponsiveContainer width="100%" height={300}>
+              {chart === 'Bar Chart' ? (
+                <BarChart
+                  width={300}
+                  height={300}
+                  data={graphData}
+                  margin={{ top: 20, bottom: 10 }}
+                >
+                  <XAxis dataKey="name" scaleToFit={true} interval={0} />
+                  <YAxis tickFormatter={num => shortenLargeNumber(num)} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="value" fill="var(--primary)" barSize={30} />
+                </BarChart>
+              ) : chart === 'Pie Chart' ? (
+                <PieChart width={400} height={400}>
+                  <Pie data={graphData} outerRadius={120} dataKey="value">
+                    {graphData.map((_entry, index) => (
+                      <Cell
+                        key={index}
+                        stroke={null}
+                        fill={COLORS[index % COLORS.length]}
+                        content={'hello'}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                </PieChart>
+              ) : chart === 'Block Chart' ? (
+                <Treemap
+                  data={graphData}
+                  dataKey="value"
+                  ratio={1 / 1}
+                  content={<TreemapContent />}
+                >
+                  <Tooltip content={<CustomTooltip />} />
+                </Treemap>
+              ) : (
+                <div id="Analytics-table">
+                  <div className="Analytics-table-header">Name</div>
+                  <div className="Analytics-table-header">Total Weight</div>
+                  <div className="Analytics-table-header">% of Total</div>
+                  {graphData.map((row, i) => (
+                    <>
+                      <div key={`${i}-name`} className="Analytics-table-name">
+                        {row.name}
+                      </div>
+                      <div key={`${i}-total`} className="Analytics-table-total">
+                        {formatLargeNumber(row.value)} lbs.
+                      </div>
+                      <div
+                        key={`${i}-percent`}
+                        className="Analytics-table-percent"
+                      >
+                        {((100 * row.value) / apiData.total_weight).toFixed(2)}%
+                      </div>
+                    </>
+                  ))}
+                </div>
+              )}
+            </ResponsiveContainer>
+          </section>
+        </>
+      ) : (
+        <>
+          <Spacer height={32} />
+          <Loading relative text="Calculating" />
+        </>
+      )}
     </main>
-  ) : (
-    <Loading text="Loading analytics data" />
   )
 }
 

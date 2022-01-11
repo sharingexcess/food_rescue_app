@@ -144,6 +144,7 @@ export async function updateImpactDataForRescue(rescue) {
 }
 
 export function formatLargeNumber(x) {
+  if (!x) return 0
   const parts = x.toString().split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   if (parts[1] && parts[1].length > 2) {

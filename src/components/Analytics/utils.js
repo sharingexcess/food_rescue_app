@@ -5,7 +5,6 @@ export function getDefaultRangeStart() {
   const params = new URLSearchParams(window.location.search)
   const param = params.get('date_range_start')
   if (param) {
-    console.log('got date range start from params')
     return formatTimestamp(
       new Date(new Date(param).setDate(new Date(param).getDate() + 1)),
       'yyyy-MM-DDTkk:mm'
@@ -22,7 +21,6 @@ export function getDefaultRangeEnd() {
   const params = new URLSearchParams(window.location.search)
   const param = params.get('date_range_end')
   if (param) {
-    console.log('got date range end from params')
     return formatTimestamp(
       new Date(new Date(param).setDate(new Date(param).getDate() + 1)),
       'yyyy-MM-DDTkk:mm'
