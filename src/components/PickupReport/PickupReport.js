@@ -208,7 +208,9 @@ export function PickupReport({ customSubmitHandler }) {
           !['impact_data_total_weight', 'notes'].includes(field) ? (
             <section key={field}>
               <Text type="small-header" color="white" shadow>
-                {field.replace('impact_data_', '').replace('_', ' ')}
+                {field === 'impact_data_non_perishable'
+                  ? field.replace('impact_data_', '').replace('_', ' ')
+                  : field.replace('impact_data_', '').replace('_', ' / ')}
               </Text>
               <input
                 id={field}
