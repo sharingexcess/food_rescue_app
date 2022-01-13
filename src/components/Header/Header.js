@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth, useIsMobile } from 'hooks'
 import { Menu } from 'components'
-import { MOBILE_THRESHOLD } from 'helpers'
+import { MOBILE_THRESHOLD, CLOUD_FUNCTION_URLS } from 'helpers'
 import { Text, Spacer, Logo, Button } from '@sharingexcess/designsystem'
 import { generateHeaderText } from './utils'
 
@@ -15,6 +15,14 @@ export function Header() {
   const path_components = location.pathname.split('/').filter(i => i.length)
 
   const { title, back_label, back_url } = generateHeaderText(path_components)
+
+  function backupFunction() {
+    console.log(CLOUD_FUNCTION_URLS.backupFunction)
+    fetch(CLOUD_FUNCTION_URLS.backupFunction, {
+      method: 'POST',
+      body: '',
+    })
+  }
 
   function UserProfile() {
     return user ? (
@@ -33,6 +41,7 @@ export function Header() {
         <Link to="/">
           <Logo color="white" size={48} shadow />
         </Link>
+        <Button handler={backupFunction}> Test Function</Button>
         <Spacer width={12} />
         <div id="Header-location">
           <Text

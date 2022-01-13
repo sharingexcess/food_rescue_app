@@ -118,8 +118,14 @@ export const CLOUD_FUNCTION_URLS = {
   addCalendarEvent:
     process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'calendar/add',
   deleteCalendarEvent:
+<<<<<<< HEAD
     process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'calendar/delete',
   analytics: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'analytics',
+=======
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'deleteCalendarEvent',
+  backupFunction:
+    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'backUpToStorage',
+>>>>>>> e713481 (Completed Saving Json Files to Storage)
 }
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
