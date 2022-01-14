@@ -120,8 +120,6 @@ export const CLOUD_FUNCTION_URLS = {
   deleteCalendarEvent:
     process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'calendar/delete',
   analytics: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'analytics',
-  backupFunction:
-    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'backUpToStorage',
 }
 
 export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB

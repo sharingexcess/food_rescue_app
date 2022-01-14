@@ -2,11 +2,21 @@ const googleCredentials = require('./credentials.json')
 const { google } = require('googleapis')
 const OAuth2 = google.auth.OAuth2
 const calendar = google.calendar('v3')
+const express = require('express')
+const cors = require('cors')
 
 const ERROR_RESPONSE = {
   status: '500',
   message: 'There was an error with your Google calendar',
 }
+
+const calendar_routes = express()
+calendar_routes.use(cors({ origin: true }))
+
+calendar_routes.post('/add', addCalendarEvent)
+calendar_routes.post('/delete', deleteCalendarEvent)
+
+exports.calendar = calendar_routes
 
 function addEvent(resource, auth) {
   console.log('\n\n\n\nAdding Event:', resource)
@@ -54,7 +64,7 @@ function deleteEvent(calendarId, eventId, auth) {
   })
 }
 
-exports.addCalendarEvent = (request, response) => {
+function addCalendarEvent(request, response) {
   const oAuth2Client = new OAuth2(
     googleCredentials.web.client_id,
     googleCredentials.web.client_secret,
@@ -77,7 +87,7 @@ exports.addCalendarEvent = (request, response) => {
     })
 }
 
-exports.deleteCalendarEvent = (request, response) => {
+function deleteCalendarEvent(request, response) {
   const oAuth2Client = new OAuth2(
     googleCredentials.web.client_id,
     googleCredentials.web.client_secret,

@@ -1,5 +1,4 @@
 const admin = require('firebase-admin')
-const fs = require('fs')
 exports.app = admin.initializeApp()
 exports.db = admin.firestore()
 
@@ -60,14 +59,12 @@ exports.RECIPIENT_SUB_TYPES = [
 
 exports.EMISSIONS_COEFFICIENT = 3.66
 
-exports.uploadFile = (filePath, options, needDelete) => {
+exports.uploadFile = async (path, data) => {
   const bucket = admin.storage().bucket()
-
-  bucket.upload(filePath, options, err => {
-    if (err) {
-      throw err
-    }
-    console.log('File uploaded to Storage')
-    if (needDelete) fs.unlinkSync(filePath)
-  })
+  try {
+    await bucket.file(path).save(data)
+    console.log(`Successfully uploaded ${path} to Storage`)
+  } catch (error) {
+    console.error(`Error uploading file ${path} to storage:`, error)
+  }
 }

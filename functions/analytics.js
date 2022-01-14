@@ -8,8 +8,15 @@ const {
   RECIPIENT_SUB_TYPES,
   RETAIL_VALUES,
 } = require('./helpers')
+const express = require('express')
+const cors = require('cors')
 
-exports.analytics = async (request, response) => {
+const analytics_routes = express()
+analytics_routes.use(cors({ origin: true }))
+analytics_routes.get('/', handleAnalytics)
+exports.analytics = analytics_routes
+
+async function handleAnalytics(request, response) {
   return new Promise(async resolve => {
     console.log('running analytics')
     const { date_range_start, date_range_end, breakdown } = request.query
