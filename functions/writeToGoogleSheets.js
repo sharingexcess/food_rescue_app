@@ -105,6 +105,8 @@ exports.writeToGoogleSheets = async () => {
   for (const rescue of rescues) {
     // format all timestamps as readable strings
     console.log('rescue:', JSON.stringify(rescue))
+    const timeStarted = ''
+    const timeEneded = ''
     for (const key in rescue) {
       if (key.includes('timestamp_') && rescue[key]) {
         rescue[key] = moment(rescue[key].toDate())
@@ -239,6 +241,9 @@ exports.writeToGoogleSheets = async () => {
       rescue.timestamp_scheduled_finish || '',
       rescue.timestamp_logged_start || '',
       rescue.timestamp_logged_finish || '',
+      rescue.timestamp_logged_finish && rescue.timestamp_logged_start
+        ? rescue.timestamp_logged_finish - rescue.timestamp_logged_start
+        : '',
     ]
     console.log('COMPLETE ROW:', JSON.stringify(row))
     rescue_rows.push(row)
@@ -264,6 +269,7 @@ exports.writeToGoogleSheets = async () => {
     'Scheduled Finish',
     'Logged Start',
     'Logged Finish',
+    'Total Time',
   ]
   const columns = [
     'A',
@@ -439,4 +445,12 @@ exports.writeToGoogleSheets = async () => {
     )
     current_row += body.length
   }
+}
+
+function differenceInTime(timeStarted, timeEnded) {
+  differenceSecs = timeEnded.diff(timeStarted, 'seconds')
+  h = Math.floor(differenceSecs / 3600)
+  m = Math.ceil((difference % 3600) / 60)
+
+  return `${h} hours, ${m} minutes`
 }
