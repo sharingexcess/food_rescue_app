@@ -58,3 +58,13 @@ exports.RECIPIENT_SUB_TYPES = [
 ]
 
 exports.EMISSIONS_COEFFICIENT = 3.66
+
+exports.uploadFile = async (path, data) => {
+  const bucket = admin.storage().bucket()
+  try {
+    await bucket.file(path).save(data)
+    console.log(`Successfully uploaded ${path} to Storage`)
+  } catch (error) {
+    console.error(`Error uploading file ${path} to storage:`, error)
+  }
+}
