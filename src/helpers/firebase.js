@@ -1,7 +1,6 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/storage'
-import 'firebase/firestore'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/auth'
+import 'firebase/compat/firestore'
 import { customAlphabet } from 'nanoid'
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 
@@ -75,10 +74,4 @@ export async function deleteFirestoreData(identifier) {
     }
   }
   return await query.delete()
-}
-
-export async function uploadFileToStorage(file, path) {
-  const ref = firebase.storage().ref()
-  await ref.child(path).put(file, { contentType: file.type })
-  return await ref.child(path).getDownloadURL()
 }

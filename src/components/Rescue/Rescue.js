@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   setFirestoreData,
   createTimestamp,
@@ -20,7 +20,7 @@ import {
 export function Rescue() {
   const { rescue_id } = useParams()
   const { admin } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const rescue = useFirestore('rescues', rescue_id)
   const deliveries = useFirestore(
     'stops',
@@ -50,7 +50,7 @@ export function Rescue() {
             timestamp_updated: createTimestamp(),
           })
           setWorking(false)
-          history.push(`/rescues/${rescue_id}/completed`)
+          navigate(`/rescues/${rescue_id}/completed`)
         }
       }
     }

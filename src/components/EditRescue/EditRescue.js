@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   updateFieldSuggestions,
   formFields,
@@ -37,7 +37,7 @@ import {
 import { Emoji } from 'react-apple-emojis'
 
 export function EditRescue() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const rescues = useFirestore('rescues')
   const drivers = useFirestore('users')
   const { rescue_id } = useParams()
@@ -165,7 +165,7 @@ export function EditRescue() {
           impact_data_total_weight: stop.impact_data_total_weight || 0,
         }
         if (stop.type === 'delivery') {
-          s.percent_of_total_dropped = stop.percent_of_total_dropped || 0
+          s.percent_of_total_dropped = stop.percent_of_total_dropped || 100
         }
         await setFirestoreData(['stops', stop.id], s)
       }
@@ -197,7 +197,7 @@ export function EditRescue() {
       }
       await setFirestoreData(['rescues', new_rescue_id], rescue)
       setWorking(false)
-      history.push(`/rescues/${new_rescue_id}`)
+      navigate(`/rescues/${new_rescue_id}`)
     }
   }
 

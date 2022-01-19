@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  // "parser": "babel-eslint",
   "plugins": ["prettier", "react-hooks"],
   "rules": {
     "prettier/prettier": [
@@ -13,10 +13,5 @@
     "prefer-const": "warn",
     "no-duplicate-imports": "error"
   },
-  "extends": [
-    "react-app",
-    "plugin:prettier/recommended",
-    "prettier",
-    "prettier/react"
-  ]
+  "extends": ["react-app", "plugin:prettier/recommended", "prettier"]
 }

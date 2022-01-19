@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   createTimestamp,
   DONOR_TYPES,
@@ -14,7 +14,7 @@ import { Button } from '@sharingexcess/designsystem'
 
 export function EditOrganization() {
   const { organization_id } = useParams()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     type: '',
@@ -61,7 +61,7 @@ export function EditOrganization() {
           timestamp_created: org.timestamp_created || createTimestamp(),
           timestamp_updated: createTimestamp(),
         })
-        history.push(`/admin/organizations/${org_id}`)
+        navigate(`/admin/organizations/${org_id}`)
       } catch (e) {
         console.error('Error writing document: ', e)
       }
@@ -73,7 +73,7 @@ export function EditOrganization() {
       await setFirestoreData(['organizations', organization_id], {
         is_deleted: true,
       })
-      history.push('/admin/organizations')
+      navigate('/admin/organizations')
     }
   }
 
