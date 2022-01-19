@@ -18,6 +18,7 @@
     -webkit-appearance: none;
     cursor: pointer;
     text-shadow: var(--se-shadow-small);
+    margin-right: 8px;
   }
 
   .wrapper {
@@ -27,9 +28,13 @@
 
   #Filters {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
+
+    :last-child {
+      margin-left: auto;
+    }
 
     @include mobile {
       flex-wrap: wrap;
