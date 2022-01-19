@@ -1,6 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ORG_TYPE_ICONS, prettyPrintDbFieldName } from 'helpers'
+import {
+  ORG_TYPE_ICONS,
+  prettyPrintDbFieldName,
+  DONOR_TYPES,
+  RECIPIENT_TYPES,
+} from 'helpers'
 import { Input, Loading } from 'components'
 import { useFirestore } from 'hooks'
 import {
@@ -20,20 +25,27 @@ export function Organizations() {
     useCallback(i => !i.is_deleted, [])
   )
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState(
-    new URLSearchParams(window.location.search).get('filter') || 'recipient'
+  const [type, setType] = useState(
+    new URLSearchParams(window.location.search).get('type') || 'recipient'
+  )
+  const [subtype, setSubtype] = useState(
+    new URLSearchParams(window.location.search).get('subtype') || 'all'
   )
 
   useEffect(() => {
-    history.replace(`/admin/organizations?filter=${filter}`)
-  }, [filter]) // eslint-disable-line
+    history.replace(`/admin/organizations?type=${type}&subtype=${subtype}`)
+  }, [type, subtype]) // eslint-disable-line
 
   function handleSearch(e) {
     setSearch(e.target.value)
   }
 
   function filterByType(array) {
-    return filter === 'all' ? array : array.filter(i => i.type === filter)
+    return type === 'all' ? array : array.filter(i => i.type === type)
+  }
+
+  function filterBySubtype(array) {
+    return subtype === 'all' ? array : array.filter(i => i.subtype === subtype)
   }
 
   function filterBySearch(array) {
@@ -43,17 +55,35 @@ export function Organizations() {
   }
 
   if (!organizations.length) return <Loading text="Loading organizations" />
+
   return (
     <main id="Organizations">
       <section id="Filters">
-        <select value={filter} onChange={e => setFilter(e.target.value)}>
-          <option value="">Filter by type...</option>
+        <select value={type} onChange={e => setType(e.target.value)}>
+          <option value="all">All Types&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
           <option value="recipient">
             Recipients&nbsp;&nbsp;&nbsp;&nbsp;⬇️
           </option>
           <option value="donor">Donors&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
-          <option value="all">All&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
         </select>
+        {['donor', 'recipient'].includes(type) ? (
+          <select value={subtype} onChange={e => setSubtype(e.target.value)}>
+            <option value="all">All Subtypes&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
+            {type === 'donor'
+              ? Object.values(DONOR_TYPES).map(i => (
+                  <option value={i}>
+                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
+                  </option>
+                ))
+              : type === 'recipient'
+              ? Object.values(RECIPIENT_TYPES).map(i => (
+                  <option value={i}>
+                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
+                  </option>
+                ))
+              : null}
+          </select>
+        ) : null}
         <Link to="/admin/create-organization">
           <Button type="secondary" color="white">
             + New
@@ -67,7 +97,7 @@ export function Organizations() {
         animation={false}
       />
       <Spacer height={16} />
-      {filterBySearch(filterByType(organizations)).map(org => (
+      {filterBySearch(filterByType(filterBySubtype(organizations))).map(org => (
         <Link
           key={org.id}
           className="wrapper"
