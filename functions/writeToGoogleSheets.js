@@ -106,14 +106,22 @@ exports.writeToGoogleSheets = async () => {
     // format all timestamps as readable strings
     console.log('rescue:', JSON.stringify(rescue))
     const timeStarted = ''
-    const timeEneded = ''
+    const timeEnded = ''
     for (const key in rescue) {
       if (key.includes('timestamp_') && rescue[key]) {
-        rescue[key] = moment(rescue[key].toDate())
-          .tz('America/New_York')
-          .format('dddd, MM/DD/YY, hh:mma')
+        if (key === 'timestamp_logged_finish') {
+          timeEnded = rescue[key].toDate().getTime()
+        } else if (key === ' timestamp_logged_start') {
+          timeStarted = rescue[key].toDate().getTime()
+        } else {
+          rescue[key] = moment(rescue[key].toDate())
+            .tz('America/New_York')
+            .format('dddd, MM/DD/YY, hh:mma')
+        }
       }
     }
+    //add Total time to the rescue
+    rescue['']
     // add the handler's name to the rescue
     if (rescue.handler_id) {
       const handler = users.find(i => i.id === rescue.handler_id)
@@ -447,10 +455,14 @@ exports.writeToGoogleSheets = async () => {
   }
 }
 
-function differenceInTime(timeStarted, timeEnded) {
-  differenceSecs = timeEnded.diff(timeStarted, 'seconds')
-  h = Math.floor(differenceSecs / 3600)
-  m = Math.ceil((difference % 3600) / 60)
+function differenceInTime(dateStarted, dateEnded) {
+  timeStarted = new Date(dateStarted).getTime()
+  timeEnded = new Date(dateEnded).getTime()
+
+  totalTimeSecs = (timEnded - timeStarted) / 1000
+
+  h = Math.floor(totalTimeSecs / 3600)
+  m = Math.ceil((totalTimeSecs % 3600) / 60)
 
   return `${h} hours, ${m} minutes`
 }
