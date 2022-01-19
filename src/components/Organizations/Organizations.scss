@@ -12,12 +12,15 @@
     text-transform: capitalize;
     font-size: 16px;
     font-weight: 600;
-    color: var(--se-black);
+    color: var(--se-white);
     z-index: 1;
     transition: border 0.1s ease;
     -webkit-appearance: none;
     cursor: pointer;
     text-shadow: var(--se-shadow-small);
+    &:hover {
+      color: var(--black);
+    }
   }
 
   .wrapper {
