@@ -141,6 +141,7 @@ export function Rescues() {
         return rescues
           .filter(r => ['scheduled', 'active'].includes(r.status))
           .sort(byDate)
+          .reverse()
       case 'past':
         return admin
           ? rescues
@@ -162,7 +163,10 @@ export function Rescues() {
           )
           .sort(byDate)
       case 'unassigned':
-        return rescues.filter(r => !r.handler_id).sort(byDate)
+        return rescues
+          .filter(r => !r.handler_id)
+          .sort(byDate)
+          .reverse()
       case 'driver':
         return rescues
           .filter(
@@ -179,6 +183,7 @@ export function Rescues() {
               searchByDate
           )
           .sort(byDate)
+          .reverse()
       default:
         return rescues.sort(byDate)
     }
