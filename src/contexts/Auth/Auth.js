@@ -1,9 +1,9 @@
 import React, { createContext, useEffect, useState } from 'react'
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/auth'
 import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { createTimestamp, getCollection } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
 import { Loading } from 'components'
@@ -15,7 +15,7 @@ const AuthContext = createContext()
 AuthContext.displayName = 'Auth'
 
 function Auth({ children }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   // we use an imported React Hook create state variables
   // auth_user defines the current auth state,
   // loading defines whether a request is currently running
@@ -36,13 +36,13 @@ function Auth({ children }) {
 
   function handleLogout() {
     firebase.auth().signOut()
-    history.push('/')
+    navigate('/')
   }
 
   async function handleLogin() {
     const user = await getAuthenticatedUser()
     updatePublicUserProfile(user)
-    history.push('/')
+    navigate('/')
   }
 
   function Error() {

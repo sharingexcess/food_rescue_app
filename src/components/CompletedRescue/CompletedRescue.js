@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link, Redirect, useParams, useHistory } from 'react-router-dom'
+import { Link, Redirect, useParams, useNavigate } from 'react-router-dom'
 import { useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
@@ -7,7 +7,7 @@ import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
 
 export function CompletedRescue() {
   const { rescue_id } = useParams()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [notes, setNotes] = useState('')
   const rescue = useFirestore('rescues', rescue_id)
   const deliveries = useFirestore(
@@ -38,13 +38,15 @@ export function CompletedRescue() {
         timestamp_updated: createTimestamp(),
       })
     }
-    history.push('/')
+    navigate('/')
+  }
+
+  if (rescue && rescue.status !== STATUSES.COMPLETED) {
+    navigate(`/rescues/${rescue_id}`)
   }
 
   return !rescue ? (
     <Loading />
-  ) : rescue.status !== STATUSES.COMPLETED ? (
-    <Redirect to={`/rescues/${rescue_id}`} />
   ) : (
     <main id="CompletedRescue">
       <div id="CompletedRescue-icon">🎉</div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Loading, Input } from 'components'
 import {
   createTimestamp,
@@ -23,7 +23,7 @@ export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
   const rescue = useFirestore('rescues', rescue_id)
-  const history = useHistory()
+  const navigate = useNavigate()
   const pickup = useFirestore('stops', pickup_id)
   const [formData, setFormData] = useState(initFormData)
   const [changed, setChanged] = useState(false)
@@ -58,7 +58,6 @@ export function PickupReport({ customSubmitHandler }) {
       !working &&
       changed
     ) {
-      console.log('updating automatically...')
       setWorking(true)
       setFirestoreData(['stops', pickup_id], {
         ...formData,
@@ -157,7 +156,7 @@ export function PickupReport({ customSubmitHandler }) {
         if (rescue.status === STATUSES.COMPLETED) {
           await updateImpactDataForRescue(rescue)
         }
-        history.push(`/rescues/${rescue_id}`)
+        navigate(`/rescues/${rescue_id}`)
       } catch (e) {
         console.error('Error writing document: ', e)
       }
@@ -250,21 +249,19 @@ export function PickupReport({ customSubmitHandler }) {
         onChange={handleChange}
       />
       <FormError />
-      {changed ? (
-        <Button
-          type="primary"
-          color="white"
-          size="large"
-          fullWidth
-          handler={
-            customSubmitHandler
-              ? e => customSubmitHandler(e, formData)
-              : e => handleSubmit(e, formData)
-          }
-        >
-          {pickup.report ? 'Update Report' : 'Submit Report'}
-        </Button>
-      ) : null}
+      <Button
+        type="primary"
+        color="white"
+        size="large"
+        fullWidth
+        handler={
+          customSubmitHandler
+            ? e => customSubmitHandler(e, formData)
+            : e => handleSubmit(e, formData)
+        }
+      >
+        {pickup.report ? 'Update Report' : 'Submit Report'}
+      </Button>
     </main>
   )
 }

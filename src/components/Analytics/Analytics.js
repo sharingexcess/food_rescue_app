@@ -22,10 +22,10 @@ import {
   shortenLargeNumber,
 } from 'helpers'
 import { Loading, Input } from 'components'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export function Analytics() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const search = new URLSearchParams(window.location.search)
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
@@ -39,28 +39,28 @@ export function Analytics() {
   const [working, setWorking] = useState(true)
 
   const query = useMemo(() => {
-    const base_url = CLOUD_FUNCTION_URLS.analytics
     const date_range_start = formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD')
     const date_range_end = formatTimestamp(new Date(rangeEnd), 'YYYY-MM-DD')
-    const full_url =
-      base_url +
-      `?date_range_start=${encodeURIComponent(
-        date_range_start
-      )}&date_range_end=${encodeURIComponent(
-        date_range_end
-      )}&breakdown=${encodeURIComponent(breakdown)}`
-    return full_url
+    return `?date_range_start=${encodeURIComponent(
+      date_range_start
+    )}&date_range_end=${encodeURIComponent(
+      date_range_end
+    )}&breakdown=${encodeURIComponent(breakdown)}`
   }, [rangeStart, rangeEnd, breakdown])
 
   useEffect(() => {
-    setWorking(true)
-    history.replace(`/admin/analytics?${query.split('?')[1]}`)
-    fetch(query)
-      .then(res => res.json())
-      .then(data => {
-        setApiData(data)
-        setWorking(false)
-      })
+    if (window.location.search !== query) {
+      setWorking(true)
+      navigate(query, { replace: true })
+    } else {
+      console.log('fetching', CLOUD_FUNCTION_URLS.analytics + query)
+      fetch(CLOUD_FUNCTION_URLS.analytics + query)
+        .then(res => res.json())
+        .then(data => {
+          setApiData(data)
+          setWorking(false)
+        })
+    }
   }, [query]) // eslint-disable-line
 
   const graphData = !apiData

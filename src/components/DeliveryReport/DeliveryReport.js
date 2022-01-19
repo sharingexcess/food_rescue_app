@@ -1,26 +1,26 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   createTimestamp,
   setFirestoreData,
   STATUSES,
   updateImpactDataForRescue,
 } from 'helpers'
-import { Input, Loading } from 'components'
+import { Ellipsis, Input, Loading } from 'components'
 import { useAuth, useFirestore } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function DeliveryReport() {
   const { delivery_id, rescue_id } = useParams()
   const rescue = useFirestore('rescues', rescue_id)
-  const history = useHistory()
+  const navigate = useNavigate()
   const delivery = useFirestore('stops', delivery_id)
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',
   })
-  const [changed, setChanged] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [working, setWorking] = useState(false)
   const { admin } = useAuth()
 
   const currentLoad = useMemo(() => {
@@ -40,22 +40,28 @@ export function DeliveryReport() {
   }, [rescue, delivery_id])
 
   useEffect(() => {
-    if (rescue && delivery.status === STATUSES.COMPLETED && submitted) {
+    if (
+      rescue &&
+      delivery.status === STATUSES.COMPLETED &&
+      submitted &&
+      !working
+    ) {
+      setWorking(true)
       async function update() {
         await updateImpactDataForRescue(rescue)
-        history.push(`/rescues/${rescue_id}`)
+        navigate(`/rescues/${rescue_id}`)
       }
       update()
     }
-  }, [rescue, delivery, history, rescue_id, submitted])
+  }, [rescue, delivery, navigate, rescue_id, submitted, working])
 
   useEffect(() => {
-    delivery
-      ? setFormData(formData => ({
-          ...formData,
-          percent_of_total_dropped: delivery.percent_of_total_dropped,
-        }))
-      : setChanged(true)
+    if (delivery) {
+      setFormData(formData => ({
+        ...formData,
+        percent_of_total_dropped: delivery.percent_of_total_dropped,
+      }))
+    }
   }, [delivery])
 
   function canEdit() {
@@ -73,7 +79,6 @@ export function DeliveryReport() {
           ? parseInt(e.target.value)
           : e.target.value,
     })
-    setChanged(true)
   }
 
   async function handleSubmit(event) {
@@ -103,6 +108,7 @@ export function DeliveryReport() {
       <Text type="primary-header" color="white" align="center" shadow>
         {parseInt(formData.percent_of_total_dropped)}%
       </Text>
+      <Spacer height={16} />
       <input
         id="percent_of_total_dropped"
         type="range"
@@ -114,6 +120,11 @@ export function DeliveryReport() {
         onChange={handleChange}
         disabled={!canEdit()}
       />
+      <Spacer height={16} />
+      <Text type="small-header" color="white" shadow align="center">
+        ({Math.round((currentLoad * formData.percent_of_total_dropped) / 100)}{' '}
+        lbs.)
+      </Text>
       <Spacer height={32} />
       <Input
         type="textarea"
@@ -124,15 +135,25 @@ export function DeliveryReport() {
         onChange={handleChange}
         readOnly={!canEdit()}
       />
-      {changed && canEdit() ? (
+      {canEdit() ? (
         <Button
           type="primary"
           color="white"
           size="large"
           fullWidth
           handler={handleSubmit}
+          disabled={submitted}
         >
-          {delivery.report ? 'Update Report' : 'Submit Report'}
+          {submitted ? (
+            <>
+              Updating
+              <Ellipsis />
+            </>
+          ) : delivery.report ? (
+            'Update Report'
+          ) : (
+            'Submit Report'
+          )}
         </Button>
       ) : null}
     </main>

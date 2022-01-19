@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   createTimestamp,
   generateUniqueId,
@@ -13,7 +13,7 @@ import moment from 'moment'
 
 export function LogRescue() {
   const { user } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [donor, setDonor] = useState()
   const [recipient, setRecipient] = useState()
   const [time, setTime] = useState(
@@ -96,7 +96,7 @@ export function LogRescue() {
       timestamp_logged_start: createTimestamp(time),
       timestamp_logged_finish: createTimestamp(time),
     })
-    history.push(`/`)
+    navigate(`/`)
   }
 
   return (

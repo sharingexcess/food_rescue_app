@@ -1,18 +1,18 @@
 import React from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
 import { Button } from '@sharingexcess/designsystem'
 
 export function FoodSafety() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { user } = useAuth()
 
   function handleComplete() {
     setFirestoreData(['users', user.id], {
       completed_food_safety: true,
     })
-    history.push('/')
+    navigate('/')
   }
 
   return (

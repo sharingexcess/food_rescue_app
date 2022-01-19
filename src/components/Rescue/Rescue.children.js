@@ -22,7 +22,7 @@ import {
   formatTimestamp,
 } from 'helpers'
 import { useAuth, useFirestore, useApp } from 'hooks'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
 import { Emoji } from 'react-apple-emojis'
@@ -284,7 +284,7 @@ export function CancelRescue() {
 export function FinishRescue() {
   const { setModal } = useApp()
   const [notes, setNotes] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
   const { rescue_id } = useParams()
   const rescue = useFirestore('rescues', rescue_id)
 
@@ -294,7 +294,7 @@ export function FinishRescue() {
       notes,
     })
     setModal()
-    history.push(`/rescues/${rescue_id}/completed`)
+    navigate(`/rescues/${rescue_id}/completed`)
   }
 
   return (
@@ -447,7 +447,7 @@ export function ContactAdmin() {
 }
 
 export function Stop({ stops, s, i }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
   const rescue = useFirestore('rescues', rescue_id)
@@ -613,7 +613,7 @@ export function Stop({ stops, s, i }) {
         setFirestoreData(['stops', s.id], {
           status: STATUSES.ACTIVE,
           timestamp_logged_start: createTimestamp(),
-        }).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
+        }).then(() => navigate(`/rescues/${rescue_id}/${s.type}/${s.id}`))
       }
     }
 
@@ -666,7 +666,7 @@ export function Stop({ stops, s, i }) {
       timestamp_logged_finish: createTimestamp(),
       status: STATUSES.COMPLETED,
     })
-      .then(() => history.push(`/rescues/${rescue_id}`))
+      .then(() => navigate(`/rescues/${rescue_id}`))
       .catch(e => console.error('Error writing document: ', e))
   }
 
@@ -674,7 +674,7 @@ export function Stop({ stops, s, i }) {
     function handleOpenReport() {
       setFirestoreData(['stops', s.id], {
         status: STATUSES.ACTIVE,
-      }).then(() => history.push(`/rescues/${rescue_id}/${s.type}/${s.id}`))
+      }).then(() => navigate(`/rescues/${rescue_id}/${s.type}/${s.id}`))
     }
 
     function handleClick() {
@@ -911,7 +911,7 @@ export function BackupDelivery() {
             impact_data_mixed: 0,
             impact_data_other: 0,
             impact_data_total_weight: 0,
-            percent_of_total_dropped: 0,
+            percent_of_total_dropped: 100,
           })
           await setFirestoreData(['rescues', rescue_id], {
             stop_ids: [...rescue.stops.map(s => s.id), stop_id],

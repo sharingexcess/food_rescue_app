@@ -4,25 +4,23 @@
   "version": "3.2.1",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.5.0",
-    "@emotion/styled": "^11.3.0",
     "@formspree/react": "^2.2.4",
-    "@sentry/react": "^5.30.0",
-    "@sentry/tracing": "^5.30.0",
+    "@sentry/react": "^6.16.1",
+    "@sentry/tracing": "^6.16.1",
     "@sharingexcess/designsystem": "^1.2.8",
-    "firebase": "^8.2.1",
-    "google-map-react": "^2.1.9",
+    "firebase": "^9.6.3",
+    "google-map-react": "^2.1.10",
     "moment": "^2.29.1",
-    "nanoid": "^3.1.30",
-    "react": "^17.0.1",
+    "nanoid": "^3.2.0",
+    "react": "^17.0.2",
     "react-apple-emojis": "^2.1.1",
-    "react-dom": "^17.0.1",
-    "react-firebase-hooks": "^2.2.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.1",
-    "recharts": "^2.1.6",
-    "sass": "^1.45.2",
-    "validator": "^13.5.2"
+    "react-dom": "^17.0.2",
+    "react-firebase-hooks": "^4.0.2",
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "^5.0.0",
+    "recharts": "^2.1.8",
+    "sass": "^1.49.0",
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -47,10 +45,10 @@
   "devDependencies": {
     "@sentry/cli": "^1.71.0",
     "colors": "^1.4.0",
-    "dotenv": "^10.0.0",
-    "eslint-config-prettier": "^7.0.0",
-    "eslint-plugin-prettier": "^3.3.0",
+    "dotenv": "^14.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "git-state": "^4.1.0",
-    "prettier": "2.2.1"
+    "prettier": "2.5.1"
   }
 }

@@ -8,11 +8,11 @@ import {
   setFirestoreData,
 } from 'helpers'
 import { availability } from './utils'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 export function Profile() {
   const { user } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const profile = useFirestore('users', user ? user.uid : null)
   const [formData, setFormData] = useState({
     name: '',
@@ -104,7 +104,7 @@ export function Profile() {
           setButton('profile updated!')
           setTimeout(() => setButton(), 2000)
           setError()
-          history.push('/')
+          navigate('/')
         })
         .catch(e => console.error('Error updating profile: ', e))
     }

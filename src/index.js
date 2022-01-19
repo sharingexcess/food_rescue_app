@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
-import firebase from 'firebase/app'
+import firebase from 'firebase/compat/app'
 import {
   Calendar,
   CompletedRescue,
@@ -31,7 +31,6 @@ import {
   Users,
   User,
   Analytics,
-  SwitchEnv,
   Modal,
   EnvWarning,
   DriverStats,
@@ -70,42 +69,42 @@ if (window.matchMedia('(display-mode: standalone)').matches) {
   })
 }
 
-function PublicRoute({ children, exact, path }) {
+function PublicRoute({ children }) {
   return (
-    <Route exact={exact} path={path}>
+    <>
       <Header />
       {children}
       <Modal />
       <EnvWarning />
-    </Route>
+    </>
   )
 }
 
-function DriverRoute({ children, exact, path }) {
+function DriverRoute({ children }) {
   const { permission } = useAuth()
   return permission ? (
-    <Route exact={exact} path={path}>
+    <>
       <Header />
       {children}
       <Modal />
       <EnvWarning />
-    </Route>
+    </>
   ) : (
-    <Error message="Only registered users have permission to view this page." />
+    <Navigate to="/error" />
   )
 }
 
-function AdminRoute({ children, exact, path }) {
+function AdminRoute({ children }) {
   const { admin } = useAuth()
   return admin ? (
-    <Route exact={exact} path={path}>
+    <>
       <Header />
       {children}
       <Modal />
       <EnvWarning />
-    </Route>
+    </>
   ) : (
-    <Error message="Only admins have permission to view this page." />
+    <Navigate to="/error" />
   )
 }
 
@@ -118,128 +117,238 @@ function RescueAppRoutes() {
             {/* Auth component handles login and will show a login page if no user is authenticated */}
             <Firestore>
               <App>
-                <Switch>
+                <Routes>
                   {/* Public Routes */}
-                  <PublicRoute exact path="/">
-                    <Home />
-                  </PublicRoute>
-                  <PublicRoute exact path="/profile">
-                    <Profile />
-                  </PublicRoute>
-                  <PublicRoute exact path="/privacy">
-                    <Privacy />
-                  </PublicRoute>
-                  <PublicRoute exact path="/tos">
-                    <Terms />
-                  </PublicRoute>
-                  <PublicRoute exact path="/contact">
-                    <ContactUs />
-                  </PublicRoute>
-                  <PublicRoute exact path="/food-safety">
-                    <FoodSafety />
-                  </PublicRoute>
-                  <PublicRoute exact path="/liability">
-                    <Liability />
-                  </PublicRoute>
-                  <PublicRoute exact path="/driver-info">
-                    <DriverInfo />
-                  </PublicRoute>
-                  <PublicRoute exact path="/tutorial">
-                    <Tutorial />
-                  </PublicRoute>
+                  <Route
+                    path="/"
+                    element={
+                      <PublicRoute>
+                        <Home />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="profile"
+                    element={
+                      <PublicRoute>
+                        <Profile />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="privacy"
+                    element={
+                      <PublicRoute>
+                        <Privacy />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/tos"
+                    element={
+                      <PublicRoute>
+                        <Terms />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/contact"
+                    element={
+                      <PublicRoute>
+                        <ContactUs />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/food-safety"
+                    element={
+                      <PublicRoute>
+                        <FoodSafety />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/liability"
+                    element={
+                      <PublicRoute>
+                        <Liability />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/driver-info"
+                    element={
+                      <PublicRoute>
+                        <DriverInfo />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/tutorial"
+                    element={
+                      <PublicRoute>
+                        <Tutorial />
+                      </PublicRoute>
+                    }
+                  />
 
                   {/* Driver Routes */}
-                  <DriverRoute exact path="/calendar">
-                    <Calendar />
-                  </DriverRoute>
-                  <DriverRoute exact path="/rescues">
-                    <Rescues />
-                  </DriverRoute>
-                  <DriverRoute exact path="/rescues/:rescue_id">
-                    <Rescue />
-                  </DriverRoute>
-                  <DriverRoute
-                    exact
+                  <Route
+                    path="/calendar"
+                    element={
+                      <DriverRoute>
+                        <Calendar />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
+                    path="/rescues"
+                    element={
+                      <DriverRoute>
+                        <Rescues />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
+                    path="/rescues/:rescue_id"
+                    element={
+                      <DriverRoute>
+                        <Rescue />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
                     path="/rescues/:rescue_id/pickup/:pickup_id"
-                  >
-                    <PickupReport />
-                  </DriverRoute>
-                  <DriverRoute
-                    exact
+                    element={
+                      <DriverRoute>
+                        <PickupReport />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
                     path="/rescues/:rescue_id/delivery/:delivery_id"
-                  >
-                    <DeliveryReport />
-                  </DriverRoute>
-                  <DriverRoute exact path="/rescues/:rescue_id/edit">
-                    <EditRescue />
-                  </DriverRoute>
-                  <DriverRoute exact path="/rescues/:rescue_id/completed">
-                    <CompletedRescue />
-                  </DriverRoute>
-                  <DriverRoute exact path="/stats">
-                    <DriverStats />
-                  </DriverRoute>
-
+                    element={
+                      <DriverRoute>
+                        <DeliveryReport />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
+                    path="/rescues/:rescue_id/edit"
+                    element={
+                      <DriverRoute>
+                        <EditRescue />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
+                    path="/rescues/:rescue_id/completed"
+                    element={
+                      <DriverRoute>
+                        <CompletedRescue />
+                      </DriverRoute>
+                    }
+                  />
+                  <Route
+                    path="/stats"
+                    element={
+                      <DriverRoute>
+                        <DriverStats />
+                      </DriverRoute>
+                    }
+                  />
                   {/* Admin Routes */}
 
-                  <AdminRoute exact path="/admin/create-rescue">
-                    <EditRescue />
-                  </AdminRoute>
-                  <AdminRoute exact path="/admin/log-rescue">
-                    <LogRescue />
-                  </AdminRoute>
-                  <AdminRoute exact path="/admin/create-organization">
-                    <EditOrganization />
-                  </AdminRoute>
-                  <AdminRoute exact path="/admin/organizations">
-                    <Organizations />
-                  </AdminRoute>
-
-                  <AdminRoute
-                    exact
+                  <Route
+                    path="/admin/create-rescue"
+                    element={
+                      <AdminRoute>
+                        <EditRescue />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/log-rescue"
+                    element={
+                      <AdminRoute>
+                        <LogRescue />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/create-organization"
+                    element={
+                      <AdminRoute>
+                        <EditOrganization />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/organizations"
+                    element={
+                      <AdminRoute>
+                        <Organizations />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
                     path="/admin/organizations/:organization_id"
-                  >
-                    <Organization />
-                  </AdminRoute>
-                  <AdminRoute
-                    exact
+                    element={
+                      <AdminRoute>
+                        <Organization />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
                     path="/admin/organizations/:organization_id/edit"
-                  >
-                    <EditOrganization />
-                  </AdminRoute>
-                  <AdminRoute
-                    exact
+                    element={
+                      <AdminRoute>
+                        <EditOrganization />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
                     path="/admin/organizations/:organization_id/create-location"
-                  >
-                    <EditLocation />
-                  </AdminRoute>
-                  <AdminRoute
-                    exact
+                    element={
+                      <AdminRoute>
+                        <EditLocation />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
                     path="/admin/organizations/:organization_id/location/:location_id"
-                  >
-                    <EditLocation />
-                  </AdminRoute>
-
-                  <AdminRoute exact path="/admin/users">
-                    <Users />
-                  </AdminRoute>
-                  <AdminRoute exact path="/admin/users/:id">
-                    <User />
-                  </AdminRoute>
-                  <AdminRoute exact path="/admin/analytics">
-                    <Analytics />
-                  </AdminRoute>
-                  <AdminRoute exact path="/admin/switch-environment">
-                    <SwitchEnv />
-                  </AdminRoute>
-
-                  {/* Catch All */}
-                  <Route>
-                    {/* This route has no path, and therefore will be the 'catch all' */}
-                    <Error />
-                    {/* this 404 page component will render if the url does not match any other routes */}
-                  </Route>
-                </Switch>
+                    element={
+                      <AdminRoute>
+                        <EditLocation />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/users"
+                    element={
+                      <AdminRoute>
+                        <Users />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/users/:id"
+                    element={
+                      <AdminRoute>
+                        <User />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/analytics"
+                    element={
+                      <AdminRoute>
+                        <Analytics />
+                      </AdminRoute>
+                    }
+                  />
+                  <Route path="*" element={<Error />} />
+                </Routes>
               </App>
             </Firestore>
           </Auth>

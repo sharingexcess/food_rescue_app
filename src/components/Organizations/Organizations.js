@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ORG_TYPE_ICONS,
@@ -16,10 +16,10 @@ import {
   Text,
 } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 export function Organizations() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const organizations = useFirestore(
     'organizations',
     useCallback(i => !i.is_deleted, [])
@@ -32,9 +32,15 @@ export function Organizations() {
     new URLSearchParams(window.location.search).get('subtype') || 'all'
   )
 
+  const query = useMemo(() => {
+    return `?type=${type}&subtype=${subtype}`
+  }, [type, subtype])
+
   useEffect(() => {
-    history.replace(`/admin/organizations?type=${type}&subtype=${subtype}`)
-  }, [type, subtype]) // eslint-disable-line
+    if (window.location.search !== query) {
+      navigate(`?type=${type}&subtype=${subtype}`, { replace: true })
+    }
+  }, [query]) // eslint-disable-line
 
   function handleSearch(e) {
     setSearch(e.target.value)
@@ -71,13 +77,13 @@ export function Organizations() {
             <option value="all">All Subtypes&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
             {type === 'donor'
               ? Object.values(DONOR_TYPES).map(i => (
-                  <option value={i}>
+                  <option value={i} key={i}>
                     {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
                   </option>
                 ))
               : type === 'recipient'
               ? Object.values(RECIPIENT_TYPES).map(i => (
-                  <option value={i}>
+                  <option value={i} key={i}>
                     {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
                   </option>
                 ))
