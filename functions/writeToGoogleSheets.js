@@ -105,23 +105,19 @@ exports.writeToGoogleSheets = async () => {
   for (const rescue of rescues) {
     // format all timestamps as readable strings
     console.log('rescue:', JSON.stringify(rescue))
-    const timeStarted = ''
-    const timeEnded = ''
     for (const key in rescue) {
       if (key.includes('timestamp_') && rescue[key]) {
-        if (key === 'timestamp_logged_finish') {
-          timeEnded = rescue[key].toDate().getTime()
-        } else if (key === ' timestamp_logged_start') {
-          timeStarted = rescue[key].toDate().getTime()
-        } else {
-          rescue[key] = moment(rescue[key].toDate())
-            .tz('America/New_York')
-            .format('dddd, MM/DD/YY, hh:mma')
-        }
+        rescue[key] = moment(rescue[key].toDate())
+          .tz('America/New_York')
+          .format('dddd, MM/DD/YY, hh:mma')
       }
     }
     //add Total time to the rescue
-    rescue['']
+    if (rescue.timestamp_logged_finish && rescue.timestamp_logged_start)
+      rescue['total_time'] = differenceInTime(
+        rescue.timestamp_logged_finish,
+        rescue.timestamp_logged_start
+      )
     // add the handler's name to the rescue
     if (rescue.handler_id) {
       const handler = users.find(i => i.id === rescue.handler_id)
@@ -249,9 +245,7 @@ exports.writeToGoogleSheets = async () => {
       rescue.timestamp_scheduled_finish || '',
       rescue.timestamp_logged_start || '',
       rescue.timestamp_logged_finish || '',
-      rescue.timestamp_logged_finish && rescue.timestamp_logged_start
-        ? rescue.timestamp_logged_finish - rescue.timestamp_logged_start
-        : '',
+      rescue.total_time || '',
     ]
     console.log('COMPLETE ROW:', JSON.stringify(row))
     rescue_rows.push(row)
@@ -456,8 +450,8 @@ exports.writeToGoogleSheets = async () => {
 }
 
 function differenceInTime(dateStarted, dateEnded) {
-  timeStarted = new Date(dateStarted).getTime()
-  timeEnded = new Date(dateEnded).getTime()
+  timeStarted = moment(dateStarted).toDate().getTime()
+  timeEnded = moment(dateEnded).toDate().getTime()
 
   totalTimeSecs = (timEnded - timeStarted) / 1000
 
