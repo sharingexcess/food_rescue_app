@@ -107,17 +107,16 @@ exports.writeToGoogleSheets = async () => {
     console.log('rescue:', JSON.stringify(rescue))
     for (const key in rescue) {
       if (key.includes('timestamp_') && rescue[key]) {
+        if (!rescue.total_time)
+          rescue.total_time = differenceInTime(
+            rescue.timestamp_logged_start,
+            rescue.timestamp_logged_finish
+          )
         rescue[key] = moment(rescue[key].toDate())
           .tz('America/New_York')
           .format('dddd, MM/DD/YY, hh:mma')
       }
     }
-    //add Total time to the rescue
-    if (rescue.timestamp_logged_finish && rescue.timestamp_logged_start)
-      rescue['total_time'] = differenceInTime(
-        rescue.timestamp_logged_finish,
-        rescue.timestamp_logged_start
-      )
     // add the handler's name to the rescue
     if (rescue.handler_id) {
       const handler = users.find(i => i.id === rescue.handler_id)
@@ -450,13 +449,11 @@ exports.writeToGoogleSheets = async () => {
 }
 
 function differenceInTime(dateStarted, dateEnded) {
-  timeStarted = moment(dateStarted).toDate().getTime()
-  timeEnded = moment(dateEnded).toDate().getTime()
+  const totalTimeSecs =
+    (dateEnded.toDate().getTime() - dateStarted.toDate().getTime()) / 1000
 
-  totalTimeSecs = (timEnded - timeStarted) / 1000
-
-  h = Math.floor(totalTimeSecs / 3600)
-  m = Math.ceil((totalTimeSecs % 3600) / 60)
+  const h = Math.floor(totalTimeSecs / 3600)
+  const m = Math.floor((totalTimeSecs % 3600) / 60)
 
   return `${h} hours, ${m} minutes`
 }
