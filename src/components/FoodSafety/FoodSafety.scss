@@ -12,7 +12,11 @@
   }
 
   section {
-    @include card;
+    background-color: var(--white);
+    margin-top: 32px;
+    margin-bottom: 32px;
+    padding: 24px;
+    border-radius: 25px;
   }
 
   ol {
