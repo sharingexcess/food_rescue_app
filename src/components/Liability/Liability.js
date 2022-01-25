@@ -1,18 +1,18 @@
 import { Button, Spacer, Text, Card } from '@sharingexcess/designsystem'
 import { setFirestoreData } from 'helpers'
 import { useAuth } from 'hooks'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Input } from 'components'
 
 export function Liability() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { user } = useAuth()
 
   function agreeToLiability(e) {
     setFirestoreData(['users', user.id], {
       completed_liability_release: true,
     })
-    history.push('/')
+    navigate('/')
   }
 
   return (

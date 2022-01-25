@@ -23,6 +23,9 @@
     option {
       color: var(--se-black);
     }
+    
+    margin-right: 8px;
+
   }
 
   .wrapper {
@@ -32,9 +35,13 @@
 
   #Filters {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
+
+    :last-child {
+      margin-left: auto;
+    }
 
     @include mobile {
       flex-wrap: wrap;

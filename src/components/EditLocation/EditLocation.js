@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   createTimestamp,
   generateUniqueId,
@@ -13,7 +13,7 @@ import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function EditLocation() {
   const { organization_id, location_id } = useParams()
-  const history = useHistory()
+  const navigate = useNavigate()
   const organization = useFirestore('organizations', organization_id)
   const location = useFirestore('locations', location_id)
   const [formData, setFormData] = useState({
@@ -63,7 +63,7 @@ export function EditLocation() {
           timestamp_created: location.timestamp_created || createTimestamp(),
           timestamp_updated: createTimestamp(),
         })
-        history.push(`/admin/organizations/${organization_id}`)
+        navigate(`/admin/organizations/${organization_id}`)
       } catch (e) {
         console.error('Error writing document: ', e)
       }
@@ -77,7 +77,7 @@ export function EditLocation() {
       await setFirestoreData(['locations', location_id], {
         is_deleted: true,
       })
-      history.push('/admin/organizations')
+      navigate('/admin/organizations')
     }
   }
 

@@ -1,17 +1,17 @@
 import React from 'react'
 import { useAuth } from 'hooks'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import { setFirestoreData } from 'helpers'
 import { Link } from 'react-router-dom'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function DriverInfo() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { user } = useAuth()
 
   function handleComplete() {
     setFirestoreData(['users', user.id], { completed_driver_info: true })
-    history.push('/')
+    navigate('/')
   }
 
   return (

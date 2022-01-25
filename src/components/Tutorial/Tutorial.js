@@ -1,19 +1,19 @@
 import React from 'react'
 import { useAuth } from 'hooks'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import { setFirestoreData } from 'helpers'
 import { Button } from '@sharingexcess/designsystem'
 import { Link } from 'react-router-dom'
 
 export function Tutorial() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { user } = useAuth()
 
   function handleComplete() {
     setFirestoreData(['users', user.id], {
       completed_app_tutorial: true,
     })
-    history.push('/')
+    navigate('/')
   }
 
   return (

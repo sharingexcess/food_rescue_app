@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Ellipsis, Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth, useFirestore } from 'hooks'
 import {
   Button,
@@ -18,7 +18,6 @@ import PickupIcon from 'assets/pickup.png'
 import DeliveryIcon from 'assets/delivery.png'
 
 export function Rescues() {
-  const history = useHistory()
   const { user, admin } = useAuth()
   const {
     loadMoreData,
@@ -81,14 +80,14 @@ export function Rescues() {
     const rootPath = window.location.pathname
     if (filter === 'past') {
       params.set('filter', 'past')
-      history.replace(`${rootPath}?${params.toString()}`)
+      window.history.replaceState(null, '', `${rootPath}?${params.toString()}`)
     } else if (filter === 'driver') {
       params.set('filter', 'driver')
       if (searchByDriver) {
         params.set('driver', searchByDriver)
       }
       params.delete('date')
-      history.replace(`${rootPath}?${params.toString()}`)
+      window.history.replaceState(null, '', `${rootPath}?${params.toString()}`)
       setFilterByDriver(true)
       setFilterByDate(false)
     } else if (filter === 'date') {
@@ -97,17 +96,17 @@ export function Rescues() {
         params.set('date', searchByDate)
       }
       params.delete('driver')
-      history.replace(`${rootPath}?${params.toString()}`)
+      window.history.replaceState(null, '', `${rootPath}?${params.toString()}`)
       setFilterByDriver(false)
       setFilterByDate(true)
     } else if (filter === 'mine') {
-      history.replace(`${rootPath}?filter=mine`)
+      window.history.replaceState(null, '', `${rootPath}?filter=mine`)
     } else if (filter === 'unassigned') {
-      history.replace(`${rootPath}?filter=unassigned`)
+      window.history.replaceState(null, '', `${rootPath}?filter=unassigned`)
     } else if (isInitialRender) {
       setIsInitialRender(false)
     } else {
-      history.replace(`${rootPath}`)
+      window.history.replaceState(null, '', `${rootPath}`)
       setFilterByDriver(false)
       setFilterByDate(false)
     }
@@ -124,11 +123,19 @@ export function Rescues() {
 
   function handleSearchByDriver(e) {
     setSearchByDriver(e.target.value)
-    history.replace(`rescues?filter=driver&driver=${e.target.value}`)
+    window.history.replaceState(
+      null,
+      '',
+      `rescues?filter=driver&driver=${e.target.value}`
+    )
   }
   function handleSearchByDate(e) {
     setSearchByDate(e.target.value)
-    history.replace(`rescues?filter=date&date=${e.target.value}`)
+    window.history.replaceState(
+      null,
+      '',
+      `rescues?filter=date&date=${e.target.value}`
+    )
   }
 
   function filterAndSortRescues(rescues) {
@@ -141,6 +148,7 @@ export function Rescues() {
         return rescues
           .filter(r => ['scheduled', 'active'].includes(r.status))
           .sort(byDate)
+          .reverse()
       case 'past':
         return admin
           ? rescues
@@ -162,7 +170,10 @@ export function Rescues() {
           )
           .sort(byDate)
       case 'unassigned':
-        return rescues.filter(r => !r.handler_id).sort(byDate)
+        return rescues
+          .filter(r => !r.handler_id)
+          .sort(byDate)
+          .reverse()
       case 'driver':
         return rescues
           .filter(
@@ -179,6 +190,7 @@ export function Rescues() {
               searchByDate
           )
           .sort(byDate)
+          .reverse()
       default:
         return rescues.sort(byDate)
     }
