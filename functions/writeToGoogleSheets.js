@@ -107,6 +107,11 @@ exports.writeToGoogleSheets = async () => {
     console.log('rescue:', JSON.stringify(rescue))
     for (const key in rescue) {
       if (key.includes('timestamp_') && rescue[key]) {
+        if (!rescue.total_time)
+          rescue.total_time = differenceInTime(
+            rescue.timestamp_logged_start,
+            rescue.timestamp_logged_finish
+          )
         rescue[key] = moment(rescue[key].toDate())
           .tz('America/New_York')
           .format('dddd, MM/DD/YY, hh:mma')
@@ -239,6 +244,7 @@ exports.writeToGoogleSheets = async () => {
       rescue.timestamp_scheduled_finish || '',
       rescue.timestamp_logged_start || '',
       rescue.timestamp_logged_finish || '',
+      rescue.total_time || '',
     ]
     console.log('COMPLETE ROW:', JSON.stringify(row))
     rescue_rows.push(row)
@@ -264,6 +270,7 @@ exports.writeToGoogleSheets = async () => {
     'Scheduled Finish',
     'Logged Start',
     'Logged Finish',
+    'Total Time',
   ]
   const columns = [
     'A',
@@ -439,4 +446,14 @@ exports.writeToGoogleSheets = async () => {
     )
     current_row += body.length
   }
+}
+
+function differenceInTime(dateStarted, dateEnded) {
+  const totalTimeSecs =
+    (dateEnded.toDate().getTime() - dateStarted.toDate().getTime()) / 1000
+
+  const h = Math.floor(totalTimeSecs / 3600)
+  const m = Math.floor((totalTimeSecs % 3600) / 60)
+
+  return `${h} hours, ${m} minutes`
 }
