@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const colors = require('colors');
 const { series } = require('async');
 const git = require('git-state')
 const pjson = require('../package.json')
@@ -15,12 +16,12 @@ async function validateGitState() {
     return new Promise(res => {
         git.check('.', (err, result) => {
             if (err) throw err;
-            console.log('Validating Git State:\n', result, '\n');
+            console.log(colors.yellow.bold('Validating Git State:\n'), result, '\n');
             if (result.branch !== 'master') {
-                console.error('Cannot deploy to production from branch other than master. Exiting...\n');
+                console.error(colors.red.bold('Cannot deploy to production from branch other than master. Exiting...\n'));
                 res(false);
             } else {
-                console.log('\nGit state validated.');
+                console.log(colors.green('\nGit state validated.'));
                 res(true);
             }
         });
@@ -28,9 +29,9 @@ async function validateGitState() {
 }
 
 async function runCommand(command, callback) {
-    console.log('\n\nRUNNING:', command);
+    console.log(colors.yellow('\n\nRUNNING:', command));
     const process = exec(command, error => {
-        console.log('\n\nCOMPLETED:', command);
+        console.log(colors.green('\n\nCOMPLETED:', command));
         if (error) console.error(error); else callback();
     });
     process.stdout.on('data', data => {
@@ -62,7 +63,7 @@ async function main() {
                 process.env.SENTRY_AUTH_TOKEN
             } sentry-cli releases --org sharingexcess -p rescue finalize ${getVersion()}`,callback)
         ], err => {
-            err ? console.error('Error in deployment:', err) : console.log('\n\nDEPLOYMENT SUCCESSFUL!\n');
+            err ? console.error('Error in deployment:', err) : console.log(colors.green.bold('\n\nDEPLOYMENT SUCCESSFUL!\n'));
         });
     } else console.log('Invalid Git branch. Exiting...')
 }
