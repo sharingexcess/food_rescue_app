@@ -10,6 +10,7 @@ const serviceAccountKey = is_prod
 const serviceAccount = require(serviceAccountKey)
 const moment = require('moment-timezone')
 const { db } = require('./helpers')
+const { calculateTotalDistanceFromLocations } = require('./test')
 
 const jwtClient = new google.auth.JWT({
   email: serviceAccount.client_email,
@@ -152,6 +153,9 @@ exports.writeToGoogleSheets = async () => {
       rescue.stops = rescue_stops
         .map(s => `${s.organization.name} (${s.location.address1})`)
         .join(', ')
+
+      // TODO: implement full total distance
+      // const total_distance = calculateTotalDistanceFromLocations(rescue_stops.map(stop => `${stop.location.address1}))
 
       for (const s of rescue_stops) {
         for (const key in s) {

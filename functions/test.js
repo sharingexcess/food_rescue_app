@@ -1,15 +1,7 @@
 // TODO: delete this file!
 const fetch = require('node-fetch')
 
-const locations = [
-  '880 N Bucknell St, Philadelphia PA 19130',
-  '514 S 12th St, Philadelphia PA',
-  '880 N Bucknell St, Philadelphia PA 19130',
-  '514 S 12th St, Philadelphia PA',
-  '514 S 12th St, Philadelphia PA',
-]
-
-const calculateTotalDistanceFromLocations = async (locations = []) => {
+exports.calculateTotalDistanceFromLocations = async (locations = []) => {
   console.log(
     'Running calculateTotalDistanceFromLocations with input:',
     locations
@@ -40,5 +32,3 @@ const calculateTotalDistanceFromLocations = async (locations = []) => {
 
   console.log(total_distance)
 }
-
-calculateTotalDistanceFromLocations(locations)
