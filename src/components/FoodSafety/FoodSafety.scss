@@ -12,12 +12,25 @@
   }
 
   section {
-    @include card;
+    background-color: var(--white);
+    margin-top: 32px;
+    margin-bottom: 32px;
+    padding: 24px;
+    border-radius: 25px;
+  }
+
+  .sectionHeader {
+    margin-bottom: 16px;
+  }
+
+  .subheader {
+    margin-bottom: 8px;
   }
 
   ol {
     list-style-type: decimal;
     margin-left: 24px;
+    margin-bottom: 16px;
   }
 
   .green {
