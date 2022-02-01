@@ -16,20 +16,26 @@ export function FoodSafety() {
   return (
     <main id="FoodSafety">
       <section id="intro">
-        <Text type="section-header" color="black" shadow="section-header">
-          Food safety is our priority
-        </Text>
-        <Text type="subheader" color="green">
-          Our goal is to safely provide healthy food excess from our donors to
-          hunger relief organizations in 30 minutes or less. Food safety
-          guidelines ensure that we do our job professionally with integrity and
-          compassion for all parties.
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Food safety is our priority
+          </Text>
+        </div>
+        <div className="subheader">
+          <Text type="subheader" color="green">
+            Our goal is to safely provide healthy food excess from our donors to
+            hunger relief organizations in 30 minutes or less. Food safety
+            guidelines ensure that we do our job professionally with integrity
+            and compassion for all parties.
+          </Text>
+        </div>
       </section>
       <section id="goldenrules">
-        <Text type="section-header" color="black" shadow="section-header">
-          Our 3 Golden Rules
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Our 3 Golden Rules
+          </Text>
+        </div>
         <Text type="paragraph" color="black">
           <ol>
             <li>Always be consistent and courteous to partners.</li>
@@ -39,12 +45,16 @@ export function FoodSafety() {
         </Text>
       </section>
       <section id="pickups">
-        <Text type="section-header" color="black" shadow="section-header">
-          Pickup and Delivery
-        </Text>
-        <Text type="subheader" color="grey">
-          Please drive safe, obey traffic laws, and avoid parking tickets.
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Pickup and Delivery
+          </Text>
+        </div>
+        <div className="subheader">
+          <Text type="subheader" color="grey">
+            Please drive safe, obey traffic laws, and avoid parking tickets.
+          </Text>
+        </div>
         <Text type="small-header" color="green">
           Packaging
         </Text>
@@ -72,7 +82,7 @@ export function FoodSafety() {
             </li>
           </ol>
         </Text>
-        <Text type="section-header" color="black" shadow="section-header">
+        <Text type="small-header" color="green">
           Logging Routes
         </Text>
         <Text type="paragraph" color="black">
@@ -85,9 +95,11 @@ export function FoodSafety() {
         </Text>
       </section>
       <section id="foodtemp">
-        <Text type="section-header" color="black" shadow="section-header">
-          Food Temperature
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Food Temperature
+          </Text>
+        </div>
         <Text type="paragraph" color="black">
           The <b>“Danger Zone” </b> for bacterial growth on food is between 41*F
           and 129*F. Food is acceptable within this temperature range for 3 hrs.
@@ -109,9 +121,11 @@ export function FoodSafety() {
         </Text>
       </section>
       <section id="perishables">
-        <Text type="section-header" color="black" shadow="section-header">
-          Perishables
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Perishables
+          </Text>
+        </div>
         <Text type="paragraph" color="black">
           At Sharing Excess, we prioritize quality and only accept food that we
           would personally eat! Avoid making direct contact with food. Donations
@@ -122,9 +136,11 @@ export function FoodSafety() {
         </Text>
       </section>
       <section id="weaccept">
-        <Text type="section-header" color="black" shadow="section-header">
-          Food Items We Accept
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Food Items We Accept
+          </Text>
+        </div>
         <Text type="paragraph" color="black">
           <ol>
             <li>Frozen meat</li>
@@ -149,9 +165,11 @@ export function FoodSafety() {
         </Text>
       </section>
       <section id="cannotaccept">
-        <Text type="section-header" color="black" shadow="section-header">
-          We Cannot Accept
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            We Cannot Accept
+          </Text>
+        </div>
         <Text type="paragraph" color="black">
           <ol>
             <li>
@@ -176,15 +194,20 @@ export function FoodSafety() {
       </section>
 
       <section id="waste">
-        <Text type="section-header" color="black" shadow="section-header">
-          Waste and Recycling
-        </Text>
-        <Text type="subheader" color="black">
-          At Sharing Excess, we prioritize quality and only accept food that we
-          would personally eat! Donations have already been checked and sorted
-          for freshness and quality. However, if the food doesn't look or smell
-          good, please contact your volunteer coordinator after your pickup.
-        </Text>
+        <div className="sectionHeader">
+          <Text type="section-header" color="black">
+            Waste and Recycling
+          </Text>
+        </div>
+        <div className="subheader">
+          <Text type="subheader" color="black">
+            At Sharing Excess, we prioritize quality and only accept food that
+            we would personally eat! Donations have already been checked and
+            sorted for freshness and quality. However, if the food doesn't look
+            or smell good, please contact your volunteer coordinator after your
+            pickup.
+          </Text>
+        </div>
         <Text type="small-header" color="green">
           Our Proper Disposal Guidelines
         </Text>
