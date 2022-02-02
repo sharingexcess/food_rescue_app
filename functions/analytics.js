@@ -40,10 +40,11 @@ async function handleAnalytics(request, response) {
       .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
     stops = stops.filter(i => i.status === 'completed')
 
-    const pickups = stops.filter(s => s.type === 'pickup')
-    const deliveries = stops.filter(s => s.type === 'delivery')
     const organizations = await fetchCollection('organizations')
     const users = await fetchCollection('users')
+
+    const pickups = stops.filter(s => s.type === 'pickup')
+    const deliveries = stops.filter(s => s.type === 'delivery')
 
     console.log('DATA:', rescues.length, stops.length, organizations.length)
 
@@ -53,7 +54,7 @@ async function handleAnalytics(request, response) {
       retail_value,
       fair_market_value,
       emissions_reduced,
-    } = calculateMetrics(deliveries)
+    } = calculateMetrics(deliveries, organizations)
 
     console.log(
       'METRICS:',
@@ -163,7 +164,12 @@ async function handleAnalytics(request, response) {
   })
 }
 
-function calculateMetrics(deliveries) {
+function calculateMetrics(deliveries, organizations) {
+  // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
+  deliveries = deliveries.filter(d => {
+    const org = organizations.find(o => o.id === d.organization_id)
+    return org.subtype !== 'holding'
+  })
   let total_categorized_weight = 0,
     retail_value = 0,
     fair_market_value = 0,
