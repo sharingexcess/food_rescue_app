@@ -185,7 +185,7 @@ function calculateMetrics(deliveries, organizations) {
     )
     total_categorized_weight += category_weight
     emissions_reduced += category_weight * EMISSIONS_COEFFICIENT
-    retail_value += category_weight * EMISSIONS_COEFFICIENT
+    retail_value += category_weight * RETAIL_VALUES[category]
     fair_market_value += category_weight * FAIR_MARKET_VALUES[category]
   }
   // HANDLE RESCUES WHERE CATEGORIES WERE MEASURED IN BOXES INSTEAD OF POUNDS
