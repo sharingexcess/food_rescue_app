@@ -318,7 +318,7 @@ exports.writeToGoogleSheets = async () => {
 
   let current_row = 2
   while (rescue_rows.length) {
-    const body = rescue_rows.splice(0, Math.min(100, rescue_rows.length))
+    const body = rescue_rows.splice(0, Math.min(400, rescue_rows.length))
     const range = `Rescues!A${current_row}:${
       columns[rescue_headers.length - 1]
     }${current_row + body.length}`
@@ -373,7 +373,7 @@ exports.writeToGoogleSheets = async () => {
 
   current_row = 2
   while (pickup_rows.length) {
-    const body = pickup_rows.splice(0, Math.min(100, pickup_rows.length))
+    const body = pickup_rows.splice(0, Math.min(400, pickup_rows.length))
     const range = `Pickups!A${current_row}:${
       columns[pickup_headers.length - 1]
     }${current_row + body.length}`
@@ -430,7 +430,7 @@ exports.writeToGoogleSheets = async () => {
 
   current_row = 2
   while (delivery_rows.length) {
-    const body = delivery_rows.splice(0, Math.min(100, delivery_rows.length))
+    const body = delivery_rows.splice(0, Math.min(400, delivery_rows.length))
     const range = `Deliveries!A${current_row}:${
       columns[delivery_headers.length - 1]
     }${current_row + body.length}`

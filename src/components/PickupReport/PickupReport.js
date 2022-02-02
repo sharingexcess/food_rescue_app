@@ -56,7 +56,8 @@ export function PickupReport({ customSubmitHandler }) {
       !isFormDataEqual(formData, initFormData) &&
       !isFormDataEqual(formData, pickup) &&
       !working &&
-      changed
+      changed &&
+      pickup_id
     ) {
       setWorking(true)
       setFirestoreData(['stops', pickup_id], {

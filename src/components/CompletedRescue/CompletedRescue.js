@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link, Redirect, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
@@ -12,9 +12,10 @@ export function CompletedRescue() {
   const rescue = useFirestore('rescues', rescue_id)
   const deliveries = useFirestore(
     'stops',
-    useCallback(i => i.type === 'delivery' && i.rescue_id === rescue_id, [
-      rescue_id,
-    ])
+    useCallback(
+      i => i.type === 'delivery' && i.rescue_id === rescue_id,
+      [rescue_id]
+    )
   )
 
   useEffect(() => {
