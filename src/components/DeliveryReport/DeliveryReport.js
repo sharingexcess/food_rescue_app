@@ -156,6 +156,10 @@ export function DeliveryReport() {
           )}
         </Button>
       ) : null}
+      <Spacer height={16} />
+      <Button type="tertiary" color="white" size="large" fullWidth>
+        Need Help ?
+      </Button>
     </main>
   )
 }
