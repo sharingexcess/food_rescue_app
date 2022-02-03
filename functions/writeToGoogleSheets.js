@@ -10,7 +10,10 @@ const serviceAccountKey = is_prod
 const serviceAccount = require(serviceAccountKey)
 const moment = require('moment-timezone')
 const { db } = require('./helpers')
-const { calculateTotalDistanceFromLocations } = require('./test')
+const fetch = require('node-fetch')
+
+const express = require('express')
+const cors = require('cors')
 
 const jwtClient = new google.auth.JWT({
   email: serviceAccount.client_email,
@@ -20,7 +23,7 @@ const jwtClient = new google.auth.JWT({
 
 const jwtAuthPromise = jwtClient.authorize()
 
-exports.writeToGoogleSheets = async () => {
+const writeToGoogleSheets = async () => {
   console.log('Spreadsheet ID:', spreadsheetId)
   console.log('is_prod?', is_prod, process.env.GCLOUD_PROJECT)
 
@@ -155,7 +158,12 @@ exports.writeToGoogleSheets = async () => {
         .join(', ')
 
       // TODO: implement full total distance
-      // const total_distance = calculateTotalDistanceFromLocations(rescue_stops.map(stop => `${stop.location.address1}))
+      rescue.total_distance = await calculateTotalDistanceFromLocations(
+        rescue_stops.map(
+          stop =>
+            `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
+        )
+      )
 
       for (const s of rescue_stops) {
         for (const key in s) {
@@ -249,6 +257,7 @@ exports.writeToGoogleSheets = async () => {
       rescue.timestamp_logged_start || '',
       rescue.timestamp_logged_finish || '',
       rescue.total_time || '',
+      rescue.total_distance || '',
     ]
     console.log('COMPLETE ROW:', JSON.stringify(row))
     rescue_rows.push(row)
@@ -275,6 +284,7 @@ exports.writeToGoogleSheets = async () => {
     'Logged Start',
     'Logged Finish',
     'Total Time',
+    'Total Distance',
   ]
   const columns = [
     'A',
@@ -461,3 +471,41 @@ function differenceInTime(dateStarted, dateEnded) {
 
   return `${h} hours, ${m} minutes`
 }
+
+const calculateTotalDistanceFromLocations = async (locations = []) => {
+  console.log(
+    'Running calculateTotalDistanceFromLocations with input:',
+    locations
+  )
+  const base_url =
+    'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial'
+  const API_KEY = ''
+
+  let total_distance = 0
+  let curr_location = locations.shift()
+
+  while (locations.length) {
+    const full_url = `
+      ${base_url}&key=${API_KEY}
+      &origins=${encodeURIComponent(curr_location)}
+      &destinations=${encodeURIComponent(locations[0])}
+    `
+
+    const response = await fetch(full_url).then(res => res.json())
+    const distance = parseFloat(
+      response.rows[0].elements[0].distance.text.split(' ')[0]
+    )
+
+    console.log(distance)
+    total_distance += distance
+    curr_location = locations.shift()
+  }
+
+  console.log(total_distance)
+  return `${total_distance} miles`
+}
+
+const writeToSheets = express()
+writeToSheets.use(cors({ origin: true }))
+writeToSheets.get('/', writeToGoogleSheets)
+exports.writeSheets = writeToSheets

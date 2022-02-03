@@ -21,7 +21,7 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
     `
 
     const response = await fetch(full_url).then(res => res.json())
-    const distance = parseInt(
+    const distance = parseFloat(
       response.rows[0].elements[0].distance.text.split(' ')[0]
     )
 
@@ -31,4 +31,5 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
   }
 
   console.log(total_distance)
+  return `${total_distance} miles`
 }

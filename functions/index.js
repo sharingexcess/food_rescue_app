@@ -3,6 +3,7 @@ const { writeToGoogleSheets } = require('./writeToGoogleSheets')
 const { backup } = require('./backup')
 const { calendar } = require('./calendar')
 const { analytics } = require('./analytics')
+const { writeSheets } = require('./writeToGoogleSheets')
 
 exports.calendar = functions.https.onRequest(calendar)
 
@@ -22,11 +23,13 @@ exports.backup = functions
   .timeZone('America/New_York')
   .onRun(backup)
 
-exports.writeToGoogleSheets = functions
-  .runWith({
-    timeoutSeconds: 540,
-    memory: '4GB',
-  })
-  .pubsub.schedule('01 00 * * *') // run every day at 12:01am (00:01)
-  .timeZone('America/New_York')
-  .onRun(writeToGoogleSheets)
+exports.writeToGoogleSheets = functions.https.onRequest(writeSheets)
+
+// exports.writeToGoogleSheets = functions
+//   .runWith({
+//     timeoutSeconds: 540,
+//     memory: '4GB',
+//   })
+//   .pubsub.schedule('01 00 * * *') // run every day at 12:01am (00:01)
+//   .timeZone('America/New_York')
+//   .onRun(writeToGoogleSheets)
