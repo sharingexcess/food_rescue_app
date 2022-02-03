@@ -39,6 +39,15 @@
     }
   }
 
+  #HoursOpen {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .se-button {
+      margin: 8px;
+    }
+  }
+
   #EditLocation-address {
     display: flex;
     justify-content: flex-start;
