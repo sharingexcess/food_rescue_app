@@ -5,17 +5,20 @@ import {
   Text,
   Dropdown,
 } from '@sharingexcess/designsystem'
-import { useAuth } from 'hooks'
+import { useAuth, useApp } from 'hooks'
 import { useEffect, useState } from 'react'
 
 export function NeedHelp() {
   const { user } = useAuth()
   const [state, handleSubmit] = useForm('myyoejgg')
+  const { setModal } = useApp()
+  const [issue, setIssue] = useState('')
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
     phone: user.phone,
     message: '',
+    issue: '',
   })
 
   useEffect(() => {
@@ -25,6 +28,7 @@ export function NeedHelp() {
         email: user.email,
         phone: user.phone,
         message: '',
+        issue: '',
       })
     }
   }, [state.succeeded, user])
@@ -40,26 +44,37 @@ export function NeedHelp() {
   }
 
   function isFormComplete() {
-    return formData.name && formData.email && formData.message
+    return formData.name && formData.email && formData.message && formData.issue
   }
 
   return (
     <main id="NeedHelp">
       <Spacer height={16} />
+      <section id="issue">
+        <select
+          id="issues"
+          value={issue}
+          onChange={e => {
+            setIssue(e.target.value)
+            setFormData(data => ({
+              ...data,
+              issue: e.target.value,
+            }))
+          }}
+        >
+          <option>Reasons for needing help ...</option>
+          <option>Issue with the App</option>
+          <option>Can't Pickup All Food</option>
+          <option>Can't Contact Anyone at Location</option>
+          <option value="other">Other</option>
+        </select>
+      </section>
+      <Spacer height={16} />
       <form onSubmit={handleSubmit} method="POST">
-        <section id="Reasons">
-          <select>
-            <option>Reasons for needing help ...</option>
-            <option>Issue with the App</option>
-            <option>Can't Pickup All Food</option>
-            <option>Can't Contact Anyone at Location</option>
-            <option>Other</option>
-          </select>
-        </section>
-        <Spacer height={16} />
         <input type="hidden" value={user.name} name="name" />
         <input type="hidden" value={user.email} name="email" />
         <input type="hidden" value={user.phone} name="phone" />
+        <input type="hidden" value={issue} name="issue" />
         <textarea
           id="message"
           name="message"
@@ -67,13 +82,14 @@ export function NeedHelp() {
           value={formData.message}
           onChange={handleChange}
           className={validateText(formData.message)}
-          placeholder="Desbribe your issue here"
+          placeholder="Desbribe your issue here !"
         />
         <Spacer height={16} />
         <button
           type="submit"
           className="se-button type-primary size-medium color-white full-width"
           disabled={state.submitting || !isFormComplete()}
+          handler={() => setModal(false)}
         >
           Submit!
         </button>
