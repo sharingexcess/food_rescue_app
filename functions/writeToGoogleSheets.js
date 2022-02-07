@@ -11,9 +11,6 @@ const serviceAccount = require(serviceAccountKey)
 const moment = require('moment-timezone')
 const { db, calculateTotalDistanceFromLocations } = require('./helpers')
 
-const express = require('express')
-const cors = require('cors')
-
 const jwtClient = new google.auth.JWT({
   email: serviceAccount.client_email,
   key: serviceAccount.private_key,
@@ -22,7 +19,7 @@ const jwtClient = new google.auth.JWT({
 
 const jwtAuthPromise = jwtClient.authorize()
 
-const writeToGoogleSheets = async () => {
+exports.writeToGoogleSheets = async () => {
   console.log('Spreadsheet ID:', spreadsheetId)
   console.log('is_prod?', is_prod, process.env.GCLOUD_PROJECT)
 
@@ -470,8 +467,3 @@ function differenceInTime(dateStarted, dateEnded) {
 
   return `${h} hours, ${m} minutes`
 }
-
-const writeToSheets = express()
-writeToSheets.use(cors({ origin: true }))
-writeToSheets.get('/', writeToGoogleSheets)
-exports.writeSheets = writeToSheets

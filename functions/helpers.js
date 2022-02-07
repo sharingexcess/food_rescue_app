@@ -99,6 +99,6 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
     curr_location = locations.shift()
   }
 
-  console.log(total_distance)
+  console.log(total_distance, 'miles')
   return `${total_distance} miles`
 }
