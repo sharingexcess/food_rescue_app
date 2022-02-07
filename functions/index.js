@@ -3,7 +3,6 @@ const { writeToGoogleSheets } = require('./writeToGoogleSheets')
 const { backup } = require('./backup')
 const { calendar } = require('./calendar')
 const { analytics } = require('./analytics')
-const { writeToGoogleSheets } = require('./writeToGoogleSheets')
 
 exports.calendar = functions.https.onRequest(calendar)
 
