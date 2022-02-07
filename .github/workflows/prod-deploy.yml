@@ -2,6 +2,9 @@ name: Deploy to Sharing Excess Production Environment
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        required: true
 
 jobs:
   build:
@@ -9,4 +12,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm install
-      - run: npm run deploy
+      - run: npm run build
+      - run: echo ${{ github.event.inputs.version }}
