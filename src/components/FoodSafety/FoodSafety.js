@@ -9,7 +9,7 @@ export function FoodSafety() {
   const { user } = useAuth()
 
   function handleComplete() {
-    setFirestoreData(['Users', user.id], { completed_food_safety: true })
+    setFirestoreData(['users', user.id], { completed_food_safety: true })
     navigate('/')
   }
 
