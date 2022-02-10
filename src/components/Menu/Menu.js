@@ -5,6 +5,7 @@ import { useAuth, useFirestore, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
 import { IS_DEV_ENVIRONMENT, VERSION } from 'helpers'
+import { Emoji } from 'react-apple-emojis'
 
 export function Menu({ isOpen, setIsOpen }) {
   const { pathname } = useLocation()
@@ -131,7 +132,7 @@ export function Menu({ isOpen, setIsOpen }) {
               }}
             >
               <Text type="subheader" color="black" classList={['Menu-link']}>
-                🚪&nbsp;&nbsp;Logout
+              <Emoji name="door" width={20} />&nbsp;&nbsp;Logout
               </Text>
             </li>
           </ul>

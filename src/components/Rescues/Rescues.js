@@ -194,13 +194,13 @@ export function Rescues() {
 
   function StatusIndicator({ rescue }) {
     if (rescue.status === STATUSES.COMPLETED) {
-      return <div className="Rescues-route-status">✅</div>
+      return <div className="Rescues-route-status"><Emoji name="check-mark-button" width={20} /></div>
     } else if (rescue.status === STATUSES.CANCELLED) {
-      return <div className="Rescues-route-status">❌</div>
+      return <div className="Rescues-route-status"><Emoji name="cross-mark" width={20} /></div>
     } else if (rescue.status === STATUSES.SCHEDULED) {
       return <div className="Rescues-route-status">🗓</div>
     } else if (rescue.status === STATUSES.ACTIVE) {
-      return <div className="Rescues-route-status">🚛</div>
+      return <div className="Rescues-route-status"><Emoji name="articulated-lorry" width={20} /></div>
     } else return null
   }
 
@@ -320,21 +320,21 @@ export function Rescues() {
         >
           {admin === true ? (
             <>
-              <option value="active">Active Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
+              <option value="active">Active Rescues&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} /></option>
             </>
           ) : null}
-          <option value="mine">My Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
-          <option value="past">Past Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
+          <option value="mine">My Rescues&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} /></option>
+          <option value="past">Past Rescues&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} /></option>
           <option value="unassigned">
-            Available Rescues&nbsp;&nbsp;&nbsp;⬇️
+            Available Rescues&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} />
           </option>
           {admin === true ? (
             <option value="driver">
-              Rescues by Driver&nbsp;&nbsp;&nbsp;⬇️
+              Rescues by Driver&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} />
             </option>
           ) : null}
           {admin === true ? (
-            <option value="date">Rescues by Date&nbsp;&nbsp;&nbsp;⬇️</option>
+            <option value="date">Rescues by Date&nbsp;&nbsp;&nbsp;⬇<Emoji name="down-arrow" width={20} /></option>
           ) : null}
         </select>
       </section>

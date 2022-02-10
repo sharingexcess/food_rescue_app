@@ -4,6 +4,7 @@ import { useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
+import { Emoji } from 'react-apple-emojis'
 
 export function CompletedRescue() {
   const { rescue_id } = useParams()
@@ -50,7 +51,7 @@ export function CompletedRescue() {
     <Loading />
   ) : (
     <main id="CompletedRescue">
-      <div id="CompletedRescue-icon">🎉</div>
+      <div id="CompletedRescue-icon"><Emoji name="party-popper" width={120} /></div>
       <Spacer height={32} />
       <Text type="primary-header" color="white" shadow align="center">
         Route Completed!
