@@ -13,10 +13,14 @@ export function initializeFormData(location, callback) {
     notes: location.notes || '',
     nickname: location.nickname || '',
 <<<<<<< HEAD
+<<<<<<< HEAD
     hours: location.hours || [],
 =======
     hours: location.hours || {},
 >>>>>>> dc31660... Began adding button
+=======
+    hours: location.hours || [],
+>>>>>>> 3daa8b5... Adding Time Windows To Locations
     is_philabundance_partner: location.is_philabundance_partner || '',
   })
 }

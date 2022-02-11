@@ -39,15 +39,6 @@
     }
   }
 
-  #HoursOpen {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    .se-button {
-      margin: 8px;
-    }
-  }
-
   #EditLocation-address {
     display: flex;
     justify-content: flex-start;
@@ -108,6 +99,7 @@
     }
   }
 
+<<<<<<< HEAD
   .se-flex-container {
     .Inputs {
       width: 150%;
@@ -116,6 +108,14 @@
         width: calc(30% - 8px);
         margin: 0 0 16px 0;
       }
+=======
+  #HoursOpen {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .se-button {
+      margin: 8px;
+>>>>>>> 3daa8b5... Adding Time Windows To Locations
     }
   }
 }
