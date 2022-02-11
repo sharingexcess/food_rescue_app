@@ -98,6 +98,7 @@ export function EditLocation() {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
       <FlexContainer>
@@ -168,6 +169,8 @@ export function EditLocation() {
     )
   }
 
+=======
+>>>>>>> fb3ddec... Moving Button component out of function
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
       <FlexContainer primaryAlign="space-between">
@@ -241,6 +244,7 @@ export function EditLocation() {
         ),
       })
     } else {
+      const found = false
       setFormData({
         ...formData,
 <<<<<<< HEAD
@@ -383,8 +387,29 @@ export function EditLocation() {
             )
           })}
           <div id="HoursOpen">
+<<<<<<< HEAD
             <AddHoursButton />
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
+=======
+            <Button
+              type="primary"
+              handler={() => {
+                setFormData({
+                  ...formData,
+                  hours: [
+                    ...formData.hours,
+                    {
+                      day_of_week: 'Sunday',
+                      time_open: '8:00',
+                      time_close: '20:00',
+                    },
+                  ],
+                })
+              }}
+            >
+              Add Hours
+            </Button>
+>>>>>>> fb3ddec... Moving Button component out of function
           </div>
           <div className="is_philabundance_partner">
             <input
