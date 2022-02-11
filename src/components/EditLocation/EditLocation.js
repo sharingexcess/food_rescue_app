@@ -94,29 +94,6 @@ export function EditLocation() {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
 
-  function AddHoursButton() {
-    return (
-      <Button
-        type="primary"
-        handler={() => {
-          setFormData({
-            ...formData,
-            hours: [
-              ...formData.hours,
-              {
-                day_of_week: 'Sunday',
-                time_open: '8:00',
-                time_close: '20:00',
-              },
-            ],
-          })
-        }}
-      >
-        Add Hours
-      </Button>
-    )
-  }
-
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
       <FlexContainer primaryAlign="space-between">
@@ -175,6 +152,7 @@ export function EditLocation() {
         ),
       })
     } else {
+      const found = false
       setFormData({
         ...formData,
         hours: formData.hours.filter(
@@ -280,7 +258,24 @@ export function EditLocation() {
             )
           })}
           <div id="HoursOpen">
-            <AddHoursButton />
+            <Button
+              type="primary"
+              handler={() => {
+                setFormData({
+                  ...formData,
+                  hours: [
+                    ...formData.hours,
+                    {
+                      day_of_week: 'Sunday',
+                      time_open: '8:00',
+                      time_close: '20:00',
+                    },
+                  ],
+                })
+              }}
+            >
+              Add Hours
+            </Button>
           </div>
           <div className="is_philabundance_partner">
             <input
