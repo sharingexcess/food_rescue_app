@@ -67,7 +67,7 @@ function Auth({ children }) {
           permission: db_user
             ? !db_user.is_admin && !db_user.is_driver
               ? null
-              : db_user.is_driver
+              : db_user.is_driver || db_user.is_admin
             : null,
           handleLogout,
           handleLogin,
