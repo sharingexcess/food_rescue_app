@@ -12,7 +12,7 @@ export function initializeFormData(location, callback) {
     contact_phone: location.contact_phone || '',
     notes: location.notes || '',
     nickname: location.nickname || '',
-    hours: location.hours || {},
+    hours: location.hours || [],
     is_philabundance_partner: location.is_philabundance_partner || '',
   })
 }

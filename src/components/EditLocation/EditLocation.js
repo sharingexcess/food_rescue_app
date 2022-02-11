@@ -2,15 +2,22 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   createTimestamp,
+  DAYS,
   generateUniqueId,
   removeSpecialCharacters,
   setFirestoreData,
+  TIMES,
 } from 'helpers'
 import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
 import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
-import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
+import {
+  Button,
+  Spacer,
+  Text,
+  FlexContainer,
+} from '@sharingexcess/designsystem'
 
 export function EditLocation() {
   const { organization_id, location_id } = useParams()
@@ -25,6 +32,7 @@ export function EditLocation() {
     contact_phone: '',
     notes: '',
     nickname: '',
+    hours: [],
     is_philabundance_partner: false,
   })
   const [isInitialLoad, setIsInitialLoad] = useState(true)
@@ -86,8 +94,99 @@ export function EditLocation() {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
 
-  function addRowOfHours() {
-    console.log('hi')
+  function AddHoursButton() {
+    return (
+      <Button
+        type="primary"
+        handler={() => {
+          setFormData({
+            ...formData,
+            hours: [
+              ...formData.hours,
+              {
+                day_of_week: 'Sunday',
+                time_open: '8:00',
+                time_close: '20:00',
+              },
+            ],
+          })
+        }}
+      >
+        Add Hours
+      </Button>
+    )
+  }
+
+  function Hours({ dayOfWeek, openTime, closeTime }) {
+    return (
+      <FlexContainer primaryAlign="space-between">
+        <Input
+          type="select"
+          element_id="day_of_week"
+          value={dayOfWeek}
+          onSuggestionClick={e => {
+            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+          }}
+          suggestions={DAYS}
+          label={'Choose Day of Week'}
+        />
+        <Input
+          type="select"
+          element_id="time_open"
+          value={openTime}
+          onSuggestionClick={e =>
+            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+          }
+          suggestions={TIMES}
+          label={'Open Time'}
+        />
+        <Input
+          type="select"
+          element_id="time_close"
+          value={closeTime}
+          onSuggestionClick={e =>
+            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+          }
+          suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
+          label={'Close Time'}
+        />
+        <Button
+          type="secondary"
+          size="medium"
+          color="white"
+          handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
+        >
+          Delete TimeSlot
+        </Button>
+      </FlexContainer>
+    )
+  }
+
+  function handleChangeTimeSlot(day, open, close, e) {
+    if (e) {
+      setFormData({
+        ...formData,
+        hours: formData.hours.map(hour =>
+          hour.day_of_week === day &&
+          hour.time_open === open &&
+          hour.time_close === close
+            ? { ...hour, [e.target.id]: e.target.value }
+            : hour
+        ),
+      })
+    } else {
+      setFormData({
+        ...formData,
+        hours: formData.hours.filter(
+          hour =>
+            !(
+              hour.day_of_week === day &&
+              hour.time_open === open &&
+              hour.time_close === close
+            )
+        ),
+      })
+    }
   }
 
   return !location || !organization ? (
@@ -111,7 +210,9 @@ export function EditLocation() {
             </>
           ) : null}
           <div id="EditLocation-address">
-            <div className="EditLocation-address-pin"><Emoji name="round-pushpin" width={20} /></div>
+            <div className="EditLocation-address-pin">
+              <Emoji name="round-pushpin" width={20} />
+            </div>
             <Text type="section-header" color="white" shadow>
               {formData.address1}
               <br />
@@ -168,11 +269,18 @@ export function EditLocation() {
             value={formData.nickname}
             onChange={handleChange}
           />
+          {formData.hours.map(hour => {
+            return (
+              <Hours
+                dayOfWeek={hour.day_of_week}
+                openTime={hour.time_open}
+                closeTime={hour.time_close}
+                key={hour}
+              />
+            )
+          })}
           <div id="HoursOpen">
-            <Button type="primary" handler={addRowOfHours}>
-              {' '}
-              Add Hours
-            </Button>
+            <AddHoursButton />
           </div>
           <div className="is_philabundance_partner">
             <input

@@ -39,15 +39,6 @@
     }
   }
 
-  #HoursOpen {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    .se-button {
-      margin: 8px;
-    }
-  }
-
   #EditLocation-address {
     display: flex;
     justify-content: flex-start;
@@ -105,6 +96,15 @@
       &::-webkit-calendar-picker-indicator {
         filter: invert(1);
       }
+    }
+  }
+
+  #HoursOpen {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .se-button {
+      margin: 8px;
     }
   }
 }
