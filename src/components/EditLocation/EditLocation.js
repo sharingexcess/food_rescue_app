@@ -96,73 +96,72 @@ export function EditLocation() {
 
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
-      <FlexContainer primaryAlign="space-between">
-        <Input
-          type="select"
-          element_id="day_of_week"
-          value={dayOfWeek}
-          onSuggestionClick={e => {
-            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-          }}
-          suggestions={DAYS}
-          label={'Choose Day of Week'}
-        />
-        <Input
-          type="select"
-          element_id="time_open"
-          value={openTime}
-          onSuggestionClick={e =>
-            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-          }
-          suggestions={TIMES}
-          label={'Open Time'}
-        />
-        <Input
-          type="select"
-          element_id="time_close"
-          value={closeTime}
-          onSuggestionClick={e =>
-            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-          }
-          suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
-          label={'Close Time'}
-        />
-        <Button
-          type="secondary"
-          size="medium"
-          color="white"
-          handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
-        >
-          Delete TimeSlot
-        </Button>
+      <FlexContainer>
+        <FlexContainer className="Inputs" primaryAlign="start">
+          <Input
+            type="select"
+            element_id="day_of_week"
+            value={dayOfWeek}
+            onSuggestionClick={e => {
+              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+            }}
+            suggestions={DAYS}
+            label={'Choose Day of Week'}
+          />
+          <Input
+            type="select"
+            element_id="time_open"
+            value={openTime}
+            onSuggestionClick={e =>
+              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+            }
+            suggestions={TIMES}
+            label={'Open Time'}
+          />
+          <Input
+            type="select"
+            element_id="time_close"
+            value={closeTime}
+            onSuggestionClick={e =>
+              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+            }
+            suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
+            label={'Close Time'}
+          />
+        </FlexContainer>
+        <FlexContainer primaryAlign="end">
+          <Button
+            type="secondary"
+            size="medium"
+            color="white"
+            classlist={['Input']}
+            handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
+          >
+            Delete TimeSlot
+          </Button>
+        </FlexContainer>
       </FlexContainer>
     )
   }
 
   function handleChangeTimeSlot(day, open, close, e) {
+    const alter = formData.hours.findIndex(
+      hour =>
+        hour.day_of_week === day &&
+        hour.time_open === open &&
+        hour.time_close === close
+    )
     if (e) {
       setFormData({
         ...formData,
-        hours: formData.hours.map(hour =>
-          hour.day_of_week === day &&
-          hour.time_open === open &&
-          hour.time_close === close
-            ? { ...hour, [e.target.id]: e.target.value }
-            : hour
+        hours: formData.hours.map((hour, index) =>
+          index === alter ? { ...hour, [e.target.id]: e.target.value } : hour
         ),
       })
     } else {
-      const found = false
       setFormData({
         ...formData,
-        hours: formData.hours.filter(
-          hour =>
-            !(
-              hour.day_of_week === day &&
-              hour.time_open === open &&
-              hour.time_close === close
-            )
-        ),
+        hours: formData.hours.filter((element, index) => index !== alter),
       })
     }
   }
@@ -247,6 +246,10 @@ export function EditLocation() {
             value={formData.nickname}
             onChange={handleChange}
           />
+          <Text type="section-header" color="white" shadow>
+            Time Windows
+          </Text>
+          <Spacer height={15} />
           {formData.hours.map(hour => {
             return (
               <Hours
@@ -257,7 +260,7 @@ export function EditLocation() {
               />
             )
           })}
-          <div id="HoursOpen">
+          <div id="EditLocation-buttons">
             <Button
               type="primary"
               handler={() => {

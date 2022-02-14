@@ -99,12 +99,14 @@
     }
   }
 
-  #HoursOpen {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    .se-button {
-      margin: 8px;
+  .se-flex-container {
+    .Inputs {
+      width: 150%;
+      justify-content: space-around;
+      .Input {
+        width: calc(30% - 8px);
+        margin: 0 0 16px 0;
+      }
     }
   }
 }
