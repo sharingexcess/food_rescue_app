@@ -173,6 +173,7 @@ export function EditLocation() {
 >>>>>>> fb3ddec... Moving Button component out of function
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
+<<<<<<< HEAD
       <FlexContainer primaryAlign="space-between">
         <Input
           type="select"
@@ -213,18 +214,68 @@ export function EditLocation() {
           Delete TimeSlot
         </Button>
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
+=======
+      <FlexContainer>
+        <FlexContainer className="Inputs" primaryAlign="start">
+          <Input
+            type="select"
+            element_id="day_of_week"
+            value={dayOfWeek}
+            onSuggestionClick={e => {
+              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+            }}
+            suggestions={DAYS}
+            label={'Choose Day of Week'}
+          />
+          <Input
+            type="select"
+            element_id="time_open"
+            value={openTime}
+            onSuggestionClick={e =>
+              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+            }
+            suggestions={TIMES}
+            label={'Open Time'}
+          />
+          <Input
+            type="select"
+            element_id="time_close"
+            value={closeTime}
+            onSuggestionClick={e =>
+              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+            }
+            suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
+            label={'Close Time'}
+          />
+        </FlexContainer>
+        <FlexContainer primaryAlign="end">
+          <Button
+            type="secondary"
+            size="medium"
+            color="white"
+            classlist={['Input']}
+            handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
+          >
+            Delete TimeSlot
+          </Button>
+        </FlexContainer>
+>>>>>>> bb1b2f7... Added Styling and fixed bug
       </FlexContainer>
     )
   }
 
   function handleChangeTimeSlot(day, open, close, e) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bb1b2f7... Added Styling and fixed bug
     const alter = formData.hours.findIndex(
       hour =>
         hour.day_of_week === day &&
         hour.time_open === open &&
         hour.time_close === close
     )
+<<<<<<< HEAD
     if (e) {
       setFormData({
         ...formData,
@@ -241,12 +292,19 @@ export function EditLocation() {
             ? { ...hour, [e.target.id]: e.target.value }
             : hour
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
+=======
+    if (e) {
+      setFormData({
+        ...formData,
+        hours: formData.hours.map((hour, index) =>
+          index === alter ? { ...hour, [e.target.id]: e.target.value } : hour
+>>>>>>> bb1b2f7... Added Styling and fixed bug
         ),
       })
     } else {
-      const found = false
       setFormData({
         ...formData,
+<<<<<<< HEAD
 <<<<<<< HEAD
         hours: formData.hours.filter((element, index) => index !== alter),
 =======
@@ -259,6 +317,9 @@ export function EditLocation() {
             )
         ),
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
+=======
+        hours: formData.hours.filter((element, index) => index !== alter),
+>>>>>>> bb1b2f7... Added Styling and fixed bug
       })
     }
   }
@@ -344,12 +405,18 @@ export function EditLocation() {
             onChange={handleChange}
           />
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bb1b2f7... Added Styling and fixed bug
           <Text type="section-header" color="white" shadow>
             Time Windows
           </Text>
           <Spacer height={15} />
+<<<<<<< HEAD
           {formData.hours.map((hour, index) => {
 =======
+=======
+>>>>>>> bb1b2f7... Added Styling and fixed bug
           {formData.hours.map(hour => {
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
             return (
@@ -386,11 +453,15 @@ export function EditLocation() {
               />
             )
           })}
+<<<<<<< HEAD
           <div id="HoursOpen">
 <<<<<<< HEAD
             <AddHoursButton />
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
 =======
+=======
+          <div id="EditLocation-buttons">
+>>>>>>> bb1b2f7... Added Styling and fixed bug
             <Button
               type="primary"
               handler={() => {
