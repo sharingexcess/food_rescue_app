@@ -1,32 +1,30 @@
 import { useForm } from '@formspree/react'
 import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 import { useAuth, useApp } from 'hooks'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export function NeedHelp() {
   const { user } = useAuth()
   const [state, handleSubmit] = useForm('myyoejgg')
   const { setModal } = useApp()
   const [issue, setIssue] = useState('')
-  const [formData, setFormData] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    message: '',
-    issue: '',
-  })
+  const initFormData = useMemo(
+    () => ({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      message: '',
+      issue: "Can't Pickup All Food",
+    }),
+    [user]
+  )
+  const [formData, setFormData] = useState(initFormData)
 
   useEffect(() => {
     if (state.succeeded) {
-      setFormData({
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        message: '',
-        issue: '',
-      })
+      setFormData(initFormData)
     }
-  }, [state.succeeded, user])
+  }, [state.succeeded, initFormData])
 
   function handleChange(e) {
     setFormData(data => ({ ...data, [e.target.id]: e.target.value }))
@@ -39,7 +37,7 @@ export function NeedHelp() {
   }
 
   function isFormComplete() {
-    return formData.name && formData.email && formData.message && formData.issue
+    return formData.message && formData.issue
   }
 
   return (
