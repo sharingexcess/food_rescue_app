@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { createTimestamp, getCollection } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
 import { Loading } from 'components'
+import { db } from '../../../functions/helpers'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -64,11 +65,7 @@ function Auth({ children }) {
           user: auth_user ? { ...auth_user, ...db_user } : null,
           admin: db_user && db_user.is_admin,
           driver: db_user && db_user.is_driver && !db_user.is_admin,
-          permission: db_user
-            ? !db_user.is_admin && !db_user.is_driver
-              ? null
-              : db_user.is_driver
-            : null,
+          permission: db_user && (db_user.is_admin || db.is_driver),
           handleLogout,
           handleLogin,
         }}
