@@ -14,7 +14,7 @@ export function NeedHelp() {
       email: user.email,
       phone: user.phone,
       message: '',
-      issue: "Can't Pickup All Food",
+      issue: '',
     }),
     [user]
   )
@@ -62,6 +62,7 @@ export function NeedHelp() {
             }))
           }}
         >
+          <option>Select an issue...</option>
           <option value="Can't Pickup All Food">Can't Pickup All Food</option>
           <option value="Issue with the App">Issue with the App</option>
           <option value="Can't Contact Donor/Recipient">
