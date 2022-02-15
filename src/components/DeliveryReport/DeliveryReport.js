@@ -7,10 +7,11 @@ import {
   updateImpactDataForRescue,
 } from 'helpers'
 import { Ellipsis, Input, Loading } from 'components'
-import { useAuth, useFirestore } from 'hooks'
+import { useAuth, useFirestore, useApp } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function DeliveryReport() {
+  const { setModal } = useApp()
   const { delivery_id, rescue_id } = useParams()
   const rescue = useFirestore('rescues', rescue_id)
   const navigate = useNavigate()
@@ -156,6 +157,16 @@ export function DeliveryReport() {
           )}
         </Button>
       ) : null}
+      <Spacer height={32} />
+      <Button
+        type="tertiary"
+        color="white"
+        size="large"
+        fullWidth
+        handler={() => setModal('NeedHelp')}
+      >
+        Need Help ?
+      </Button>
     </main>
   )
 }

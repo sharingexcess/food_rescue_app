@@ -263,6 +263,16 @@ export function PickupReport({ customSubmitHandler }) {
       >
         {pickup.report ? 'Update Report' : 'Submit Report'}
       </Button>
+      <Spacer height={32} />
+      <Button
+        type="tertiary"
+        color="white"
+        size="large"
+        fullWidth
+        handler={() => setModal('NeedHelp')}
+      >
+        Need Help ?
+      </Button>
     </main>
   )
 }

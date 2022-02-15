@@ -1,0 +1,38 @@
+#NeedHelp {
+  a {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+  textarea {
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.4);
+    background: none;
+    height: 100%;
+    position: relative;
+    border: 0;
+    border-radius: 8px;
+    background: var(--foreground);
+    padding: 16px 8px 16px 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    width: 100%;
+    z-index: 1;
+    transition: border 0.1s ease;
+    -webkit-appearance: none;
+  }
+  select {
+    font-family: var(--font-body);
+    font-weight: 600;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.4);
+    border: none;
+    padding: 12px 8px 12px 16px;
+    cursor: pointer;
+
+    option {
+      color: var(--black);
+      background: var(--se-white);
+    }
+  }
+}

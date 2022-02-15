@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal as ModalWrapper } from '@sharingexcess/designsystem'
 import { useApp } from 'hooks'
-import { AddToCategory, PickupReportInstructions } from 'components'
+import { AddToCategory, PickupReportInstructions, NeedHelp } from 'components'
 import {
   DropRescue,
   FinishRescue,
@@ -38,6 +38,8 @@ export function Modal() {
         return <AddRescueNotes />
       case 'PickupReportInstructions':
         return <PickupReportInstructions />
+      case 'NeedHelp':
+        return <NeedHelp />
       default:
         return null
     }
