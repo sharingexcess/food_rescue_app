@@ -413,17 +413,22 @@ export function EditLocation() {
           </Text>
           <Spacer height={15} />
 <<<<<<< HEAD
+<<<<<<< HEAD
           {formData.hours.map((hour, index) => {
 =======
 =======
 >>>>>>> bb1b2f7... Added Styling and fixed bug
           {formData.hours.map(hour => {
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
+=======
+          {formData.hours.map((hour, index) => {
+>>>>>>> 55421b2... Fixed key error
             return (
               <Hours
                 dayOfWeek={hour.day_of_week}
                 openTime={hour.time_open}
                 closeTime={hour.time_close}
+<<<<<<< HEAD
 <<<<<<< HEAD
                 key={index}
               />
@@ -450,6 +455,9 @@ export function EditLocation() {
             </Button>
 =======
                 key={hour}
+=======
+                key={index}
+>>>>>>> 55421b2... Fixed key error
               />
             )
           })}
