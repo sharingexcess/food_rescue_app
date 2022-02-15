@@ -250,13 +250,13 @@ export function EditLocation() {
             Time Windows
           </Text>
           <Spacer height={15} />
-          {formData.hours.map(hour => {
+          {formData.hours.map((hour, index) => {
             return (
               <Hours
                 dayOfWeek={hour.day_of_week}
                 openTime={hour.time_open}
                 closeTime={hour.time_close}
-                key={hour}
+                key={index}
               />
             )
           })}
