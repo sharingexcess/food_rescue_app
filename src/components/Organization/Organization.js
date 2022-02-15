@@ -21,9 +21,10 @@ export function Organization() {
 
   const locations = useFirestore(
     'locations',
-    useCallback(i => i.organization_id === organization_id && !i.is_deleted, [
-      organization_id,
-    ])
+    useCallback(
+      i => i.organization_id === organization_id && !i.is_deleted,
+      [organization_id]
+    )
   )
 
   function OrgLocations() {

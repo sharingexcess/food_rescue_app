@@ -19,12 +19,8 @@ import DeliveryIcon from 'assets/delivery.png'
 
 export function Rescues() {
   const { user, admin } = useAuth()
-  const {
-    loadMoreData,
-    loadAllData,
-    loadedAllData,
-    resetLimit,
-  } = useFirestore()
+  const { loadMoreData, loadAllData, loadedAllData, resetLimit } =
+    useFirestore()
   const rescues = useFirestore('rescues')
   const deliveries = useFirestore(
     'stops',

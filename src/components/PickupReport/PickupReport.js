@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Loading, Input, NeedHelp } from 'components'
+import { Loading, Input } from 'components'
 import {
   createTimestamp,
   FOOD_CATEGORIES,
@@ -262,7 +262,7 @@ export function PickupReport({ customSubmitHandler }) {
       >
         {pickup.report ? 'Update Report' : 'Submit Report'}
       </Button>
-      <Spacer height={16} />
+      <Spacer height={32} />
       <Button
         type="tertiary"
         color="white"

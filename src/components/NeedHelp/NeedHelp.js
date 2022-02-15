@@ -1,10 +1,5 @@
 import { useForm } from '@formspree/react'
-import {
-  ExternalLink,
-  Spacer,
-  Text,
-  Dropdown,
-} from '@sharingexcess/designsystem'
+import { ExternalLink, Spacer, Text } from '@sharingexcess/designsystem'
 import { useAuth, useApp } from 'hooks'
 import { useEffect, useState } from 'react'
 
@@ -49,8 +44,15 @@ export function NeedHelp() {
 
   return (
     <main id="NeedHelp">
-      <Spacer height={16} />
-      <section id="issue">
+      <Text type="secondary-header" color="black" align="left">
+        Rescue Help
+      </Text>
+      <Spacer height={8} />
+      <form onSubmit={handleSubmit} method="POST">
+        <Text type="paragraph" color="grey" align="left">
+          What's going on?
+        </Text>
+        <Spacer height={8} />
         <select
           id="issues"
           value={issue}
@@ -62,19 +64,22 @@ export function NeedHelp() {
             }))
           }}
         >
-          <option>Reasons for needing help ...</option>
-          <option>Issue with the App</option>
-          <option>Can't Pickup All Food</option>
-          <option>Can't Contact Anyone at Location</option>
+          <option value="Can't Pickup All Food">Can't Pickup All Food</option>
+          <option value="Issue with the App">Issue with the App</option>
+          <option value="Can't Contact Donor/Recipient">
+            Can't Contact Donor/Recipient
+          </option>
           <option value="other">Other</option>
         </select>
-      </section>
-      <Spacer height={16} />
-      <form onSubmit={handleSubmit} method="POST">
+        <Spacer height={16} />
         <input type="hidden" value={user.name} name="name" />
         <input type="hidden" value={user.email} name="email" />
         <input type="hidden" value={user.phone} name="phone" />
         <input type="hidden" value={issue} name="issue" />
+        <Text type="paragraph" color="grey" align="left">
+          How can we help?
+        </Text>
+        <Spacer height={8} />
         <textarea
           id="message"
           name="message"
@@ -82,23 +87,26 @@ export function NeedHelp() {
           value={formData.message}
           onChange={handleChange}
           className={validateText(formData.message)}
-          placeholder="Desbribe your issue here !"
+          placeholder="Describe your issue here..."
         />
         <Spacer height={16} />
         <button
           type="submit"
-          className="se-button type-primary size-medium color-white full-width"
+          className="se-button type-primary size-medium color-green full-width"
           disabled={state.submitting || !isFormComplete()}
           handler={() => setModal(false)}
         >
           Submit!
         </button>
-        <Spacer height={16} />
+        <Spacer height={24} />
       </form>
       {state.succeeded && (
-        <Text type="small" align="center" color="green">
-          Got it! Thank you so much for reaching out - the Sharing Excess team
-          will get back to you ASAP.
+        <Text type="small" align="center" color="grey">
+          Got it! The Sharing Excess team will get back to you as soon as
+          possible.
+          <Spacer height={12} />
+          If you need immediate help, call Hannah at&nbsp;
+          <ExternalLink to="tel:1-833-742-7397">1 (833) 742-7397</ExternalLink>
         </Text>
       )}
     </main>
