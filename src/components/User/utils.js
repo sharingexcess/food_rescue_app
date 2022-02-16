@@ -97,7 +97,7 @@ export function UserAdminPermissions({ profile }) {
       setFirestoreData(['users', profile.id], {
         is_admin: isAdmin,
         is_driver: isDriver,
-        timestamps: { ...profile.timestamps, updated: createTimestamp() },
+        timestamp_updated: createTimestamp(),
         granted_access_by: user.name,
       })
     }
