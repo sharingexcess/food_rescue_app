@@ -48,7 +48,7 @@ export async function updatePublicUserProfile(user) {
     })
   } else {
     setFirestoreData(['users', user.uid], {
-      timestamps: { last_active: createTimestamp() },
+      timestamp_last_active: createTimestamp(),
     })
   }
 }
