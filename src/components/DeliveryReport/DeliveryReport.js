@@ -85,13 +85,16 @@ export function DeliveryReport() {
   async function handleSubmit(event) {
     event.preventDefault()
     try {
-      const delivery = {
+      const payload = {
         ...formData,
-        timestamp_logged_finish: createTimestamp(),
+        timestamp_logged_finish:
+          delivery && delivery.timestamp_logged_finish
+            ? delivery.timestamp_logged_finish
+            : createTimestamp(),
         timestamp_updated: createTimestamp(),
         status: STATUSES.COMPLETED,
       }
-      await setFirestoreData(['stops', delivery_id], delivery)
+      await setFirestoreData(['stops', delivery_id], payload)
       setSubmitted(true)
       // This logic will trigger a useEffect above to redirect after the rescue object updates
     } catch (e) {
