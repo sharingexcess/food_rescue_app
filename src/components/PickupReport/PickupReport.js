@@ -64,7 +64,10 @@ export function PickupReport({ customSubmitHandler }) {
         ...formData,
         status: STATUSES.COMPLETED,
         timestamp_updated: createTimestamp(),
-        timestamp_logged_finish: createTimestamp(),
+        timestamp_logged_finish:
+          pickup && pickup.timestamp_logged_finish
+            ? pickup.timestamp_logged_finish
+            : createTimestamp(),
       }).then(() => setWorking(false))
     }
   }, [working, pickup, formData, pickup_id, changed])
