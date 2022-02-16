@@ -40,13 +40,9 @@ export function AddToCategory() {
         Use this tool to add pounds of rescued food without having to do the
         math yourself ;)
       </Text>
-      <Input
-        type="tel"
-        value={weight === 0 ? '' : weight}
-        onChange={handleWeightChange}
-        label="Enter weight..."
-        autoFocus
-      ></Input>
+      <Text id="AddToCategory-weight" type="primary-header" align="center">
+        {weight}
+      </Text>
       <FlexContainer>
         <Button
           type="tertiary"
