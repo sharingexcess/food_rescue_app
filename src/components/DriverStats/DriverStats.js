@@ -1,12 +1,19 @@
 import { Spacer, Text } from '@sharingexcess/designsystem'
-import { ORG_SUBTYPES, STATUSES } from 'helpers'
+import {
+  ORG_SUBTYPES,
+  STATUSES,
+  CLOUD_FUNCTION_URLS,
+  formatLargeNumber,
+} from 'helpers'
 import { useAuth, useFirestore } from 'hooks'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PoundsByMonthChart } from './PoundsByMonthChart'
 import { PoundsByOrgChart } from './PoundsByOrgChart'
 import { TotalPounds } from './TotalPounds'
+import { useNavigate } from 'react-router-dom'
 
 export function DriverStats() {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const { loadAllData } = useFirestore()
   const driver_stops = useFirestore(
@@ -44,8 +51,23 @@ export function DriverStats() {
     () => filteredByHolding.filter(i => i.type === 'delivery'),
     [filteredByHolding]
   )
+  const [working, setWorking] = useState(true)
+  const [apiData, setApiData] = useState()
 
-  useEffect(() => loadAllData(), []) // eslint-disable-line
+  useEffect(() => {
+    if (window.location.search !== user.id) {
+      setWorking(true)
+      navigate(user.id, { replace: true })
+    } else {
+      console.log('fetching', CLOUD_FUNCTION_URLS.myStats + user.id)
+      fetch(CLOUD_FUNCTION_URLS.myStats)
+        .then(res => res.json())
+        .then(data => {
+          setApiData(data)
+          setWorking(false)
+        })
+    }
+  }, [user.id]) // eslint-disable-line
 
   return (
     <main id="DriverStats">
@@ -58,9 +80,13 @@ export function DriverStats() {
         redistributing food.
       </Text>
       <Spacer height={32} />
-      <TotalPounds stops={driver_deliveries} />
+      <Text type="primary-header" color="black">
+        {formatLargeNumber(apiData.total_weight)} lbs
+      </Text>
+
+      {/* <TotalPounds stops={driver_deliveries} /> */}
       <Spacer height={64} />
-      <Text type="section-header" color="white" shadow>
+      {/* <Text type="section-header" color="white" shadow>
         Looking back on the year:
       </Text>
       <Spacer height={8} />
@@ -90,7 +116,7 @@ export function DriverStats() {
         organization.
       </Text>
       <Spacer height={16} />
-      <PoundsByOrgChart stops={driver_deliveries} />
+      <PoundsByOrgChart stops={driver_deliveries} /> */}
     </main>
   )
 }
