@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Brush,
   PieChart,
   Pie,
   Cell,
@@ -167,6 +168,23 @@ export function Analytics() {
     return null
   }
 
+  const CustomAxisTick = ({ x, y, stroke, payload }) => {
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={16}
+          textAnchor="end"
+          fill="#666"
+          transform="rotate(-60)"
+        >
+          {payload.value}
+        </text>
+      </g>
+    )
+  }
+
   return (
     <main id="Analytics">
       <FlexContainer className="InputSection" primaryAlign="space-between">
@@ -253,10 +271,24 @@ export function Analytics() {
                   data={graphData}
                   margin={{ top: 20, bottom: 10 }}
                 >
-                  <XAxis dataKey="name" scaleToFit={true} interval={0} />
+                  <XAxis
+                    dataKey="name"
+                    scaleToFit={true}
+                    interval={0}
+                    allowDataOverflow={false}
+                    tick={<CustomAxisTick />}
+                  />
                   <YAxis tickFormatter={num => shortenLargeNumber(num)} />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="value" fill="var(--primary)" barSize={30} />
+                  <Brush
+                    dataKey="name"
+                    height={20}
+                    stroke="var(--se-grey-dark )"
+                    travellerWidth={0}
+                    startIndex={0}
+                    endIndex={5}
+                  />
                 </BarChart>
               ) : chart === 'Pie Chart' ? (
                 <PieChart width={400} height={400}>
