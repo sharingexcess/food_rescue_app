@@ -1,5 +1,6 @@
 import { Button } from '@sharingexcess/designsystem'
 import React, { useState, useEffect } from 'react'
+import { Emoji } from 'react-apple-emojis'
 
 export function ReorderStops({ onMove, id, position, lengthOfStops }) {
   const UP = -1
@@ -25,7 +26,7 @@ export function ReorderStops({ onMove, id, position, lengthOfStops }) {
         disabled={isDisabledUpButton}
         handler={() => onMove(id, UP)}
       >
-        ⬆️ Move Up
+        <Emoji name="up-arrow" width={20} /> Move Up
       </Button>
       <Button
         color="blue"
@@ -33,7 +34,7 @@ export function ReorderStops({ onMove, id, position, lengthOfStops }) {
         disabled={isDisabledDownButton}
         handler={() => onMove(id, DOWN)}
       >
-        ⬇️ Move Down
+        <Emoji name="down-arrow" width={20} /> Move Down
       </Button>
     </div>
   )

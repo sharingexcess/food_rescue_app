@@ -10,6 +10,7 @@ import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
 import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
+import { Emoji } from 'react-apple-emojis'
 
 export function EditLocation() {
   const { organization_id, location_id } = useParams()
@@ -105,7 +106,7 @@ export function EditLocation() {
             </>
           ) : null}
           <div id="EditLocation-address">
-            <div className="EditLocation-address-pin">📍</div>
+            <div className="EditLocation-address-pin"><Emoji name="round-pushpin" width={20} /></div>
             <Text type="section-header" color="white" shadow>
               {formData.address1}
               <br />
