@@ -66,25 +66,25 @@ export function Organizations() {
     <main id="Organizations">
       <section id="Filters">
         <select value={type} onChange={e => setType(e.target.value)}>
-          <option value="all">All Types&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} /></option>
+          <option value="all">All Types&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
           <option value="recipient">
-            Recipients&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} />
+            Recipients&nbsp;&nbsp;&nbsp;&nbsp;⬇️
           </option>
-          <option value="donor">Donors&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} /></option>
+          <option value="donor">Donors&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
         </select>
         {['donor', 'recipient'].includes(type) ? (
           <select value={subtype} onChange={e => setSubtype(e.target.value)}>
-            <option value="all">All Subtypes&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} /></option>
+            <option value="all">All Subtypes&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
             {type === 'donor'
               ? Object.values(DONOR_TYPES).map(i => (
                   <option value={i} key={i}>
-                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} />
+                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} />3
                   </option>
                 ))
               : type === 'recipient'
               ? Object.values(RECIPIENT_TYPES).map(i => (
                   <option value={i} key={i}>
-                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;<Emoji name="down-arrow" width={20} />
+                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
                   </option>
                 ))
               : null}
