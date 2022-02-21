@@ -4,14 +4,14 @@ const colors = require('colors')
 const { series } = require('async')
 const git = require('git-state')
 
-require('dotenv').config({ path: 'environments/.env.prod' }) // eslint-disable-line
+require('dotenv').config({ path: './client/environments/.env.prod' }) // eslint-disable-line
 
 const ENCODED_PASS_CODE =
   '10a35f32b13f533407ce443ab0d4aa5d734db37586c95e1e3bd116227b695ca1'
 
 function getVersion() {
   // eslint-disable-next-line
-  var pjson = require('../package.json')
+  var pjson = require('../client/package.json')
   console.log(pjson.version)
   return pjson.version
 }
@@ -114,17 +114,17 @@ async function main() {
           [
             callback =>
               runCommand(
-                'cp environments/.env.prod .env.production.local',
+                'cp client/environments/.env.prod client/.env.production.local',
                 callback
               ),
-            callback => runCommand('rm -rf build', callback),
-            callback => runCommand('rm -rf node_modules', callback),
-            callback => runCommand('npm ci', callback),
-            callback => runCommand('npm run build', callback),
-            callback => runCommand('rm .env.production.local', callback),
+            callback => runCommand('rm -rf client/build', callback),
+            callback => runCommand('rm -rf client/node_modules', callback),
+            callback => runCommand('cd client && npm ci', callback),
+            callback => runCommand('cd client && npm run build', callback),
+            callback => runCommand('rm client/.env.production.local', callback),
             callback =>
               runCommand(
-                'cp environments/firebase.prod.json firebase.json',
+                'cp client/environments/firebase.prod.json client/firebase.json',
                 callback
               ),
             callback => runCommand('firebase use prod', callback),
@@ -135,7 +135,7 @@ async function main() {
               ),
             callback =>
               runCommand(
-                'cp environments/firebase.dev.json firebase.json',
+                'cp client/environments/firebase.dev.json client/firebase.json',
                 callback
               ),
             callback => runCommand('firebase use default', callback),

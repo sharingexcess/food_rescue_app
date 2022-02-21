@@ -77,7 +77,7 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
   )
   const base_url =
     'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial'
-  const API_KEY = ''
+  const API_KEY = process.env.GOOGLE_MAPS_API_KEY
 
   let total_distance = 0
   let curr_location = locations.shift()

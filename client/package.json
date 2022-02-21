@@ -2,7 +2,7 @@
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
   "version": "3.2.3",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@formspree/react": "^2.2.4",
     "@sentry/react": "^6.16.1",
@@ -24,11 +24,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "cp environments/.env.dev .env.local && react-scripts start",
-    "prod": "cp environments/.env.prod .env.local && react-scripts start",
+    "dev": "cp environments/.env.dev .env && react-scripts start",
+    "prod": "cp environments/.env.prod .env && react-scripts start",
     "build": "react-scripts build",
-    "deploy": "node scripts/auto_prod_deploy.js",
-    "rollback": "node scripts/prod_emergency_rollback.js"
+    "deploy": "node ../scripts/auto_prod_deploy.js",
+    "rollback": "node ../scripts/prod_emergency_rollback.js"
   },
   "browserslist": {
     "production": [
