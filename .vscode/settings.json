@@ -1,4 +1,12 @@
 {
+	"workbench.colorTheme": "GitHub Dark",
+	"prettier.arrowParens": "avoid",
+	"prettier.configPath": ".prettierrc",
+	"prettier.semi": false,
+	"prettier.singleQuote": true,
+	"prettier.useTabs": true,
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
   "cSpell.ignoreWords": [
     "datetime",
     "default",
@@ -14,4 +22,23 @@
     "to"
   ],
   "cSpell.words": ["designsystem", "FORMSPREE", "philabundance", "Treemap"]
+	"explorer.confirmDragAndDrop": false,
+	"editor.tabSize": 2,
+	"javascript.updateImportsOnFileMove.enabled": "always",
+	"liveshare.authenticationProvider": "GitHub",
+	"explorer.confirmDelete": false,
+	"workbench.welcomePage.hiddenCategories": ["Setup", "Beginner"],
+	"workbench.editorAssociations": {
+		"*.ipynb": "jupyter.notebook.ipynb"
+	},
+	"eslint.alwaysShowStatus": true,
+	"tslint.autoFixOnSave": true,
+	"[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"redhat.telemetry.enabled": false,
+	"window.zoomLevel": 3,
+	"editor.minimap.enabled": false,
+	"docker.languageserver.formatter.ignoreMultilineInstructions": true
 }
