@@ -11,10 +11,7 @@ import {
 import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
 import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
-<<<<<<< HEAD
 import { Emoji } from 'react-apple-emojis'
-=======
->>>>>>> 3daa8b5... Adding Time Windows To Locations
 import {
   Button,
   Spacer,
@@ -280,6 +277,7 @@ export function EditLocation() {
       setFormData({
         ...formData,
         hours: formData.hours.map((hour, index) =>
+<<<<<<< HEAD
           index === alter ? { ...hour, [e.target.id]: e.target.value } : hour
 =======
     if (e) {
@@ -299,6 +297,13 @@ export function EditLocation() {
         hours: formData.hours.map((hour, index) =>
           index === alter ? { ...hour, [e.target.id]: e.target.value } : hour
 >>>>>>> bb1b2f7... Added Styling and fixed bug
+=======
+          index === alter
+            ? e.target.id === 'day_of_week'
+              ? { ...hour, [e.target.id]: DAYS.indexOf(e.target.value) }
+              : { ...hour, [e.target.id]: e.target.value }
+            : hour
+>>>>>>> 01b7f46... Fixed changing day bug
         ),
       })
     } else {
