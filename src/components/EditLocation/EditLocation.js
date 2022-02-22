@@ -106,7 +106,7 @@ export function EditLocation() {
           <Input
             type="select"
             element_id="day_of_week"
-            value={dayOfWeek}
+            value={DAYS[dayOfWeek]}
             onSuggestionClick={e => {
               handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
             }}
@@ -478,7 +478,7 @@ export function EditLocation() {
                   hours: [
                     ...formData.hours,
                     {
-                      day_of_week: 'Sunday',
+                      day_of_week: 0,
                       time_open: '8:00',
                       time_close: '20:00',
                     },
