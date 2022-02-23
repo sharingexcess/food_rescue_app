@@ -101,6 +101,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> bb1b2f7... Added Styling and fixed bug
   .se-flex-container {
@@ -110,6 +111,19 @@
       .Input {
         width: calc(30% - 8px);
         margin: 0 0 16px 0;
+=======
+  .EditLocation-hours {
+    padding: 8px 0;
+    > * {
+      margin: 0 4px;
+
+      &:first-child {
+        margin-left: 0;
+        flex-grow: 1;
+      }
+      &:not(:first-child) {
+        width: 50%;
+>>>>>>> 100b219... styling pass
       }
 <<<<<<< HEAD
 =======
@@ -122,6 +136,17 @@
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
 =======
 >>>>>>> bb1b2f7... Added Styling and fixed bug
+    }
+
+    .se-button {
+      padding: 8px;
+      height: 24px;
+      width: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      margin-left: 16px;
     }
   }
 }

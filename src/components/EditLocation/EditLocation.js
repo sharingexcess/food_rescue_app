@@ -98,6 +98,7 @@ export function EditLocation() {
 <<<<<<< HEAD
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
+<<<<<<< HEAD
       <FlexContainer>
         <FlexContainer className="Inputs" primaryAlign="start">
           <Input
@@ -176,11 +177,22 @@ export function EditLocation() {
           type="select"
           element_id="day_of_week"
           value={dayOfWeek}
+=======
+      <FlexContainer className="EditLocation-hours">
+        <Input
+          type="select"
+          element_id="day_of_week"
+          value={DAYS[dayOfWeek]}
+>>>>>>> 100b219... styling pass
           onSuggestionClick={e => {
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
           }}
           suggestions={DAYS}
+<<<<<<< HEAD
           label={'Choose Day of Week'}
+=======
+          label="Day of Week"
+>>>>>>> 100b219... styling pass
         />
         <Input
           type="select"
@@ -200,7 +212,11 @@ export function EditLocation() {
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
           }
           suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
+<<<<<<< HEAD
           label={'Close Time'}
+=======
+          label="Close Time"
+>>>>>>> 100b219... styling pass
         />
         <Button
           type="secondary"
@@ -208,6 +224,7 @@ export function EditLocation() {
           color="white"
           handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
         >
+<<<<<<< HEAD
           Delete TimeSlot
         </Button>
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
@@ -257,6 +274,10 @@ export function EditLocation() {
           </Button>
         </FlexContainer>
 >>>>>>> bb1b2f7... Added Styling and fixed bug
+=======
+          x
+        </Button>
+>>>>>>> 100b219... styling pass
       </FlexContainer>
     )
   }
@@ -414,7 +435,7 @@ export function EditLocation() {
 =======
 >>>>>>> bb1b2f7... Added Styling and fixed bug
           <Text type="section-header" color="white" shadow>
-            Time Windows
+            Open Hours
           </Text>
           <Spacer height={15} />
 <<<<<<< HEAD
@@ -467,12 +488,16 @@ export function EditLocation() {
             )
           })}
 <<<<<<< HEAD
+<<<<<<< HEAD
           <div id="HoursOpen">
 <<<<<<< HEAD
             <AddHoursButton />
 >>>>>>> 3daa8b5... Adding Time Windows To Locations
 =======
 =======
+=======
+          <Spacer height={16} />
+>>>>>>> 100b219... styling pass
           <div id="EditLocation-buttons">
 >>>>>>> bb1b2f7... Added Styling and fixed bug
             <Button
@@ -483,9 +508,9 @@ export function EditLocation() {
                   hours: [
                     ...formData.hours,
                     {
-                      day_of_week: 0,
-                      time_open: '8:00',
-                      time_close: '20:00',
+                      day_of_week: null,
+                      time_open: null,
+                      time_close: null,
                     },
                   ],
                 })
