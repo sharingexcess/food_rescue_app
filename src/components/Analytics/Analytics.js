@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Brush,
   PieChart,
   Pie,
   Cell,
@@ -167,6 +168,27 @@ export function Analytics() {
     return null
   }
 
+  const CustomXAxisTick = ({ x, y, payload }) => {
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={16}
+          fill="var(--se-grey-dark)"
+          transform="rotate(-40)"
+          width={5}
+          textAnchor="end"
+          verticalAnchor="middle"
+          scaleToFit={true}
+        >
+          {payload.value.substring(0, 13)}
+          {payload.value.length >= 13 ? '...' : ''}
+        </text>
+      </g>
+    )
+  }
+
   return (
     <main id="Analytics">
       <FlexContainer className="InputSection" primaryAlign="space-between">
@@ -245,18 +267,33 @@ export function Analytics() {
           </FlexContainer>
           <Spacer height={32} />
           <section className="PoundsInDateRange-graph">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={500}>
               {chart === 'Bar Chart' ? (
                 <BarChart
                   width={300}
                   height={300}
                   data={graphData}
-                  margin={{ top: 20, bottom: 10 }}
+                  margin={{ top: 20, bottom: 96, right: 20 }}
                 >
-                  <XAxis dataKey="name" scaleToFit={true} interval={0} />
+                  <XAxis
+                    dataKey="name"
+                    interval={0}
+                    allowDataOverflow={false}
+                    tick={<CustomXAxisTick />}
+                    height={0.1}
+                    tickSize={25}
+                  ></XAxis>
                   <YAxis tickFormatter={num => shortenLargeNumber(num)} />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="value" fill="var(--primary)" barSize={30} />
+                  <Brush
+                    dataKey="name"
+                    height={20}
+                    stroke="var(--se-grey-primary)"
+                    travellerWidth={0}
+                    startIndex={0}
+                    endIndex={7}
+                  />
                 </BarChart>
               ) : chart === 'Pie Chart' ? (
                 <PieChart width={400} height={400}>
