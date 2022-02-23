@@ -1,6 +1,16 @@
 {
+  "plugins": ["prettier"],
   "rules": {
-    "no-var": "error",
-    "prefer-const": "error"
-  }
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "react-hooks/rules-of-hooks": "warn",
+    "no-var": "warn",
+    "prefer-const": "warn",
+    "no-duplicate-imports": "error"
+  },
+  "extends": ["plugin:prettier/recommended", "prettier"]
 }

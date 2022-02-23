@@ -13,5 +13,11 @@
     "sharingexcess",
     "to"
   ],
-  "cSpell.words": ["designsystem", "FORMSPREE", "philabundance", "Treemap"]
+  "cSpell.words": [
+    "designsystem",
+    "FORMSPREE",
+    "philabundance",
+    "Treemap"
+  ],
+  "prettier.configPath": ".prettierrc"
 }

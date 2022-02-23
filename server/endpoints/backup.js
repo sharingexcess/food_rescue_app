@@ -1,5 +1,6 @@
 const moment = require('moment-timezone')
 const { fetchCollection, uploadFile } = require('./helpers')
+require('dotenv').config()
 
 exports.backup = async () => {
   const COLLECTIONS = [

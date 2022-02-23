@@ -7,9 +7,10 @@ const {
   FOOD_CATEGORIES,
   RECIPIENT_SUB_TYPES,
   RETAIL_VALUES,
-} = require('./helpers')
+} = require('../helpers')
 const express = require('express')
 const cors = require('cors')
+require('dotenv').config()
 
 const analytics_routes = express()
 analytics_routes.use(cors({ origin: true }))

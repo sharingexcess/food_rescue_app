@@ -2,6 +2,7 @@ const admin = require('firebase-admin')
 exports.app = admin.initializeApp()
 exports.db = admin.firestore()
 const fetch = require('node-fetch')
+require('dotenv').config()
 
 exports.fetchCollection = async name => {
   const results = []
@@ -11,6 +12,24 @@ exports.fetchCollection = async name => {
     .get()
     .then(snapshot => snapshot.forEach(doc => results.push(doc.data())))
   return results
+}
+
+exports.fetchDocument = async (collection, id) => {
+  let doc
+  await db
+    .collection(collection)
+    .where('id', '==', id)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(result => (doc = result))
+    })
+  return doc
+}
+
+exports.formatLocationAsAddressString = location => {
+  return `${location.address1}${
+    location.address2 ? ' ' + location.address2 : ''
+  }, ${location.city}, ${location.state}, ${location.zip}`
 }
 
 exports.FOOD_CATEGORIES = [

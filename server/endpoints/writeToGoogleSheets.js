@@ -4,20 +4,18 @@ const is_prod = process.env.GCLOUD_PROJECT === 'sharing-excess-prod'
 const spreadsheetId = is_prod
   ? '1wmcOySR3EhHezgFn0o3suf7RZFDh62secue3jpbPK4Q'
   : '16bn0SYmKu7YnTI1yB5NiMzHhq3E0ZkDzCnfeh0v1AeI'
-const serviceAccountKey = is_prod
-  ? './serviceAccountProd.json'
-  : './serviceAccountDev.json'
-const serviceAccount = require(serviceAccountKey)
+const serviceAccount = require('../service_account.json')
 const moment = require('moment-timezone')
-const { db, calculateTotalDistanceFromLocations } = require('./helpers')
+const { db, calculateTotalDistanceFromLocations } = require('../helpers')
+require('dotenv').config()
 
-const jwtClient = new google.auth.JWT({
-  email: serviceAccount.client_email,
-  key: serviceAccount.private_key,
+const google_auth_credentials = new google.auth.JWT({
+  email: process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+  key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 })
 
-const jwtAuthPromise = jwtClient.authorize()
+const jwtAuthPromise = google_auth_credentials.authorize()
 
 exports.writeToGoogleSheets = async () => {
   console.log('Spreadsheet ID:', spreadsheetId)
@@ -317,7 +315,7 @@ exports.writeToGoogleSheets = async () => {
   console.log('writing rescue headers to range:', rescueHeadersRange)
   await sheets.spreadsheets.values.update(
     {
-      auth: jwtClient,
+      auth: google_auth_credentials,
       spreadsheetId: spreadsheetId,
       range: rescueHeadersRange,
       valueInputOption: 'RAW',
@@ -334,7 +332,7 @@ exports.writeToGoogleSheets = async () => {
     }${current_row + body.length}`
     await sheets.spreadsheets.values.update(
       {
-        auth: jwtClient,
+        auth: google_auth_credentials,
         spreadsheetId: spreadsheetId,
         range: range,
         valueInputOption: 'RAW',
@@ -372,7 +370,7 @@ exports.writeToGoogleSheets = async () => {
   console.log('writing rescue headers to range:', pickupHeadersRange)
   await sheets.spreadsheets.values.update(
     {
-      auth: jwtClient,
+      auth: google_auth_credentials,
       spreadsheetId: spreadsheetId,
       range: pickupHeadersRange,
       valueInputOption: 'RAW',
@@ -389,7 +387,7 @@ exports.writeToGoogleSheets = async () => {
     }${current_row + body.length}`
     await sheets.spreadsheets.values.update(
       {
-        auth: jwtClient,
+        auth: google_auth_credentials,
         spreadsheetId: spreadsheetId,
         range: range,
         valueInputOption: 'RAW',
@@ -429,7 +427,7 @@ exports.writeToGoogleSheets = async () => {
   console.log('writing rescue headers to range:', deliveryHeadersRange)
   await sheets.spreadsheets.values.update(
     {
-      auth: jwtClient,
+      auth: google_auth_credentials,
       spreadsheetId: spreadsheetId,
       range: deliveryHeadersRange,
       valueInputOption: 'RAW',
@@ -446,7 +444,7 @@ exports.writeToGoogleSheets = async () => {
     }${current_row + body.length}`
     await sheets.spreadsheets.values.update(
       {
-        auth: jwtClient,
+        auth: google_auth_credentials,
         spreadsheetId: spreadsheetId,
         range: range,
         valueInputOption: 'RAW',

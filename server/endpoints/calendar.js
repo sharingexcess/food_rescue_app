@@ -4,6 +4,7 @@ const OAuth2 = google.auth.OAuth2
 const calendar = google.calendar('v3')
 const express = require('express')
 const cors = require('cors')
+require('dotenv').config()
 
 const ERROR_RESPONSE = {
   status: '500',
