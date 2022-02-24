@@ -159,6 +159,7 @@ export const DAYS = [
   'Thursday',
   'Friday',
   'Saturday',
+  'Monday - Friday',
 ]
 export const TIMES = [
   '8:00',
