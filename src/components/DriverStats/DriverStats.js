@@ -11,6 +11,7 @@ import { PoundsByMonthChart } from './PoundsByMonthChart'
 import { PoundsByOrgChart } from './PoundsByOrgChart'
 import { TotalPounds } from './TotalPounds'
 import { useNavigate } from 'react-router-dom'
+import { Loading } from 'components'
 
 export function DriverStats() {
   const navigate = useNavigate()
@@ -34,32 +35,36 @@ export function DriverStats() {
   )
   const organizations = useFirestore('organizations')
 
-  const filteredByHolding = useMemo(
-    () =>
-      driver_stops.filter(i => {
-        const org = organizations.find(o => i.organization_id === o.id)
-        return org.subtype !== ORG_SUBTYPES.HOLDING
-      }),
-    [organizations, driver_stops]
-  )
+  // const filteredByHolding = useMemo(
+  //   () =>
+  //     driver_stops.filter(i => {
+  //       const org = organizations.find(o => i.organization_id === o.id)
+  //       return org.subtype !== ORG_SUBTYPES.HOLDING
+  //     }),
+  //   [organizations, driver_stops]
+  // )
 
-  const driver_pickups = useMemo(
-    () => filteredByHolding.filter(i => i.type === 'pickup'),
-    [filteredByHolding]
-  )
-  const driver_deliveries = useMemo(
-    () => filteredByHolding.filter(i => i.type === 'delivery'),
-    [filteredByHolding]
-  )
+  // const driver_pickups = useMemo(
+  //   () => filteredByHolding.filter(i => i.type === 'pickup'),
+  //   [filteredByHolding]
+  // )
+  // const driver_deliveries = useMemo(
+  //   () => filteredByHolding.filter(i => i.type === 'delivery'),
+  //   [filteredByHolding]
+  // )
   const [working, setWorking] = useState(true)
   const [apiData, setApiData] = useState()
 
+  const query = useMemo(() => {
+    return `?user=${encodeURIComponent(user.id)}`
+  }, [user.id])
+
   useEffect(() => {
-    if (window.location.search !== user.id) {
+    if (window.location.search !== query) {
       setWorking(true)
-      navigate(user.id, { replace: true })
+      navigate(query, { replace: true })
     } else {
-      console.log('fetching', CLOUD_FUNCTION_URLS.myStats + user.id)
+      console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
       fetch(CLOUD_FUNCTION_URLS.myStats)
         .then(res => res.json())
         .then(data => {
@@ -67,26 +72,29 @@ export function DriverStats() {
           setWorking(false)
         })
     }
-  }, [user.id]) // eslint-disable-line
+  }, [query]) // eslint-disable-line
+  console.log('apiData: ', apiData)
 
   return (
     <main id="DriverStats">
-      <Text type="section-header" color="white" shadow>
-        You and Sharing Excess
-      </Text>
-      <Spacer height={8} />
-      <Text type="paragraph" color="white" shadow>
-        Let's take a look at all the impact you've made rescuing and
-        redistributing food.
-      </Text>
-      <Spacer height={32} />
-      <Text type="primary-header" color="black">
-        {formatLargeNumber(apiData.total_weight)} lbs
-      </Text>
+      {apiData && !working ? (
+        <>
+          <Text type="section-header" color="white" shadow>
+            You and Sharing Excess
+          </Text>
+          <Spacer height={8} />
+          <Text type="paragraph" color="white" shadow>
+            Let's take a look at all the impact you've made rescuing and
+            redistributing food.
+          </Text>
+          <Spacer height={32} />
+          <Text type="primary-header" color="black">
+            {formatLargeNumber(apiData.total_weight)} lbs
+          </Text>
 
-      {/* <TotalPounds stops={driver_deliveries} /> */}
-      <Spacer height={64} />
-      {/* <Text type="section-header" color="white" shadow>
+          {/* <TotalPounds stops={driver_deliveries} /> */}
+          <Spacer height={64} />
+          {/* <Text type="section-header" color="white" shadow>
         Looking back on the year:
       </Text>
       <Spacer height={8} />
@@ -117,6 +125,13 @@ export function DriverStats() {
       </Text>
       <Spacer height={16} />
       <PoundsByOrgChart stops={driver_deliveries} /> */}
+        </>
+      ) : (
+        <>
+          <Spacer height={32} />
+          <Loading relative text="Calculating" />
+        </>
+      )}
     </main>
   )
 }

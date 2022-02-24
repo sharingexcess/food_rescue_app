@@ -9,58 +9,58 @@ exports.myStats = myStats_routes
 
 async function handleMyStats(request, response) {
   return new Promise(async resolve => {
-    console.log('running analytics')
+    console.log('running myStats')
     const { user } = request.query
-    console.log(user)
+    console.log('user:', user)
 
-    let rescues = []
-    await db
-      .collection('rescues')
-      .where('handler_id', '==', new Date(date_range_start))
-      .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-      .get()
-      .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
-    rescues = rescues.filter(i => i.status === 'completed')
+    // let rescues = []
+    // await db
+    //   .collection('rescues')
+    //   .where('handler_id', '==', new Date(date_range_start))
+    //   .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    //   .get()
+    //   .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
+    // rescues = rescues.filter(i => i.status === 'completed')
 
-    let stops = []
-    await db
-      .collection('stops')
-      .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-      .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-      .get()
-      .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
-    stops = stops.filter(i => i.status === 'completed')
+    // let stops = []
+    // await db
+    //   .collection('stops')
+    //   .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
+    //   .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    //   .get()
+    //   .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
+    // stops = stops.filter(i => i.status === 'completed')
 
-    let poundsByMonth = []
-    await db.collection('rescues')
+    // let poundsByMonth = []
+    // await db.collection('rescues')
 
-    const organizations = await fetchCollection('organizations')
-    const users = await fetchCollection('users')
+    // const organizations = await fetchCollection('organizations')
+    // const users = await fetchCollection('users')
 
-    const pickups = stops.filter(s => s.type === 'pickup')
-    const deliveries = stops.filter(s => s.type === 'delivery')
+    // const pickups = stops.filter(s => s.type === 'pickup')
+    // const deliveries = stops.filter(s => s.type === 'delivery')
 
-    console.log('DATA:', rescues.length, stops.length, organizations.length)
+    // console.log('DATA:', rescues.length, stops.length, organizations.length)
 
-    const total_weight = calculateMetrics(deliveries, organizations)
+    // const { total_weight } = calculateMetrics(deliveries, organizations)
 
-    console.log(
-      'METRICS:',
-      total_weight,
-      total_categorized_weight,
-      retail_value,
-      fair_market_value,
-      emissions_reduced
-    )
+    // console.log(
+    //   'METRICS:',
+    //   total_weight,
+    //   total_categorized_weight,
+    //   retail_value,
+    //   fair_market_value,
+    //   emissions_reduced
+    // )
 
-    console.log('Handling breakdown by driver')
+    const total_weight = 100
     const payload = {
       total_weight,
-      total_impact,
-      impact_last_year,
-      rescues,
-      deliveries,
-      view_data: breakdownByDonor(deliveries, users),
+      // total_impact,
+      // impact_last_year,
+      // rescues,
+      // deliveries,
+      // view_data: breakdownByDonor(deliveries, users),
     }
     console.log('returning payload:', payload)
     response.status(200).send(JSON.stringify(payload))
