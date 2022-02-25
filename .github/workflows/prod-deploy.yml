@@ -19,7 +19,7 @@ jobs:
         uses: dmandrade/sentry-release-github-action@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: foo
-          SENTRY_PROJECT: bar
+          SENTRY_ORG: sharingexcess
+          SENTRY_PROJECT: rescue
         with:
           version: ${{ github.event.inputs.version }}
