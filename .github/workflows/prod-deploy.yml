@@ -12,6 +12,7 @@ jobs:
     environment: prod
     steps:
       - uses: actions/checkout@v2
+      - run: firebase init
       - run: npm install
       - run: npm run build
       - run: echo "The version number is ${{ github.event.inputs.version }}"
