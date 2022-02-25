@@ -20,4 +20,5 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: sharingexcess
-          SENTRY_PROJECT: rescue 
+          SENTRY_PROJECT: rescue
+          SENTRY_LOG_LEVEL: debug 
