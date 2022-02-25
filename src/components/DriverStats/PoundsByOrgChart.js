@@ -36,12 +36,12 @@ export function PoundsByOrgChart({ stops }) {
       setPoundsByOrg(sortedByWeight)
     }
   }, [stops, organizations])
-
-  return poundsByOrg && loadedAllData ? (
+  console.log('stops:', stops)
+  return (
     <section id="PoundsByOrgChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <Treemap
-          data={poundsByOrg}
+          data={stops}
           dataKey="weight"
           ratio={1 / 1}
           content={<TreemapContent />}
@@ -51,8 +51,6 @@ export function PoundsByOrgChart({ stops }) {
         </Treemap>
       </ResponsiveContainer>
     </section>
-  ) : (
-    <Loading text="Calculating your impact" relative />
   )
 }
 

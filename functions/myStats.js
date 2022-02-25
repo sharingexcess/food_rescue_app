@@ -1,6 +1,7 @@
 const { db, fetchCollection } = require('./helpers')
 const express = require('express')
 const cors = require('cors')
+var moment = require('moment-timezone')
 
 const myStats_routes = express()
 myStats_routes.use(cors({ origin: true }))
@@ -13,36 +14,25 @@ async function handleMyStats(request, response) {
     const { user } = request.query
     console.log('user:', user)
 
-    // let rescues = []
-    // await db
-    //   .collection('rescues')
-    //   .where('handler_id', '==', new Date(date_range_start))
-    //   .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-    //   .get()
-    //   .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
-    // rescues = rescues.filter(i => i.status === 'completed')
-
-    // let stops = []
-    // await db
-    //   .collection('stops')
-    //   .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-    //   .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-    //   .get()
-    //   .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
-    // stops = stops.filter(i => i.status === 'completed')
+    let stops = []
+    await db
+      .collection('stops')
+      .where('handler_id', '=', user)
+      .get()
+      .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
+    stops = stops.filter(i => i.status === 'completed')
 
     // let poundsByMonth = []
     // await db.collection('rescues')
 
-    // const organizations = await fetchCollection('organizations')
-    // const users = await fetchCollection('users')
+    const organizations = await fetchCollection('organizations')
 
-    // const pickups = stops.filter(s => s.type === 'pickup')
-    // const deliveries = stops.filter(s => s.type === 'delivery')
+    const pickups = stops.filter(s => s.type === 'pickup')
+    const deliveries = stops.filter(s => s.type === 'delivery')
 
-    // console.log('DATA:', rescues.length, stops.length, organizations.length)
+    console.log('DATA:', stops.length, organizations.length)
 
-    // const { total_weight } = calculateMetrics(deliveries, organizations)
+    const total_weight = calculateMetrics(deliveries, organizations)
 
     // console.log(
     //   'METRICS:',
@@ -52,11 +42,12 @@ async function handleMyStats(request, response) {
     //   fair_market_value,
     //   emissions_reduced
     // )
-
-    const total_weight = 100
+    const poundsByMonth = calcPoundsByMonth(deliveries)
+    const donors = breakdownByDonor(pickups, organizations)
     const payload = {
       total_weight,
-      // total_impact,
+      poundsByMonth,
+      donors,
       // impact_last_year,
       // rescues,
       // deliveries,
@@ -83,17 +74,40 @@ function calculateMetrics(deliveries, organizations) {
 }
 
 function breakdownByDonor(pickups, organizations) {
-  const donors = {}
-  for (const p of pickups) {
-    try {
-      const organization = organizations.find(o => o.id === p.organization_id)
-      const { name } = organization
-      donors[name] = (donors[name] || 0) + (p.impact_data_total_weight || 0)
-    } catch (e) {
-      console.error('Unable to add pickup to donor totals:', JSON.stringify(p))
+  // const donors = {}
+  // for (const p of pickups) {
+  //   try {
+  //     const organization = organizations.find(o => o.id === p.organization_id)
+  //     const { name } = organization
+  //     donors[name] = (donors[name] || 0) + (p.impact_data_total_weight || 0)
+  //   } catch (e) {
+  //     console.error('Unable to add pickup to donor totals:', JSON.stringify(p))
+  //   }
+  // }
+
+  const poundsByOrgId = {}
+  for (const pickup of pickups) {
+    if (poundsByOrgId[pickup.organization_id]) {
+      poundsByOrgId[pickup.organization_id] =
+        poundsByOrgId[pickup.organization_id] +
+        (pickup.impact_data_total_weight || 0)
+    } else {
+      poundsByOrgId[pickup.organization_id] =
+        pickup.impact_data_total_weight || 0
     }
   }
-  return sortObjectByValues(donors)
+  const poundsByOrg = []
+  for (const org_id in poundsByOrgId) {
+    const organization = organizations.find(i => i.id === org_id)
+    organization &&
+      poundsByOrg.push({
+        name: organization.name,
+        weight: poundsByOrgId[org_id],
+      })
+  }
+  const sortedByWeight = poundsByOrg.sort((a, b) => b.weight - a.weight)
+
+  return sortObjectByValues(sortedByWeight)
 }
 
 function breakdownByRecipient(deliveries, organizations) {
@@ -114,26 +128,37 @@ function breakdownByRecipient(deliveries, organizations) {
   return sortObjectByValues(recipients)
 }
 
-function breakdownByDriver(deliveries, users) {
-  const recipients = {}
-  for (const d of deliveries) {
-    try {
-      const driver = users.find(o => o.id === d.handler_id)
-      const { name } = driver
-      recipients[name] =
-        (recipients[name] || 0) + (d.impact_data_total_weight || 0)
-    } catch (e) {
-      console.error(
-        'Unable to add delivery to driver totals:',
-        JSON.stringify(d)
-      )
-    }
-  }
-  return sortObjectByValues(recipients)
-}
-
 function sortObjectByValues(object) {
   return Object.entries(object)
     .sort(([, a], [, b]) => b - a)
     .reduce((r, [k, v]) => ({ ...r, [k]: v }), {})
 }
+
+// const [poundsByMonth, setPoundsByMonth] = useState()
+function calcPoundsByMonth(deliveries) {
+  const poundsByMonth = []
+  for (let i = 11; i >= 0; i--) {
+    const range_start = moment().subtract(i, 'months').startOf('month').toDate()
+    const range_end = moment()
+      .subtract(i - 1, 'months')
+      .startOf('month')
+      .toDate()
+    const filterByDateRange = i =>
+      i.timestamp_logged_finish.toDate() > range_start &&
+      i.timestamp_logged_finish.toDate() < range_end
+    const stopsInMonth = deliveries.filter(filterByDateRange)
+    const totalWeightInStops = stopsInMonth.reduce(
+      (a, b) => a + (b.impact_data_total_weight || 0),
+      0
+    )
+    poundsByMonth.push({
+      name: formatTimestamp(range_start, 'MMM'),
+      date: formatTimestamp(range_start, 'MMMM YYYY'),
+      weight: totalWeightInStops,
+    })
+  }
+  return poundsByMonth
+}
+
+const formatTimestamp = (t, format) =>
+  moment(t instanceof Date ? t : t.toDate()).format(format)

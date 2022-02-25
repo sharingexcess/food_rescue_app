@@ -52,6 +52,7 @@ export function DriverStats() {
   //   () => filteredByHolding.filter(i => i.type === 'delivery'),
   //   [filteredByHolding]
   // )
+  // useEffect(() => loadAllData(), []) // eslint-disable-line
   const [working, setWorking] = useState(true)
   const [apiData, setApiData] = useState()
 
@@ -65,7 +66,7 @@ export function DriverStats() {
       navigate(query, { replace: true })
     } else {
       console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
-      fetch(CLOUD_FUNCTION_URLS.myStats)
+      fetch(CLOUD_FUNCTION_URLS.myStats + query)
         .then(res => res.json())
         .then(data => {
           setApiData(data)
@@ -77,24 +78,31 @@ export function DriverStats() {
 
   return (
     <main id="DriverStats">
+      <Text type="section-header" color="white" shadow>
+        You and Sharing Excess
+      </Text>
+      <Spacer height={8} />
+      <Text type="paragraph" color="white" shadow>
+        Let's take a look at all the impact you've made rescuing and
+        redistributing food.
+      </Text>
+      <Spacer height={32} />
       {apiData && !working ? (
         <>
-          <Text type="section-header" color="white" shadow>
-            You and Sharing Excess
+          <Text type="primary-header" align="center" color="white" shadow>
+            {formatLargeNumber(apiData.total_weight)} lbs.
           </Text>
-          <Spacer height={8} />
-          <Text type="paragraph" color="white" shadow>
-            Let's take a look at all the impact you've made rescuing and
-            redistributing food.
+          <Text type="subheader" align="center" color="white" shadow>
+            Food diverted from landfills <br />
+            and redistributed to your local community !!!
           </Text>
-          <Spacer height={32} />
-          <Text type="primary-header" color="black">
-            {formatLargeNumber(apiData.total_weight)} lbs
-          </Text>
+        </>
+      ) : (
+        <Loading relative text="Calculating your impact" />
+      )}
 
-          {/* <TotalPounds stops={driver_deliveries} /> */}
-          <Spacer height={64} />
-          {/* <Text type="section-header" color="white" shadow>
+      <Spacer height={64} />
+      <Text type="section-header" color="white" shadow>
         Looking back on the year:
       </Text>
       <Spacer height={8} />
@@ -102,7 +110,11 @@ export function DriverStats() {
         Here's a breakdown of all the food you've rescued in the last 12 months.
       </Text>
       <Spacer height={16} />
-      <PoundsByMonthChart stops={driver_deliveries} />
+      {apiData && !working ? (
+        <PoundsByMonthChart stops={apiData.poundsByMonth} />
+      ) : (
+        <Loading text="Calculating your impact" relative />
+      )}
       <Spacer height={64} />
       <Text type="section-header" color="white" shadow>
         Where You Like to Rescue:
@@ -113,8 +125,12 @@ export function DriverStats() {
         organization.
       </Text>
       <Spacer height={16} />
-      <PoundsByOrgChart stops={driver_pickups} />
-      <Spacer height={64} />
+      {apiData && !working ? (
+        <PoundsByOrgChart stops={apiData.donors} />
+      ) : (
+        <Loading text="Calculating your impact" relative />
+      )}
+      {/* <Spacer height={64} />
       <Text type="section-header" color="white" shadow>
         Where You Like to Deliver:
       </Text>
@@ -122,16 +138,9 @@ export function DriverStats() {
       <Text type="paragraph" color="white" shadow>
         Click on a block to see exactly how much food you delivered to each
         organization.
-      </Text>
-      <Spacer height={16} />
-      <PoundsByOrgChart stops={driver_deliveries} /> */}
-        </>
-      ) : (
-        <>
-          <Spacer height={32} />
-          <Loading relative text="Calculating" />
-        </>
-      )}
+      </Text> */}
+      {/* <Spacer height={16} /> */}
+      {/* <PoundsByOrgChart stops={driver_deliveries} /> */}
     </main>
   )
 }
