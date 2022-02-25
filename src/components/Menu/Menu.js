@@ -28,7 +28,7 @@ export function Menu({ isOpen, setIsOpen }) {
     return pathname.includes(url)
   }
 
-  function MenuLink({ url, label }) {
+  function MenuLink({ url, label, emoji, num }) {
     return (
       <>
         <li onClick={() => setIsOpen(false)}>
@@ -38,6 +38,7 @@ export function Menu({ isOpen, setIsOpen }) {
               classList={['Menu-link']}
               color={isCurrentRoute(url) ? 'green' : 'black'}
             >
+              <Emoji name={emoji} width={num} />
               {label}
             </Text>
           </Link>
@@ -96,34 +97,38 @@ export function Menu({ isOpen, setIsOpen }) {
           <ul>
             {permission ? (
               <>
-                <MenuLink label="🚛&nbsp;&nbsp;Rescues" url="/rescues" />
-                <MenuLink label="📊&nbsp;&nbsp;Your Stats" url="/stats" />
+                <MenuLink emoji="articulated-lorry" num={20} label="&nbsp;&nbsp;Rescues" url="/rescues" />
+                <MenuLink emoji="bar-chart" num={20} label="&nbsp;&nbsp;Your Stats" url="/stats" />
               </>
             ) : null}
             {admin && (
               <>
                 <MenuLink
-                  label="➕&nbsp;&nbsp;Schedule Rescue"
+                  emoji="plus" num={20} 
+                  label="&nbsp;&nbsp;Schedule Rescue"
                   url="/admin/create-rescue"
                 />
                 <MenuLink
-                  label="✍️&nbsp;&nbsp;Log Rescue"
+                  emoji="writing-hand" num={20} 
+                  label="&nbsp;&nbsp;Log Rescue"
                   url="/admin/log-rescue"
                 />
                 <MenuLink
-                  label="🏢&nbsp;&nbsp;Organizations"
+                  emoji="office-building" num={20} 
+                  label="&nbsp;&nbsp;Organizations"
                   url="/admin/organizations"
                 />
-                <MenuLink label="👪&nbsp;&nbsp;Users" url="/admin/users" />
+                <MenuLink emoji="family" num={20} label="&nbsp;&nbsp;Users" url="/admin/users" />
                 <MenuLink
-                  label="📈&nbsp;&nbsp;Analytics"
+                  emoji="chart-increasing" num={20} 
+                  label="&nbsp;&nbsp;Analytics"
                   url="/admin/analytics"
                 />
               </>
             )}
-            <MenuLink label="🍎&nbsp;&nbsp;Food Safety" url="/food-safety" />
-            <MenuLink label="💡&nbsp;&nbsp;Tutorial" url="/tutorial" />
-            <MenuLink label="🙋&nbsp;&nbsp;Help" url="/contact" />
+            <MenuLink emoji="red-apple" num={20} label="&nbsp;&nbsp;Food Safety" url="/food-safety" />
+            <MenuLink emoji="light-bulb" num={20} label="&nbsp;&nbsp;Tutorial" url="/tutorial" />
+            <MenuLink emoji="person-raising-hand" num={20} label="&nbsp;&nbsp;Help" url="/contact" />
 
             <li
               onClick={() => {
