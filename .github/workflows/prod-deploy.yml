@@ -15,10 +15,11 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: echo "The version number is ${{ github.event.inputs.version }}"
-      - name: Create Sentry Release
-        uses: getsentry/action-release@v1
+      - name: Send Release to Sentry
+        uses: dmandrade/sentry-release-github-action@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: sharingexcess
-          SENTRY_PROJECT: rescue
-          SENTRY_LOG_LEVEL: debug 
+          SENTRY_ORG: foo
+          SENTRY_PROJECT: bar
+        with:
+          version: ${{ github.event.inputs.version }}
