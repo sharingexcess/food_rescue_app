@@ -22,4 +22,5 @@ jobs:
           SENTRY_ORG: sharingexcess
           SENTRY_PROJECT: rescue
         with:
+          environment: production
           version: ${{ github.event.inputs.version }}
