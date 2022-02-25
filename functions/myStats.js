@@ -26,13 +26,18 @@ async function handleMyStats(request, response) {
     // await db.collection('rescues')
 
     const organizations = await fetchCollection('organizations')
+    // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
+    filteredStops = stops.filter(d => {
+      const org = organizations.find(o => o.id === d.organization_id)
+      return org.subtype !== 'holding'
+    })
 
-    const pickups = stops.filter(s => s.type === 'pickup')
-    const deliveries = stops.filter(s => s.type === 'delivery')
+    const pickups = filteredStops.filter(s => s.type === 'pickup')
+    const deliveries = filteredStops.filter(s => s.type === 'delivery')
 
-    console.log('DATA:', stops.length, organizations.length)
+    console.log('DATA:', filteredStops.length, organizations.length)
 
-    const total_weight = calculateMetrics(deliveries, organizations)
+    const total_weight = calculateMetrics(deliveries)
 
     // console.log(
     //   'METRICS:',
@@ -60,12 +65,7 @@ async function handleMyStats(request, response) {
   })
 }
 
-function calculateMetrics(deliveries, organizations) {
-  // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
-  deliveries = deliveries.filter(d => {
-    const org = organizations.find(o => o.id === d.organization_id)
-    return org.subtype !== 'holding'
-  })
+function calculateMetrics(deliveries) {
   const total_weight = deliveries.reduce(
     (total, curr) => total + (curr.impact_data_total_weight || 0),
     0
@@ -85,7 +85,7 @@ function breakdownByDonor(pickups, organizations) {
   //   }
   // }
 
-  const poundsByOrgId = {}
+  const poundsByOrgId = []
   for (const pickup of pickups) {
     if (poundsByOrgId[pickup.organization_id]) {
       poundsByOrgId[pickup.organization_id] =
@@ -107,7 +107,7 @@ function breakdownByDonor(pickups, organizations) {
   }
   const sortedByWeight = poundsByOrg.sort((a, b) => b.weight - a.weight)
 
-  return sortObjectByValues(sortedByWeight)
+  return sortedByWeight
 }
 
 function breakdownByRecipient(deliveries, organizations) {

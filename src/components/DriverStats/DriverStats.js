@@ -111,7 +111,7 @@ export function DriverStats() {
       </Text>
       <Spacer height={16} />
       {apiData && !working ? (
-        <PoundsByMonthChart stops={apiData.poundsByMonth} />
+        <PoundsByMonthChart poundsByMonth={apiData.poundsByMonth} />
       ) : (
         <Loading text="Calculating your impact" relative />
       )}
@@ -126,7 +126,7 @@ export function DriverStats() {
       </Text>
       <Spacer height={16} />
       {apiData && !working ? (
-        <PoundsByOrgChart stops={apiData.donors} />
+        <PoundsByOrgChart poundsByOrg={apiData.donors} />
       ) : (
         <Loading text="Calculating your impact" relative />
       )}

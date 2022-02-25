@@ -4,44 +4,44 @@ import { useFirestore, useIsMobile } from 'hooks'
 import React, { useEffect, useState } from 'react'
 import { ResponsiveContainer, Tooltip, Treemap } from 'recharts'
 
-export function PoundsByOrgChart({ stops }) {
-  const [poundsByOrg, setPoundsByOrg] = useState()
+export function PoundsByOrgChart({ poundsByOrg }) {
+  // const [poundsByOrg, setPoundsByOrg] = useState()
   const isMobile = useIsMobile()
   const { loadedAllData } = useFirestore()
   const organizations = useFirestore('organizations')
 
-  useEffect(() => {
-    if (stops) {
-      const poundsByOrgId = {}
-      for (const stop of stops) {
-        if (poundsByOrgId[stop.organization_id]) {
-          poundsByOrgId[stop.organization_id] =
-            poundsByOrgId[stop.organization_id] +
-            (stop.impact_data_total_weight || 0)
-        } else {
-          poundsByOrgId[stop.organization_id] =
-            stop.impact_data_total_weight || 0
-        }
-      }
-      const poundsByOrg = []
-      for (const org_id in poundsByOrgId) {
-        const organization = organizations.find(i => i.id === org_id)
-        organization &&
-          poundsByOrg.push({
-            name: organization.name,
-            weight: poundsByOrgId[org_id],
-          })
-      }
-      const sortedByWeight = poundsByOrg.sort((a, b) => b.weight - a.weight)
-      setPoundsByOrg(sortedByWeight)
-    }
-  }, [stops, organizations])
-  console.log('stops:', stops)
+  // useEffect(() => {
+  //   if (stops) {
+  //     const poundsByOrgId = {}
+  //     for (const stop of stops) {
+  //       if (poundsByOrgId[stop.organization_id]) {
+  //         poundsByOrgId[stop.organization_id] =
+  //           poundsByOrgId[stop.organization_id] +
+  //           (stop.impact_data_total_weight || 0)
+  //       } else {
+  //         poundsByOrgId[stop.organization_id] =
+  //           stop.impact_data_total_weight || 0
+  //       }
+  //     }
+  //     const poundsByOrg = []
+  //     for (const org_id in poundsByOrgId) {
+  //       const organization = organizations.find(i => i.id === org_id)
+  //       organization &&
+  //         poundsByOrg.push({
+  //           name: organization.name,
+  //           weight: poundsByOrgId[org_id],
+  //         })
+  //     }
+  //     const sortedByWeight = poundsByOrg.sort((a, b) => b.weight - a.weight)
+  //     setPoundsByOrg(sortedByWeight)
+  //   }
+  // }, [stops, organizations])
+  // console.log('stops:', stops)
   return (
     <section id="PoundsByOrgChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <Treemap
-          data={stops}
+          data={poundsByOrg}
           dataKey="weight"
           ratio={1 / 1}
           content={<TreemapContent />}
