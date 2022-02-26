@@ -21,7 +21,13 @@
     "sharingexcess",
     "to"
   ],
-  "cSpell.words": ["designsystem", "FORMSPREE", "philabundance", "Treemap"],
+  "cSpell.words": [
+    "designsystem",
+    "falsey",
+    "FORMSPREE",
+    "philabundance",
+    "Treemap"
+  ],
   "explorer.confirmDragAndDrop": false,
   "editor.tabSize": 2,
   "javascript.updateImportsOnFileMove.enabled": "always",

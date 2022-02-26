@@ -46,6 +46,13 @@ export async function getFirestoreData(identifier) {
     )
 }
 
+export function initFirestoreListener(query, callback) {
+  query.onSnapshot(res => {
+    const payload = res.docs.map(doc => doc.data())
+    callback(payload)
+  })
+}
+
 export async function setFirestoreData(identifier, value) {
   let next = 'doc'
   let query = getCollection(identifier.shift())

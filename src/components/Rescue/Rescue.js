@@ -5,6 +5,8 @@ import {
   createTimestamp,
   STATUSES,
   updateImpactDataForRescue,
+  getCollection,
+  getFirestoreData,
 } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
 import { useFirestore, useAuth } from 'hooks'
@@ -22,6 +24,7 @@ export function Rescue() {
   const { admin } = useAuth()
   const navigate = useNavigate()
   const rescue = useFirestore('rescues', rescue_id)
+
   const deliveries = useFirestore(
     'stops',
     useCallback(i => i.type === 'delivery', [])

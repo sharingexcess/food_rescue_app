@@ -9,13 +9,14 @@ export const useFirestore = (collection, filter) => {
 
   useEffect(() => {
     if (data[collection]) {
+      // handle if the filter is an array of ids
       const updated = Array.isArray(filter)
         ? data[collection].filter(i => filter.includes(i.id))
-        : typeof filter === 'function'
+        : typeof filter === 'function' // handle if filter is a callback function
         ? data[collection].filter(filter)
-        : filter
+        : filter // handle if filter is a singular id
         ? data[collection].find(i => i.id === filter)
-        : data[collection]
+        : data[collection] // if filter is "falsey", return unfiltered data
       if (updated && JSON.stringify(updated) !== JSON.stringify(data)) {
         setFiltered(updated)
       }

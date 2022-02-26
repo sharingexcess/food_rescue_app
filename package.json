@@ -30,6 +30,7 @@
     "start": "react-scripts start",
     "dev": "cp environments/.env.dev .env.local && react-scripts start",
     "prod": "cp environments/.env.prod .env.local && react-scripts start",
+    "emulators": "firebase emulators:start --only functions",
     "build": "react-scripts build",
     "deploy": "node scripts/manual_prod_deploy.js",
     "rollback": "node scripts/prod_emergency_rollback.js"
