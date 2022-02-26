@@ -98,4 +98,30 @@
       }
     }
   }
+
+  .EditLocation-hours {
+    padding: 8px 0;
+    > * {
+      margin: 0 4px;
+
+      &:first-child {
+        margin-left: 0;
+        flex-grow: 1;
+      }
+      &:not(:first-child) {
+        width: 50%;
+      }
+    }
+
+    .se-button {
+      padding: 8px;
+      height: 24px;
+      width: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      margin-left: 16px;
+    }
+  }
 }

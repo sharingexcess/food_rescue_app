@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   createTimestamp,
+  DAYS,
   generateUniqueId,
   removeSpecialCharacters,
   setFirestoreData,
+  TIMES,
 } from 'helpers'
 import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
 import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
-import { Button, Spacer, Text } from '@sharingexcess/designsystem'
-import { Emoji } from 'react-apple-emojis'
+import {
+  Button,
+  Spacer,
+  Text,
+  FlexContainer,
+} from '@sharingexcess/designsystem'
 
 export function EditLocation() {
   const { organization_id, location_id } = useParams()
@@ -25,6 +31,7 @@ export function EditLocation() {
     contact_phone: '',
     notes: '',
     nickname: '',
+    hours: [],
     is_philabundance_partner: false,
   })
   const [isInitialLoad, setIsInitialLoad] = useState(true)
@@ -60,6 +67,7 @@ export function EditLocation() {
           id: new_location_id,
           organization_id,
           ...formData,
+          hours: checkMonToFriday(),
           contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
           timestamp_created: location.timestamp_created || createTimestamp(),
           timestamp_updated: createTimestamp(),
@@ -70,7 +78,6 @@ export function EditLocation() {
       }
     }
   }
-
   async function handleDelete() {
     if (
       window.confirm(`Are you sure you want to delete ${location.address1}?`)
@@ -85,6 +92,105 @@ export function EditLocation() {
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
+
+  function Hours({ dayOfWeek, openTime, closeTime }) {
+    return (
+      <FlexContainer className="EditLocation-hours">
+        <Input
+          type="select"
+          element_id="day_of_week"
+          value={DAYS[dayOfWeek]}
+          onSuggestionClick={e => {
+            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+          }}
+          suggestions={DAYS}
+          label="Day of Week"
+        />
+        <Input
+          type="select"
+          element_id="time_open"
+          value={openTime}
+          onSuggestionClick={e =>
+            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+          }
+          suggestions={TIMES}
+          label={'Open Time'}
+        />
+        <Input
+          type="select"
+          element_id="time_close"
+          value={closeTime}
+          onSuggestionClick={e =>
+            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
+          }
+          suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
+          label="Close Time"
+        />
+        <Button
+          type="secondary"
+          size="medium"
+          color="white"
+          handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
+        >
+          x
+        </Button>
+      </FlexContainer>
+    )
+  }
+
+  function handleChangeTimeSlot(day, open, close, e) {
+    const alter = formData.hours.findIndex(
+      hour =>
+        hour.day_of_week === day &&
+        hour.time_open === open &&
+        hour.time_close === close
+    )
+    if (e) {
+      setFormData({
+        ...formData,
+        hours: formData.hours.map((hour, index) =>
+          index === alter
+            ? e.target.id === 'day_of_week'
+              ? { ...hour, [e.target.id]: DAYS.indexOf(e.target.value) }
+              : { ...hour, [e.target.id]: e.target.value }
+            : hour
+        ),
+      })
+    } else {
+      setFormData({
+        ...formData,
+        hours: formData.hours.filter((element, index) => index !== alter),
+      })
+    }
+  }
+
+  function checkMonToFriday() {
+    const indexOfMonFriday = formData.hours.findIndex(
+      hour => hour.day_of_week === 7
+    )
+    if (indexOfMonFriday !== -1) {
+      const open = formData.hours[indexOfMonFriday].time_open
+      const close = formData.hours[indexOfMonFriday].time_close
+      const hours = []
+      setFormData({
+        ...formData,
+        hours: formData.hours.splice(indexOfMonFriday, 1),
+      })
+      for (let i = 1; i <= 5; i++) {
+        hours.push({
+          day_of_week: i,
+          time_open: open,
+          time_close: close,
+        })
+      }
+      const newHours = formData.hours.concat(hours)
+
+      console.log('After', newHours)
+      return newHours
+    }
+    return formData.hours
+  }
+
   return !location || !organization ? (
     <Loading text="Loading location data..." />
   ) : (
@@ -106,7 +212,7 @@ export function EditLocation() {
             </>
           ) : null}
           <div id="EditLocation-address">
-            <div className="EditLocation-address-pin"><Emoji name="round-pushpin" width={20} /></div>
+            <div className="EditLocation-address-pin">📍</div>
             <Text type="section-header" color="white" shadow>
               {formData.address1}
               <br />
@@ -163,6 +269,41 @@ export function EditLocation() {
             value={formData.nickname}
             onChange={handleChange}
           />
+          <Text type="section-header" color="white" shadow>
+            Open Hours
+          </Text>
+          <Spacer height={15} />
+          {formData.hours.map((hour, index) => {
+            return (
+              <Hours
+                dayOfWeek={hour.day_of_week}
+                openTime={hour.time_open}
+                closeTime={hour.time_close}
+                key={index}
+              />
+            )
+          })}
+          <Spacer height={16} />
+          <div id="EditLocation-buttons">
+            <Button
+              type="primary"
+              handler={() => {
+                setFormData({
+                  ...formData,
+                  hours: [
+                    ...formData.hours,
+                    {
+                      day_of_week: null,
+                      time_open: null,
+                      time_close: null,
+                    },
+                  ],
+                })
+              }}
+            >
+              Add Hours
+            </Button>
+          </div>
           <div className="is_philabundance_partner">
             <input
               type="checkbox"

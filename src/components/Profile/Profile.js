@@ -170,31 +170,31 @@ export function Profile() {
       </div>
       <Input
         element_id="vehicle_make_model"
-        label="Vehicle Make + Model"
+        label="Vehicle Make + Model (only for drivers)"
         value={formData.vehicle_make_model}
         onChange={handleChange}
       />
       <Input
         element_id="license_state"
-        label="Driver's License State"
+        label="Driver's License State (only for drivers)"
         value={formData.license_state}
         onChange={handleChange}
       />
       <Input
         element_id="license_number"
-        label="Driver's License Number"
+        label="Driver's License Number (only for drivers)"
         value={formData.license_number}
         onChange={handleChange}
       />
       <Input
         element_id="insurance_provider"
-        label="Insurance Provider"
+        label="Insurance Provider (only for drivers)"
         value={formData.insurance_provider}
         onChange={handleChange}
       />
       <Input
         element_id="insurance_policy_number"
-        label="Insurance Policy Number"
+        label="Insurance Policy Number (only for drivers)"
         value={formData.insurance_policy_number}
         onChange={handleChange}
       />

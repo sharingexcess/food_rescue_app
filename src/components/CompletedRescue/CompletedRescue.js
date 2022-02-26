@@ -51,7 +51,9 @@ export function CompletedRescue() {
     <Loading />
   ) : (
     <main id="CompletedRescue">
-      <div id="CompletedRescue-icon"><Emoji name="party-popper" width={120} /></div>
+      <div id="CompletedRescue-icon">
+        <Emoji name="party-popper" width={120} />
+      </div>
       <Spacer height={32} />
       <Text type="primary-header" color="white" shadow align="center">
         Route Completed!
