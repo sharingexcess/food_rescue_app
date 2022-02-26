@@ -43,10 +43,10 @@ async function validateGitState() {
       git.check('.', (err, result) => {
         if (err) throw err
         console.log(colors.yellow.bold('Validating Git State:\n'), result, '\n')
-        if (result.branch !== 'master') {
+        if (result.branch !== 'main') {
           console.error(
             colors.red.bold(
-              'Cannot deploy to production from branch other than master. Exiting...\n'
+              'Cannot deploy to production from branch other than main. Exiting...\n'
             )
           )
           res(false)
