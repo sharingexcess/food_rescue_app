@@ -1,6 +1,11 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { DEFAULT_DB_LIMIT, FIRST_RESCUE_IN_DB, getCollection } from 'helpers'
+import {
+  DEFAULT_DB_LIMIT,
+  FIRST_RESCUE_IN_DB,
+  getCollection,
+  initFirestoreListener,
+} from 'helpers'
 import moment from 'moment'
 
 const FirestoreContext = createContext()
@@ -8,27 +13,39 @@ FirestoreContext.displayName = 'Firestore'
 
 function Firestore({ children }) {
   const [limit, setLimit] = useState(DEFAULT_DB_LIMIT)
-  const [rescues, setRescues] = useState()
-  const rescuesQuery = useMemo(
-    () =>
+  const [data, setData] = useState({
+    rescues: [],
+    stops: [],
+    organizations: [],
+    locations: [],
+    users: [],
+  })
+
+  useEffect(() => {
+    initFirestoreListener(
       getCollection('rescues')
         .where('timestamp_scheduled_start', '>=', limit)
         .orderBy('timestamp_scheduled_start', 'desc'),
-    [limit]
-  )
-  const [rescues_raw] = useCollectionData(rescuesQuery)
+      payload => setData(data => ({ ...data, rescues: payload }))
+    )
+  }, [limit])
 
-  const stopsQuery = useMemo(
+  const stops_query = useMemo(
     () =>
       getCollection('stops')
         .where('timestamp_scheduled_start', '>=', limit)
         .orderBy('timestamp_scheduled_start', 'desc'),
     [limit]
   )
-  const [stops] = useCollectionData(stopsQuery)
-  const [organizations] = useCollectionData(
-    getCollection('organizations').orderBy('name')
+  initFirestoreListener(stops_query, payload =>
+    setData(data => ({ ...data, stops: payload }))
   )
+
+  const organizations_query = getCollection('organizations').orderBy('name')
+  initFirestoreListener(organizations_query, payload =>
+    setData(data => ({ ...data, organizations: payload }))
+  )
+
   const [locations] = useCollectionData(
     getCollection('locations').orderBy('id')
   )
