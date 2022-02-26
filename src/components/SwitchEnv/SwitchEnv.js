@@ -6,7 +6,9 @@ import { Emoji } from 'react-apple-emojis'
 function SwitchToDev() {
   return (
     <main id="SwitchEnv">
-      <div className="icon"><Emoji name="articulated-lorry" width={20} /></div>
+      <div className="icon">
+        <Emoji name="articulated-lorry" width={20} />
+      </div>
       <Text type="section-header" color="white" align="center" shadow>
         You're currently in the production environment.
       </Text>
@@ -29,7 +31,9 @@ function SwitchToDev() {
 function SwitchToProd() {
   return (
     <main id="SwitchEnv">
-      <div className="icon"><Emoji name="gear" width={20} /></div>
+      <div className="icon">
+        <Emoji name="gear" width={20} />
+      </div>
       <Text type="section-header" color="white" align="center" shadow>
         You're currently in the development environment.
       </Text>

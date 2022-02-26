@@ -465,13 +465,29 @@ export function Stop({ stops, s, i }) {
 
   function RescueStatusIndicator({ rescue }) {
     if (rescue.status === STATUSES.COMPLETED) {
-      return <div className="Rescues-stop-status"><Emoji name="check-mark-button" width={20} /></div>
+      return (
+        <div className="Rescues-stop-status">
+          <Emoji name="check-mark-button" width={20} />
+        </div>
+      )
     } else if (rescue.status === STATUSES.CANCELLED) {
-      return <div className="Rescues-stop-status"><Emoji name="cross-mark" width={20} /></div>
+      return (
+        <div className="Rescues-stop-status">
+          <Emoji name="cross-mark" width={20} />
+        </div>
+      )
     } else if (rescue.status === STATUSES.SCHEDULED) {
-      return <div className="Rescues-stop-status"><Emoji name="spiral-calendar" width={20} /></div>
+      return (
+        <div className="Rescues-stop-status">
+          <Emoji name="spiral-calendar" width={20} />
+        </div>
+      )
     } else if (rescue.status === STATUSES.ACTIVE) {
-      return <div className="Rescues-stop-status"><Emoji name="articulated-lorry" width={20} /></div>
+      return (
+        <div className="Rescues-stop-status">
+          <Emoji name="articulated-lorry" width={20} />
+        </div>
+      )
     } else return null
   }
 

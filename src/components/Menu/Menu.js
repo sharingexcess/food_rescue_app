@@ -97,38 +97,72 @@ export function Menu({ isOpen, setIsOpen }) {
           <ul>
             {permission ? (
               <>
-                <MenuLink emoji="articulated-lorry" num={20} label="&nbsp;&nbsp;Rescues" url="/rescues" />
-                <MenuLink emoji="bar-chart" num={20} label="&nbsp;&nbsp;Your Stats" url="/stats" />
+                <MenuLink
+                  emoji="articulated-lorry"
+                  num={20}
+                  label="&nbsp;&nbsp;Rescues"
+                  url="/rescues"
+                />
+                <MenuLink
+                  emoji="bar-chart"
+                  num={20}
+                  label="&nbsp;&nbsp;Your Stats"
+                  url="/stats"
+                />
               </>
             ) : null}
             {admin && (
               <>
                 <MenuLink
-                  emoji="plus" num={20} 
+                  emoji="plus"
+                  num={20}
                   label="&nbsp;&nbsp;Schedule Rescue"
                   url="/admin/create-rescue"
                 />
                 <MenuLink
-                  emoji="writing-hand" num={20} 
+                  emoji="writing-hand"
+                  num={20}
                   label="&nbsp;&nbsp;Log Rescue"
                   url="/admin/log-rescue"
                 />
                 <MenuLink
-                  emoji="office-building" num={20} 
+                  emoji="office-building"
+                  num={20}
                   label="&nbsp;&nbsp;Organizations"
                   url="/admin/organizations"
                 />
-                <MenuLink emoji="family" num={20} label="&nbsp;&nbsp;Users" url="/admin/users" />
                 <MenuLink
-                  emoji="chart-increasing" num={20} 
+                  emoji="family"
+                  num={20}
+                  label="&nbsp;&nbsp;Users"
+                  url="/admin/users"
+                />
+                <MenuLink
+                  emoji="chart-increasing"
+                  num={20}
                   label="&nbsp;&nbsp;Analytics"
                   url="/admin/analytics"
                 />
               </>
             )}
-            <MenuLink emoji="red-apple" num={20} label="&nbsp;&nbsp;Food Safety" url="/food-safety" />
-            <MenuLink emoji="light-bulb" num={20} label="&nbsp;&nbsp;Tutorial" url="/tutorial" />
-            <MenuLink emoji="person-raising-hand" num={20} label="&nbsp;&nbsp;Help" url="/contact" />
+            <MenuLink
+              emoji="red-apple"
+              num={20}
+              label="&nbsp;&nbsp;Food Safety"
+              url="/food-safety"
+            />
+            <MenuLink
+              emoji="light-bulb"
+              num={20}
+              label="&nbsp;&nbsp;Tutorial"
+              url="/tutorial"
+            />
+            <MenuLink
+              emoji="person-raising-hand"
+              num={20}
+              label="&nbsp;&nbsp;Help"
+              url="/contact"
+            />
 
             <li
               onClick={() => {
@@ -137,7 +171,8 @@ export function Menu({ isOpen, setIsOpen }) {
               }}
             >
               <Text type="subheader" color="black" classList={['Menu-link']}>
-              <Emoji name="door" width={20} />&nbsp;&nbsp;Logout
+                <Emoji name="door" width={20} />
+                &nbsp;&nbsp;Logout
               </Text>
             </li>
           </ul>
