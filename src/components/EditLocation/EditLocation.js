@@ -11,7 +11,6 @@ import {
 import { initializeFormData } from './utils'
 import { useFirestore } from 'hooks'
 import { Input, GoogleAutoComplete, GoogleMap, Loading } from 'components'
-import { Emoji } from 'react-apple-emojis'
 import {
   Button,
   Spacer,
@@ -94,105 +93,18 @@ export function EditLocation() {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   function Hours({ dayOfWeek, openTime, closeTime }) {
     return (
-<<<<<<< HEAD
-      <FlexContainer>
-        <FlexContainer className="Inputs" primaryAlign="start">
-          <Input
-            type="select"
-            element_id="day_of_week"
-            value={DAYS[dayOfWeek]}
-            onSuggestionClick={e => {
-              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-            }}
-            suggestions={DAYS}
-            label={'Choose Day of Week'}
-          />
-          <Input
-            type="select"
-            element_id="time_open"
-            value={openTime}
-            onSuggestionClick={e =>
-              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-            }
-            suggestions={TIMES}
-            label={'Open Time'}
-          />
-          <Input
-            type="select"
-            element_id="time_close"
-            value={closeTime}
-            onSuggestionClick={e =>
-              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-            }
-            suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
-            label={'Close Time'}
-          />
-        </FlexContainer>
-        <FlexContainer primaryAlign="end">
-          <Button
-            type="secondary"
-            size="medium"
-            color="white"
-            classlist={['Input']}
-            handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
-          >
-            Delete TimeSlot
-          </Button>
-        </FlexContainer>
-=======
-  function AddHoursButton() {
-    return (
-      <Button
-        type="primary"
-        handler={() => {
-          setFormData({
-            ...formData,
-            hours: [
-              ...formData.hours,
-              {
-                day_of_week: 'Sunday',
-                time_open: '8:00',
-                time_close: '20:00',
-              },
-            ],
-          })
-        }}
-      >
-        Add Hours
-      </Button>
-    )
-  }
-
-=======
->>>>>>> fb3ddec... Moving Button component out of function
-  function Hours({ dayOfWeek, openTime, closeTime }) {
-    return (
-<<<<<<< HEAD
-      <FlexContainer primaryAlign="space-between">
-        <Input
-          type="select"
-          element_id="day_of_week"
-          value={dayOfWeek}
-=======
       <FlexContainer className="EditLocation-hours">
         <Input
           type="select"
           element_id="day_of_week"
           value={DAYS[dayOfWeek]}
->>>>>>> 100b219... styling pass
           onSuggestionClick={e => {
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
           }}
           suggestions={DAYS}
-<<<<<<< HEAD
-          label={'Choose Day of Week'}
-=======
           label="Day of Week"
->>>>>>> 100b219... styling pass
         />
         <Input
           type="select"
@@ -212,11 +124,7 @@ export function EditLocation() {
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
           }
           suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
-<<<<<<< HEAD
-          label={'Close Time'}
-=======
           label="Close Time"
->>>>>>> 100b219... styling pass
         />
         <Button
           type="secondary"
@@ -224,128 +132,34 @@ export function EditLocation() {
           color="white"
           handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
         >
-<<<<<<< HEAD
-          Delete TimeSlot
-        </Button>
->>>>>>> 3daa8b5... Adding Time Windows To Locations
-=======
-      <FlexContainer>
-        <FlexContainer className="Inputs" primaryAlign="start">
-          <Input
-            type="select"
-            element_id="day_of_week"
-            value={dayOfWeek}
-            onSuggestionClick={e => {
-              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-            }}
-            suggestions={DAYS}
-            label={'Choose Day of Week'}
-          />
-          <Input
-            type="select"
-            element_id="time_open"
-            value={openTime}
-            onSuggestionClick={e =>
-              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-            }
-            suggestions={TIMES}
-            label={'Open Time'}
-          />
-          <Input
-            type="select"
-            element_id="time_close"
-            value={closeTime}
-            onSuggestionClick={e =>
-              handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-            }
-            suggestions={TIMES.slice(TIMES.indexOf(openTime) + 1)}
-            label={'Close Time'}
-          />
-        </FlexContainer>
-        <FlexContainer primaryAlign="end">
-          <Button
-            type="secondary"
-            size="medium"
-            color="white"
-            classlist={['Input']}
-            handler={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
-          >
-            Delete TimeSlot
-          </Button>
-        </FlexContainer>
->>>>>>> bb1b2f7... Added Styling and fixed bug
-=======
           x
         </Button>
->>>>>>> 100b219... styling pass
       </FlexContainer>
     )
   }
 
   function handleChangeTimeSlot(day, open, close, e) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bb1b2f7... Added Styling and fixed bug
     const alter = formData.hours.findIndex(
       hour =>
         hour.day_of_week === day &&
         hour.time_open === open &&
         hour.time_close === close
     )
-<<<<<<< HEAD
     if (e) {
       setFormData({
         ...formData,
         hours: formData.hours.map((hour, index) =>
-<<<<<<< HEAD
-          index === alter ? { ...hour, [e.target.id]: e.target.value } : hour
-=======
-    if (e) {
-      setFormData({
-        ...formData,
-        hours: formData.hours.map(hour =>
-          hour.day_of_week === day &&
-          hour.time_open === open &&
-          hour.time_close === close
-            ? { ...hour, [e.target.id]: e.target.value }
-            : hour
->>>>>>> 3daa8b5... Adding Time Windows To Locations
-=======
-    if (e) {
-      setFormData({
-        ...formData,
-        hours: formData.hours.map((hour, index) =>
-          index === alter ? { ...hour, [e.target.id]: e.target.value } : hour
->>>>>>> bb1b2f7... Added Styling and fixed bug
-=======
           index === alter
             ? e.target.id === 'day_of_week'
               ? { ...hour, [e.target.id]: DAYS.indexOf(e.target.value) }
               : { ...hour, [e.target.id]: e.target.value }
             : hour
->>>>>>> 01b7f46... Fixed changing day bug
         ),
       })
     } else {
       setFormData({
         ...formData,
-<<<<<<< HEAD
-<<<<<<< HEAD
         hours: formData.hours.filter((element, index) => index !== alter),
-=======
-        hours: formData.hours.filter(
-          hour =>
-            !(
-              hour.day_of_week === day &&
-              hour.time_open === open &&
-              hour.time_close === close
-            )
-        ),
->>>>>>> 3daa8b5... Adding Time Windows To Locations
-=======
-        hours: formData.hours.filter((element, index) => index !== alter),
->>>>>>> bb1b2f7... Added Styling and fixed bug
       })
     }
   }
@@ -398,9 +212,7 @@ export function EditLocation() {
             </>
           ) : null}
           <div id="EditLocation-address">
-            <div className="EditLocation-address-pin">
-              <Emoji name="round-pushpin" width={20} />
-            </div>
+            <div className="EditLocation-address-pin">📍</div>
             <Text type="section-header" color="white" shadow>
               {formData.address1}
               <br />
@@ -457,76 +269,22 @@ export function EditLocation() {
             value={formData.nickname}
             onChange={handleChange}
           />
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bb1b2f7... Added Styling and fixed bug
           <Text type="section-header" color="white" shadow>
             Open Hours
           </Text>
           <Spacer height={15} />
-<<<<<<< HEAD
-<<<<<<< HEAD
           {formData.hours.map((hour, index) => {
-=======
-=======
->>>>>>> bb1b2f7... Added Styling and fixed bug
-          {formData.hours.map(hour => {
->>>>>>> 3daa8b5... Adding Time Windows To Locations
-=======
-          {formData.hours.map((hour, index) => {
->>>>>>> 55421b2... Fixed key error
             return (
               <Hours
                 dayOfWeek={hour.day_of_week}
                 openTime={hour.time_open}
                 closeTime={hour.time_close}
-<<<<<<< HEAD
-<<<<<<< HEAD
                 key={index}
               />
             )
           })}
-          <div id="EditLocation-buttons">
-            <Button
-              type="primary"
-              handler={() => {
-                setFormData({
-                  ...formData,
-                  hours: [
-                    ...formData.hours,
-                    {
-                      day_of_week: 'Sunday',
-                      time_open: '8:00',
-                      time_close: '20:00',
-                    },
-                  ],
-                })
-              }}
-            >
-              Add Hours
-            </Button>
-=======
-                key={hour}
-=======
-                key={index}
->>>>>>> 55421b2... Fixed key error
-              />
-            )
-          })}
-<<<<<<< HEAD
-<<<<<<< HEAD
-          <div id="HoursOpen">
-<<<<<<< HEAD
-            <AddHoursButton />
->>>>>>> 3daa8b5... Adding Time Windows To Locations
-=======
-=======
-=======
           <Spacer height={16} />
->>>>>>> 100b219... styling pass
           <div id="EditLocation-buttons">
->>>>>>> bb1b2f7... Added Styling and fixed bug
             <Button
               type="primary"
               handler={() => {
@@ -545,7 +303,6 @@ export function EditLocation() {
             >
               Add Hours
             </Button>
->>>>>>> fb3ddec... Moving Button component out of function
           </div>
           <div className="is_philabundance_partner">
             <input

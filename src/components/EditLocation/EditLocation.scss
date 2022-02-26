@@ -99,19 +99,6 @@
     }
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bb1b2f7... Added Styling and fixed bug
-  .se-flex-container {
-    .Inputs {
-      width: 150%;
-      justify-content: space-around;
-      .Input {
-        width: calc(30% - 8px);
-        margin: 0 0 16px 0;
-=======
   .EditLocation-hours {
     padding: 8px 0;
     > * {
@@ -123,19 +110,7 @@
       }
       &:not(:first-child) {
         width: 50%;
->>>>>>> 100b219... styling pass
       }
-<<<<<<< HEAD
-=======
-  #HoursOpen {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    .se-button {
-      margin: 8px;
->>>>>>> 3daa8b5... Adding Time Windows To Locations
-=======
->>>>>>> bb1b2f7... Added Styling and fixed bug
     }
 
     .se-button {
