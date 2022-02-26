@@ -1,41 +1,51 @@
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from 'hooks'
 import { Card, Spacer, Text } from '@sharingexcess/designsystem'
+import { setFirestoreData } from 'helpers'
 
 export function NewDriver() {
   const { user } = useAuth()
 
-  const sections = [
-    {
-      name: 'Complete your Profile',
-      page: '/profile',
-      completed:
-        user.name &&
-        user.phone &&
-        user.pronouns &&
-        user.vehicle_make_model &&
-        user.license_number &&
-        user.license_state &&
-        user.insurance_policy_number &&
-        user.insurance_provider,
-    },
-    {
-      name: 'Liability Release',
-      page: '/liability',
-      completed: user.completed_liability_release,
-    },
-    {
-      name: 'App Tutorial',
-      page: '/tutorial',
-      completed: user.completed_app_tutorial,
-    },
-    {
-      name: 'Food Safety Training',
-      page: '/food-safety',
-      completed: user.completed_food_safety,
-    },
-  ]
+  const sections = useMemo(
+    () => [
+      {
+        name: 'Complete your Profile',
+        page: '/profile',
+        completed: user.name && user.phone && user.pronouns,
+      },
+      {
+        name: 'Liability Release',
+        page: '/liability',
+        completed: user.completed_liability_release,
+      },
+      {
+        name: 'App Tutorial',
+        page: '/tutorial',
+        completed: user.completed_app_tutorial,
+      },
+      {
+        name: 'Food Safety Training',
+        page: '/food-safety',
+        completed: user.completed_food_safety,
+      },
+    ],
+    [user]
+  )
+
+  useEffect(() => {
+    if (
+      user.completed_app_tutorial &&
+      user.completed_food_safety &&
+      user.completed_liability_release &&
+      user.phone &&
+      user.pronouns &&
+      user.name &&
+      !user.is_driver
+    ) {
+      setFirestoreData(['users', user.uid], { is_driver: true })
+    }
+  }, [user])
 
   return (
     <main id="NewDriver">
