@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "sharingexcess-dev",
+    "target": "sharingexcess",
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
@@ -9,5 +9,8 @@
         "destination": "/index.html"
       }
     ]
+  },
+  "functions": {
+    "source": "functions"
   }
 }
