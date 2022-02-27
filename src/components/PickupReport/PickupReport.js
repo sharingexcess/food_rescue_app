@@ -8,7 +8,7 @@ import {
   STATUSES,
   updateImpactDataForRescue,
 } from 'helpers'
-import { useFirestore, useApp } from 'hooks'
+import { useFirestore, useApp, useApi } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
 import { isFormDataEqual } from './utils'
@@ -22,9 +22,9 @@ const initFormData = {
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
-  const rescue = useFirestore('rescues', rescue_id)
   const navigate = useNavigate()
-  const pickup = useFirestore('stops', pickup_id)
+  const rescue = useApi(`/rescue/${rescue_id}`)
+  const [pickup] = useApi(`/stop/${pickup_id}`)
   const [formData, setFormData] = useState(initFormData)
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])

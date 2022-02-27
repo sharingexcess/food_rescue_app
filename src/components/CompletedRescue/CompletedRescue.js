@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { useFirestore } from 'hooks'
+import { useApi, useFirestore } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
@@ -10,14 +10,7 @@ export function CompletedRescue() {
   const { rescue_id } = useParams()
   const navigate = useNavigate()
   const [notes, setNotes] = useState('')
-  const rescue = useFirestore('rescues', rescue_id)
-  const deliveries = useFirestore(
-    'stops',
-    useCallback(
-      i => i.type === 'delivery' && i.rescue_id === rescue_id,
-      [rescue_id]
-    )
-  )
+  const [rescue] = useApi(`rescue/${rescue_id}`)
 
   useEffect(() => {
     if (rescue && rescue.notes) {
@@ -26,8 +19,9 @@ export function CompletedRescue() {
   }, [rescue])
 
   function calculateWeight() {
-    return deliveries
-      ? deliveries
+    return rescue
+      ? rescue.stops
+          .filter(i => i.type === 'delivery')
           .map(d => d.impact_data_total_weight)
           .reduce((a, b) => a + b, 0)
       : 0

@@ -5,11 +5,9 @@ import {
   createTimestamp,
   STATUSES,
   updateImpactDataForRescue,
-  getCollection,
-  getFirestoreData,
 } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
-import { useFirestore, useAuth } from 'hooks'
+import { useFirestore, useAuth, useApi } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
 import { Loading } from 'components'
 import {
@@ -23,8 +21,7 @@ export function Rescue() {
   const { rescue_id } = useParams()
   const { admin } = useAuth()
   const navigate = useNavigate()
-  const rescue = useFirestore('rescues', rescue_id)
-
+  const [rescue, loading, error] = useApi(`/rescue/${rescue_id}`)
   const deliveries = useFirestore(
     'stops',
     useCallback(i => i.type === 'delivery', [])

@@ -98,7 +98,9 @@ export async function updateGoogleCalendarEvent(data) {
 export const createTimestamp = d => (d ? new Date(d) : new Date())
 
 export const formatTimestamp = (t, format) =>
-  moment(t instanceof Date ? t : t.toDate()).format(format)
+  moment(t instanceof Date || typeof t === 'string' ? t : t.toDate()).format(
+    format
+  )
 
 export function generateDirectionsLink(address1, city, state, zip) {
   return `${GOOGLE_MAPS_URL}${address1}+${city}+${state}+${zip}`
