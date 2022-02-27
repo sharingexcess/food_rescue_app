@@ -158,6 +158,11 @@ function parseLocation(location) {
     address: `${location.address1}${
       location.address2 ? ', ' + location.address2 : ''
     }, ${location.city}, ${location.state} ${location.zip}`,
+    address1: location.address1,
+    address2: location.address2,
+    city: location.city,
+    state: location.state,
+    zip: location.zip,
     nickname: location.nickname,
     contact_name: location.contact_name,
     contact_email: location.contact_email,

@@ -7,15 +7,15 @@ import {
   updateImpactDataForRescue,
 } from 'helpers'
 import { Ellipsis, Input, Loading } from 'components'
-import { useAuth, useFirestore, useApp } from 'hooks'
+import { useAuth, useApp, useApi } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 
 export function DeliveryReport() {
   const { setModal } = useApp()
   const { delivery_id, rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
   const navigate = useNavigate()
-  const delivery = useFirestore('stops', delivery_id)
+  const [rescue] = useApi(`/rescue/${rescue_id}`)
+  const [delivery] = useApi(`/stop/${delivery_id}`)
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',
@@ -43,6 +43,7 @@ export function DeliveryReport() {
   useEffect(() => {
     if (
       rescue &&
+      delivery &&
       delivery.status === STATUSES.COMPLETED &&
       submitted &&
       !working

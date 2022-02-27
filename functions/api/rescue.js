@@ -6,18 +6,18 @@ exports.rescue = async (request, response) => {
     try {
       console.log('running getRescue')
 
-      const { id } = request.params
-      console.log('Received id:', id)
+      const { rescue_id } = request.params
+      console.log('Received rescue_id:', rescue_id)
 
-      if (!id) {
-        response.status(400).send('No id param received in request URL.')
+      if (!rescue_id) {
+        response.status(400).send('No rescue_id param received in request URL.')
         return
       }
 
       // load base rescue object from DB
       const rescue = await db
         .collection('rescues')
-        .doc(id)
+        .doc(rescue_id)
         .get()
         .then(doc => parseRescue(doc.data()))
 
@@ -127,6 +127,7 @@ function parseRescue(rescue) {
 function parseStop(stop) {
   return {
     id: stop.id,
+    status: stop.status,
     name: stop.name,
     type: stop.type,
     subtype: stop.subtype,
@@ -138,6 +139,7 @@ function parseStop(stop) {
     ),
     timestamp_logged_start: formatTimestamp(stop.timestamp_logged_start),
     timestamp_logged_finish: formatTimestamp(stop.timestamp_logged_finish),
+    impact_data_total_weight: stop.impact_data_total_weight,
   }
 }
 

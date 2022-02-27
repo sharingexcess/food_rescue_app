@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Ellipsis, Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
 import { Link } from 'react-router-dom'
-import { useAuth, useFirestore } from 'hooks'
+import { useApi, useAuth, useFirestore } from 'hooks'
 import {
   Button,
   Card,
@@ -19,9 +19,15 @@ import DeliveryIcon from 'assets/delivery.png'
 
 export function Rescues() {
   const { user, admin } = useAuth()
-  const { loadMoreData, loadAllData, loadedAllData, resetLimit } =
-    useFirestore()
-  const rescues = useFirestore('rescues')
+  const [weeksOfData, setWeeksOfData] = useState(1)
+  const rescues_query = useMemo(
+    () =>
+      `/rescues?date_range_start=${moment()
+        .subtract(weeksOfData, 'weeks')
+        .format('YYYY-MM-DD')}`,
+    [weeksOfData]
+  )
+  const [rescues] = useApi(rescues_query)
   const deliveries = useFirestore(
     'stops',
     useCallback(i => i.type === 'delivery', [])
@@ -35,10 +41,6 @@ export function Rescues() {
   const [filter, setFilter] = useState(admin ? 'active' : 'mine')
   const [isInitialRender, setIsInitialRender] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
-
-  useEffect(() => {
-    resetLimit()
-  }, []) // eslint-disable-line
 
   useEffect(() => {
     setLoadingMore(false)
@@ -109,12 +111,9 @@ export function Rescues() {
   }, [filter]) // eslint-disable-line
 
   function handleLoadMore() {
-    setLoadingMore(true)
-    loadMoreData()
-  }
-  function handleLoadAll() {
-    setLoadingMore(true)
-    loadAllData()
+    // setLoadingMore(true)
+    // loadMoreData()
+    setWeeksOfData(weeks => weeks + 1)
   }
 
   function handleSearchByDriver(e) {
@@ -174,8 +173,10 @@ export function Rescues() {
         return rescues
           .filter(
             r =>
-              r.driver.name !== undefined &&
-              r.driver.name.toLowerCase().includes(searchByDriver.toLowerCase())
+              r.handler.name !== undefined &&
+              r.handler.name
+                .toLowerCase()
+                .includes(searchByDriver.toLowerCase())
           )
           .sort(byDate)
       case 'date':
@@ -242,12 +243,12 @@ export function Rescues() {
       <Link to={`/rescues/${r.id}`} key={r.id}>
         <Card classList={['Route']}>
           <div className="Rescues-route-header">
-            {r.driver && (
-              <img src={r.driver.icon || UserIcon} alt={r.driver.name} />
+            {r.handler && (
+              <img src={r.handler.icon || UserIcon} alt={r.handler.name} />
             )}
             <div>
               <Text type="section-header" color="black" wrap={false}>
-                {r.driver.name || 'Unassigned Route'}
+                {r.handler.name || 'Unassigned Route'}
               </Text>
               <Text type="small" color="blue">
                 {r.status === STATUSES.COMPLETED
@@ -377,15 +378,7 @@ export function Rescues() {
       )}
       <Spacer height={32} />
       <FlexContainer primaryAlign="space-around">
-        {!(loadingMore || loadedAllData) && (
-          <Button type="secondary" handler={handleLoadAll}>
-            Load All Rescues
-          </Button>
-        )}
-        <Button
-          handler={handleLoadMore}
-          disabled={loadingMore || loadedAllData}
-        >
+        <Button handler={handleLoadMore}>
           Load{loadingMore ? 'ing' : ' More'} Rescues
           {loadingMore && <Ellipsis />}
         </Button>
