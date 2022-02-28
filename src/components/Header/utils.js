@@ -12,13 +12,12 @@ export const generateHeaderText = path_components => {
     path_components.length > 1
       ? `/${path_components.slice(0, path_components.length - 1).join('/')}`
       : '/'
-
   if (
     ['admin', 'pickup', 'delivery', 'location'].includes(
       back_url.slice(back_url.lastIndexOf('/') + 1, back_url.length)
     )
   ) {
-    back_url = back_url.substring(0, back_url.lastIndexOf('/'))
+    back_url = back_url.substring(0, back_url.lastIndexOf('/') + 1)
   }
 
   if (path_components[0] === 'rescues' && path_components.length > 1) {
