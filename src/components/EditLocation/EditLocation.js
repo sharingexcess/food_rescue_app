@@ -184,8 +184,6 @@ export function EditLocation() {
         })
       }
       const newHours = formData.hours.concat(hours)
-
-      console.log('After', newHours)
       return newHours
     }
     return formData.hours

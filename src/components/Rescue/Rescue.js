@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   setFirestoreData,
@@ -7,7 +7,7 @@ import {
   updateImpactDataForRescue,
 } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
-import { useFirestore, useAuth, useApi } from 'hooks'
+import { useAuth, useApi } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
 import { Loading } from 'components'
 import {
@@ -21,11 +21,7 @@ export function Rescue() {
   const { rescue_id } = useParams()
   const { admin } = useAuth()
   const navigate = useNavigate()
-  const [rescue, loading, error] = useApi(`/rescue/${rescue_id}`)
-  const deliveries = useFirestore(
-    'stops',
-    useCallback(i => i.type === 'delivery', [])
-  )
+  const [rescue, loading, error, refresh] = useApi(`/rescue/${rescue_id}`)
   const [working, setWorking] = useState(false)
 
   useEffect(() => {
@@ -55,7 +51,7 @@ export function Rescue() {
       }
     }
     handleAutoCompleteRescue()
-  }, [deliveries, rescue_id, rescue]) // eslint-disable-line
+  }, [rescue_id, rescue]) // eslint-disable-line
 
   return (
     <main id="Rescue">
@@ -63,20 +59,28 @@ export function Rescue() {
         <Loading />
       ) : (
         <>
-          <RescueHeader />
-          <RescueActionButton />
+          <RescueHeader rescue={rescue} />
+          <RescueActionButton rescue={rescue} refresh={refresh} />
           <Spacer height={32} />
           {rescue.stops.length ? (
             <>
               <section className="Stops">
                 {rescue.stops.map((s, i) => (
-                  <Stop stops={rescue.stops} s={s} i={i} key={i} />
+                  <Stop
+                    rescue={rescue}
+                    stops={rescue.stops}
+                    s={s}
+                    i={i}
+                    key={i}
+                  />
                 ))}
               </section>
               {rescue.status === STATUSES.ACTIVE &&
                 admin === true &&
                 areAllStopsCompleted(rescue.stops) &&
-                !allFoodDelivered(rescue.stops) && <BackupDelivery />}
+                !allFoodDelivered(rescue.stops) && (
+                  <BackupDelivery rescue={rescue} />
+                )}
             </>
           ) : (
             <Loading text="Loading stops on route..." relative />

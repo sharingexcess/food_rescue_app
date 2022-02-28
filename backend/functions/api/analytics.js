@@ -7,16 +7,9 @@ const {
   FOOD_CATEGORIES,
   RECIPIENT_SUB_TYPES,
   RETAIL_VALUES,
-} = require('./helpers')
-const express = require('express')
-const cors = require('cors')
+} = require('../../helpers')
 
-const analytics_routes = express()
-analytics_routes.use(cors({ origin: true }))
-analytics_routes.get('/', handleAnalytics)
-exports.analytics = analytics_routes
-
-async function handleAnalytics(request, response) {
+exports.analytics = async (request, response) => {
   return new Promise(async resolve => {
     //Verifies that header containing an access token exists
     //and verifies that there is an access token after 'Bearer '
@@ -30,7 +23,9 @@ async function handleAnalytics(request, response) {
     }
 
     console.log('running analytics')
-    const { date_range_start, date_range_end, breakdown } = request.query
+    const { date_range_start, date_range_end } = request.query
+    let { breakdown } = request.query
+    breakdown = decodeURIComponent(breakdown)
     console.log(date_range_start, date_range_end, breakdown)
 
     let rescues = []

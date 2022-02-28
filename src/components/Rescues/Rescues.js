@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Ellipsis, Input, Loading } from 'components'
 import moment from 'moment'
 import UserIcon from 'assets/user.svg'
 import { Link } from 'react-router-dom'
-import { useApi, useAuth, useFirestore } from 'hooks'
+import { useApi, useAuth } from 'hooks'
 import {
   Button,
   Card,
@@ -28,10 +28,6 @@ export function Rescues() {
     [weeksOfData]
   )
   const [rescues] = useApi(rescues_query)
-  const deliveries = useFirestore(
-    'stops',
-    useCallback(i => i.type === 'delivery', [])
-  )
   const [searchByDriver, setSearchByDriver] = useState('')
   const [searchByDate, setSearchByDate] = useState(
     moment(new Date()).format('yyyy-MM-DD')
@@ -64,8 +60,8 @@ export function Rescues() {
     }
   }, [])
 
-  function getRescueWeight(rescue_id) {
-    const rescue_deliveries = deliveries.filter(d => d.rescue_id === rescue_id)
+  function getRescueWeight(rescue) {
+    const rescue_deliveries = rescue.stops.filter(s => s.type === 'delivery')
     let totalWeight = 0
     for (const rd of rescue_deliveries) {
       totalWeight += rd.impact_data_total_weight || 0
@@ -111,8 +107,6 @@ export function Rescues() {
   }, [filter]) // eslint-disable-line
 
   function handleLoadMore() {
-    // setLoadingMore(true)
-    // loadMoreData()
     setWeeksOfData(weeks => weeks + 1)
   }
 
@@ -265,7 +259,7 @@ export function Rescues() {
                 <>
                   <Spacer height={4} />
                   <Text type="small" color="green">
-                    {getRescueWeight(r.id)} lbs. delivered
+                    {getRescueWeight(r)} lbs. delivered
                   </Text>
                 </>
               )}

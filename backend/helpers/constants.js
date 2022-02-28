@@ -1,17 +1,3 @@
-const admin = require('firebase-admin')
-exports.app = admin.initializeApp()
-exports.db = admin.firestore()
-
-exports.fetchCollection = async name => {
-  const results = []
-  await admin
-    .firestore()
-    .collection(name)
-    .get()
-    .then(snapshot => snapshot.forEach(doc => results.push(doc.data())))
-  return results
-}
-
 exports.FOOD_CATEGORIES = [
   'impact_data_dairy',
   'impact_data_bakery',
@@ -58,13 +44,3 @@ exports.RECIPIENT_SUB_TYPES = [
 ]
 
 exports.EMISSIONS_COEFFICIENT = 3.66
-
-exports.uploadFile = async (path, data) => {
-  const bucket = admin.storage().bucket()
-  try {
-    await bucket.file(path).save(data)
-    console.log(`Successfully uploaded ${path} to Storage`)
-  } catch (error) {
-    console.error(`Error uploading file ${path} to storage:`, error)
-  }
-}

@@ -8,7 +8,7 @@ import {
   STATUSES,
   updateImpactDataForRescue,
 } from 'helpers'
-import { useFirestore, useApp, useApi } from 'hooks'
+import { useApp, useApi } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import validator from 'validator'
 import { isFormDataEqual } from './utils'
@@ -23,8 +23,8 @@ export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
   const navigate = useNavigate()
-  const rescue = useApi(`/rescue/${rescue_id}`)
-  const [pickup] = useApi(`/stop/${pickup_id}`)
+  const rescue = useApi(rescue_id ? `/rescue/${rescue_id}` : null)
+  const [pickup] = useApi(pickup_id ? `/stop/${pickup_id}` : null)
   const [formData, setFormData] = useState(initFormData)
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
@@ -169,7 +169,7 @@ export function PickupReport({ customSubmitHandler }) {
     }
   }
 
-  if (!pickup) return <Loading text="Loading report" />
+  if (pickup_id && !pickup) return <Loading text="Loading report" />
 
   return (
     <main id="PickupReport">
@@ -264,7 +264,7 @@ export function PickupReport({ customSubmitHandler }) {
             : e => handleSubmit(e, formData)
         }
       >
-        {pickup.report ? 'Update Report' : 'Submit Report'}
+        {pickup ? 'Update Report' : 'Submit Report'}
       </Button>
       <Spacer height={32} />
       <Button

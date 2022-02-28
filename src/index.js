@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
-import firebase from 'firebase/compat/app'
 import {
   Calendar,
   CompletedRescue,
@@ -37,7 +36,7 @@ import {
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
-import { FIREBASE_CONFIG, SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
+import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import { EmojiProvider } from 'react-apple-emojis'
 import emojiData from 'react-apple-emojis/lib/data.json'
 import './styles/index.scss'
@@ -51,7 +50,7 @@ Sentry.init({
 })
 
 // This function call connects us to Firebase and initializes all of our API access
-firebase.initializeApp(FIREBASE_CONFIG)
+// firebase.initializeApp(FIREBASE_CONFIG)
 
 // handle installed on home screen
 let debounce

@@ -1,7 +1,15 @@
 import { Text } from '@sharingexcess/designsystem'
+<<<<<<< HEAD
 import { shortenLargeNumber } from 'helpers'
 import { useIsMobile } from 'hooks'
 import React from 'react'
+=======
+import { Loading } from 'components'
+import { shortenLargeNumber, formatTimestamp } from 'helpers'
+import { useIsMobile } from 'hooks'
+import moment from 'moment'
+import React, { useEffect, useState } from 'react'
+>>>>>>> 767a12f (working server)
 import {
   XAxis,
   YAxis,
@@ -11,9 +19,47 @@ import {
   Tooltip,
 } from 'recharts'
 
+<<<<<<< HEAD
 export function PoundsByMonthChart({ poundsByMonth }) {
   const isMobile = useIsMobile()
   return (
+=======
+export function PoundsByMonthChart({ stops }) {
+  const [poundsByMonth, setPoundsByMonth] = useState()
+  const isMobile = useIsMobile()
+
+  useEffect(() => {
+    if (stops) {
+      const poundsByMonth = []
+      for (let i = 11; i >= 0; i--) {
+        const range_start = moment()
+          .subtract(i, 'months')
+          .startOf('month')
+          .toDate()
+        const range_end = moment()
+          .subtract(i - 1, 'months')
+          .startOf('month')
+          .toDate()
+        const filterByDateRange = i =>
+          i.timestamp_logged_finish.toDate() > range_start &&
+          i.timestamp_logged_finish.toDate() < range_end
+        const stopsInMonth = stops.filter(filterByDateRange)
+        const totalWeightInStops = stopsInMonth.reduce(
+          (a, b) => a + (b.impact_data_total_weight || 0),
+          0
+        )
+        poundsByMonth.push({
+          name: formatTimestamp(range_start, 'MMM'),
+          date: range_start,
+          weight: totalWeightInStops,
+        })
+      }
+      setPoundsByMonth(poundsByMonth)
+    }
+  }, [stops])
+
+  return poundsByMonth ? (
+>>>>>>> 767a12f (working server)
     <section id="PoundsByMonthChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <BarChart data={poundsByMonth}>

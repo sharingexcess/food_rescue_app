@@ -1,5 +1,4 @@
 {
-  // "parser": "babel-eslint",
   "plugins": ["prettier", "react-hooks"],
   "rules": {
     "prettier/prettier": [

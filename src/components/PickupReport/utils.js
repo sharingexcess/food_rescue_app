@@ -1,4 +1,5 @@
 export function isFormDataEqual(data1, data2) {
+  if (!data1 || !data2) return false
   const keys_to_compare = [
     'impact_data_dairy',
     'impact_data_bakery',

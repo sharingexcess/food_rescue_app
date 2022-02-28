@@ -53,8 +53,8 @@ export function formatPhoneNumber(phoneNumberString) {
 export async function updateGoogleCalendarEvent(data) {
   const resource = {
     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-    summary: data.driver
-      ? `Food Rescue: ${data.driver.name} ${data.driver.phone}`
+    summary: data.handler
+      ? `Food Rescue: ${data.handler.name} ${data.handler.phone}`
       : 'Unassigned Food Rescue',
     location: `${data.stops[0].location.address1}, ${data.stops[0].location.city}, ${data.stops[0].location.state} ${data.stops[0].location.zip}`,
     description: `Stops on Route: ${data.stops
@@ -73,7 +73,7 @@ export async function updateGoogleCalendarEvent(data) {
       dateTime: new Date(data.timestamp_scheduled_finish).toISOString(),
       timeZone: 'America/New_York',
     },
-    attendees: [data.driver ? { email: data.driver.email } : ''],
+    attendees: [data.handler ? { email: data.handler.email } : ''],
   }
   if (data.google_calendar_event_id) {
     await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
