@@ -1,7 +1,7 @@
 {
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "private": true,
   "dependencies": {
     "@formspree/react": "^2.2.4",
