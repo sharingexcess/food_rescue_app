@@ -3,13 +3,13 @@ import moment from 'moment'
 
 export function updateFieldSuggestions(
   queryValue,
-  drivers,
+  handlers,
   field,
   suggestions,
   callback
 ) {
   if (field.suggestionQuery) {
-    const updatedSuggestions = field.suggestionQuery(queryValue, drivers)
+    const updatedSuggestions = field.suggestionQuery(queryValue, handlers)
     if (
       !suggestions[field.id] ||
       suggestions[field.id].length !== updatedSuggestions.length
@@ -59,8 +59,8 @@ export const formFields = [
     id: 'handler_name',
     preReq: 'timestamp_scheduled_start',
     type: 'text',
-    suggestionQuery: (name, drivers) =>
-      drivers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
+    suggestionQuery: (name, handlers) =>
+      handlers.filter(d => d.name.toLowerCase().startsWith(name.toLowerCase())),
     handleSelect: user => ({
       handler_name: user.name,
       handler_id: user.id,
@@ -73,14 +73,12 @@ export const formFields = [
   },
 ]
 
-export const fetchExistingRescueData = async (rescue_id, rescues) => {
-  const rescue = rescues.find(r => r.id === rescue_id)
+export const parseExistingRescue = async rescue => {
   if (!rescue) return null
-
   const rescue_data = {
-    driver: Object.keys(rescue.driver).length ? rescue.driver : null,
-    handler_id: rescue.handler_id,
-    handler_name: rescue.driver.name || null,
+    handler: Object.keys(rescue.handler).length ? rescue.handler : null,
+    handler_id: rescue.handler.id,
+    handler_name: rescue.handler.name || null,
     timestamp_scheduled_start: formatTimestamp(
       rescue.timestamp_scheduled_start,
       'yyyy-MM-DDTHH:mm'

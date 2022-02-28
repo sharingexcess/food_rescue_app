@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
-const { fetchCollection, uploadFile } = require('./helpers')
+const { fetchCollection, uploadFile } = require('../../helpers/functions')
 
-exports.backup = async () => {
+exports.backup_data_to_storage = async () => {
   const COLLECTIONS = [
     'locations',
     'organizations',

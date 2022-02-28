@@ -7,7 +7,6 @@ import { ResponsiveContainer, Tooltip, Treemap } from 'recharts'
 export function PoundsByOrgChart({ stops }) {
   const [poundsByOrg, setPoundsByOrg] = useState()
   const isMobile = useIsMobile()
-  const { loadedAllData } = useFirestore()
   const organizations = useFirestore('organizations')
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export function PoundsByOrgChart({ stops }) {
     }
   }, [stops, organizations])
 
-  return poundsByOrg && loadedAllData ? (
+  return poundsByOrg ? (
     <section id="PoundsByOrgChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <Treemap

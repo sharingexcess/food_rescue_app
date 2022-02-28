@@ -5,11 +5,11 @@ const spreadsheetId = is_prod
   ? '1wmcOySR3EhHezgFn0o3suf7RZFDh62secue3jpbPK4Q'
   : '16bn0SYmKu7YnTI1yB5NiMzHhq3E0ZkDzCnfeh0v1AeI'
 const serviceAccountKey = is_prod
-  ? './serviceAccountProd.json'
-  : './serviceAccountDev.json'
+  ? '../../credentials/service_account_prod.json'
+  : '../../credentials/service_account_dev.json'
 const serviceAccount = require(serviceAccountKey)
 const moment = require('moment-timezone')
-const { db } = require('./helpers')
+const { db } = require('../../helpers/functions')
 
 const jwtClient = new google.auth.JWT({
   email: serviceAccount.client_email,
@@ -19,7 +19,7 @@ const jwtClient = new google.auth.JWT({
 
 const jwtAuthPromise = jwtClient.authorize()
 
-exports.writeToGoogleSheets = async () => {
+exports.export_data_to_google_sheets = async () => {
   console.log('Spreadsheet ID:', spreadsheetId)
   console.log('is_prod?', is_prod, process.env.GCLOUD_PROJECT)
 

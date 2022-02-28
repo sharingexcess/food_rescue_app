@@ -1,7 +1,7 @@
 import { Text } from '@sharingexcess/designsystem'
 import { Loading } from 'components'
 import { shortenLargeNumber, formatTimestamp } from 'helpers'
-import { useFirestore, useIsMobile } from 'hooks'
+import { useIsMobile } from 'hooks'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import {
@@ -15,7 +15,6 @@ import {
 
 export function PoundsByMonthChart({ stops }) {
   const [poundsByMonth, setPoundsByMonth] = useState()
-  const { loadedAllData } = useFirestore()
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export function PoundsByMonthChart({ stops }) {
     }
   }, [stops])
 
-  return poundsByMonth && loadedAllData ? (
+  return poundsByMonth ? (
     <section id="PoundsByMonthChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <BarChart data={poundsByMonth}>

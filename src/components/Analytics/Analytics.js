@@ -16,7 +16,7 @@ import {
   Treemap,
 } from 'recharts'
 import {
-  CLOUD_FUNCTION_URLS,
+  // CLOUD_FUNCTION_URLS,
   COLORS,
   formatLargeNumber,
   formatTimestamp,
@@ -24,6 +24,7 @@ import {
 } from 'helpers'
 import { Loading, Input } from 'components'
 import { useNavigate } from 'react-router-dom'
+import { useApi } from 'hooks'
 
 export function Analytics() {
   const navigate = useNavigate()
@@ -36,8 +37,8 @@ export function Analytics() {
       : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
-  const [apiData, setApiData] = useState()
-  const [working, setWorking] = useState(true)
+  // const [apiData, setApiData] = useState()
+  // const [working, setWorking] = useState(true)
 
   const query = useMemo(() => {
     const date_range_start = formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD')
@@ -49,18 +50,19 @@ export function Analytics() {
     )}&breakdown=${encodeURIComponent(breakdown)}`
   }, [rangeStart, rangeEnd, breakdown])
 
+  const [apiData, working] = useApi(`/analytics${query}`)
+
   useEffect(() => {
     if (window.location.search !== query) {
-      setWorking(true)
+      // setWorking(true)
       navigate(query, { replace: true })
     } else {
-      console.log('fetching', CLOUD_FUNCTION_URLS.analytics + query)
-      fetch(CLOUD_FUNCTION_URLS.analytics + query)
-        .then(res => res.json())
-        .then(data => {
-          setApiData(data)
-          setWorking(false)
-        })
+      // fetch(CLOUD_FUNCTION_URLS.analytics + query)
+      //   .then(res => res.json())
+      //   .then(data => {
+      //     setApiData(data)
+      //     setWorking(false)
+      //   })
     }
   }, [query]) // eslint-disable-line
 
@@ -179,8 +181,6 @@ export function Analytics() {
           transform="rotate(-40)"
           width={5}
           textAnchor="end"
-          verticalAnchor="middle"
-          scaleToFit={true}
         >
           {payload.value.substring(0, 13)}
           {payload.value.length >= 13 ? '...' : ''}

@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { useApi, useFirestore } from 'hooks'
+import { useApi } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
@@ -10,7 +10,7 @@ export function CompletedRescue() {
   const { rescue_id } = useParams()
   const navigate = useNavigate()
   const [notes, setNotes] = useState('')
-  const [rescue] = useApi(`rescue/${rescue_id}`)
+  const [rescue] = useApi(`/rescue/${rescue_id}`)
 
   useEffect(() => {
     if (rescue && rescue.notes) {

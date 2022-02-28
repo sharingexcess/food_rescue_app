@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   Card,
@@ -30,23 +30,26 @@ import { useEffect } from 'react/cjs/react.development'
 import PickupIcon from 'assets/pickup.png'
 import DeliveryIcon from 'assets/delivery.png'
 
-export function RescueHeader() {
-  const { setModal } = useApp()
-  const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
+export function RescueHeader({ rescue }) {
+  const { setModal, setModalState } = useApp()
+
+  function openRescueMenu() {
+    setModal('RescueMenu')
+    setModalState({ rescue })
+  }
 
   return rescue ? (
     <div id="Driver" type="secondary">
       <Image
-        src={rescue.driver ? rescue.driver.icon : UserIcon}
-        alt={rescue.driver ? rescue.driver.name : 'No assigned driver'}
+        src={rescue.handler ? rescue.handler.icon : UserIcon}
+        alt={rescue.handler ? rescue.handler.name : 'No assigned driver'}
       />
       <div>
         <Text type="small-header" color="white" shadow>
           {rescue.status.toUpperCase()} RESCUE
         </Text>
         <Text type="section-header" color="white" shadow>
-          {rescue.driver ? rescue.driver.name : 'No assigned driver'}
+          {rescue.handler ? rescue.handler.name : 'No assigned driver'}
         </Text>
         <Text type="small" color="white" shadow>
           {formatTimestamp(
@@ -66,7 +69,7 @@ export function RescueHeader() {
         id="Rescue-edit-button"
         type="secondary"
         color="white"
-        handler={() => setModal('RescueMenu')}
+        handler={openRescueMenu}
       >
         <i className="fa fa-ellipsis-v" />
       </Button>
@@ -75,10 +78,10 @@ export function RescueHeader() {
 }
 
 export function RescueMenu() {
-  const { setModal } = useApp()
+  const { setModal, modalState } = useApp()
   const { user, admin } = useAuth()
   const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
+  const { rescue } = modalState
 
   function RescueOption({ name, modalName }) {
     return (
@@ -164,21 +167,20 @@ export function StopMenu() {
 }
 
 export function DropRescue() {
-  const { setModal } = useApp()
+  const { setModal, modalState } = useApp()
   const [notes, setNotes] = useState('')
-  const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
+  const { rescue } = modalState
 
   async function handleUnassign() {
     const event = await updateGoogleCalendarEvent({
       ...rescue,
       driver: null,
-      notes: `Rescue dropped by ${rescue.driver.name}: "${notes}"`,
+      notes: `Rescue dropped by ${rescue.handler.name}: "${notes}"`,
     })
     await setFirestoreData(['rescues', rescue.id], {
       handler_id: null,
       google_calendar_event_id: event.id,
-      notes: `Rescue dropped by ${rescue.driver.name}: "${notes}"`,
+      notes: `Rescue dropped by ${rescue.handler.name}: "${notes}"`,
       timestamp_updated: createTimestamp(),
     })
     for (const stop of rescue.stops) {
@@ -224,10 +226,9 @@ export function DropRescue() {
 }
 
 export function CancelRescue() {
-  const { setModal } = useApp()
+  const { modalState, setModal } = useApp()
   const [notes, setNotes] = useState()
-  const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
+  const { rescue } = modalState
 
   async function handleCancel() {
     try {
@@ -282,11 +283,11 @@ export function CancelRescue() {
 }
 
 export function FinishRescue() {
-  const { setModal } = useApp()
+  const { setModal, modalState } = useApp()
   const [notes, setNotes] = useState('')
   const navigate = useNavigate()
   const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
+  const { rescue } = modalState
 
   async function handleFinish() {
     await setFirestoreData(['rescues', rescue.id], {
@@ -331,9 +332,8 @@ export function FinishRescue() {
 }
 
 export function AddRescueNotes() {
-  const { setModal } = useApp()
-  const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
+  const { setModal, modalState } = useApp()
+  const { rescue } = modalState
   const [notes, setNotes] = useState('')
 
   useEffect(() => {
@@ -446,15 +446,10 @@ export function ContactAdmin() {
   )
 }
 
-export function Stop({ stops, s, i }) {
+export function Stop({ rescue, stops, s, i }) {
   const navigate = useNavigate()
   const { rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
-  const rescue = useFirestore('rescues', rescue_id)
-  const pickups = useFirestore(
-    'stops',
-    useCallback(i => i.type === 'pickup', [])
-  )
 
   const isActiveStop = rescue
     ? i === getNextIncompleteStopIndex(rescue, stops)
@@ -661,7 +656,7 @@ export function Stop({ stops, s, i }) {
 
   function handleSubmitHomeDelivery() {
     // BAKED IN ASSUMPTION: home delivery rescues will only ever have 1 pickup
-    const pickup = pickups.find(p => p.rescue_id === rescue.id)
+    const pickup = rescue.stops.find(s => s.type === 'pickup')
     const percent_of_total_dropped = 1 / (rescue.stops.length - 1)
     setFirestoreData(['stops', s.id], {
       // calculate percentage based weight totals for each food category
@@ -807,11 +802,10 @@ export function Stop({ stops, s, i }) {
     : stopCard
 }
 
-export function RescueActionButton() {
+export function RescueActionButton({ rescue, refresh }) {
   const { rescue_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
-  const rescue = useFirestore('rescues', rescue_id)
 
   async function handleBegin() {
     await setFirestoreData(['rescues', rescue.id], {
@@ -819,6 +813,7 @@ export function RescueActionButton() {
       timestamp_logged_start: createTimestamp(),
       timestamp_updated: createTimestamp(),
     })
+    refresh()
   }
 
   async function handleClaim() {
@@ -862,7 +857,7 @@ export function RescueActionButton() {
   }
   if (!rescue) return null
   if (rescue.status === STATUSES.SCHEDULED) {
-    if (rescue.driver) {
+    if (rescue.handler) {
       return <ActionButton handler={handleBegin}>Start Rescue</ActionButton>
     } else {
       if (admin) {
@@ -878,11 +873,10 @@ export function RescueActionButton() {
   return null
 }
 
-export function BackupDelivery() {
+export function BackupDelivery({ rescue }) {
   const [willFind, setWillFind] = useState()
   const [working, setWorking] = useState(false)
   const { rescue_id } = useParams()
-  const rescue = useFirestore('rescues', rescue_id)
 
   if (rescue && areAllStopsCompleted(rescue.stops)) {
     let lastStop

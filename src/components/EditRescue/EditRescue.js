@@ -4,8 +4,8 @@ import {
   updateFieldSuggestions,
   formFields,
   getDefaultStartTime,
-  fetchExistingRescueData,
   getDefaultEndTime,
+  parseExistingRescue,
 } from './utils'
 import UserIcon from 'assets/user.svg'
 import {
@@ -26,7 +26,7 @@ import {
   Loading,
   ReorderStops,
 } from 'components'
-import { useFirestore } from 'hooks'
+import { useApi, useFirestore } from 'hooks'
 import {
   Button,
   Spacer,
@@ -37,10 +37,10 @@ import {
 import { Emoji } from 'react-apple-emojis'
 
 export function EditRescue() {
-  const navigate = useNavigate()
-  const rescues = useFirestore('rescues')
-  const drivers = useFirestore('users')
   const { rescue_id } = useParams()
+  const navigate = useNavigate()
+  const [rescue] = useApi(rescue_id ? `/rescue/${rescue_id}` : null)
+  const handlers = useFirestore('users')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
     // others can and should be initialized as null
@@ -69,10 +69,7 @@ export function EditRescue() {
 
   useEffect(() => {
     async function getExistingRescueData() {
-      const existingRescueData = await fetchExistingRescueData(
-        rescue_id,
-        rescues
-      )
+      const existingRescueData = parseExistingRescue(rescue)
       setFormData(prevFormData => ({
         ...prevFormData,
         ...existingRescueData,
@@ -83,16 +80,16 @@ export function EditRescue() {
       }))
       setCanRender(true)
     }
-    drivers && rescues && rescue_id && getExistingRescueData()
-  }, [rescues, rescue_id, drivers])
+    rescue && rescue_id && getExistingRescueData()
+  }, [rescue, rescue_id])
 
   useEffect(() => {
     formData.handler_id &&
       setFormData({
         ...formData,
-        driver: drivers.find(i => i.id === formData.handler_id),
+        handler: handlers.find(i => i.id === formData.handler_id),
       })
-  }, [formData.handler_id, drivers]) // eslint-disable-line
+  }, [formData.handler_id, handlers]) // eslint-disable-line
 
   function deselectStop(e) {
     if (e.target.id === 'EditRescue') {
@@ -119,86 +116,77 @@ export function EditRescue() {
   async function handleCreateRescue() {
     setWorking(true)
     const new_rescue_id = rescue_id || (await generateUniqueId('rescues'))
-    if (new_rescue_id) {
-      const existing = rescues.find(i => i.id === new_rescue_id)
-      if (existing) {
-        // if this is an existing rescue with pre-created stops,
-        // make sure we delete any old and now deleted pickups and deliveries
-        for (const stop of deletedStops) {
-          await deleteFirestoreData(['stops', stop.id])
-        }
+    if (rescue_id) {
+      // if this is an existing rescue with pre-created stops,
+      // make sure we delete any old and now deleted pickups and deliveries
+      for (const stop of deletedStops) {
+        await deleteFirestoreData(['stops', stop.id])
       }
-      const event = await updateGoogleCalendarEvent(formData)
+    }
+    const event = await updateGoogleCalendarEvent(formData)
 
-      if (!event.id) {
-        alert('Error creating Google Calendar event. Please contact support!')
-        return
-      }
+    if (!event.id) {
+      alert('Error creating Google Calendar event. Please contact support!')
+      return
+    }
 
-      for (const stop of formData.stops) {
-        const s = {
-          id: stop.id,
-          type: stop.type,
-          handler_id: formData.handler_id,
-          rescue_id: new_rescue_id,
-          organization_id: stop.organization_id,
-          location_id: stop.location_id,
-          status: stop.status || STATUSES.SCHEDULED,
-          timestamp_created: stop.timestamp_created || createTimestamp(),
-          timestamp_updated: createTimestamp(),
-          timestamp_logged_start: stop.timestamp_logged_start || null,
-          timestamp_logged_finish: stop.timestamp_logged_finish || null,
-          timestamp_scheduled_start: createTimestamp(
-            formData.timestamp_scheduled_start
-          ),
-          timestamp_scheduled_finish: createTimestamp(
-            formData.timestamp_scheduled_finish
-          ),
-          impact_data_dairy: stop.impact_data_dairy || 0,
-          impact_data_bakery: stop.impact_data_bakery || 0,
-          impact_data_produce: stop.impact_data_produce || 0,
-          impact_data_meat_fish: stop.impact_data_meat_fish || 0,
-          impact_data_non_perishable: stop.impact_data_non_perishable || 0,
-          impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
-          impact_data_mixed: stop.impact_data_mixed || 0,
-          impact_data_other: stop.impact_data_other || 0,
-          impact_data_total_weight: stop.impact_data_total_weight || 0,
-        }
-        if (stop.type === 'delivery') {
-          s.percent_of_total_dropped = stop.percent_of_total_dropped || 100
-        }
-        await setFirestoreData(['stops', stop.id], s)
-      }
-
-      const rescue = {
-        id: new_rescue_id,
+    for (const stop of formData.stops) {
+      const s = {
+        id: stop.id,
+        type: stop.type,
         handler_id: formData.handler_id,
-        google_calendar_event_id: event.id,
-        stop_ids: formData.stops.map(s => s.id),
-        is_direct_link: formData.is_direct_link,
-        status: existing ? existing.status : STATUSES.SCHEDULED,
-        notes: existing ? existing.notes : '',
-        timestamp_created: existing
-          ? existing.timestamp_created
-          : createTimestamp(),
+        rescue_id: new_rescue_id,
+        organization_id: stop.organization_id,
+        location_id: stop.location_id,
+        status: stop.status || STATUSES.SCHEDULED,
+        timestamp_created: stop.timestamp_created || createTimestamp(),
         timestamp_updated: createTimestamp(),
+        timestamp_logged_start: stop.timestamp_logged_start || null,
+        timestamp_logged_finish: stop.timestamp_logged_finish || null,
         timestamp_scheduled_start: createTimestamp(
           formData.timestamp_scheduled_start
         ),
         timestamp_scheduled_finish: createTimestamp(
           formData.timestamp_scheduled_finish
         ),
-        timestamp_logged_start: existing
-          ? existing.timestamp_logged_start
-          : null,
-        timestamp_logged_finish: existing
-          ? existing.timestamp_logged_finish
-          : null,
+        impact_data_dairy: stop.impact_data_dairy || 0,
+        impact_data_bakery: stop.impact_data_bakery || 0,
+        impact_data_produce: stop.impact_data_produce || 0,
+        impact_data_meat_fish: stop.impact_data_meat_fish || 0,
+        impact_data_non_perishable: stop.impact_data_non_perishable || 0,
+        impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
+        impact_data_mixed: stop.impact_data_mixed || 0,
+        impact_data_other: stop.impact_data_other || 0,
+        impact_data_total_weight: stop.impact_data_total_weight || 0,
       }
-      await setFirestoreData(['rescues', new_rescue_id], rescue)
-      setWorking(false)
-      navigate(`/rescues/${new_rescue_id}`)
+      if (stop.type === 'delivery') {
+        s.percent_of_total_dropped = stop.percent_of_total_dropped || 100
+      }
+      await setFirestoreData(['stops', stop.id], s)
     }
+
+    const payload = {
+      id: new_rescue_id,
+      handler_id: formData.handler_id,
+      google_calendar_event_id: event.id,
+      stop_ids: formData.stops.map(s => s.id),
+      is_direct_link: formData.is_direct_link,
+      status: rescue ? rescue.status : STATUSES.SCHEDULED,
+      notes: rescue ? rescue.notes : '',
+      timestamp_created: rescue ? rescue.timestamp_created : createTimestamp(),
+      timestamp_updated: createTimestamp(),
+      timestamp_scheduled_start: createTimestamp(
+        formData.timestamp_scheduled_start
+      ),
+      timestamp_scheduled_finish: createTimestamp(
+        formData.timestamp_scheduled_finish
+      ),
+      timestamp_logged_start: rescue ? rescue.timestamp_logged_start : null,
+      timestamp_logged_finish: rescue ? rescue.timestamp_logged_finish : null,
+    }
+    await setFirestoreData(['rescues', new_rescue_id], payload)
+    setWorking(false)
+    navigate(`/rescues/${new_rescue_id}`)
   }
 
   async function handleRemoveStop(id, type) {
@@ -226,7 +214,7 @@ export function EditRescue() {
     if (field.suggestionQuery) {
       updateFieldSuggestions(
         e.target.value,
-        drivers,
+        handlers,
         field,
         suggestions,
         setSuggestions
@@ -248,7 +236,7 @@ export function EditRescue() {
     } else if (field.id === 'handler_name') {
       setFormData({
         ...formData,
-        driver: {},
+        handler: {},
         handler_id: '',
         handler_name: e.target.value,
       })
@@ -357,16 +345,16 @@ export function EditRescue() {
     } else return null
   }
 
-  function Driver() {
+  function Handler() {
     return (
-      <div id="EditRescue-driver">
+      <div id="EditRescue-handler">
         <img
-          src={formData.driver ? formData.driver.icon : UserIcon}
-          alt={formData.driver ? formData.driver.name : 'Unassigned Rescue'}
+          src={formData.handler ? formData.handler.icon : UserIcon}
+          alt={formData.handler ? formData.handler.name : 'Unassigned Rescue'}
         />
-        <div id="EditRescue-driver-info">
+        <div id="EditRescue-handler-info">
           <Text type="secondary-header" color="white" shadow>
-            {formData.driver ? formData.driver.name : 'Unassigned Rescue'}
+            {formData.handler ? formData.handler.name : 'Unassigned Rescue'}
           </Text>
           <Text type="subheader" color="white" shadow>
             {`${moment(formData.timestamp_scheduled_start).format(
@@ -379,7 +367,7 @@ export function EditRescue() {
             } `}
           </Text>
           <Button
-            id="EditRescue-driver-edit"
+            id="EditRescue-handler-edit"
             type="secondary"
             handler={() => setConfirmedTime(false)}
           >
@@ -390,7 +378,7 @@ export function EditRescue() {
     )
   }
 
-  function SelectDriver() {
+  function SelectHandler() {
     function ConfirmTimesButton() {
       function handleClick() {
         if (validateFormData()) {
@@ -564,7 +552,7 @@ export function EditRescue() {
     <main id="EditRescue" onClick={deselectStop}>
       {canRender ? (
         <>
-          {confirmedTimes ? <Driver /> : SelectDriver()}
+          {confirmedTimes ? <Handler /> : SelectHandler()}
           <SelectStops />
         </>
       ) : (
