@@ -1,7 +1,6 @@
 const functions = require('firebase-functions')
 const {
   api,
-  // calendar,
   backup_data_to_storage,
   export_data_to_google_sheets,
 } = require('./functions')
@@ -13,9 +12,7 @@ exports.api = functions
   })
   .https.onRequest(api)
 
-// exports.calendar = functions.https.onRequest(calendar)
-
-exports.backup = functions
+exports.backup_data_to_storage = functions
   .runWith({
     timeoutSeconds: 540,
     memory: '1GB',

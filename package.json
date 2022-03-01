@@ -30,9 +30,10 @@
     "start": "react-scripts start",
     "set_env:dev": "cp backend/environments/.env.prod backend/.env && cp environments/.env.prod .env",
     "set_env:prod": "cp backend/environments/.env.prod backend/.env && cp environments/.env.prod .env",
-    "dev": "npm run set_env:dev && concurrently \"npm run emulators\" \"npm start\"",
-    "prod": "npm run set_env:prod && concurrently \"npm run emulators\" \"npm start\"",
-    "emulators": "firebase emulators:start --only functions",
+    "dev": "npm run set_env:dev && concurrently \"npm run backend\" \"npm run frontend\"",
+    "prod": "npm run set_env:prod && concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "firebase emulators:start --only functions",
+    "frontend": "react-scripts start",
     "build": "react-scripts build",
     "deploy": "node scripts/manual_prod_deploy.js",
     "rollback": "node scripts/prod_emergency_rollback.js"
