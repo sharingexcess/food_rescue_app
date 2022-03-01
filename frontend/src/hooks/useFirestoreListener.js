@@ -1,11 +1,27 @@
-import { getCollection } from 'helpers'
+import { getFirestoreRef } from 'helpers'
 import { useEffect } from 'react'
 
-export function useFirestoreListener(collection, callback) {
+export function useFirestoreListener(identifier, callback) {
   useEffect(() => {
-    const unsubscribe = getCollection(collection).onSnapshot(() =>
-      callback(performance.now())
-    )
-    return () => unsubscribe()
-  }, [collection, callback])
+    if (identifier && identifier.length) {
+      console.log('[useFirestoreListener] Adding Listener for id:', identifier)
+      // const unsubscribe =
+      getFirestoreRef(identifier).onSnapshot(() => {
+        console.log(
+          '[useFirestoreListener] Detected Update for id:',
+          identifier
+        )
+        callback()
+      })
+      // return () => {
+      //   if (identifier && identifier.length && unsubscribe) {
+      //     console.log(
+      //       '[useFirestoreListener] Removing Listener for id:',
+      //       identifier
+      //     )
+      //     unsubscribe()
+      //   }
+      // }
+    }
+  }, [identifier, callback])
 }

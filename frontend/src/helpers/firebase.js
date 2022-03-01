@@ -29,6 +29,21 @@ export async function isExistingId(id, collection) {
   return snapshot.exists
 }
 
+export function getFirestoreRef(identifier) {
+  let next = 'doc'
+  let ref = getCollection(identifier.shift())
+  while (identifier.length) {
+    if (next === 'doc') {
+      ref = ref.doc(identifier.shift())
+      next = 'collection'
+    } else {
+      ref = ref.collection(identifier.shift())
+      next = 'doc'
+    }
+  }
+  return ref
+}
+
 export async function getFirestoreData(identifier) {
   let next = 'doc'
   let query = getCollection(identifier.shift())
