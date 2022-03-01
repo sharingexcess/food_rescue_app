@@ -1,5 +1,6 @@
 {
   "name": "rescue",
+  "version": "3.2.8",
   "productName": "Sharing Excess | Food Rescue",
   "description": "A web application built to schedule, track, and measure the impact of food rescue.",
   "scripts": {
@@ -11,6 +12,8 @@
     "deploy": "node scripts/manual_prod_deploy.js"
   },
   "dependencies": {
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-react-app": "^7.0.0",
     "firebase": "^9.6.6"
   },
   "devDependencies": {
@@ -18,8 +21,8 @@
     "colors": "^1.4.0",
     "concurrently": "^7.0.0",
     "dotenv": "^14.2.0",
+    "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-config-react-app": "^7.0.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.2",
     "git-state": "^4.1.0",

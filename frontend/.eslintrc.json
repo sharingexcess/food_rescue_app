@@ -12,5 +12,5 @@
     "prefer-const": "warn",
     "no-duplicate-imports": "error"
   },
-  "extends": ["plugin:prettier/recommended", "prettier"]
+  "extends": ["react-app", "plugin:prettier/recommended", "prettier"]
 }

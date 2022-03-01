@@ -7,9 +7,6 @@
     "set_env:dev": "cp environments/.env.dev .env",
     "set_env:prod": "cp environments/.env.prod .env"
   },
-  "engines": {
-    "node": "12"
-  },
   "main": "index.js",
   "dependencies": {
     "firebase": "^9.6.2",
