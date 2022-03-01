@@ -18,7 +18,11 @@ export function useApi(endpoint) {
         .then(res => res.json())
         .then(payload => {
           // console.log('[useApi] Response for request:', endpoint, payload)
-          setState(state => ({ ...state, data: payload, loading: false }))
+          setState(state => ({
+            ...state,
+            data: formatAllTimestamps(payload),
+            loading: false,
+          }))
         })
         .catch(e => {
           console.error('[useApi] Caught Error:', e)
@@ -51,4 +55,18 @@ function generateCacheIdentifier(endpoint) {
   }
 
   return null
+}
+
+function formatAllTimestamps(payload) {
+  if (!payload) return null
+  for (const key in payload) {
+    if (key.includes(`timestamp_`)) {
+      // convert all string timestamps into Date objects
+      payload[key] = new Date(payload[key])
+    } else if (typeof payload[key] === 'object') {
+      // recurse through nested payloads
+      payload[key] = formatAllTimestamps(payload[key])
+    }
+  }
+  return payload
 }
