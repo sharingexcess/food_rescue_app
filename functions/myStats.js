@@ -14,16 +14,27 @@ async function handleMyStats(request, response) {
     const { user } = request.query
     console.log('user:', user)
 
+    let rescues = []
+    await db
+      .collection('rescues')
+      .where('handler_id', '==', user)
+      .get()
+      .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
+    rescues = rescues.filter(i => i.status === 'completed')
+
     let stops = []
     await db
       .collection('stops')
-      .where('handler_id', '=', user)
+      .where('handler_id', '==', user)
       .get()
       .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
-    stops = stops.filter(i => i.status === 'completed')
-
-    // let poundsByMonth = []
-    // await db.collection('rescues')
+    stops = stops.filter(i => {
+      const rescue = rescues.find(r => r.id === i.rescue_id)
+      if (!rescue) {
+        return false
+      }
+      return i.status === 'completed' && rescue.status === 'completed'
+    })
 
     const organizations = await fetchCollection('organizations')
     // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
@@ -49,10 +60,12 @@ async function handleMyStats(request, response) {
     // )
     const poundsByMonth = calcPoundsByMonth(deliveries)
     const donors = breakdownByDonor(pickups, organizations)
+    const recipients = breakdownByDonor(deliveries, organizations)
     const payload = {
       total_weight,
       poundsByMonth,
       donors,
+      recipients,
       // impact_last_year,
       // rescues,
       // deliveries,
@@ -143,9 +156,13 @@ function calcPoundsByMonth(deliveries) {
       .subtract(i - 1, 'months')
       .startOf('month')
       .toDate()
-    const filterByDateRange = i =>
-      i.timestamp_logged_finish.toDate() > range_start &&
-      i.timestamp_logged_finish.toDate() < range_end
+    const filterByDateRange = i => {
+      console.log(i)
+      return (
+        i.timestamp_logged_finish.toDate() > range_start &&
+        i.timestamp_logged_finish.toDate() < range_end
+      )
+    }
     const stopsInMonth = deliveries.filter(filterByDateRange)
     const totalWeightInStops = stopsInMonth.reduce(
       (a, b) => a + (b.impact_data_total_weight || 0),

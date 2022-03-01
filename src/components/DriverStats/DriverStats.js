@@ -100,7 +100,6 @@ export function DriverStats() {
       ) : (
         <Loading relative text="Calculating your impact" />
       )}
-
       <Spacer height={64} />
       <Text type="section-header" color="white" shadow>
         Looking back on the year:
@@ -130,7 +129,7 @@ export function DriverStats() {
       ) : (
         <Loading text="Calculating your impact" relative />
       )}
-      {/* <Spacer height={64} />
+      <Spacer height={64} />
       <Text type="section-header" color="white" shadow>
         Where You Like to Deliver:
       </Text>
@@ -138,9 +137,13 @@ export function DriverStats() {
       <Text type="paragraph" color="white" shadow>
         Click on a block to see exactly how much food you delivered to each
         organization.
-      </Text> */}
-      {/* <Spacer height={16} /> */}
-      {/* <PoundsByOrgChart stops={driver_deliveries} /> */}
+      </Text>{' '}
+      <Spacer height={16} />
+      {apiData && !working ? (
+        <PoundsByOrgChart poundsByOrg={apiData.recipients} />
+      ) : (
+        <Loading text="Calculating your impact" relative />
+      )}
     </main>
   )
 }

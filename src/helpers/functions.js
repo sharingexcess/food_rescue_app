@@ -3,6 +3,7 @@ import {
   CLOUD_FUNCTION_URLS,
   FOOD_CATEGORIES,
   GOOGLE_MAPS_URL,
+  STATUSES,
 } from './constants'
 import { setFirestoreData } from './firebase'
 
@@ -116,7 +117,10 @@ export async function updateImpactDataForRescue(rescue) {
           current_load[category] += stop[category]
         }
       } else {
-        if (stop.percent_of_total_dropped) {
+        if (
+          stop.percent_of_total_dropped &&
+          stop.status === STATUSES.COMPLETED
+        ) {
           const impact_data = {}
           const percent_dropped = stop.percent_of_total_dropped / 100
           const load_weight = Object.values(current_load).reduce(
@@ -136,6 +140,18 @@ export async function updateImpactDataForRescue(rescue) {
             ...impact_data,
             timestamp_updated: createTimestamp(),
           })
+        } else if (stop.status === STATUSES.CANCELLED) {
+          const payload = {
+            impact_data_total_weight: 0,
+            timestamp_updated: createTimestamp(),
+          }
+          for (const key in current_load) {
+            payload[key] = 0
+          }
+          if (stop.type === 'delivery') {
+            payload.percent_of_total_dropped = 0
+          }
+          await setFirestoreData(['stops', stop.id], payload)
         }
       }
     }
