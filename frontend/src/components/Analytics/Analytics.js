@@ -25,11 +25,8 @@ import {
 } from 'helpers'
 import { Loading, Input } from 'components'
 import { useNavigate } from 'react-router-dom'
-<<<<<<< HEAD
 import { useAuth } from 'hooks'
-=======
 import { useApi } from 'hooks'
->>>>>>> 767a12f (working server)
 
 export function Analytics() {
   const { user } = useAuth()
@@ -63,7 +60,6 @@ export function Analytics() {
       // setWorking(true)
       navigate(query, { replace: true })
     } else {
-<<<<<<< HEAD
       console.log('fetching', CLOUD_FUNCTION_URLS.analytics + query)
       fetchData(CLOUD_FUNCTION_URLS.analytics + query, user.accessToken)
         .then(res => res.json())
@@ -71,14 +67,12 @@ export function Analytics() {
           setApiData(data)
           setWorking(false)
         })
-=======
       // fetch(CLOUD_FUNCTION_URLS.analytics + query)
       //   .then(res => res.json())
       //   .then(data => {
       //     setApiData(data)
       //     setWorking(false)
       //   })
->>>>>>> 767a12f (working server)
     }
   }, [query]) // eslint-disable-line
   console.log(apiData)

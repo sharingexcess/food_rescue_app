@@ -1,15 +1,12 @@
 import { Text } from '@sharingexcess/designsystem'
-<<<<<<< HEAD
 import { shortenLargeNumber } from 'helpers'
 import { useIsMobile } from 'hooks'
 import React from 'react'
-=======
 import { Loading } from 'components'
 import { shortenLargeNumber, formatTimestamp } from 'helpers'
 import { useIsMobile } from 'hooks'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
->>>>>>> 767a12f (working server)
 import {
   XAxis,
   YAxis,
@@ -19,11 +16,9 @@ import {
   Tooltip,
 } from 'recharts'
 
-<<<<<<< HEAD
 export function PoundsByMonthChart({ poundsByMonth }) {
   const isMobile = useIsMobile()
   return (
-=======
 export function PoundsByMonthChart({ stops }) {
   const [poundsByMonth, setPoundsByMonth] = useState()
   const isMobile = useIsMobile()
@@ -59,7 +54,6 @@ export function PoundsByMonthChart({ stops }) {
   }, [stops])
 
   return poundsByMonth ? (
->>>>>>> 767a12f (working server)
     <section id="PoundsByMonthChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <BarChart data={poundsByMonth}>

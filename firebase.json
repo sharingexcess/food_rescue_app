@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "sharingexcess-dev",
+    "target": "sharingexcess",
     "public": "frontend/build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [

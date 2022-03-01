@@ -1,25 +1,20 @@
 import { Spacer, Text } from '@sharingexcess/designsystem'
-<<<<<<< HEAD
 import { CLOUD_FUNCTION_URLS, fetchData, formatLargeNumber } from 'helpers'
 import { useAuth } from 'hooks'
 import React, { useEffect, useMemo, useState } from 'react'
-=======
 import { ORG_SUBTYPES } from 'helpers'
 import { useFirestore } from 'hooks'
 import React, { useMemo } from 'react'
->>>>>>> 767a12f (working server)
 import { PoundsByMonthChart } from './PoundsByMonthChart'
 import { PoundsByOrgChart } from './PoundsByOrgChart'
 import { useNavigate } from 'react-router-dom'
 import { Loading } from 'components'
 
 export function DriverStats() {
-<<<<<<< HEAD
   const navigate = useNavigate()
   const { user } = useAuth()
   const [working, setWorking] = useState(true)
   const [apiData, setApiData] = useState()
-=======
   // const { user } = useAuth()
   // const { loadAllData } = useFirestore()
   // const driver_stops = useFirestore(
@@ -50,13 +45,11 @@ export function DriverStats() {
       }),
     [organizations, driver_stops]
   )
->>>>>>> 767a12f (working server)
 
   const query = useMemo(() => {
     return `?user=${encodeURIComponent(user.id)}`
   }, [user.id])
 
-<<<<<<< HEAD
   useEffect(() => {
     if (window.location.search !== query) {
       setWorking(true)
@@ -71,9 +64,7 @@ export function DriverStats() {
         })
     }
   }, [query, navigate])
-=======
   // useEffect(() => loadAllData(), []) // eslint-disable-line
->>>>>>> 767a12f (working server)
 
   return (
     <main id="DriverStats">
