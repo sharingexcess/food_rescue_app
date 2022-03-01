@@ -1,13 +1,11 @@
 {
-  "name": "functions",
-  "description": "Cloud Functions for Firebase",
+  "name": "rescue-backend",
   "scripts": {
+    "start": "firebase emulators:start --only functions",
     "lint": "eslint .",
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "set_env:dev": "cp environments/.env.dev .env",
+    "set_env:prod": "cp environments/.env.prod .env"
   },
   "engines": {
     "node": "12"
@@ -26,6 +24,5 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "firebase-functions-test": "^0.2.3"
-  },
-  "private": true
+  }
 }

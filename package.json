@@ -1,58 +1,27 @@
 {
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
-  "version": "3.2.5",
-  "private": true,
-  "dependencies": {
-    "@formspree/react": "^2.2.4",
-    "@sentry/react": "^6.16.1",
-    "@sentry/tracing": "^6.16.1",
-    "@sharingexcess/designsystem": "^1.2.8",
-    "concurrently": "^7.0.0",
-    "firebase": "^9.6.6",
-    "google-map-react": "^2.1.10",
-    "moment": "^2.29.1",
-    "nanoid": "^3.2.0",
-    "react": "^17.0.2",
-    "react-apple-emojis": "^2.1.1",
-    "react-dom": "^17.0.2",
-    "react-firebase-hooks": "^4.0.2",
-    "react-router-dom": "^6.2.1",
-    "react-scripts": "^5.0.0",
-    "recharts": "^2.1.8",
-    "sass": "^1.49.0",
-    "validator": "^13.7.0"
-  },
+  "description": "A web application built to schedule, track, and measure the impact of food rescue.",
   "scripts": {
-    "start": "react-scripts start",
-    "set_env:dev": "cp backend/environments/.env.prod backend/.env && cp environments/.env.prod .env",
-    "set_env:prod": "cp backend/environments/.env.prod backend/.env && cp environments/.env.prod .env",
-    "dev": "npm run set_env:dev && concurrently \"npm run backend\" \"npm run frontend\"",
-    "prod": "npm run set_env:prod && concurrently \"npm run backend\" \"npm run frontend\"",
-    "backend": "firebase emulators:start --only functions",
-    "frontend": "react-scripts start",
-    "build": "react-scripts build",
-    "deploy": "node scripts/manual_prod_deploy.js",
-    "rollback": "node scripts/prod_emergency_rollback.js"
+    "install:all": "npm i && cd frontend && npm i && cd ../backend && npm i",
+    "dev": "npm run set_env:dev && concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
+    "prod": "npm run set_env:prod && concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
+    "set_env:dev": "firebase use default && cp frontend/environments/.env.dev frontend/.env && cp backend/environments/.env.dev backend/.env",
+    "set_env:prod": "firebase use prod && cp frontend/environments/.env.prod frontend/.env && cp backend/environments/.env.prod backend/.env",
+    "deploy": "node scripts/manual_prod_deploy.js"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "firebase": "^9.6.6"
   },
   "devDependencies": {
     "@sentry/cli": "^1.71.0",
     "colors": "^1.4.0",
+    "concurrently": "^7.0.0",
     "dotenv": "^14.2.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^7.0.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.2",
     "git-state": "^4.1.0",
     "prettier": "2.5.1"
   }

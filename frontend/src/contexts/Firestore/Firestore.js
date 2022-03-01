@@ -14,14 +14,16 @@ function Firestore({ children }) {
   useFirestoreListener('organizations', setUpdatedAt)
   useFirestoreListener('locations', setUpdatedAt)
   useFirestoreListener('users', setUpdatedAt)
-
-  const [organizations] = useCollectionData(
-    getCollection('organizations').orderBy('name')
-  )
-  const [locations] = useCollectionData(
-    getCollection('locations').orderBy('id')
-  )
-  const [users] = useCollectionData(getCollection('users').orderBy('name'))
+  const organizations = [],
+    users = [],
+    locations = []
+  // const [organizations] = useCollectionData(
+  //   getCollection('organizations').orderBy('name')
+  // )
+  // const [locations] = useCollectionData(
+  //   getCollection('locations').orderBy('id')
+  // )
+  // const [users] = useCollectionData(getCollection('users').orderBy('name'))
 
   return (
     <FirestoreContext.Provider
