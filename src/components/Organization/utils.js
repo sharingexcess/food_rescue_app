@@ -12,3 +12,12 @@ export function LocationPhone({ loc }) {
     )
   } else return null
 }
+
+export function LocationHours({ loc }) {
+  if (loc.hours) {
+    loc.hours.map(hour => {
+      return <Text>yes</Text>
+    })
+    return null
+  } else return null
+}
