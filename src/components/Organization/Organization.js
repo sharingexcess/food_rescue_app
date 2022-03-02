@@ -11,7 +11,7 @@ import {
   Spacer,
   Text,
 } from '@sharingexcess/designsystem'
-import { ORG_TYPE_ICONS, prettyPrintDbFieldName } from 'helpers'
+import { ORG_TYPE_ICONS, prettyPrintDbFieldName, DAYS } from 'helpers'
 import { Emoji } from 'react-apple-emojis'
 import PhilabundanceLogo from 'assets/philabundance.png'
 
@@ -75,6 +75,20 @@ export function Organization() {
               {loc.id === org.primary_location_id && (
                 <i className="primary fa fa-star" />
               )}
+              <Spacer height={10} />
+              <Text type="small" color="black" bold>
+                Open Hours
+              </Text>
+              {loc.hours.map((hour, index) => {
+                return (
+                  <div key={index}>
+                    <Text type="small" color="grey">
+                      &nbsp;&nbsp; {DAYS[hour.day_of_week]}: {hour.time_open} -{' '}
+                      {hour.time_close}
+                    </Text>
+                  </div>
+                )
+              })}
             </Card>
           </Link>
         ))}
