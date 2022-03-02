@@ -8,7 +8,7 @@ import { generateUniqueId } from 'helpers'
 export function EditDelivery({ handleSubmit, title }) {
   const recipients = useFirestore(
     'organizations',
-    useCallback(i => i.type === 'recipient', [])
+    useCallback(i => i.type === 'recipient' && !i.is_deleted, [])
   )
   const locations = useFirestore(
     'locations',
@@ -86,7 +86,6 @@ export function EditDelivery({ handleSubmit, title }) {
           field
         )
       }
-
       return (
         <Input
           key={field.id}
