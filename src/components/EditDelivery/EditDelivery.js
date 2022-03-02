@@ -86,6 +86,7 @@ export function EditDelivery({ handleSubmit, title }) {
           field
         )
       }
+
       return (
         <Input
           key={field.id}
