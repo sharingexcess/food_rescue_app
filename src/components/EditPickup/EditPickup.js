@@ -8,7 +8,7 @@ import { generateUniqueId } from 'helpers'
 export function EditPickup({ handleSubmit, title }) {
   const donors = useFirestore(
     'organizations',
-    useCallback(i => i.type === 'donor', [])
+    useCallback(i => i.type === 'donor' && !i.is_deleted, [])
   )
   const locations = useFirestore(
     'locations',
