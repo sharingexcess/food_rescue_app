@@ -1,58 +1,15 @@
 import { Spacer, Text } from '@sharingexcess/designsystem'
-import {
-  ORG_SUBTYPES,
-  STATUSES,
-  CLOUD_FUNCTION_URLS,
-  formatLargeNumber,
-} from 'helpers'
-import { useAuth, useFirestore } from 'hooks'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { CLOUD_FUNCTION_URLS, formatLargeNumber } from 'helpers'
+import { useAuth } from 'hooks'
+import React, { useEffect, useMemo, useState } from 'react'
 import { PoundsByMonthChart } from './PoundsByMonthChart'
 import { PoundsByOrgChart } from './PoundsByOrgChart'
-import { TotalPounds } from './TotalPounds'
 import { useNavigate } from 'react-router-dom'
 import { Loading } from 'components'
 
 export function DriverStats() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { loadAllData } = useFirestore()
-  const driver_stops = useFirestore(
-    'stops',
-    useCallback(
-      i =>
-        i.handler_id === user.id &&
-        // i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && // (Use Jacob's ID for testing)
-        // i.handler_id === 'jiBBxAvncBSNWwjizdmsxM7EALz1' && // Sarah DiPasquale
-        // i.handler_id === '1yxUOZ53OOg0T3SJ2SqolPI3UK12' && // Alex Havertine
-        // [
-        //   'sUqgP36KAiPgDaU7V4z8N0GirIc2',
-        //   'K2eYju4PtaejTIiOdHQrERMoRnk2',
-        // ].includes(i.handler_id) && // Evan Ehlers (he has 2 accounts)
-        i.status === STATUSES.COMPLETED,
-      [user]
-    )
-  )
-  const organizations = useFirestore('organizations')
-
-  // const filteredByHolding = useMemo(
-  //   () =>
-  //     driver_stops.filter(i => {
-  //       const org = organizations.find(o => i.organization_id === o.id)
-  //       return org.subtype !== ORG_SUBTYPES.HOLDING
-  //     }),
-  //   [organizations, driver_stops]
-  // )
-
-  // const driver_pickups = useMemo(
-  //   () => filteredByHolding.filter(i => i.type === 'pickup'),
-  //   [filteredByHolding]
-  // )
-  // const driver_deliveries = useMemo(
-  //   () => filteredByHolding.filter(i => i.type === 'delivery'),
-  //   [filteredByHolding]
-  // )
-  // useEffect(() => loadAllData(), []) // eslint-disable-line
   const [working, setWorking] = useState(true)
   const [apiData, setApiData] = useState()
 
@@ -73,8 +30,7 @@ export function DriverStats() {
           setWorking(false)
         })
     }
-  }, [query]) // eslint-disable-line
-  console.log('apiData: ', apiData)
+  }, [query, navigate])
 
   return (
     <main id="DriverStats">
@@ -92,7 +48,7 @@ export function DriverStats() {
           <Text type="primary-header" align="center" color="white" shadow>
             {formatLargeNumber(apiData.total_weight)} lbs.
           </Text>
-          <Text type="subheader" align="center" color="white" shadow>
+          <Text type="paragraph" align="center" color="white" shadow>
             Food diverted from landfills <br />
             and redistributed to your local community !!!
           </Text>

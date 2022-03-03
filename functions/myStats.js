@@ -10,9 +10,7 @@ exports.myStats = myStats_routes
 
 async function handleMyStats(request, response) {
   return new Promise(async resolve => {
-    console.log('running myStats')
     const { user } = request.query
-    console.log('user:', user)
 
     let rescues = []
     await db
@@ -45,19 +43,8 @@ async function handleMyStats(request, response) {
 
     const pickups = filteredStops.filter(s => s.type === 'pickup')
     const deliveries = filteredStops.filter(s => s.type === 'delivery')
-
-    console.log('DATA:', filteredStops.length, organizations.length)
-
     const total_weight = calculateMetrics(deliveries)
 
-    // console.log(
-    //   'METRICS:',
-    //   total_weight,
-    //   total_categorized_weight,
-    //   retail_value,
-    //   fair_market_value,
-    //   emissions_reduced
-    // )
     const poundsByMonth = calcPoundsByMonth(deliveries)
     const donors = breakdownByDonor(pickups, organizations)
     const recipients = breakdownByDonor(deliveries, organizations)
@@ -66,12 +53,7 @@ async function handleMyStats(request, response) {
       poundsByMonth,
       donors,
       recipients,
-      // impact_last_year,
-      // rescues,
-      // deliveries,
-      // view_data: breakdownByDonor(deliveries, users),
     }
-    console.log('returning payload:', payload)
     response.status(200).send(JSON.stringify(payload))
     resolve()
     return
@@ -87,17 +69,6 @@ function calculateMetrics(deliveries) {
 }
 
 function breakdownByDonor(pickups, organizations) {
-  // const donors = {}
-  // for (const p of pickups) {
-  //   try {
-  //     const organization = organizations.find(o => o.id === p.organization_id)
-  //     const { name } = organization
-  //     donors[name] = (donors[name] || 0) + (p.impact_data_total_weight || 0)
-  //   } catch (e) {
-  //     console.error('Unable to add pickup to donor totals:', JSON.stringify(p))
-  //   }
-  // }
-
   const poundsByOrgId = []
   for (const pickup of pickups) {
     if (poundsByOrgId[pickup.organization_id]) {
@@ -123,31 +94,6 @@ function breakdownByDonor(pickups, organizations) {
   return sortedByWeight
 }
 
-function breakdownByRecipient(deliveries, organizations) {
-  const recipients = {}
-  for (const d of deliveries) {
-    try {
-      const organization = organizations.find(o => o.id === d.organization_id)
-      const { name } = organization
-      recipients[name] =
-        (recipients[name] || 0) + (d.impact_data_total_weight || 0)
-    } catch (e) {
-      console.error(
-        'Unable to add pickup to recipient totals:',
-        JSON.stringify(d)
-      )
-    }
-  }
-  return sortObjectByValues(recipients)
-}
-
-function sortObjectByValues(object) {
-  return Object.entries(object)
-    .sort(([, a], [, b]) => b - a)
-    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {})
-}
-
-// const [poundsByMonth, setPoundsByMonth] = useState()
 function calcPoundsByMonth(deliveries) {
   const poundsByMonth = []
   for (let i = 11; i >= 0; i--) {
@@ -157,7 +103,6 @@ function calcPoundsByMonth(deliveries) {
       .startOf('month')
       .toDate()
     const filterByDateRange = i => {
-      console.log(i)
       return (
         i.timestamp_logged_finish.toDate() > range_start &&
         i.timestamp_logged_finish.toDate() < range_end
