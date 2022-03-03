@@ -75,20 +75,25 @@ export function Organization() {
               {loc.id === org.primary_location_id && (
                 <i className="primary fa fa-star" />
               )}
-              <Spacer height={10} />
-              <Text type="small" color="black" bold>
-                Open Hours
-              </Text>
-              {loc.hours.map((hour, index) => {
-                return (
-                  <div key={index}>
-                    <Text type="small" color="grey">
-                      &nbsp;&nbsp; {DAYS[hour.day_of_week]}: {hour.time_open} -{' '}
-                      {hour.time_close}
-                    </Text>
-                  </div>
-                )
-              })}
+              {loc.hours && (
+                <>
+                  <Spacer height={10} />
+                  <Text type="small" color="black" bold>
+                    Open Hours
+                  </Text>
+                </>
+              )}
+              {loc.hours &&
+                loc.hours.map((hour, index) => {
+                  return (
+                    <div key={index}>
+                      <Text type="small" color="grey">
+                        &nbsp;&nbsp; {DAYS[hour.day_of_week]}: {hour.time_open}{' '}
+                        - {hour.time_close}
+                      </Text>
+                    </div>
+                  )
+                })}
             </Card>
           </Link>
         ))}
