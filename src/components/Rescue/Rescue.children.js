@@ -7,6 +7,7 @@ import {
   Spacer,
   Text,
 } from '@sharingexcess/designsystem'
+import moment from 'moment'
 import { EditDelivery, GoogleMap, Input } from 'components'
 import {
   CLOUD_FUNCTION_URLS,
@@ -796,6 +797,8 @@ export function Stop({ stops, s, i }) {
             name={s.location.contact_name}
             number={s.location.contact_phone}
           />
+          <Spacer height={8} />
+          <StopInstructions />
         </>
       )}
     </Card>
