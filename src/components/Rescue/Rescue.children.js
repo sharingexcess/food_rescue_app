@@ -10,6 +10,7 @@ import {
 import moment from 'moment'
 import { EditDelivery, GoogleMap, Input } from 'components'
 import {
+  DAYS,
   CLOUD_FUNCTION_URLS,
   createTimestamp,
   formatPhoneNumber,
@@ -548,6 +549,40 @@ export function Stop({ stops, s, i }) {
     ) : null
   }
 
+  function GetDayOfWeek() {
+    const formatDate = formatTimestamp(s.timestamp_scheduled_start)
+    const date = moment(formatDate).format('d')
+    const filterDate = s.location.hours
+      ? s.location.hours.filter(hour => hour.day_of_week === parseInt(date))
+      : null
+
+    return filterDate.length > 0
+      ? [
+          DAYS[filterDate[0].day_of_week],
+          ': ',
+          filterDate[0].time_open,
+          '-',
+          filterDate[0].time_close,
+        ]
+      : 'Not available today'
+  }
+
+  function StopHours() {
+    return s.location.hours ? (
+      <>
+        <Spacer height={16} />
+        <Text
+          type="small"
+          color="black"
+          classList={['Rescue-stop-instructions']}
+        >
+          <span>Open Hours: </span>
+          {GetDayOfWeek()}
+        </Text>
+      </>
+    ) : null
+  }
+
   function StopAddress() {
     const { address1, address2, city, state, zip } = s.location
     const button = (
@@ -799,6 +834,7 @@ export function Stop({ stops, s, i }) {
           />
           <Spacer height={8} />
           <StopInstructions />
+          <StopHours />
         </>
       )}
     </Card>
