@@ -564,7 +564,7 @@ export function Stop({ stops, s, i }) {
           '-',
           filterDate[0].time_close,
         ]
-      : "No information on this location's open hours."
+      : 'Not available today'
   }
 
   function StopHours() {
