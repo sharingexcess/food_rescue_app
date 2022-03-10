@@ -63,6 +63,7 @@ export function Analytics() {
         })
     }
   }, [query]) // eslint-disable-line
+  console.log(apiData)
 
   const graphData = !apiData
     ? null

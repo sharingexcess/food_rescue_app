@@ -387,10 +387,24 @@ export function CancelStop() {
   const { setModal, modalState } = useApp()
 
   async function handleCancel() {
-    await setFirestoreData(['stops', modalState.stop.id], {
+    const payload = {
       status: STATUSES.CANCELLED,
       notes,
-    })
+      impact_data_dairy: 0,
+      impact_data_bakery: 0,
+      impact_data_produce: 0,
+      impact_data_meat_fish: 0,
+      impact_data_non_perishable: 0,
+      impact_data_prepared_frozen: 0,
+      impact_data_mixed: 0,
+      impact_data_other: 0,
+      impact_data_total_weight: 0,
+    }
+    if (modalState.stop.type === 'delivery') {
+      payload.percent_of_total_dropped = 0
+    }
+    await setFirestoreData(['stops', modalState.stop.id], payload)
+
     setModal()
   }
 
