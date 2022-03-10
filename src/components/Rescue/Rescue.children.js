@@ -540,7 +540,7 @@ export function Stop({ stops, s, i }) {
         <Spacer height={16} />
         <Text
           type="small"
-          color="white"
+          color={isActiveStop ? 'black' : 'white'}
           classList={['Rescue-stop-instructions']}
         >
           <span>Instructions: </span>
@@ -583,7 +583,7 @@ export function Stop({ stops, s, i }) {
     return s.location.hours ? (
       <>
         <Spacer height={16} />
-        <Text type="small" color="white">
+        <Text type="small" color={isActiveStop ? 'black' : 'white'}>
           <Emoji name="one-oclock" width={20} />
 
           {GetDayOfWeek()}
@@ -772,6 +772,7 @@ export function Stop({ stops, s, i }) {
           name={s.location.contact_name}
           number={s.location.contact_phone}
         />
+        <StopHours />
         <StopInstructions />
         <Spacer height={16} />
         <StopMap />
