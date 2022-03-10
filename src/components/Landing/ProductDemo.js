@@ -1,14 +1,23 @@
 import { Button, Spacer, Text, Image } from '@sharingexcess/designsystem'
+import { useIsMobile } from 'hooks'
 
 export function ProductDemo() {
+  const isMobile = useIsMobile()
   return (
     <>
       <main id="ProductDemo">
         <section id="Demo-background">
-          <Image
-            src="/LandingImage/demo_background.png"
-            alt="Demo Background"
-          />
+          {isMobile ? (
+            <Image
+              src="/LandingImage/demo_background_mobile.png"
+              alt="Demo Background"
+            />
+          ) : (
+            <Image
+              src="/LandingImage/demo_background.png"
+              alt="Demo Background"
+            />
+          )}
         </section>
         <div id="Demo-content">
           <Text type="primary-header" color="black" align="center">

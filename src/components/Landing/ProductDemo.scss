@@ -12,6 +12,9 @@
       width: 100%;
       height: 100%;
     }
+    @include mobile {
+      min-width: 100vw;
+    }
   }
 
   #Demo-content {
