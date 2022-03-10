@@ -58,7 +58,7 @@ export function Home() {
     )
   }
 
-  const header = user ? generateGreeting(user.displayName) : null
+  const { headerText, emoji } = user ? generateGreeting(user.displayName) : null
 
   return !user ? (
     <Landing />
@@ -67,7 +67,7 @@ export function Home() {
   ) : (
     <main id="Home">
       <Text type="secondary-header" color="white" align="center" shadow>
-        {header}
+        {headerText} <Emoji name={emoji} width={50} />
       </Text>
       <Spacer height={4} />
       <Text type="subheader" color="white" align="center" shadow>

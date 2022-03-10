@@ -9,18 +9,17 @@ export function generateGreeting(name) {
   let prefix, suffix
   if (curHr < 4) {
     prefix = 'Get some sleep'
-    suffix = '😴'
+    suffix = 'sleeping-face'
   } else if (curHr < 7) {
     prefix = "You're up early"
-    suffix = '☕️'
+    suffix = 'hot-beverage'
   } else if (curHr < 12) {
     prefix = 'Good Morning'
-    suffix = `☀️`
+    suffix = `sun`
   } else {
     prefix = "How's it going"
-    suffix = `😊`
+    suffix = `smiling-face-with-smiling-eyes`
   }
-  return formattedName
-    ? `${prefix}, ${formattedName} ${suffix}`
-    : `${prefix} ${suffix}`
+  const headerText = formattedName ? `${prefix}, ${formattedName}` : `${prefix}`
+  return { headerText, emoji: suffix }
 }
