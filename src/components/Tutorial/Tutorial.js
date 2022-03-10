@@ -38,8 +38,8 @@ export function Tutorial() {
           </li>
         </ul>
         <div>
-          <img src="/tutorial-ios-actions2.png" alt="Actions" />
-          <img src="/tutorial-ios-add2.png" alt="Rescues" />
+          <img src="/tutorial-ios-actions.png" alt="Actions" />
+          <img src="/tutorial-ios-add.png" alt="Rescues" />
         </div>
       </section>
       <section id="save2">
@@ -71,8 +71,8 @@ export function Tutorial() {
           <li>Log onto app and click on assigned rescue guidance. </li>
         </ul>
         <div>
-          <img src="/tutorial-home2.png" alt="Home" />
-          <img src="/tutorial-routes2.png" alt="Rescues" />
+          <img src="/tutorial-home.png" alt="Home" />
+          <img src="/tutorial-routes.png" alt="Rescues" />
         </div>
       </section>
       <section id="pickup">
@@ -99,8 +99,8 @@ export function Tutorial() {
           <li>Safely pack food in the vehicle.</li>
         </ul>
         <div>
-          <img src="/tutorial-route2.png" alt="Route" />
-          <img src="/tutorial-report2.png" alt="Report" />
+          <img src="/tutorial-route.png" alt="Route" />
+          <img src="/tutorial-report.png" alt="Report" />
         </div>
       </section>
       <section id="delivery">
@@ -134,8 +134,8 @@ export function Tutorial() {
           </li>
         </ul>
         <div>
-          <img src="/tutorial-percentage2.png" alt="Percentage Dropoff" />
-          <img src="/tutorial-completed2.png" alt="Completed" />
+          <img src="/tutorial-percentage.png" alt="Percentage Dropoff" />
+          <img src="/tutorial-completed.png" alt="Completed" />
         </div>
       </section>
       <br />
