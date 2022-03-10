@@ -1,0 +1,109 @@
+#Testimonial {
+  #Testimonial-background {
+    z-index: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+
+    .se-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  #Testimonial-content {
+    .Testimonial-slider {
+      .Slide {
+        position: absolute;
+        z-index: 3;
+        width: clamp(300px, 42%, 500px);
+        padding: 48px 24px;
+        box-shadow: var(--se-shadow-large);
+        top: 250%;
+        margin: 10px;
+        border-radius: 8px;
+        background: var(--white);
+        opacity: 0;
+
+        .Quotemark-vector .se-image {
+          position: absolute;
+          opacity: 30%;
+          z-index: 2;
+          width: 20%;
+        }
+        .se-text {
+          padding: 50px 25px 0;
+        }
+      }
+      .Testimonial-author {
+        .se-image {
+          left: 65%;
+          width: 30%;
+          border-radius: 50%;
+          object-fit: cover;
+          box-shadow: var(--se-shadow-medium);
+        }
+        .subheader {
+          font-weight: 700;
+        }
+        .se-text {
+          padding: 0;
+          right: 6%;
+        }
+      }
+      .button-slide {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        .se-image {
+          width: 25px;
+          height: 25px;
+          z-index: 5;
+        }
+        .prev {
+          right: 20px;
+          transform: translateY(-60%);
+        }
+        .next {
+          right: 20px;
+          transform: translateY(-60%);
+        }
+      }
+      .active {
+        opacity: 1;
+      }
+    }
+  }
+
+  .darkgreen {
+    color: var(--darkgreen);
+  }
+
+  .green {
+    color: var(--green);
+  }
+
+  .darkgrey {
+    color: var(--darkgrey);
+  }
+  .blue {
+    color: var(--blue);
+  }
+
+  .party-orange {
+    color: var(--party-orange);
+  }
+
+  .party-blue {
+    color: var(--party-blue);
+  }
+}

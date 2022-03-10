@@ -1,28 +1,2 @@
-#Landing {
-  padding: 108px 16px;
-  max-width: 1000px;
-  min-height: 100vh;
-  margin: auto;
-  animation: fade-in 0.32s ease forwards;
-  text-align: center;
-
-  .green {
-    color: var(--green);
-  }
-
-  .blue {
-    color: var(--blue);
-  }
-
-  h1 {
-    font-size: 36px;
-    margin-bottom: 24px;
-  }
-  img {
-    width: 100%;
-    max-width: 400px;
-  }
-  button {
-    max-width: 300px;
-  }
+#Landing-background {
 }

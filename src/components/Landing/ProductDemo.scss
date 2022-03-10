@@ -1,0 +1,49 @@
+#ProductDemo {
+  #Demo-background {
+    z-index: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+
+    .se-image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  #Demo-content {
+    z-index: 2;
+    position: absolute;
+    width: 100%;
+    top: 110%;
+
+    .se-button {
+      display: flex;
+      left: 10%;
+    }
+
+    #Demo-screen {
+      position: absolute;
+      left: 40%;
+      top: 60%;
+    }
+  }
+
+  .darkgreen {
+    color: var(--darkgreen);
+  }
+
+  .green {
+    color: var(--green);
+  }
+
+  .darkgrey {
+    color: var(--darkgrey);
+  }
+  .blue {
+    color: var(--blue);
+  }
+}

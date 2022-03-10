@@ -1,0 +1,43 @@
+#Hero {
+  @include page;
+  text-align: center;
+
+  #Hero-background {
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+
+    .se-image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  #Hero-content {
+    z-index: 2;
+    position: absolute;
+  }
+
+  .darkgreen {
+    color: var(--darkgreen);
+  }
+
+  .green {
+    color: var(--green);
+  }
+
+  .darkgrey {
+    color: var(--darkgrey);
+  }
+  .blue {
+    color: var(--blue);
+  }
+
+  button {
+    max-width: 300px;
+  }
+}
