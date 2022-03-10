@@ -1,10 +1,9 @@
 #Hero {
-  @include page;
   text-align: center;
 
   #Hero-background {
     z-index: 1;
-    position: absolute;
+    position: relative;
     width: 100%;
     height: 100%;
     top: 0;
@@ -20,6 +19,8 @@
   #Hero-content {
     z-index: 2;
     position: absolute;
+    top: 20%;
+    width: 100%;
   }
 
   .darkgreen {
@@ -35,9 +36,5 @@
   }
   .blue {
     color: var(--blue);
-  }
-
-  button {
-    max-width: 300px;
   }
 }

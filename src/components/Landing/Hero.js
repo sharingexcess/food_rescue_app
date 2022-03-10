@@ -1,16 +1,24 @@
 import { Button, Spacer, Text, Image } from '@sharingexcess/designsystem'
-import { useAuth } from 'hooks'
+import { useAuth, useIsMobile } from 'hooks'
 
 export function Hero() {
+  const isMobile = useIsMobile()
   const { handleLogin } = useAuth()
   return (
     <>
-      <main id="Hero">
+      <div id="Hero">
         <section id="Hero-background">
-          <Image
-            src="/LandingImage/hero_background.png"
-            alt="Hero Background"
-          />
+          {isMobile ? (
+            <Image
+              src="/LandingImage/hero_background_mobile.png"
+              alt="Hero Background"
+            />
+          ) : (
+            <Image
+              src="/LandingImage/hero_background.png"
+              alt="Hero Background"
+            />
+          )}
         </section>
         <div id="Hero-content">
           <Text type="primary-header" color="black" align="center">
@@ -32,7 +40,7 @@ export function Hero() {
             Start saving food
           </Button>
         </div>
-      </main>
+      </div>
     </>
   )
 }
