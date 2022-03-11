@@ -1,13 +1,27 @@
 #ProductDemo {
+  @include LandingPage;
+  --se-min-hero-width: 700px;
+  --se-min-hero-height: 100vh;
+  min-width: var(--se-min-hero-width);
+  min-height: var(--se-min-hero-height);
+  display: flex;
+  padding-top: 100px;
+  padding-bottom: 170px;
+
+  @include mobile {
+    min-width: 100vw;
+  }
+
   #Demo-background {
     z-index: 1;
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    overflow: hidden;
-
+    object-fit: cover;
+    display: flex;
+    align-items: center;
     .se-image {
       width: 100%;
       height: 100%;
@@ -19,19 +33,36 @@
 
   #Demo-content {
     z-index: 2;
-    position: absolute;
     width: 100%;
-    top: 110%;
-
-    .se-button {
+    .Demo-content-container {
       display: flex;
-      left: 10%;
-    }
+      .Demo-content-menu {
+        position: relative;
+        @include flex-vertical-left;
+        width: 35%;
+        right: 5%;
+        text-align: center;
+        .se-button {
+          border-radius: 5px;
+        }
+      }
 
-    #Demo-screen {
-      position: absolute;
-      left: 40%;
-      top: 60%;
+      .Demo-screen {
+        background-color: var(--lightgrey);
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        box-shadow: var(--se-shadow-large);
+        left: 10%;
+        position: relative;
+
+        #demoVideo {
+          border-radius: 10px;
+          position: relative;
+          object-fit: cover;
+          max-width: 100%;
+        }
+      }
     }
   }
 

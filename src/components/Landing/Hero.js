@@ -7,19 +7,22 @@ export function Hero() {
   return (
     <>
       <div id="Hero">
-        <section id="Hero-background">
+        <div id="Hero-background">
           {isMobile ? (
             <Image
               src="/LandingImage/hero_background_mobile.png"
               alt="Hero Background"
             />
           ) : (
-            <Image
-              src="/LandingImage/hero_background.png"
-              alt="Hero Background"
-            />
+            <>
+              <Image
+                src="/LandingImage/hero_background.png"
+                alt="Hero Background"
+              />
+            </>
           )}
-        </section>
+        </div>
+
         <div id="Hero-content">
           <Text type="primary-header" color="black" align="center">
             Using

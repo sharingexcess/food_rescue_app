@@ -1,2 +1,104 @@
+@mixin LandingPage {
+  // Page views should have 144px on top and bottom,
+  // and at least 96px on left and right.
+  // For large window sizes, we want to constrain the content
+  // to the center 1000px. Therefore, our max padding is
+  // 50vw - 500px on the left and right,
+  // which is half the difference between the
+  // window width, and 1000px
+  padding: 144px max(96px, calc(50vw - 500px)) 64px
+    max(96px, calc(50vw - 500px));
+  position: relative;
+  @include mobile {
+    padding: 96px 16px;
+  }
+}
+@mixin flex-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+@mixin flex-vertical-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+@mixin flex-vertical-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-vertical-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+@mixin hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      &:not(:disabled) {
+        @content;
+      }
+    }
+  }
+}
+
+@mixin active {
+  &:active {
+    &:not(:disabled) {
+      @content;
+    }
+  }
+}
+
+@mixin ellipsis {
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  min-width: 0 !important;
+}
+
+@mixin fade-in($time: 0.2s, $delay: 0s) {
+  opacity: 0;
+  animation: fade-in $time ease forwards $delay;
+
+  @keyframes fade-in {
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin slide-in($x: -64px, $y: 0, $time: 1s) {
+  opacity: 0;
+  transform: translate($x, $y);
+  animation: slide-in $time ease forwards;
+
+  @keyframes slide-in {
+    to {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+  }
+}
+
 #Landing-background {
 }

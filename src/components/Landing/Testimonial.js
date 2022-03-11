@@ -3,18 +3,19 @@ import { dataSlider } from './dataSlider'
 import { useState } from 'react/cjs/react.development'
 import leftArrow from 'assets/leftArrow.svg'
 import rightArrow from 'assets/rightArrow.svg'
+import { useIsMobile } from 'hooks'
 
 function ButtonSlider({ direction, moveSlide }) {
   console.log(moveSlide)
   return (
-    <Button
-      handler={moveSlide}
+    <button
+      onClick={moveSlide}
       className={
         direction === 'next' ? 'button-slide next' : 'button-slide prev'
       }
     >
       <Image src={direction === 'next' ? rightArrow : leftArrow} />
-    </Button>
+    </button>
   )
 }
 function TestimonialSlider() {
@@ -39,10 +40,6 @@ function TestimonialSlider() {
   return (
     <div className="Testimonial-slider">
       {dataSlider.map((author, index) => {
-        {
-          console.log(index + 1)
-          console.log(slideIndex)
-        }
         return (
           <div
             key={author.name}
@@ -73,19 +70,27 @@ function TestimonialSlider() {
 }
 
 export function Testimonial() {
+  const isMobile = useIsMobile()
   return (
     <>
-      <main id="Testimonial">
-        <section id="Testimonial-background">
-          <Image
-            src="/LandingImage/test_background.png"
-            alt="Testimonial Background"
-          />
-        </section>
+      <div id="Testimonial">
+        <div id="Testimonial-background">
+          {isMobile ? (
+            <Image
+              src="/LandingImage/test_background_mobile.png"
+              alt="Testimonial Background"
+            />
+          ) : (
+            <Image
+              src="/LandingImage/test_background.png"
+              alt="Testimonial Background"
+            />
+          )}
+        </div>
         <div id="Testimonial-content">
           <TestimonialSlider />
         </div>
-      </main>
+      </div>
     </>
   )
 }
