@@ -31,34 +31,28 @@
 
   #Testimonial-content {
     width: 100%;
+    position: absolute;
+    max-width: 100%;
+    object-fit: cover;
+    overflow: hidden;
+    @include flex-vertical-right;
+    .Slide {
+      width: 100%;
+    }
 
-    .Testimonial-slider {
-      @include flex-vertical-right;
-      .Slide {
-        top: 20%;
+    .Slide-content {
+      width: 100%;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: var(--se-shadow-large);
+      padding: 15px;
+      .Quotemark-vector .se-image {
         position: absolute;
-        z-index: 3;
-        width: clamp(300px, 50%, 500px);
-        padding: 48px 24px;
-        box-shadow: var(--se-shadow-large);
-        margin: 10px;
-        border-radius: 10px;
-        background: var(--white);
-        opacity: 0;
+        opacity: 30%;
+        z-index: 2;
+        width: 30%;
+      }
 
-        .Quotemark-vector .se-image {
-          position: absolute;
-          opacity: 30%;
-          z-index: 2;
-          width: 30%;
-        }
-        .se-text {
-          padding: 50px 25px 0;
-        }
-      }
-      .active {
-        opacity: 1;
-      }
       .Testimonial-author {
         .se-image {
           left: 65%;
@@ -75,21 +69,6 @@
           right: 6%;
         }
       }
-      .button-slide {
-        border-radius: 50%;
-        width: 5%;
-        background-color: transparent;
-        border: 0px;
-        position: absolute;
-        top: 30%;
-        z-index: 4;
-      }
-      .prev {
-        left: 10px;
-      }
-      .next {
-        right: 10%;
-      }
     }
   }
 
@@ -104,6 +83,7 @@
   .darkgrey {
     color: var(--darkgrey);
   }
+
   .blue {
     color: var(--blue);
   }

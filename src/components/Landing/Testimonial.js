@@ -4,8 +4,13 @@ import { useState } from 'react/cjs/react.development'
 import leftArrow from 'assets/leftArrow.svg'
 import rightArrow from 'assets/rightArrow.svg'
 import { useIsMobile } from 'hooks'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { EffectCoverflow, Pagination } from 'swiper'
+import 'swiper/css'
+import 'swiper/css/effect-coverflow'
+import 'swiper/css/pagination'
 
-function ButtonSlider({ direction, moveSlide }) {
+/*function ButtonSlider({ direction, moveSlide }) {
   console.log(moveSlide)
   return (
     <button
@@ -67,7 +72,7 @@ function TestimonialSlider() {
       <ButtonSlider moveSlide={nextSlide} direction={'next'} />
     </div>
   )
-}
+}*/
 
 export function Testimonial() {
   const isMobile = useIsMobile()
@@ -87,8 +92,48 @@ export function Testimonial() {
             />
           )}
         </div>
+
         <div id="Testimonial-content">
-          <TestimonialSlider />
+          <Swiper
+            effect={'coverflow'}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={3}
+            coverflowEffect={{
+              rotate: 0,
+              stretch: 0,
+              depth: 100,
+              modifier: 2,
+              slideShadows: true,
+            }}
+            pagination={true}
+            modules={[EffectCoverflow, Pagination]}
+            className="mySwiper"
+          >
+            {dataSlider.map(user => (
+              <SwiperSlide key={user.name} className="Slide">
+                <div className="Slide-content">
+                  <div clasName="Slide-content-box">
+                    <div className="Quotemark-vector">
+                      <Image src={user.quotemark} />
+                    </div>
+                    <Text type="paragraph" color="greydark" align="left">
+                      {user.quote}
+                    </Text>
+                    <div className="Testimonial-author">
+                      <Image src={user.image} alt={user.name} />
+                      <Text type="subheader" color={user.color} align="right">
+                        {user.name}
+                      </Text>
+                      <Text type="small" color="black" align="right">
+                        {user.title}
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </div>
     </>
