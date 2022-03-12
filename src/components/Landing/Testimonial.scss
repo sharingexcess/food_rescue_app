@@ -31,6 +31,7 @@
     width: 100%;
     position: relative;
     max-width: 100%;
+    left: 30%;
 
     .swiper-button-prev,
     .swiper-button-next {
@@ -61,6 +62,7 @@
         }
 
         .Testimonial-author {
+          padding-top: 30px;
           .se-image {
             width: 30%;
             border-radius: 50%;
@@ -102,5 +104,9 @@
 
   .party-blue {
     color: var(--party-blue);
+  }
+
+  .party-yellow {
+    color: var(--party-yellow);
   }
 }

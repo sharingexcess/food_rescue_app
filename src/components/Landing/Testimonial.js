@@ -41,7 +41,7 @@ export function Testimonial() {
               slideShadows: true,
             }}
             pagination={true}
-            navigation={true}
+            navigation={isMobile ? true : false}
             modules={[EffectCoverflow, Pagination, Navigation]}
             className="mySwiper"
           >

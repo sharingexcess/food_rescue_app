@@ -40,7 +40,7 @@
       .Demo-content-menu {
         position: relative;
         @include flex-vertical-left;
-        width: 35%;
+        width: 25%;
         right: 5%;
         text-align: center;
         .se-button {
@@ -49,9 +49,9 @@
       }
 
       .Demo-screen {
+        width: 100%;
         left: 10%;
         position: relative;
-        width: 65%;
 
         video {
           border-radius: 10px;
@@ -59,7 +59,7 @@
           object-fit: cover;
           width: calc(100% - 20px);
           box-shadow: var(--se-shadow-large);
-          transition: all 0.4s ease-in;
+          transition: all 0.3s ease-in;
 
           &.visible {
             opacity: 1;
