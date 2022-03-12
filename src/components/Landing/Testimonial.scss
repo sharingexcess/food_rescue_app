@@ -1,12 +1,10 @@
 #Testimonial {
   @include LandingPage;
   --se-min-hero-width: 700px;
-  --se-min-hero-height: 80vh;
+  --se-min-hero-height: 0vh;
   min-width: var(--se-min-hero-width);
   min-height: var(--se-min-hero-height);
   display: flex;
-  padding-top: 100px;
-  padding-bottom: 0;
 
   @include mobile {
     min-width: 100vw;
@@ -31,42 +29,52 @@
 
   #Testimonial-content {
     width: 100%;
-    position: absolute;
+    position: relative;
     max-width: 100%;
-    object-fit: cover;
-    overflow: hidden;
-    @include flex-vertical-right;
-    .Slide {
-      width: 100%;
+
+    .swiper-button-prev,
+    .swiper-button-next {
+      color: var(--black);
     }
 
-    .Slide-content {
+    .Slide {
       width: 100%;
-      background: var(--white);
-      border-radius: 10px;
-      box-shadow: var(--se-shadow-large);
-      padding: 15px;
-      .Quotemark-vector .se-image {
-        position: absolute;
-        opacity: 30%;
-        z-index: 2;
-        width: 30%;
-      }
 
-      .Testimonial-author {
-        .se-image {
-          left: 65%;
-          width: 30%;
-          border-radius: 50%;
-          object-fit: cover;
-          box-shadow: var(--se-shadow-medium);
-        }
-        .subheader {
-          font-weight: 700;
-        }
+      .Slide-content {
+        background: var(--white);
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: var(--se-shadow-large);
+        padding: 30px;
+        padding-top: 30px;
+        padding-bottom: 40px;
+        position: relative;
         .se-text {
-          padding: 0;
-          right: 6%;
+          padding-top: 30px;
+          padding-left: 10px;
+        }
+        .Quotemark-vector .se-image {
+          position: absolute;
+          z-index: 0;
+          width: 30%;
+          opacity: 50%;
+        }
+
+        .Testimonial-author {
+          .se-image {
+            width: 30%;
+            border-radius: 50%;
+            object-fit: cover;
+            left: 65%;
+            box-shadow: var(--se-shadow-medium);
+          }
+          .subheader {
+            font-weight: 700;
+          }
+          .se-text {
+            padding: 0;
+            right: 6%;
+          }
         }
       }
     }

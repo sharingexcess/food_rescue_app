@@ -1,4 +1,4 @@
-export const dataSlider = [
+export const TESTIMONIALS = [
   {
     name: 'Lucy Doren',
     quotemark: '/LandingImage/test_quotemark.png',
@@ -24,5 +24,20 @@ export const dataSlider = [
     image: '/LandingImage/lucy.png',
     title: 'Distribution Coordinator',
     quote: '',
+  },
+]
+
+export const DEMO_VIDEOS = [
+  {
+    name: 'Schedule Rescue',
+    source: '/LandingImage/demo_scheduleRescue.mp4',
+  },
+  {
+    name: 'Analytics',
+    source: '/LandingImage/demo_analytics.mp4',
+  },
+  {
+    name: 'My Stats',
+    source: '/LandingImage/demo_myStats.mp4',
   },
 ]

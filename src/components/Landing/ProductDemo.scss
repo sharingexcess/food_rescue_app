@@ -7,6 +7,7 @@
   display: flex;
   padding-top: 100px;
   padding-bottom: 170px;
+  box-sizing: border-box;
 
   @include mobile {
     min-width: 100vw;
@@ -48,19 +49,24 @@
       }
 
       .Demo-screen {
-        background-color: var(--lightgrey);
-        padding: 10px;
-        border-radius: 10px;
-        width: 100%;
-        box-shadow: var(--se-shadow-large);
         left: 10%;
         position: relative;
+        width: 65%;
 
-        #demoVideo {
+        video {
           border-radius: 10px;
-          position: relative;
+          position: absolute;
           object-fit: cover;
-          max-width: 100%;
+          width: calc(100% - 20px);
+          box-shadow: var(--se-shadow-large);
+          transition: all 0.4s ease-in;
+
+          &.visible {
+            opacity: 1;
+          }
+          &.invisible {
+            opacity: 0;
+          }
         }
       }
     }

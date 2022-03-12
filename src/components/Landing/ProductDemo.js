@@ -1,6 +1,7 @@
 import { Button, Spacer, Text, Image, Card } from '@sharingexcess/designsystem'
 import { useIsMobile } from 'hooks'
 import { useState } from 'react/cjs/react.development'
+import { DEMO_VIDEOS } from './helper'
 
 export function ProductDemo() {
   const isMobile = useIsMobile()
@@ -65,27 +66,23 @@ export function ProductDemo() {
               </Button>
             </div>
             <div className="Demo-screen">
-              {demo === '' ? (
+              {DEMO_VIDEOS.map(video => (
                 <video
-                  id="demoVideo"
-                  src="/LandingImage/demo_myStats.mp4"
+                  className={
+                    demo === ''
+                      ? 'visible'
+                      : demo === video.source
+                      ? 'visible'
+                      : 'invisible'
+                  }
+                  src={video.source}
                   autoPlay
                   playsInline
                   preload="auto"
                   muted
                   loop
                 />
-              ) : (
-                <video
-                  id="demoVideo"
-                  src={demo}
-                  autoPlay
-                  playsInline
-                  preload="auto"
-                  muted
-                  loop
-                />
-              )}
+              ))}
             </div>
           </div>
         </div>
