@@ -32,7 +32,7 @@ export function Testimonial() {
             effect={'coverflow'}
             grabCursor={true}
             centeredSlides={true}
-            slidesPerView={2}
+            slidesPerView={isMobile ? 1 : 2}
             coverflowEffect={{
               rotate: 0,
               stretch: 0,

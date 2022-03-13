@@ -9,6 +9,7 @@
   padding: 144px max(96px, calc(50vw - 500px)) 64px
     max(96px, calc(50vw - 500px));
   position: relative;
+
   @include mobile {
     padding: 96px 16px;
   }

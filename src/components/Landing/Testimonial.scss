@@ -6,6 +6,8 @@
   min-height: var(--se-min-hero-height);
   display: flex;
 
+  box-sizing: border-box;
+
   @include mobile {
     min-width: 100vw;
   }
@@ -32,6 +34,11 @@
     position: relative;
     max-width: 100%;
     left: 30%;
+    @include mobile {
+      position: initial;
+      left: 0;
+      width: 100%;
+    }
 
     .swiper-button-prev,
     .swiper-button-next {
@@ -50,6 +57,7 @@
         padding-top: 30px;
         padding-bottom: 40px;
         position: relative;
+
         .se-text {
           padding-top: 30px;
           padding-left: 10px;
