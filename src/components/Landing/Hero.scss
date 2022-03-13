@@ -8,6 +8,7 @@
   align-items: center;
   padding-top: 20px;
   padding-bottom: 128px;
+  box-sizing: border-box;
 
   @include mobile {
     min-width: 100vw;
@@ -42,15 +43,7 @@
   .darkgreen {
     color: var(--darkgreen);
   }
-
-  .green {
-    color: var(--green);
-  }
-
   .darkgrey {
     color: var(--darkgrey);
-  }
-  .blue {
-    color: var(--blue);
   }
 }

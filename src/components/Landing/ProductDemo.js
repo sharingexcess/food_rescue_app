@@ -9,7 +9,7 @@ export function ProductDemo() {
 
   return (
     <>
-      <main id="ProductDemo">
+      <div id="ProductDemo">
         <div id="Demo-background">
           {isMobile ? (
             <Image
@@ -33,6 +33,7 @@ export function ProductDemo() {
             their comunities.
           </Text>
           <Spacer height={50} />
+
           <div className="Demo-content-container">
             <div className="Demo-content-menu">
               <Button
@@ -66,6 +67,7 @@ export function ProductDemo() {
               </Button>
             </div>
             <Spacer height={50} />
+
             <div className="Demo-screen">
               {DEMO_VIDEOS.map(obj =>
                 isMobile ? (
@@ -100,7 +102,7 @@ export function ProductDemo() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </>
   )
 }

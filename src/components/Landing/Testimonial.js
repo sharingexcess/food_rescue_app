@@ -1,4 +1,4 @@
-import { Button, Spacer, Text, Image, Card } from '@sharingexcess/designsystem'
+import { Text, Image } from '@sharingexcess/designsystem'
 import { TESTIMONIALS } from './Helper'
 import { useIsMobile } from 'hooks'
 import { Swiper, SwiperSlide } from 'swiper/react'

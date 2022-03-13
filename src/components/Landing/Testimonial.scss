@@ -5,12 +5,12 @@
   min-width: var(--se-min-hero-width);
   min-height: var(--se-min-hero-height);
   display: flex;
-
   box-sizing: border-box;
 
   @include mobile {
     min-width: 100vw;
   }
+
   #Testimonial-background {
     z-index: 1;
     position: absolute;
@@ -34,7 +34,6 @@
     position: relative;
     max-width: 100%;
     left: 20%;
-
     @include mobile {
       position: initial;
       margin: auto;
@@ -59,7 +58,6 @@
         padding-top: 30px;
         padding-bottom: 40px;
         position: relative;
-
         .se-text {
           padding-top: 30px;
           padding-left: 10px;
@@ -96,16 +94,8 @@
     color: var(--darkgreen);
   }
 
-  .green {
-    color: var(--green);
-  }
-
   .darkgrey {
     color: var(--darkgrey);
-  }
-
-  .blue {
-    color: var(--blue);
   }
 
   .party-orange {
