@@ -33,11 +33,13 @@
     width: 100%;
     position: relative;
     max-width: 100%;
-    left: 30%;
+    left: 20%;
+
     @include mobile {
       position: initial;
-      left: 0;
+      margin: auto;
       width: 100%;
+      display: block;
     }
 
     .swiper-button-prev,

@@ -44,7 +44,7 @@
         position: relative;
         @include flex-vertical-left;
         width: 25%;
-        right: 5%;
+
         text-align: center;
         @include mobile {
           width: 50%;
@@ -57,13 +57,32 @@
       }
 
       .Demo-screen {
-        width: 100%;
+        width: 65%;
         left: 10%;
         position: relative;
 
+        img {
+          border-radius: 10px;
+          position: absolute;
+          object-fit: cover;
+          width: calc(100% - 20px);
+          box-shadow: var(--se-shadow-large);
+          transition: all 0.3s ease-in;
+
+          &.visible {
+            opacity: 1;
+          }
+          &.invisible {
+            opacity: 0;
+          }
+        }
+
         @include mobile {
           left: 0;
-          display: inline-block;
+          margin: auto;
+          width: 100%;
+          display: block;
+          position: relative;
         }
 
         video {

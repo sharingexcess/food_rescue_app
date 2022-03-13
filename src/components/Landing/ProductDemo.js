@@ -1,7 +1,7 @@
-import { Button, Spacer, Text, Image, Card } from '@sharingexcess/designsystem'
+import { Button, Spacer, Text, Image } from '@sharingexcess/designsystem'
 import { useIsMobile } from 'hooks'
 import { useState } from 'react/cjs/react.development'
-import { DEMO_VIDEOS } from './helper'
+import { DEMO_VIDEOS } from './Helper'
 
 export function ProductDemo() {
   const isMobile = useIsMobile()
@@ -65,24 +65,38 @@ export function ProductDemo() {
                 Your stats
               </Button>
             </div>
+            <Spacer height={50} />
             <div className="Demo-screen">
-              {DEMO_VIDEOS.map(video => (
-                <video
-                  className={
-                    demo === ''
-                      ? 'visible'
-                      : demo === video.source
-                      ? 'visible'
-                      : 'invisible'
-                  }
-                  src={video.source}
-                  autoPlay
-                  playsInline
-                  preload="auto"
-                  muted
-                  loop
-                />
-              ))}
+              {DEMO_VIDEOS.map(obj =>
+                isMobile ? (
+                  <img
+                    className={
+                      demo === ''
+                        ? 'visible'
+                        : demo === obj.mp4
+                        ? 'visible'
+                        : 'invisible'
+                    }
+                    src={obj.gif}
+                  />
+                ) : (
+                  <video
+                    className={
+                      demo === ''
+                        ? 'visible'
+                        : demo === obj.mp4
+                        ? 'visible'
+                        : 'invisible'
+                    }
+                    src={obj.mp4}
+                    autoPlay
+                    playsInline
+                    preload="auto"
+                    muted
+                    loop
+                  />
+                )
+              )}
             </div>
           </div>
         </div>

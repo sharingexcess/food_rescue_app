@@ -30,14 +30,17 @@ export const TESTIMONIALS = [
 export const DEMO_VIDEOS = [
   {
     name: 'Schedule Rescue',
-    source: '/LandingImage/demo_scheduleRescue.mp4',
+    mp4: '/LandingImage/demo_scheduleRescue.mp4',
+    gif: '/LandingImage/demo_scheduleRescue.gif',
   },
   {
     name: 'Analytics',
-    source: '/LandingImage/demo_analytics.mp4',
+    mp4: '/LandingImage/demo_analytics.mp4',
+    gif: '/LandingImage/demo_analytics.gif',
   },
   {
     name: 'My Stats',
-    source: '/LandingImage/demo_myStats.mp4',
+    mp4: '/LandingImage/demo_myStats.mp4',
+    gif: '/LandingImage/demo_myStats.gif',
   },
 ]

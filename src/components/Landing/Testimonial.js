@@ -1,5 +1,5 @@
 import { Button, Spacer, Text, Image, Card } from '@sharingexcess/designsystem'
-import { TESTIMONIALS } from './helper'
+import { TESTIMONIALS } from './Helper'
 import { useIsMobile } from 'hooks'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCoverflow, Navigation, Pagination } from 'swiper'
