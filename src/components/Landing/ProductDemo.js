@@ -43,7 +43,7 @@ export function ProductDemo() {
                 fullWidth
                 handler={() => setDemo('/LandingImage/demo_scheduleRescue.mp4')}
               >
-                Schedule Rescue
+                Coordinate Rescues
               </Button>
               <Spacer height={20} />
               <Button
@@ -53,7 +53,7 @@ export function ProductDemo() {
                 fullWidth
                 handler={() => setDemo('/LandingImage/demo_analytics.mp4')}
               >
-                Analytics
+                Measure Impact
               </Button>
               <Spacer height={20} />
               <Button
@@ -63,10 +63,10 @@ export function ProductDemo() {
                 fullWidth
                 handler={() => setDemo('/LandingImage/demo_myStats.mp4')}
               >
-                Your stats
+                Track Your Progress
               </Button>
             </div>
-            <Spacer height={50} />
+            <Spacer height={40} />
 
             <div className="Demo-screen">
               {DEMO_VIDEOS.map(obj =>

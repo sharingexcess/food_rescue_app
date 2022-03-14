@@ -35,16 +35,22 @@
   #Demo-content {
     z-index: 2;
     width: 100%;
+    padding-top: 120px;
+    padding-bottom: 120px;
+    @include mobile {
+      padding-top: 50px;
+      padding-bottom: 50px;
+    }
+
     .Demo-content-container {
       display: flex;
       @include mobile {
-        display: block;
+        @include flex-vertical-center;
       }
       .Demo-content-menu {
         position: relative;
         @include flex-vertical-left;
         width: 25%;
-
         text-align: center;
         @include mobile {
           width: 50%;
@@ -61,6 +67,14 @@
         left: 10%;
         position: relative;
 
+        @include mobile {
+          left: 0;
+          width: 100%;
+          margin: auto;
+          display: block;
+          position: relative;
+        }
+
         img {
           border-radius: 10px;
           position: absolute;
@@ -69,20 +83,19 @@
           box-shadow: var(--se-shadow-large);
           transition: all 0.3s ease-in;
 
+          @include mobile {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+          }
+
           &.visible {
             opacity: 1;
           }
           &.invisible {
             opacity: 0;
           }
-        }
-
-        @include mobile {
-          left: 0;
-          margin: auto;
-          width: 100%;
-          display: block;
-          position: relative;
         }
 
         video {
