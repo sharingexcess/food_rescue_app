@@ -1,15 +1,13 @@
-import { Button, Spacer, Text, Image } from '@sharingexcess/designsystem'
-
-import { Hero } from './Hero'
-import { ProductDemo } from './ProductDemo'
-import { Testimonial } from './Testimonial'
+import { Hero } from './Hero/Hero'
+import { ProductDemo } from './ProductDemo/ProductDemo'
+import { Testimonial } from './Testimonial/Testimonial'
 
 export function Landing() {
   return (
-    <>
+    <main id="Landing">
       <Hero />
       <ProductDemo />
       <Testimonial />
-    </>
+    </main>
   )
 }

@@ -1,3 +1,8 @@
+#Landing {
+  width: 100vw;
+  overflow: hidden;
+}
+
 @mixin LandingPage {
   // Page views should have 144px on top and bottom,
   // and at least 96px on left and right.
@@ -103,3 +108,7 @@
 
 #Landing-background {
 }
+
+@import './Hero/Hero.scss';
+@import './ProductDemo/ProductDemo.scss';
+@import './Testimonial/Testimonial.scss';

@@ -1,38 +1,24 @@
 #ProductDemo {
   @include LandingPage;
-  --se-min-hero-width: 700px;
-  --se-min-hero-height: 100vh;
-  min-width: var(--se-min-hero-width);
-  min-height: var(--se-min-hero-height);
-  display: flex;
-  padding-top: 100px;
-  padding-bottom: 170px;
-  box-sizing: border-box;
+  min-height: 92vh;
+  padding-top: 32px;
+  padding-bottom: 128px;
 
   @include mobile {
-    min-width: 100vw;
+    padding-top: 64px;
   }
 
-  #Demo-background {
-    z-index: 1;
+  #ProductDemo-background {
     position: absolute;
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    z-index: -1;
     top: 0;
     left: 0;
-    object-fit: cover;
-    display: flex;
-    align-items: center;
-    .se-image {
-      width: 100%;
-      height: 100%;
-    }
-    @include mobile {
-      min-width: 100vw;
-    }
   }
 
-  #Demo-content {
+  #ProductDemo-content {
     z-index: 2;
     width: 100%;
     padding-top: 120px;
@@ -42,12 +28,12 @@
       padding-bottom: 50px;
     }
 
-    .Demo-content-container {
+    .ProductDemo-content-container {
       display: flex;
       @include mobile {
         @include flex-vertical-center;
       }
-      .Demo-content-menu {
+      .ProductDemo-content-menu {
         position: relative;
         @include flex-vertical-left;
         width: 25%;
@@ -62,7 +48,7 @@
         }
       }
 
-      .Demo-screen {
+      .ProductDemo-screen {
         width: 65%;
         left: 10%;
         position: relative;

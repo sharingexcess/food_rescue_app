@@ -27,20 +27,17 @@ export const TESTIMONIALS = [
   },
 ]
 
-export const DEMO_VIDEOS = [
-  {
-    name: 'Schedule Rescue',
+export const DEMO_VIDEOS = {
+  'Coordinate Rescues': {
     mp4: '/LandingImage/demo_scheduleRescue.mp4',
     gif: '/LandingImage/demo_scheduleRescue.gif',
   },
-  {
-    name: 'Analytics',
+  'Measure Impact': {
     mp4: '/LandingImage/demo_analytics.mp4',
     gif: '/LandingImage/demo_analytics.gif',
   },
-  {
-    name: 'My Stats',
+  'Track Your Progress': {
     mp4: '/LandingImage/demo_myStats.mp4',
     gif: '/LandingImage/demo_myStats.gif',
   },
-]
+}
