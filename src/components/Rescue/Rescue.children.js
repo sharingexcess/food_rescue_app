@@ -7,8 +7,11 @@ import {
   Spacer,
   Text,
 } from '@sharingexcess/designsystem'
+
+import moment from 'moment'
 import { EditDelivery, GoogleMap, Input } from 'components'
 import {
+  DAYS,
   CLOUD_FUNCTION_URLS,
   createTimestamp,
   formatPhoneNumber,
@@ -551,11 +554,53 @@ export function Stop({ stops, s, i }) {
         <Spacer height={16} />
         <Text
           type="small"
-          color="black"
+          color={isActiveStop ? 'black' : 'white'}
           classList={['Rescue-stop-instructions']}
         >
           <span>Instructions: </span>
           {s.location.notes}
+        </Text>
+      </>
+    ) : null
+  }
+
+  function formatTime(time) {
+    const getHour = parseInt(time) >= 12 ? time.slice(0, 2) : time.slice(0, 1)
+    const getMin = time.slice(-2)
+    const amOrPm = getHour >= 12 ? 'pm' : 'am'
+    console.log(getMin)
+    if (getHour > 12) {
+      return [getHour - 12, ':', getMin, amOrPm]
+    } else return [time, amOrPm]
+  }
+
+  function GetDayOfWeek() {
+    const formatDate = formatTimestamp(s.timestamp_scheduled_start)
+    const date = moment(formatDate).format('d')
+    const filterDate = s.location.hours
+      ? s.location.hours.filter(hour => hour.day_of_week === parseInt(date))
+      : null
+
+    return filterDate.length > 0
+      ? [
+          ' Open ',
+          DAYS[filterDate[0].day_of_week],
+          ' : ',
+          formatTime(filterDate[0].time_open),
+          ' - ',
+          formatTime(filterDate[0].time_close),
+        ]
+      : ' Not available today'
+  }
+
+  function StopHours() {
+    return s.location.hours ? (
+      <>
+        <Spacer height={16} />
+        <Text type="small" color={isActiveStop ? 'black' : 'white'}>
+          <Emoji name="one-oclock" width={20} />
+
+          {GetDayOfWeek()}
         </Text>
       </>
     ) : null
@@ -741,6 +786,7 @@ export function Stop({ stops, s, i }) {
           name={s.location.contact_name}
           number={s.location.contact_phone}
         />
+        <StopHours />
         <StopInstructions />
         <Spacer height={16} />
         <StopMap />
@@ -810,6 +856,9 @@ export function Stop({ stops, s, i }) {
             name={s.location.contact_name}
             number={s.location.contact_phone}
           />
+          <Spacer height={8} />
+          <StopHours />
+          <StopInstructions />
         </>
       )}
     </Card>
