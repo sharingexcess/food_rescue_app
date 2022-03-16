@@ -2,6 +2,7 @@
   @include LandingPage;
   min-height: 92vh;
   padding-top: 96px;
+  box-sizing: border-box;
 
   @include mobile {
     padding-top: 64px;

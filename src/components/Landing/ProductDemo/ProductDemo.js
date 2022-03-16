@@ -1,4 +1,10 @@
-import { Button, Spacer, Text, Image } from '@sharingexcess/designsystem'
+import {
+  Button,
+  Spacer,
+  Text,
+  Image,
+  FlexContainer,
+} from '@sharingexcess/designsystem'
 import { useIsMobile } from 'hooks'
 import { useState } from 'react'
 import { DEMO_VIDEOS } from '../content'
@@ -12,7 +18,7 @@ export function ProductDemo() {
     : '/LandingImage/demo_background.png'
 
   return (
-    <div id="ProductDemo">
+    <FlexContainer direction="vertical" id="ProductDemo">
       <Image
         id="ProductDemo-background"
         src={BACKGROUND_IMAGE}
@@ -29,38 +35,27 @@ export function ProductDemo() {
         </Text>
         <Spacer height={48} />
 
-        <div className="ProductDemo-content-container">
+        <FlexContainer
+          direction="horizontal"
+          id="ProductDemo-content-container"
+        >
           <div className="ProductDemo-content-menu">
-            <Button
-              type="secondary"
-              color="black"
-              size="medium"
-              fullWidth
-              handler={() => setDemo('Coordinate Rescues')}
-            >
-              Coordinate Rescues
-            </Button>
-            <Spacer height={20} />
-            <Button
-              type="secondary"
-              color="black"
-              size="medium"
-              fullWidth
-              handler={() => setDemo('Measure Impact')}
-            >
-              Measure Impact
-            </Button>
-            <Spacer height={20} />
-            <Button
-              type="secondary"
-              color="black"
-              size="medium"
-              fullWidth
-              handler={() => setDemo('Track Your Progress')}
-            >
-              Track Your Progress
-            </Button>
+            {Object.keys(DEMO_VIDEOS).map((value, index) => (
+              <>
+                <Button
+                  type="secondary"
+                  color="black"
+                  size="medium"
+                  fullWidth
+                  handler={() => setDemo(Object.keys(DEMO_VIDEOS)[index])}
+                >
+                  {Object.keys(DEMO_VIDEOS)[index]}
+                </Button>
+                <Spacer height={25} />
+              </>
+            ))}
           </div>
+
           <Spacer height={40} />
 
           <div className="ProductDemo-screen">
@@ -84,8 +79,8 @@ export function ProductDemo() {
               )
             )}
           </div>
-        </div>
+        </FlexContainer>
       </div>
-    </div>
+    </FlexContainer>
   )
 }
