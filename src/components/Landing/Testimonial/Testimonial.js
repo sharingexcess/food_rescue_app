@@ -1,74 +1,61 @@
-import { Text, Image } from '@sharingexcess/designsystem'
-import { TESTIMONIALS } from '../content'
+import { Text, Image, FlexContainer, Spacer } from '@sharingexcess/designsystem'
+import { TESTIMONIALS, COLORS } from '../content'
 import { useIsMobile } from 'hooks'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { EffectCoverflow, Navigation, Pagination } from 'swiper'
+import { Navigation, Pagination } from 'swiper'
 import 'swiper/css'
-import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 
 export function Testimonial() {
   const isMobile = useIsMobile()
+  const BACKGROUND_IMAGE = isMobile
+    ? '/LandingImage/test_background_mobile.png'
+    : '/LandingImage/test_background.png'
   return (
-    <>
-      <div id="Testimonial">
-        <div id="Testimonial-background">
-          {isMobile ? (
-            <Image
-              src="/LandingImage/test_background_mobile.png"
-              alt="Testimonial Background"
-            />
-          ) : (
-            <Image
-              src="/LandingImage/test_background.png"
-              alt="Testimonial Background"
-            />
-          )}
-        </div>
-
-        <div id="Testimonial-content">
-          <Swiper
-            effect={'coverflow'}
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView={isMobile ? 1 : 2}
-            coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 100,
-              modifier: 2,
-              slideShadows: true,
-            }}
-            pagination={true}
-            navigation={isMobile ? true : false}
-            modules={[EffectCoverflow, Pagination, Navigation]}
-            className="mySwiper"
-          >
-            {TESTIMONIALS.map(user => (
-              <SwiperSlide key={user.name} className="Slide">
-                <div className="Slide-content">
-                  <div className="Quotemark-vector">
-                    <Image src={user.quotemark} />
-                  </div>
-                  <Text type="paragraph" color="greydark" align="left">
-                    {user.quote}
-                  </Text>
-                  <div className="Testimonial-author">
-                    <Image src={user.image} alt={user.name} />
-                    <Text type="subheader" color={user.color} align="right">
-                      {user.name}
-                    </Text>
-                    <Text type="small" color="black" align="right">
-                      {user.title}
-                    </Text>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      </div>
-    </>
+    <FlexContainer direction="vertical" id="Testimonial">
+      <Image
+        id="Testimonial-background"
+        src={BACKGROUND_IMAGE}
+        alt="Hero Background"
+      />
+      <Text type="primary-header" color="black" align="center" shadow>
+        Testimonials
+      </Text>
+      <Spacer height={isMobile ? 20 : 50} />
+      <FlexContainer id="Testimonial-content">
+        <Swiper
+          pagination={true}
+          navigation={true}
+          modules={[Pagination, Navigation]}
+          className="Testimonial-swiper"
+        >
+          {TESTIMONIALS.map((user, index) => (
+            <SwiperSlide className="Testimonial-content-slide">
+              <Image
+                src={user.image}
+                id="Testimonial-content-headshot"
+                classList={[COLORS[index]]}
+              />
+              <Spacer height={20} />
+              <Image
+                src={isMobile ? '' : user.quotemark}
+                id="Testimonial-content-vector"
+              />
+              <Text type="paragraph" color="greydark" align="left">
+                {user.quote}
+              </Text>
+              <Spacer height={20} />
+              <Text type="small-header" color={COLORS[index]} align="center">
+                {user.name}
+              </Text>
+              <Text type="small" color="black" align="center">
+                {user.title}
+              </Text>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </FlexContainer>
+    </FlexContainer>
   )
 }

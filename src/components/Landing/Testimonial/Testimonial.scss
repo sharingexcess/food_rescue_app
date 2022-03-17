@@ -1,92 +1,68 @@
 #Testimonial {
   @include LandingPage;
-  --se-min-hero-width: 700px;
-  --se-min-hero-height: 0vh;
-  min-width: var(--se-min-hero-width);
-  min-height: var(--se-min-hero-height);
-  display: flex;
+  min-height: 92vh;
   box-sizing: border-box;
-
+  padding-top: 32px;
   @include mobile {
-    min-width: 100vw;
+    padding-top: 100px;
   }
 
   #Testimonial-background {
-    z-index: 1;
     position: absolute;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
     top: 0;
     left: 0;
-    object-fit: cover;
-    display: flex;
-    align-items: center;
-    .se-image {
-      width: 100%;
-      height: 100%;
-    }
-    @include mobile {
-      min-width: 100vw;
-    }
   }
 
   #Testimonial-content {
-    width: 100%;
-    position: relative;
-    max-width: 100%;
-    left: 20%;
-    @include mobile {
-      position: initial;
-      margin: auto;
-      width: 100%;
-      display: block;
+    .Testimonial-content-slide {
+      background-color: var(--white);
+      border-radius: 10px;
+      padding: 30px 70px 30px 70px;
+      @include mobile {
+        background-image: linear-gradient(var(--lightgrey), var(--white));
+      }
     }
-
+    #Testimonial-content-vector {
+      position: absolute;
+      left: 5%;
+      top: 40%;
+      width: 15%;
+      opacity: 30%;
+    }
+    #Testimonial-content-headshot {
+      border-radius: 50%;
+      width: 17%;
+      border: 6px solid var(--se-white);
+      @include mobile {
+        width: 55%;
+      }
+      &.party-orange {
+        border-color: var(--party-orange);
+        background: var(--party-orange);
+      }
+      &.party-blue {
+        border-color: var(--party-blue);
+        background: var(--party-blue);
+      }
+      &.party-yellow {
+        border-color: var(--party-yellow);
+        background: var(--party-yellow);
+      }
+      &.partygreen {
+        border-color: var(--party-green);
+        background: var(--party-green);
+      }
+    }
+    .subheader {
+      font-weight: 700;
+    }
     .swiper-button-prev,
     .swiper-button-next {
       color: var(--black);
-    }
-
-    .Slide {
-      width: 100%;
-
-      .Slide-content {
-        background: var(--white);
-        width: 100%;
-        border-radius: 10px;
-        box-shadow: var(--se-shadow-large);
-        padding: 30px;
-        padding-top: 30px;
-        padding-bottom: 40px;
-        position: relative;
-        .se-text {
-          padding-top: 30px;
-          padding-left: 10px;
-        }
-        .Quotemark-vector .se-image {
-          position: absolute;
-          z-index: 0;
-          width: 30%;
-          opacity: 50%;
-        }
-
-        .Testimonial-author {
-          padding-top: 30px;
-          .se-image {
-            width: 30%;
-            border-radius: 50%;
-            object-fit: cover;
-            left: 65%;
-            box-shadow: var(--se-shadow-medium);
-          }
-          .subheader {
-            font-weight: 700;
-          }
-          .se-text {
-            padding: 0;
-            right: 6%;
-          }
-        }
-      }
     }
   }
 

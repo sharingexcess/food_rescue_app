@@ -23,7 +23,7 @@ export function Hero() {
         alt="Hero Background"
       />
 
-      <Text type="primary-header" color="black" align="center">
+      <Text type="primary-header" color="black" align="center" shadow>
         Using <span className="darkgreen">surplus</span>
         <Spacer height={4} />
         as a solution to <span className="darkgreen">scarcity</span>

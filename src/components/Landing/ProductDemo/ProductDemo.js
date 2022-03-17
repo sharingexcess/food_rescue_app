@@ -25,7 +25,7 @@ export function ProductDemo() {
         alt="Hero Background"
       />
       <div id="ProductDemo-content">
-        <Text type="primary-header" color="black" align="center">
+        <Text type="primary-header" color="black" align="center" shadow>
           Improving access to excess
         </Text>
         <Spacer height={16} />

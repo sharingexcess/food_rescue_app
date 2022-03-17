@@ -2,7 +2,6 @@ export const TESTIMONIALS = [
   {
     name: 'Lucy Doren',
     quotemark: '/LandingImage/test_quotemark.png',
-    color: 'party-orange',
     image: '/LandingImage/lucy_doren.png',
     title: 'Distribution Coordinator',
     quote:
@@ -11,19 +10,10 @@ export const TESTIMONIALS = [
   {
     name: 'Jacob Manera',
     quotemark: '/LandingImage/test_quotemark_blue.png',
-    color: 'party-blue',
-    image: '',
-    title: 'Distribution Coordinator',
+    image: '/LandingImage/jacob_manera.jpg',
+    title: 'Lead Rescue Driver',
     quote:
-      'The app helps me by letting me organize my stops into the order I need (I am an admin) and provides a location, contact number, and detailed instructions for most stops.',
-  },
-  {
-    name: 'Hannah Newlands',
-    quotemark: '/LandingImage/test_quotemark_yellow.png',
-    color: 'party-yellow',
-    image: '/LandingImage/hannah_newlands.png',
-    title: 'Volunteer Coordinator',
-    quote: '',
+      "The app helps me by letting me organize my stops into the order I need and provides a location, contact number, and detailed instructions for most stops. I can also edit submissions and split food between stop very easily. If the app didn't exist, we'd still be manually going through this process which was very incovenient.",
   },
 ]
 
@@ -41,3 +31,10 @@ export const DEMO_VIDEOS = {
     gif: '/LandingImage/demo_myStats.gif',
   },
 }
+
+export const COLORS = [
+  'party-orange',
+  'party-blue',
+  'party-yellow',
+  'party-green',
+]
