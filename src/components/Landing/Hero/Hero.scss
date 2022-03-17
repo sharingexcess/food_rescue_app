@@ -1,7 +1,8 @@
 #Hero {
   @include LandingPage;
   min-height: 92vh;
-  padding-top: 96px;
+  padding-top: 0px;
+  padding-bottom: 140px;
   box-sizing: border-box;
 
   @include mobile {
@@ -16,6 +17,12 @@
     z-index: -1;
     top: 0;
     left: 0;
+  }
+
+  #Hero-element {
+    position: absolute;
+    top: 55%;
+    left: 13%;
   }
 
   #Hero-subheader {

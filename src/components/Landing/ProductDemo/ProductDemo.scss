@@ -2,7 +2,7 @@
   @include LandingPage;
   min-height: 92vh;
   padding-top: 32px;
-  padding-bottom: 128px;
+  padding-bottom: 120px;
   box-sizing: border-box;
   @include mobile {
     padding-top: 64px;
@@ -38,8 +38,8 @@
       .ProductDemo-screen {
         width: 70%;
         position: relative;
-        padding-bottom: 250px;
-        padding-right: 550px;
+        padding-bottom: 220px;
+        padding-right: 450px;
         @include mobile {
           width: 100%;
           padding: 0;
