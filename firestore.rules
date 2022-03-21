@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    function isAuthenticated(){
+      return request.auth != null
+    }
+    
+    function isTheSameUser(userId){
+    	return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin (userId){
+      let adminStatus = get(/databases/$(database)/documents/users/$(userId)).data.is_admin == true;
+      return adminStatus;
+    }
+    
+    function isDriver (userId){
+      let driverStatus = get(/databases/$(database)/documents/users/$(userId)).data.is_driver == true;
+      return driverStatus;
+    }
+    
+    match /users/{userId} {
+    	allow create
+      allow read: if isTheSameUser(userId) || isAdmin(request.auth.uid);
+      allow update: if isTheSameUser(userId);
+      allow delete: if isTheSameUser(userId) || isAdmin(request.auth.uid);
+    }
+    
+    match /locations/{locationId}{
+    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid)
+    	allow create, update, delete: if isAdmin(request.auth.uid);
+    }
+    
+    match /organizations/{organizationId}{
+    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid)
+    	allow create, update, delete: if isAdmin(request.auth.uid);
+    }
+    
+    function isHandler(rescue)
+    {
+    	return  rescue.data.handler_id == request.auth.uid
+    }
+    
+    match /rescues/{rescueId}{
+    	allow create, delete: if isAdmin(request.auth.uid);
+    	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
+    }
+    
+    match /stops/{stops}{
+    	allow create, delete: if isAdmin(request.auth.uid);
+    	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
+    }
+  }
+}
