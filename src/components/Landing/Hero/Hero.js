@@ -23,25 +23,31 @@ export function Hero() {
         alt="Hero Background"
       />
 
-      <Text type="primary-header" color="black" align="center" shadow>
-        Using <span className="darkgreen">surplus</span>
+      <Text
+        type="primary-header"
+        id="Hero-header"
+        color="white"
+        align="center"
+        shadow
+      >
+        Using <span className="green">surplus</span>
         <Spacer height={4} />
-        as a solution to <span className="darkgreen">scarcity</span>
+        as a solution to <span className="green">scarcity</span>.
       </Text>
       <Spacer height={32} />
       <Text
         type="subheader"
         id="Hero-subheader"
         color="white"
-        align="center"
         shadow
+        align="center"
       >
-        Rescuing surplus food from restaurants, grocery stores, and retailers
-        since 2018.
+        <strong>Sharing Excess</strong> rescues food from wholesalers, grocery
+        stores, and restaurants to help fight food scarcity in our community.
       </Text>
       <Spacer height={32} />
       <Button size="large" handler={handleLogin}>
-        Start saving food
+        Start Saving Food
       </Button>
     </FlexContainer>
   )

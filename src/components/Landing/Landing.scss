@@ -19,6 +19,7 @@
     padding: 96px 16px;
   }
 }
+
 @mixin flex-left {
   display: flex;
   justify-content: flex-start;
@@ -57,6 +58,7 @@
   justify-content: center;
   align-items: flex-end;
 }
+
 @mixin hover {
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -104,9 +106,6 @@
       transform: translate(0, 0);
     }
   }
-}
-
-#Landing-background {
 }
 
 @import './Hero/Hero.scss';

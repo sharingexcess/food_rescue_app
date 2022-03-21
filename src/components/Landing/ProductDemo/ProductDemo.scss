@@ -4,8 +4,13 @@
   padding-top: 32px;
   padding-bottom: 120px;
   box-sizing: border-box;
+
   @include mobile {
-    padding-top: 64px;
+    padding-top: 0px;
+  }
+
+  .subheader {
+    max-width: 540px;
   }
 
   #ProductDemo-background {
@@ -19,6 +24,8 @@
   }
 
   #ProductDemo-content {
+    @include flex-vertical-center;
+
     #ProductDemo-content-container {
       @include mobile {
         @include flex-vertical-center;

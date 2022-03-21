@@ -19,10 +19,14 @@ export function Testimonial() {
         src={BACKGROUND_IMAGE}
         alt="Hero Background"
       />
-      <Text type="primary-header" color="black" align="center" shadow>
+      <Text type="primary-header" color="black" align="center">
         Testimonials
       </Text>
-      <Spacer height={isMobile ? 20 : 50} />
+      <Text type="subheader" color="black" align="center">
+        We work to build technology that matters for those doing the work on the
+        ground. Hear from the people that matter most!
+      </Text>
+      <Spacer height={isMobile ? 32 : 50} />
       <FlexContainer id="Testimonial-content">
         <Swiper
           pagination={true}

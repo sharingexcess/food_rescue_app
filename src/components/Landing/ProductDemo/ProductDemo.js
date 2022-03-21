@@ -26,12 +26,12 @@ export function ProductDemo() {
       />
       <div id="ProductDemo-content">
         <Text type="primary-header" color="black" align="center" shadow>
-          Improving access to excess
+          We improve access to excess.
         </Text>
         <Spacer height={16} />
         <Text type="subheader" color="black" align="center">
-          We work with organizations nationwide to help them deliver food to
-          their comunities.
+          At Sharing Excess, we're building technology that makes it easier for
+          volunteers and businesses work together to fight food scarcity.
         </Text>
         <Spacer height={48} />
 
@@ -51,7 +51,7 @@ export function ProductDemo() {
                 >
                   {Object.keys(DEMO_VIDEOS)[index]}
                 </Button>
-                <Spacer height={25} />
+                <Spacer height={16} />
               </>
             ))}
           </div>
