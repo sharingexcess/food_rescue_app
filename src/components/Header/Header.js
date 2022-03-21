@@ -42,7 +42,7 @@ export function Header() {
             wrap={false}
             shadow
           >
-            {user ? title : 'Sharing Excess'}
+            {user ? title : ''}
           </Text>
           {path_components.length > 0 ? (
             <Link to={back_url}>

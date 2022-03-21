@@ -28,6 +28,7 @@ body {
   // basic colors
   --green: rgb(78, 165, 40);
   --green-rgb: 78, 165, 40;
+  --darkgreen: rgb(33, 104, 16);
   --yellow: rgb(253, 205, 102);
   --yellow-rgb: 253, 205, 102;
   --blue: rgb(78, 108, 231);
@@ -35,9 +36,17 @@ body {
   --red: rgb(231, 111, 90);
   --red-rgb: 231, 111, 90;
 
+  // alternative pastel colors
+  --party-green: rgb(160, 209, 155);
+  --party-blue: rgb(164, 214, 204);
+  --party-orange: rgb(248, 166, 31);
+  --party-yellow: rgb(255, 216, 82);
+
   // grayscale values
   --black: rgb(18, 18, 18);
   --black-rgb: 18, 18, 18;
+  --darkgrey: rgb(83, 87, 90);
+  --darkgrey-rgb: 83, 87, 90;
   --grey: rgb(173, 184, 173);
   --grey-rgb: 192, 200, 192;
   --lightgrey: rgb(216, 224, 216);
