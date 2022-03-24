@@ -1,5 +1,5 @@
 import { Spacer, Text } from '@sharingexcess/designsystem'
-import { CLOUD_FUNCTION_URLS, formatLargeNumber } from 'helpers'
+import { CLOUD_FUNCTION_URLS, fetchData, formatLargeNumber } from 'helpers'
 import { useAuth } from 'hooks'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PoundsByMonthChart } from './PoundsByMonthChart'
@@ -23,7 +23,7 @@ export function DriverStats() {
       navigate(query, { replace: true })
     } else {
       console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
-      fetch(CLOUD_FUNCTION_URLS.myStats + query)
+      fetchData(CLOUD_FUNCTION_URLS.myStats + query, user.accessToken)
         .then(res => res.json())
         .then(data => {
           setApiData(data)

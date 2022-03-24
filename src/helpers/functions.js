@@ -168,3 +168,14 @@ export function formatLargeNumber(x) {
   }
   return parts.join('.')
 }
+
+// Parameters:
+//  link - API Endpoint
+//  accessToken - user AccessToken that is passed in a header to verify request was made from app
+export function fetchData(link, accessToken) {
+  return fetch(link, {
+    headers: {
+      authorization: 'Bearer ' + accessToken,
+    },
+  })
+}

@@ -12,6 +12,17 @@ async function handleMyStats(request, response) {
   return new Promise(async resolve => {
     const { user } = request.query
 
+    //Verifies that header containing an access token exists
+    //and verifies that there is an access token after 'Bearer '
+    //This DOES NOT verify the access token
+    if (
+      !request.headers.authorization ||
+      !request.headers.authorization.startsWith('Bearer ')
+    ) {
+      response.status(403).send('Unauthorized')
+      return
+    }
+
     let rescues = []
     await db
       .collection('rescues')
