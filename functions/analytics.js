@@ -18,6 +18,9 @@ exports.analytics = analytics_routes
 
 async function handleAnalytics(request, response) {
   return new Promise(async resolve => {
+    //Verifies that header containing an access token exists
+    //and verifies that there is an access token after 'Bearer '
+    //This DOES NOT verify the access token
     if (
       !request.headers.authorization ||
       !request.headers.authorization.startsWith('Bearer ')

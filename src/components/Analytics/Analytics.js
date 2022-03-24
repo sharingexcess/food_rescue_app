@@ -18,6 +18,7 @@ import {
 import {
   CLOUD_FUNCTION_URLS,
   COLORS,
+  fetchData,
   formatLargeNumber,
   formatTimestamp,
   shortenLargeNumber,
@@ -57,11 +58,7 @@ export function Analytics() {
       navigate(query, { replace: true })
     } else {
       console.log('fetching', CLOUD_FUNCTION_URLS.analytics + query)
-      fetch(CLOUD_FUNCTION_URLS.analytics + query, {
-        headers: {
-          authorization: 'Bearer ' + user.accessToken,
-        },
-      })
+      fetchData(CLOUD_FUNCTION_URLS.analytics + query, user.accessToken)
         .then(res => res.json())
         .then(data => {
           setApiData(data)
