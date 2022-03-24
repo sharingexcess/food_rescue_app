@@ -58,7 +58,9 @@ export function Home() {
     )
   }
 
-  const { headerText, emoji } = user ? generateGreeting(user.displayName) : null
+  const { headerText, emoji } = user
+    ? generateGreeting(user.displayName)
+    : { headerText: null, emoji: null }
 
   return !user ? (
     <Landing />
