@@ -18,6 +18,14 @@ exports.analytics = analytics_routes
 
 async function handleAnalytics(request, response) {
   return new Promise(async resolve => {
+    if (
+      !request.headers.authorization ||
+      !request.headers.authorization.startsWith('Bearer ')
+    ) {
+      response.status(403).send('Unauthorized to look')
+      return
+    }
+
     console.log('running analytics')
     const { date_range_start, date_range_end, breakdown } = request.query
     console.log(date_range_start, date_range_end, breakdown)

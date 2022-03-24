@@ -23,7 +23,11 @@ export function DriverStats() {
       navigate(query, { replace: true })
     } else {
       console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
-      fetch(CLOUD_FUNCTION_URLS.myStats + query)
+      fetch(CLOUD_FUNCTION_URLS.myStats + query, {
+        headers: {
+          authorization: 'Bearer ' + user.accessToken,
+        },
+      })
         .then(res => res.json())
         .then(data => {
           setApiData(data)

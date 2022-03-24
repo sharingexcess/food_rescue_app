@@ -24,8 +24,10 @@ import {
 } from 'helpers'
 import { Loading, Input } from 'components'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from 'hooks'
 
 export function Analytics() {
+  const { user } = useAuth()
   const navigate = useNavigate()
   const search = new URLSearchParams(window.location.search)
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
@@ -55,7 +57,11 @@ export function Analytics() {
       navigate(query, { replace: true })
     } else {
       console.log('fetching', CLOUD_FUNCTION_URLS.analytics + query)
-      fetch(CLOUD_FUNCTION_URLS.analytics + query)
+      fetch(CLOUD_FUNCTION_URLS.analytics + query, {
+        headers: {
+          authorization: 'Bearer ' + user.accessToken,
+        },
+      })
         .then(res => res.json())
         .then(data => {
           setApiData(data)

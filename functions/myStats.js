@@ -12,6 +12,14 @@ async function handleMyStats(request, response) {
   return new Promise(async resolve => {
     const { user } = request.query
 
+    if (
+      !request.headers.authorization ||
+      !request.headers.authorization.startsWith('Bearer ')
+    ) {
+      response.status(403).send('Unauthorized')
+      return
+    }
+
     let rescues = []
     await db
       .collection('rescues')
