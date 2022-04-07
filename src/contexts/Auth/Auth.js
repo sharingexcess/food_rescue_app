@@ -29,7 +29,7 @@ function Auth({ children }) {
     if (auth_user) {
       const userRef = getCollection('users').doc(auth_user.uid)
       userRef
-        .update({ timestamp_last_active: createTimestamp() })
+        .set({ timestamp_last_active: createTimestamp() })
         .then(() => userRef.onSnapshot(doc => setDbUser(doc.data())))
     }
   }, [auth_user])
