@@ -53,6 +53,11 @@ Sentry.init({
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
+// var db = firebase.firestore()
+// if (window.location.hostname === 'localhost') {
+//   db.useEmulator('localhost', 8080)
+// }
+
 // handle installed on home screen
 let debounce
 if (window.matchMedia('(display-mode: standalone)').matches) {

@@ -1,12 +1,14 @@
 import { createContext, useEffect, useMemo, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { DEFAULT_DB_LIMIT, FIRST_RESCUE_IN_DB, getCollection } from 'helpers'
+import { useAuth } from 'hooks'
 import moment from 'moment'
 
 const FirestoreContext = createContext()
 FirestoreContext.displayName = 'Firestore'
 
 function Firestore({ children }) {
+  const { user } = useAuth()
   const [limit, setLimit] = useState(DEFAULT_DB_LIMIT)
   const [rescues, setRescues] = useState()
   const rescuesQuery = useMemo(
@@ -32,7 +34,26 @@ function Firestore({ children }) {
   const [locations] = useCollectionData(
     getCollection('locations').orderBy('id')
   )
-  const [users] = useCollectionData(getCollection('users').orderBy('name'))
+
+  // const [users] = useCollectionData(getCollection('users').orderBy('name'))
+  //Gets rid of list requests
+  const [users, setUsers] = useState()
+
+  useEffect(() => {
+    if (user && user.is_admin) {
+      getCollection('users').onSnapshot(querySnapshot => {
+        const updatedUsers = []
+        querySnapshot.forEach(doc => {
+          updatedUsers.push(doc.data())
+        })
+        setUsers(updatedUsers)
+      })
+    } else if (user && user.is_driver) {
+      getCollection('users')
+        .doc(user.uid)
+        .onSnapshot(doc => setUsers([doc.data()]))
+    }
+  }, [user])
 
   useEffect(() => {
     async function populateCompleteRescueData() {

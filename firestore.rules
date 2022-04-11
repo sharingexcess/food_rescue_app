@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
   
     function isAuthenticated(){
-      return request.auth != null
+      return request.auth != null;
     }
     
     function isTheSameUser(userId){
@@ -19,35 +19,37 @@ service cloud.firestore {
       let driverStatus = get(/databases/$(database)/documents/users/$(userId)).data.is_driver == true;
       return driverStatus;
     }
+
     
-    match /users/{userId} {
-    	allow create
-      allow read: if isTheSameUser(userId) || isAdmin(request.auth.uid);
+    match /users/{userId}/{documents=**} {
+    	allow create;
+      allow list, get: if isTheSameUser(userId) || isAdmin(request.auth.uid);
       allow update: if isTheSameUser(userId);
       allow delete: if isTheSameUser(userId) || isAdmin(request.auth.uid);
     }
     
-    match /locations/{locationId}{
-    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid)
+    match /locations/{locationId}/{documents=**}{
+    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid);
     	allow create, update, delete: if isAdmin(request.auth.uid);
     }
     
-    match /organizations/{organizationId}{
-    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid)
+    match /organizations/{organizationId}/{documents=**} {
+    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid);
     	allow create, update, delete: if isAdmin(request.auth.uid);
     }
     
     function isHandler(rescue)
     {
-    	return  rescue.data.handler_id == request.auth.uid
+    	return  rescue.data.handler_id == request.auth.uid;
     }
     
-    match /rescues/{rescueId}{
+    match /rescues/{rescueId}/{documents=**} {
     	allow create, delete: if isAdmin(request.auth.uid);
+      // allow read:  if request.auth != null;
     	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
     }
     
-    match /stops/{stops}{
+    match /stops/{stops}/{documents=**} {
     	allow create, delete: if isAdmin(request.auth.uid);
     	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
     }
