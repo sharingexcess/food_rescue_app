@@ -53,6 +53,7 @@ Sentry.init({
 // This function call connects us to Firebase and initializes all of our API access
 firebase.initializeApp(FIREBASE_CONFIG)
 
+//Used for testing
 // var db = firebase.firestore()
 // if (window.location.hostname === 'localhost') {
 //   db.useEmulator('localhost', 8080)

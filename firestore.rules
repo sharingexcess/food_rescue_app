@@ -23,7 +23,7 @@ service cloud.firestore {
     
     match /users/{userId}/{documents=**} {
     	allow create;
-      allow list, get: if isTheSameUser(userId) || isAdmin(request.auth.uid);
+      allow read: if isTheSameUser(userId) || isAdmin(request.auth.uid);
       allow update: if isTheSameUser(userId);
       allow delete: if isTheSameUser(userId) || isAdmin(request.auth.uid);
     }

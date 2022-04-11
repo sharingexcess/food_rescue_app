@@ -48,7 +48,7 @@ function Firestore({ children }) {
         })
         setUsers(updatedUsers)
       })
-    } else if (user && user.is_driver) {
+    } else if (user) {
       getCollection('users')
         .doc(user.uid)
         .onSnapshot(doc => setUsers([doc.data()]))
