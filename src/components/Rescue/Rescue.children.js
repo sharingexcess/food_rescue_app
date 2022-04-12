@@ -769,7 +769,7 @@ export function Stop({ stops, s, i }) {
         fullWidth
         handler={handleClick}
       >
-        Finish {s.type} Report
+        Enter {s.type} Weight
       </Button>
     )
   }
