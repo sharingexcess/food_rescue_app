@@ -165,6 +165,7 @@ export function Rescues() {
               [STATUSES.SCHEDULED, STATUSES.ACTIVE].includes(r.status)
           )
           .sort(byDate)
+          .reverse()
       case 'unassigned':
         return rescues
           .filter(r => !r.handler_id)
