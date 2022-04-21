@@ -10,7 +10,7 @@
 
 #Menu {
   position: fixed;
-  background: var(--foreground);
+  background: var(--se-white);
   top: -100vh;
   left: 0;
   height: 300vh;
@@ -26,7 +26,6 @@
   z-index: 22;
   transition: transform 0.32s ease, box-shadow 0.32s ease 0.16s,
     background 0.32s ease;
-  animation: fade-in 0.32s ease forwards;
 
   @include desktop {
     top: 112px;
@@ -70,7 +69,7 @@
       width: 48px;
       object-fit: cover;
       border: 2px solid var(--primary);
-      background: var(--blue);
+      background: var(--se-blue-primary);
     }
     div {
       display: flex;
@@ -96,7 +95,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        color: var(--green);
+        color: var(--se-green-primary);
         transition: opacity 0.32s ease;
         overflow: hidden;
         white-space: nowrap;
@@ -110,7 +109,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        color: var(--grey);
+        color: var(--se-grey-primary);
         transition: opacity 0.32s ease;
         overflow: hidden;
         white-space: nowrap;
@@ -121,13 +120,13 @@
         i {
           margin-right: 4px;
           font-size: 8px;
-          color: var(--yellow);
+          color: rgb(253, 205, 102);
         }
       }
     }
     #Close {
       cursor: pointer;
-      color: var(--text);
+      color: var(--se-black);
       font-size: 24px;
       padding-left: 8px;
       margin-left: auto;
@@ -145,7 +144,7 @@
       padding-bottom: 32px;
       font-size: 18px;
       font-weight: 600;
-      color: var(--blue);
+      color: var(--se-blue-primary);
     }
     ul {
       .Menu-link {
@@ -172,7 +171,7 @@
     padding: 8px 4px;
     a {
       font-size: 12px;
-      color: var(--blue);
+      color: var(--se-blue-primary);
       width: auto;
     }
   }

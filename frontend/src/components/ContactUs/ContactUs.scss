@@ -2,7 +2,7 @@
   @include page;
 
   a {
-    color: var(--blue);
+    color: var(--se-blue-primary);
     text-decoration: underline;
   }
   textarea {
@@ -12,11 +12,11 @@
     position: relative;
     border: 0;
     border-radius: 8px;
-    background: var(--foreground);
+    background: var(--se-white);
     padding: 16px 8px 16px 12px;
     font-size: 18px;
     font-weight: 600;
-    color: var(--text);
+    color: var(--se-black);
     width: 100%;
     z-index: 1;
     transition: border 0.1s ease;

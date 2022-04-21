@@ -11,34 +11,35 @@
     width: 100%;
   }
 
-  #Filters {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-    select {
-      background: none;
-      height: 100%;
-      position: relative;
-      border: 0;
-      border-radius: 8px;
-      font-family: var(--font-body);
-      background: var(--se-white-transparent);
-      padding: 12px 8px 12px 16px;
+  #Rescues-tabs {
+    gap: 8px;
+    @include mobile {
+      gap: 4px;
+    }
+    .se-button {
+      padding: 8px 16px;
       text-transform: capitalize;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--se-white);
-      z-index: 1;
-      transition: border 0.1s ease;
-      -webkit-appearance: none;
-      cursor: pointer;
-      text-shadow: var(--se-shadow-small);
-
-      option {
-        color: var(--se-black);
+      @include mobile {
+        padding: 8px 12px;
+        flex-grow: 1;
+        margin-right: 0;
       }
+    }
+  }
+
+  #Rescues-filters {
+    gap: 8px;
+    .Input {
+      width: 100%;
+      font-size: 16px;
+
+      input[type='text']:read-only {
+        opacity: 0.6;
+      }
+    }
+    .InputSuggestions li {
+      font-size: 10px;
+      padding: 8px;
     }
   }
 
@@ -61,9 +62,11 @@
         margin-bottom: auto;
       }
 
-      div {
+      > div {
         display: flex;
         flex-direction: column;
+        padding-right: 4px;
+        @include ellipsis;
         .se-text.small {
           line-height: 1.2;
         }
@@ -78,7 +81,7 @@
         object-fit: contain;
         flex-shrink: 0;
         padding: 2px;
-        background: var(--white);
+        background: var(--se-white);
         border-radius: 50%;
         margin-right: 12px;
       }

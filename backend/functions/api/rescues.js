@@ -1,3 +1,4 @@
+const moment = require('moment')
 const {
   db,
   fetchCollection,
@@ -9,9 +10,8 @@ exports.rescues = async (request, response) => {
     try {
       console.log('running rescues')
 
-      const { date_range_start, date_range_end } = request.query
-      console.log('Received date_range_start query param:', date_range_start)
-      console.log('Received date_range_end query param:', date_range_end)
+      console.log('Received params:', request.query)
+      const { date, status, handler_id, limit, start_after } = request.query
 
       const organizations = await fetchCollection('organizations')
       const locations = await fetchCollection('locations')
@@ -23,42 +23,61 @@ exports.rescues = async (request, response) => {
       let rescues_query = db.collection('rescues')
       let stops_query = db.collection('stops')
 
-      // apply date range filters
-      if (date_range_start) {
-        rescues_query = rescues_query.where(
-          'timestamp_scheduled_start',
-          '>=',
-          new Date(date_range_start)
-        )
-        stops_query = stops_query.where(
-          'timestamp_scheduled_start',
-          '>=',
-          new Date(date_range_start)
-        )
+      let start_after_ref
+      if (start_after) {
+        await db
+          .collection('rescues')
+          .doc(start_after)
+          .get()
+          .then(doc => {
+            start_after_ref = doc
+          })
       }
 
-      if (date_range_end) {
-        rescues_query = rescues_query.where(
+      // apply filters
+
+      if (date) {
+        const start = new Date(date)
+        const end = moment(start).add(24, 'hours').toDate()
+        console.log(start, end)
+        rescues_query = rescues_query
+          .where('timestamp_scheduled_start', '>=', start)
+          .where('timestamp_scheduled_start', '<=', end)
+        stops_query = stops_query
+          .where('timestamp_scheduled_start', '>=', start)
+          .where('timestamp_scheduled_start', '<=', end)
+      }
+
+      if (handler_id) {
+        rescues_query = rescues_query.where('handler_id', '==', handler_id)
+      }
+
+      if (status) {
+        rescues_query = rescues_query.where('status', '==', status)
+      }
+
+      if (limit) {
+        rescues_query = rescues_query.limit(parseInt(limit))
+      }
+
+      if (start_after) {
+        rescues_query = rescues_query
+          .orderBy('timestamp_scheduled_start')
+          .startAfter(start_after_ref)
+      } else {
+        rescues_query = rescues_query.orderBy(
           'timestamp_scheduled_start',
-          '<=',
-          new Date(date_range_end)
-        )
-        stops_query = stops_query.where(
-          'timestamp_scheduled_start',
-          '<=',
-          new Date(date_range_end)
+          'desc'
         )
       }
 
       // execute db queries
       await Promise.all([
-        rescues_query
-          .get()
-          .then(snapshot =>
-            snapshot.forEach(doc =>
-              rescues.push(formatDocumentTimestamps(doc.data()))
-            )
-          ),
+        rescues_query.get().then(snapshot => {
+          snapshot.forEach(doc =>
+            rescues.push(formatDocumentTimestamps(doc.data()))
+          )
+        }),
         stops_query
           .get()
           .then(snapshot =>
@@ -67,10 +86,6 @@ exports.rescues = async (request, response) => {
             )
           ),
       ])
-
-      if (!rescues) {
-        response.status(200).send([])
-      }
 
       // initialize stops array with length of stop_ids
       for (const rescue of rescues) {
@@ -93,7 +108,10 @@ exports.rescues = async (request, response) => {
         )
       }
 
-      console.log('returning rescues:', rescues)
+      console.log(
+        'returning rescues:',
+        rescues.map(i => i.id)
+      )
       response.status(200).send(JSON.stringify(rescues))
       // use resolve to allow the cloud function to close
       resolve()

@@ -29,6 +29,8 @@ export const FORMSPREE_FORM_ID = 'xlezdgjl'
 export const GOOGLE_MAPS_URL =
   'https://www.google.com/maps/dir/?api=1&destination='
 
+export const API_ENDPOINTS = { RESCUES: '/rescues' }
+
 export const FOOD_CATEGORIES = [
   'impact_data_dairy',
   'impact_data_bakery',

@@ -1,22 +1,13 @@
 #Landing {
-  width: 100vw;
-  overflow: hidden;
-}
+  padding: 108px 16px;
+  max-width: 1000px;
+  min-height: 100vh;
+  margin: auto;
+  animation: fade-in 0.32s ease forwards;
+  text-align: center;
 
-@mixin LandingPage {
-  // Page views should have 144px on top and bottom,
-  // and at least 96px on left and right.
-  // For large window sizes, we want to constrain the content
-  // to the center 1000px. Therefore, our max padding is
-  // 50vw - 500px on the left and right,
-  // which is half the difference between the
-  // window width, and 1000px
-  padding: 144px max(96px, calc(50vw - 500px)) 64px
-    max(96px, calc(50vw - 500px));
-  position: relative;
-
-  @include mobile {
-    padding: 96px 16px;
+  .green {
+    color: var(--se-green-primary);
   }
 }
 
@@ -59,13 +50,8 @@
   align-items: flex-end;
 }
 
-@mixin hover {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      &:not(:disabled) {
-        @content;
-      }
-    }
+  .blue {
+    color: var(--se-blue-primary);
   }
 }
 

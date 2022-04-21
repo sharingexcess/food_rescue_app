@@ -21,16 +21,20 @@ const initFormData = {
 
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
-  const { setModal, setModalState } = useApp()
-  const navigate = useNavigate()
-  const rescue = useApi(rescue_id ? `/rescue/${rescue_id}` : null)
-  const [pickup] = useApi(pickup_id ? `/stop/${pickup_id}` : null)
+  // this code is shared by it's own view "/rescue/:id/pickup/:id"
+  // but also the LogRescue component, so it must handle both the case
+  // where a pickup_id is present in the url, and where it is
+  // creating a new pickup
+  const { data: rescue } = useApi(rescue_id ? `/rescues/${rescue_id}` : null)
+  const { data: pickup } = useApi(pickup_id ? `/stops/${pickup_id}` : null)
   const [formData, setFormData] = useState(initFormData)
   const [changed, setChanged] = useState(false)
   const [errors, setErrors] = useState([])
   const [showErrors, setShowErrors] = useState(false)
   const [updatedFromDb, setUpdatedFromDb] = useState(false)
   const [working, setWorking] = useState(false)
+  const { setModal, setModalState } = useApp()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (pickup && pickup.id && !updatedFromDb) {

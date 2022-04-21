@@ -204,13 +204,13 @@ export function Analytics() {
     <main id="Analytics">
       <FlexContainer className="InputSection" primaryAlign="space-between">
         <Input
-          type="datetime-local"
+          type="date"
           value={rangeStart}
           onChange={e => setRangeStart(e.target.value)}
           label="From..."
         />
         <Input
-          type="datetime-local"
+          type="date"
           value={rangeEnd}
           onChange={e => setRangeEnd(e.target.value)}
           label="To..."

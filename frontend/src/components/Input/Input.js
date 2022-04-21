@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 export function Input({
   element_id,
@@ -13,14 +13,18 @@ export function Input({
   inherited_ref,
   animation = true,
   autoFocus = false,
+  clear,
 }) {
-  const [isUsed, setIsUsed] = useState(type === 'select' ? true : false)
-  const shouldNotMoveLabel = () =>
-    ['time', 'datetime-local', 'select'].includes(type)
+  const [isUsed, setIsUsed] = useState(false)
+
+  const shouldNotMoveLabel = useCallback(
+    () => ['time', 'date', 'datetime-local', 'select'].includes(type),
+    [type]
+  )
 
   useEffect(() => {
-    setIsUsed(!!value)
-  }, [value])
+    setIsUsed(shouldNotMoveLabel() ? true : !!value)
+  }, [value, shouldNotMoveLabel])
 
   return (
     <>
@@ -31,6 +35,7 @@ export function Input({
         <label className={isUsed || shouldNotMoveLabel() ? 'focused' : ''}>
           {label}
         </label>
+        {clear && !readOnly && <button onClick={clear}>X</button>}
         {type === 'textarea' ? (
           <textarea
             id={element_id}
@@ -99,7 +104,7 @@ export function Input({
       {type === 'text' && suggestions ? (
         <ul className="InputSuggestions">
           {suggestions.length && value.length ? (
-            suggestions.map(s => (
+            suggestions.slice(0, 5).map(s => (
               <li key={s.id} id={s.id} onClick={e => onSuggestionClick(e, s)}>
                 {s.name}
                 {s.email ? ` (${s.email})` : ''}

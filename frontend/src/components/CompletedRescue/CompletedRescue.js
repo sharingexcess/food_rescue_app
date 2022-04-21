@@ -10,7 +10,7 @@ export function CompletedRescue() {
   const { rescue_id } = useParams()
   const navigate = useNavigate()
   const [notes, setNotes] = useState('')
-  const [rescue] = useApi(`/rescue/${rescue_id}`)
+  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
 
   useEffect(() => {
     if (rescue && rescue.notes) {

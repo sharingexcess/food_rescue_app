@@ -52,7 +52,7 @@
       object-fit: contain;
       flex-shrink: 0;
       padding: 2px;
-      background: var(--white);
+      background: var(--se-white);
       border-radius: 50%;
       margin-right: 16px;
     }
@@ -103,7 +103,7 @@
     }
 
     .org_hours {
-      color: var(--green);
+      color: var(--se-green-primary);
       text-decoration: none;
 
       span {
@@ -112,10 +112,10 @@
         text-decoration: none;
       }
       span.open {
-        color: var(--green);
+        color: var(--se-green-primary);
       }
       span.close {
-        color: var(--red);
+        color: var(--se-red-primary);
       }
     }
   }

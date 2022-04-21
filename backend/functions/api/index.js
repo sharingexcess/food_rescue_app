@@ -13,9 +13,8 @@ api.use(cors({ origin: true }))
 
 // define api endpoints
 api.get('/rescues', rescues)
-api.get('/rescue/:rescue_id', rescue)
-api.get('/stop/:stop_id', stop)
-api.get('/analytics', analytics)
+api.get('/rescues/:rescue_id', rescue)
+api.get('/stops/:stop_id', stop)
 api.get('/analytics', analytics)
 api.post('/calendar/add', add_calendar_event)
 api.post('/calendar/delete', delete_calendar_event)

@@ -30,14 +30,16 @@ export async function isExistingId(id, collection) {
 }
 
 export function getFirestoreRef(identifier) {
+  // create a copy of the identifier first, as to not change the original object
+  const array = [...identifier]
   let next = 'doc'
-  let ref = getCollection(identifier.shift())
-  while (identifier.length) {
+  let ref = getCollection(array.shift())
+  while (array.length) {
     if (next === 'doc') {
-      ref = ref.doc(identifier.shift())
+      ref = ref.doc(array.shift())
       next = 'collection'
     } else {
-      ref = ref.collection(identifier.shift())
+      ref = ref.collection(array.shift())
       next = 'doc'
     }
   }

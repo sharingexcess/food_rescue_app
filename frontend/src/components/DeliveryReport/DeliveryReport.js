@@ -14,8 +14,8 @@ export function DeliveryReport() {
   const { setModal } = useApp()
   const { delivery_id, rescue_id } = useParams()
   const navigate = useNavigate()
-  const [rescue] = useApi(`/rescue/${rescue_id}`)
-  const [delivery] = useApi(`/stop/${delivery_id}`)
+  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
+  const { data: delivery } = useApi(`/stops/${delivery_id}`)
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
     notes: '',

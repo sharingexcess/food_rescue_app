@@ -1,361 +1,181 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useApi, useAuth, useFirestore } from 'hooks'
 import { Ellipsis, Input, Loading } from 'components'
-import moment from 'moment'
-import UserIcon from 'assets/user.svg'
-import { Link } from 'react-router-dom'
-import { useApi, useAuth } from 'hooks'
+import { API_ENDPOINTS, STATUSES } from 'helpers'
+import { sortRescues, RescueCard } from './utils'
+import { Emoji } from 'react-apple-emojis'
 import {
   Button,
-  Card,
   FlexContainer,
   Spacer,
   Text,
-  Image,
 } from '@sharingexcess/designsystem'
-import { formatTimestamp, STATUSES } from 'helpers'
-import { Emoji } from 'react-apple-emojis'
-import PickupIcon from 'assets/pickup.png'
-import DeliveryIcon from 'assets/delivery.png'
+import moment from 'moment'
 
 export function Rescues() {
   const { user, admin } = useAuth()
-  const [weeksOfData, setWeeksOfData] = useState(1)
-  const rescues_query = useMemo(
-    () =>
-      `/rescues?date_range_start=${moment()
-        .subtract(weeksOfData, 'weeks')
-        .format('YYYY-MM-DD')}`,
-    [weeksOfData]
+  const handlers = useFirestore('users')
+  const url_params = new URLSearchParams(window.location.search)
+
+  // initialize state object to manage URL params, and user input filters
+  const [state, setState] = useState({
+    status: url_params.get('status') || STATUSES.SCHEDULED,
+    handler_id: admin ? url_params.get('handler_id') || user.id : user.id, // ensure that non-admins can't fetch data by transforming the url
+    date: url_params.get('date') || '',
+    limit: 10,
+    handler_name: admin
+      ? url_params.get('handler_name') || user.name
+      : user.name,
+    handler_suggestions: null,
+    scroll_position: null,
+  })
+
+  // create memoized object of params to pass to API
+  // only tracking which fields will be a part of the request
+  // to prevent unnecessary fetches
+  const api_params = useMemo(
+    () => ({
+      status: state.status,
+      handler_id: state.handler_id,
+      date: state.date,
+      limit: state.limit,
+    }),
+    [state.status, state.handler_id, state.date, state.limit]
   )
-  const [rescues] = useApi(rescues_query)
-  const [searchByDriver, setSearchByDriver] = useState('')
-  const [searchByDate, setSearchByDate] = useState(
-    moment(new Date()).format('yyyy-MM-DD')
-  )
-  const [filterByDriver, setFilterByDriver] = useState(false)
-  const [filterByDate, setFilterByDate] = useState(false)
-  const [filter, setFilter] = useState(admin ? 'active' : 'mine')
-  const [isInitialRender, setIsInitialRender] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
 
-  useEffect(() => {
-    setLoadingMore(false)
-  }, [rescues])
+  // fetch data from API, renaming "data" as "rescues",
+  // with a boolean value for loading state, and a callback
+  // to load addtional rescues
+  const {
+    data: rescues,
+    loading,
+    loadMore,
+  } = useApi(API_ENDPOINTS.RESCUES, api_params)
 
-  useEffect(() => {
-    // check if there are any "filter" query params
-    // if there are, then setFilter("that parameter")
-    const searchParams = new URLSearchParams(window.location.search)
-    const filterSearchParam = searchParams.get('filter')
-    if (filterSearchParam) {
-      setFilter(filterSearchParam)
-    }
-    const driverSearchParam = searchParams.get('driver')
-    if (driverSearchParam) {
-      setSearchByDriver(driverSearchParam)
-    }
-    const dateSearchParam = searchParams.get('date')
-    if (dateSearchParam) {
-      setSearchByDate(dateSearchParam)
-    }
-  }, [])
-
-  function getRescueWeight(rescue) {
-    const rescue_deliveries = rescue.stops.filter(s => s.type === 'delivery')
-    let totalWeight = 0
-    for (const rd of rescue_deliveries) {
-      totalWeight += rd.impact_data_total_weight || 0
-    }
-    return totalWeight
-  }
-
+  // this useEfect updates the current URL on state changes
+  // to preserve the current query over refresh/back
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const rootPath = window.location.pathname
-    if (filter === 'past') {
-      params.set('filter', 'past')
-      window.history.replaceState(null, '', `${rootPath}?${params.toString()}`)
-    } else if (filter === 'driver') {
-      params.set('filter', 'driver')
-      if (searchByDriver) {
-        params.set('driver', searchByDriver)
-      }
-      params.delete('date')
-      window.history.replaceState(null, '', `${rootPath}?${params.toString()}`)
-      setFilterByDriver(true)
-      setFilterByDate(false)
-    } else if (filter === 'date') {
-      params.set('filter', 'date')
-      if (searchByDate) {
-        params.set('date', searchByDate)
-      }
-      params.delete('driver')
-      window.history.replaceState(null, '', `${rootPath}?${params.toString()}`)
-      setFilterByDriver(false)
-      setFilterByDate(true)
-    } else if (filter === 'mine') {
-      window.history.replaceState(null, '', `${rootPath}?filter=mine`)
-    } else if (filter === 'unassigned') {
-      window.history.replaceState(null, '', `${rootPath}?filter=unassigned`)
-    } else if (isInitialRender) {
-      setIsInitialRender(false)
-    } else {
-      window.history.replaceState(null, '', `${rootPath}`)
-      setFilterByDriver(false)
-      setFilterByDate(false)
+    params.set('status', state.status)
+    params.set('handler_id', state.handler_id)
+    params.set('date', state.date)
+    params.set('handler_name', state.handler_name)
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}?${params.toString()}`
+    )
+  }, [state])
+
+  // this useEffect returns to the pre-update scroll position
+  // when new rescues are loaded so users don't lose their place
+  useEffect(() => {
+    if (!loading && state.scroll_position) {
+      window.scrollTo(0, state.scroll_position)
+      setState({ ...state, scroll_position: null })
     }
-  }, [filter]) // eslint-disable-line
+  }, [loading, state])
 
   function handleLoadMore() {
-    setWeeksOfData(weeks => weeks + 1)
+    // store the current scroll position to return to after loading new rescues
+    setState({ ...state, scroll_position: window.scrollY })
+    loadMore()
   }
 
-  function handleSearchByDriver(e) {
-    setSearchByDriver(e.target.value)
-    window.history.replaceState(
-      null,
-      '',
-      `rescues?filter=driver&driver=${e.target.value}`
+  function handleChangeHandler(event) {
+    const search_value = event.target.value
+    const suggestions = handlers.filter(i =>
+      i.name.toLowerCase().includes(search_value.toLowerCase())
     )
-  }
-  function handleSearchByDate(e) {
-    setSearchByDate(e.target.value)
-    window.history.replaceState(
-      null,
-      '',
-      `rescues?filter=date&date=${e.target.value}`
-    )
+    setState({
+      ...state,
+      handler_name: search_value,
+      handler_suggestions: suggestions,
+    })
   }
 
-  function filterAndSortRescues(rescues) {
-    const byDate = (a, b) =>
-      new Date(b.timestamp_scheduled_start) -
-      new Date(a.timestamp_scheduled_start)
-
-    switch (filter) {
-      case 'active':
-        return rescues
-          .filter(r => ['scheduled', 'active'].includes(r.status))
-          .sort(byDate)
-          .reverse()
-      case 'past':
-        return admin
-          ? rescues
-              .filter(r => ['completed', 'cancelled'].includes(r.status))
-              .sort(byDate)
-          : rescues
-              .filter(
-                r =>
-                  ['completed', 'cancelled'].includes(r.status) &&
-                  r.handler_id === user.uid
-              )
-              .sort(byDate)
-      case 'mine':
-        return rescues
-          .filter(
-            r =>
-              r.handler_id === user.uid &&
-              [STATUSES.SCHEDULED, STATUSES.ACTIVE].includes(r.status)
-          )
-          .sort(byDate)
-      case 'unassigned':
-        return rescues
-          .filter(r => !r.handler_id)
-          .sort(byDate)
-          .reverse()
-      case 'driver':
-        return rescues
-          .filter(
-            r =>
-              r.handler.name !== undefined &&
-              r.handler.name
-                .toLowerCase()
-                .includes(searchByDriver.toLowerCase())
-          )
-          .sort(byDate)
-      case 'date':
-        return rescues
-          .filter(
-            r =>
-              formatTimestamp(r.timestamp_scheduled_start, 'yyyy-MM-DD') ===
-              searchByDate
-          )
-          .sort(byDate)
-          .reverse()
-      default:
-        return rescues.sort(byDate)
-    }
+  function handleChangeDate(event) {
+    const date = event.target.value
+      ? moment(event.target.value).format('YYYY-MM-DD')
+      : ''
+    setState({ ...state, date })
   }
 
-  function StatusIndicator({ rescue }) {
-    if (rescue.status === STATUSES.COMPLETED) {
-      return <div className="Rescues-route-status">✅</div>
-    } else if (rescue.status === STATUSES.CANCELLED) {
-      return <div className="Rescues-route-status">❌</div>
-    } else if (rescue.status === STATUSES.SCHEDULED) {
-      return <div className="Rescues-route-status">🗓</div>
-    } else if (rescue.status === STATUSES.ACTIVE) {
-      return <div className="Rescues-route-status">🚛</div>
-    } else return null
+  function handleSelectHandler(selected) {
+    setState({
+      ...state,
+      handler_id: selected.id,
+      handler_name: selected.name,
+      handler_suggestions: null,
+    })
   }
 
-  function generateStopLabel(stop) {
-    return `${stop.organization.name} (${
-      stop.location.nickname || stop.location.address1
-    })${stop.status === STATUSES.CANCELLED ? ' - Cancelled' : ''}`
+  function handleClearHandler() {
+    setState({
+      ...state,
+      handler_name: '',
+      handler_id: null,
+      handler_suggestions: null,
+    })
   }
 
-  function generateDeliveryWeight(delivery) {
-    const baseText = `${delivery.organization.name} (${
-      delivery.location.nickname || delivery.location.address1
-    })`
-    if (delivery.status === STATUSES.CANCELLED) {
-      return `${baseText} - Cancelled`
-    } else if (delivery.status === STATUSES.COMPLETED) {
-      return `${baseText} - ${delivery.impact_data_total_weight} lbs.`
-    } else return `${baseText}`
-  }
-
-  function generateRescueStart(rescue) {
-    if (rescue.status === STATUSES.COMPLETED) {
-      return rescue.timestamp_logged_start
-        ? formatTimestamp(rescue.timestamp_logged_start, 'h:mma')
-        : 'No start time'
-    }
-  }
-
-  function generateRescueFinish(rescue) {
-    if (rescue.status === STATUSES.COMPLETED) {
-      return rescue.timestamp_logged_finish
-        ? formatTimestamp(rescue.timestamp_logged_finish, 'h:mma')
-        : 'No end time'
-    }
-  }
-
-  function RescueCard({ r }) {
+  const TabButtons = () => {
     return (
-      <Link to={`/rescues/${r.id}`} key={r.id}>
-        <Card classList={['Route']}>
-          <div className="Rescues-route-header">
-            {r.handler && (
-              <img src={r.handler.icon || UserIcon} alt={r.handler.name} />
-            )}
-            <div>
-              <Text type="section-header" color="black" wrap={false}>
-                {r.handler.name || 'Unassigned Route'}
-              </Text>
-              <Text type="small" color="blue">
-                {r.status === STATUSES.COMPLETED
-                  ? `${formatTimestamp(
-                      r.timestamp_scheduled_start,
-                      'ddd, MMM Do'
-                    )}, ${generateRescueStart(r)} - ${generateRescueFinish(r)}`
-                  : formatTimestamp(
-                      r.timestamp_scheduled_start,
-                      'ddd, MMM Do, h:mma'
-                    )}
-              </Text>
-              {r.status === STATUSES.COMPLETED && (
-                <>
-                  <Spacer height={4} />
-                  <Text type="small" color="green">
-                    {getRescueWeight(r)} lbs. delivered
-                  </Text>
-                </>
-              )}
-
-              {r.notes ? (
-                <>
-                  <Spacer height={4} />
-                  <Text type="small" color="grey">
-                    Notes: {r.notes}
-                  </Text>
-                </>
-              ) : null}
-            </div>
-            <StatusIndicator rescue={r} />
-          </div>
-          <Spacer height={12} />
-          <Text type="small" color="grey" classList={['pickups']}>
-            <Image src={PickupIcon} />
-            {'  '}
-            {r.stops
-              .filter(s => s.type === 'pickup')
-              .map(stop => generateStopLabel(stop))
-              .join('\n')}
-          </Text>
-          <Spacer height={8} />
-          <Text type="small" color="grey" classList={['deliveries']}>
-            <Image src={DeliveryIcon} />
-            {'  '}
-            {r.stops
-              .filter(s => s.type === 'delivery')
-              .map(s => generateDeliveryWeight(s))
-              .join('\n')}
-          </Text>
-        </Card>
-      </Link>
+      <FlexContainer id="Rescues-tabs" primaryAlign="left">
+        {[
+          STATUSES.SCHEDULED,
+          STATUSES.ACTIVE,
+          STATUSES.COMPLETED,
+          STATUSES.CANCELLED,
+        ].map(status => (
+          <Button
+            key={status}
+            size="small"
+            color={state.status === status ? 'blue' : 'white'}
+            handler={() => setState({ ...state, status: status })}
+          >
+            {status}
+          </Button>
+        ))}
+      </FlexContainer>
     )
   }
 
-  return rescues ? (
+  return (
     <main id="Rescues">
-      <Text type="section-header" id="Rescues-title" color="white" shadow>
-        Rescues
-      </Text>
-      <Text type="subheader" color="white" shadow>
-        Select a rescue to view pickup, delivery, and impact data.
-      </Text>
-      <Spacer height={32} />
-      <section id="Filters">
-        <select
-          name="filters"
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-        >
-          {admin === true ? (
-            <>
-              <option value="active">Active Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
-            </>
-          ) : null}
-          <option value="mine">My Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
-          <option value="past">Past Rescues&nbsp;&nbsp;&nbsp;⬇️</option>
-          <option value="unassigned">
-            Available Rescues&nbsp;&nbsp;&nbsp;⬇️
-          </option>
-          {admin === true ? (
-            <option value="driver">
-              Rescues by Driver&nbsp;&nbsp;&nbsp;⬇️
-            </option>
-          ) : null}
-          {admin === true ? (
-            <option value="date">Rescues by Date&nbsp;&nbsp;&nbsp;⬇️</option>
-          ) : null}
-        </select>
-      </section>
-      {filterByDriver ? (
+      <TabButtons />
+      <FlexContainer
+        id="Rescues-filters"
+        primaryAlign="space-between"
+        secondaryAlign="start"
+      >
+        <FlexContainer direction="vertical" textAlign="left">
+          <Input
+            element_id="Rescues-filter-handler"
+            type="text"
+            label="Handler..."
+            value={state.handler_name}
+            onChange={handleChangeHandler}
+            suggestions={state.handler_suggestions}
+            readOnly={!admin}
+            onSuggestionClick={(_e, handler) => handleSelectHandler(handler)}
+            clear={handleClearHandler}
+          />
+        </FlexContainer>
         <Input
-          label="Filter Route by Driver Name"
-          onChange={handleSearchByDriver}
-          value={searchByDriver}
-          animation={false}
-        />
-      ) : null}
-      {filterByDate ? (
-        <Input
-          label="Filter Route by Date"
+          element_id="Rescues-filter-date"
           type="date"
-          onChange={handleSearchByDate}
-          value={searchByDate}
-          animation={false}
+          label="Date..."
+          value={state.date}
+          onChange={handleChangeDate}
         />
-      ) : null}
-      {!rescues.length ? (
+      </FlexContainer>
+      {!rescues || (!rescues.length && loading) ? (
         <>
           <Spacer height={64} />
           <Loading text="Loading rescues" relative />
         </>
-      ) : !filterAndSortRescues(rescues).length ? (
+      ) : !rescues.length ? (
         <div className="no-rescues">
           <Emoji className="icon" name="woman-shrugging" />
           <Spacer height={16} />
@@ -364,21 +184,21 @@ export function Rescues() {
           </Text>
           <Spacer height={4} />
           <Text color="white" shadow align="center">
-            You might need to load older rescues.
+            Your search didn't return any results.
           </Text>
         </div>
       ) : (
-        filterAndSortRescues(rescues).map(r => <RescueCard key={r.id} r={r} />)
+        sortRescues(rescues, state.status).map(r => (
+          <RescueCard key={r.id} r={r} />
+        ))
       )}
       <Spacer height={32} />
       <FlexContainer primaryAlign="space-around">
-        <Button handler={handleLoadMore}>
-          Load{loadingMore ? 'ing' : ' More'} Rescues
-          {loadingMore && <Ellipsis />}
+        <Button handler={handleLoadMore} disabled={loading || !loadMore}>
+          Load{loading ? 'ing' : !loadMore ? 'ed All' : ' More'} Rescues
+          {loading && <Ellipsis />}
         </Button>
       </FlexContainer>
     </main>
-  ) : (
-    <Loading />
   )
 }

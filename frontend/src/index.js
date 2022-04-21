@@ -38,7 +38,7 @@ import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import { EmojiProvider } from 'react-apple-emojis'
-import emojiData from 'react-apple-emojis/lib/data.json'
+import emojiData from 'assets/emojis.json'
 import './styles/index.scss'
 
 Sentry.init({
