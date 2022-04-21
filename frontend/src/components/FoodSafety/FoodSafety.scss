@@ -3,7 +3,7 @@
 
   h2 {
     font-size: 20px;
-    color: var(--green);
+    color: var(--se-green-primary);
     margin-bottom: 10px;
   }
 
@@ -12,7 +12,7 @@
   }
 
   section {
-    background-color: var(--white);
+    background-color: var(--se-white);
     margin-top: 32px;
     margin-bottom: 32px;
     padding: 24px;
@@ -34,11 +34,11 @@
   }
 
   .green {
-    color: var(--green);
+    color: var(--se-green-primary);
   }
 
   .red {
-    color: var(--red);
+    color: var(--se-red-primary);
   }
 
   .row {

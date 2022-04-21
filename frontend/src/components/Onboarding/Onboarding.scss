@@ -1,24 +1,24 @@
-#NewDriver {
+#Onboarding {
   @include page;
   p {
     white-space: pre-wrap;
   }
   a {
     width: 100%;
-    .NewDriver-section {
+    .Onboarding-section {
       margin: 8px 0;
       flex-direction: row;
       justify-content: flex-start;
       i {
         margin-right: 16px;
-        color: var(--blue);
+        color: var(--se-blue-primary);
       }
 
       &.completed {
         opacity: 0.5;
         box-shadow: none;
         i {
-          color: var(--green);
+          color: var(--se-green-primary);
         }
       }
     }

@@ -9,9 +9,10 @@
   width: 100%;
   max-width: 800px;
   margin: auto;
-  animation: fade-in 0.32s ease forwards;
   z-index: 1;
   overflow-x: hidden;
+  opacity: 1;
+  animation: fade-in 0.32s ease forwards;
 
   @include desktop {
     padding-left: 314px;
@@ -27,41 +28,16 @@
   border-radius: 16px;
   margin: 12px 0;
   padding: 16px;
-  background: var(--foreground);
+  background: var(--se-white);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   @include shadow;
-
-  h2 {
-    color: var(--text);
-    font-size: 20px;
-    margin-bottom: 4px;
-  }
-
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: var(--grey);
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  p,
-  div,
-  span {
-    color: var(--primary);
-  }
-
-  p {
-    margin-bottom: 4px;
-  }
 }
 
 @mixin shadow {
-  box-shadow: 0 12px 32px 0px rgba(var(--shadow-rgb), 0.16);
+  box-shadow: 0 12px 32px 0px rgba(56, 56, 56, 0.16);
 }
 
 * {
@@ -70,7 +46,16 @@
 
 body {
   background: var(--se-green-gradient);
-  color: var(--text);
+  color: var(--se-black);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -91,7 +76,7 @@ input {
 
   &[type='checkbox'] {
     border: none;
-    background: var(--white);
+    background: var(--se-white);
   }
 }
 
@@ -107,4 +92,14 @@ textarea:read-only,
 
 input[type='checkbox'] {
   cursor: pointer;
+}
+
+#root {
+  // background: var(--se-green-primary);
+  height: 100%;
+  width: 100%;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(0) !important;
 }

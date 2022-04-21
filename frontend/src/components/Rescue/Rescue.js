@@ -21,7 +21,7 @@ export function Rescue() {
   const { rescue_id } = useParams()
   const { admin } = useAuth()
   const navigate = useNavigate()
-  const [rescue, loading, error, refresh] = useApi(`/rescue/${rescue_id}`)
+  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
   const [working, setWorking] = useState(false)
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function Rescue() {
       ) : (
         <>
           <RescueHeader rescue={rescue} />
-          <RescueActionButton rescue={rescue} refresh={refresh} />
+          <RescueActionButton rescue={rescue} />
           <Spacer height={32} />
           {rescue.stops.length ? (
             <>

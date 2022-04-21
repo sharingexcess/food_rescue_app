@@ -10,7 +10,6 @@ header#Header {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  animation: fade-in 0.32s ease forwards;
   z-index: 20;
   transition: all 0.2s ease;
 
@@ -36,7 +35,7 @@ header#Header {
     width: 48px;
     object-fit: cover;
     border: 2px solid var(--se-white);
-    background: var(--blue);
+    background: var(--se-blue-primary);
     box-shadow: var(--se-shadow-medium);
   }
 

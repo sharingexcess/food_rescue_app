@@ -24,7 +24,7 @@
       object-fit: contain;
       flex-shrink: 0;
       padding: 2px;
-      background: var(--white);
+      background: var(--se-white);
       border-radius: 50%;
       margin-right: 16px;
     }
@@ -124,22 +124,22 @@
         padding: 1px;
 
         &.fa-times {
-          background: var(--red);
+          background: var(--se-red-primary);
         }
 
         &.fa-clock-o {
-          background: var(--blue);
+          background: var(--se-blue-primary);
         }
 
         &.fa-check {
-          background: var(--green);
+          background: var(--se-green-primary);
         }
       }
 
       .update-stop {
         margin-top: 16px;
         border: none;
-        background: var(--blue);
+        background: var(--se-blue-primary);
         color: #fff;
         font-weight: 900;
         font-size: 18px;
@@ -198,7 +198,7 @@
 
   .modal-content {
     border-radius: 8px;
-    background-color: var(--foreground);
+    background-color: var(--se-white);
     margin: 15% auto;
     padding: 16px;
     width: 50%;

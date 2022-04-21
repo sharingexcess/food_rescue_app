@@ -11,6 +11,10 @@
   flex-direction: column;
   background: var(--se-green-gradient);
 
+  > * {
+    animation: fade-in 0.32s ease forwards;
+  }
+
   #Loading-icon {
     font-size: 96px;
     animation: spin infinite 2s linear;
@@ -27,6 +31,7 @@
 
   h1 {
     font-size: 24px;
+    letter-spacing: 0;
   }
 
   &.relative {

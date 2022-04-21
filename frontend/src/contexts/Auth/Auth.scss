@@ -9,14 +9,13 @@
   flex-direction: column;
   &.request-access {
     opacity: 0;
-    animation: fade-in 0.32s ease forwards 0.64s;
   }
 
   h1 {
     font-size: 64px;
     line-height: 0.8;
     .green {
-      color: var(--green);
+      color: var(--se-green-primary);
     }
   }
 
@@ -38,7 +37,7 @@
   button {
     i {
       background: none;
-      color: var(--green);
+      color: var(--se-green-primary);
     }
   }
 }

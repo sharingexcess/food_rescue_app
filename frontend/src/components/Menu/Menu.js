@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
-import { useAuth, useFirestore, useIsMobile } from 'hooks'
+import { useAuth, useIsMobile } from 'hooks'
 import UserIcon from 'assets/user.svg'
 import { Text, ExternalLink, Spacer } from '@sharingexcess/designsystem'
 import { IS_DEV_ENVIRONMENT, VERSION } from 'helpers'
@@ -16,9 +16,6 @@ export function Menu({ isOpen, setIsOpen }) {
   useEffect(() => {
     if (isMobile) setIsOpen(false)
   }, [isMobile]) // eslint-disable-line
-
-  // get public user profile state
-  const profile = useFirestore('users', user ? user.uid : {})
 
   function closeMenu() {
     setIsOpen(false)
@@ -70,7 +67,7 @@ export function Menu({ isOpen, setIsOpen }) {
           />
           <div>
             <h2 id="UserName">
-              {profile && profile.name ? profile.name : user.displayName}
+              {user && user.name ? user.name : user.displayName}
             </h2>
             <h3 id="UserEmail">{user.email}</h3>
             <AdminIndicator />

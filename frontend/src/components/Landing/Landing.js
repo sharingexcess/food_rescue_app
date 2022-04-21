@@ -1,9 +1,7 @@
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
 import Map from 'assets/map.png'
-import { useAuth } from 'hooks'
 
-export function Landing() {
-  const { handleLogin } = useAuth()
+export function Landing({ handleLogin }) {
   return (
     <>
       <main id="Landing">

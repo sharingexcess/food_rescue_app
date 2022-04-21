@@ -2,13 +2,12 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from 'hooks'
 import { generateGreeting } from './utils'
-import { Landing, NewDriver } from 'components'
 import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
 
 export function Home() {
   // access current user and admin state from the Auth Context in Auth.js
-  const { user, admin, permission } = useAuth()
+  const { user, admin } = useAuth()
 
   function Tile({ name, icon, link }) {
     return (
@@ -60,11 +59,7 @@ export function Home() {
 
   const header = user ? generateGreeting(user.displayName) : null
 
-  return !user ? (
-    <Landing />
-  ) : !permission ? (
-    <NewDriver />
-  ) : (
+  return (
     <main id="Home">
       <Text type="secondary-header" color="white" align="center" shadow>
         {header}

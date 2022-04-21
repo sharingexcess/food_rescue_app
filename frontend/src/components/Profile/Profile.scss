@@ -1,6 +1,5 @@
 #Profile {
   @include page;
-  animation: fade-in 0.32s ease forwards;
 
   h1 {
     font-size: 28px;
@@ -10,7 +9,7 @@
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    border: 4px solid var(--white);
+    border: 4px solid var(--se-white);
     object-fit: cover;
     margin: 32px auto 8px auto;
     display: block;
@@ -45,7 +44,7 @@
     border-radius: 0;
     border: 0;
     border: 1px solid var(--secondary);
-    background: var(--foreground);
+    background: var(--se-white);
     border-radius: 8px;
     font-size: 24px;
     padding: 0px 8px;
@@ -66,7 +65,7 @@
       padding: 20px 8px 16px 8px;
       font-size: 18px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--se-black);
       width: 100%;
       z-index: 1;
       transition: border 0.1s ease;
@@ -81,7 +80,7 @@
     border-radius: 10px;
     background-color: var(--yellow);
     text-align: center;
-    color: var(--black);
+    color: var(--se-black);
     padding: 12px;
     margin: 10px 0;
     p {
