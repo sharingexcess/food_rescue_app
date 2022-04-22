@@ -349,6 +349,7 @@ export function AddRescueNotes() {
     await setFirestoreData(['rescues', rescue.id], {
       notes,
     })
+    modalState.refresh && modalState.refresh()
     setModal()
   }
 
@@ -463,7 +464,7 @@ export function ContactAdmin() {
   )
 }
 
-export function Stop({ rescue, stops, s, i }) {
+export function Stop({ rescue, stops, s, i, refresh }) {
   const navigate = useNavigate()
   const { rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
@@ -659,21 +660,21 @@ export function Stop({ rescue, stops, s, i }) {
     ) : null
   }
 
-  function StopDirectionsButton() {
+  function StopDirectionsButton({ refresh }) {
     async function handleClick() {
-      setFirestoreData(['stops', s.id], {
+      await setFirestoreData(['stops', s.id], {
         status: STATUSES.ACTIVE,
         timestamp_logged_start: createTimestamp(),
-      }).then(() =>
-        window.open(
-          generateDirectionsLink(
-            s.location.address1,
-            s.location.city,
-            s.location.state,
-            s.location.zip
-          ),
-          '_blank'
-        )
+      })
+      refresh()
+      window.open(
+        generateDirectionsLink(
+          s.location.address1,
+          s.location.city,
+          s.location.state,
+          s.location.zip
+        ),
+        '_blank'
       )
     }
     async function handleSkip() {
@@ -769,7 +770,7 @@ export function Stop({ rescue, stops, s, i }) {
     )
   }
 
-  function StopDetails() {
+  function StopDetails({ refresh }) {
     return s.location.is_deleted ? (
       <Text type="paragraph">This location has been deleted.</Text>
     ) : (
@@ -786,7 +787,9 @@ export function Stop({ rescue, stops, s, i }) {
         <Spacer height={16} />
         <StopMap />
         <Spacer height={24} />
-        {s.status === STATUSES.SCHEDULED && <StopDirectionsButton />}
+        {s.status === STATUSES.SCHEDULED && (
+          <StopDirectionsButton refresh={refresh} />
+        )}
         {s.status === STATUSES.ACTIVE && <StopReportButton />}
       </>
     )
@@ -839,7 +842,7 @@ export function Stop({ rescue, stops, s, i }) {
         {s.location.nickname ? ` (${s.location.nickname})` : ''}
       </Text>
       {isActiveStop ? (
-        <StopDetails />
+        <StopDetails refresh={refresh} />
       ) : isCompletedStop ? (
         <StopSummary />
       ) : (

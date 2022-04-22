@@ -1,8 +1,6 @@
-import { useCallback, useState, useEffect } from 'react'
-import { CLOUD_FUNCTION_URLS, generateId } from 'helpers'
+import { useEffect, useCallback, useState } from 'react'
+import { CLOUD_FUNCTION_URLS, DB_COLLECTIONS, generateId } from 'helpers'
 import { useFirestoreListener } from './useFirestoreListener'
-
-const LOGS = true
 
 export function useApi(endpoint, params = null) {
   const [state, setState] = useState({
@@ -12,6 +10,9 @@ export function useApi(endpoint, params = null) {
     last: null,
     loading: false,
     error: false,
+    // keep track of total docs loaded, to adjust "refresh"
+    // limit if more paginated data has been loaded
+    docs_loaded: 0,
     // keep track of last used params to make sure
     //  to not clear data if we are requesting a
     //  next page of data instead of a brand new request
@@ -27,6 +28,11 @@ export function useApi(endpoint, params = null) {
   const fetchApi = useCallback(
     (options = {}) => {
       if (endpoint && !state.loading) {
+        if (options.is_refresh && params && params.limit) {
+          // adjust the limit to include all additional paginated data on refresh.
+          // see notes above on docs_loaded for context
+          params.limit = state.docs_loaded
+        }
         const request = generateApiRequest(endpoint, params, state, options)
         logSendingRequest(endpoint, params, request, state.api_session_id)
         setState(state => ({
@@ -44,8 +50,15 @@ export function useApi(endpoint, params = null) {
               ...state,
               data:
                 options.load_more && state.data
-                  ? [...state.data, ...formatAllTimestamps(payload)]
+                  ? removeDuplicates([
+                      ...state.data,
+                      ...formatAllTimestamps(payload),
+                    ])
                   : formatAllTimestamps(payload),
+              docs_loaded:
+                payload && payload.length
+                  ? state.docs_loaded + payload.length
+                  : 1,
               last:
                 payload.length && params && payload.length === params.limit
                   ? payload.at(-1).id
@@ -68,13 +81,24 @@ export function useApi(endpoint, params = null) {
     useCallback(fetchApi, [endpoint, params]) // eslint-disable-line
   )
 
+  useEffect(() => {
+    // to handle cases where the request does not map to a Firestore DB collection,
+    // make a fetch call directly, instead of allowing useFirestore Listener to trigger fetch
+    if (
+      endpoint &&
+      !Object.values(DB_COLLECTIONS).includes(endpoint.split('/').slice(1)[0])
+    ) {
+      fetchApi()
+    }
+  }, [endpoint, params]) // eslint-disable-line
+
   // we pass to the consumer component all existing state,
   // plus a "refresh" function to recall fetchApi,
   // and a "loadMore" function to fetch new paginated data
   // based on the limit provided in 'params'
   return {
     ...state,
-    refresh: fetchApi,
+    refresh: () => fetchApi({ is_refresh: true }),
     loadMore: state.last ? () => fetchApi({ load_more: true }) : null,
   }
 }
@@ -88,12 +112,20 @@ function generateApiRequest(endpoint, params, state, options) {
   }
   return encodeURI(
     endpoint +
-      '?' +
+      `?api_session_id=${state.api_session_id}` +
+      // add an & only if additional params will be appended
+      (Object.keys(full_params).filter(i => !!full_params[i]).length
+        ? '&'
+        : '') +
       Object.keys(full_params)
         .filter(i => !!full_params[i]) // filter out any falsey field values
         .map(i => `${i}=${full_params[i]}`)
         .join('&')
   )
+}
+
+function removeDuplicates(array) {
+  return array.filter((v, i, a) => a.findIndex(v2 => v2.id === v.id) === i)
 }
 
 // convert all timestamps in the payload from strings to date objects recursively
@@ -112,7 +144,8 @@ function formatAllTimestamps(payload) {
 }
 
 function logSendingRequest(endpoint, params, request, api_session_id) {
-  LOGS &&
+  // only create logs if the global window variable is set to 'true'
+  window.se_api_logs &&
     console.log(
       `%c[API:${api_session_id}] Sending Request:`,
       ';font-weight:bold;background:lightblue;color:black;',
@@ -126,7 +159,8 @@ function logSendingRequest(endpoint, params, request, api_session_id) {
 }
 
 function logReceivedResponse(request, payload, api_session_id) {
-  LOGS &&
+  // only create logs if the global window variable is set to 'true'
+  window.se_api_logs &&
     console.log(
       `%c[API:${api_session_id}] Received Response:`,
       ';font-weight:bold;background:lightblue;color:black;',

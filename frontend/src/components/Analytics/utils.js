@@ -7,13 +7,13 @@ export function getDefaultRangeStart() {
   if (param) {
     return formatTimestamp(
       new Date(new Date(param).setDate(new Date(param).getDate() + 1)),
-      'yyyy-MM-DDTkk:mm'
+      'yyyy-MM-DD'
     )
   } else
     return moment(new Date())
       .subtract(1, 'month')
       .startOf('month')
-      .format('yyyy-MM-DDTkk:mm')
+      .format('yyyy-MM-DD')
       .replace('24:00', '00:00')
 }
 
@@ -23,11 +23,11 @@ export function getDefaultRangeEnd() {
   if (param) {
     return formatTimestamp(
       new Date(new Date(param).setDate(new Date(param).getDate() + 1)),
-      'yyyy-MM-DDTkk:mm'
+      'yyyy-MM-DD'
     )
   } else
     return moment(new Date())
       .startOf('month')
-      .format('yyyy-MM-DDTkk:mm')
+      .format('yyyy-MM-DD')
       .replace('24:00', '00:00')
 }

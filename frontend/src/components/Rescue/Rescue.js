@@ -7,9 +7,10 @@ import {
   updateImpactDataForRescue,
 } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
-import { useAuth, useApi } from 'hooks'
+import { useAuth, useApi, useApp } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
 import { Loading } from 'components'
+import PullToRefresh from 'react-simple-pull-to-refresh'
 import {
   BackupDelivery,
   RescueActionButton,
@@ -20,9 +21,16 @@ import {
 export function Rescue() {
   const { rescue_id } = useParams()
   const { admin } = useAuth()
+  const { setModalState } = useApp()
   const navigate = useNavigate()
-  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
+  const { data: rescue, refresh } = useApi(`/rescues/${rescue_id}`)
   const [working, setWorking] = useState(false)
+
+  useEffect(() => {
+    // make the refresh function available in the modal state
+    // for child components to gain access
+    setModalState(state => ({ ...state, refresh }))
+  }, []) // eslint-disable-line
 
   useEffect(() => {
     // handle auto completing a rescue when all stops are finished
@@ -53,12 +61,18 @@ export function Rescue() {
     handleAutoCompleteRescue()
   }, [rescue_id, rescue]) // eslint-disable-line
 
+  function handleRefresh() {
+    return new Promise(res => {
+      refresh().then(res())
+    })
+  }
+
   return (
     <main id="Rescue">
       {!rescue ? (
         <Loading />
       ) : (
-        <>
+        <PullToRefresh onRefresh={handleRefresh}>
           <RescueHeader rescue={rescue} />
           <RescueActionButton rescue={rescue} />
           <Spacer height={32} />
@@ -68,6 +82,7 @@ export function Rescue() {
                 {rescue.stops.map((s, i) => (
                   <Stop
                     rescue={rescue}
+                    refresh={refresh}
                     stops={rescue.stops}
                     s={s}
                     i={i}
@@ -85,7 +100,7 @@ export function Rescue() {
           ) : (
             <Loading text="Loading stops on route..." relative />
           )}
-        </>
+        </PullToRefresh>
       )}
     </main>
   )

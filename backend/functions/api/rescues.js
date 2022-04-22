@@ -101,6 +101,7 @@ exports.rescues = async (request, response) => {
           stop.location = formatDocumentTimestamps(
             locations.find(l => l.id === stop.location_id) || {}
           )
+          console.log('Found completed stop:', stop)
           rescue.stops.push(stop)
         }
         rescue.handler = formatDocumentTimestamps(
@@ -110,7 +111,8 @@ exports.rescues = async (request, response) => {
 
       console.log(
         'returning rescues:',
-        rescues.map(i => i.id)
+        rescues
+        // .map(i => i.id)
       )
       response.status(200).send(JSON.stringify(rescues))
       // use resolve to allow the cloud function to close

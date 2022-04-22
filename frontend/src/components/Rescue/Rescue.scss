@@ -1,6 +1,16 @@
 #Rescue {
   @include page;
 
+  .lds-ellipsis {
+    * {
+      color: var(--se-white) !important;
+    }
+    div {
+      // this controls the "pull to refresh" loading icon;
+      background: var(--se-white);
+    }
+  }
+
   .buttons {
     display: flex;
     justify-content: center;
