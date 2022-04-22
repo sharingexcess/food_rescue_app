@@ -36,10 +36,16 @@ import {
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
-import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
+import { IS_DEV_ENVIRONMENT, SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import { EmojiProvider } from 'react-apple-emojis'
 import emojiData from 'assets/emojis.json'
 import './styles/index.scss'
+
+// We use this window variable to turn on or off
+// api logs. By using this window variable,
+// we can turn on logs from the console in production.
+// by default, we turn them on only for DEV, not PROD.
+window.se_api_logs = IS_DEV_ENVIRONMENT
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -48,9 +54,6 @@ Sentry.init({
   env: SENTRY_ENV,
   release: VERSION,
 })
-
-// This function call connects us to Firebase and initializes all of our API access
-// firebase.initializeApp(FIREBASE_CONFIG)
 
 // handle installed on home screen
 let debounce

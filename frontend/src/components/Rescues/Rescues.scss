@@ -7,6 +7,11 @@
     text-align: center;
   }
 
+  .lds-ellipsis div {
+    // this controls the "pull to refresh" loading icon;
+    background: var(--se-white);
+  }
+
   a {
     width: 100%;
   }

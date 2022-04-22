@@ -39,7 +39,7 @@ import { Emoji } from 'react-apple-emojis'
 export function EditRescue() {
   const { rescue_id } = useParams()
   const navigate = useNavigate()
-  const [rescue] = useApi(rescue_id ? `/rescue/${rescue_id}` : null)
+  const { data: rescue } = useApi(rescue_id ? `/rescues/${rescue_id}` : null)
   const handlers = useFirestore('users')
   const [formData, setFormData] = useState({
     // Any field used as an input value must be an empty string
@@ -69,7 +69,7 @@ export function EditRescue() {
 
   useEffect(() => {
     async function getExistingRescueData() {
-      const existingRescueData = parseExistingRescue(rescue)
+      const existingRescueData = await parseExistingRescue(rescue)
       setFormData(prevFormData => ({
         ...prevFormData,
         ...existingRescueData,

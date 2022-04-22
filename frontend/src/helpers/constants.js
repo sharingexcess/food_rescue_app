@@ -31,6 +31,14 @@ export const GOOGLE_MAPS_URL =
 
 export const API_ENDPOINTS = { RESCUES: '/rescues' }
 
+export const DB_COLLECTIONS = {
+  RESCUES: 'rescues',
+  STOPS: 'stops',
+  ORGANIZATIONS: 'organizations',
+  LOCATIONS: 'locations',
+  USERS: 'users',
+}
+
 export const FOOD_CATEGORIES = [
   'impact_data_dairy',
   'impact_data_bakery',

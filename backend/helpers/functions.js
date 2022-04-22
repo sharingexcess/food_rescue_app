@@ -25,8 +25,6 @@ exports.uploadFile = async (path, data) => {
 
 exports.formatDocumentTimestamps = data => {
   const copy = { ...data }
-  delete copy.timestamp_created
-  delete copy.timestamp_updated
   for (const key in copy) {
     if (key.includes('timestamp_')) {
       copy[key] = exports.formatTimestamp(copy[key])

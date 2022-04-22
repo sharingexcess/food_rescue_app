@@ -23,11 +23,9 @@ import {
   shortenLargeNumber,
 } from 'helpers'
 import { Loading, Input } from 'components'
-import { useNavigate } from 'react-router-dom'
 import { useApi } from 'hooks'
 
 export function Analytics() {
-  const navigate = useNavigate()
   const search = new URLSearchParams(window.location.search)
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
@@ -37,34 +35,31 @@ export function Analytics() {
       : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
-  // const [apiData, setApiData] = useState()
-  // const [working, setWorking] = useState(true)
 
-  const query = useMemo(() => {
-    const date_range_start = formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD')
-    const date_range_end = formatTimestamp(new Date(rangeEnd), 'YYYY-MM-DD')
-    return `?date_range_start=${encodeURIComponent(
-      date_range_start
-    )}&date_range_end=${encodeURIComponent(
-      date_range_end
-    )}&breakdown=${encodeURIComponent(breakdown)}`
-  }, [rangeStart, rangeEnd, breakdown])
+  const params = useMemo(
+    () => ({
+      date_range_start: formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD'),
+      date_range_end: formatTimestamp(new Date(rangeEnd), 'YYYY-MM-DD'),
+      breakdown,
+    }),
+    [rangeStart, rangeEnd, breakdown]
+  )
 
-  const [apiData, working] = useApi(`/analytics${query}`)
+  const { data: apiData, loading } = useApi('/analytics', params)
 
+  // this useEfect updates the current URL on state changes
+  // to preserve the current query over refresh/back
   useEffect(() => {
-    if (window.location.search !== query) {
-      // setWorking(true)
-      navigate(query, { replace: true })
-    } else {
-      // fetch(CLOUD_FUNCTION_URLS.analytics + query)
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     setApiData(data)
-      //     setWorking(false)
-      //   })
-    }
-  }, [query]) // eslint-disable-line
+    const params = new URLSearchParams(window.location.search)
+    params.set('date_range_start', rangeStart)
+    params.set('date_range_end', rangeEnd)
+    params.set('breakdown', breakdown)
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}?${params.toString()}`
+    )
+  }, [rangeStart, rangeEnd, breakdown])
 
   const graphData = !apiData
     ? null
@@ -230,7 +225,7 @@ export function Analytics() {
       </FlexContainer>
       <Spacer height={16} />
 
-      {apiData && !working ? (
+      {apiData && !loading ? (
         <>
           <FlexContainer primaryAlign="space-between">
             <FlexContainer
@@ -285,7 +280,11 @@ export function Analytics() {
                   ></XAxis>
                   <YAxis tickFormatter={num => shortenLargeNumber(num)} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" fill="var(--primary)" barSize={30} />
+                  <Bar
+                    dataKey="value"
+                    fill="var(--se-green-primary)"
+                    barSize={30}
+                  />
                   <Brush
                     dataKey="name"
                     height={20}
