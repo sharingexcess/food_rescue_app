@@ -36,6 +36,8 @@ jobs:
           args: use default
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_OAUTH_CREDENTIALS: ${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}
+          GOOGLE_SERVICE_ACCOUNT_STRINGIFIED: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED }}
       # Deploying the functions to firebase
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
@@ -43,3 +45,5 @@ jobs:
           args: deploy --only functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_OAUTH_CREDENTIALS: ${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}
+          GOOGLE_SERVICE_ACCOUNT_STRINGIFIED: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED }}
