@@ -11,7 +11,13 @@ exports.rescues = async (request, response) => {
       console.log('running rescues')
 
       console.log('Received params:', request.query)
-      const { date, status, handler_id, limit, start_after } = request.query
+      const {
+        date,
+        status,
+        handler_id,
+        limit = 100,
+        start_after,
+      } = request.query
 
       const organizations = await fetchCollection('organizations')
       const locations = await fetchCollection('locations')

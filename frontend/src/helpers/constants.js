@@ -1,5 +1,3 @@
-import moment from 'moment'
-
 // all exports should be of type 'const' with an all caps var name separated by underscores
 
 export const VERSION = process.env.REACT_APP_VERSION
@@ -124,16 +122,15 @@ export const RECIPIENT_TYPES = {
   OTHER: 'other',
 }
 
-export const CLOUD_FUNCTION_URLS = {
-  addCalendarEvent:
-    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'api/calendar/add',
-  deleteCalendarEvent:
-    process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'api/calendar/delete',
-  api: process.env.REACT_APP_CLOUD_FUNCTION_BASE_URL + 'api',
-}
+export const API_URL =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_URL_LOCAL
+    : process.env.REACT_APP_API_URL_HOSTED
 
-export const FIRST_RESCUE_IN_DB = process.env.REACT_APP_FIRST_RESCUE_IN_DB
-export const DEFAULT_DB_LIMIT = moment().subtract(7, 'days').toDate()
+export const CLOUD_FUNCTION_URLS = {
+  addCalendarEvent: API_URL + '/calendar/add',
+  deleteCalendarEvent: API_URL + '/calendar/delete',
+}
 
 export const MONTHS = [
   'January',

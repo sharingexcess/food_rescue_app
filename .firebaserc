@@ -6,15 +6,21 @@
   "targets": {
     "sharing-excess-prod": {
       "hosting": {
-        "sharingexcess": [
-          "sharingexcess"
+        "react-app-prod": [
+          "react-app-prod"
+        ],
+        "node-api-prod": [
+          "node-api-prod"
         ]
       }
     },
     "sharing-excess-7e887": {
       "hosting": {
-        "sharingexcess-dev": [
-          "sharingexcess-dev"
+        "react-app-dev": [
+          "react-app-dev"
+        ],
+        "node-api-dev": [
+          "node-api-dev"
         ]
       }
     }

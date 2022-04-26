@@ -7,15 +7,15 @@ const {
 
 exports.api = functions
   .runWith({
-    timeoutSeconds: 30,
-    memory: '4GB',
+    timeoutSeconds: 15,
+    memory: '8GB',
   })
   .https.onRequest(api)
 
 exports.backup_data_to_storage = functions
   .runWith({
     timeoutSeconds: 540,
-    memory: '1GB',
+    memory: '4GB',
   })
   .pubsub.schedule('01 0 * * *') // run every day at 12:01am (00:01)
   .timeZone('America/New_York')

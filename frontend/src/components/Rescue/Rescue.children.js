@@ -667,15 +667,6 @@ export function Stop({ rescue, stops, s, i, refresh }) {
         timestamp_logged_start: createTimestamp(),
       })
       refresh()
-      window.open(
-        generateDirectionsLink(
-          s.location.address1,
-          s.location.city,
-          s.location.state,
-          s.location.zip
-        ),
-        '_blank'
-      )
     }
     async function handleSkip() {
       if (s.organization.subtype === RECIPIENT_TYPES.HOME_DELIVERY) {
@@ -690,15 +681,25 @@ export function Stop({ rescue, stops, s, i, refresh }) {
 
     return (
       <>
-        <Button
-          type="primary"
-          color="blue"
-          size="large"
-          fullWidth
-          handler={handleClick}
+        <ExternalLink
+          id="Rescue-directions-button-link"
+          to={generateDirectionsLink(
+            s.location.address1,
+            s.location.city,
+            s.location.state,
+            s.location.zip
+          )}
         >
-          Get Directions
-        </Button>
+          <Button
+            type="primary"
+            color="blue"
+            size="large"
+            fullWidth
+            handler={handleClick}
+          >
+            Get Directions
+          </Button>
+        </ExternalLink>
         <Spacer height={24} />
         <Button
           type="tertiary"
@@ -707,7 +708,7 @@ export function Stop({ rescue, stops, s, i, refresh }) {
           fullWidth
           handler={handleSkip}
         >
-          Skip to Finish {s.type}
+          Skip to Enter {s.type} Weight
         </Button>
         <Spacer height={8} />
       </>
@@ -765,7 +766,7 @@ export function Stop({ rescue, stops, s, i, refresh }) {
         fullWidth
         handler={handleClick}
       >
-        Finish {s.type} Report
+        Enter {s.type} Weight
       </Button>
     )
   }

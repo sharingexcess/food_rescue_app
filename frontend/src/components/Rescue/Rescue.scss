@@ -11,6 +11,14 @@
     }
   }
 
+  // TODO: fix this horrible selector
+  // we have no current way to add a class/ID to our ExternalLink compoonent
+  // so this is the only way to select the #Rescue-directions-button-link
+  // a tag wrapping our Get Directions button
+  .Stop a:nth-child(13) {
+    width: 100%;
+  }
+
   .buttons {
     display: flex;
     justify-content: center;
@@ -230,5 +238,6 @@
 
   .se-button.type-tertiary {
     white-space: pre-wrap;
+    text-transform: capitalize;
   }
 }

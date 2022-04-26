@@ -4,6 +4,7 @@ service cloud.firestore {
   
     function isAuthenticated(){
       return request.auth != null
+      return request.auth != null;
     }
     
     function isTheSameUser(userId){
@@ -22,6 +23,10 @@ service cloud.firestore {
     
     match /users/{userId} {
     	allow create
+
+    
+    match /users/{userId}/{documents=**} {
+    	allow create;
       allow read: if isTheSameUser(userId) || isAdmin(request.auth.uid);
       allow update: if isTheSameUser(userId);
       allow delete: if isTheSameUser(userId) || isAdmin(request.auth.uid);
@@ -34,6 +39,13 @@ service cloud.firestore {
     
     match /organizations/{organizationId}{
     	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid)
+    match /locations/{locationId}/{documents=**}{
+    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid);
+    	allow create, update, delete: if isAdmin(request.auth.uid);
+    }
+    
+    match /organizations/{organizationId}/{documents=**} {
+    	allow read: if isDriver(request.auth.uid) || isAdmin(request.auth.uid);
     	allow create, update, delete: if isAdmin(request.auth.uid);
     }
     
@@ -48,6 +60,16 @@ service cloud.firestore {
     }
     
     match /stops/{stops}{
+    	return  rescue.data.handler_id == request.auth.uid;
+    }
+    
+    match /rescues/{rescueId}/{documents=**} {
+    	allow create, delete: if isAdmin(request.auth.uid);
+      // allow read:  if request.auth != null;
+    	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
+    }
+    
+    match /stops/{stops}/{documents=**} {
     	allow create, delete: if isAdmin(request.auth.uid);
     	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
     }
