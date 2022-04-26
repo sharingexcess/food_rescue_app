@@ -7,8 +7,8 @@
     "install:all": "npm i && cd frontend && npm i && cd ../backend && npm i",
     "dev": "npm run set_env:dev && concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
     "prod": "npm run set_env:prod && concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
-    "set_env:dev": "firebase use default && cp frontend/environments/.env.dev frontend/.env && cp backend/environments/.env.dev backend/.env",
-    "set_env:prod": "firebase use prod && cp frontend/environments/.env.prod frontend/.env && cp backend/environments/.env.prod backend/.env",
+    "set_env:dev": "firebase use default && cp environments/.env.frontend.dev frontend/.env && cp environments/.env.backend.dev backend/.env",
+    "set_env:prod": "firebase use prod && cp environments/.env.frontend.prod frontend/.env && cp environments/.env.backend.prod backend/.env",
     "deploy": "node scripts/manual_prod_deploy.js"
   },
   "dependencies": {

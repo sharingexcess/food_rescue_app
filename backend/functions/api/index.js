@@ -19,5 +19,11 @@ api.get('/analytics', analytics)
 api.post('/calendar/add', add_calendar_event)
 api.post('/calendar/delete', delete_calendar_event)
 
+api.get('/', (_request, response) =>
+  response.send(
+    `Sharing Excess API, ©${new Date().getFullYear()}, All Rights Reserved.`
+  )
+)
+
 // export express server instance
 exports.api = api

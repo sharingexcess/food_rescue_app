@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { CLOUD_FUNCTION_URLS, DB_COLLECTIONS, generateId } from 'helpers'
+import { API_URL, DB_COLLECTIONS, generateId } from 'helpers'
 import { useFirestoreListener } from './useFirestoreListener'
 
 export function useApi(endpoint, params = null) {
@@ -42,7 +42,7 @@ export function useApi(endpoint, params = null) {
           data:
             JSON.stringify(params) === state.cached_params ? state.data : null,
         }))
-        fetch(CLOUD_FUNCTION_URLS.api + request)
+        fetch(API_URL + request)
           .then(res => res.json())
           .then(payload => {
             logReceivedResponse(request, payload, state.api_session_id)

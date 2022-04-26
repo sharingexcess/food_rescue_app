@@ -16,7 +16,6 @@ import {
   Treemap,
 } from 'recharts'
 import {
-  // CLOUD_FUNCTION_URLS,
   COLORS,
   formatLargeNumber,
   formatTimestamp,
