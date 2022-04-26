@@ -29,6 +29,13 @@ jobs:
         run: |
           cd backend
           npm install
+      # Initilize session with firebase project
+      - name: Firebase Login to Project
+        uses: w9jds/firebase-action@master
+        with:
+          args: use default
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       # Deploying the functions to firebase
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
