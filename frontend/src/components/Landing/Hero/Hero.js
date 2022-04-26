@@ -5,11 +5,10 @@ import {
   Image,
   FlexContainer,
 } from '@sharingexcess/designsystem'
-import { useAuth, useIsMobile } from 'hooks'
+import { useIsMobile } from 'hooks'
 
-export function Hero() {
+export function Hero({ handleLogin }) {
   const isMobile = useIsMobile()
-  const { handleLogin } = useAuth()
 
   const BACKGROUND_IMAGE = isMobile
     ? '/LandingImage/hero_background_mobile.png'

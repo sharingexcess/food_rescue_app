@@ -16,6 +16,7 @@ import {
   Treemap,
 } from 'recharts'
 import {
+  CLOUD_FUNCTION_URLS,
   COLORS,
   fetchData,
   formatLargeNumber,
@@ -25,14 +26,10 @@ import {
 import { Loading, Input } from 'components'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from 'hooks'
-import { useApi } from 'hooks'
 
 export function Analytics() {
   const { user } = useAuth()
   const navigate = useNavigate()
-import { useApi } from 'hooks'
-
-export function Analytics() {
   const search = new URLSearchParams(window.location.search)
   const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
   const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
@@ -42,23 +39,22 @@ export function Analytics() {
       : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
+  const [apiData, setApiData] = useState()
+  const [working, setWorking] = useState(true)
 
-  const params = useMemo(
-    () => ({
-      date_range_start: formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD'),
-      date_range_end: formatTimestamp(new Date(rangeEnd), 'YYYY-MM-DD'),
-      breakdown,
-    }),
-    [rangeStart, rangeEnd, breakdown]
-  )
+  const query = useMemo(() => {
+    const date_range_start = formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD')
+    const date_range_end = formatTimestamp(new Date(rangeEnd), 'YYYY-MM-DD')
+    return `?date_range_start=${encodeURIComponent(
+      date_range_start
+    )}&date_range_end=${encodeURIComponent(
+      date_range_end
+    )}&breakdown=${encodeURIComponent(breakdown)}`
+  }, [rangeStart, rangeEnd, breakdown])
 
-  const { data: apiData, loading } = useApi('/analytics', params)
-
-  // this useEfect updates the current URL on state changes
-  // to preserve the current query over refresh/back
   useEffect(() => {
     if (window.location.search !== query) {
-      // setWorking(true)
+      setWorking(true)
       navigate(query, { replace: true })
     } else {
       console.log('fetching', CLOUD_FUNCTION_URLS.analytics + query)
@@ -68,25 +64,9 @@ export function Analytics() {
           setApiData(data)
           setWorking(false)
         })
-      // fetch(CLOUD_FUNCTION_URLS.analytics + query)
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     setApiData(data)
-      //     setWorking(false)
-      //   })
     }
   }, [query]) // eslint-disable-line
   console.log(apiData)
-    const params = new URLSearchParams(window.location.search)
-    params.set('date_range_start', rangeStart)
-    params.set('date_range_end', rangeEnd)
-    params.set('breakdown', breakdown)
-    window.history.replaceState(
-      null,
-      '',
-      `${window.location.pathname}?${params.toString()}`
-    )
-  }, [rangeStart, rangeEnd, breakdown])
 
   const graphData = !apiData
     ? null
@@ -203,6 +183,8 @@ export function Analytics() {
           transform="rotate(-40)"
           width={5}
           textAnchor="end"
+          verticalAnchor="middle"
+          scaleToFit={true}
         >
           {payload.value.substring(0, 13)}
           {payload.value.length >= 13 ? '...' : ''}
@@ -215,13 +197,13 @@ export function Analytics() {
     <main id="Analytics">
       <FlexContainer className="InputSection" primaryAlign="space-between">
         <Input
-          type="date"
+          type="datetime-local"
           value={rangeStart}
           onChange={e => setRangeStart(e.target.value)}
           label="From..."
         />
         <Input
-          type="date"
+          type="datetime-local"
           value={rangeEnd}
           onChange={e => setRangeEnd(e.target.value)}
           label="To..."
@@ -252,7 +234,7 @@ export function Analytics() {
       </FlexContainer>
       <Spacer height={16} />
 
-      {apiData && !loading ? (
+      {apiData && !working ? (
         <>
           <FlexContainer primaryAlign="space-between">
             <FlexContainer
@@ -307,11 +289,7 @@ export function Analytics() {
                   ></XAxis>
                   <YAxis tickFormatter={num => shortenLargeNumber(num)} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="value"
-                    fill="var(--se-green-primary)"
-                    barSize={30}
-                  />
+                  <Bar dataKey="value" fill="var(--primary)" barSize={30} />
                   <Brush
                     dataKey="name"
                     height={20}

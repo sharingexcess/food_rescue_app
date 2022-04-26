@@ -2,9 +2,6 @@ import { Spacer, Text } from '@sharingexcess/designsystem'
 import { CLOUD_FUNCTION_URLS, fetchData, formatLargeNumber } from 'helpers'
 import { useAuth } from 'hooks'
 import React, { useEffect, useMemo, useState } from 'react'
-import { ORG_SUBTYPES } from 'helpers'
-import { useFirestore } from 'hooks'
-import React, { useMemo } from 'react'
 import { PoundsByMonthChart } from './PoundsByMonthChart'
 import { PoundsByOrgChart } from './PoundsByOrgChart'
 import { useNavigate } from 'react-router-dom'
@@ -15,36 +12,6 @@ export function DriverStats() {
   const { user } = useAuth()
   const [working, setWorking] = useState(true)
   const [apiData, setApiData] = useState()
-  // const { user } = useAuth()
-  // const { loadAllData } = useFirestore()
-  // const driver_stops = useFirestore(
-  //   'stops',
-  //   useCallback(
-  //     i =>
-  //       i.handler_id === user.id &&
-  //       // i.handler_id === 'jvC1BuuhYiXzMvbuog9b9YcUkDy1' && // (Use Jacob's ID for testing)
-  //       // i.handler_id === 'jiBBxAvncBSNWwjizdmsxM7EALz1' && // Sarah DiPasquale
-  //       // i.handler_id === '1yxUOZ53OOg0T3SJ2SqolPI3UK12' && // Alex Havertine
-  //       // [
-  //       //   'sUqgP36KAiPgDaU7V4z8N0GirIc2',
-  //       //   'K2eYju4PtaejTIiOdHQrERMoRnk2',
-  //       // ].includes(i.handler_id) && // Evan Ehlers (he has 2 accounts)
-  //       i.status === STATUSES.COMPLETED,
-  //     [user]
-  //   )
-  // )
-  // TEMP FIX => ACTIVELY BEING REFACTORED IN ANOTHER PR
-  const driver_stops = [] // eslint-disable-line
-  const organizations = useFirestore('organizations')
-
-  const filteredByHolding = useMemo(
-    () =>
-      driver_stops.filter(i => {
-        const org = organizations.find(o => i.organization_id === o.id)
-        return org.subtype !== ORG_SUBTYPES.HOLDING
-      }),
-    [organizations, driver_stops]
-  )
 
   const query = useMemo(() => {
     return `?user=${encodeURIComponent(user.id)}`
@@ -64,7 +31,6 @@ export function DriverStats() {
         })
     }
   }, [query, navigate])
-  // useEffect(() => loadAllData(), []) // eslint-disable-line
 
   return (
     <main id="DriverStats">

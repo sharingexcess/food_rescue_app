@@ -1,10 +1,11 @@
-import { Button, Spacer, Text } from '@sharingexcess/designsystem'
-import Map from 'assets/map.png'
+import { Hero } from './Hero/Hero'
+import { ProductDemo } from './ProductDemo/ProductDemo'
+import { Testimonial } from './Testimonial/Testimonial'
 
 export function Landing({ handleLogin }) {
   return (
     <main id="Landing">
-      <Hero />
+      <Hero handleLogin={handleLogin} />
       <ProductDemo />
       <Testimonial />
     </main>

@@ -7,36 +7,6 @@ export function PoundsByOrgChart({ poundsByOrg }) {
   const isMobile = useIsMobile()
 
   return (
-  const organizations = useFirestore('organizations')
-
-  useEffect(() => {
-    if (stops) {
-      const poundsByOrgId = {}
-      for (const stop of stops) {
-        if (poundsByOrgId[stop.organization_id]) {
-          poundsByOrgId[stop.organization_id] =
-            poundsByOrgId[stop.organization_id] +
-            (stop.impact_data_total_weight || 0)
-        } else {
-          poundsByOrgId[stop.organization_id] =
-            stop.impact_data_total_weight || 0
-        }
-      }
-      const poundsByOrg = []
-      for (const org_id in poundsByOrgId) {
-        const organization = organizations.find(i => i.id === org_id)
-        organization &&
-          poundsByOrg.push({
-            name: organization.name,
-            weight: poundsByOrgId[org_id],
-          })
-      }
-      const sortedByWeight = poundsByOrg.sort((a, b) => b.weight - a.weight)
-      setPoundsByOrg(sortedByWeight)
-    }
-  }, [stops, organizations])
-
-  return poundsByOrg ? (
     <section id="PoundsByOrgChart">
       <ResponsiveContainer width="100%" height={isMobile ? 300 : 500}>
         <Treemap
