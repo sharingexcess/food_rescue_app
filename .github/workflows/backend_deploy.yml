@@ -22,6 +22,18 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - run: |
+          if [ "$REACT_APP_FIREBASE_ENV" == "dev" ]
+          then
+            echo "Building with DEV env vars set"
+          elif [ "$REACT_APP_FIREBASE_ENV" == "prod" ]
+          then
+            echo "Building with PROD env vars set"
+          else
+            echo "env vars are improperly set, not DEV or PROD."
+          fi
+        env:
+          REACT_APP_FIREBASE_ENV: ${{secrets.REACT_APP_FIREBASE_ENV}}
 
       # Runs a single command using the runners shell
       # And of course we need to goto our functions folder to deploy
