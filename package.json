@@ -14,18 +14,18 @@
   "dependencies": {
     "eslint-config-react": "^1.1.7",
     "eslint-config-react-app": "^7.0.0",
-    "firebase": "^9.6.6"
-  },
-  "devDependencies": {
-    "@sentry/cli": "^1.71.0",
-    "colors": "^1.4.0",
-    "concurrently": "^7.0.0",
-    "dotenv": "^14.2.0",
+    "firebase": "^9.6.6",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.2",
-    "git-state": "^4.1.0",
-    "prettier": "2.5.1"
+    "prettier": "2.5.1",
+    "@sentry/cli": "^1.71.0",
+    "colors": "^1.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "dotenv": "^14.2.0",
+    "git-state": "^4.1.0"
   }
 }
