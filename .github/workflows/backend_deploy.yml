@@ -22,7 +22,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - run: |
+      - name: ENV Check
+        run: |
           if [ "$REACT_APP_FIREBASE_ENV" == "dev" ]
           then
             echo "Building with DEV env vars set"
@@ -41,8 +42,11 @@ jobs:
         run: |
           cd backend
           npm install
+          cd ../frontend
+          npm install
+          npm run build
       # Initilize session with firebase project
-      - name: Firebase Login to Project
+      - name: Initialize Firebase Project
         uses: w9jds/firebase-action@master
         with:
           args: use default
@@ -54,7 +58,7 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:node-api-dev
+          args: deploy
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           GOOGLE_OAUTH_CREDENTIALS: ${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}
