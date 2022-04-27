@@ -40,6 +40,7 @@ jobs:
       # And of course we need to goto our functions folder to deploy
       - name: Install npm packages
         run: |
+          npm install
           cd backend
           npm install
           cd ../frontend
