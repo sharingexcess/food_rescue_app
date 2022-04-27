@@ -31,7 +31,6 @@ function Auth({ children }) {
     if (uid) {
       const userRef = getCollection('users').doc(uid)
       unsubscribe = userRef.onSnapshot(doc => setProfile(doc.data()))
-      userRef.update({ timestamp_last_active: createTimestamp() })
       user && localStorage.setItem('se_user_id', user.uid)
     }
     return () => unsubscribe && unsubscribe()

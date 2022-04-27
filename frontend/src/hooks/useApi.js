@@ -1,8 +1,10 @@
 import { useEffect, useCallback, useState } from 'react'
 import { API_URL, DB_COLLECTIONS, generateId } from 'helpers'
 import { useFirestoreListener } from './useFirestoreListener'
+import { useAuth } from './useAuth'
 
 export function useApi(endpoint, params = null) {
+  const { user } = useAuth()
   const [state, setState] = useState({
     data: null,
     // last identifies the id of the last document returned
@@ -42,10 +44,16 @@ export function useApi(endpoint, params = null) {
           data:
             JSON.stringify(params) === state.cached_params ? state.data : null,
         }))
-        fetch(API_URL + request)
+        const request_start_timestamp = performance.now()
+        fetch(API_URL + request, { headers: { accessToken: user.accessToken } })
           .then(res => res.json())
           .then(payload => {
-            logReceivedResponse(request, payload, state.api_session_id)
+            logReceivedResponse(
+              request,
+              payload,
+              state.api_session_id,
+              request_start_timestamp
+            )
             setState(state => ({
               ...state,
               data:
@@ -158,7 +166,12 @@ function logSendingRequest(endpoint, params, request, api_session_id) {
     )
 }
 
-function logReceivedResponse(request, payload, api_session_id) {
+function logReceivedResponse(
+  request,
+  payload,
+  api_session_id,
+  request_start_timestamp
+) {
   // only create logs if the global window variable is set to 'true'
   window.se_api_logs &&
     console.log(
@@ -167,6 +180,10 @@ function logReceivedResponse(request, payload, api_session_id) {
       '\nurl:',
       request,
       '\npayload:',
-      payload
+      payload,
+      '\nduration:',
+      `${((performance.now() - request_start_timestamp) / 1000).toFixed(
+        2
+      )}seconds`
     )
 }

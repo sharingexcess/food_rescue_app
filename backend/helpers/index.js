@@ -1,1 +1,5 @@
-module.exports = { ...require('./functions'), ...require('./constants') }
+module.exports = {
+  ...require('./functions'),
+  ...require('./constants'),
+  ...require('./auth'),
+}

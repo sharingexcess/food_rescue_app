@@ -3,14 +3,14 @@ const {
   db,
   fetchCollection,
   formatDocumentTimestamps,
+  authenticateRequest,
 } = require('../../helpers')
 
 exports.rescues = async (request, response) => {
   return new Promise(async resolve => {
     try {
-      console.log('running rescues')
+      console.log('INVOKING ENDPOINT: rescues()\n', 'params:', request.query)
 
-      console.log('Received params:', request.query)
       const {
         date,
         status,
@@ -18,6 +18,17 @@ exports.rescues = async (request, response) => {
         limit = 100,
         start_after,
       } = request.query
+
+      if (
+        !authenticateRequest(
+          request.get('accessToken'),
+          user => user.is_admin || (handler_id && user.id === handler_id)
+        )
+      ) {
+        response
+          .status(403)
+          .send('User does not have permission to make this request.')
+      }
 
       const organizations = await fetchCollection('organizations')
       const locations = await fetchCollection('locations')
