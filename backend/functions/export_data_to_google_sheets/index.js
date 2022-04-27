@@ -4,9 +4,9 @@ const is_prod = process.env.GCLOUD_PROJECT === 'sharing-excess-prod'
 const spreadsheetId = is_prod
   ? '1wmcOySR3EhHezgFn0o3suf7RZFDh62secue3jpbPK4Q'
   : '16bn0SYmKu7YnTI1yB5NiMzHhq3E0ZkDzCnfeh0v1AeI'
-const serviceAccount = JSON.parse(
-  process.env.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED
-)
+const serviceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED
+  ? JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED)
+  : {}
 const moment = require('moment-timezone')
 const { db } = require('../../helpers/functions')
 

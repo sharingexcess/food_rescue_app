@@ -1,7 +1,13 @@
 const { google } = require('googleapis')
 const OAuth2 = google.auth.OAuth2
 const calendar = google.calendar('v3')
-const googleCredentials = JSON.parse(process.env.GOOGLE_OAUTH_CREDENTIALS)
+// console.log(
+//   process.env.GOOGLE_OAUTH_CREDENTIALS,
+//   JSON.parse(new String(process.env.GOOGLE_OAUTH_CREDENTIALS))
+// )
+const googleCredentials = process.env.GOOGLE_OAUTH_CREDENTIALS
+  ? JSON.parse(new String(process.env.GOOGLE_OAUTH_CREDENTIALS))
+  : null
 
 const ERROR_RESPONSE = {
   status: '500',
