@@ -1,4 +1,4 @@
-#DriverStats {
+#Impact {
   @include page;
 
   .primary-header {
@@ -9,7 +9,7 @@
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 600;
-    .DriverStats-tooltip {
+    .Impact-tooltip {
       background: var(--se-white);
       padding: 8px;
       border-radius: 4px;

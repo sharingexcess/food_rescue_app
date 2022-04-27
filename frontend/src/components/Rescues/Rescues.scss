@@ -7,6 +7,10 @@
     text-align: center;
   }
 
+  #Error {
+    height: auto;
+  }
+
   .lds-ellipsis div {
     // this controls the "pull to refresh" loading icon;
     background: var(--se-white);

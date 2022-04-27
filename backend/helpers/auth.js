@@ -49,7 +49,12 @@ exports.authenticateRequest = async (token, permissionCallback) => {
 
 function handleValidateAuthentication(user, permissionCallback) {
   const response = permissionCallback(user)
-  console.log(permissionCallback.toString(), ' => ', response)
+  console.log(
+    'Running permissionCallback():',
+    permissionCallback.toString(),
+    ' => ',
+    response
+  )
   if (response === true) {
     console.log('Request Authentication: Approved.')
   } else {
@@ -99,6 +104,6 @@ async function getUserRecordFromId(uid) {
 }
 
 function cacheUserRecordByToken(token, userRecord) {
-  console.log('Caching User Record for future requests.')
   cached_approved_tokens[token] = userRecord
+  console.log('Cached User Record for future requests.')
 }

@@ -1,12 +1,19 @@
-const { db, formatDocumentTimestamps } = require('../../helpers')
+const {
+  db,
+  formatDocumentTimestamps,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 
 exports.rescue = async (request, response) => {
   return new Promise(async resolve => {
     try {
-      console.log('running getRescue')
+      console.log('INVOKING ENDPOINT: rescue()\n', 'params:', {
+        ...request.params,
+        ...request.query,
+      })
 
       const { rescue_id } = request.params
-      console.log('Received rescue_id:', rescue_id)
 
       if (!rescue_id) {
         response.status(400).send('No rescue_id param received in request URL.')
@@ -19,6 +26,18 @@ exports.rescue = async (request, response) => {
         .doc(rescue_id)
         .get()
         .then(doc => formatDocumentTimestamps(doc.data()))
+
+      // we wait until here to authenticate the request so we can see if this is the
+      // driver's own route (that data isn't available until after we fetch the rescue)
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.is_admin || (rescue && user.id === rescue.handler_id)
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       if (!rescue) {
         response.status(200).send(null)
@@ -91,7 +110,7 @@ exports.rescue = async (request, response) => {
       resolve()
     } catch (e) {
       console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      response.status(500).send(e.toString())
     }
   })
 }

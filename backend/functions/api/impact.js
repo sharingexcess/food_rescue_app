@@ -1,32 +1,31 @@
-const { db, fetchCollection } = require('./helpers')
-const express = require('express')
-const cors = require('cors')
+const {
+  db,
+  fetchCollection,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 var moment = require('moment-timezone')
 
-const myStats_routes = express()
-myStats_routes.use(cors({ origin: true }))
-myStats_routes.get('/', handleMyStats)
-exports.myStats = myStats_routes
-
-async function handleMyStats(request, response) {
+exports.impact = async (request, response) => {
   return new Promise(async resolve => {
-    const { user } = request.query
+    console.log('INVOKING ENDPOINT: impact()\n', 'params:', request.query)
 
-    //Verifies that header containing an access token exists
-    //and verifies that there is an access token after 'Bearer '
-    //This DOES NOT verify the access token
-    if (
-      !request.headers.authorization ||
-      !request.headers.authorization.startsWith('Bearer ')
-    ) {
-      response.status(403).send('Unauthorized')
+    const { user_id } = request.query
+
+    const requestIsAuthenticated = await authenticateRequest(
+      request.get('accessToken'),
+      user => user_id === user.id
+    )
+
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
       return
     }
 
     let rescues = []
     await db
       .collection('rescues')
-      .where('handler_id', '==', user)
+      .where('handler_id', '==', user_id)
       .get()
       .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
     rescues = rescues.filter(i => i.status === 'completed')
@@ -34,7 +33,7 @@ async function handleMyStats(request, response) {
     let stops = []
     await db
       .collection('stops')
-      .where('handler_id', '==', user)
+      .where('handler_id', '==', user_id)
       .get()
       .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
     stops = stops.filter(i => {
@@ -113,11 +112,12 @@ function calcPoundsByMonth(deliveries) {
       .subtract(i - 1, 'months')
       .startOf('month')
       .toDate()
-    const filterByDateRange = i => {
-      return (
-        i.timestamp_logged_finish.toDate() > range_start &&
-        i.timestamp_logged_finish.toDate() < range_end
-      )
+    const filterByDateRange = delivery => {
+      if (!delivery.timestamp_logged_finish) return false
+      const finished = delivery.timestamp_logged_finish.toDate
+        ? delivery.timestamp_logged_finish.toDate()
+        : new Date(delivery.timestamp_logged_finish)
+      return finished > range_start && finished < range_end
     }
     const stopsInMonth = deliveries.filter(filterByDateRange)
     const totalWeightInStops = stopsInMonth.reduce(

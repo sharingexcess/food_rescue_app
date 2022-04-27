@@ -44,3 +44,9 @@ exports.formatTimestamp = timestamp => {
     return null
   }
 }
+
+exports.rejectUnauthorizedRequest = response => {
+  response
+    .status(403)
+    .send('User does not have permission to make this request.')
+}

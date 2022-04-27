@@ -23,11 +23,11 @@
 
   #Testimonial-content {
     .Testimonial-content-slide {
-      background-color: var(--white);
+      background-color: var(--se-white);
       border-radius: 10px;
       padding: 30px 70px 30px 70px;
       @include mobile {
-        background-image: linear-gradient(var(--lightgrey), var(--white));
+        background-image: linear-gradient(var(--lightgrey), var(--se-white));
       }
     }
     #Testimonial-content-vector {

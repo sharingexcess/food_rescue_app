@@ -4,13 +4,13 @@ const {
   fetchCollection,
   formatDocumentTimestamps,
   authenticateRequest,
+  rejectUnauthorizedRequest,
 } = require('../../helpers')
 
 exports.rescues = async (request, response) => {
   return new Promise(async resolve => {
     try {
       console.log('INVOKING ENDPOINT: rescues()\n', 'params:', request.query)
-
       const {
         date,
         status,
@@ -19,15 +19,14 @@ exports.rescues = async (request, response) => {
         start_after,
       } = request.query
 
-      if (
-        !authenticateRequest(
-          request.get('accessToken'),
-          user => user.is_admin || (handler_id && user.id === handler_id)
-        )
-      ) {
-        response
-          .status(403)
-          .send('User does not have permission to make this request.')
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.is_admin || (handler_id && user.id === handler_id)
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
       }
 
       const organizations = await fetchCollection('organizations')
@@ -136,7 +135,7 @@ exports.rescues = async (request, response) => {
       resolve()
     } catch (e) {
       console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      response.status(500).send(e.toString())
     }
   })
 }

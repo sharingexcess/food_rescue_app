@@ -46,7 +46,22 @@ export function useApi(endpoint, params = null) {
         }))
         const request_start_timestamp = performance.now()
         fetch(API_URL + request, { headers: { accessToken: user.accessToken } })
-          .then(res => res.json())
+          .then(async res => {
+            if (!res.ok) {
+              let message
+              // attempt to get an error, message, but don't let this throw it's own error
+              try {
+                const msg = await res.text()
+                console.log(msg)
+                message = msg
+              } catch (e) {}
+              throw new Error(
+                `${res.status} ${res.statusText}${
+                  message ? ' - ' + message : ''
+                }`
+              )
+            } else return res.json()
+          })
           .then(payload => {
             logReceivedResponse(
               request,
@@ -74,31 +89,22 @@ export function useApi(endpoint, params = null) {
               loading: false,
             }))
           })
-          .catch(e => setState(state => ({ ...state, error: e })))
+          .catch(e => setState(state => ({ ...state, error: e.toString() })))
       }
     },
     [endpoint, params, state]
   )
 
-  // useFirstoreListener will trigger the initial fetch,
-  // and accept a callback as its 3rd arg to trigger
+  // make an initial fetch
+  useEffect(fetchApi, [endpoint, params]) // eslint-disable-line
+
+  // useFirstoreListener will accept a callback as its 3rd arg to trigger
   // when an update is detected on the specified data
   useFirestoreListener(
     endpoint,
     state.api_session_id,
     useCallback(fetchApi, [endpoint, params]) // eslint-disable-line
   )
-
-  useEffect(() => {
-    // to handle cases where the request does not map to a Firestore DB collection,
-    // make a fetch call directly, instead of allowing useFirestore Listener to trigger fetch
-    if (
-      endpoint &&
-      !Object.values(DB_COLLECTIONS).includes(endpoint.split('/').slice(1)[0])
-    ) {
-      fetchApi()
-    }
-  }, [endpoint, params]) // eslint-disable-line
 
   // we pass to the consumer component all existing state,
   // plus a "refresh" function to recall fetchApi,

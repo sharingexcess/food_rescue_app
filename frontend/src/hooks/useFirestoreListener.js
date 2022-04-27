@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 export function useFirestoreListener(endpoint, api_session_id, callback) {
   const [isInitialFetch, setIsInitialFetch] = useState(true)
+
   const identifier = useMemo(
     () => generateCacheIdentifier(endpoint),
     [endpoint]
@@ -14,11 +15,12 @@ export function useFirestoreListener(endpoint, api_session_id, callback) {
         logInitializingConnection(identifier, api_session_id)
         const ref = getFirestoreRef(identifier)
         const unsubscribe = ref.onSnapshot(() => {
-          logHandlingUpdate(identifier, isInitialFetch, api_session_id)
           if (isInitialFetch) {
             setIsInitialFetch(false)
+          } else {
+            logHandlingUpdate(identifier, isInitialFetch, api_session_id)
+            callback()
           }
-          callback()
         })
 
         return () => {
@@ -32,7 +34,7 @@ export function useFirestoreListener(endpoint, api_session_id, callback) {
       console.error(`Error in useFirstoreListener:${api_session_id} - `, e)
     }
     // don't include 'isInitialFetch' in dependencies - it causes double fetching on init
-  }, [endpoint, identifier, callback, api_session_id]) // eslint-disable-line
+  }, [identifier]) // eslint-disable-line
 }
 
 function generateCacheIdentifier(endpoint) {
@@ -59,9 +61,7 @@ function logHandlingUpdate(identifier, isInitialFetch, api_session_id) {
   // only create logs if the global window variable is set to 'true'
   window.se_api_logs &&
     console.log(
-      `%c[Firestore:${api_session_id}] ${
-        isInitialFetch ? 'Requesting Fetch:' : 'Detected Update:'
-      }`,
+      `%c[Firestore:${api_session_id}] Detected Update:`,
       ';font-weight:bold;background:lightgreen;color:black;',
       '\nidentifier:',
       identifier.join(' => ')

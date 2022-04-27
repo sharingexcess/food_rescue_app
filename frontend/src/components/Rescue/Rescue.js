@@ -17,14 +17,15 @@ import {
   RescueHeader,
   Stop,
 } from './Rescue.children'
+import { Error } from 'components/Error/Error'
 
 export function Rescue() {
-  const { rescue_id } = useParams()
   const { admin } = useAuth()
-  const { setModalState } = useApp()
   const navigate = useNavigate()
-  const { data: rescue, refresh } = useApi(`/rescues/${rescue_id}`)
+  const { rescue_id } = useParams()
+  const { setModalState } = useApp()
   const [working, setWorking] = useState(false)
+  const { data: rescue, refresh, error } = useApi(`/rescues/${rescue_id}`)
 
   useEffect(() => {
     // make the refresh function available in the modal state
@@ -69,37 +70,33 @@ export function Rescue() {
 
   return (
     <main id="Rescue">
-      {!rescue ? (
+      {error ? (
+        <Error message={error} />
+      ) : !rescue ? (
         <Loading />
       ) : (
         <PullToRefresh onRefresh={handleRefresh}>
           <RescueHeader rescue={rescue} />
           <RescueActionButton rescue={rescue} />
           <Spacer height={32} />
-          {rescue.stops.length ? (
-            <>
-              <section className="Stops">
-                {rescue.stops.map((s, i) => (
-                  <Stop
-                    rescue={rescue}
-                    refresh={refresh}
-                    stops={rescue.stops}
-                    s={s}
-                    i={i}
-                    key={i}
-                  />
-                ))}
-              </section>
-              {rescue.status === STATUSES.ACTIVE &&
-                admin === true &&
-                areAllStopsCompleted(rescue.stops) &&
-                !allFoodDelivered(rescue.stops) && (
-                  <BackupDelivery rescue={rescue} />
-                )}
-            </>
-          ) : (
-            <Loading text="Loading stops on route..." relative />
-          )}
+          <section className="Stops">
+            {rescue.stops.map((s, i) => (
+              <Stop
+                rescue={rescue}
+                refresh={refresh}
+                stops={rescue.stops}
+                s={s}
+                i={i}
+                key={i}
+              />
+            ))}
+          </section>
+          {rescue.status === STATUSES.ACTIVE &&
+            admin === true &&
+            areAllStopsCompleted(rescue.stops) &&
+            !allFoodDelivered(rescue.stops) && (
+              <BackupDelivery rescue={rescue} />
+            )}
         </PullToRefresh>
       )}
     </main>

@@ -7,26 +7,27 @@ const {
   FOOD_CATEGORIES,
   RECIPIENT_SUB_TYPES,
   RETAIL_VALUES,
+  rejectUnauthorizedRequest,
+  authenticateRequest,
 } = require('../../helpers')
 
 exports.analytics = async (request, response) => {
   return new Promise(async resolve => {
-    //Verifies that header containing an access token exists
-    //and verifies that there is an access token after 'Bearer '
-    //This DOES NOT verify the access token
-    if (
-      !request.headers.authorization ||
-      !request.headers.authorization.startsWith('Bearer ')
-    ) {
-      response.status(403).send('Unauthorized to look')
+    console.log('INVOKING ENDPOINT: analytics()\n', 'params:', request.query)
+
+    const requestIsAuthenticated = await authenticateRequest(
+      request.get('accessToken'),
+      user => user.is_admin
+    )
+
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
       return
     }
 
-    console.log('running analytics')
     const { date_range_start, date_range_end } = request.query
     let { breakdown } = request.query
     breakdown = decodeURIComponent(breakdown)
-    console.log(date_range_start, date_range_end, breakdown)
 
     let rescues = []
     await db

@@ -32,7 +32,7 @@ import {
   Analytics,
   Modal,
   EnvWarning,
-  DriverStats,
+  Impact,
 } from 'components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -255,7 +255,7 @@ function RescueAppRoutes() {
                     path="/stats"
                     element={
                       <DriverRoute>
-                        <DriverStats />
+                        <Impact />
                       </DriverRoute>
                     }
                   />

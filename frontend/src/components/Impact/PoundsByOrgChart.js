@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
-      <div className="DriverStats-tooltip">
+      <div className="Impact-tooltip">
         <Text type="paragraph" align="center" color="green">
           {data.name}
         </Text>

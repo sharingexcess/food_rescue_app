@@ -1,39 +1,49 @@
 import { Spacer, Text } from '@sharingexcess/designsystem'
-import { CLOUD_FUNCTION_URLS, fetchData, formatLargeNumber } from 'helpers'
-import { useAuth } from 'hooks'
+import { formatLargeNumber } from 'helpers'
+import { useApi, useAuth } from 'hooks'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PoundsByMonthChart } from './PoundsByMonthChart'
 import { PoundsByOrgChart } from './PoundsByOrgChart'
 import { useNavigate } from 'react-router-dom'
 import { Loading } from 'components'
 
-export function DriverStats() {
+export function Impact() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const [working, setWorking] = useState(true)
-  const [apiData, setApiData] = useState()
+  // const [working, setWorking] = useState(true)
+  // const [apiData, setApiData] = useState()
 
-  const query = useMemo(() => {
-    return `?user=${encodeURIComponent(user.id)}`
-  }, [user.id])
+  const {
+    data: apiData,
+    loading,
+    error,
+  } = useApi(
+    '/impact',
+    useMemo(
+      () => ({
+        user_id: user.id,
+      }),
+      [user.id]
+    )
+  )
 
-  useEffect(() => {
-    if (window.location.search !== query) {
-      setWorking(true)
-      navigate(query, { replace: true })
-    } else {
-      console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
-      fetchData(CLOUD_FUNCTION_URLS.myStats + query, user.accessToken)
-        .then(res => res.json())
-        .then(data => {
-          setApiData(data)
-          setWorking(false)
-        })
-    }
-  }, [query, navigate])
+  // useEffect(() => {
+  //   if (window.location.search !== query) {
+  //     setWorking(true)
+  //     navigate(query, { replace: true })
+  //   } else {
+  //     console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
+  //     fetchData(CLOUD_FUNCTION_URLS.myStats + query, user.accessToken)
+  //       .then(res => res.json())
+  //       .then(data => {
+  //         setApiData(data)
+  //         setWorking(false)
+  //       })
+  //   }
+  // }, [query, navigate])
 
   return (
-    <main id="DriverStats">
+    <main id="Impact">
       <Text type="section-header" color="white" shadow>
         You and Sharing Excess
       </Text>
@@ -43,7 +53,7 @@ export function DriverStats() {
         redistributing food.
       </Text>
       <Spacer height={32} />
-      {apiData && !working ? (
+      {apiData ? (
         <>
           <Text type="primary-header" align="center" color="white" shadow>
             {formatLargeNumber(apiData.total_weight)} lbs.
@@ -65,7 +75,7 @@ export function DriverStats() {
         Here's a breakdown of all the food you've rescued in the last 12 months.
       </Text>
       <Spacer height={16} />
-      {apiData && !working ? (
+      {apiData ? (
         <PoundsByMonthChart poundsByMonth={apiData.poundsByMonth} />
       ) : (
         <Loading text="Calculating your impact" relative />
@@ -80,7 +90,7 @@ export function DriverStats() {
         organization.
       </Text>
       <Spacer height={16} />
-      {apiData && !working ? (
+      {apiData ? (
         <PoundsByOrgChart poundsByOrg={apiData.donors} />
       ) : (
         <Loading text="Calculating your impact" relative />
@@ -95,7 +105,7 @@ export function DriverStats() {
         organization.
       </Text>{' '}
       <Spacer height={16} />
-      {apiData && !working ? (
+      {apiData ? (
         <PoundsByOrgChart poundsByOrg={apiData.recipients} />
       ) : (
         <Loading text="Calculating your impact" relative />

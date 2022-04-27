@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useApi, useAuth, useFirestore } from 'hooks'
-import { Ellipsis, Input, Loading } from 'components'
+import { Ellipsis, Input, Loading, Error } from 'components'
 import { API_ENDPOINTS, STATUSES } from 'helpers'
 import { sortRescues, RescueCard } from './utils'
 import { Emoji } from 'react-apple-emojis'
@@ -21,12 +21,10 @@ export function Rescues() {
   // initialize state object to manage URL params, and user input filters
   const [state, setState] = useState({
     status: url_params.get('status') || STATUSES.SCHEDULED,
-    handler_id: admin ? url_params.get('handler_id') || user.id : user.id, // ensure that non-admins can't fetch data by transforming the url
+    handler_id: admin ? url_params.get('handler_id') || '' : user.id, // ensure that non-admins can't fetch data by transforming the url
     date: url_params.get('date') || '',
-    limit: 20,
-    handler_name: admin
-      ? url_params.get('handler_name') || user.name
-      : user.name,
+    limit: 10,
+    handler_name: admin ? url_params.get('handler_name') || '' : user.name,
     handler_suggestions: null,
     scroll_position: null,
   })
@@ -52,6 +50,7 @@ export function Rescues() {
     loading,
     loadMore,
     refresh,
+    error,
   } = useApi(API_ENDPOINTS.RESCUES, api_params)
 
   // this useEfect updates the current URL on state changes
@@ -116,7 +115,7 @@ export function Rescues() {
     setState({
       ...state,
       handler_name: '',
-      handler_id: null,
+      handler_id: '',
       handler_suggestions: null,
     })
   }
@@ -179,7 +178,9 @@ export function Rescues() {
             onChange={handleChangeDate}
           />
         </FlexContainer>
-        {!rescues || (!rescues.length && loading) ? (
+        {error ? (
+          <Error message={error} />
+        ) : !rescues || (!rescues.length && loading) ? (
           <>
             <Spacer height={64} />
             <Loading text="Loading rescues" relative />

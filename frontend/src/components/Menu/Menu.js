@@ -103,7 +103,7 @@ export function Menu({ isOpen, setIsOpen }) {
                 <MenuLink
                   emoji="bar-chart"
                   num={20}
-                  label="&nbsp;&nbsp;Your Stats"
+                  label="&nbsp;&nbsp;Your Impact"
                   url="/stats"
                 />
               </>
