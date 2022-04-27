@@ -1,5 +1,4 @@
 const admin = require('firebase-admin')
-const { PERMISSION_LEVELS } = require('./constants')
 
 // defined as a global variable to persist over multiple invocations.
 // this should speed up validation time by not re-verifying tokens repeatedly.
