@@ -17,13 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
-      - uses: actions/checkout@v3
-      - name: Install npm packages
+      - name: 'Checkout Github Repo'
+        uses: actions/checkout@v3
+      - name: Install NPM packages
         run: |
           npm install
           cd frontend
           npm install
           echo "${{secrets.ENV_FRONTEND }}" > .env
+          cat .env
           npm run build
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
@@ -45,13 +47,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
-      - uses: actions/checkout@v3
-      - name: Install npm packages
+      - name: 'Checkout Github Repo'
+        uses: actions/checkout@v3
+      - name: Install NPM packages
         run: |
           npm install
           cd backend
           npm install
           echo "${{secrets.ENV_BACKEND }}" > .env
+          cat .env
         env:
           ENV_BACKEND: ${{secrets.ENV_BACKEND}}
       - name: Initialize Firebase Project
