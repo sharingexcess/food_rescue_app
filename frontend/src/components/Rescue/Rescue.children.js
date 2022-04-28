@@ -173,13 +173,17 @@ export function DropRescue() {
   const { setModal, modalState } = useApp()
   const [notes, setNotes] = useState('')
   const { rescue } = modalState
+  const { user } = useAuth()
 
   async function handleUnassign() {
-    const event = await updateGoogleCalendarEvent({
-      ...rescue,
-      driver: null,
-      notes: `Rescue dropped by ${rescue.handler.name}: "${notes}"`,
-    })
+    const event = await updateGoogleCalendarEvent(
+      {
+        ...rescue,
+        driver: null,
+        notes: `Rescue dropped by ${rescue.handler.name}: "${notes}"`,
+      },
+      user.accessToken
+    )
     await setFirestoreData(['rescues', rescue.id], {
       handler_id: null,
       google_calendar_event_id: event.id,
@@ -882,11 +886,14 @@ export function RescueActionButton({ rescue }) {
   }
 
   async function handleClaim() {
-    const event = await updateGoogleCalendarEvent({
-      ...rescue,
-      notes: null,
-      driver: drivers.find(d => d.id === user.uid),
-    })
+    const event = await updateGoogleCalendarEvent(
+      {
+        ...rescue,
+        notes: null,
+        driver: drivers.find(d => d.id === user.uid),
+      },
+      user.accessToken
+    )
     setFirestoreData(['rescues', rescue.id], {
       handler_id: user.uid,
       google_calendar_event_id: event.id,

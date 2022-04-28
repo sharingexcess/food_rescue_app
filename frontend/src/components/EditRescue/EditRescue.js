@@ -26,7 +26,7 @@ import {
   Loading,
   ReorderStops,
 } from 'components'
-import { useApi, useFirestore } from 'hooks'
+import { useApi, useFirestore, useAuth } from 'hooks'
 import {
   Button,
   Spacer,
@@ -37,6 +37,7 @@ import {
 import { Emoji } from 'react-apple-emojis'
 
 export function EditRescue() {
+  const { user } = useAuth()
   const { rescue_id } = useParams()
   const navigate = useNavigate()
   const { data: rescue } = useApi(rescue_id ? `/rescues/${rescue_id}` : null)
@@ -123,7 +124,7 @@ export function EditRescue() {
         await deleteFirestoreData(['stops', stop.id])
       }
     }
-    const event = await updateGoogleCalendarEvent(formData)
+    const event = await updateGoogleCalendarEvent(formData, user.accessToken)
 
     if (!event.id) {
       alert('Error creating Google Calendar event. Please contact support!')

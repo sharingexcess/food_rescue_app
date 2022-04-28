@@ -1,7 +1,27 @@
 const { google } = require('googleapis')
 const calendar = google.calendar('v3')
+const {
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 
-exports.delete_calendar_event = (request, response) => {
+exports.delete_calendar_event = async (request, response) => {
+  console.log(
+    'INVOKING ENDPOINT: deleteCalendarEvent()\n',
+    'params:',
+    JSON.parse(request.body)
+  )
+
+  const requestIsAuthenticated = await authenticateRequest(
+    request.get('accessToken'),
+    user => user.is_admin
+  )
+
+  if (!requestIsAuthenticated) {
+    rejectUnauthorizedRequest(response)
+    return
+  }
+
   const { eventId } = JSON.parse(request.body)
 
   deleteEvent(eventId)

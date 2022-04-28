@@ -1,7 +1,7 @@
 {
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
-  "version": "3.2.10",
+  "version": "3.2.11",
   "private": true,
   "scripts": {
     "install:all": "npm i && cd frontend && npm i && cd ../backend && npm i",

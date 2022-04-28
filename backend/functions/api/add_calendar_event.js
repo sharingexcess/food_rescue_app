@@ -1,7 +1,27 @@
 const { google } = require('googleapis')
 const calendar = google.calendar('v3')
+const {
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 
-exports.add_calendar_event = (request, response) => {
+exports.add_calendar_event = async (request, response) => {
+  console.log(
+    'INVOKING ENDPOINT: addCalendarEvent()\n',
+    'params:',
+    JSON.parse(request.body)
+  )
+
+  const requestIsAuthenticated = await authenticateRequest(
+    request.get('accessToken'),
+    user => user.is_admin
+  )
+
+  if (!requestIsAuthenticated) {
+    rejectUnauthorizedRequest(response)
+    return
+  }
+
   addEvent(JSON.parse(request.body))
     .then(data => {
       response.status(200).send(data)
@@ -15,7 +35,7 @@ exports.add_calendar_event = (request, response) => {
 }
 
 async function addEvent(resource) {
-  console.log('\n\n\n\nAdding Event:', resource)
+  console.log('Adding Event:', resource)
   return new Promise(async (resolve, reject) => {
     const event = {
       summary: resource.summary,

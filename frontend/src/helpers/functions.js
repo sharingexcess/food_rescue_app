@@ -50,7 +50,7 @@ export function formatPhoneNumber(phoneNumberString) {
   return null
 }
 
-export async function updateGoogleCalendarEvent(data) {
+export async function updateGoogleCalendarEvent(data, accessToken) {
   const resource = {
     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
     summary: data.handler
@@ -81,14 +81,14 @@ export async function updateGoogleCalendarEvent(data) {
       body: JSON.stringify({
         eventId: data.google_calendar_event_id,
       }),
+      headers: { accessToken },
     }).catch(e => console.error('Error deleting original event:', e))
   }
-
-  debugger
 
   const event = await fetch(CLOUD_FUNCTION_URLS.addCalendarEvent, {
     method: 'POST',
     body: JSON.stringify(resource),
+    headers: { accessToken },
   })
     .then(res => res.json())
     .catch(e => console.error('Error creating event:', e))
