@@ -1,8 +1,6 @@
 name: Deploy Food Rescue App to DEV Environment
 
-on:
-  push:
-    branches: [main]
+on: workflow_dispatch
 
 jobs:
   deploy_frontend:
@@ -24,6 +22,9 @@ jobs:
           echo "${{secrets.ENV_FRONTEND }}" > .env
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
+      - name: get-npm-version
+          id: package-version
+          uses: martinbeentjes/npm-get-version-action@main
       - name: Build React Application
         run: |
           cd frontend
@@ -37,9 +38,18 @@ jobs:
       - name: Deploy React App
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:react-app-dev
+          args: deploy --only hosting:sharingexcess
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: development
+          version: ${{ steps.package-version.outputs.current-version}}
 
   deploy_backend:
     name: 'Deploy Backend'
@@ -75,6 +85,6 @@ jobs:
       - name: Deploy Node API
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:node-api-dev
+          args: deploy --only hosting:sharingexcess-api
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
