@@ -22,9 +22,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
       - name: ENV Check
         run: |
           if [ "$REACT_APP_FIREBASE_ENV" == "dev" ]
@@ -56,8 +53,9 @@ jobs:
           args: use default
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          GOOGLE_OAUTH_CREDENTIALS: ${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}
-          GOOGLE_SERVICE_ACCOUNT_STRINGIFIED: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED }}
+          GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
+          GOOGLE_SERVICE_ACCOUNT_SUBJECT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_SUBJECT }}
       # Deploying the functions to firebase
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
@@ -65,5 +63,6 @@ jobs:
           args: deploy
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          GOOGLE_OAUTH_CREDENTIALS: ${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}
-          GOOGLE_SERVICE_ACCOUNT_STRINGIFIED: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED }}
+          GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
+          GOOGLE_SERVICE_ACCOUNT_SUBJECT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_SUBJECT }}
