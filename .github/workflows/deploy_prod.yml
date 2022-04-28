@@ -1,6 +1,6 @@
 name: 'Deploy to PROD'
 
-on: 
+on:
   workflow_dispatch:
 
 jobs:
@@ -24,8 +24,8 @@ jobs:
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
       - name: get-npm-version
-          id: 'package-version'
-          uses: martinbeentjes/npm-get-version-action@main
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
       - name: Build React Application
         run: |
           cd frontend
