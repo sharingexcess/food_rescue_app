@@ -7,7 +7,7 @@ jobs:
   deploy_frontend:
     name: 'Deploy Frontend'
     runs-on: ubuntu-latest
-    environment: dev
+    environment: prod
     steps:
       - name: 'Checkout Github Repo'
         uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
           echo "${{secrets.ENV_FRONTEND }}" > .env
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
-      - name: get-npm-version
+      - name: Get Version from package.json
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
       - name: Build React Application
@@ -33,13 +33,13 @@ jobs:
       - name: Initialize Firebase Project
         uses: w9jds/firebase-action@master
         with:
-          args: use default
+          args: use prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy React App
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:react-app-dev
+          args: deploy --only hosting:sharingexcess
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Create Sentry release
@@ -49,14 +49,14 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
-          environment: 'development'
+          environment: 'production'
           version: ${{ steps.package-version.outputs.current-version}}
           set_commits: 'skip'
 
   deploy_backend:
     name: 'Deploy Backend'
     runs-on: ubuntu-latest
-    environment: dev
+    environment: prod
     steps:
       - name: 'Checkout Github Repo'
         uses: actions/checkout@v3
@@ -75,7 +75,7 @@ jobs:
       - name: Initialize Firebase Project
         uses: w9jds/firebase-action@master
         with:
-          args: use default
+          args: use prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy Firebase Functions
@@ -87,6 +87,6 @@ jobs:
       - name: Deploy Node API
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:node-api-dev
+          args: deploy --only hosting:sharingexcess-api
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
