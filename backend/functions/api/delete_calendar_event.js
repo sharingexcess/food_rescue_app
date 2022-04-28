@@ -1,54 +1,46 @@
 const { google } = require('googleapis')
-const OAuth2 = google.auth.OAuth2
 const calendar = google.calendar('v3')
-// console.log(
-//   process.env.GOOGLE_OAUTH_CREDENTIALS,
-//   JSON.parse(new String(process.env.GOOGLE_OAUTH_CREDENTIALS))
-// )
-const googleCredentials = process.env.GOOGLE_OAUTH_CREDENTIALS
-  ? JSON.parse(new String(process.env.GOOGLE_OAUTH_CREDENTIALS))
-  : null
-
-const ERROR_RESPONSE = {
-  status: '500',
-  message: 'There was an error with your Google calendar',
-}
 
 exports.delete_calendar_event = (request, response) => {
-  const oAuth2Client = new OAuth2(
-    googleCredentials.web.client_id,
-    googleCredentials.web.client_secret,
-    googleCredentials.web.redirect_uris[0]
-  )
+  const { eventId } = JSON.parse(request.body)
 
-  oAuth2Client.setCredentials({
-    refresh_token: googleCredentials.refresh_token,
-  })
-  const { calendarId, eventId } = JSON.parse(request.body)
-
-  deleteEvent(calendarId, eventId, oAuth2Client)
+  deleteEvent(eventId)
     .then(data => {
       response.status(200).send(data)
       return
     })
     .catch(err => {
       console.error('Error adding event: ' + err.message)
-      response.status(500).send(ERROR_RESPONSE)
+      response.status(500).send('There was an error with Google calendar')
       return
     })
 }
 
-function deleteEvent(calendarId, eventId, auth) {
+function deleteEvent(eventId) {
   console.log('Deleting Event:', eventId)
+
+  const auth = new google.auth.JWT(
+    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    null,
+    // loading this key from an ENV var messes up line break formatting
+    // need the replace() to format properly
+    process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+    ['https://www.googleapis.com/auth/calendar.events'],
+    process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
+  )
+
   return new Promise(function (resolve, reject) {
-    calendar.events.delete({ auth, calendarId, eventId }, (err, res) => {
-      if (err) {
-        console.log('Rejecting because of error', err)
-        reject(err)
-      } else {
-        console.log('Request successful', res)
-        resolve(res.data)
+    calendar.events.delete(
+      { auth, calendarId: process.env.GOOGLE_CALENDAR_ID, eventId },
+      (err, res) => {
+        if (err) {
+          console.log('Rejecting because of error', err)
+          reject(err)
+        } else {
+          console.log('Request successful', res)
+          resolve(res.data)
+        }
       }
-    })
+    )
   })
 }

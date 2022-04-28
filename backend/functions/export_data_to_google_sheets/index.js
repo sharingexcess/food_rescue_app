@@ -1,25 +1,19 @@
 const { google } = require('googleapis')
 const sheets = google.sheets('v4')
 const is_prod = process.env.GCLOUD_PROJECT === 'sharing-excess-prod'
-const spreadsheetId = is_prod
-  ? '1wmcOySR3EhHezgFn0o3suf7RZFDh62secue3jpbPK4Q'
-  : '16bn0SYmKu7YnTI1yB5NiMzHhq3E0ZkDzCnfeh0v1AeI'
-const serviceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED
-  ? JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_STRINGIFIED)
-  : {}
 const moment = require('moment-timezone')
 const { db } = require('../../helpers/functions')
 
 const jwtClient = new google.auth.JWT({
-  email: serviceAccount.client_email,
-  key: serviceAccount.private_key,
+  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+  key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 })
 
 const jwtAuthPromise = jwtClient.authorize()
 
 exports.export_data_to_google_sheets = async () => {
-  console.log('Spreadsheet ID:', spreadsheetId)
+  console.log('Spreadsheet ID:', process.env.GOOGLE_SHEETS_SPREADSHEET_ID)
   console.log('is_prod?', is_prod, process.env.GCLOUD_PROJECT)
 
   // fetch all rescues from db
@@ -307,7 +301,7 @@ exports.export_data_to_google_sheets = async () => {
   await sheets.spreadsheets.values.update(
     {
       auth: jwtClient,
-      spreadsheetId: spreadsheetId,
+      spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID,
       range: rescueHeadersRange,
       valueInputOption: 'RAW',
       requestBody: { values: [rescue_headers] },
@@ -324,7 +318,7 @@ exports.export_data_to_google_sheets = async () => {
     await sheets.spreadsheets.values.update(
       {
         auth: jwtClient,
-        spreadsheetId: spreadsheetId,
+        spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID,
         range: range,
         valueInputOption: 'RAW',
         requestBody: { values: body },

@@ -4,6 +4,7 @@ import { Input, Loading } from 'components'
 import { Button, Image, Spacer, Text } from '@sharingexcess/designsystem'
 import {
   createTimestamp,
+  getCollection,
   removeSpecialCharacters,
   setFirestoreData,
 } from 'helpers'
@@ -13,7 +14,9 @@ import { useNavigate } from 'react-router'
 export function Profile() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const profile = useFirestore('users', user ? user.uid : null)
+  // profile looks up the user in the firestore db
+  // to get additional permissions and profile data
+  const [profile, setProfile] = useState()
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -40,6 +43,16 @@ export function Profile() {
   })
   const [button, setButton] = useState()
   const [error, setError] = useState()
+
+  useEffect(() => {
+    const uid = user ? user.uid : null
+    let unsubscribe
+    if (uid) {
+      const userRef = getCollection('users').doc(uid)
+      unsubscribe = userRef.onSnapshot(doc => setProfile(doc.data()))
+    }
+    return () => unsubscribe && unsubscribe()
+  }, [user])
 
   useEffect(() => {
     // update formData only once by checking name population

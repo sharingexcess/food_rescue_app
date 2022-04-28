@@ -89,6 +89,7 @@ export const parseExistingRescue = async rescue => {
     ),
     stops: rescue.stops,
     status: rescue.status,
+    google_calendar_event_id: rescue.google_calendar_event_id,
   }
   return rescue_data
 }

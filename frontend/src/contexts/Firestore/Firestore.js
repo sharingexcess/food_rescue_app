@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { getCollection } from 'helpers'
+import { deleteFirestoreData, getCollection } from 'helpers'
 import { useAuth } from 'hooks'
 
 const FirestoreContext = createContext()

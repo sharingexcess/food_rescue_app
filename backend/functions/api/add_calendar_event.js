@@ -1,45 +1,22 @@
 const { google } = require('googleapis')
-const OAuth2 = google.auth.OAuth2
 const calendar = google.calendar('v3')
-// console.log(
-//   process.env.GOOGLE_OAUTH_CREDENTIALS,
-//   JSON.parse(new String(process.env.GOOGLE_OAUTH_CREDENTIALS))
-// )
-const googleCredentials = process.env.GOOGLE_OAUTH_CREDENTIALS
-  ? JSON.parse(new String(process.env.GOOGLE_OAUTH_CREDENTIALS))
-  : null
-
-const ERROR_RESPONSE = {
-  status: '500',
-  message: 'There was an error with your Google calendar',
-}
 
 exports.add_calendar_event = (request, response) => {
-  const oAuth2Client = new OAuth2(
-    googleCredentials.web.client_id,
-    googleCredentials.web.client_secret,
-    googleCredentials.web.redirect_uris[0]
-  )
-
-  oAuth2Client.setCredentials({
-    refresh_token: googleCredentials.refresh_token,
-  })
-
-  addEvent(JSON.parse(request.body), oAuth2Client)
+  addEvent(JSON.parse(request.body))
     .then(data => {
       response.status(200).send(data)
       return
     })
     .catch(err => {
       console.error('Error adding event: ' + err.message)
-      response.status(500).send(ERROR_RESPONSE)
+      response.status(500).send('There was an error with Google calendar')
       return
     })
 }
 
-function addEvent(resource, auth) {
+async function addEvent(resource) {
   console.log('\n\n\n\nAdding Event:', resource)
-  return new Promise(function (resolve, reject) {
+  return new Promise(async (resolve, reject) => {
     const event = {
       summary: resource.summary,
       location: resource.location,
@@ -49,10 +26,20 @@ function addEvent(resource, auth) {
       attendees: resource.attendees,
     }
 
+    const auth = new google.auth.JWT(
+      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      null,
+      // loading this key from an ENV var messes up line break formatting
+      // need the replace() to format properly
+      process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+      ['https://www.googleapis.com/auth/calendar.events'],
+      process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
+    )
+
     calendar.events.insert(
       {
-        auth,
-        calendarId: resource.calendarId,
+        auth: auth,
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
         resource: event,
       },
       (err, res) => {

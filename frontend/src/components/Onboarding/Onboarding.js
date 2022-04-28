@@ -1,25 +1,32 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link, Route, Routes } from 'react-router-dom'
 import { useAuth } from 'hooks'
 import { Card, Spacer, Text } from '@sharingexcess/designsystem'
-import { Menu, Header } from 'components'
+import { Profile, Header, Tutorial, Liability, FoodSafety } from 'components'
+import { setFirestoreData } from 'helpers'
 
 export function Onboarding() {
   const { user } = useAuth()
+
+  useEffect(() => {
+    if (
+      user.completed_app_tutorial &&
+      user.completed_food_safety &&
+      user.completed_liability_release &&
+      user.phone &&
+      user.pronouns &&
+      user.name &&
+      !user.is_driver
+    ) {
+      setFirestoreData(['users', user.uid], { is_driver: true })
+    }
+  }, [user])
 
   const sections = [
     {
       name: 'Complete your Profile',
       page: '/profile',
-      completed:
-        user.name &&
-        user.phone &&
-        user.pronouns &&
-        user.vehicle_make_model &&
-        user.license_number &&
-        user.license_state &&
-        user.insurance_policy_number &&
-        user.insurance_provider,
+      completed: user.name && user.phone && user.pronouns,
     },
     {
       name: 'Liability Release',
@@ -38,10 +45,8 @@ export function Onboarding() {
     },
   ]
 
-  return (
-    <>
-      <Header />
-      <Menu />
+  function OnboardingHome() {
+    return (
       <main id="Onboarding">
         <Text type="secondary-header" color="white" shadow>
           Welcome to Sharing Excess!
@@ -74,6 +79,19 @@ export function Onboarding() {
           </Link>
         ))}
       </main>
+    )
+  }
+
+  return (
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<OnboardingHome />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/liability" element={<Liability />} />
+        <Route path="/tutorial" element={<Tutorial />} />
+        <Route path="/food-safety" element={<FoodSafety />} />
+      </Routes>
     </>
   )
 }

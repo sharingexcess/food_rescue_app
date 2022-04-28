@@ -50,7 +50,12 @@ window.se_api_logs = IS_DEV_ENVIRONMENT
 Sentry.init({
   dsn: SENTRY_DSN,
   autoSessionTracking: true,
-  integrations: [new Integrations.BrowserTracing()],
+  integrations: [
+    new Integrations.BrowserTracing(),
+    new Sentry.Integrations.Breadcrumbs({
+      console: false,
+    }),
+  ],
   env: SENTRY_ENV,
   release: VERSION,
 })

@@ -79,11 +79,12 @@ export async function updateGoogleCalendarEvent(data) {
     await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
       method: 'POST',
       body: JSON.stringify({
-        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
         eventId: data.google_calendar_event_id,
       }),
     }).catch(e => console.error('Error deleting original event:', e))
   }
+
+  debugger
 
   const event = await fetch(CLOUD_FUNCTION_URLS.addCalendarEvent, {
     method: 'POST',

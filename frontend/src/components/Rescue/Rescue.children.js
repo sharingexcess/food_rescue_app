@@ -564,7 +564,6 @@ export function Stop({ rescue, stops, s, i, refresh }) {
     const getHour = parseInt(time) >= 12 ? time.slice(0, 2) : time.slice(0, 1)
     const getMin = time.slice(-2)
     const amOrPm = getHour >= 12 ? 'pm' : 'am'
-    console.log(getMin)
     if (getHour > 12) {
       return [getHour - 12, ':', getMin, amOrPm]
     } else return [time, amOrPm]
