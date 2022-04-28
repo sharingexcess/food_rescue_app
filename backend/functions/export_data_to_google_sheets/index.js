@@ -4,17 +4,17 @@ const is_prod = process.env.GCLOUD_PROJECT === 'sharing-excess-prod'
 const moment = require('moment-timezone')
 const { db } = require('../../helpers/functions')
 
-const jwtClient = new google.auth.JWT({
-  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-  key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-})
-
-const jwtAuthPromise = jwtClient.authorize()
-
 exports.export_data_to_google_sheets = async () => {
   console.log('Spreadsheet ID:', process.env.GOOGLE_SHEETS_SPREADSHEET_ID)
   console.log('is_prod?', is_prod, process.env.GCLOUD_PROJECT)
+
+  const jwtClient = new google.auth.JWT({
+    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  })
+
+  const jwtAuthPromise = jwtClient.authorize()
 
   // fetch all rescues from db
   const rescues = []
