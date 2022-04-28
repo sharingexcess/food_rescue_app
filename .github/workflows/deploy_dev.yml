@@ -19,16 +19,22 @@ jobs:
     steps:
       - name: 'Checkout Github Repo'
         uses: actions/checkout@v3
-      - name: Install NPM packages
+      - name: Install Root Dependencies
+        run: npm install
+      - name: Install React App Dependencies
         run: |
-          npm install
           cd frontend
           npm install
+      - name: Create .env File Locally
+        run: |
+          cd frontend
           echo "${{secrets.ENV_FRONTEND }}" > .env
-          cat .env
-          npm run build
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
+      - name: Build React Application
+        run: |
+          cd frontend
+          npm run build
       - name: Initialize Firebase Project
         uses: w9jds/firebase-action@master
         with:
@@ -49,13 +55,16 @@ jobs:
     steps:
       - name: 'Checkout Github Repo'
         uses: actions/checkout@v3
-      - name: Install NPM packages
+      - name: Install Root Dependencies
+        run: npm install
+      - name: Install Node App Dependencies
         run: |
-          npm install
           cd backend
           npm install
+      - name: Create .env File Locally
+        run: |
+          cd backend
           echo "${{secrets.ENV_BACKEND }}" > .env
-          cat .env
         env:
           ENV_BACKEND: ${{secrets.ENV_BACKEND}}
       - name: Initialize Firebase Project
