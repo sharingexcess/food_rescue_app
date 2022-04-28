@@ -13,56 +13,61 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  'Deploy Frontend':
     runs-on: ubuntu-latest
     environment: dev
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - name: ENV Check
-        run: |
-          if [ "$REACT_APP_FIREBASE_ENV" == "dev" ]
-          then
-            echo "Building with DEV env vars set"
-          elif [ "$REACT_APP_FIREBASE_ENV" == "prod" ]
-          then
-            echo "Building with PROD env vars set"
-          else
-            echo "env vars are improperly set, not DEV or PROD."
-          fi
-        env:
-          REACT_APP_FIREBASE_ENV: ${{secrets.REACT_APP_FIREBASE_ENV}}
-
-      # Runs a single command using the runners shell
-      # And of course we need to goto our functions folder to deploy
       - name: Install npm packages
         run: |
           npm install
-          cd backend
+          cd frontend
           npm install
-          cd ../frontend
-          npm install
+          echo "${{secrets.ENV_FRONTEND }}" > .env
           npm run build
-      # Initilize session with firebase project
+        env:
+          ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
       - name: Initialize Firebase Project
         uses: w9jds/firebase-action@master
         with:
           args: use default
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY }}
-          GOOGLE_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
-          GOOGLE_SERVICE_ACCOUNT_SUBJECT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_SUBJECT }}
-      # Deploying the functions to firebase
-      - name: Deploy to Firebase
+      - name: Deploy React App
         uses: w9jds/firebase-action@master
         with:
-          args: deploy
+          args: deploy --only hosting:react-app-dev
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY }}
-          GOOGLE_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
-          GOOGLE_SERVICE_ACCOUNT_SUBJECT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_SUBJECT }}
+
+  'Deploy Backend':
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install npm packages
+        run: |
+          npm install
+          cd backend
+          npm install
+          echo "${{secrets.ENV_BACKEND }}" > .env
+        env:
+          ENV_BACKEND: ${{secrets.ENV_BACKEND}}
+      - name: Initialize Firebase Project
+        uses: w9jds/firebase-action@master
+        with:
+          args: use default
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Deploy Firebase Functions
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Deploy Node API
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting:node-api-dev
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
