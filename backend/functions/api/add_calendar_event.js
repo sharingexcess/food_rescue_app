@@ -26,12 +26,17 @@ async function addEvent(resource) {
       attendees: resource.attendees,
     }
 
+    // loading this key from an ENV var messes up line break formatting
+    // need the replace() to format properly
+    const key = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(
+      /\\n/gm,
+      '\n'
+    )
+    console.log('KEY:', key)
     const auth = new google.auth.JWT(
       process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       null,
-      // loading this key from an ENV var messes up line break formatting
-      // need the replace() to format properly
-      process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+      key,
       ['https://www.googleapis.com/auth/calendar.events'],
       process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
     )
