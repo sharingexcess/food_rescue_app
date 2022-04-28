@@ -1,0 +1,105 @@
+/* use this file for all global app styles, should not be specific to components, pages, or views */
+@mixin page {
+  padding: 120px 16px 108px 16px;
+  min-height: 100vh;
+  @media all and (display-mode: standalone) {
+    padding: 174px 16px 108px 16px;
+    min-height: calc(100vh + 54px);
+  }
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  z-index: 1;
+  overflow-x: hidden;
+  opacity: 1;
+  animation: fade-in 0.32s ease forwards;
+
+  @include desktop {
+    padding-left: 314px;
+    padding-right: 32px;
+    max-width: 1100px;
+  }
+}
+
+@mixin card {
+  width: 100%;
+  position: relative;
+  border: none;
+  border-radius: 16px;
+  margin: 12px 0;
+  padding: 16px;
+  background: var(--se-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  @include shadow;
+}
+
+@mixin shadow {
+  box-shadow: 0 12px 32px 0px rgba(56, 56, 56, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--se-green-gradient);
+  color: var(--se-black);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  user-select: none;
+  font-size: 10px;
+  overflow: hidden;
+}
+
+input {
+  font-family: 'Source Sans Pro', sans-serif;
+  box-sizing: border-box;
+
+  &[type='checkbox'] {
+    border: none;
+    background: var(--se-white);
+  }
+}
+
+textarea {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+input:read-only,
+textarea:read-only,
+*:disabled {
+  cursor: not-allowed;
+}
+
+input[type='checkbox'] {
+  cursor: pointer;
+}
+
+#root {
+  // background: var(--se-green-primary);
+  height: 100%;
+  width: 100%;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(0) !important;
+}

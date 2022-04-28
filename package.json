@@ -3,56 +3,28 @@
   "productName": "Sharing Excess | Food Rescue",
   "version": "3.2.10",
   "private": true,
-  "dependencies": {
-    "@formspree/react": "^2.2.4",
-    "@sentry/react": "^6.16.1",
-    "@sentry/tracing": "^6.16.1",
-    "@sharingexcess/designsystem": "^1.2.8",
-    "@types/react-transition-group": "^4.4.4",
-    "firebase": "^9.6.6",
-    "google-map-react": "^2.1.10",
-    "moment": "^2.29.1",
-    "nanoid": "^3.2.0",
-    "node-sass": "^7.0.1",
-    "react": "^17.0.2",
-    "react-apple-emojis": "^2.1.1",
-    "react-dom": "^17.0.2",
-    "react-firebase-hooks": "^4.0.2",
-    "react-router-dom": "^6.2.1",
-    "react-scripts": "^5.0.0",
-    "react-transition-group": "^4.4.2",
-    "recharts": "^2.1.8",
-    "sass": "^1.49.0",
-    "swiper": "^8.0.7",
-    "validator": "^13.7.0"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "dev": "cp environments/.env.dev .env.local && react-scripts start",
-    "prod": "cp environments/.env.prod .env.local && react-scripts start",
-    "build": "react-scripts build",
-    "deploy": "node scripts/manual_prod_deploy.js",
-    "rollback": "node scripts/prod_emergency_rollback.js"
+    "install:all": "npm i && cd frontend && npm i && cd ../backend && npm i",
+    "dev": "npm run set_env:dev && concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
+    "prod": "npm run set_env:prod && concurrently \"cd backend && npm start\" \"cd frontend && npm start\"",
+    "set_env:dev": "firebase use default && cp environments/.env.frontend.dev frontend/.env && cp environments/.env.backend.dev backend/.env",
+    "set_env:prod": "firebase use prod && cp environments/.env.frontend.prod frontend/.env && cp environments/.env.backend.prod backend/.env",
+    "deploy": "node scripts/manual_prod_deploy.js"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@sentry/cli": "^1.71.0",
-    "colors": "^1.4.0",
-    "dotenv": "^14.2.0",
+  "dependencies": {
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-react-app": "^7.0.0",
+    "firebase": "^9.6.6",
+    "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "git-state": "^4.1.0",
-    "prettier": "2.5.1"
+    "prettier": "2.5.1",
+    "@sentry/cli": "^1.71.0",
+    "colors": "^1.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "dotenv": "^14.2.0",
+    "git-state": "^4.1.0"
   }
 }

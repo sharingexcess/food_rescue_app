@@ -1,0 +1,43 @@
+#Auth {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 120px 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  &.request-access {
+    opacity: 0;
+  }
+
+  h1 {
+    font-size: 64px;
+    line-height: 0.8;
+    .green {
+      color: var(--se-green-primary);
+    }
+  }
+
+  p {
+    font-weight: 600;
+    font-size: 24px;
+    margin: 16px 0 32px 0;
+  }
+
+  .background {
+    position: fixed;
+    bottom: -64px;
+    right: -64px;
+    width: 100vw;
+    opacity: 0.12;
+    max-width: 600px;
+  }
+
+  button {
+    i {
+      background: none;
+      color: var(--se-green-primary);
+    }
+  }
+}

@@ -1,0 +1,58 @@
+#Home {
+  @include page;
+
+  h1 {
+    font-size: 24px;
+    width: 100%;
+    text-align: center;
+  }
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: var(--se-red-primary);
+  }
+  h3 {
+    font-size: 16px;
+    color: var(--se-green-dark);
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+    font-weight: 500;
+    span {
+      font-weight: 900;
+    }
+  }
+
+  #Tiles {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-gap: 16px;
+    padding-bottom: 32px;
+
+    .Home-tile {
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      .se-text {
+        transition: all 0.2s ease;
+      }
+      @include hover {
+        transform: translateY(-2px);
+        .se-text {
+          color: var(--se-blue-primary);
+        }
+      }
+
+      img {
+        font-size: 72px;
+        margin: 32px;
+      }
+    }
+  }
+}

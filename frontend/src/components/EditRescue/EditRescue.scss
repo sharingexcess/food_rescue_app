@@ -1,0 +1,122 @@
+#EditRescue {
+  @include page;
+
+  #EditRescue-confirm-button {
+    margin: auto;
+    display: block;
+  }
+
+  #EditRescue-buttons {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+    .se-button {
+      flex-grow: 1;
+      margin: 16px;
+    }
+
+    #EditRescue-add-pickup {
+      color: var(--se-green-primary);
+    }
+    #EditRescue-add-delivery {
+      color: var(--se-red-primary);
+    }
+    #EditRescue-cancel {
+      flex-grow: 0;
+    }
+    #EditRescue-submit {
+      width: 100%;
+    }
+  }
+
+  .Input.checkbox {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #EditRescue-handler {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 24px 0;
+    .secondary-header {
+      @include mobile {
+        font-size: 24px;
+      }
+    }
+
+    img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      flex-shrink: 0;
+      padding: 2px;
+      background: var(--se-white);
+      border-radius: 50%;
+      margin-right: 16px;
+    }
+
+    #EditRescue-driver-edit {
+      margin-left: auto;
+      @include mobile {
+        width: 100%;
+        margin: 8px 0;
+      }
+    }
+  }
+
+  .selected-card {
+    border: 4px var(--se-blue-primary) solid;
+  }
+
+  .Stop {
+    margin-bottom: 16px;
+    cursor: pointer;
+
+    .section-header {
+      font-size: 18px;
+      margin-top: 8px;
+    }
+
+    .fa-times {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--se-black);
+      z-index: 2;
+    }
+    .Rescue-stop-address-button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: left;
+      div {
+        font-size: 20px;
+      }
+    }
+
+    .org_hours p {
+      text-decoration: none;
+    }
+
+    .org_hours {
+      color: var(--se-green-primary);
+      text-decoration: none;
+
+      span {
+        margin-left: 5px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      span.open {
+        color: var(--se-green-primary);
+      }
+      span.close {
+        color: var(--se-red-primary);
+      }
+    }
+  }
+}

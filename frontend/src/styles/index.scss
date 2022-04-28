@@ -1,0 +1,7 @@
+/* use this file for all browser default overrides and styles non-specific to the app's styles */
+/* font imports should happen in index.html using <link> tags */
+@import '@sharingexcess/designsystem/build/index.scss';
+@import './reset.scss';
+@import './global.scss';
+@import './animations.scss';
+@import './components.scss';

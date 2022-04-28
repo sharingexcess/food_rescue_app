@@ -1,0 +1,17 @@
+.GoogleMap {
+  height: 240px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  opacity: 0;
+  animation: fade-in 0.24s ease forwards 0.48s;
+
+  .Marker {
+    i {
+      color: var(--se-red-primary);
+      font-size: 48px;
+      transform: translate(-50%, -100%);
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.24));
+    }
+  }
+}

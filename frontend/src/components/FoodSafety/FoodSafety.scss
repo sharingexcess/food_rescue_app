@@ -1,0 +1,51 @@
+#FoodSafety {
+  @include page;
+
+  h2 {
+    font-size: 20px;
+    color: var(--se-green-primary);
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    margin-top: 8px;
+  }
+
+  section {
+    background-color: var(--se-white);
+    margin-top: 32px;
+    margin-bottom: 32px;
+    padding: 24px;
+    border-radius: 25px;
+  }
+
+  .sectionHeader {
+    margin-bottom: 16px;
+  }
+
+  .subheader {
+    margin-bottom: 8px;
+  }
+
+  ol {
+    list-style-type: decimal;
+    margin-left: 24px;
+    margin-bottom: 16px;
+  }
+
+  .green {
+    color: var(--se-green-primary);
+  }
+
+  .red {
+    color: var(--se-red-primary);
+  }
+
+  .row {
+    display: flex;
+
+    .column-50 {
+      flex: 50%;
+    }
+  }
+}

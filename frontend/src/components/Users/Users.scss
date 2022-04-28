@@ -1,0 +1,86 @@
+#Users {
+  @include page;
+
+  .wrapper {
+    width: 100%;
+    display: inline;
+  }
+
+  h1 {
+    font-size: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  #Users-permission-filters {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .Users-permission-filter {
+      display: flex;
+      align-items: center;
+      input {
+        margin-right: 4px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .access-level {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    height: 24px;
+    width: 24px;
+
+    &.fa-crown {
+      background: var(--primary);
+      font-size: 10px;
+    }
+    &.fa-truck {
+      background: var(--primary);
+      font-size: 10px;
+    }
+  }
+
+  .User {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 16px;
+    padding: 24px 12px;
+
+    @include mobile {
+      padding: 24px 12px;
+    }
+
+    .section-header {
+      padding-right: 32px;
+      @include mobile {
+        font-size: 18px;
+      }
+    }
+
+    div {
+      width: 100%;
+      overflow: hidden;
+      * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .User-icon {
+      width: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: contain;
+      margin-right: 16px;
+      background: var(--se-white);
+      padding: 2px;
+    }
+  }
+}

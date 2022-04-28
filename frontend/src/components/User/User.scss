@@ -1,0 +1,73 @@
+#User {
+  @include page;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  .wrapper {
+    width: 100%;
+    display: inline;
+  }
+
+  img {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+    background: var(--se-white);
+    padding: 4px;
+    border-radius: 50%;
+    object-fit: contain;
+  }
+
+  #User-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    a {
+      text-decoration: underline;
+    }
+    .se-text {
+      display: flex;
+    }
+  }
+  #AccessLevel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .section-header {
+      width: 100%;
+    }
+
+    .Input {
+      width: 48%;
+      justify-content: center;
+      margin: 12px 0;
+    }
+  }
+
+  #User-driver-availability {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .Input {
+      width: 48%;
+      margin: 8px 0;
+      justify-content: flex-end;
+      align-items: center;
+      justify-content: center;
+      input {
+        -webkit-appearance: checkbox;
+      }
+    }
+  }
+
+  .Input {
+    margin: 12px 0;
+  }
+}
