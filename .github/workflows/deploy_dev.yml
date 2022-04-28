@@ -2,7 +2,6 @@ name: 'Deploy to DEV'
 
 on:
   workflow_dispatch:
-    inputs:
   push:
     branches: [main]
 
