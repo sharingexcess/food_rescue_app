@@ -12,8 +12,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  'Deploy Frontend':
+  deploy_frontend:
+    name: 'Deploy Frontend'
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -40,7 +40,8 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
-  'Deploy Backend':
+  deploy_backend:
+    name: 'Deploy Backend'
     runs-on: ubuntu-latest
     environment: dev
     steps:
