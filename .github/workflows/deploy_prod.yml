@@ -39,7 +39,7 @@ jobs:
       - name: Deploy React App
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:sharingexcess
+          args: deploy --only hosting:react-app-dev
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Create Sentry release
@@ -86,6 +86,6 @@ jobs:
       - name: Deploy Node API
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:sharingexcess-api
+          args: deploy --only hosting:node-api-dev
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
