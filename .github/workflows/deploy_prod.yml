@@ -49,8 +49,9 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
-          environment: development
+          environment: 'development'
           version: ${{ steps.package-version.outputs.current-version}}
+          set_commits: 'skip'
 
   deploy_backend:
     name: 'Deploy Backend'
