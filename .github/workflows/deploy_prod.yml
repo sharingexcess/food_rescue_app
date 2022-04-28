@@ -1,6 +1,8 @@
-name: Deploy Food Rescue App to DEV Environment
+name: Deploy to PROD
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
 
 jobs:
   deploy_frontend:
