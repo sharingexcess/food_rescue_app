@@ -2,7 +2,10 @@ const { google } = require('googleapis')
 const sheets = google.sheets('v4')
 const is_prod = process.env.GCLOUD_PROJECT === 'sharing-excess-prod'
 const moment = require('moment-timezone')
-const { db } = require('../../helpers/functions')
+const {
+  db,
+  calculateTotalDistanceFromLocations,
+} = require('../../helpers/functions')
 
 exports.export_data_to_google_sheets = async () => {
   console.log('Spreadsheet ID:', process.env.GOOGLE_SHEETS_SPREADSHEET_ID)
@@ -146,6 +149,14 @@ exports.export_data_to_google_sheets = async () => {
         .map(s => `${s.organization.name} (${s.location.address1})`)
         .join(', ')
 
+      //Add Total Distance to rescue
+      rescue.total_distance = await calculateTotalDistanceFromLocations(
+        rescue_stops.map(
+          stop =>
+            `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
+        )
+      )
+
       for (const s of rescue_stops) {
         for (const key in s) {
           if (key.includes('timestamp_') && s[key]) {
@@ -238,6 +249,7 @@ exports.export_data_to_google_sheets = async () => {
       rescue.timestamp_logged_start || '',
       rescue.timestamp_logged_finish || '',
       rescue.total_time || '',
+      rescue.total_distance || '',
     ]
     console.log('COMPLETE ROW:', JSON.stringify(row))
     rescue_rows.push(row)
@@ -264,6 +276,7 @@ exports.export_data_to_google_sheets = async () => {
     'Logged Start',
     'Logged Finish',
     'Total Time',
+    'Total Distance',
   ]
   const columns = [
     'A',
