@@ -31,6 +31,7 @@ exports.export_data_to_google_sheets = functions
   .timeZone('America/New_York')
   .onRun(export_data_to_google_sheets)
 
-exports.rescueOnWrite = functions.firestore
-  .document('/rescues/{rescue_id}')
-  .onWrite(event => rescueOnWrite(event))
+// Database Trigger version to calculate distance ***** UNTESTED *****
+// exports.rescueOnWrite = functions.firestore
+//   .document('/rescues/{rescue_id}')
+//   .onWrite(event => rescueOnWrite(event))
