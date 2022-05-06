@@ -52,7 +52,9 @@ exports.impact = async (request, response) => {
     })
 
     const pickups = filteredStops.filter(s => s.type === 'pickup')
+    console.log('Pickup stops:', pickups)
     const deliveries = filteredStops.filter(s => s.type === 'delivery')
+    console.log('Delivery stops:', pickups)
     const total_weight = calculateMetrics(deliveries)
 
     const poundsByMonth = calcPoundsByMonth(deliveries)
@@ -64,6 +66,7 @@ exports.impact = async (request, response) => {
       donors,
       recipients,
     }
+    console.log('Paylod:', payload)
     response.status(200).send(JSON.stringify(payload))
     resolve()
     return

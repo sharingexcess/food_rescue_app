@@ -21,6 +21,8 @@ export function useApi(endpoint, params = null) {
     cached_params: null,
     // create a unique ID for this API session to identify in logs
     api_session_id: generateId().substring(0, 4).toUpperCase(),
+    //Request Id will be generated at time of fetch to filter stale requests
+    request_id: null,
   })
 
   // fetchApi is the function to actually make a request to the API,
@@ -29,13 +31,15 @@ export function useApi(endpoint, params = null) {
   // will call for new data, and merge it with exisiting data
   const fetchApi = useCallback(
     (options = {}) => {
-      if (endpoint && !state.loading) {
+      // if (endpoint && !state.loading) {  //Testing removing loading
+      if (endpoint) {
         if (options.is_refresh && params && params.limit) {
           // adjust the limit to include all additional paginated data on refresh.
           // see notes above on docs_loaded for context
           params.limit = state.docs_loaded
         }
         const request = generateApiRequest(endpoint, params, state, options)
+        const request_id = generateId().substring(0, 4).toUpperCase()
         logSendingRequest(endpoint, params, request, state.api_session_id)
         setState(state => ({
           ...state,
@@ -43,6 +47,7 @@ export function useApi(endpoint, params = null) {
           cached_params: JSON.stringify(params),
           data:
             JSON.stringify(params) === state.cached_params ? state.data : null,
+          request_id: request_id,
         }))
         const request_start_timestamp = performance.now()
         fetch(API_URL + request, { headers: { accessToken: user.accessToken } })
@@ -62,33 +67,39 @@ export function useApi(endpoint, params = null) {
               )
             } else return res.json()
           })
-          .then(payload => {
-            logReceivedResponse(
-              request,
-              payload,
-              state.api_session_id,
-              request_start_timestamp
-            )
-            setState(state => ({
-              ...state,
-              data:
-                options.load_more && state.data
-                  ? removeDuplicates([
-                      ...state.data,
-                      ...formatAllTimestamps(payload),
-                    ])
-                  : formatAllTimestamps(payload),
-              docs_loaded:
-                payload && payload.length
-                  ? state.docs_loaded + payload.length
-                  : 1,
-              last:
-                payload.length && params && payload.length === params.limit
-                  ? payload.at(-1).id
-                  : null,
-              loading: false,
-            }))
-          })
+          .then(
+            payload => {
+              console.log(request_id)
+              console.log(state.request_id)
+              // if (request_id === state.request_id) {  TODO: throw out request that are out of date
+              logReceivedResponse(
+                request,
+                payload,
+                state.api_session_id,
+                request_start_timestamp
+              )
+              setState(state => ({
+                ...state,
+                data:
+                  options.load_more && state.data
+                    ? removeDuplicates([
+                        ...state.data,
+                        ...formatAllTimestamps(payload),
+                      ])
+                    : formatAllTimestamps(payload),
+                docs_loaded:
+                  payload && payload.length
+                    ? state.docs_loaded + payload.length
+                    : 1,
+                last:
+                  payload.length && params && payload.length === params.limit
+                    ? payload.at(-1).id
+                    : null,
+                loading: false,
+              }))
+            }
+            // }
+          )
           .catch(e => setState(state => ({ ...state, error: e.toString() })))
       }
     },
