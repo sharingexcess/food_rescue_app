@@ -60,6 +60,10 @@
       margin-bottom: 16px;
       justify-content: space-between;
 
+      a {
+        width: 100%;
+      }
+
       .section-header {
         @include mobile {
           font-size: 18px;
