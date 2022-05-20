@@ -1,5 +1,7 @@
 import moment from 'moment'
 import {
+  API_ENDPOINTS,
+  API_URL,
   CLOUD_FUNCTION_URLS,
   FOOD_CATEGORIES,
   GOOGLE_MAPS_URL,
@@ -108,12 +110,16 @@ export function generateDirectionsLink(address1, city, state, zip) {
 }
 
 export async function updateImpactDataForRescue(rescue) {
+  console.log('UPDATING IMPACT DATA...')
+  debugger
   return new Promise(async res => {
     const { stops } = rescue
 
     const current_load = {
       ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
     }
+    console.log(stops, current_load)
+    debugger
     for (const stop of stops) {
       if (stop.type === 'pickup') {
         for (const category in current_load) {
@@ -130,7 +136,14 @@ export async function updateImpactDataForRescue(rescue) {
             (a, b) => a + b,
             0
           )
+          console.log(load_weight)
           for (const category in current_load) {
+            console.log(
+              'adding',
+              Math.round(current_load[category] * percent_dropped),
+              'to',
+              category
+            )
             impact_data[category] = Math.round(
               current_load[category] * percent_dropped
             )
@@ -157,6 +170,8 @@ export async function updateImpactDataForRescue(rescue) {
           await setFirestoreData(['stops', stop.id], payload)
         }
       }
+      console.log(current_load, stop)
+      debugger
     }
     res()
   })

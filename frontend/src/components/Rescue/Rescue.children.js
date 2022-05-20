@@ -872,7 +872,7 @@ export function Stop({ rescue, stops, s, i, refresh }) {
     : stopCard
 }
 
-export function RescueActionButton({ rescue }) {
+export function RescueActionButton({ rescue, refresh }) {
   const { rescue_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
@@ -883,6 +883,7 @@ export function RescueActionButton({ rescue }) {
       timestamp_logged_start: createTimestamp(),
       timestamp_updated: createTimestamp(),
     })
+    refresh()
   }
 
   async function handleClaim() {

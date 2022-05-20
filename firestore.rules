@@ -6,24 +6,44 @@ service cloud.firestore {
       return request.auth != null
     }
     
+    function document(collection, document){
+    	return get(/databases/$(database)/documents/$(collection)/$(document)).data;
+    }
+    
     function isTheSameUser(userId){
     	return isAuthenticated() && request.auth.uid == userId;
     }
 
     function isAdmin (userId){
-      let adminStatus = get(/databases/$(database)/documents/users/$(userId)).data.is_admin == true;
+    	let userData = document('users', userId);
+      let adminStatus = userData.is_admin == true;
       return adminStatus;
     }
     
     function isDriver (userId){
-      let driverStatus = get(/databases/$(database)/documents/users/$(userId)).data.is_driver == true;
+    	let userData = document('users', userId);
+      let driverStatus = userData.is_driver == true;
       return driverStatus;
     }
+    
+    function fieldChanged (collection, userId, field, request){
+    	let userData = document(collection, userId);
+    	let adminChange = request.resource.data[field] != userData[field];
+      return adminChange;
+    }
+    
+    function changinPermissions (userId, req){
+    	let changingAdmin = fieldChanged('users', userId, "is_admin", req);
+    	let changingDriver = fieldChanged('users', userId, "is_driver", req);
+      return changingAdmin || changingDriver;
+    }
+    
     
     match /users/{userId} {
     	allow create
       allow read: if isTheSameUser(userId) || isAdmin(request.auth.uid);
-      allow update: if isTheSameUser(userId);
+      allow update: if (isTheSameUser(userId) && !(fieldChanged('users', userId, "is_admin", request))) 
+      										|| (changinPermissions(userId, request) && isAdmin(request.auth.uid));
       allow delete: if isTheSameUser(userId) || isAdmin(request.auth.uid);
     }
     

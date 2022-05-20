@@ -14,7 +14,7 @@ export function DeliveryReport() {
   const { setModal } = useApp()
   const { delivery_id, rescue_id } = useParams()
   const navigate = useNavigate()
-  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
+  const { data: rescue, refresh } = useApi(`/rescues/${rescue_id}`)
   const { data: delivery } = useApi(`/stops/${delivery_id}`)
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,
@@ -22,6 +22,7 @@ export function DeliveryReport() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [working, setWorking] = useState(false)
+  const [refreshed, setRefreshed] = useState(false)
   const { admin } = useAuth()
 
   const currentLoad = useMemo(() => {
@@ -36,11 +37,19 @@ export function DeliveryReport() {
           weight -= stop.impact_data_total_weight || 0
         }
       }
-    }
+    } else return undefined
     return weight
   }, [rescue, delivery_id])
 
   useEffect(() => {
+    console.log(
+      !!rescue,
+      !!delivery,
+      delivery && delivery.status,
+      submitted,
+      working,
+      refreshed
+    )
     if (
       rescue &&
       delivery &&
@@ -50,12 +59,20 @@ export function DeliveryReport() {
     ) {
       setWorking(true)
       async function update() {
-        await updateImpactDataForRescue(rescue)
-        navigate(`/rescues/${rescue_id}`)
+        if (!refreshed) {
+          console.log('taking refresh')
+          refresh()
+          setRefreshed(true)
+          setWorking(false)
+        } else {
+          console.log('taking else')
+          window.setTimeout(() => updateImpactDataForRescue(rescue), 2000)
+          // navigate(`/rescues/${rescue_id}`)
+        }
       }
       update()
     }
-  }, [rescue, delivery, navigate, rescue_id, submitted, working])
+  }, [rescue, delivery, navigate, rescue_id, submitted, working, refreshed])
 
   useEffect(() => {
     if (delivery) {
@@ -103,7 +120,7 @@ export function DeliveryReport() {
     }
   }
 
-  if (!delivery) return <Loading text="Loading report" />
+  if (!delivery || !currentLoad) return <Loading text="Loading report" />
   return (
     <main id="DeliveryReport">
       <Text type="section-header" color="white" align="center" shadow>

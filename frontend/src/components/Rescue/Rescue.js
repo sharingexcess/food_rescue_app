@@ -77,7 +77,7 @@ export function Rescue() {
       ) : (
         <PullToRefresh onRefresh={handleRefresh}>
           <RescueHeader rescue={rescue} />
-          <RescueActionButton rescue={rescue} />
+          <RescueActionButton rescue={rescue} refresh={refresh} />
           <Spacer height={32} />
           <section className="Stops">
             {rescue.stops.map((s, i) => (

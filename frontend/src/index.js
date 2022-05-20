@@ -45,7 +45,8 @@ import './styles/index.scss'
 // api logs. By using this window variable,
 // we can turn on logs from the console in production.
 // by default, we turn them on only for DEV, not PROD.
-window.se_api_logs = IS_DEV_ENVIRONMENT
+// window.se_api_logs = IS_DEV_ENVIRONMENT
+window.se_api_logs = true
 
 Sentry.init({
   dsn: SENTRY_DSN,
