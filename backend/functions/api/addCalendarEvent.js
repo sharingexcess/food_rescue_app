@@ -5,7 +5,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
-exports.add_calendar_event = async (request, response) => {
+async function addCalendarEventEndpoint(request, response) {
   console.log(
     'INVOKING ENDPOINT: addCalendarEvent()\n',
     'params:',
@@ -79,3 +79,5 @@ async function addEvent(resource) {
     )
   })
 }
+
+exports.addCalendarEventEndpoint = addCalendarEventEndpoint

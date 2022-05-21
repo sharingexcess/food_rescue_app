@@ -3,6 +3,99 @@ exports.app = admin.initializeApp()
 exports.db = admin.firestore()
 const moment = require('moment-timezone')
 
+exports.recalculateRescue = async id => {
+  let rescue
+  const stops = []
+
+  // run these two queries in parallel
+  await Promise.all([
+    this.db
+      .collection('rescues')
+      .doc(id)
+      .get()
+      .then(doc => (rescue = doc.data())),
+    this.db
+      .collection('stops')
+      .where('rescue_id', '==', id)
+      .get()
+      .then(snapshot => snapshot.forEach(doc => stops.push(doc.data()))),
+  ])
+  // do this mapping to get stops in correct order
+  rescue.stops = rescue.stop_ids.map(id => stops.find(s => s.id === id))
+
+  const current_load = {
+    impact_data_dairy: 0,
+    impact_data_bakery: 0,
+    impact_data_produce: 0,
+    impact_data_meat_fish: 0,
+    impact_data_non_perishable: 0,
+    impact_data_prepared_frozen: 0,
+    impact_data_mixed: 0,
+    impact_data_other: 0,
+  }
+
+  // we'll queue up queries, and add them into this array
+  // so they can run in parallel, and we can await the whole
+  // list at the end, instead of running them all serially
+  const promises = []
+
+  for (const stop of rescue.stops) {
+    console.log('\n\nCURRENT LOAD:', current_load)
+    if (stop.type === 'pickup') {
+      for (const category in current_load) {
+        current_load[category] += stop[category]
+      }
+    } else {
+      if (stop.status === 'completed') {
+        const impact_data = {}
+        const percent_dropped = stop.percent_of_total_dropped / 100
+        const load_weight = Object.values(current_load).reduce(
+          (a, b) => a + b,
+          0
+        )
+        for (const category in current_load) {
+          console.log(
+            'adding',
+            Math.round(current_load[category] * percent_dropped),
+            'to',
+            category
+          )
+          impact_data[category] = Math.round(
+            current_load[category] * percent_dropped
+          )
+          current_load[category] -= impact_data[category]
+        }
+        impact_data.impact_data_total_weight = Math.round(
+          load_weight * percent_dropped
+        )
+        const payload = {
+          ...impact_data,
+          timestamp_updated: new Date(),
+        }
+        promises.push(
+          this.db.collection('stops').doc(stop.id).set(payload, { merge: true })
+        )
+      } else if (stop.status === 'cancelled') {
+        const payload = {
+          impact_data_total_weight: 0,
+          timestamp_updated: new Date(),
+        }
+        for (const key in current_load) {
+          payload[key] = 0
+        }
+        if (stop.type === 'delivery') {
+          payload.percent_of_total_dropped = 0
+        }
+        promises.push(
+          this.db.collection('stops').doc(stop.id).set(payload, { merge: true })
+        )
+      }
+    }
+  }
+  await Promise.all(promises)
+  console.log('updated all stops in rescue')
+}
+
 exports.fetchCollection = async name => {
   const results = []
   await admin

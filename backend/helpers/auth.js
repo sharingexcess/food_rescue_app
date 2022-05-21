@@ -1,4 +1,5 @@
 const admin = require('firebase-admin')
+const { performance } = require('perf_hooks')
 
 // defined as a global variable to persist over multiple invocations.
 // this should speed up validation time by not re-verifying tokens repeatedly.
@@ -23,6 +24,7 @@ const cached_approved_tokens = {}
  */
 exports.authenticateRequest = async (token, permissionCallback) => {
   try {
+    const start = performance.now()
     console.log('INVOKING FUNCTION: authenticateRequest():', '\nparams:', {
       token: `${token.substring(0, 10)}...`,
       permissionCallback: permissionCallback.toString(),
@@ -39,7 +41,14 @@ exports.authenticateRequest = async (token, permissionCallback) => {
       const userId = await getUserIdFromToken(token)
       const user = await getUserRecordFromId(userId)
       cacheUserRecordByToken(token, user)
-      return handleValidateAuthentication(user, permissionCallback)
+      const response = handleValidateAuthentication(user, permissionCallback)
+
+      console.log(
+        'authenticateRequest execution time:',
+        (performance.now() - start) / 1000,
+        'seconds'
+      )
+      return response
     }
   } catch (error) {
     console.error('Caught error while authenticating request:', error)

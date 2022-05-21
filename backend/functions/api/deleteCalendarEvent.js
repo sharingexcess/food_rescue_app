@@ -5,7 +5,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
-exports.delete_calendar_event = async (request, response) => {
+async function deleteCalendarEventEndpoint(request, response) {
   console.log(
     'INVOKING ENDPOINT: deleteCalendarEvent()\n',
     'params:',
@@ -69,3 +69,5 @@ function deleteEvent(eventId) {
     )
   })
 }
+
+exports.deleteCalendarEventEndpoint = deleteCalendarEventEndpoint

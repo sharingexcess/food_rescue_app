@@ -1,0 +1,15 @@
+{
+  "parser": "@babel/eslint-parser",
+  "rules": {
+    "no-var": "warn",
+    "prefer-const": "warn",
+    "no-duplicate-imports": "error"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+
+  "env": {
+    "es6": true
+  }
+}
