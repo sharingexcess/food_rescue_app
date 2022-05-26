@@ -30,13 +30,21 @@ exports.authenticateRequest = async (token, permissionCallback) => {
       permissionCallback: permissionCallback.toString(),
     })
 
+    // Check if this is a special case that we want to handle uniquely
+    if (token === RETOOL_AUTH_KEY) {
+      console.log('Request Authentication: Approved as Retool integration.')
+      return true
+    }
+
     // Check if we have already approved this token for faster response
     const cached_user = cached_approved_tokens[token]
     if (cached_user) {
       console.log('Found existing user record in cache:', cached_user)
       return handleValidateAuthentication(cached_user, permissionCallback)
-    } else {
-      // if no cached user is available, look up the user to validate permission
+    }
+
+    // if no cached user is available, look up the user to validate permission
+    else {
       console.log('No user record matching this token found in cache.')
       const userId = await getUserIdFromToken(token)
       const user = await getUserRecordFromId(userId)
