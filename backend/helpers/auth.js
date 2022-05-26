@@ -1,4 +1,5 @@
 const admin = require('firebase-admin')
+const { performance } = require('perf_hooks')
 
 // defined as a global variable to persist over multiple invocations.
 // this should speed up validation time by not re-verifying tokens repeatedly.
@@ -23,23 +24,39 @@ const cached_approved_tokens = {}
  */
 exports.authenticateRequest = async (token, permissionCallback) => {
   try {
+    const start = performance.now()
     console.log('INVOKING FUNCTION: authenticateRequest():', '\nparams:', {
       token: `${token.substring(0, 10)}...`,
       permissionCallback: permissionCallback.toString(),
     })
+
+    // Check if this is a special case that we want to handle uniquely
+    if (token === RETOOL_AUTH_KEY) {
+      console.log('Request Authentication: Approved as Retool integration.')
+      return true
+    }
 
     // Check if we have already approved this token for faster response
     const cached_user = cached_approved_tokens[token]
     if (cached_user) {
       console.log('Found existing user record in cache:', cached_user)
       return handleValidateAuthentication(cached_user, permissionCallback)
-    } else {
-      // if no cached user is available, look up the user to validate permission
+    }
+
+    // if no cached user is available, look up the user to validate permission
+    else {
       console.log('No user record matching this token found in cache.')
       const userId = await getUserIdFromToken(token)
       const user = await getUserRecordFromId(userId)
       cacheUserRecordByToken(token, user)
-      return handleValidateAuthentication(user, permissionCallback)
+      const response = handleValidateAuthentication(user, permissionCallback)
+
+      console.log(
+        'authenticateRequest execution time:',
+        (performance.now() - start) / 1000,
+        'seconds'
+      )
+      return response
     }
   } catch (error) {
     console.error('Caught error while authenticating request:', error)

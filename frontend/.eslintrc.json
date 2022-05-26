@@ -1,0 +1,23 @@
+{
+  "parser": "@babel/eslint-parser",
+  "plugins": ["prettier", "react-hooks"],
+  "rules": {
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "react-hooks/rules-of-hooks": "warn",
+    "no-var": "warn",
+    "prefer-const": "warn",
+    "no-duplicate-imports": "error"
+  },
+  "extends": ["plugin:prettier/recommended", "prettier"],
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    }
+  }
+}

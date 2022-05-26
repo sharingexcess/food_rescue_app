@@ -9,6 +9,7 @@ const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 firebase.initializeApp(FIREBASE_CONFIG)
 
 export const firestore = firebase.firestore()
+export const auth = firebase.auth()
 
 export function generateId() {
   return nanoid()

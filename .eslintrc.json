@@ -1,5 +1,5 @@
 {
-  "plugins": ["prettier", "react-hooks"],
+  "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": [
       "warn",
@@ -7,7 +7,6 @@
         "endOfLine": "auto"
       }
     ],
-    "react-hooks/rules-of-hooks": "warn",
     "no-var": "warn",
     "prefer-const": "warn",
     "no-duplicate-imports": "error"

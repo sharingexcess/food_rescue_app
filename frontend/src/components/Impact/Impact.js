@@ -27,21 +27,6 @@ export function Impact() {
     )
   )
 
-  // useEffect(() => {
-  //   if (window.location.search !== query) {
-  //     setWorking(true)
-  //     navigate(query, { replace: true })
-  //   } else {
-  //     console.log('fetching', CLOUD_FUNCTION_URLS.myStats + query)
-  //     fetchData(CLOUD_FUNCTION_URLS.myStats + query, user.accessToken)
-  //       .then(res => res.json())
-  //       .then(data => {
-  //         setApiData(data)
-  //         setWorking(false)
-  //       })
-  //   }
-  // }, [query, navigate])
-
   return (
     <main id="Impact">
       <Text type="section-header" color="white" shadow>

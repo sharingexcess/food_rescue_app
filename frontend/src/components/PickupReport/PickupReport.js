@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Loading, Input } from 'components'
 import {
+  API_URL,
   createTimestamp,
   FOOD_CATEGORIES,
-  setFirestoreData,
+  SE_API,
   STATUSES,
-  updateImpactDataForRescue,
 } from 'helpers'
-import { useApp, useApi } from 'hooks'
+import { useApp, useApi, useAuth } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
-import validator from 'validator'
 import { isFormDataEqual } from './utils'
 
 const initFormData = {
@@ -19,21 +18,23 @@ const initFormData = {
   notes: '',
 }
 
+let debounce_timer
+const DEBOUNCE_INTERVAL = 2000
+
 export function PickupReport({ customSubmitHandler }) {
   const { pickup_id, rescue_id } = useParams()
   // this code is shared by it's own view "/rescue/:id/pickup/:id"
   // but also the LogRescue component, so it must handle both the case
   // where a pickup_id is present in the url, and where it is
   // creating a new pickup
-  const { data: rescue } = useApi(rescue_id ? `/rescues/${rescue_id}` : null)
-  const { data: pickup } = useApi(pickup_id ? `/stops/${pickup_id}` : null)
+  const { data: pickup, refresh } = useApi(
+    pickup_id ? `/stops/${pickup_id}` : null
+  )
   const [formData, setFormData] = useState(initFormData)
   const [changed, setChanged] = useState(false)
-  const [errors, setErrors] = useState([])
-  const [showErrors, setShowErrors] = useState(false)
   const [updatedFromDb, setUpdatedFromDb] = useState(false)
-  const [working, setWorking] = useState(false)
   const { setModal, setModalState } = useApp()
+  const { user } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -59,29 +60,22 @@ export function PickupReport({ customSubmitHandler }) {
     if (
       !isFormDataEqual(formData, initFormData) &&
       !isFormDataEqual(formData, pickup) &&
-      !working &&
       changed &&
       pickup_id
     ) {
-      setWorking(true)
-      setFirestoreData(['stops', pickup_id], {
-        ...formData,
-        status: STATUSES.COMPLETED,
-        timestamp_updated: createTimestamp(),
-        timestamp_logged_finish:
-          pickup && pickup.timestamp_logged_finish
-            ? pickup.timestamp_logged_finish
-            : createTimestamp(),
-      }).then(() => setWorking(false))
+      debounce_timer && window.clearTimeout(debounce_timer)
+      debounce_timer = setTimeout(handleUpdateStop, DEBOUNCE_INTERVAL)
     }
-  }, [working, pickup, formData, pickup_id, changed])
+  }, [pickup, formData, pickup_id, changed])
 
-  useEffect(() => {
-    setFormData(formData => ({
+  async function handleUpdateStop() {
+    await SE_API.post(`/stops/${pickup_id}/update`, {
       ...formData,
-      impact_data_total_weight: sumWeight(formData),
-    }))
-  }, [errors])
+      status: STATUSES.COMPLETED,
+      timestamp_logged_finish: createTimestamp(),
+    })
+    refresh()
+  }
 
   function openAddToCategory(field) {
     setModal('AddToCategory')
@@ -109,68 +103,14 @@ export function PickupReport({ customSubmitHandler }) {
           : parseInt(e.target.value) || 0,
     }
     updated.impact_data_total_weight = sumWeight(updated)
-    setErrors([])
-    setShowErrors(false)
     setFormData(updated)
     setChanged(true)
   }
 
-  function validateFormData(data) {
-    const currErrors = []
-    if (
-      isNaN(data.impact_data_total_weight) ||
-      /\s/g.test(data.impact_data_total_weight)
-    ) {
-      currErrors.push('Invalid Input: Total Weight is not a number')
-    }
-    if (data.impact_data_total_weight < 0) {
-      errors.push('Invalid Input: Total Weight must be greater than zero')
-    }
-    for (const field in data) {
-      if (
-        field !== 'impact_data_total_weight' &&
-        field !== 'notes' &&
-        !validator.isInt(data[field].toString()) &&
-        data.field < 0
-      ) {
-        errors.push('Invalid Input: Total Weight is not valid')
-        break
-      }
-    }
-
-    if (currErrors.length === 0) {
-      return true
-    }
-    setErrors(currErrors)
-    return false
-  }
-
-  function FormError() {
-    if (showErrors === true) {
-      return errors.map(error => <p id="FormError">{error}</p>)
-    } else return null
-  }
-
   async function handleSubmit(event, data) {
     event.preventDefault()
-    if (validateFormData(data)) {
-      try {
-        await setFirestoreData(['stops', pickup_id], {
-          ...formData,
-          status: STATUSES.COMPLETED,
-          timestamp_updated: createTimestamp(),
-          timestamp_logged_finish: createTimestamp(),
-        })
-        if (rescue.status === STATUSES.COMPLETED) {
-          await updateImpactDataForRescue(rescue)
-        }
-        navigate(`/rescues/${rescue_id}`)
-      } catch (e) {
-        console.error('Error writing document: ', e)
-      }
-    } else {
-      setShowErrors(true)
-    }
+    await handleUpdateStop()
+    navigate(`/rescues/${rescue_id}`)
   }
 
   if (pickup_id && !pickup) return <Loading text="Loading report" />
@@ -183,11 +123,8 @@ export function PickupReport({ customSubmitHandler }) {
       <Spacer height={4} />
 
       <Text type="subheader" color="white" shadow>
-        Please request scale from donor prior to filling out this report. Weigh
-        each box, noting that box's variety, and fill in total pounds for each
-        category below.<br></br> <br></br>
-        For additional instructions on how to fill out the pickup report, press
-        the i button.
+        Weigh each box by category, and use the "+" button to add to the
+        category total.
         <Button
           id="Pickup-report-instructions"
           type="tertiary"
@@ -256,7 +193,6 @@ export function PickupReport({ customSubmitHandler }) {
         value={formData.notes}
         onChange={handleChange}
       />
-      <FormError />
       <Button
         type="primary"
         color="white"

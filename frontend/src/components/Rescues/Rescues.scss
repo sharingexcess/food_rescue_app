@@ -21,6 +21,8 @@
   }
 
   #Rescues-tabs {
+    padding-top: 2px;
+    overflow: visible;
     gap: 8px;
     @include mobile {
       gap: 4px;

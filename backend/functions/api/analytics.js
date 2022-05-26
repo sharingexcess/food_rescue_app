@@ -11,7 +11,7 @@ const {
   authenticateRequest,
 } = require('../../helpers')
 
-exports.analytics = async (request, response) => {
+async function analyticsEndpoint(request, response) {
   return new Promise(async resolve => {
     console.log('INVOKING ENDPOINT: analytics()\n', 'params:', request.query)
 
@@ -319,3 +319,5 @@ function sortObjectByValues(object) {
     .sort(([, a], [, b]) => b - a)
     .reduce((r, [k, v]) => ({ ...r, [k]: v }), {})
 }
+
+exports.analyticsEndpoint = analyticsEndpoint

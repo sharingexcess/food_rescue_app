@@ -6,7 +6,7 @@ const {
 } = require('../../helpers')
 var moment = require('moment-timezone')
 
-exports.impact = async (request, response) => {
+async function impactEndpoint(request, response) {
   return new Promise(async resolve => {
     console.log('INVOKING ENDPOINT: impact()\n', 'params:', request.query)
 
@@ -138,3 +138,5 @@ function calcPoundsByMonth(deliveries) {
 
 const formatTimestamp = (t, format) =>
   moment(t instanceof Date ? t : t.toDate()).format(format)
+
+exports.impactEndpoint = impactEndpoint

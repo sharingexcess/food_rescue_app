@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  setFirestoreData,
-  createTimestamp,
-  STATUSES,
-  updateImpactDataForRescue,
-} from 'helpers'
+import { setFirestoreData, createTimestamp, STATUSES } from 'helpers'
 import { allFoodDelivered, areAllStopsCompleted } from './utils'
 import { useAuth, useApi, useApp } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
@@ -48,7 +43,6 @@ export function Rescue() {
         }
         if (allFoodDelivered(rescue.stops) && !working) {
           setWorking(true)
-          await updateImpactDataForRescue(rescue)
           await setFirestoreData(['rescues', rescue_id], {
             status: STATUSES.COMPLETED,
             timestamp_logged_finish: createTimestamp(),
@@ -77,18 +71,11 @@ export function Rescue() {
       ) : (
         <PullToRefresh onRefresh={handleRefresh}>
           <RescueHeader rescue={rescue} />
-          <RescueActionButton rescue={rescue} refresh={refresh} />
+          <RescueActionButton rescue={rescue} />
           <Spacer height={32} />
           <section className="Stops">
             {rescue.stops.map((s, i) => (
-              <Stop
-                rescue={rescue}
-                refresh={refresh}
-                stops={rescue.stops}
-                s={s}
-                i={i}
-                key={i}
-              />
+              <Stop rescue={rescue} stops={rescue.stops} s={s} i={i} key={i} />
             ))}
           </section>
           {rescue.status === STATUSES.ACTIVE &&

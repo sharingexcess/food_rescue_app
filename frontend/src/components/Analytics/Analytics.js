@@ -17,7 +17,6 @@ import {
 } from 'recharts'
 import {
   COLORS,
-  fetchData,
   formatLargeNumber,
   formatTimestamp,
   shortenLargeNumber,
