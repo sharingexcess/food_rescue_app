@@ -31,7 +31,7 @@ exports.authenticateRequest = async (token, permissionCallback) => {
     })
 
     // Check if this is a special case that we want to handle uniquely
-    if (token === RETOOL_AUTH_KEY) {
+    if (token === process.env.RETOOL_AUTH_KEY) {
       console.log('Request Authentication: Approved as Retool integration.')
       return true
     }
