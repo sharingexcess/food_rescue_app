@@ -31,13 +31,13 @@ jobs:
           cd frontend
           npm run build
       - name: Initialize Firebase Project
-        uses: w9jds/firebase-action@master
+        uses: docker://w9jds/firebase-action:master
         with:
           args: use prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy React App
-        uses: w9jds/firebase-action@master
+        uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only hosting:sharingexcess
         env:
@@ -73,26 +73,26 @@ jobs:
         env:
           ENV_BACKEND: ${{secrets.ENV_BACKEND}}
       - name: Initialize Firebase Project
-        uses: w9jds/firebase-action@master
+        uses: docker://w9jds/firebase-action:master
         with:
           args: use prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy Firebase Functions
-        uses: w9jds/firebase-action@master
+        uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy Node API
-        uses: w9jds/firebase-action@master
+        uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only hosting:sharingexcess-api
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy Firestore Security Rules
-        uses: w9jds/firebase-action@master
+        uses: docker://w9jds/firebase-action:master
         with:
-          args: firebase deploy --only firestore:rules
+          args: deploy --only firestore:rules
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
