@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
 import { API_URL, DB_COLLECTIONS, generateId } from 'helpers'
-import { useFirestoreListener } from './useFirestoreListener'
 import { useAuth } from './useAuth'
 
 export function useApi(endpoint, params = null) {
@@ -69,8 +68,6 @@ export function useApi(endpoint, params = null) {
           })
           .then(
             payload => {
-              console.log(request_id)
-              console.log(state.request_id)
               // if (request_id === state.request_id) {  TODO: throw out request that are out of date
               logReceivedResponse(
                 request,
@@ -111,11 +108,12 @@ export function useApi(endpoint, params = null) {
 
   // useFirstoreListener will accept a callback as its 3rd arg to trigger
   // when an update is detected on the specified data
-  useFirestoreListener(
-    endpoint,
-    state.api_session_id,
-    useCallback(fetchApi, [endpoint, params]) // eslint-disable-line
-  )
+
+  // useFirestoreListener(
+  //   endpoint,
+  //   state.api_session_id,
+  //   useCallback(fetchApi, [endpoint, params]) // eslint-disable-line
+  // )
 
   // we pass to the consumer component all existing state,
   // plus a "refresh" function to recall fetchApi,
@@ -143,7 +141,7 @@ function generateApiRequest(endpoint, params, state, options) {
         ? '&'
         : '') +
       Object.keys(full_params)
-        .filter(i => !!full_params[i]) // filter out any falsey field values
+        .filter(i => full_params[i] != null) // filter out any falsey field values
         .map(i => `${i}=${full_params[i]}`)
         .join('&')
   )

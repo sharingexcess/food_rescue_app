@@ -70,12 +70,10 @@ export function RescueCard({ r }) {
     <Link to={`/rescues/${r.id}`} key={r.id}>
       <Card classList={['Route']}>
         <div className="Rescues-route-header">
-          {r.handler && (
-            <img src={r.handler.icon || UserIcon} alt={r.handler.name} />
-          )}
+          <img src={r.handler?.icon || UserIcon} alt={r.handler?.name} />
           <div>
             <Text type="section-header" color="black" wrap={false}>
-              {r.handler.name || 'Unassigned Route'}
+              {r.handler?.name || 'Unassigned Route'}
             </Text>
             <Text type="small" color="blue">
               {r.status === STATUSES.COMPLETED

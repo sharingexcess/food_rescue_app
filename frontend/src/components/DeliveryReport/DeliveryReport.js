@@ -1,11 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  createTimestamp,
-  setFirestoreData,
-  STATUSES,
-  updateImpactDataForRescue,
-} from 'helpers'
+import { createTimestamp, SE_API, STATUSES } from 'helpers'
 import { Ellipsis, Input, Loading } from 'components'
 import { useAuth, useApp, useApi } from 'hooks'
 import { Button, Spacer, Text } from '@sharingexcess/designsystem'
@@ -21,9 +16,16 @@ export function DeliveryReport() {
     notes: '',
   })
   const [submitted, setSubmitted] = useState(false)
-  const [working, setWorking] = useState(false)
-  const [refreshed, setRefreshed] = useState(false)
   const { admin } = useAuth()
+
+  useEffect(() => {
+    if (delivery) {
+      setFormData(formData => ({
+        ...formData,
+        percent_of_total_dropped: delivery.percent_of_total_dropped,
+      }))
+    }
+  }, [delivery])
 
   const currentLoad = useMemo(() => {
     let weight = 0
@@ -40,48 +42,6 @@ export function DeliveryReport() {
     } else return undefined
     return weight
   }, [rescue, delivery_id])
-
-  useEffect(() => {
-    console.log(
-      !!rescue,
-      !!delivery,
-      delivery && delivery.status,
-      submitted,
-      working,
-      refreshed
-    )
-    if (
-      rescue &&
-      delivery &&
-      delivery.status === STATUSES.COMPLETED &&
-      submitted &&
-      !working
-    ) {
-      setWorking(true)
-      async function update() {
-        if (!refreshed) {
-          console.log('taking refresh')
-          refresh()
-          setRefreshed(true)
-          setWorking(false)
-        } else {
-          console.log('taking else')
-          window.setTimeout(() => updateImpactDataForRescue(rescue), 2000)
-          // navigate(`/rescues/${rescue_id}`)
-        }
-      }
-      update()
-    }
-  }, [rescue, delivery, navigate, rescue_id, submitted, working, refreshed])
-
-  useEffect(() => {
-    if (delivery) {
-      setFormData(formData => ({
-        ...formData,
-        percent_of_total_dropped: delivery.percent_of_total_dropped,
-      }))
-    }
-  }, [delivery])
 
   function canEdit() {
     return (
@@ -100,27 +60,21 @@ export function DeliveryReport() {
     })
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-    try {
-      const payload = {
-        ...formData,
-        timestamp_logged_finish:
-          delivery && delivery.timestamp_logged_finish
-            ? delivery.timestamp_logged_finish
-            : createTimestamp(),
-        timestamp_updated: createTimestamp(),
-        status: STATUSES.COMPLETED,
-      }
-      await setFirestoreData(['stops', delivery_id], payload)
-      setSubmitted(true)
-      // This logic will trigger a useEffect above to redirect after the rescue object updates
-    } catch (e) {
-      console.error('Error writing document: ', e)
+  async function handleSubmit() {
+    setSubmitted(true)
+    const payload = {
+      ...formData,
+      timestamp_logged_finish:
+        delivery?.timestamp_logged_finish || createTimestamp(),
+      timestamp_updated: createTimestamp(),
+      status: STATUSES.COMPLETED,
     }
+    await SE_API.post(`/stops/${delivery_id}/update`, payload)
+    navigate(`/rescues/${rescue_id}`)
   }
 
   if (!delivery || !currentLoad) return <Loading text="Loading report" />
+
   return (
     <main id="DeliveryReport">
       <Text type="section-header" color="white" align="center" shadow>

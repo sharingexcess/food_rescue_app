@@ -1,13 +1,5 @@
 import moment from 'moment'
-import {
-  API_ENDPOINTS,
-  API_URL,
-  CLOUD_FUNCTION_URLS,
-  FOOD_CATEGORIES,
-  GOOGLE_MAPS_URL,
-  STATUSES,
-} from './constants'
-import { setFirestoreData } from './firebase'
+import { CLOUD_FUNCTION_URLS, GOOGLE_MAPS_URL } from './constants'
 
 export function removeSpecialCharacters(str) {
   return str ? str.replace(/[^A-Z0-9]/gi, '') : ''
@@ -109,74 +101,6 @@ export function generateDirectionsLink(address1, city, state, zip) {
   return `${GOOGLE_MAPS_URL}${address1}+${city}+${state}+${zip}`
 }
 
-export async function updateImpactDataForRescue(rescue) {
-  console.log('UPDATING IMPACT DATA...')
-  debugger
-  return new Promise(async res => {
-    const { stops } = rescue
-
-    const current_load = {
-      ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
-    }
-    console.log(stops, current_load)
-    debugger
-    for (const stop of stops) {
-      if (stop.type === 'pickup') {
-        for (const category in current_load) {
-          current_load[category] += stop[category]
-        }
-      } else {
-        if (
-          stop.percent_of_total_dropped &&
-          stop.status === STATUSES.COMPLETED
-        ) {
-          const impact_data = {}
-          const percent_dropped = stop.percent_of_total_dropped / 100
-          const load_weight = Object.values(current_load).reduce(
-            (a, b) => a + b,
-            0
-          )
-          console.log(load_weight)
-          for (const category in current_load) {
-            console.log(
-              'adding',
-              Math.round(current_load[category] * percent_dropped),
-              'to',
-              category
-            )
-            impact_data[category] = Math.round(
-              current_load[category] * percent_dropped
-            )
-            current_load[category] -= impact_data[category]
-          }
-          impact_data.impact_data_total_weight = Math.round(
-            load_weight * percent_dropped
-          )
-          await setFirestoreData(['stops', stop.id], {
-            ...impact_data,
-            timestamp_updated: createTimestamp(),
-          })
-        } else if (stop.status === STATUSES.CANCELLED) {
-          const payload = {
-            impact_data_total_weight: 0,
-            timestamp_updated: createTimestamp(),
-          }
-          for (const key in current_load) {
-            payload[key] = 0
-          }
-          if (stop.type === 'delivery') {
-            payload.percent_of_total_dropped = 0
-          }
-          await setFirestoreData(['stops', stop.id], payload)
-        }
-      }
-      console.log(current_load, stop)
-      debugger
-    }
-    res()
-  })
-}
-
 export function formatLargeNumber(x) {
   if (!x) return 0
   const parts = x.toString().split('.')
@@ -185,15 +109,4 @@ export function formatLargeNumber(x) {
     parts[1] = parts[1].substring(0, 2)
   }
   return parts.join('.')
-}
-
-// Parameters:
-//  link - API Endpoint
-//  accessToken - user AccessToken that is passed in a header to verify request was made from app
-export function fetchData(link, accessToken) {
-  return fetch(link, {
-    headers: {
-      authorization: 'Bearer ' + accessToken,
-    },
-  })
 }

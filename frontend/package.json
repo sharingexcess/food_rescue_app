@@ -40,5 +40,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/preset-react": "^7.17.12",
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-react-app": "^7.0.0"
   }
 }

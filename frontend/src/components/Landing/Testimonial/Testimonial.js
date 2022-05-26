@@ -35,7 +35,7 @@ export function Testimonial() {
           className="Testimonial-swiper"
         >
           {TESTIMONIALS.map((user, index) => (
-            <SwiperSlide className="Testimonial-content-slide">
+            <SwiperSlide className="Testimonial-content-slide" key={index}>
               <Image
                 src={user.image}
                 id="Testimonial-content-headshot"

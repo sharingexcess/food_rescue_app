@@ -23,6 +23,8 @@ import {
   RECIPIENT_TYPES,
   generateUniqueId,
   formatTimestamp,
+  API_URL,
+  SE_API,
 } from 'helpers'
 import { useAuth, useFirestore, useApp } from 'hooks'
 import { Link, useNavigate, useParams } from 'react-router-dom'
@@ -342,6 +344,7 @@ export function AddRescueNotes() {
   const { setModal, modalState } = useApp()
   const { rescue } = modalState
   const [notes, setNotes] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (rescue && rescue.notes) {
@@ -353,7 +356,7 @@ export function AddRescueNotes() {
     await setFirestoreData(['rescues', rescue.id], {
       notes,
     })
-    modalState.refresh && modalState.refresh()
+    navigate(location.pathname)
     setModal()
   }
 
@@ -468,7 +471,7 @@ export function ContactAdmin() {
   )
 }
 
-export function Stop({ rescue, stops, s, i, refresh }) {
+export function Stop({ rescue, stops, s, i }) {
   const navigate = useNavigate()
   const { rescue_id } = useParams()
   const { setModal, setModalState } = useApp()
@@ -663,13 +666,13 @@ export function Stop({ rescue, stops, s, i, refresh }) {
     ) : null
   }
 
-  function StopDirectionsButton({ refresh }) {
+  function StopDirectionsButton() {
     async function handleClick() {
       await setFirestoreData(['stops', s.id], {
         status: STATUSES.ACTIVE,
         timestamp_logged_start: createTimestamp(),
       })
-      refresh()
+      navigate(location.pathname)
     }
     async function handleSkip() {
       if (s.organization.subtype === RECIPIENT_TYPES.HOME_DELIVERY) {
@@ -774,7 +777,7 @@ export function Stop({ rescue, stops, s, i, refresh }) {
     )
   }
 
-  function StopDetails({ refresh }) {
+  function StopDetails() {
     return s.location.is_deleted ? (
       <Text type="paragraph">This location has been deleted.</Text>
     ) : (
@@ -791,9 +794,7 @@ export function Stop({ rescue, stops, s, i, refresh }) {
         <Spacer height={16} />
         <StopMap />
         <Spacer height={24} />
-        {s.status === STATUSES.SCHEDULED && (
-          <StopDirectionsButton refresh={refresh} />
-        )}
+        {s.status === STATUSES.SCHEDULED && <StopDirectionsButton />}
         {s.status === STATUSES.ACTIVE && <StopReportButton />}
       </>
     )
@@ -846,7 +847,7 @@ export function Stop({ rescue, stops, s, i, refresh }) {
         {s.location.nickname ? ` (${s.location.nickname})` : ''}
       </Text>
       {isActiveStop ? (
-        <StopDetails refresh={refresh} />
+        <StopDetails />
       ) : isCompletedStop ? (
         <StopSummary />
       ) : (
@@ -872,18 +873,19 @@ export function Stop({ rescue, stops, s, i, refresh }) {
     : stopCard
 }
 
-export function RescueActionButton({ rescue, refresh }) {
+export function RescueActionButton({ rescue }) {
   const { rescue_id } = useParams()
   const drivers = useFirestore('users')
   const { user, admin } = useAuth()
+  const navigate = useNavigate()
 
   async function handleBegin() {
-    await setFirestoreData(['rescues', rescue.id], {
+    await SE_API.post(`/rescues/${rescue_id}/update`, {
       status: STATUSES.ACTIVE,
       timestamp_logged_start: createTimestamp(),
       timestamp_updated: createTimestamp(),
     })
-    refresh()
+    navigate(location.pathname)
   }
 
   async function handleClaim() {

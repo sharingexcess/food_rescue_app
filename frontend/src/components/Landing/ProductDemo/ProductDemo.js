@@ -6,7 +6,7 @@ import {
   FlexContainer,
 } from '@sharingexcess/designsystem'
 import { useIsMobile } from 'hooks'
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import { DEMO_VIDEOS } from '../content'
 
 export function ProductDemo() {
@@ -41,7 +41,7 @@ export function ProductDemo() {
         >
           <div className="ProductDemo-content-menu">
             {Object.keys(DEMO_VIDEOS).map((value, index) => (
-              <>
+              <Fragment key={index}>
                 <Button
                   type="secondary"
                   color="black"
@@ -52,7 +52,7 @@ export function ProductDemo() {
                   {Object.keys(DEMO_VIDEOS)[index]}
                 </Button>
                 <Spacer height={16} />
-              </>
+              </Fragment>
             ))}
           </div>
 
@@ -62,12 +62,14 @@ export function ProductDemo() {
             {Object.keys(DEMO_VIDEOS).map(i =>
               isMobile ? (
                 <img
+                  key={i}
                   className={demo === i ? 'visible' : 'invisible'}
                   src={DEMO_VIDEOS[i].gif}
                   alt="Product Demo"
                 />
               ) : (
                 <video
+                  key={i}
                   className={demo === i ? 'visible' : 'invisible'}
                   src={DEMO_VIDEOS[i].mp4}
                   autoPlay
