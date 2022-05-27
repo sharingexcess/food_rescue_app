@@ -38,6 +38,12 @@ jobs:
           args: use prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Configure Deploy Target
+        uses: docker://w9jds/firebase-action:master
+        with:
+          args: target:apply hosting sharingexcess sharing-excess-prod
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy React App
         uses: docker://w9jds/firebase-action:master
         with:
@@ -84,6 +90,12 @@ jobs:
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only functions
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Configure Deploy Target
+        uses: docker://w9jds/firebase-action:master
+        with:
+          args: target:apply hosting sharingexcess-api sharingexcess-api
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       - name: Deploy Node API

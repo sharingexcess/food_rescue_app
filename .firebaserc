@@ -11,6 +11,12 @@
         ],
         "node-api-prod": [
           "node-api-prod"
+        ],
+        "sharingexcess": [
+          "sharing-excess-prod"
+        ],
+        "sharingexcess-api": [
+          "sharingexcess-api"
         ]
       }
     },
