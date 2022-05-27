@@ -25,6 +25,10 @@ jobs:
           echo "${{secrets.ENV_FRONTEND }}" > .env
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
+      - name: Create firebase.json File Locally
+        run: echo "${{secrets.FIREBASE_JSON }}" > firebase.json
+        env:
+          FIREBASE_JSON: ${{secrets.FIREBASE_JSON}}
       - name: Build React Application
         run: |
           cd frontend
@@ -61,6 +65,10 @@ jobs:
           echo "${{secrets.ENV_BACKEND }}" > .env
         env:
           ENV_BACKEND: ${{secrets.ENV_BACKEND}}
+      - name: Create firebase.json File Locally
+        run: echo "${{secrets.FIREBASE_JSON }}" > firebase.json
+        env:
+          FIREBASE_JSON: ${{secrets.FIREBASE_JSON}}
       - name: Initialize Firebase Project
         uses: docker://w9jds/firebase-action:master
         with:

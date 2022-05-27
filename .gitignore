@@ -1,6 +1,7 @@
 build
 node_modules
 environments
+firebase.json
 *.env*
 .eslintcache
 package-lock.json

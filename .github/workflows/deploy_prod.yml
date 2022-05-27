@@ -23,6 +23,10 @@ jobs:
           echo "${{secrets.ENV_FRONTEND }}" > .env
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
+      - name: Create firebase.json File Locally
+        run: echo "${{secrets.FIREBASE_JSON }}" > firebase.json
+        env:
+          FIREBASE_JSON: ${{secrets.FIREBASE_JSON}}
       - name: Get Version from package.json
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
@@ -70,8 +74,10 @@ jobs:
         run: |
           cd backend
           echo "${{secrets.ENV_BACKEND }}" > .env
+      - name: Create firebase.json File Locally
+        run: echo "${{secrets.FIREBASE_JSON }}" > firebase.json
         env:
-          ENV_BACKEND: ${{secrets.ENV_BACKEND}}
+          FIREBASE_JSON: ${{secrets.FIREBASE_JSON}}
       - name: Initialize Firebase Project
         uses: docker://w9jds/firebase-action:master
         with:
