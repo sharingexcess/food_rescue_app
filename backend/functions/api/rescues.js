@@ -78,7 +78,7 @@ async function getRescues(date, status, handler_id, start_after, limit = 100) {
 
   if (start_after) {
     rescues_query = rescues_query
-      .orderBy('timestamp_scheduled_start')
+      .orderBy('timestamp_scheduled_start', 'desc')
       .startAfter(start_after_ref)
   } else {
     rescues_query = rescues_query.orderBy('timestamp_scheduled_start', 'desc')

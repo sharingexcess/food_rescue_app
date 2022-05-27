@@ -148,7 +148,10 @@ function generateApiRequest(endpoint, params, state, options) {
 }
 
 function removeDuplicates(array) {
-  return array.filter((v, i, a) => a.findIndex(v2 => v2.id === v.id) === i)
+  return array.filter(
+    (currValue, currIndex, array) =>
+      array.findIndex(v2 => v2.id === currValue.id) === currIndex
+  )
 }
 
 // convert all timestamps in the payload from strings to date objects recursively
