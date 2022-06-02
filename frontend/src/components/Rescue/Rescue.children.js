@@ -108,14 +108,26 @@ export function RescueMenu() {
       </Text>
       <Spacer height={8} />
       <ul>
+        {user.id === rescue.handler_id || admin ? (
+          <>
+            <li>
+              <Link to={`/rescues/${rescue_id}/edit`}>
+                <Button type="tertiary" color="blue" size="large">
+                  Edit Rescue
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <RescueOption
+                modalName="FinishRescue"
+                name="Force Finish Rescue"
+              />
+            </li>
+          </>
+        ) : null}
         <li>
           <RescueOption modalName="AddRescueNotes" name="Add Notes to Rescue" />
         </li>
-        {user.id === rescue.handler_id || admin ? (
-          <li>
-            <RescueOption modalName="FinishRescue" name="Force Finish Rescue" />
-          </li>
-        ) : null}
 
         {user.id === rescue.handler_id ? (
           <>
@@ -128,18 +140,9 @@ export function RescueMenu() {
           </>
         ) : null}
         {admin ? (
-          <>
-            <li>
-              <Link to={`/rescues/${rescue_id}/edit`}>
-                <Button type="tertiary" color="blue" size="large">
-                  Edit Rescue
-                </Button>
-              </Link>
-            </li>
-            <li>
-              <RescueOption modalName="CancelRescue" name="Cancel Rescue" />
-            </li>
-          </>
+          <li>
+            <RescueOption modalName="CancelRescue" name="Cancel Rescue" />
+          </li>
         ) : null}
       </ul>
     </div>
