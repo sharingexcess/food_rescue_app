@@ -37,7 +37,7 @@ import {
 import { Emoji } from 'react-apple-emojis'
 
 export function EditRescue() {
-  const { user } = useAuth()
+  const { user, admin } = useAuth()
   const { rescue_id } = useParams()
   const navigate = useNavigate()
   const { data: rescue } = useApi(rescue_id ? `/rescues/${rescue_id}` : null)
@@ -302,10 +302,12 @@ export function EditRescue() {
         onClick={() => handleCardSelection(s.id)}
       >
         <div>
-          <i
-            className="fa fa-times"
-            onClick={() => handleRemoveStop(s.id, s.type)}
-          />
+          {admin && (
+            <i
+              className="fa fa-times"
+              onClick={() => handleRemoveStop(s.id, s.type)}
+            />
+          )}
           <Text
             type="small-header"
             color={s.type === 'pickup' ? 'green' : 'red'}
@@ -367,13 +369,20 @@ export function EditRescue() {
                 : ''
             } `}
           </Text>
-          <Button
-            id="EditRescue-handler-edit"
-            type="secondary"
-            handler={() => setConfirmedTime(false)}
-          >
-            Update Rescue Info
-          </Button>
+          <Spacer height={8} />
+          {admin ? (
+            <Button
+              id="EditRescue-handler-edit"
+              type="secondary"
+              handler={() => setConfirmedTime(false)}
+            >
+              Update Rescue Info
+            </Button>
+          ) : (
+            <Text color="white" shadow>
+              Select a stop to reorder your rescue
+            </Text>
+          )}
         </div>
       </div>
     )
@@ -540,9 +549,13 @@ export function EditRescue() {
           ) : null}
         </section>
         <div id="EditRescue-buttons">
-          <CancelButton />
-          <AddPickupButton />
-          <AddDeliveryButton />
+          {admin && (
+            <>
+              <CancelButton />
+              <AddPickupButton />
+              <AddDeliveryButton />
+            </>
+          )}
           <SubmitButton />
         </div>
       </>
