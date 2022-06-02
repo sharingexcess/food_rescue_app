@@ -160,6 +160,7 @@ export function PickupReport({ customSubmitHandler }) {
                 id={field}
                 type="number"
                 value={formData[field] === 0 ? '' : formData[field]}
+                onWheel={e => e.target.blur()}
                 onChange={handleChange}
               />
               <Button
