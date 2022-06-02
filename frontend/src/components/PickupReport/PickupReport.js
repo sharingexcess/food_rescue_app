@@ -158,11 +158,15 @@ export function PickupReport({ customSubmitHandler }) {
               </Text>
               <input
                 id={field}
+<<<<<<< HEAD
                 type="tel"
+=======
+                type="tel" // type tel, min 0, max 100000
+>>>>>>> 20285d1 (changed input for pickup report to telephone. max value is 99999)
                 minLength={0}
                 maxLength={5}
                 value={formData[field] === 0 ? '' : formData[field]}
-                onWheel={e => e.target.blur()}
+                // onWheel={e => e.target.blur()}
                 onChange={handleChange}
               />
               <Button
