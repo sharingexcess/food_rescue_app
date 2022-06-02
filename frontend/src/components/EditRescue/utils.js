@@ -77,7 +77,7 @@ export const parseExistingRescue = async rescue => {
   if (!rescue) return null
   const rescue_data = {
     handler: rescue.handler || null,
-    handler_id: rescue.handler?.id,
+    handler_id: rescue.handler?.id || null,
     handler_name: rescue.handler?.name || null,
     timestamp_scheduled_start: formatTimestamp(
       rescue.timestamp_scheduled_start,

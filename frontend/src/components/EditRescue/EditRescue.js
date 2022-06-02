@@ -135,7 +135,7 @@ export function EditRescue() {
       const s = {
         id: stop.id,
         type: stop.type,
-        handler_id: formData.handler_id,
+        handler_id: formData.handler_id || null,
         rescue_id: new_rescue_id,
         organization_id: stop.organization_id,
         location_id: stop.location_id,
