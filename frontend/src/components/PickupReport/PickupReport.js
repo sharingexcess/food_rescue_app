@@ -158,7 +158,9 @@ export function PickupReport({ customSubmitHandler }) {
               </Text>
               <input
                 id={field}
-                type="number"
+                type="tel"
+                minLength={0}
+                maxLength={5}
                 value={formData[field] === 0 ? '' : formData[field]}
                 onWheel={e => e.target.blur()}
                 onChange={handleChange}
