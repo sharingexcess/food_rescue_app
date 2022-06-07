@@ -90,7 +90,7 @@ export function useApi(endpoint, params = null) {
                     : 1,
                 last:
                   payload.length && params && payload.length === params.limit
-                    ? payload.at(-1).id
+                    ? payload[payload.length - 1].id
                     : null,
                 loading: false,
               }))
