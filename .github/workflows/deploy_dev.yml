@@ -26,7 +26,7 @@ jobs:
         env:
           ENV_FRONTEND: ${{secrets.ENV_FRONTEND}}
       - name: Create firebase.json File Locally
-        run: cp firebase.prod.json firebase.json
+        run: cp firebase.dev.json firebase.json
       - name: Get Version from package.json
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
