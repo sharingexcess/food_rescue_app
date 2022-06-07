@@ -67,7 +67,7 @@ jobs:
         env:
           ENV_BACKEND: ${{secrets.ENV_BACKEND}}
       - name: Create firebase.json File Locally
-        run: cp firebase.prod.json firebase.json
+        run: cp firebase.dev.json firebase.json
       - name: Initialize Firebase Project
         uses: docker://w9jds/firebase-action:master
         with:
