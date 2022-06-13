@@ -16,6 +16,7 @@ import {
   createTimestamp,
   formatPhoneNumber,
   setFirestoreData,
+  getFirestoreData,
   updateGoogleCalendarEvent,
   generateDirectionsLink,
   STATUSES,
@@ -277,8 +278,38 @@ export function CancelRescue() {
   async function handleCancel() {
     await SE_API.post(`/rescues/${rescue.id}/cancel`, {
       status: STATUSES.CANCELLED,
-      notes,
+      notes: notes ? notes : '',
+      stop_ids: rescue.stop_ids,
     })
+
+    rescue.stop_ids.forEach(async stop_id => {
+      const stop = await getFirestoreData(['stops', stop_id])
+      console.log(stop.type)
+
+      await SE_API.post(
+        `/rescues/${rescue.id}/${stop.type}/${stop_id}/cancel`,
+        {
+          status: STATUSES.CANCELLED,
+          notes: notes ? notes : '',
+        }
+      )
+    })
+
+    // await SE_API.post('/calendar/delete', {
+    //   body: JSON.stringify({
+    //     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+    //     eventId: rescue.google_calendar_event_id,
+    //   }),
+    // })
+
+    await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+      method: 'POST',
+      body: JSON.stringify({
+        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+        eventId: rescue.google_calendar_event_id,
+      }),
+    })
+
     // bad practice
     modalState.refresh()
   }

@@ -20,13 +20,16 @@ async function cancelRescueEndpoint(request, response) {
         response.status(400).send('No payload received in request body.')
         return
       }
-      const canceled_rescue = await db.collection('rescues').doc(id).set(
-        {
-          status: payload.status,
-          notes: payload.notes,
-        },
-        { merge: true }
-      )
+      const canceled_rescue = await db
+        .collection('rescues')
+        .doc(id)
+        .set(
+          {
+            status: payload.status,
+            notes: payload.notes || '',
+          },
+          { merge: true }
+        )
       response.status(200).send(JSON.stringify(canceled_rescue))
       resolve()
     } catch (e) {
@@ -37,25 +40,3 @@ async function cancelRescueEndpoint(request, response) {
 }
 
 exports.cancelRescueEndpoint = cancelRescueEndpoint
-
-// async function cancelRescue(id, payload) {
-//   const payload = {
-//     status: STATUSES.CANCELLED,
-//     notes,
-//     impact_data_dairy: 0,
-//     impact_data_bakery: 0,
-//     impact_data_produce: 0,
-//     impact_data_meat_fish: 0,
-//     impact_data_non_perishable: 0,
-//     impact_data_prepared_frozen: 0,
-//     impact_data_mixed: 0,
-//     impact_data_other: 0,
-//     impact_data_total_weight: 0,
-//   }
-//   if (modalState.stop.type === 'delivery') {
-//     payload.percent_of_total_dropped = 0
-//   }
-//   await setFirestoreData(['stops', modalState.stop.id], payload)
-
-//   setModal()
-// }
