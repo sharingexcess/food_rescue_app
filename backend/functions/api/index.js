@@ -28,6 +28,9 @@ api.post('/rescues/:id/update', (req, res) =>
 api.post('/stops/:id/update', (req, res) =>
   loadEndpoint('updateStop', req, res)
 )
+api.post('/rescues/:id/cancel', (req, res) =>
+  loadEndpoint('cancelRescue', req, res)
+)
 
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
