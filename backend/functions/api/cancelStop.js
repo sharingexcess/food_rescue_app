@@ -1,16 +1,12 @@
-const { db } = require('../../helpers')
+const { db, fetchDocument } = require('../../helpers/functions')
 
 async function cancelStopEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
       console.log('running cancelStop')
-      const { stop_id } = request.params
+      const { type, stop_id } = request.params
       console.log('Received stop_id:', stop_id)
-      // console.log('Received rescue_id:', id)
-      // if (!rescue_id) {
-      //   response.status(400).send('No id param received in request URL.')
-      //   return
-      // }
+      console.log('Received type:', type)
       if (!stop_id) {
         response.status(400).send('No id param received in request URL.')
         return
@@ -42,6 +38,15 @@ async function cancelStopEndpoint(request, response) {
           },
           { merge: true }
         )
+
+      if (type === 'delivery') {
+        canceled_stop = await db.collection('stops').doc(stop_id).set(
+          {
+            percent_of_total_dropped: 0,
+          },
+          { merge: true }
+        )
+      }
 
       response.status(200).send(JSON.stringify(canceled_stop))
       resolve()

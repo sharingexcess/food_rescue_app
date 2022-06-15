@@ -284,7 +284,6 @@ export function CancelRescue() {
 
     rescue.stop_ids.forEach(async stop_id => {
       const stop = await getFirestoreData(['stops', stop_id])
-      console.log(stop.type)
 
       await SE_API.post(
         `/rescues/${rescue.id}/${stop.type}/${stop_id}/cancel`,
@@ -294,13 +293,6 @@ export function CancelRescue() {
         }
       )
     })
-
-    // await SE_API.post('/calendar/delete', {
-    //   body: JSON.stringify({
-    //     calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-    //     eventId: rescue.google_calendar_event_id,
-    //   }),
-    // })
 
     await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
       method: 'POST',
@@ -313,25 +305,6 @@ export function CancelRescue() {
     // bad practice
     modalState.refresh()
   }
-
-  // async function handleCancel() {
-  //   try {
-  //     await setFirestoreData(['rescues', rescue.id], {
-  //       status: STATUSES.CANCELLED,
-  //       notes,
-  //     })
-  //     await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-  //         eventId: rescue.google_calendar_event_id,
-  //       }),
-  //     })
-  //     setModal()
-  //   } catch (e) {
-  //     console.error('Error deleting calendar event:', e)
-  //   }
-  // }
 
   return (
     <>
