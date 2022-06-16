@@ -16,6 +16,7 @@ import {
   createTimestamp,
   formatPhoneNumber,
   setFirestoreData,
+  getFirestoreData,
   updateGoogleCalendarEvent,
   generateDirectionsLink,
   STATUSES,
@@ -35,12 +36,12 @@ import { useEffect } from 'react/cjs/react.development'
 import PickupIcon from 'assets/pickup.png'
 import DeliveryIcon from 'assets/delivery.png'
 
-export function RescueHeader({ rescue }) {
+export function RescueHeader({ rescue, refresh }) {
   const { setModal, setModalState } = useApp()
 
   function openRescueMenu() {
     setModal('RescueMenu')
-    setModalState({ rescue })
+    setModalState({ rescue, refresh })
   }
 
   return rescue ? (
@@ -82,21 +83,16 @@ export function RescueHeader({ rescue }) {
   ) : null
 }
 
-export function RescueMenu() {
-  const { setModal, modalState } = useApp()
+export function RescueMenu({ refresh }) {
+  const { setModal, modalState, setModalState } = useApp()
   const { user, admin } = useAuth()
   const { rescue_id } = useParams()
   const { rescue } = modalState
 
-  function RescueOption({ name, modalName }) {
+  function RescueOption({ label, action }) {
     return (
-      <Button
-        type="tertiary"
-        color="blue"
-        size="large"
-        handler={() => setModal(modalName)}
-      >
-        {name}
+      <Button type="tertiary" color="blue" size="large" handler={action}>
+        {label}
       </Button>
     )
   }
@@ -126,23 +122,61 @@ export function RescueMenu() {
           </>
         ) : null}
         <li>
-          <RescueOption modalName="AddRescueNotes" name="Add Notes to Rescue" />
+          <RescueOption
+            action={() => setModal('AddRescueNotes')}
+            label="Add Notes to Rescue"
+          />
         </li>
+<<<<<<< HEAD
+=======
+        {user.id === rescue.handler_id || admin ? (
+          <li>
+            <RescueOption
+              action={() => setModal('FinishRescue')}
+              label="Force Finish Rescue"
+            />
+          </li>
+        ) : null}
+>>>>>>> 9ccb58e (can cancel rescue via api now)
 
         {user.id === rescue.handler_id ? (
           <>
             <li>
-              <RescueOption modalName="DropRescue" name="Drop Rescue" />
+              <RescueOption
+                action={() => setModal('DropRescue')}
+                label="Drop Rescue"
+              />
             </li>
             <li>
-              <RescueOption modalName="ContactAdmin" name="Contact Admin" />
+              <RescueOption
+                action={() => setModal('ContactAdmin')}
+                label="Contact Admin"
+              />
             </li>
           </>
         ) : null}
         {admin ? (
+<<<<<<< HEAD
           <li>
             <RescueOption modalName="CancelRescue" name="Cancel Rescue" />
           </li>
+=======
+          <>
+            <li>
+              <Link to={`/rescues/${rescue_id}/edit`}>
+                <Button type="tertiary" color="blue" size="large">
+                  Edit Rescue
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <RescueOption
+                action={() => setModal('CancelRescue')}
+                label="Cancel Rescue"
+              />
+            </li>
+          </>
+>>>>>>> 9ccb58e (can cancel rescue via api now)
         ) : null}
       </ul>
     </div>
@@ -241,24 +275,35 @@ export function CancelRescue() {
   const { modalState, setModal } = useApp()
   const [notes, setNotes] = useState()
   const { rescue } = modalState
-
   async function handleCancel() {
-    try {
-      await setFirestoreData(['rescues', rescue.id], {
-        status: STATUSES.CANCELLED,
-        notes,
-      })
-      await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
-        method: 'POST',
-        body: JSON.stringify({
-          calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
-          eventId: rescue.google_calendar_event_id,
-        }),
-      })
-      setModal()
-    } catch (e) {
-      console.error('Error deleting calendar event:', e)
-    }
+    await SE_API.post(`/rescues/${rescue.id}/cancel`, {
+      status: STATUSES.CANCELLED,
+      notes: notes ? notes : '',
+      stop_ids: rescue.stop_ids,
+    })
+
+    rescue.stop_ids.forEach(async stop_id => {
+      const stop = await getFirestoreData(['stops', stop_id])
+
+      await SE_API.post(
+        `/rescues/${rescue.id}/${stop.type}/${stop_id}/cancel`,
+        {
+          status: STATUSES.CANCELLED,
+          notes: notes ? notes : '',
+        }
+      )
+    })
+
+    await fetch(CLOUD_FUNCTION_URLS.deleteCalendarEvent, {
+      method: 'POST',
+      body: JSON.stringify({
+        calendarId: process.env.REACT_APP_GOOGLE_CALENDAR_ID,
+        eventId: rescue.google_calendar_event_id,
+      }),
+    })
+
+    // bad practice
+    modalState.refresh()
   }
 
   return (

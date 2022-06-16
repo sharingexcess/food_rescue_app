@@ -25,6 +25,7 @@ export function Rescue() {
   useEffect(() => {
     // make the refresh function available in the modal state
     // for child components to gain access
+    console.log('setting modal state')
     setModalState(state => ({ ...state, refresh }))
   }, []) // eslint-disable-line
 
@@ -70,7 +71,7 @@ export function Rescue() {
         <Loading />
       ) : (
         <PullToRefresh onRefresh={handleRefresh}>
-          <RescueHeader rescue={rescue} />
+          <RescueHeader rescue={rescue} refresh={refresh} />
           <RescueActionButton rescue={rescue} />
           <Spacer height={32} />
           <section className="Stops">

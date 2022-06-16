@@ -47,19 +47,20 @@ import './styles/index.scss'
 // by default, we turn them on only for DEV, not PROD.
 // window.se_api_logs = IS_DEV_ENVIRONMENT
 window.se_api_logs = true
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  autoSessionTracking: true,
-  integrations: [
-    new Integrations.BrowserTracing(),
-    new Sentry.Integrations.Breadcrumbs({
-      console: false,
-    }),
-  ],
-  env: SENTRY_ENV,
-  release: VERSION,
-})
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    autoSessionTracking: true,
+    integrations: [
+      new Integrations.BrowserTracing(),
+      new Sentry.Integrations.Breadcrumbs({
+        console: false,
+      }),
+    ],
+    env: SENTRY_ENV,
+    release: VERSION,
+  })
+}
 
 // handle installed on home screen
 let debounce
