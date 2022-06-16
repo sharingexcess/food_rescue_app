@@ -158,7 +158,11 @@ export function PickupReport({ customSubmitHandler }) {
               </Text>
               <input
                 id={field}
+<<<<<<< HEAD
                 type="tel"
+=======
+                type="tel" // type tel, min 0, max 100000
+>>>>>>> 8569853 (Fixed rebase issues)
                 minLength={0}
                 maxLength={5}
                 value={formData[field] === 0 ? '' : formData[field]}
