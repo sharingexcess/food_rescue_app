@@ -23,6 +23,7 @@ export function DeliveryReport() {
       setFormData(formData => ({
         ...formData,
         percent_of_total_dropped: delivery.percent_of_total_dropped,
+        notes: delivery.notes,
       }))
     }
   }, [delivery])
@@ -73,7 +74,7 @@ export function DeliveryReport() {
     navigate(`/rescues/${rescue_id}`)
   }
 
-  if (!delivery || !currentLoad) return <Loading text="Loading report" />
+  if (!delivery || currentLoad == null) return <Loading text="Loading report" />
 
   return (
     <main id="DeliveryReport">
