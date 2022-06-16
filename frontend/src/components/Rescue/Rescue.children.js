@@ -127,8 +127,6 @@ export function RescueMenu({ refresh }) {
             label="Add Notes to Rescue"
           />
         </li>
-<<<<<<< HEAD
-=======
         {user.id === rescue.handler_id || admin ? (
           <li>
             <RescueOption
@@ -137,7 +135,6 @@ export function RescueMenu({ refresh }) {
             />
           </li>
         ) : null}
->>>>>>> 9ccb58e (can cancel rescue via api now)
 
         {user.id === rescue.handler_id ? (
           <>
@@ -156,11 +153,6 @@ export function RescueMenu({ refresh }) {
           </>
         ) : null}
         {admin ? (
-<<<<<<< HEAD
-          <li>
-            <RescueOption modalName="CancelRescue" name="Cancel Rescue" />
-          </li>
-=======
           <>
             <li>
               <Link to={`/rescues/${rescue_id}/edit`}>
@@ -176,7 +168,6 @@ export function RescueMenu({ refresh }) {
               />
             </li>
           </>
->>>>>>> 9ccb58e (can cancel rescue via api now)
         ) : null}
       </ul>
     </div>
