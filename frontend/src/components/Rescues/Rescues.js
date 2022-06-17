@@ -27,6 +27,7 @@ export function Rescues() {
     handler_name: admin ? url_params.get('handler_name') || '' : user.name,
     handler_suggestions: null,
     scroll_position: null,
+    status: 'scheduled',
   })
 
   // create memoized object of params to pass to API
@@ -34,8 +35,8 @@ export function Rescues() {
   // to prevent unnecessary fetches
   const api_params = useMemo(
     () => ({
-      status: state.status,
-      handler_id: state.handler_id,
+      status: state.status === 'available' ? 'scheduled' : state.status,
+      handler_id: state.status === 'available' ? 'null' : state.handler_id, // this is a weird edge case, yes we in fact need to use the string "null" here.
       date: state.date,
       limit: state.limit,
     }),
@@ -129,6 +130,14 @@ export function Rescues() {
   const TabButtons = () => {
     return (
       <FlexContainer id="Rescues-tabs" primaryAlign="left">
+        <Button
+          key="available"
+          size="small"
+          color={state.status === 'available' ? 'blue' : 'white'}
+          handler={() => setState({ ...state, status: 'available' })}
+        >
+          Available
+        </Button>
         {[
           STATUSES.SCHEDULED,
           STATUSES.ACTIVE,

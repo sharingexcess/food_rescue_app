@@ -126,7 +126,7 @@ export function useApi(endpoint, params = null) {
   }
 }
 
-// convert the given enpoint and params into a fully constructed API pathname
+// convert the given endpoint and params into a fully constructed API pathname
 // with query params and full formatting
 function generateApiRequest(endpoint, params, state, options) {
   const full_params = {

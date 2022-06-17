@@ -25,7 +25,6 @@ export function Rescue() {
   useEffect(() => {
     // make the refresh function available in the modal state
     // for child components to gain access
-    console.log('setting modal state')
     setModalState(state => ({ ...state, refresh }))
   }, []) // eslint-disable-line
 
