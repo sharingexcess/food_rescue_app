@@ -64,7 +64,10 @@ async function getRescues(date, status, handler_id, start_after, limit = 100) {
       .where('timestamp_scheduled_start', '<=', end)
   }
 
-  if (handler_id) {
+  // Note: Ryan hates that we have to do this.
+  if (handler_id === 'null') {
+    rescues_query = rescues_query.where('handler_id', '==', null)
+  } else if (handler_id) {
     rescues_query = rescues_query.where('handler_id', '==', handler_id)
   }
 
