@@ -14,6 +14,7 @@ async function createRescueEndpoint(request, response) {
       }
       const payload = JSON.parse(request.body)
 
+      const event = payload.event
       const formData = payload.formData
       const status_scheduled = payload.status_scheduled
       const timestamp_created = payload.timestamp_created
@@ -55,17 +56,48 @@ async function createRescueEndpoint(request, response) {
           stop_payload.percent_of_total_dropped =
             stop.percent_of_total_dropped || 100
         }
+        formatDocumentTimestamps(stop_payload)
 
         console.log('Logging Stop', stop_payload)
         const created_stop = await db
-          .collection('rescues')
+          .collection('stops')
           .doc(stop_payload.id)
           .set(stop_payload, { merge: true })
+          .then(doc => formatDocumentTimestamps(doc)) //Attempt to fix how timestamps are saved
 
-        response.status(200).send(JSON.stringify(created_stop))
+        // response.status(200).send(JSON.stringify(created_stop))
       }
 
-      response.status(200).send(JSON.stringify('created')) //'created' changed to something else
+      // formData
+      // status_scheduled
+      // timestamp_created
+      // timestamp_scheduled_start
+      // timestamp_scheduled_finish
+      const rescue_payload = {
+        id: id,
+        handler_id: formData.handler_id,
+        google_calendar_event_id: event.id,
+        stop_ids: formData.stops.map(s => s.id),
+        is_direct_link: formData.is_direct_link,
+        status: status_scheduled,
+        notes: '',
+        timestamp_created: timestamp_created,
+        timestamp_updated: timestamp_created,
+        timestamp_scheduled_start: timestamp_scheduled_start,
+        timestamp_scheduled_finish: timestamp_scheduled_finish,
+        timestamp_logged_start: null, //rescue ? rescue.timestamp_logged_start : null,
+        timestamp_logged_finish: null, // rescue ? rescue.timestamp_logged_finish : null,
+      }
+      formatDocumentTimestamps(rescue_payload)
+
+      console.log('Logging Created Rescue:', rescue_payload)
+      const created_rescue = await db
+        .collection('rescues')
+        .doc(rescue_payload.id)
+        .set(rescue_payload, { merge: true })
+        .then(doc => formatDocumentTimestamps(doc)) //Attempt to fix how timestamps are saved
+
+      response.status(200).send(JSON.stringify(created_rescue))
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {

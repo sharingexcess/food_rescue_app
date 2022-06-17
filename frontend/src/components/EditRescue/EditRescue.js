@@ -13,7 +13,6 @@ import {
   deleteFirestoreData,
   generateDirectionsLink,
   generateUniqueId,
-  setFirestoreData,
   STATUSES,
   updateGoogleCalendarEvent,
   SE_API,
@@ -127,7 +126,13 @@ export function EditRescue() {
     }
     const event = await updateGoogleCalendarEvent(formData, user.accessToken)
 
+    if (!event.id) {
+      alert('Error creating Google Calendar event. Please contact support!')
+      return
+    }
+
     await SE_API.post(`/rescues/${new_rescue_id}/create`, {
+      event: event,
       formData: formData,
       status_scheduled: STATUSES.SCHEDULED,
       timestamp_created: createTimestamp(),
@@ -139,31 +144,26 @@ export function EditRescue() {
       ),
     })
 
-    if (!event.id) {
-      alert('Error creating Google Calendar event. Please contact support!')
-      return
-    }
+    // const payload = {
+    //   id: new_rescue_id,
+    //   handler_id: formData.handler_id,
+    //   google_calendar_event_id: event.id,
+    //   stop_ids: formData.stops.map(s => s.id),
+    //   is_direct_link: formData.is_direct_link,
+    //   status: rescue ? rescue.status : STATUSES.SCHEDULED,
+    //   notes: rescue ? rescue.notes : '',
+    // timestamp_created: rescue ? rescue.timestamp_created : createTimestamp(),
+    //   timestamp_updated: createTimestamp(),
+    //   timestamp_scheduled_start: createTimestamp(
+    //     formData.timestamp_scheduled_start
+    //   ),
+    //   timestamp_scheduled_finish: createTimestamp(
+    //     formData.timestamp_scheduled_finish
+    //   ),
+    //   timestamp_logged_start: rescue ? rescue.timestamp_logged_start : null,
+    //   timestamp_logged_finish: rescue ? rescue.timestamp_logged_finish : null,
+    // }
 
-    const payload = {
-      id: new_rescue_id,
-      handler_id: formData.handler_id,
-      google_calendar_event_id: event.id,
-      stop_ids: formData.stops.map(s => s.id),
-      is_direct_link: formData.is_direct_link,
-      status: rescue ? rescue.status : STATUSES.SCHEDULED,
-      notes: rescue ? rescue.notes : '',
-      timestamp_created: rescue ? rescue.timestamp_created : createTimestamp(),
-      timestamp_updated: createTimestamp(),
-      timestamp_scheduled_start: createTimestamp(
-        formData.timestamp_scheduled_start
-      ),
-      timestamp_scheduled_finish: createTimestamp(
-        formData.timestamp_scheduled_finish
-      ),
-      timestamp_logged_start: rescue ? rescue.timestamp_logged_start : null,
-      timestamp_logged_finish: rescue ? rescue.timestamp_logged_finish : null,
-    }
-    // await setFirestoreData(['rescues', new_rescue_id], payload)
     setWorking(false)
     // navigate(`/rescues/${new_rescue_id}`)
   }
