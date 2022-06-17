@@ -62,9 +62,14 @@ service cloud.firestore {
     	return  rescue.data.handler_id == request.auth.uid
     }
     
+    function isAvailable(rescue)
+    {
+    	return  rescue.data.handler_id == null
+    }
+    
     match /rescues/{rescueId}{
     	allow create, delete: if isAdmin(request.auth.uid);
-    	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
+    	allow read, update: if isAvailable(rescue) || isHandler(resource) || isAdmin(request.auth.uid);
     }
     
     match /stops/{stops}{
