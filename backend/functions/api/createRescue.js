@@ -1,0 +1,78 @@
+const { db, formatDocumentTimestamps } = require('../../helpers')
+
+async function createRescueEndpoint(request, response) {
+  return new Promise(async resolve => {
+    try {
+      console.log('running createRescue')
+
+      const { id } = request.params
+      console.log('Received id:', id)
+
+      if (!id) {
+        response.status(400).send('No id param received in request URL.')
+        return
+      }
+      const payload = JSON.parse(request.body)
+
+      const formData = payload.formData
+      const status_scheduled = payload.status_scheduled
+      const timestamp_created = payload.timestamp_created
+      const timestamp_scheduled_start = payload.timestamp_scheduled_start
+      const timestamp_scheduled_finish = payload.timestamp_scheduled_finish
+
+      console.log('Received payload:', payload)
+      if (!payload) {
+        response.status(400).send('No payload received in request body.')
+        return
+      }
+      console.log('All the stops', formData.stops)
+      for (const stop of formData.stops) {
+        const stop_payload = {
+          id: stop.id,
+          type: stop.type,
+          handler_id: formData.handler_id || null,
+          rescue_id: id,
+          organization_id: stop.organization_id,
+          location_id: stop.location_id,
+          status: stop.status || status_scheduled,
+          timestamp_created: stop.timestamp_created || timestamp_created,
+          timestamp_updated: timestamp_created,
+          timestamp_logged_start: stop.timestamp_logged_start || null,
+          timestamp_logged_finish: stop.timestamp_logged_finish || null,
+          timestamp_scheduled_start: timestamp_scheduled_start,
+          timestamp_scheduled_finish: timestamp_scheduled_finish,
+          impact_data_dairy: stop.impact_data_dairy || 0,
+          impact_data_bakery: stop.impact_data_bakery || 0,
+          impact_data_produce: stop.impact_data_produce || 0,
+          impact_data_meat_fish: stop.impact_data_meat_fish || 0,
+          impact_data_non_perishable: stop.impact_data_non_perishable || 0,
+          impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
+          impact_data_mixed: stop.impact_data_mixed || 0,
+          impact_data_other: stop.impact_data_other || 0,
+          impact_data_total_weight: stop.impact_data_total_weight || 0,
+        }
+        if (stop.type === 'delivery') {
+          stop_payload.percent_of_total_dropped =
+            stop.percent_of_total_dropped || 100
+        }
+
+        console.log('Logging Stop', stop_payload)
+        const created_stop = await db
+          .collection('rescues')
+          .doc(stop_payload.id)
+          .set(stop_payload, { merge: true })
+
+        response.status(200).send(JSON.stringify(created_stop))
+      }
+
+      response.status(200).send(JSON.stringify('created')) //'created' changed to something else
+      // use resolve to allow the cloud function to close
+      resolve()
+    } catch (e) {
+      console.error('Caught error:', e)
+      response.status(500).send(JSON.stringify(e))
+    }
+  })
+}
+
+exports.createRescueEndpoint = createRescueEndpoint
