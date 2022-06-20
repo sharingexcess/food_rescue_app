@@ -17,20 +17,21 @@ React Hooks and Redux Toolkit provide a lightweight and scalable client side app
 
 This project was created using [Create React App](https://github.com/facebook/create-react-app).
 
-## Getting Started 🏁
+## Getting Started  🏁
 
 _\* In order to run the application locally, you'll need **[node](https://nodejs.org/en/download/)** and **[npm](https://www.npmjs.com/get-npm)** installed on your computer._
 
 _\* You'll also need to request environment files from an admin to connect to the Firebase API._
 
-1. Open the terminal on your computer.
-2. Clone this git repo wherever you want the code to live in your file system by running:
+1. Fork this repository
+2. Open the terminal on your computer.
+3. Clone this git repo wherever you want the code to live in your file system by running:
    `git clone git@github.com:sharingexcess/rescue.git`
-3. Move into the newly cloned directory by running:
+4. Move into the newly cloned directory by running:
    `cd rescue`
-4. Install the application's dependencies from NPM by running:
+5. Install the application's dependencies from NPM by running:
    `npm install` _(or `npm i` for short)_
-5. Start the application locally by running:
+6. Start the application locally by running:
    `npm run dev`
    This should open your browser automatically to `localhost:3000`, where you'll see the application running.
 
