@@ -129,12 +129,19 @@ async function getStops(
     stops
       .map(stop => [
         db
+          .collection('users')
+          .doc(stop.handler_id)
+          .get()
+          .then(doc => {
+            const handler = formatDocumentTimestamps(doc.data())
+            stop.handler = handler
+          }),
+        db
           .collection('organizations')
           .doc(stop.organization_id)
           .get()
           .then(doc => {
             const org = formatDocumentTimestamps(doc.data())
-            // console.log('got org', org)
             stop.organization = org
           }),
         db
@@ -143,7 +150,6 @@ async function getStops(
           .get()
           .then(doc => {
             const loc = formatDocumentTimestamps(doc.data())
-            // console.log('got loc', loc)
             stop.location = loc
           }),
       ])
