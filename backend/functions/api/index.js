@@ -13,6 +13,7 @@ api.get('/', (_request, response) =>
 )
 api.get('/rescues', (req, res) => loadEndpoint('rescues', req, res))
 api.get('/rescues/:id', (req, res) => loadEndpoint('rescue', req, res))
+api.get('/stops', (req, res) => loadEndpoint('stops', req, res))
 api.get('/stops/:id', (req, res) => loadEndpoint('stop', req, res))
 api.get('/analytics', (req, res) => loadEndpoint('analytics', req, res))
 api.get('/impact', (req, res) => loadEndpoint('impact', req, res))

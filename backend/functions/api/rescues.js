@@ -2,7 +2,6 @@ const moment = require('moment')
 const { performance } = require('perf_hooks')
 const {
   db,
-  fetchCollection,
   formatDocumentTimestamps,
   authenticateRequest,
   rejectUnauthorizedRequest,
