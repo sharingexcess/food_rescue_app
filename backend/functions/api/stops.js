@@ -55,7 +55,7 @@ async function getStops(
   limit = 100
 ) {
   const start = performance.now()
-  // const stops = []
+  const stops = []
 
   let stops_query = db.collection('stops')
 
