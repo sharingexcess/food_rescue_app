@@ -55,7 +55,7 @@ async function getStops(
   limit = 100
 ) {
   const start = performance.now()
-  const stops = []
+  // const stops = []
 
   let stops_query = db.collection('stops')
 
@@ -113,7 +113,7 @@ async function getStops(
 
   await stops_query.get().then(snapshot => {
     snapshot.forEach(doc =>
-      stops.push({ ...formatDocumentTimestamps(doc.data()), stops: [] })
+      stops.push({ ...formatDocumentTimestamps(doc.data()) })
     )
   })
 
