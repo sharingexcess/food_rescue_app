@@ -1,4 +1,8 @@
-const { db, formatDocumentTimestamps } = require('../../helpers')
+const {
+  db,
+  formatDocumentTimestamps,
+  calculateTotalDistanceFromLocations,
+} = require('../../helpers')
 
 async function createRescueEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -17,16 +21,22 @@ async function createRescueEndpoint(request, response) {
       const event = payload.event
       const formData = payload.formData
       const status_scheduled = payload.status_scheduled
-      const timestamp_created = payload.timestamp_created
-      const timestamp_scheduled_start = payload.timestamp_scheduled_start
-      const timestamp_scheduled_finish = payload.timestamp_scheduled_finish
+      const timestamp_created = new Date(payload.timestamp_created)
+      const timestamp_scheduled_start = new Date(
+        payload.timestamp_scheduled_start
+      )
+      const timestamp_scheduled_finish = new Date(
+        payload.timestamp_scheduled_finish
+      )
 
       console.log('Received payload:', payload)
       if (!payload) {
         response.status(400).send('No payload received in request body.')
         return
       }
+      const stops_promises = []
       console.log('All the stops', formData.stops)
+
       for (const stop of formData.stops) {
         const stop_payload = {
           id: stop.id,
@@ -36,10 +46,16 @@ async function createRescueEndpoint(request, response) {
           organization_id: stop.organization_id,
           location_id: stop.location_id,
           status: stop.status || status_scheduled,
-          timestamp_created: stop.timestamp_created || timestamp_created,
+          timestamp_created: stop.timestamp_created
+            ? new Date(stop.timestamp_created)
+            : timestamp_created,
           timestamp_updated: timestamp_created,
-          timestamp_logged_start: stop.timestamp_logged_start || null,
-          timestamp_logged_finish: stop.timestamp_logged_finish || null,
+          timestamp_logged_start: stop.timestamp_logged_start
+            ? new Date(stop.timestamp_logged_start)
+            : null,
+          timestamp_logged_finish: stop.timestamp_logged_finish
+            ? new Date(stop.timestamp_logged_finish)
+            : null,
           timestamp_scheduled_start: timestamp_scheduled_start,
           timestamp_scheduled_finish: timestamp_scheduled_finish,
           impact_data_dairy: stop.impact_data_dairy || 0,
@@ -59,20 +75,15 @@ async function createRescueEndpoint(request, response) {
         formatDocumentTimestamps(stop_payload)
 
         console.log('Logging Stop', stop_payload)
-        const created_stop = await db
-          .collection('stops')
-          .doc(stop_payload.id)
-          .set(stop_payload, { merge: true })
-          .then(doc => formatDocumentTimestamps(doc)) //Attempt to fix how timestamps are saved
-
-        // response.status(200).send(JSON.stringify(created_stop))
+        stops_promises.push(
+          db
+            .collection('stops')
+            .doc(stop_payload.id)
+            .set(stop_payload, { merge: true })
+        )
       }
+      await Promise.all(stops_promises)
 
-      // formData
-      // status_scheduled
-      // timestamp_created
-      // timestamp_scheduled_start
-      // timestamp_scheduled_finish
       const rescue_payload = {
         id: id,
         handler_id: formData.handler_id,
@@ -85,10 +96,18 @@ async function createRescueEndpoint(request, response) {
         timestamp_updated: timestamp_created,
         timestamp_scheduled_start: timestamp_scheduled_start,
         timestamp_scheduled_finish: timestamp_scheduled_finish,
-        timestamp_logged_start: null, //rescue ? rescue.timestamp_logged_start : null,
-        timestamp_logged_finish: null, // rescue ? rescue.timestamp_logged_finish : null,
+        timestamp_logged_start: null, //rescue ? new Date(rescue.timestamp_logged_start) : null,
+        timestamp_logged_finish: null, // rescue ? new Date(rescue.timestamp_logged_finish)  : null,
       }
-      formatDocumentTimestamps(rescue_payload)
+
+      // const total_distance = await calculateTotalDistanceFromLocations(
+      //   formData.stops.map(
+      //     stop =>
+      //       `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
+      //   )
+      // )
+
+      // console.log('total distance:', total_distance)
 
       console.log('Logging Created Rescue:', rescue_payload)
       const created_rescue = await db

@@ -144,28 +144,8 @@ export function EditRescue() {
       ),
     })
 
-    // const payload = {
-    //   id: new_rescue_id,
-    //   handler_id: formData.handler_id,
-    //   google_calendar_event_id: event.id,
-    //   stop_ids: formData.stops.map(s => s.id),
-    //   is_direct_link: formData.is_direct_link,
-    //   status: rescue ? rescue.status : STATUSES.SCHEDULED,
-    //   notes: rescue ? rescue.notes : '',
-    // timestamp_created: rescue ? rescue.timestamp_created : createTimestamp(),
-    //   timestamp_updated: createTimestamp(),
-    //   timestamp_scheduled_start: createTimestamp(
-    //     formData.timestamp_scheduled_start
-    //   ),
-    //   timestamp_scheduled_finish: createTimestamp(
-    //     formData.timestamp_scheduled_finish
-    //   ),
-    //   timestamp_logged_start: rescue ? rescue.timestamp_logged_start : null,
-    //   timestamp_logged_finish: rescue ? rescue.timestamp_logged_finish : null,
-    // }
-
     setWorking(false)
-    // navigate(`/rescues/${new_rescue_id}`)
+    navigate(`/rescues/${new_rescue_id}`)
   }
 
   async function handleRemoveStop(id, type) {
