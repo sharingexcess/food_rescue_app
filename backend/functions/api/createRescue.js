@@ -2,6 +2,7 @@ const {
   db,
   formatDocumentTimestamps,
   calculateTotalDistanceFromLocations,
+  fetchDocument,
 } = require('../../helpers')
 
 async function createRescueEndpoint(request, response) {
@@ -116,6 +117,12 @@ async function createRescueEndpoint(request, response) {
         .set(rescue_payload, { merge: true })
         .then(doc => formatDocumentTimestamps(doc)) //Attempt to fix how timestamps are saved
 
+      addEvent(formData).catch(err => {
+        console.error('Error adding event: ' + err.message)
+        response.status(500).send('There was an error with Google calendar')
+        return
+      })
+
       response.status(200).send(JSON.stringify(created_rescue))
       // use resolve to allow the cloud function to close
       resolve()
@@ -123,6 +130,71 @@ async function createRescueEndpoint(request, response) {
       console.error('Caught error:', e)
       response.status(500).send(JSON.stringify(e))
     }
+  })
+}
+
+async function addEvent(resource) {
+  console.log('Adding Event:', resource)
+  return new Promise(async (resolve, reject) => {
+    const handler = await fetchDocument('users', resource.handler_id)
+
+    const event = {
+      summary: handler
+        ? `Food Rescue: ${handler.name} ${handler.phone}`
+        : 'Unassigned Food Rescue',
+      location: `${resource.stops[0].location.address1}, ${resource.stops[0].location.city}, ${resource.stops[0].location.state} ${resource.stops[0].location.zip}`,
+      description: `Stops on Route: ${resource.stops
+        .map(
+          s =>
+            `${s.organization.name} (${
+              s.location.nickname || s.location.address1
+            })`
+        )
+        .join(', ')}`,
+      start: {
+        dateTime: new Date(resource.timestamp_scheduled_start).toISOString(),
+        timeZone: 'America/New_York',
+      },
+      end: {
+        dateTime: new Date(resource.timestamp_scheduled_finish).toISOString(),
+        timeZone: 'America/New_York',
+      },
+      attendees: [handler ? { email: handler.email } : ''],
+    }
+
+    console.log('Event:', event)
+
+    // loading this key from an ENV var messes up line break formatting
+    // need the replace() to format properly
+    const key = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(
+      /\\n/gm,
+      '\n'
+    )
+    console.log('KEY:', key)
+    const auth = new google.auth.JWT(
+      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      null,
+      key,
+      ['https://www.googleapis.com/auth/calendar.events'],
+      process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
+    )
+
+    calendar.events.insert(
+      {
+        auth: auth,
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
+        resource: event,
+      },
+      (err, res) => {
+        if (err) {
+          console.log('Rejecting because of error', err)
+          reject(err)
+        } else {
+          console.log('Request successful', res)
+          resolve(res.data)
+        }
+      }
+    )
   })
 }
 
