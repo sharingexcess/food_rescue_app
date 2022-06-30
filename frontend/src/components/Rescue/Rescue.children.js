@@ -614,7 +614,7 @@ export function Stop({ rescue, stops, s, i }) {
           ' - ',
           formatTime(filterDate[0].time_close),
         ]
-      : ' Not available today'
+      : ' No hours available'
   }
 
   function StopHours() {
