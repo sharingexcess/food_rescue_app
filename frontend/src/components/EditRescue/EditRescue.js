@@ -124,15 +124,15 @@ export function EditRescue() {
         await deleteFirestoreData(['stops', stop.id])
       }
     }
-    const event = await updateGoogleCalendarEvent(formData, user.accessToken)
 
-    if (!event.id) {
-      alert('Error creating Google Calendar event. Please contact support!')
-      return
-    }
+    // const event = await updateGoogleCalendarEvent(formData, user.accessToken)
+    // if (!event.id) {
+    //   alert('Error creating Google Calendar event. Please contact support!')
+    //   return
+    // }
 
     await SE_API.post(`/rescues/${new_rescue_id}/create`, {
-      event: event,
+      // event: event,
       formData: formData,
       status_scheduled: STATUSES.SCHEDULED,
       timestamp_created: createTimestamp(),

@@ -1,8 +1,9 @@
+const { google } = require('googleapis')
+const calendar = google.calendar('v3')
 const {
   db,
   formatDocumentTimestamps,
   calculateTotalDistanceFromLocations,
-  fetchDocument,
 } = require('../../helpers')
 
 async function createRescueEndpoint(request, response) {
@@ -19,7 +20,6 @@ async function createRescueEndpoint(request, response) {
       }
       const payload = JSON.parse(request.body)
 
-      const event = payload.event
       const formData = payload.formData
       const status_scheduled = payload.status_scheduled
       const timestamp_created = new Date(payload.timestamp_created)
@@ -51,12 +51,14 @@ async function createRescueEndpoint(request, response) {
             ? new Date(stop.timestamp_created)
             : timestamp_created,
           timestamp_updated: timestamp_created,
-          timestamp_logged_start: stop.timestamp_logged_start
-            ? new Date(stop.timestamp_logged_start)
-            : null,
-          timestamp_logged_finish: stop.timestamp_logged_finish
-            ? new Date(stop.timestamp_logged_finish)
-            : null,
+          timestamp_logged_start:
+            stop.timestamp_logged_start != null
+              ? new Date(stop.timestamp_logged_start)
+              : null,
+          timestamp_logged_finish:
+            stop.timestamp_logged_finish != null
+              ? new Date(stop.timestamp_logged_finish)
+              : null,
           timestamp_scheduled_start: timestamp_scheduled_start,
           timestamp_scheduled_finish: timestamp_scheduled_finish,
           impact_data_dairy: stop.impact_data_dairy || 0,
@@ -85,6 +87,17 @@ async function createRescueEndpoint(request, response) {
       }
       await Promise.all(stops_promises)
 
+      const event = await addEvent(formData).catch(err => {
+        console.error('Error adding event: ' + err.message)
+        response.status(500).send('There was an error with Google calendar')
+        return
+      })
+
+      if (!event.id) {
+        alert('Error creating Google Calendar event. Please contact support!')
+        return
+      }
+
       const rescue_payload = {
         id: id,
         handler_id: formData.handler_id,
@@ -97,8 +110,8 @@ async function createRescueEndpoint(request, response) {
         timestamp_updated: timestamp_created,
         timestamp_scheduled_start: timestamp_scheduled_start,
         timestamp_scheduled_finish: timestamp_scheduled_finish,
-        timestamp_logged_start: null, //rescue ? new Date(rescue.timestamp_logged_start) : null,
-        timestamp_logged_finish: null, // rescue ? new Date(rescue.timestamp_logged_finish)  : null,
+        timestamp_logged_start: null,
+        timestamp_logged_finish: null,
       }
 
       // const total_distance = await calculateTotalDistanceFromLocations(
@@ -115,16 +128,9 @@ async function createRescueEndpoint(request, response) {
         .collection('rescues')
         .doc(rescue_payload.id)
         .set(rescue_payload, { merge: true })
-        .then(doc => formatDocumentTimestamps(doc)) //Attempt to fix how timestamps are saved
-
-      addEvent(formData).catch(err => {
-        console.error('Error adding event: ' + err.message)
-        response.status(500).send('There was an error with Google calendar')
-        return
-      })
+        .then(doc => formatDocumentTimestamps(doc))
 
       response.status(200).send(JSON.stringify(created_rescue))
-      // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
       console.error('Caught error:', e)
@@ -136,7 +142,19 @@ async function createRescueEndpoint(request, response) {
 async function addEvent(resource) {
   console.log('Adding Event:', resource)
   return new Promise(async (resolve, reject) => {
-    const handler = await fetchDocument('users', resource.handler_id)
+    let handler
+    const handler_ref = await db
+      .collection('users')
+      .doc(resource.handler_id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          handler = doc.data()
+        } else {
+          console.error('No such document!')
+        }
+      })
+    console.log('[handler]:', handler)
 
     const event = {
       summary: handler
