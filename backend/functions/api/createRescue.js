@@ -4,12 +4,28 @@ const {
   db,
   formatDocumentTimestamps,
   calculateTotalDistanceFromLocations,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
 } = require('../../helpers')
 
 async function createRescueEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
-      console.log('running createRescue')
+      console.log(
+        'INVOKING ENDPOINT: createRescue()\n',
+        'params:',
+        JSON.parse(request.body)
+      )
+
+      // const requestIsAuthenticated = await authenticateRequest(
+      //   request.get('accessToken'),
+      //   user => user.is_admin
+      // )
+
+      // if (!requestIsAuthenticated) {
+      //   rejectUnauthorizedRequest(response)
+      //   return
+      // }
 
       const { id } = request.params
       console.log('Received id:', id)
@@ -98,6 +114,15 @@ async function createRescueEndpoint(request, response) {
         return
       }
 
+      const total_distance = await calculateTotalDistanceFromLocations(
+        formData.stops.map(
+          stop =>
+            `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
+        )
+      )
+
+      console.log('Total distance:', total_distance)
+
       const rescue_payload = {
         id: id,
         handler_id: formData.handler_id,
@@ -112,16 +137,8 @@ async function createRescueEndpoint(request, response) {
         timestamp_scheduled_finish: timestamp_scheduled_finish,
         timestamp_logged_start: null,
         timestamp_logged_finish: null,
+        driving_distance: total_distance,
       }
-
-      // const total_distance = await calculateTotalDistanceFromLocations(
-      //   formData.stops.map(
-      //     stop =>
-      //       `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
-      //   )
-      // )
-
-      // console.log('total distance:', total_distance)
 
       console.log('Logging Created Rescue:', rescue_payload)
       const created_rescue = await db

@@ -2,6 +2,7 @@ const admin = require('firebase-admin')
 exports.app = admin.initializeApp()
 exports.db = admin.firestore()
 const moment = require('moment-timezone')
+const fetch = require('node-fetch')
 
 exports.recalculateRescue = async id => {
   let rescue
@@ -151,7 +152,7 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
   )
   const base_url =
     'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial'
-  const API_KEY = process.env.GOOGLE_MAPS_API_KEY
+  const API_KEY = process.env.GOOGLE_DISTANCE_MATRIX_API
 
   let total_distance = 0
   let curr_location = locations.shift()
@@ -168,13 +169,19 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
       response.rows[0].elements[0].distance.text.split(' ')[0]
     )
 
-    console.log(distance)
+    console.log(
+      'Distance between',
+      curr_location,
+      'and',
+      locations[0],
+      distance
+    )
     total_distance += distance
     curr_location = locations.shift()
   }
 
-  console.log(total_distance, 'miles')
-  return `${total_distance} miles`
+  console.log('Total Distance:', total_distance, 'miles')
+  return total_distance
 }
 
 exports.fetchDocument = async (collection, id) => {
