@@ -55,45 +55,16 @@ async function createRescueEndpoint(request, response) {
       console.log('All the stops', formData.stops)
 
       for (const stop of formData.stops) {
-        const stop_payload = {
-          id: stop.id,
-          type: stop.type,
-          handler_id: formData.handler_id || null,
-          rescue_id: id,
-          organization_id: stop.organization_id,
-          location_id: stop.location_id,
-          status: stop.status || status_scheduled,
-          timestamp_created: stop.timestamp_created
-            ? new Date(stop.timestamp_created)
-            : timestamp_created,
-          timestamp_updated: timestamp_created,
-          timestamp_logged_start:
-            stop.timestamp_logged_start != null
-              ? new Date(stop.timestamp_logged_start)
-              : null,
-          timestamp_logged_finish:
-            stop.timestamp_logged_finish != null
-              ? new Date(stop.timestamp_logged_finish)
-              : null,
-          timestamp_scheduled_start: timestamp_scheduled_start,
-          timestamp_scheduled_finish: timestamp_scheduled_finish,
-          impact_data_dairy: stop.impact_data_dairy || 0,
-          impact_data_bakery: stop.impact_data_bakery || 0,
-          impact_data_produce: stop.impact_data_produce || 0,
-          impact_data_meat_fish: stop.impact_data_meat_fish || 0,
-          impact_data_non_perishable: stop.impact_data_non_perishable || 0,
-          impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
-          impact_data_mixed: stop.impact_data_mixed || 0,
-          impact_data_other: stop.impact_data_other || 0,
-          impact_data_total_weight: stop.impact_data_total_weight || 0,
-        }
-        if (stop.type === 'delivery') {
-          stop_payload.percent_of_total_dropped =
-            stop.percent_of_total_dropped || 100
-        }
-        formatDocumentTimestamps(stop_payload)
+        const stop_payload = await createStopsPayload(
+          id,
+          stop,
+          formData,
+          status_scheduled,
+          timestamp_created,
+          timestamp_scheduled_start,
+          timestamp_scheduled_finish
+        )
 
-        console.log('Logging Stop', stop_payload)
         stops_promises.push(
           db
             .collection('stops')
@@ -103,42 +74,14 @@ async function createRescueEndpoint(request, response) {
       }
       await Promise.all(stops_promises)
 
-      const event = await addEvent(formData).catch(err => {
-        console.error('Error adding event: ' + err.message)
-        response.status(500).send('There was an error with Google calendar')
-        return
-      })
-
-      if (!event.id) {
-        alert('Error creating Google Calendar event. Please contact support!')
-        return
-      }
-
-      const total_distance = await calculateTotalDistanceFromLocations(
-        formData.stops.map(
-          stop =>
-            `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
-        )
+      const rescue_payload = await createRescuePayload(
+        id,
+        formData,
+        status_scheduled,
+        timestamp_created,
+        timestamp_scheduled_start,
+        timestamp_scheduled_finish
       )
-
-      console.log('Total distance:', total_distance)
-
-      const rescue_payload = {
-        id: id,
-        handler_id: formData.handler_id,
-        google_calendar_event_id: event.id,
-        stop_ids: formData.stops.map(s => s.id),
-        is_direct_link: formData.is_direct_link,
-        status: status_scheduled,
-        notes: '',
-        timestamp_created: timestamp_created,
-        timestamp_updated: timestamp_created,
-        timestamp_scheduled_start: timestamp_scheduled_start,
-        timestamp_scheduled_finish: timestamp_scheduled_finish,
-        timestamp_logged_start: null,
-        timestamp_logged_finish: null,
-        driving_distance: total_distance,
-      }
 
       console.log('Logging Created Rescue:', rescue_payload)
       const created_rescue = await db
@@ -154,6 +97,104 @@ async function createRescueEndpoint(request, response) {
       response.status(500).send(JSON.stringify(e))
     }
   })
+}
+
+async function createRescuePayload(
+  id,
+  formData,
+  status_scheduled,
+  timestamp_created,
+  timestamp_scheduled_start,
+  timestamp_scheduled_finish
+) {
+  const event = await addEvent(formData).catch(err => {
+    console.error('Error adding event: ' + err.message)
+    response.status(500).send('There was an error with Google calendar')
+    return
+  })
+
+  if (!event.id) {
+    alert('Error creating Google Calendar event. Please contact support!')
+    return
+  }
+
+  const total_distance = await calculateTotalDistanceFromLocations(
+    formData.stops.map(
+      stop =>
+        `${stop.location.address1} ${stop.location.city} ${stop.location.state} ${stop.location.zip}`
+    )
+  )
+
+  console.log('Total distance:', total_distance)
+
+  const rescue_payload = {
+    id: id,
+    handler_id: formData.handler_id,
+    google_calendar_event_id: event.id,
+    stop_ids: formData.stops.map(s => s.id),
+    is_direct_link: formData.is_direct_link,
+    status: status_scheduled,
+    notes: '',
+    timestamp_created: timestamp_created,
+    timestamp_updated: timestamp_created,
+    timestamp_scheduled_start: timestamp_scheduled_start,
+    timestamp_scheduled_finish: timestamp_scheduled_finish,
+    timestamp_logged_start: null,
+    timestamp_logged_finish: null,
+    driving_distance: total_distance,
+  }
+
+  return rescue_payload
+}
+
+async function createStopsPayload(
+  id,
+  stop,
+  formData,
+  status_scheduled,
+  timestamp_created,
+  timestamp_scheduled_start,
+  timestamp_scheduled_finish
+) {
+  const stop_payload = {
+    id: stop.id,
+    type: stop.type,
+    handler_id: formData.handler_id || null,
+    rescue_id: id,
+    organization_id: stop.organization_id,
+    location_id: stop.location_id,
+    status: stop.status || status_scheduled,
+    timestamp_created: stop.timestamp_created
+      ? new Date(stop.timestamp_created)
+      : timestamp_created,
+    timestamp_updated: timestamp_created,
+    timestamp_logged_start:
+      stop.timestamp_logged_start != null
+        ? new Date(stop.timestamp_logged_start)
+        : null,
+    timestamp_logged_finish:
+      stop.timestamp_logged_finish != null
+        ? new Date(stop.timestamp_logged_finish)
+        : null,
+    timestamp_scheduled_start: timestamp_scheduled_start,
+    timestamp_scheduled_finish: timestamp_scheduled_finish,
+    impact_data_dairy: stop.impact_data_dairy || 0,
+    impact_data_bakery: stop.impact_data_bakery || 0,
+    impact_data_produce: stop.impact_data_produce || 0,
+    impact_data_meat_fish: stop.impact_data_meat_fish || 0,
+    impact_data_non_perishable: stop.impact_data_non_perishable || 0,
+    impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
+    impact_data_mixed: stop.impact_data_mixed || 0,
+    impact_data_other: stop.impact_data_other || 0,
+    impact_data_total_weight: stop.impact_data_total_weight || 0,
+  }
+  if (stop.type === 'delivery') {
+    stop_payload.percent_of_total_dropped = stop.percent_of_total_dropped || 100
+  }
+
+  console.log('Stop Payload:', stop_payload)
+
+  return stop_payload
 }
 
 async function addEvent(resource) {
