@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Button,
   Card,
@@ -32,7 +32,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { areAllStopsCompleted, getNextIncompleteStopIndex } from './utils'
 import UserIcon from 'assets/user.svg'
 import { Emoji } from 'react-apple-emojis'
-import { useEffect } from 'react/cjs/react.development'
 import PickupIcon from 'assets/pickup.png'
 import DeliveryIcon from 'assets/delivery.png'
 
