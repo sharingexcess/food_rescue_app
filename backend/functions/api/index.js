@@ -35,6 +35,7 @@ api.post('/rescues/:id/cancel', (req, res) =>
 api.post('/rescues/:id/:type/:stop_id/cancel', (req, res) =>
   loadEndpoint('cancelStop', req, res)
 )
+api.get('/reports', (req, res) => loadEndpoint('reports', req, res))
 
 api.post('/rescues/:id/create', (req, res) =>
   loadEndpoint('createRescue', req, res)
@@ -43,7 +44,6 @@ api.post('/rescues/:id/create', (req, res) =>
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
   const module = require(`./${name}`)
-  console.log(name, module)
   const endpoint = module[`${name}Endpoint`]
   return endpoint(request, response)
 }
