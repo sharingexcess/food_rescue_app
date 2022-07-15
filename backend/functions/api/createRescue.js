@@ -7,6 +7,7 @@ const {
   authenticateRequest,
   rejectUnauthorizedRequest,
 } = require('../../helpers')
+const { addCalendarEvent } = require('./addCalendarEvent')
 
 async function createRescueEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -107,7 +108,8 @@ async function createRescuePayload(
   timestamp_scheduled_start,
   timestamp_scheduled_finish
 ) {
-  const event = await addEvent(formData).catch(err => {
+  const resource = await createEventResource(formData)
+  const event = await addCalendarEvent(resource).catch(err => {
     console.error('Error adding event: ' + err.message)
     response.status(500).send('There was an error with Google calendar')
     return
@@ -197,81 +199,48 @@ async function createStopsPayload(
   return stop_payload
 }
 
-async function addEvent(resource) {
-  console.log('Adding Event:', resource)
-  return new Promise(async (resolve, reject) => {
-    let handler
-    const handler_ref = await db
-      .collection('users')
-      .doc(resource.handler_id)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          handler = doc.data()
-        } else {
-          console.error('No such document!')
-        }
-      })
-    console.log('[handler]:', handler)
-
-    const event = {
-      summary: handler
-        ? `Food Rescue: ${handler.name} ${handler.phone}`
-        : 'Unassigned Food Rescue',
-      location: `${resource.stops[0].location.address1}, ${resource.stops[0].location.city}, ${resource.stops[0].location.state} ${resource.stops[0].location.zip}`,
-      description: `Stops on Route: ${resource.stops
-        .map(
-          s =>
-            `${s.organization.name} (${
-              s.location.nickname || s.location.address1
-            })`
-        )
-        .join(', ')}`,
-      start: {
-        dateTime: new Date(resource.timestamp_scheduled_start).toISOString(),
-        timeZone: 'America/New_York',
-      },
-      end: {
-        dateTime: new Date(resource.timestamp_scheduled_finish).toISOString(),
-        timeZone: 'America/New_York',
-      },
-      attendees: [handler ? { email: handler.email } : ''],
-    }
-
-    console.log('Event:', event)
-
-    // loading this key from an ENV var messes up line break formatting
-    // need the replace() to format properly
-    const key = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(
-      /\\n/gm,
-      '\n'
-    )
-    console.log('KEY:', key)
-    const auth = new google.auth.JWT(
-      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      null,
-      key,
-      ['https://www.googleapis.com/auth/calendar.events'],
-      process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
-    )
-
-    calendar.events.insert(
-      {
-        auth: auth,
-        calendarId: process.env.GOOGLE_CALENDAR_ID,
-        resource: event,
-      },
-      (err, res) => {
-        if (err) {
-          console.log('Rejecting because of error', err)
-          reject(err)
-        } else {
-          console.log('Request successful', res)
-          resolve(res.data)
-        }
+async function createEventResource(resource) {
+  let handler
+  const handler_ref = await db
+    .collection('users')
+    .doc(resource.handler_id)
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        handler = doc.data()
+      } else {
+        console.error('No such document!')
       }
-    )
-  })
+    })
+  console.log('[handler]:', handler)
+
+  const event = {
+    summary: handler
+      ? `Food Rescue: ${handler.name} ${handler.phone}`
+      : 'Unassigned Food Rescue',
+    location: `${resource.stops[0].location.address1}, ${resource.stops[0].location.city}, ${resource.stops[0].location.state} ${resource.stops[0].location.zip}`,
+    description: `Stops on Route: ${resource.stops
+      .map(
+        s =>
+          `${s.organization.name} (${
+            s.location.nickname || s.location.address1
+          })`
+      )
+      .join(', ')}`,
+    start: {
+      dateTime: new Date(resource.timestamp_scheduled_start).toISOString(),
+      timeZone: 'America/New_York',
+    },
+    end: {
+      dateTime: new Date(resource.timestamp_scheduled_finish).toISOString(),
+      timeZone: 'America/New_York',
+    },
+    attendees: [handler ? { email: handler.email } : ''],
+  }
+
+  console.log('Event:', event)
+
+  return event
 }
 
 exports.createRescueEndpoint = createRescueEndpoint
