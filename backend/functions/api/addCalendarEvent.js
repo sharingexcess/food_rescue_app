@@ -81,3 +81,4 @@ async function addEvent(resource) {
 }
 
 exports.addCalendarEventEndpoint = addCalendarEventEndpoint
+exports.addCalendarEvent = addEvent
