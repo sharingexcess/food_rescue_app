@@ -901,7 +901,7 @@ export function RescueActionButton({ rescue }) {
   const navigate = useNavigate()
 
   async function handleBegin() {
-    await SE_API.post(`/rescues/${rescue_id}/update`, {
+    await SE_API.post(`/rescues/${rescue.id}/update`, {
       status: STATUSES.ACTIVE,
       timestamp_logged_start: createTimestamp(),
       timestamp_updated: createTimestamp(),
@@ -910,25 +910,42 @@ export function RescueActionButton({ rescue }) {
   }
 
   async function handleClaim() {
-    const event = await updateGoogleCalendarEvent(
-      {
-        ...rescue,
-        notes: null,
-        driver: drivers.find(d => d.id === user.uid),
-      },
-      user.accessToken
-    )
-    setFirestoreData(['rescues', rescue.id], {
+    // const event = await updateGoogleCalendarEvent(
+    //   {
+    //     ...rescue,
+    //     notes: null,
+    //     driver: drivers.find(d => d.id === user.uid),
+    //   },
+    //   user.accessToken
+    // )
+    // setFirestoreData(['rescues', rescue.id], {
+    //   handler_id: user.uid,
+    //   google_calendar_event_id: event.id,
+    //   notes: '',
+    //   timestamp_updated: createTimestamp(),
+    // })
+    // for (const stop of rescue.stops) {
+    //   setFirestoreData(['stops', stop.id], {
+    //     handler_id: user.uid,
+    //   })
+    // }
+
+    await SE_API.post(`/rescues/${rescue_id}/update`, {
       handler_id: user.uid,
-      google_calendar_event_id: event.id,
+      // create event in api
       notes: '',
       timestamp_updated: createTimestamp(),
     })
+    const stops_promises = []
     for (const stop of rescue.stops) {
-      setFirestoreData(['stops', stop.id], {
-        handler_id: user.uid,
-      })
+      stops_promises.push(
+        SE_API.post(`/stops/${stop.id}/update`, {
+          handler_id: user.uid,
+          timestamp_updated: createTimestamp(),
+        })
+      )
     }
+    await Promise.all(stops_promises)
   }
 
   function ActionButton({ handler, link, children }) {

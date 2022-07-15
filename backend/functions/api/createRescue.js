@@ -244,3 +244,4 @@ async function createEventResource(resource) {
 }
 
 exports.createRescueEndpoint = createRescueEndpoint
+exports.addEvent = addEvent
