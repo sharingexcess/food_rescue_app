@@ -152,22 +152,48 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
   )
   const base_url =
     'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial'
+  console.log('Grabbing API Key')
+
   const API_KEY = process.env.GOOGLE_DISTANCE_MATRIX_API
 
   let total_distance = 0
   let curr_location = locations.shift()
 
   while (locations.length) {
-    const full_url = `
+    console.log('Constructing URL')
+    let full_url
+    try {
+      full_url = `
       ${base_url}&key=${API_KEY}
       &origins=${encodeURIComponent(curr_location)}
       &destinations=${encodeURIComponent(locations[0])}
     `
+    } catch (error) {
+      console.log('Failed to construct URL')
+      console.error(error)
+    }
 
-    const response = await fetch(full_url).then(res => res.json())
-    const distance = parseFloat(
-      response.rows[0].elements[0].distance.text.split(' ')[0]
-    )
+    console.log('Fetching URL')
+    let response
+    try {
+      response = await fetch(full_url).then(res => res.json())
+    } catch (error) {
+      console.log('Failed Fetch')
+      console.error(error)
+    }
+
+    console.log('Fetch Result:', response)
+
+    console.log('Grabbing distance')
+    let distance
+    try {
+      distance = parseFloat(
+        response.rows[0].elements[0].distance.text.split(' ')[0]
+      )
+    } catch (error) {
+      console.log('Failed to grab distance')
+      console.error(error)
+    }
 
     console.log(
       'Distance between',

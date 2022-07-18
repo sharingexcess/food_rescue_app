@@ -9,6 +9,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "dotenv": "^16.0.1",
     "firebase": "^9.6.2",
     "firebase-admin": "^9.4.2",
     "firebase-functions": "^3.22.0",
