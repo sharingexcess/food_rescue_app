@@ -200,23 +200,28 @@ async function createStopsPayload(
 }
 
 async function createEventResource(resource) {
+  // console.log('resource handler id', resource.handler_id)
   let handler
-  const handler_ref = await db
-    .collection('users')
-    .doc(resource.handler_id)
-    .get()
-    .then(doc => {
-      if (doc.exists) {
-        handler = doc.data()
-      } else {
-        console.error('No such document!')
-      }
-    })
-  console.log('[handler]:', handler)
+  if (resource.handler_id) {
+    const handler_ref = await db
+      .collection('users')
+      .doc(resource.handler_id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          handler = doc.data()
+        } else {
+          console.error('No such document!')
+        }
+      })
+    console.log('[handler]:', handler)
+  } else {
+    handler = null
+  }
 
   const event = {
     summary: handler
-      ? `Food Rescue: ${handler.name} ${handler.phone}`
+      ? `Food Rescue: ${handler.name}`
       : 'Unassigned Food Rescue',
     location: `${resource.stops[0].location.address1}, ${resource.stops[0].location.city}, ${resource.stops[0].location.state} ${resource.stops[0].location.zip}`,
     description: `Stops on Route: ${resource.stops
@@ -244,4 +249,4 @@ async function createEventResource(resource) {
 }
 
 exports.createRescueEndpoint = createRescueEndpoint
-exports.addEvent = addEvent
+exports.createEventResource = createEventResource

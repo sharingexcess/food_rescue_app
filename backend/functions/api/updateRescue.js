@@ -1,6 +1,8 @@
 const { db, formatDocumentTimestamps } = require('../../helpers')
-const { addEvent } = require('./createRescue')
 const { deleteEvent } = require('./deleteCalendarEvent')
+const { addCalendarEvent } = require('./addCalendarEvent')
+const { createEventResource } = require('./createRescue')
+const { getRescue } = require('./rescue')
 
 async function updateRescueEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -15,24 +17,26 @@ async function updateRescueEndpoint(request, response) {
         return
       }
       const payload = JSON.parse(request.body)
-
-      const timestamp_updated = payload.timestamp_updated
-      const handler_id = payload.handler_id
-      const notes = payload.notes
-
       console.log('Received payload:', payload)
       if (!payload) {
         response.status(400).send('No payload received in request body.')
         return
       }
 
-      const event = await addEvent({ ...payload }).catch(err => {
+      const rescue = await getRescue(id)
+      console.log('[rescue]:', rescue)
+
+      const resource = await createEventResource({ ...rescue, ...payload })
+      console.log('[resource]:', resource)
+
+      const event = await addCalendarEvent(resource).catch(err => {
         console.error('Error adding event: ' + err.message)
         response.status(500).send('There was an error with Google calendar')
         return
       })
+      console.log('[EVENT]:', event)
 
-      const google_calendar_event_id = event.id
+      const google_calendar_event_id = await event.id
 
       const updated = await updateRescue(id, {
         ...payload,

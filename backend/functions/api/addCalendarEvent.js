@@ -52,7 +52,6 @@ async function addEvent(resource) {
       /\\n/gm,
       '\n'
     )
-    console.log('KEY:', key)
     const auth = new google.auth.JWT(
       process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       null,

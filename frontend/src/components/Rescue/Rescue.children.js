@@ -931,17 +931,18 @@ export function RescueActionButton({ rescue }) {
     // }
 
     await SE_API.post(`/rescues/${rescue_id}/update`, {
-      handler_id: user.uid,
       // create event in api
-      notes: '',
+      // event_id,
+      // rescue,
+      // notes: '',
       timestamp_updated: createTimestamp(),
+      handler_id: user.uid,
     })
     const stops_promises = []
     for (const stop of rescue.stops) {
       stops_promises.push(
         SE_API.post(`/stops/${stop.id}/update`, {
           handler_id: user.uid,
-          timestamp_updated: createTimestamp(),
         })
       )
     }
