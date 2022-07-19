@@ -17,6 +17,11 @@ async function updateRescueEndpoint(request, response) {
         return
       }
       const payload = JSON.parse(request.body)
+
+      const timestamp_updated = payload.timestamp_updated
+      const handler_id = payload.handler_id
+      const notes = payload.notes
+
       console.log('Received payload:', payload)
       if (!payload) {
         response.status(400).send('No payload received in request body.')
