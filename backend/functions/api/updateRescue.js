@@ -1,5 +1,6 @@
 const { db } = require('../../helpers')
 const { addCalendarEvent } = require('./addCalendarEvent')
+const { deleteEvent } = require('./deleteCalendarEvent')
 const { createEventResource } = require('./createRescue')
 const { getRescue } = require('./rescue')
 
@@ -29,6 +30,10 @@ async function updateRescueEndpoint(request, response) {
 
       const rescue = await getRescue(id)
       console.log('[rescue]:', rescue)
+
+      if (rescue.google_calendar_event_id) {
+        deleteEvent(rescue.google_calendar_event_id)
+      }
 
       const resource = await createEventResource(
         { ...rescue, ...payload },
