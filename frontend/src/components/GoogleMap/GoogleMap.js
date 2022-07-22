@@ -1,4 +1,4 @@
-import GoogleMapReact from 'google-map-react'
+// import GoogleMapReact from 'google-map-react'
 import { generateDirectionsLink } from 'helpers'
 
 const defaultAddress = {
@@ -30,13 +30,13 @@ export function GoogleMap({ address = defaultAddress, style, zoom = 15 }) {
   }
   return (
     <div className="GoogleMap" style={style}>
-      <GoogleMapReact
+      {/* <GoogleMapReact
         bootstrapURLKeys={{ key: process.env.REACT_APP_FIREBASE_API_KEY }}
         defaultCenter={{ lat: address.lat, lng: address.lng }}
         defaultZoom={address.isDefault ? 12 : zoom}
       >
         {!address.isDefault && <Marker lat={address.lat} lng={address.lng} />}
-      </GoogleMapReact>
+      </GoogleMapReact> */}
     </div>
   )
 }

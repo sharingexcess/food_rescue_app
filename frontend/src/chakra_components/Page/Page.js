@@ -96,13 +96,11 @@ function PageHead({ breadcrumbs, openMenu }) {
 function HomeButton() {
   return (
     <Link to="/">
-      <a>
-        <img
-          src="/logo.png"
-          style={{ height: 48, width: 48 }}
-          alt="Sharing Excess Logo"
-        />
-      </a>
+      <img
+        src="/logo.png"
+        style={{ height: 48, width: 48 }}
+        alt="Sharing Excess Logo"
+      />
     </Link>
   )
 }

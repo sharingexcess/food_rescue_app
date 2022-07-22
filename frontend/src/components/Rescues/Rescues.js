@@ -11,7 +11,6 @@ import {
   Text,
 } from '@sharingexcess/designsystem'
 import moment from 'moment'
-import PullToRefresh from 'react-simple-pull-to-refresh'
 
 export function Rescues() {
   const { user, admin } = useAuth()
@@ -159,66 +158,64 @@ export function Rescues() {
 
   return (
     <main id="Rescues">
-      <PullToRefresh onRefresh={handleRefresh}>
-        <TabButtons />
-        <FlexContainer
-          id="Rescues-filters"
-          primaryAlign="space-between"
-          secondaryAlign="start"
-        >
-          <FlexContainer direction="vertical" textAlign="left">
-            <Input
-              element_id="Rescues-filter-handler"
-              type="text"
-              label="Handler..."
-              value={state.handler_name}
-              onChange={handleChangeHandler}
-              suggestions={state.handler_suggestions}
-              readOnly={!admin}
-              onSuggestionClick={(_e, handler) => handleSelectHandler(handler)}
-              clear={handleClearHandler}
-            />
-          </FlexContainer>
+      <TabButtons />
+      <FlexContainer
+        id="Rescues-filters"
+        primaryAlign="space-between"
+        secondaryAlign="start"
+      >
+        <FlexContainer direction="vertical" textAlign="left">
           <Input
-            element_id="Rescues-filter-date"
-            type="date"
-            label="Date..."
-            value={state.date}
-            onChange={handleChangeDate}
+            element_id="Rescues-filter-handler"
+            type="text"
+            label="Handler..."
+            value={state.handler_name}
+            onChange={handleChangeHandler}
+            suggestions={state.handler_suggestions}
+            readOnly={!admin}
+            onSuggestionClick={(_e, handler) => handleSelectHandler(handler)}
+            clear={handleClearHandler}
           />
         </FlexContainer>
-        {error ? (
-          <Error message={error} />
-        ) : !rescues || (!rescues.length && loading) ? (
-          <>
-            <Spacer height={64} />
-            <Loading text="Loading rescues" relative />
-          </>
-        ) : !rescues.length ? (
-          <div className="no-rescues">
-            <Emoji className="icon" name="woman-shrugging" />
-            <Spacer height={16} />
-            <Text type="secondary-header" color="white" shadow align="center">
-              No rescues found!
-            </Text>
-            <Spacer height={4} />
-            <Text color="white" shadow align="center">
-              Your search didn't return any results.
-            </Text>
-          </div>
-        ) : (
-          sortRescues(rescues, state.status).map(r => (
-            <RescueCard key={r.id} r={r} />
-          ))
-        )}
-        <Spacer height={32} />
-        <FlexContainer primaryAlign="space-around">
-          <Button handler={handleLoadMore} disabled={loading || !loadMore}>
-            Load{loading ? 'ing' : !loadMore ? 'ed All' : ' More'} Rescues
-            {loading && <Ellipsis />}
-          </Button>
-        </FlexContainer>
-      </PullToRefresh>
+        <Input
+          element_id="Rescues-filter-date"
+          type="date"
+          label="Date..."
+          value={state.date}
+          onChange={handleChangeDate}
+        />
+      </FlexContainer>
+      {error ? (
+        <Error message={error} />
+      ) : !rescues || (!rescues.length && loading) ? (
+        <>
+          <Spacer height={64} />
+          <Loading text="Loading rescues" relative />
+        </>
+      ) : !rescues.length ? (
+        <div className="no-rescues">
+          <Emoji className="icon" name="woman-shrugging" />
+          <Spacer height={16} />
+          <Text type="secondary-header" color="white" shadow align="center">
+            No rescues found!
+          </Text>
+          <Spacer height={4} />
+          <Text color="white" shadow align="center">
+            Your search didn't return any results.
+          </Text>
+        </div>
+      ) : (
+        sortRescues(rescues, state.status).map(r => (
+          <RescueCard key={r.id} r={r} />
+        ))
+      )}
+      <Spacer height={32} />
+      <FlexContainer primaryAlign="space-around">
+        <Button handler={handleLoadMore} disabled={loading || !loadMore}>
+          Load{loading ? 'ing' : !loadMore ? 'ed All' : ' More'} Rescues
+          {loading && <Ellipsis />}
+        </Button>
+      </FlexContainer>
     </main>
   )
 }
