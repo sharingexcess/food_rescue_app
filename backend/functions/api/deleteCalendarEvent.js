@@ -71,3 +71,4 @@ function deleteEvent(eventId) {
 }
 
 exports.deleteCalendarEventEndpoint = deleteCalendarEventEndpoint
+exports.deleteEvent = deleteEvent

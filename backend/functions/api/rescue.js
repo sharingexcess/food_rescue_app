@@ -32,7 +32,10 @@ async function rescueEndpoint(request, response) {
       // driver's own route (that data isn't available until after we fetch the rescue)
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
-        user => user.is_admin || (rescue && user.id === rescue.handler_id)
+        user =>
+          user.is_admin ||
+          (rescue && user.id === rescue.handler_id) ||
+          (user.is_driver && rescue.handler_id === null) // allow drivers search for available rescues
       )
 
       if (!requestIsAuthenticated) {
@@ -73,8 +76,12 @@ async function getRescue(id) {
       snapshot.forEach(doc => stops.push(formatDocumentTimestamps(doc.data())))
     )
 
+  console.log('Got regular stops:', stops)
+
   // we have to do this map/find operation to ensure that the order of stops is correct
   rescue.stops = rescue.stop_ids.map(id => stops.find(stop => stop.id === id))
+
+  console.log('Got stops:', rescue.stops)
 
   // populate organization and location for each stop
   const metadata_promises = [
@@ -129,4 +136,4 @@ async function getRescue(id) {
 }
 
 exports.rescueEndpoint = rescueEndpoint
-exports.getRescues = getRescue
+exports.getRescue = getRescue

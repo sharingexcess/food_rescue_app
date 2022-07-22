@@ -13,6 +13,7 @@ api.get('/', (_request, response) =>
 )
 api.get('/rescues', (req, res) => loadEndpoint('rescues', req, res))
 api.get('/rescues/:id', (req, res) => loadEndpoint('rescue', req, res))
+api.get('/stops', (req, res) => loadEndpoint('stops', req, res))
 api.get('/stops/:id', (req, res) => loadEndpoint('stop', req, res))
 api.get('/analytics', (req, res) => loadEndpoint('analytics', req, res))
 api.get('/impact', (req, res) => loadEndpoint('impact', req, res))
@@ -34,11 +35,15 @@ api.post('/rescues/:id/cancel', (req, res) =>
 api.post('/rescues/:id/:type/:stop_id/cancel', (req, res) =>
   loadEndpoint('cancelStop', req, res)
 )
+api.get('/reports', (req, res) => loadEndpoint('reports', req, res))
+
+api.post('/rescues/:id/create', (req, res) =>
+  loadEndpoint('createRescue', req, res)
+)
 
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
   const module = require(`./${name}`)
-  console.log(name, module)
   const endpoint = module[`${name}Endpoint`]
   return endpoint(request, response)
 }

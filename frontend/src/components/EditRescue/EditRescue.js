@@ -13,9 +13,9 @@ import {
   deleteFirestoreData,
   generateDirectionsLink,
   generateUniqueId,
-  setFirestoreData,
   STATUSES,
   updateGoogleCalendarEvent,
+  SE_API,
 } from 'helpers'
 import moment from 'moment'
 import {
@@ -124,68 +124,26 @@ export function EditRescue() {
         await deleteFirestoreData(['stops', stop.id])
       }
     }
-    const event = await updateGoogleCalendarEvent(formData, user.accessToken)
 
-    if (!event.id) {
-      alert('Error creating Google Calendar event. Please contact support!')
-      return
-    }
+    // const event = await updateGoogleCalendarEvent(formData, user.accessToken)
+    // if (!event.id) {
+    //   alert('Error creating Google Calendar event. Please contact support!')
+    //   return
+    // }
 
-    for (const stop of formData.stops) {
-      const s = {
-        id: stop.id,
-        type: stop.type,
-        handler_id: formData.handler_id || null,
-        rescue_id: new_rescue_id,
-        organization_id: stop.organization_id,
-        location_id: stop.location_id,
-        status: stop.status || STATUSES.SCHEDULED,
-        timestamp_created: stop.timestamp_created || createTimestamp(),
-        timestamp_updated: createTimestamp(),
-        timestamp_logged_start: stop.timestamp_logged_start || null,
-        timestamp_logged_finish: stop.timestamp_logged_finish || null,
-        timestamp_scheduled_start: createTimestamp(
-          formData.timestamp_scheduled_start
-        ),
-        timestamp_scheduled_finish: createTimestamp(
-          formData.timestamp_scheduled_finish
-        ),
-        impact_data_dairy: stop.impact_data_dairy || 0,
-        impact_data_bakery: stop.impact_data_bakery || 0,
-        impact_data_produce: stop.impact_data_produce || 0,
-        impact_data_meat_fish: stop.impact_data_meat_fish || 0,
-        impact_data_non_perishable: stop.impact_data_non_perishable || 0,
-        impact_data_prepared_frozen: stop.impact_data_prepared_frozen || 0,
-        impact_data_mixed: stop.impact_data_mixed || 0,
-        impact_data_other: stop.impact_data_other || 0,
-        impact_data_total_weight: stop.impact_data_total_weight || 0,
-      }
-      if (stop.type === 'delivery') {
-        s.percent_of_total_dropped = stop.percent_of_total_dropped || 100
-      }
-      await setFirestoreData(['stops', stop.id], s)
-    }
-
-    const payload = {
-      id: new_rescue_id,
-      handler_id: formData.handler_id,
-      google_calendar_event_id: event.id,
-      stop_ids: formData.stops.map(s => s.id),
-      is_direct_link: formData.is_direct_link,
-      status: rescue ? rescue.status : STATUSES.SCHEDULED,
-      notes: rescue ? rescue.notes : '',
-      timestamp_created: rescue ? rescue.timestamp_created : createTimestamp(),
-      timestamp_updated: createTimestamp(),
+    await SE_API.post(`/rescues/${new_rescue_id}/create`, {
+      // event: event,
+      formData: formData,
+      status_scheduled: STATUSES.SCHEDULED,
+      timestamp_created: createTimestamp(),
       timestamp_scheduled_start: createTimestamp(
         formData.timestamp_scheduled_start
       ),
       timestamp_scheduled_finish: createTimestamp(
         formData.timestamp_scheduled_finish
       ),
-      timestamp_logged_start: rescue ? rescue.timestamp_logged_start : null,
-      timestamp_logged_finish: rescue ? rescue.timestamp_logged_finish : null,
-    }
-    await setFirestoreData(['rescues', new_rescue_id], payload)
+    })
+
     setWorking(false)
     navigate(`/rescues/${new_rescue_id}`)
   }
