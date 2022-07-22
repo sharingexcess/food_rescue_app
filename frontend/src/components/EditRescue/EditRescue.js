@@ -136,12 +136,18 @@ export function EditRescue() {
       formData: formData,
       status_scheduled: STATUSES.SCHEDULED,
       timestamp_created: createTimestamp(),
-      timestamp_scheduled_start: createTimestamp(
+      // timestamp_scheduled_start: createTimestamp(
+      //   formData.timestamp_scheduled_start
+      // ),
+      // timestamp_scheduled_finish: createTimestamp(
+      //   formData.timestamp_scheduled_finish
+      // ),
+      timestamp_scheduled_start: moment(
         formData.timestamp_scheduled_start
-      ),
-      timestamp_scheduled_finish: createTimestamp(
+      ).toDate(),
+      timestamp_scheduled_finish: moment(
         formData.timestamp_scheduled_finish
-      ),
+      ).toDate(),
     })
 
     setWorking(false)

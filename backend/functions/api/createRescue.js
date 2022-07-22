@@ -37,6 +37,12 @@ async function createRescueEndpoint(request, response) {
       }
       const payload = JSON.parse(request.body)
 
+      console.log(
+        '\n\n\nTIMESTAMPS:\n\n\n',
+        'start_payload: ',
+        payload.timestamp_scheduled_start
+      )
+
       const formData = payload.formData
       const status_scheduled = payload.status_scheduled
       const timestamp_created = new Date(payload.timestamp_created)
@@ -45,6 +51,12 @@ async function createRescueEndpoint(request, response) {
       )
       const timestamp_scheduled_finish = new Date(
         payload.timestamp_scheduled_finish
+      )
+      console.log(
+        '\n\n\nTIMESTAMPS:\n\n\n',
+        '\nstart_parsed: ',
+        timestamp_scheduled_start,
+        '\n\n\n\n'
       )
 
       console.log('Received payload:', payload)
@@ -108,7 +120,11 @@ async function createRescuePayload(
   timestamp_scheduled_start,
   timestamp_scheduled_finish
 ) {
-  const resource = await createEventResource(formData)
+  const resource = await createEventResource(
+    formData,
+    timestamp_scheduled_start,
+    timestamp_scheduled_finish
+  )
   const event = await addCalendarEvent(resource).catch(err => {
     console.error('Error adding event: ' + err.message)
     response.status(500).send('There was an error with Google calendar')
@@ -199,7 +215,11 @@ async function createStopsPayload(
   return stop_payload
 }
 
-async function createEventResource(resource) {
+async function createEventResource(
+  resource,
+  timestamp_scheduled_start,
+  timestamp_scheduled_finish
+) {
   // console.log('resource handler id', resource.handler_id)
   let handler
   if (resource.handler_id) {
@@ -233,11 +253,11 @@ async function createEventResource(resource) {
       )
       .join(', ')}`,
     start: {
-      dateTime: new Date(resource.timestamp_scheduled_start).toISOString(),
+      dateTime: new Date(timestamp_scheduled_start).toISOString(),
       timeZone: 'America/New_York',
     },
     end: {
-      dateTime: new Date(resource.timestamp_scheduled_finish).toISOString(),
+      dateTime: new Date(timestamp_scheduled_finish).toISOString(),
       timeZone: 'America/New_York',
     },
     attendees: [handler ? { email: handler.email } : ''],

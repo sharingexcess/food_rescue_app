@@ -1,5 +1,4 @@
-const { db, formatDocumentTimestamps } = require('../../helpers')
-const { deleteEvent } = require('./deleteCalendarEvent')
+const { db } = require('../../helpers')
 const { addCalendarEvent } = require('./addCalendarEvent')
 const { createEventResource } = require('./createRescue')
 const { getRescue } = require('./rescue')
@@ -31,7 +30,11 @@ async function updateRescueEndpoint(request, response) {
       const rescue = await getRescue(id)
       console.log('[rescue]:', rescue)
 
-      const resource = await createEventResource({ ...rescue, ...payload })
+      const resource = await createEventResource(
+        { ...rescue, ...payload },
+        rescue.timestamp_scheduled_start,
+        rescue.timestamp_scheduled_finish
+      )
       console.log('[resource]:', resource)
 
       const event = await addCalendarEvent(resource).catch(err => {

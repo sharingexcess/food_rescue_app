@@ -947,6 +947,7 @@ export function RescueActionButton({ rescue }) {
       )
     }
     await Promise.all(stops_promises)
+    window.location.reload()
   }
 
   function ActionButton({ handler, link, children }) {
