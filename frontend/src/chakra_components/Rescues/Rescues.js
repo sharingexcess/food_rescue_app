@@ -10,38 +10,52 @@ import {
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth, useIsMobile } from 'hooks'
-import { formatTimestamp } from 'helpers'
+import { formatTimestamp, SE_API } from 'helpers'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
+import { Page } from 'chakra_components'
 
 export function Rescues() {
-  const user = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
+  // const navigate = useNavigate()
   const url_params = new URLSearchParams(window.location.search)
   const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
-  const limit = 10
-  const { data, refetch } = useQuery('rescues', async () => {
-    const token = await user.getIdToken()
-    if (!token) return
-    const res = await axios.get(
-      `/api/rescues?token=${token}&limit=5&status=${status}`
-    )
-    return res.data
+  const query = useQuery(['rescues'], async () => {
+    const token = await user.accessToken
+    if (!token) {
+      console.log('no access token')
+      return
+    }
+    console.log('running fetch', `${API_URL}/rescues?limit=5&status=scheduled`)
+    const res = await fetch(`${API_URL}/rescues?limit=5&status=scheduled`)
+    console.log(res)
+    return res
   })
 
-  useEffect(() => {
-    const params = new URLSearchParams({ status, limit })
-    navigate('/rescues?' + params.toString(), undefined, { shallow: true })
-    refetch()
-  }, [status, user])
+  console.log(query)
+
+  const { data, refetch } = query
+
+  // useEffect(() => {
+  //   // const params = new URLSearchParams({ status, limit })
+  //   // navigate('/chakra/rescues?' + params.toString(), undefined, {
+  //   //   shallow: true,
+  //   // })
+  //   console.log('refetching')
+  //   refetch()
+  // }, [status, user])
 
   return (
-    <Box w="100%">
+    <Page
+      id="Rescues"
+      title="Rescues"
+      breadcrumbs={[{ label: 'Rescues', link: '/rescues' }]}
+    >
       <StatusSelect status={status} setStatus={setStatus} />
       {data &&
         data.map(rescue => <RescueCard rescue={rescue} key={rescue.id} />)}
-    </Box>
+    </Page>
   )
 }
 

@@ -5,7 +5,6 @@ import { allFoodDelivered, areAllStopsCompleted } from './utils'
 import { useAuth, useApi, useApp } from 'hooks'
 import { Spacer } from '@sharingexcess/designsystem'
 import { Loading } from 'components'
-import PullToRefresh from 'react-simple-pull-to-refresh'
 import {
   BackupDelivery,
   RescueActionButton,
@@ -69,7 +68,7 @@ export function Rescue() {
       ) : !rescue ? (
         <Loading />
       ) : (
-        <PullToRefresh onRefresh={handleRefresh}>
+        <>
           <RescueHeader rescue={rescue} refresh={refresh} />
           <RescueActionButton rescue={rescue} />
           <Spacer height={32} />
@@ -84,7 +83,7 @@ export function Rescue() {
             !allFoodDelivered(rescue.stops) && (
               <BackupDelivery rescue={rescue} />
             )}
-        </PullToRefresh>
+        </>
       )}
     </main>
   )
