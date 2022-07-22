@@ -45,7 +45,7 @@ function deleteEvent(eventId) {
     /\\n/gm,
     '\n'
   )
-  console.log('KEY:', key)
+
   const auth = new google.auth.JWT(
     process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     null,
@@ -71,3 +71,4 @@ function deleteEvent(eventId) {
 }
 
 exports.deleteCalendarEventEndpoint = deleteCalendarEventEndpoint
+exports.deleteEvent = deleteEvent

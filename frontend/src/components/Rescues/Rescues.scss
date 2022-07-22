@@ -1,5 +1,6 @@
 #Rescues {
   @include page;
+  overflow-x: visible;
 
   .no-rescues {
     width: 100%;
@@ -24,6 +25,17 @@
     padding-top: 2px;
     overflow: visible;
     gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    padding-left: 16px;
+    padding-right: 32px;
+
+    &::-webkit-scrollbar {
+      background: transparent;
+    }
+
     @include mobile {
       gap: 4px;
     }
@@ -43,6 +55,7 @@
     .Input {
       width: 100%;
       font-size: 16px;
+      margin: 8px 0 16px 0;
 
       input[type='text']:read-only {
         opacity: 0.6;
