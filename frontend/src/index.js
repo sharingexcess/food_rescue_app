@@ -35,7 +35,11 @@ import {
   EnvWarning,
   Impact,
 } from 'components'
-import { Rescues as ChakraRescues } from './chakra_components'
+import {
+  Rescues as ChakraRescues,
+  Rescue as ChakraRescue,
+  Menu as ChakraMenu,
+} from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
 import { IS_DEV_ENVIRONMENT, SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -379,6 +383,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraRescues />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/rescues/:rescue_id"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraRescue />
                           </PublicChakraRoute>
                         }
                       />

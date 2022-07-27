@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { Menu } from 'components'
+import { Menu } from '../'
 import { useIsMobile, useAuth } from 'hooks'
 import { Auth } from 'contexts'
 import { Link } from 'react-router-dom'
