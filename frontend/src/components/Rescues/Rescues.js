@@ -219,3 +219,11 @@ export function Rescues() {
     </main>
   )
 }
+
+// to use in src/chakra_components/rescues
+// export {
+//   handleChangeHandler,
+//   handleChangeDate,
+//   handleSelectHandler,
+//   handleClearHandler,
+// }

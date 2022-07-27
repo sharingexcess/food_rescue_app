@@ -38,6 +38,7 @@ import {
 import {
   Rescues as ChakraRescues,
   Rescue as ChakraRescue,
+  Menu as ChakraMenu,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -289,119 +290,120 @@ function RescueAppRoutes() {
                     />
                     {/* Admin Routes */}
 
-                    <Route
-                      path="/admin/create-rescue"
-                      element={
-                        <AdminRoute>
-                          <EditRescue />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/log-rescue"
-                      element={
-                        <AdminRoute>
-                          <LogRescue />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/create-organization"
-                      element={
-                        <AdminRoute>
-                          <EditOrganization />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/organizations"
-                      element={
-                        <AdminRoute>
-                          <Organizations />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/organizations/:organization_id"
-                      element={
-                        <AdminRoute>
-                          <Organization />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/organizations/:organization_id/edit"
-                      element={
-                        <AdminRoute>
-                          <EditOrganization />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/organizations/:organization_id/create-location"
-                      element={
-                        <AdminRoute>
-                          <EditLocation />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/organizations/:organization_id/location/:location_id"
-                      element={
-                        <AdminRoute>
-                          <EditLocation />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/users"
-                      element={
-                        <AdminRoute>
-                          <Users />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/users/:id"
-                      element={
-                        <AdminRoute>
-                          <User />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/analytics"
-                      element={
-                        <AdminRoute>
-                          <Analytics />
-                        </AdminRoute>
-                      }
-                    />
-                    <Route
-                      path="/chakra/rescues"
-                      element={
-                        <PublicChakraRoute>
-                          <ChakraRescues />
-                        </PublicChakraRoute>
-                      }
-                    />
-                    <Route
-                      path="/chakra/rescues/:rescue_id"
-                      element={
-                        <PublicChakraRoute>
-                          <ChakraRescue />
-                        </PublicChakraRoute>
-                      }
-                    />
-                    <Route path="*" element={<Error />} />
-                  </Routes>
-                </App>
-              </Firestore>
-            </Auth>
-          </BrowserRouter>
-        </EmojiProvider>
-      </QueryClientProvider>
-    </ChakraProvider>
+                      <Route
+                        path="/admin/create-rescue"
+                        element={
+                          <AdminRoute>
+                            <EditRescue />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/log-rescue"
+                        element={
+                          <AdminRoute>
+                            <LogRescue />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/create-organization"
+                        element={
+                          <AdminRoute>
+                            <EditOrganization />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/organizations"
+                        element={
+                          <AdminRoute>
+                            <Organizations />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/organizations/:organization_id"
+                        element={
+                          <AdminRoute>
+                            <Organization />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/organizations/:organization_id/edit"
+                        element={
+                          <AdminRoute>
+                            <EditOrganization />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/organizations/:organization_id/create-location"
+                        element={
+                          <AdminRoute>
+                            <EditLocation />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/organizations/:organization_id/location/:location_id"
+                        element={
+                          <AdminRoute>
+                            <EditLocation />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/users"
+                        element={
+                          <AdminRoute>
+                            <Users />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/users/:id"
+                        element={
+                          <AdminRoute>
+                            <User />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/analytics"
+                        element={
+                          <AdminRoute>
+                            <Analytics />
+                          </AdminRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/rescues"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraRescues />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/rescues/:rescue_id"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraRescue />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route path="*" element={<Error />} />
+                    </Routes>
+                  </App>
+                </Firestore>
+              </Auth>
+            </BrowserRouter>
+          </EmojiProvider>
+        </QueryClientProvider>
+      </ChakraProvider>
+    </Sentry.ErrorBoundary>
   )
 }
 const container = document.getElementById('root')
