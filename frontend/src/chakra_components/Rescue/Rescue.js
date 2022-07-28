@@ -2,11 +2,13 @@ import {
   Avatar,
   Box,
   Button,
+  Divider,
   Flex,
   Heading,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
+import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons'
 import axios from 'axios'
 import { useApi, useAuth } from 'hooks'
 import { formatTimestamp, SE_API } from 'helpers'
@@ -40,16 +42,12 @@ export function Rescue() {
 
   const [working, setWorking] = useState(false)
   const { data, refresh, loading, error } = useApi(`/rescues/${rescue_id}`)
-  // const {data} = SE_API.get(`/rescues/${rescue_id}`)
-  console.log('data', data)
-  console.log('loading', loading)
-  console.log('error', error)
   // FROM OLD RESCUE
 
   return (
     <Page
       id="Rescue"
-      title="Rescue"
+      title={data && `${data.status} Rescue`}
       breadcrumbs={[
         { label: 'Rescues', link: '/chakra/rescues' },
         { label: rescue_id, link: `/chakra/rescues/${rescue_id}` },
@@ -82,8 +80,11 @@ function RescueHeader({ rescue }) {
         <Text color={subtextColor} fontSize="xs">
           {formatTimestamp(
             rescue.timestamp_scheduled_start,
-            'dddd, MMMM DD - h:mma'
+            'dddd, MMMM DD | h:mma'
           )}
+          <span>
+            {formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma')}
+          </span>
         </Text>
       </Flex>
     </Flex>
@@ -91,35 +92,38 @@ function RescueHeader({ rescue }) {
 }
 
 function RescueStops({ stops }) {
-  return stops.map((stop, i) =>
-    i === stops.length - 1 ? (
-      <SelectedStop stop={stop} key={i} />
-    ) : (
-      <UnselectedStop stop={stop} key={i} />
-    )
-  )
+  return stops.map((stop, i) => <UnselectedStop stop={stop} key={i} />)
 }
 
-function UnselectedStop({ stop }) {
+function UnselectedStop({ stop, isSelected }) {
   return (
     <Box px="4" my="2" py="2">
-      <Heading
-        as="h6"
-        fontWeight="700"
-        letterSpacing={1}
-        fontSize="md"
-        color="gray"
-        textTransform="uppercase"
-        py="4"
-      >
-        {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
-      </Heading>
+      <Flex justify={'space-between'} align="center">
+        <Heading
+          as="h6"
+          fontWeight="700"
+          letterSpacing={1}
+          fontSize="md"
+          color="gray"
+          textTransform="uppercase"
+          py="4"
+        >
+          {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
+        </Heading>
+        {isSelected ? (
+          <CloseIcon h={6} w={6} />
+        ) : (
+          <ChevronDownIcon h={6} w={6} />
+        )}
+      </Flex>
       <Heading as="h3" size="md" fontWeight="600">
         {stop.organization.name}
       </Heading>
       <Text as="p" fontWeight="200">
         {stop.location.nickname || stop.location.address1}
       </Text>
+      <Box h={4} />
+      <Divider orientation="horizontal" />
     </Box>
   )
 }
