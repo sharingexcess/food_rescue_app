@@ -21,10 +21,10 @@ import moment from 'moment'
 
 export function Rescues() {
   const { admin, user } = useAuth()
+  const handlers = useFirestore('users')
   // const navigate = useNavigate()
   const url_params = new URLSearchParams(window.location.search)
   console.log('status:', url_params.get('status'))
-
   // const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
 
   // const query = useQuery(['rescues'], async () => {
@@ -40,7 +40,6 @@ export function Rescues() {
   // })
 
   // FROM OLD RESCUES
-  const handlers = useFirestore('users')
 
   // console.log(query)
 
@@ -96,43 +95,6 @@ export function Rescues() {
   }, [state])
   // FROM OLD RESCUES
 
-  function handleChangeHandler(event) {
-    const search_value = event.target.value
-    const suggestions = handlers.filter(i =>
-      i.name.toLowerCase().includes(search_value.toLowerCase())
-    )
-    setState({
-      ...state,
-      handler_name: search_value,
-      handler_suggestions: suggestions,
-    })
-  }
-
-  function handleChangeDate(event) {
-    const date = event.target.value
-      ? moment(event.target.value).format('YYYY-MM-DD')
-      : ''
-    setState({ ...state, date })
-  }
-
-  function handleSelectHandler(selected) {
-    setState({
-      ...state,
-      handler_id: selected.id,
-      handler_name: selected.name,
-      handler_suggestions: null,
-    })
-  }
-
-  function handleClearHandler() {
-    setState({
-      ...state,
-      handler_name: '',
-      handler_id: '',
-      handler_suggestions: null,
-    })
-  }
-
   return (
     <Page
       id="Rescues"
@@ -154,7 +116,6 @@ export function Rescues() {
           onChange={handleChangeDate}
         />
       </Flex>
-      {/* <StatusSelect status={status} setStatus={setStatus} /> */}
       {data &&
         data.map(rescue => <RescueCard rescue={rescue} key={rescue.id} />)}
     </Page>
@@ -165,7 +126,7 @@ function RescueCard({ rescue }) {
   const cardColor = useColorModeValue('card-light', 'card-dark')
 
   return (
-    <Link to={`/chakra/rescues/${rescue.id}`}>
+    <Link to={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
       <Box
         my={6}
         boxShadow="md"
