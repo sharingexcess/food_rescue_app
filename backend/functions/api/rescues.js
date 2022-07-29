@@ -20,19 +20,18 @@ async function rescuesEndpoint(request, response) {
       date_range_end,
     } = request.query
 
-    //DO NOT FORGET TO UNCOMMENT THIS
-    // const requestIsAuthenticated = await authenticateRequest(
-    //   request.get('accessToken'),
-    //   user =>
-    //     user.is_admin ||
-    //     (handler_id && user.id === handler_id) ||
-    //     (user.is_driver && handler_id === 'null') // allow drivers search for available rescues
-    // )
+    const requestIsAuthenticated = await authenticateRequest(
+      request.get('accessToken'),
+      user =>
+        user.is_admin ||
+        (handler_id && user.id === handler_id) ||
+        (user.is_driver && handler_id === 'null') // allow drivers search for available rescues
+    )
 
-    // if (!requestIsAuthenticated) {
-    //   rejectUnauthorizedRequest(response)
-    //   return
-    // }
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
+      return
+    }
     const rescues = await getRescues(
       date,
       status,
