@@ -76,9 +76,8 @@ async function getRescues(
 
   // apply filters
   if (date_range_start && date_range_end) {
-    const start = new Date(date_range_start)
-    const end_date = new Date(date_range_end)
-    const end = moment(end_date).add(24, 'hours').toDate()
+    const start = moment(date_range_start).startOf('day').toDate()
+    const end = moment(date_range_end).endOf('day').toDate()
     console.log(start, end)
     rescues_query = rescues_query
       .where('timestamp_scheduled_start', '>=', start)
