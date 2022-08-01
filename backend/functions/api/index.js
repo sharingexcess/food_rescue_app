@@ -40,6 +40,8 @@ api.get('/reports', (req, res) => loadEndpoint('reports', req, res))
 api.post('/rescues/:id/create', (req, res) =>
   loadEndpoint('createRescue', req, res)
 )
+api.get('/users', (req, res) => loadEndpoint('users', req, res))
+api.get('/user/:id', (req, res) => loadEndpoint('user', req, res))
 
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
