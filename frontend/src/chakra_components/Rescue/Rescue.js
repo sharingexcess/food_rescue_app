@@ -11,12 +11,10 @@ import {
   Collapse,
 } from '@chakra-ui/react'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
-import axios from 'axios'
 import { useApi, useAuth } from 'hooks'
-import { formatTimestamp, SE_API } from 'helpers'
+import { formatTimestamp, generateDirectionsLink } from 'helpers'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createContext, useContext, useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { createContext, useContext, useMemo, useState } from 'react'
 import { Page } from 'chakra_components/Page/Page'
 
 // { id, initialData }
@@ -49,8 +47,23 @@ export function Rescue() {
   const { data, refresh, loading, error } = useApi(`/rescues/${rescue_id}`)
   // FROM OLD RESCUE
 
-  const [open, setOpen] = useState(null)
-  const [active, setActive] = useState(null)
+  const [openStopId, setOpenStopId] = useState(null)
+
+  const getActiveStopId = data => {
+    let activeStopId
+    for (const stop of data.stops) {
+      if (stop.status !== 'cancelled' && stop.status !== 'completed') {
+        activeStopId = stop.id
+        break
+      }
+    }
+    return activeStopId
+  }
+
+  const activeStopId = useMemo(
+    () => (data ? getActiveStopId(data) : null),
+    [data]
+  )
 
   return (
     <Page
@@ -61,17 +74,16 @@ export function Rescue() {
         { label: rescue_id, link: `/chakra/rescues/${rescue_id}` },
       ]}
     >
-      <RescueContext.Provider value={{ open, setOpen }}>
+      <RescueContext.Provider value={{ openStopId, setOpenStopId }}>
         <Flex direction="column" w="100%">
           {data && <RescueHeader rescue={data} />}
           <Box h="4" />
           {data && (
             <RescueStops
               stops={data.stops}
-              active={active}
-              setActive={setActive}
-              open={open}
-              setOpen={setOpen}
+              activeStopId={activeStopId}
+              openStopId={openStopId}
+              setOpenStopId={setOpenStopId}
             />
           )}
         </Flex>
@@ -82,7 +94,7 @@ export function Rescue() {
 
 function RescueHeader({ rescue }) {
   const subtextColor = useColorModeValue('gray.400', 'gray.500')
-  // const { setOpen } = useRescueContext()
+  // const { setOpenStopId } = useRescueContext()
 
   return (
     <Flex py="4">
@@ -108,12 +120,17 @@ function RescueHeader({ rescue }) {
   )
 }
 
-function RescueStops({ stops, active, setActive, open, setOpen }) {
+function RescueStops({ stops, activeStopId, openStopId, setOpenStopId }) {
   return stops.map((stop, i) =>
-    stop.id === active ? (
-      <ActiveStop key={i} />
+    stop.id === activeStopId ? (
+      <ActiveStop key={i} stop={stop} />
     ) : (
-      <UnselectedStop stop={stop} key={i} open={open} setOpen={setOpen} />
+      <UnselectedStop
+        stop={stop}
+        key={i}
+        openStopId={openStopId}
+        setOpenStopId={setOpenStopId}
+      />
     )
   )
 }
@@ -130,18 +147,24 @@ function SelectedToggle({ open, onClick }) {
   )
 }
 
-function StopContent({
+function StopButtonsBox({
   stop,
   // visible
 }) {
   // const [visible, setVisible] = useState(false)
-  const { open, setOpen } = useRescueContext()
+  const { openStopId, setOpenStopId } = useRescueContext()
   return (
     <>
-      <Button onClick={() => setOpen(stop.id === open ? null : stop.id)}>
+      <Button
+        onClick={() => setOpenStopId(stop.id === openStopId ? null : stop.id)}
+      >
         expand
       </Button>
-      <Collapse in={stop.id === open} startingHeight={0} endingHeight={28}>
+      <Collapse
+        in={stop.id === openStopId}
+        startingHeight={0}
+        endingHeight={28}
+      >
         {/* <Flex
         direction="column"
         justify="start"
@@ -162,7 +185,7 @@ function StopContent({
   )
 }
 
-function UnselectedStop({ stop, open, setOpen }) {
+function UnselectedStop({ stop, openStopId, setOpenStopId }) {
   return (
     <Box px="4" my="3">
       <Flex justify={'space-between'} align="center">
@@ -178,8 +201,12 @@ function UnselectedStop({ stop, open, setOpen }) {
           {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
         </Heading>
         <SelectedToggle
-          open={open === stop.id}
-          onClick={() => (open === stop.id ? setOpen(null) : setOpen(stop.id))}
+          open={openStopId === stop.id}
+          onClick={() =>
+            openStopId === stop.id
+              ? setOpenStopId(null)
+              : setOpenStopId(stop.id)
+          }
         />
       </Flex>
 
@@ -190,13 +217,42 @@ function UnselectedStop({ stop, open, setOpen }) {
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h={4} />
-      <StopContent stop={stop} visible={open === stop.id} />
+      <StopButtonsBox stop={stop} visible={openStopId === stop.id} />
       <Divider orientation="horizontal" />
     </Box>
   )
 }
 
-function SelectedStop({ stop }) {
+function MapButton({ location }) {
+  const { address1, address2, city, state, zip } = location
+  const button = (
+    <Button variant="outline">
+      <Emoji name="round-pushpin" width={20} />
+      <Spacer width={8} />
+      {address1}
+      {address2 && ` - ${address2}`}
+      <br />
+      {city}, {state} {zip}
+    </Button>
+  )
+
+  return s.status && s.status !== STATUSES.COMPLETED ? (
+    <ExternalLink
+      to={generateDirectionsLink(
+        s.location.address1,
+        s.location.city,
+        s.location.state,
+        s.location.zip
+      )}
+    >
+      {button}
+    </ExternalLink>
+  ) : (
+    button
+  )
+}
+
+function ActiveStop({ stop }) {
   const cardColor = useColorModeValue('card-light', 'card-dark')
   return (
     <Box
@@ -204,7 +260,7 @@ function SelectedStop({ stop }) {
       my="2"
       py="2"
       background={cardColor}
-      boxShadow="md"
+      boxShadow="dark-lg"
       borderRadius="xl"
     >
       <Heading
@@ -229,10 +285,12 @@ function SelectedStop({ stop }) {
         <Button
           variant="outline"
           w="100%"
-          disabled={!stop.location.phone}
+          disabled={!stop.location.contact_phone}
           size="sm"
         >
-          {stop.location.phone || 'No Phone #'}
+          {stop.location.contact_phone || 'No Phone #'}
+          {/* <Text>{stop.location}</Text> */}
+          {console.log('location', stop.location)}
         </Button>
         <Button variant="outline" w="100%" size="sm">
           Map
