@@ -5,19 +5,25 @@ import {
   Divider,
   Flex,
   Heading,
+  IconButton,
   Text,
   useColorModeValue,
+  Collapse,
 } from '@chakra-ui/react'
-import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 import axios from 'axios'
 import { useApi, useAuth } from 'hooks'
 import { formatTimestamp, SE_API } from 'helpers'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Page } from 'chakra_components/Page/Page'
 
 // { id, initialData }
+
+const RescueContext = createContext({})
+const useRescueContext = () => useContext(RescueContext)
+
 export function Rescue() {
   const { admin, user } = useAuth()
   // const { data, refetch } = useQuery(
@@ -38,32 +44,45 @@ export function Rescue() {
   // FROM OLD RESCUE
   const navigate = useNavigate()
   const { rescue_id } = useParams()
-  console.log('rescue id', rescue_id)
 
   const [working, setWorking] = useState(false)
   const { data, refresh, loading, error } = useApi(`/rescues/${rescue_id}`)
   // FROM OLD RESCUE
 
+  const [open, setOpen] = useState(null)
+  const [active, setActive] = useState(null)
+
   return (
     <Page
       id="Rescue"
-      title={data && `${data.status} Rescue`}
+      title={data ? `${data.status} Rescue` : 'Loading Rescue...'}
       breadcrumbs={[
         { label: 'Rescues', link: '/chakra/rescues' },
         { label: rescue_id, link: `/chakra/rescues/${rescue_id}` },
       ]}
     >
-      <Flex direction="column" w="100%">
-        {data && <RescueHeader rescue={data} />}
-        <Box h="4" />
-        {data && <RescueStops stops={data.stops} />}
-      </Flex>
+      <RescueContext.Provider value={{ open, setOpen }}>
+        <Flex direction="column" w="100%">
+          {data && <RescueHeader rescue={data} />}
+          <Box h="4" />
+          {data && (
+            <RescueStops
+              stops={data.stops}
+              active={active}
+              setActive={setActive}
+              open={open}
+              setOpen={setOpen}
+            />
+          )}
+        </Flex>
+      </RescueContext.Provider>
     </Page>
   )
 }
 
 function RescueHeader({ rescue }) {
   const subtextColor = useColorModeValue('gray.400', 'gray.500')
+  // const { setOpen } = useRescueContext()
 
   return (
     <Flex py="4">
@@ -82,22 +101,70 @@ function RescueHeader({ rescue }) {
             rescue.timestamp_scheduled_start,
             'dddd, MMMM DD | h:mma'
           )}
-          <span>
-            {formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma')}
-          </span>
+          {formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma')}
         </Text>
       </Flex>
     </Flex>
   )
 }
 
-function RescueStops({ stops }) {
-  return stops.map((stop, i) => <UnselectedStop stop={stop} key={i} />)
+function RescueStops({ stops, active, setActive, open, setOpen }) {
+  return stops.map((stop, i) =>
+    stop.id === active ? (
+      <ActiveStop key={i} />
+    ) : (
+      <UnselectedStop stop={stop} key={i} open={open} setOpen={setOpen} />
+    )
+  )
 }
 
-function UnselectedStop({ stop, isSelected }) {
+function SelectedToggle({ open, onClick }) {
   return (
-    <Box px="4" my="2" py="2">
+    <IconButton
+      aria-label="Rescue stop"
+      icon={
+        open ? <ChevronUpIcon h={6} w={6} /> : <ChevronDownIcon h={6} w={6} />
+      }
+      onClick={onClick}
+    />
+  )
+}
+
+function StopContent({
+  stop,
+  // visible
+}) {
+  // const [visible, setVisible] = useState(false)
+  const { open, setOpen } = useRescueContext()
+  return (
+    <>
+      <Button onClick={() => setOpen(stop.id === open ? null : stop.id)}>
+        expand
+      </Button>
+      <Collapse in={stop.id === open} startingHeight={0} endingHeight={28}>
+        {/* <Flex
+        direction="column"
+        justify="start"
+        // h={visible ? '28' : '0'}
+        // overflow="hidden"
+      > */}
+        <Flex justify="space-between" mb="2">
+          <Button variant="outline">Number</Button>
+          <Button variant="outline">Map</Button>
+          <Button variant="outline">Instructions</Button>
+        </Flex>
+        <Button variant="solid" bg="brand.primary">
+          Open Pickup
+        </Button>
+        {/* </Flex> */}
+      </Collapse>
+    </>
+  )
+}
+
+function UnselectedStop({ stop, open, setOpen }) {
+  return (
+    <Box px="4" my="3">
       <Flex justify={'space-between'} align="center">
         <Heading
           as="h6"
@@ -106,16 +173,16 @@ function UnselectedStop({ stop, isSelected }) {
           fontSize="md"
           color="gray"
           textTransform="uppercase"
-          py="4"
+          py="2"
         >
           {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
         </Heading>
-        {isSelected ? (
-          <CloseIcon h={6} w={6} />
-        ) : (
-          <ChevronDownIcon h={6} w={6} />
-        )}
+        <SelectedToggle
+          open={open === stop.id}
+          onClick={() => (open === stop.id ? setOpen(null) : setOpen(stop.id))}
+        />
       </Flex>
+
       <Heading as="h3" size="md" fontWeight="600">
         {stop.organization.name}
       </Heading>
@@ -123,6 +190,7 @@ function UnselectedStop({ stop, isSelected }) {
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h={4} />
+      <StopContent stop={stop} visible={open === stop.id} />
       <Divider orientation="horizontal" />
     </Box>
   )
