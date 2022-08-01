@@ -110,7 +110,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
         const deliveryTimestampMonth = moment(deliveryTimestamp).format('MMM')
         const deliveryTimestampYear = moment(deliveryTimestamp).format('yyy')
         console.log(
-          'Delivery Month and year:',
+          'Delivery month and year:',
           deliveryTimestampMonth,
           deliveryTimestampYear
         )
