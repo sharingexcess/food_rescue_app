@@ -16,7 +16,7 @@ import { API_ENDPOINTS, formatTimestamp, SE_API, STATUSES } from 'helpers'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Page } from 'chakra_components'
+import { Page, Autocomplete } from 'chakra_components'
 import moment from 'moment'
 
 export function Rescues() {
@@ -85,6 +85,8 @@ export function Rescues() {
     status: 'scheduled',
   })
 
+  const [handler, setHandler] = useState()
+
   const api_params = useMemo(
     () => ({
       status: state.status === 'available' ? 'scheduled' : state.status,
@@ -114,6 +116,17 @@ export function Rescues() {
   }, [state])
   // FROM OLD RESCUES
 
+  async function searchForHandler(value) {
+    // const handlers = await SE_API.get('/users')
+    const handlers = [
+      { name: 'ryan', id: 1 },
+      { name: 'roghe', id: 2 },
+    ]
+    return handlers.filter(i =>
+      i.name.toLowerCase().includes(value.toLowerCase())
+    )
+  }
+
   return (
     <Page
       id="Rescues"
@@ -121,19 +134,26 @@ export function Rescues() {
       breadcrumbs={[{ label: 'Rescues', link: '/chakra/rescues' }]}
     >
       <TabButtons />
-      <Flex justify="space-between">
-        <Input
+      <Flex justify="space-between" my="2">
+        {/* <Input
           variant="flushed"
           placeholder="Volunteer"
           suggestions={state.handler_suggestions}
           onChange={handleChangeHandler}
+        /> */}
+        <Autocomplete
+          placeholder="Handler..."
+          value={handler}
+          setValue={setHandler}
+          displayField="name"
+          handleChange={value => searchForHandler(value)}
         />
-        <Input
+        {/* <Input
           placeholder="MM/DD/YYYY"
           type="date"
           variant="flushed"
           onChange={handleChangeDate}
-        />
+        /> */}
       </Flex>
       {data &&
         data.map(rescue => <RescueCard rescue={rescue} key={rescue.id} />)}
