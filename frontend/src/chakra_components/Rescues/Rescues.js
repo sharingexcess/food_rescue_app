@@ -54,6 +54,25 @@ export function Rescues() {
   //   refetch()
   // }, [status, user])
 
+  function handleChangeHandler(event) {
+    const search_value = event.target.value
+    const suggestions = handlers.filter(i =>
+      i.name.toLowerCase().includes(search_value.toLowerCase())
+    )
+    setState({
+      ...state,
+      handler_name: search_value,
+      handler_suggestions: suggestions,
+    })
+  }
+
+  function handleChangeDate(event) {
+    const date = event.target.value
+      ? moment(event.target.value).format('YYYY-MM-DD')
+      : ''
+    setState({ ...state, date })
+  }
+
   // FROM OLD RESCUES
   const [state, setState] = useState({
     status: url_params.get('status') || STATUSES.SCHEDULED,
