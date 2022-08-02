@@ -22,9 +22,9 @@ import moment from 'moment'
 export function Rescues() {
   const { admin, user } = useAuth()
   const handlers = useFirestore('users')
-  // const navigate = useNavigate()
   const url_params = new URLSearchParams(window.location.search)
-  console.log('status:', url_params.get('status'))
+  // const navigate = useNavigate()
+  // console.log('status:', url_params.get('status'))
   // const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
 
   // const query = useQuery(['rescues'], async () => {
@@ -66,13 +66,6 @@ export function Rescues() {
     })
   }
 
-  function handleChangeDate(event) {
-    const date = event.target.value
-      ? moment(event.target.value).format('YYYY-MM-DD')
-      : ''
-    setState({ ...state, date })
-  }
-
   // FROM OLD RESCUES
   const [state, setState] = useState({
     status: url_params.get('status') || STATUSES.SCHEDULED,
@@ -86,10 +79,22 @@ export function Rescues() {
   })
 
   const [handler, setHandler] = useState()
+  const [date, setDate] = useState()
+
+  function handleChangeDate(event) {
+    const dateValue = event.target.value
+      ? moment(event.target.value).format('YYYY-MM-DD')
+      : ''
+    setDate(dateValue)
+  }
+
+  useEffect(() => {
+    console.log('date', date)
+  }, [date])
 
   const api_params = useMemo(
     () => ({
-      status: state.status === 'available' ? 'scheduled' : state.status,
+      status: state.status === 'available', // ? 'scheduled' : state.status,
       handler_id: state.status === 'available' ? 'null' : state.handler_id, // this is a weird edge case, yes we in fact need to use the string "null" here.
       date: state.date,
       limit: state.limit,
@@ -104,24 +109,26 @@ export function Rescues() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    params.set('status', state.status)
-    params.set('handler_id', state.handler_id)
-    params.set('date', state.date)
-    params.set('handler_name', state.handler_name)
+    params.set('status', 'scheduled')
+    // params.set('handler_id', handler)
+    params.set('date', date)
+    params.set('handler_name', handler)
     window.history.replaceState(
       null,
       '',
       `${window.location.pathname}?${params.toString()}`
     )
-  }, [state])
+    console.log('params', url_params)
+  }, [handler, date])
   // FROM OLD RESCUES
 
   async function searchForHandler(value) {
     // const handlers = await SE_API.get('/users')
-    const handlers = [
-      { name: 'ryan', id: 1 },
-      { name: 'roghe', id: 2 },
-    ]
+    // const handlers = [
+    //   { name: 'Ryan McHenry', id: 1 },
+    //   { name: 'Oroghene Emudainohwo', id: 2 },
+    // ]
+    const { handlers, loading, loadMore, refresh, error } = useApi('/users')
     return handlers.filter(i =>
       i.name.toLowerCase().includes(value.toLowerCase())
     )
@@ -135,25 +142,21 @@ export function Rescues() {
     >
       <TabButtons />
       <Flex justify="space-between" my="2">
-        {/* <Input
-          variant="flushed"
-          placeholder="Volunteer"
-          suggestions={state.handler_suggestions}
-          onChange={handleChangeHandler}
-        /> */}
         <Autocomplete
           placeholder="Handler..."
           value={handler}
           setValue={setHandler}
           displayField="name"
           handleChange={value => searchForHandler(value)}
+          w={40}
         />
-        {/* <Input
-          placeholder="MM/DD/YYYY"
+        <Input
           type="date"
+          value={date}
           variant="flushed"
-          onChange={handleChangeDate}
-        /> */}
+          onChange={e => handleChangeDate(e)}
+          w={40}
+        />
       </Flex>
       {data &&
         data.map(rescue => <RescueCard rescue={rescue} key={rescue.id} />)}
@@ -263,7 +266,7 @@ function TabButton({ label }) {
 
 function TabButtons() {
   return (
-    <Flex justify="space-between">
+    <Flex justify="start">
       <TabButton label={'Scheduled'} />
       <TabButton label={'Active'} />
       <TabButton label={'Completed'} />
