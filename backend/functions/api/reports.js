@@ -148,7 +148,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       for (const delivery of deliveries) {
         const deliveryTimestamp = delivery.timestamp_scheduled_start.toDate()
         const deliveryTimestampString =
-          moment(deliveryTimestamp).format('MMM Do')
+          moment(deliveryTimestamp).format('ddd, M/D')
         for (bucket of buckets) {
           if (bucket.label === deliveryTimestampString) {
             bucket.value += delivery.impact_data_total_weight
