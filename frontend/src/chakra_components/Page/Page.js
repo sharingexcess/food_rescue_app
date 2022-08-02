@@ -44,6 +44,7 @@ export function Page({ id, title, children, breadcrumbs }) {
               size="2xl"
               mb="24px"
               textTransform="capitalize"
+              color="element-primary"
             >
               {title}
             </Heading>
