@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
@@ -415,6 +415,6 @@ function RescueAppRoutes() {
   )
 }
 
-// this function call will render our React app into the DOM inside <div id='root'>
-// you can find that div in public/index.html
-ReactDOM.render(<RescueAppRoutes />, document.getElementById('root'))
+const container = document.getElementById('root')
+const root = createRoot(container)
+root.render(<RescueAppRoutes />)

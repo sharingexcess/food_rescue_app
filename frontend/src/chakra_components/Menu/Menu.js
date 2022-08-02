@@ -19,8 +19,6 @@ import {
 } from '@chakra-ui/react'
 import { useAuth, useIsMobile } from 'hooks'
 import { Link } from 'react-router-dom'
-import firebase from 'firebase/app'
-import 'firebase/auth'
 import { auth } from 'helpers'
 
 export function Menu({ isOpen, onClose }) {
@@ -68,21 +66,28 @@ export function Menu({ isOpen, onClose }) {
 }
 
 function MenuHeader() {
-  const user = useAuth()
+  const { user } = useAuth()
+
   return (
     <Flex>
       <Avatar
         name={user.displayName}
         src={user.photoURL}
-        bg="brand.primary"
+        bg="blue.500"
         color="white"
       />
       <Box w="3" />
       <Box overflow="clip">
-        <Heading as="h3" size="m" noOfLines={1}>
+        <Heading as="h3" size="m" noOfLines={1} color="element.primary">
           {user.displayName}
         </Heading>
-        <Text as="p" fontSize="sm" fontWeight="300" noOfLines={1}>
+        <Text
+          as="p"
+          fontSize="sm"
+          fontWeight="300"
+          noOfLines={1}
+          color="element.secondary"
+        >
           {user.email}
         </Text>
       </Box>
