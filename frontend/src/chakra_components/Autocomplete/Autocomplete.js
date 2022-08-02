@@ -29,6 +29,8 @@ export function Autocomplete({
   useEffect(() => {
     async function onChange() {
       const results = await handleChange(inputValue)
+      console.log('results', results)
+
       setOptions(results)
     }
     if (inputValue) onChange()
@@ -49,7 +51,7 @@ export function Autocomplete({
         variant="flushed"
       />
       {value && <IconButton icon={<CloseIcon />} onClick={() => setValue()} />}
-      {options.length ? (
+      {options.length && inputValue.length ? (
         <Box
           position="absolute"
           top="12"
