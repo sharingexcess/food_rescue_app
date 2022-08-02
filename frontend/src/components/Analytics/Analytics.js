@@ -37,8 +37,8 @@ export function Analytics() {
 
   const params = useMemo(
     () => ({
-      date_range_start: formatTimestamp(new Date(rangeStart), 'YYYY-MM-DD'),
-      date_range_end: formatTimestamp(new Date(rangeEnd), 'YYYY-MM-DD'),
+      date_range_start: rangeStart,
+      date_range_end: rangeEnd,
       breakdown,
     }),
     [rangeStart, rangeEnd, breakdown]
