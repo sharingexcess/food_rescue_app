@@ -13,6 +13,8 @@ async function stopsEndpoint(request, response) {
     const {
       type,
       date,
+      date_range_start,
+      date_range_end,
       status,
       handler_id,
       organization_id,
@@ -32,6 +34,8 @@ async function stopsEndpoint(request, response) {
     const stops = await getStops(
       type,
       date,
+      date_range_start,
+      date_range_end,
       status,
       handler_id,
       organization_id,
@@ -48,11 +52,13 @@ async function stopsEndpoint(request, response) {
 async function getStops(
   type,
   date,
+  date_range_start,
+  date_range_end,
   status,
   handler_id,
   organization_id,
   start_after,
-  limit = 100
+  limit
 ) {
   const start = performance.now()
   const stops = []
@@ -72,7 +78,15 @@ async function getStops(
 
   // apply filters
 
-  if (date) {
+  if (date_range_start && date_range_end) {
+    const start = moment(date_range_start).startOf('day').toDate()
+    const end = moment(date_range_end).endOf('day').toDate()
+    stops_query = stops_query
+      .where('timestamp_scheduled_start', '>=', start)
+      .where('timestamp_scheduled_start', '<=', end)
+  }
+
+  if (date && !(date_range_start & date_range_end)) {
     const start = new Date(date)
     const end = moment(start).add(24, 'hours').toDate()
     console.log(start, end)

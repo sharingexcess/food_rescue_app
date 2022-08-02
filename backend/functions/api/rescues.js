@@ -83,7 +83,7 @@ async function getRescues(
       .where('timestamp_scheduled_start', '<=', end)
   }
 
-  if (date & !(date_range_start & date_range_end)) {
+  if (date && !(date_range_start & date_range_end)) {
     const start = new Date(date)
     const end = moment(start).add(24, 'hours').toDate()
     console.log(start, end)
