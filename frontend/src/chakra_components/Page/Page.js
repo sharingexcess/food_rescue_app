@@ -106,14 +106,14 @@ function HomeButton() {
 }
 
 function MenuButton({ openMenu }) {
-  const user = useAuth()
+  const { user } = useAuth()
   return (
     <Avatar
       name={user.displayName}
       src={user.photoURL}
       ml="auto"
       onClick={openMenu}
-      bg="brand.primary"
+      bg="blue.500"
       color="white"
     />
   )

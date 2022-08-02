@@ -1,4 +1,5 @@
 import React from 'react'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
@@ -414,6 +415,7 @@ function RescueAppRoutes() {
     </Sentry.ErrorBoundary>
   )
 }
+
 const container = document.getElementById('root')
 const root = createRoot(container)
 root.render(<RescueAppRoutes />)

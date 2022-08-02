@@ -92,7 +92,8 @@ const semanticTokens = {
   shadows: {
     default: {
       _dark: '0 4px 16px 0 rgba(18, 19, 19, 0.5)',
-      _light: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+      _light:
+        '0 2px 8px 0 rgba(0, 0, 0, 0.08), 0 1px 4px -1px rgba(0, 0, 0, 0.25)',
     },
   },
 }
