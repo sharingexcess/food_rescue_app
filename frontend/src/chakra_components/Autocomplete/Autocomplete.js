@@ -1,6 +1,7 @@
 import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons'
 import {
   Box,
+  Divider,
   Flex,
   IconButton,
   Input,
@@ -22,6 +23,7 @@ export function Autocomplete({
   setValue,
   handleChange,
   displayField,
+  ...props
 }) {
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState([])
@@ -41,7 +43,7 @@ export function Autocomplete({
   }
 
   return (
-    <Flex position="relative">
+    <Flex position="relative" {...props}>
       {label && <label>{label}</label>}
       <Input
         placeholder={placeholder}
@@ -49,24 +51,43 @@ export function Autocomplete({
         disabled={!!value}
         onChange={e => setInputValue(e.target.value)}
         variant="flushed"
+        fontSize="sm"
+        {...props}
       />
-      {value && <IconButton icon={<CloseIcon />} onClick={() => setValue()} />}
+      {value && (
+        <IconButton
+          variant="tertiary"
+          icon={<CloseIcon />}
+          color="element.secondary"
+          onClick={() => setValue()}
+        />
+      )}
       {options.length && inputValue.length ? (
         <Box
           position="absolute"
           top="12"
-          bg="card-dark"
+          bg="surface.card"
           w="100%"
           boxShadow="lg"
           zIndex="10"
-          p="4"
+          py="1"
+          px="4"
           borderRadius="md"
         >
-          <UnorderedList styleType="none">
-            {options.map((option, i) => (
-              <ListItem key={i} onClick={() => handleSelect(option)}>
-                {option[displayField]}
-              </ListItem>
+          <UnorderedList styleType="none" m="0">
+            {options.slice(0, 10).map((option, i) => (
+              <>
+                <ListItem
+                  fontSize="xs"
+                  py={2}
+                  key={i}
+                  onClick={() => handleSelect(option)}
+                  cursor="pointer"
+                >
+                  {option[displayField]}
+                </ListItem>
+                {i !== 9 && <Divider />}
+              </>
             ))}
           </UnorderedList>
         </Box>

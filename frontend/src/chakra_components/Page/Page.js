@@ -23,7 +23,6 @@ export function Page({ id, title, children, breadcrumbs }) {
         as="main"
         id={id}
         className="se-page"
-        h="100vh"
         w="100%"
         p={['16px', '18px', '24px', '32px', '48px']}
       >
@@ -35,8 +34,8 @@ export function Page({ id, title, children, breadcrumbs }) {
             className="se-page-content"
             w="100%"
             maxW="640"
-            h="100%"
-            overflowY="auto"
+            pb="4"
+            overflow="visible"
           >
             <Heading
               as="h1"

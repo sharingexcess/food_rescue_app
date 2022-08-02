@@ -31,7 +31,7 @@ export function Menu({ isOpen, onClose }) {
     <>
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent bg={colorMode === 'dark' ? 'card-dark' : 'card-light'}>
+        <DrawerContent bg="surface.card">
           <DrawerCloseButton />
           <DrawerHeader>
             <MenuHeader />
@@ -54,8 +54,8 @@ export function Menu({ isOpen, onClose }) {
       h="100%"
       p="16px"
       mr="64px"
-      boxShadow="md"
-      bg={colorMode === 'dark' ? 'card-dark' : 'card-light'}
+      boxShadow="default"
+      bg="surface.card"
       borderRadius="xl"
     >
       <MenuHeader />
