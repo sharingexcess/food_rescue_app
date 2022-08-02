@@ -1,4 +1,5 @@
-import { extendTheme } from '@chakra-ui/react'
+import { extendTheme, mode } from '@chakra-ui/react'
+import { SE_COLORS } from './colors'
 
 const theme = extendTheme({
   config: {
@@ -11,34 +12,86 @@ const theme = extendTheme({
       },
     }),
   },
-  colors: {
-    black: '#212429',
-    brand: {
-      primary: '#4ea528',
-      light: '#E3F7DE',
-      dark: '#216810',
-      subtle: '#4ea52833',
+  colors: SE_COLORS,
+  semanticTokens: {
+    colors: {
+      'surface-background': {
+        _dark: SE_COLORS['se-gray-900'],
+        _light: SE_COLORS['se-gray-50'],
+      },
+      'surface-card': {
+        _dark: SE_COLORS['se-gray-800'],
+        _light: SE_COLORS['se-brand-white'],
+      },
+      'element-primary': {
+        _dark: SE_COLORS['se-gray-100'],
+        _light: SE_COLORS['se-gray-900'],
+      },
+      'element-secondary': {
+        _dark: SE_COLORS['se-gray-300'],
+        _light: SE_COLORS['se-gray-600'],
+      },
+      'element-tertiary': {
+        _dark: SE_COLORS['se-gray-300'],
+        _light: SE_COLORS['se-gray-300'],
+      },
+      'element-disabled': {
+        _dark: SE_COLORS['se-gray-600'],
+        _light: SE_COLORS['se-gray-200'],
+      },
+      'element-subtle': {
+        _dark: SE_COLORS['se-gray-700'],
+        _light: SE_COLORS['se-gray-100'],
+      },
+      'element-active': {
+        _dark: SE_COLORS['se-blue-300'],
+        _light: SE_COLORS['se-blue-400'],
+      },
+      'element-error': {
+        _dark: SE_COLORS['se-red-300'],
+        _light: SE_COLORS['se-red-400'],
+      },
+      'element-success': {
+        _dark: SE_COLORS['se-green-300'],
+        _light: SE_COLORS['se-green-400'],
+      },
+      'element-warning': {
+        _dark: SE_COLORS['se-yellow-300'],
+        _light: SE_COLORS['se-yellow-400'],
+      },
+      'blue-primary': {
+        _dark: SE_COLORS['se-blue-200'],
+        _light: SE_COLORS['se-blue-500'],
+      },
+      'blue-secondary': {
+        _dark: SE_COLORS['se-blue-900'],
+        _light: SE_COLORS['se-blue-100'],
+      },
+      'yellow-primary': {
+        _dark: SE_COLORS['se-yellow-200'],
+        _light: SE_COLORS['se-yellow-500'],
+      },
+      'yellow-secondary': {
+        _dark: SE_COLORS['se-yellow-900'],
+        _light: SE_COLORS['se-yellow-100'],
+      },
+      'green-primary': {
+        _dark: SE_COLORS['se-green-200'],
+        _light: SE_COLORS['se-green-500'],
+      },
+      'green-secondary': {
+        _dark: SE_COLORS['se-green-900'],
+        _light: SE_COLORS['se-green-100'],
+      },
+      'red-primary': {
+        _dark: SE_COLORS['se-red-200'],
+        _light: SE_COLORS['se-red-500'],
+      },
+      'red-secondary': {
+        _dark: SE_COLORS['se-red-900'],
+        _light: SE_COLORS['se-red-100'],
+      },
     },
-    green: {
-      primary: '#4ea528',
-      light: '#E3F7DE',
-      dark: '#216810',
-      subtle: '#4ea52833',
-    },
-    red: {
-      primary: '#D84910',
-      dark: '#B0390A',
-      light: '#FFE7DD',
-      subtle: '#D8491033',
-    },
-    blue: {
-      primary: '#4E6CE7',
-      dark: '#0E2481',
-      light: '#E3EBFF',
-      subtle: '#4E6CE733',
-    },
-    'card-dark': '#2C3135',
-    'card-light': '#ffffff',
   },
   fonts: {
     heading: `'Poppins', sans-serif`,
