@@ -65,28 +65,34 @@ const semanticTokens = {
       _light: 'se.blue.100',
     },
     'yellow.primary': {
-      _dark: SE_COLORS['se-yellow-200'],
-      _light: SE_COLORS['se-yellow-500'],
+      _dark: 'se.yellow.200',
+      _light: 'se.yellow.500',
     },
     'yellow.secondary': {
-      _dark: SE_COLORS['se-yellow-900'],
-      _light: SE_COLORS['se-yellow-100'],
+      _dark: 'se.yellow.900',
+      _light: 'se.yellow.100',
     },
     'green.primary': {
-      _dark: SE_COLORS['se-green-200'],
-      _light: SE_COLORS['se-green-500'],
+      _dark: 'se.green.200',
+      _light: 'se.green.500',
     },
     'green.secondary': {
-      _dark: SE_COLORS['se-green-900'],
-      _light: SE_COLORS['se-green-100'],
+      _dark: 'se.green.900',
+      _light: 'se.green.100',
     },
     'red.primary': {
-      _dark: SE_COLORS['se-red-200'],
-      _light: SE_COLORS['se-red-500'],
+      _dark: 'se.red.200',
+      _light: 'se.red.500',
     },
     'red.secondary': {
-      _dark: SE_COLORS['se-red-900'],
-      _light: SE_COLORS['se-red-100'],
+      _dark: 'se.red.900',
+      _light: 'se.red.100',
+    },
+  },
+  shadows: {
+    default: {
+      _dark: '0 4px 16px 0 rgba(18, 19, 19, 0.5)',
+      _light: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
     },
   },
 }

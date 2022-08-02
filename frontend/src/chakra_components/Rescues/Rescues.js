@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Page, Autocomplete } from 'chakra_components'
 import moment from 'moment'
+import './Rescues.scss'
 
 export function Rescues() {
   const { admin, user } = useAuth()
@@ -25,7 +26,6 @@ export function Rescues() {
   // const handlers = useFirestore('users')
   // const navigate = useNavigate()
   // console.log('status:', url_params.get('status'))
-  // const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
 
   // const query = useQuery(['rescues'], async () => {
   //   const token = await user.accessToken
@@ -68,7 +68,7 @@ export function Rescues() {
 
   const [handler, setHandler] = useState()
   const [date, setDate] = useState()
-  const [status, setStatus] = useState(null)
+  const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
 
   function handleChangeDate(event) {
     const dateValue = event.target.value
@@ -79,17 +79,17 @@ export function Rescues() {
 
   useEffect(() => {
     console.log('date', date)
-  }, [date])
+    console.log('status', status)
+  }, [date, status])
 
   const api_params = useMemo(
     () => ({
-      status: 'scheduled', // state.status === 'available' ? 'scheduled' : state.status,
-      handler_id:
-        state.status === 'available' ? 'null' : handler ? handler.id : null, // this is a weird edge case, yes we in fact need to use the string "null" here.
+      status: status === 'available' ? 'scheduled' : status,
+      handler_id: status === 'available' ? 'null' : handler ? handler.id : null,
       date: date,
       limit: 10,
     }),
-    [handler, date]
+    [date, handler, status]
   )
 
   const { data, loading, loadMore, refresh, error } = useApi(
@@ -99,21 +99,23 @@ export function Rescues() {
   console.log('data', data)
 
   const { data: handlers } = useApi('/users')
-  console.log('HANDLERS', handlers)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    params.set('status', 'scheduled')
-    // params.set('handler_id', handler)
+    params.set('status', status)
+    params.set(
+      'handler_id',
+      status === 'available' ? 'null' : handler?.id || ''
+    )
     params.set('date', date)
-    params.set('handler_name', handler)
+    params.set('handler_name', handler?.name || '')
     window.history.replaceState(
       null,
       '',
       `${window.location.pathname}?${params.toString()}`
     )
     console.log('params', url_params)
-  }, [date])
+  }, [date, handler, status])
   // FROM OLD RESCUES
 
   async function searchForHandler(value) {
@@ -128,22 +130,32 @@ export function Rescues() {
       title="Rescues"
       breadcrumbs={[{ label: 'Rescues', link: '/chakra/rescues' }]}
     >
-      <TabButtons />
-      <Flex justify="space-between" my="2">
+      <Flex
+        justify="space-between"
+        id="RescuesHeaderBox"
+        flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
+        gap="4"
+      >
+        <StatusSelect status={status} setStatus={setStatus} id="Statusselect" />
         <Autocomplete
           placeholder="Handler..."
           value={handler}
           setValue={setHandler}
           handleChange={value => searchForHandler(value)}
           displayField="name"
-          w={40}
+          id="Autocomplete"
+          flexGrow="1"
         />
         <Input
           type="date"
           value={date}
           variant="flushed"
           onChange={e => handleChangeDate(e)}
-          w={40}
+          id="Datepicker"
+          flexGrow="1"
+          flexBasis="150px"
+          fontSize="sm"
+          color="element.secondary"
         />
       </Flex>
       {data &&
@@ -153,17 +165,15 @@ export function Rescues() {
 }
 
 function RescueCard({ rescue }) {
-  const cardColor = useColorModeValue('card-light', 'card-dark')
-
   return (
     <Link to={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
       <Box
         my={6}
-        boxShadow="md"
+        boxShadow="default"
         borderRadius="md"
         p={4}
         w="100%"
-        bg={cardColor}
+        bg="surface.card"
         cursor="pointer"
       >
         <CardHeader rescue={rescue} />
@@ -202,8 +212,6 @@ function CardHeader({ rescue }) {
 
 function CardTags({ rescue }) {
   const isMobile = useIsMobile()
-  const greenTextColor = useColorModeValue('green.primary', 'green.light')
-  const blueTextColor = useColorModeValue('blue.primary', 'blue.light')
 
   return (
     <Flex wrap="wrap" noOfLines={2}>
@@ -211,8 +219,8 @@ function CardTags({ rescue }) {
         <Tag
           key={stop.id}
           size="sm"
-          bg={stop.type === 'pickup' ? 'green.subtle' : 'blue.subtle'}
-          color={stop.type === 'pickup' ? greenTextColor : blueTextColor}
+          bg={stop.type === 'pickup' ? 'blue.secondary' : 'green.secondary'}
+          color={stop.type === 'pickup' ? 'blue.primary' : 'green.primary'}
           borderRadius="xl"
           flexShrink={0}
           mr="1"
@@ -232,6 +240,7 @@ function StatusSelect({ status, setStatus }) {
       variant="outline"
       onChange={e => setStatus(e.target.value)}
       value={status}
+      flexBasis={['100%', '100%', '180px', '180px', '180px']}
     >
       <option value="available">Available</option>
       <option value="scheduled">Scheduled</option>
