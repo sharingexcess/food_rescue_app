@@ -21,8 +21,8 @@ import moment from 'moment'
 
 export function Rescues() {
   const { admin, user } = useAuth()
-  const handlers = useFirestore('users')
   const url_params = new URLSearchParams(window.location.search)
+  // const handlers = useFirestore('users')
   // const navigate = useNavigate()
   // console.log('status:', url_params.get('status'))
   // const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
@@ -54,18 +54,6 @@ export function Rescues() {
   //   refetch()
   // }, [status, user])
 
-  function handleChangeHandler(event) {
-    const search_value = event.target.value
-    const suggestions = handlers.filter(i =>
-      i.name.toLowerCase().includes(search_value.toLowerCase())
-    )
-    setState({
-      ...state,
-      handler_name: search_value,
-      handler_suggestions: suggestions,
-    })
-  }
-
   // FROM OLD RESCUES
   const [state, setState] = useState({
     status: url_params.get('status') || STATUSES.SCHEDULED,
@@ -80,6 +68,7 @@ export function Rescues() {
 
   const [handler, setHandler] = useState()
   const [date, setDate] = useState()
+  const [status, setStatus] = useState(null)
 
   function handleChangeDate(event) {
     const dateValue = event.target.value
@@ -94,18 +83,23 @@ export function Rescues() {
 
   const api_params = useMemo(
     () => ({
-      status: state.status === 'available', // ? 'scheduled' : state.status,
-      handler_id: state.status === 'available' ? 'null' : state.handler_id, // this is a weird edge case, yes we in fact need to use the string "null" here.
-      date: state.date,
-      limit: state.limit,
+      status: 'scheduled', // state.status === 'available' ? 'scheduled' : state.status,
+      handler_id:
+        state.status === 'available' ? 'null' : handler ? handler.id : null, // this is a weird edge case, yes we in fact need to use the string "null" here.
+      date: date,
+      limit: 10,
     }),
-    [state.status, state.handler_id, state.date, state.limit]
+    [handler, date]
   )
 
   const { data, loading, loadMore, refresh, error } = useApi(
     '/rescues',
     api_params
   )
+  console.log('data', data)
+
+  const { data: handlers } = useApi('/users')
+  console.log('HANDLERS', handlers)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -119,16 +113,10 @@ export function Rescues() {
       `${window.location.pathname}?${params.toString()}`
     )
     console.log('params', url_params)
-  }, [handler, date])
+  }, [date])
   // FROM OLD RESCUES
 
   async function searchForHandler(value) {
-    // const handlers = await SE_API.get('/users')
-    // const handlers = [
-    //   { name: 'Ryan McHenry', id: 1 },
-    //   { name: 'Oroghene Emudainohwo', id: 2 },
-    // ]
-    const { handlers, loading, loadMore, refresh, error } = useApi('/users')
     return handlers.filter(i =>
       i.name.toLowerCase().includes(value.toLowerCase())
     )
@@ -146,8 +134,8 @@ export function Rescues() {
           placeholder="Handler..."
           value={handler}
           setValue={setHandler}
-          displayField="name"
           handleChange={value => searchForHandler(value)}
+          displayField="name"
           w={40}
         />
         <Input
