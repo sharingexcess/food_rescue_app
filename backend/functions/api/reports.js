@@ -109,11 +109,11 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
         //Get Month and Year of current delivery
         const deliveryTimestampMonth = moment(deliveryTimestamp).format('MMM')
         const deliveryTimestampYear = moment(deliveryTimestamp).format('yyy')
-        console.log(
-          'Delivery month and year:',
-          deliveryTimestampMonth,
-          deliveryTimestampYear
-        )
+        // console.log(
+        //   'Delivery month and year:',
+        //   deliveryTimestampMonth,
+        //   deliveryTimestampYear
+        // )
         for (const bucket of buckets) {
           if (
             bucket.label === deliveryTimestampMonth &&
@@ -138,7 +138,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       let current_date = new Date(date_range_start)
       while (current_date <= new Date(date_range_end)) {
         buckets.push({
-          label: moment(current_date).format('MMM Do'),
+          label: moment(current_date).format('ddd, M/D'),
           value: 0,
         })
         current_date = moment(current_date).add(1, 'days').toDate()
