@@ -23,7 +23,7 @@ export function Page({ id, title, children, breadcrumbs }) {
         as="main"
         id={id}
         className="se-page"
-        h="100%"
+        h="100vh"
         w="100%"
         p={['16px', '18px', '24px', '32px', '48px']}
       >
