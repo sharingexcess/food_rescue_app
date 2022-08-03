@@ -25,6 +25,7 @@ export function Page({ id, title, children, breadcrumbs }) {
         className="se-page"
         w="100%"
         p={['16px', '18px', '24px', '32px', '48px']}
+        bg="surface.background"
       >
         <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
         <Flex h="calc(100% - 80px)" w="100%" justify="center">
