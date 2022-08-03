@@ -26,25 +26,23 @@ export function Menu({ isOpen, onClose }) {
   const isMobile = useIsMobile()
 
   return isMobile ? (
-    <>
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent bg="surface.card">
-          <DrawerCloseButton />
-          <DrawerHeader>
-            <MenuHeader />
-          </DrawerHeader>
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+      <DrawerOverlay />
+      <DrawerContent bg="surface.card">
+        <DrawerCloseButton />
+        <DrawerHeader>
+          <MenuHeader />
+        </DrawerHeader>
 
-          <DrawerBody py="8">
-            <MenuBody colorMode={colorMode} toggleColorMode={toggleColorMode} />
-          </DrawerBody>
+        <DrawerBody py="8">
+          <MenuBody colorMode={colorMode} toggleColorMode={toggleColorMode} />
+        </DrawerBody>
 
-          <DrawerFooter>
-            <MenuFooter />
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </>
+        <DrawerFooter>
+          <MenuFooter />
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   ) : (
     <Flex
       direction="column"

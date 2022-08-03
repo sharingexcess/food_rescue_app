@@ -40,18 +40,12 @@ export function RescueHeader() {
 }
 
 export function RescueStops() {
-  const { rescue, activeStop, expandedStop, setexpandedStop } =
-    useRescueContext()
+  const { rescue, activeStop } = useRescueContext()
   return rescue.stops.map((stop, i) =>
-    stop.id === activeStop.id ? (
+    stop.id === activeStop?.id ? (
       <ActiveStop key={i} stop={stop} />
     ) : (
-      <InactiveStop
-        stop={stop}
-        key={i}
-        expandedStop={expandedStop}
-        setexpandedStop={setexpandedStop}
-      />
+      <InactiveStop stop={stop} key={i} />
     )
   )
 }
@@ -71,8 +65,8 @@ function SelectedToggle({ open, onClick }) {
 }
 
 function StopButtonsBox({ stop }) {
-  const { setopenStop, activeStop } = useRescueContext()
-  const isActive = stop.id === activeStop.id
+  const { setOpenStop, activeStop } = useRescueContext()
+  const isActive = stop.id === activeStop?.id
   return (
     <>
       <Flex justify="space-between" mb="4" gap="2">
@@ -105,7 +99,7 @@ function StopButtonsBox({ stop }) {
         size="lg"
         textTransform="capitalize"
         mb="2"
-        onClick={() => setopenStop(stop.id)}
+        onClick={() => setOpenStop(stop)}
       >
         Open {stop.type}
       </Button>
@@ -113,7 +107,9 @@ function StopButtonsBox({ stop }) {
   )
 }
 
-function InactiveStop({ stop, expandedStop, setexpandedStop }) {
+function InactiveStop({ stop }) {
+  const { expandedStop, setExpandedStop } = useRescueContext()
+  const isExpanded = expandedStop?.id === stop.id
   return (
     <Box px="4" my="3">
       <Flex justify={'space-between'} align="center">
@@ -129,11 +125,9 @@ function InactiveStop({ stop, expandedStop, setexpandedStop }) {
           {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
         </Heading>
         <SelectedToggle
-          open={expandedStop === stop.id}
+          open={isExpanded}
           onClick={() =>
-            expandedStop === stop.id
-              ? setexpandedStop(null)
-              : setexpandedStop(stop.id)
+            isExpanded ? setExpandedStop(null) : setExpandedStop(stop)
           }
         />
       </Flex>
@@ -145,12 +139,8 @@ function InactiveStop({ stop, expandedStop, setexpandedStop }) {
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h={4} />
-      <Collapse
-        in={stop.id === expandedStop}
-        startingHeight={0}
-        endingHeight={120}
-      >
-        <StopButtonsBox stop={stop} visible={expandedStop === stop.id} />
+      <Collapse in={isExpanded} startingHeight={0} endingHeight={120}>
+        <StopButtonsBox stop={stop} />
       </Collapse>
       <Divider orientation="horizontal" />
     </Box>
