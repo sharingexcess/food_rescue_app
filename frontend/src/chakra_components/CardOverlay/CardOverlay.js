@@ -1,5 +1,4 @@
 import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -7,32 +6,64 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/react'
+import { useIsMobile } from 'hooks'
 
-export function CardOverlay({ isOpen, onClose }) {
-  return (
-    <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+export function CardOverlay({
+  isOpen,
+  handleClose,
+  CardHeader,
+  CardBody,
+  CardFooter,
+}) {
+  const isMobile = useIsMobile()
+
+  return isMobile ? (
+    <Drawer isOpen={isOpen} placement="bottom" onClose={handleClose}>
       <DrawerOverlay sx={{ backdropFilter: 'blur(4px)' }} />
-      <DrawerContent
-        bg="surface.card"
-        h="84vh"
-        // sx={{ borderRadius: '16px 16px 0 0 ' }}
-        roundedTop="xl"
-      >
+
+      <DrawerContent bg="surface.card" h="84vh" roundedTop="xl">
         <DrawerCloseButton />
+
         <DrawerHeader>
-          <Heading as="h2">This is the Heading</Heading>
+          <CardHeader />
         </DrawerHeader>
 
-        <DrawerBody py="8">This is the drawer body</DrawerBody>
+        <DrawerBody py="8">
+          <CardBody />
+        </DrawerBody>
 
         <DrawerFooter>
-          <Button size="lg" width="100%">
-            This is the Primary Action
-          </Button>
+          <CardFooter />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
+  ) : (
+    <Modal isOpen={isOpen} onClose={handleClose}>
+      <ModalOverlay />
+
+      <ModalContent>
+        <ModalCloseButton />
+
+        <ModalHeader>
+          <CardHeader />
+        </ModalHeader>
+
+        <ModalBody maxH="36vh" overflowY="auto">
+          <CardBody />
+        </ModalBody>
+
+        <ModalFooter>
+          <CardFooter />
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   )
 }
