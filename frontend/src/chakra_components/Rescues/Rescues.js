@@ -77,11 +77,6 @@ export function Rescues() {
     setDate(dateValue)
   }
 
-  useEffect(() => {
-    console.log('date', date)
-    console.log('status', status)
-  }, [date, status])
-
   const api_params = useMemo(
     () => ({
       status: status === 'available' ? 'scheduled' : status,
@@ -96,7 +91,6 @@ export function Rescues() {
     '/rescues',
     api_params
   )
-  console.log('data', data)
 
   const { data: handlers } = useApi('/users')
 
@@ -114,7 +108,6 @@ export function Rescues() {
       '',
       `${window.location.pathname}?${params.toString()}`
     )
-    console.log('params', url_params)
   }, [date, handler, status])
   // FROM OLD RESCUES
 
@@ -185,7 +178,6 @@ function RescueCard({ rescue }) {
 }
 
 function CardHeader({ rescue }) {
-  const subtextColor = useColorModeValue('gray.400', 'gray.500')
   return (
     <Flex align="center">
       <Avatar
@@ -196,10 +188,10 @@ function CardHeader({ rescue }) {
       />
       <Box w={4} />
       <Flex direction="column">
-        <Heading as="h4" size="md">
+        <Heading as="h2" size="md" color="element.primary">
           {rescue.handler?.name || 'Available Rescue'}
         </Heading>
-        <Text color={subtextColor} fontSize="xs">
+        <Text color="element.secondary" fontSize="xs">
           {formatTimestamp(
             rescue.timestamp_scheduled_start,
             'dddd, MMMM DD - h:mma'
