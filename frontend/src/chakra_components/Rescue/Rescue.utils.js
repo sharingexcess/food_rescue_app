@@ -1,10 +1,11 @@
-export const getActiveStopId = rescue => {
-  let activeStopId
+export const getActiveStop = rescue => {
+  if (!rescue) return null
+  let activeStop
   for (const stop of rescue.stops) {
     if (stop.status !== 'cancelled' && stop.status !== 'completed') {
-      activeStopId = stop.id
+      activeStop = stop
       break
     }
   }
-  return activeStopId
+  return activeStop
 }
