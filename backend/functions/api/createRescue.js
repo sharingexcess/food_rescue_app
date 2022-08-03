@@ -52,6 +52,8 @@ async function createRescueEndpoint(request, response) {
       const timestamp_scheduled_finish = new Date(
         payload.timestamp_scheduled_finish
       )
+      const timestamp_updated = new Date(payload.timestamp_updated)
+
       console.log(
         '\n\n\nTIMESTAMPS:\n\n\n',
         '\nstart_parsed: ',
@@ -75,7 +77,8 @@ async function createRescueEndpoint(request, response) {
           status_scheduled,
           timestamp_created,
           timestamp_scheduled_start,
-          timestamp_scheduled_finish
+          timestamp_scheduled_finish,
+          timestamp_updated
         )
 
         stops_promises.push(
@@ -93,7 +96,8 @@ async function createRescueEndpoint(request, response) {
         status_scheduled,
         timestamp_created,
         timestamp_scheduled_start,
-        timestamp_scheduled_finish
+        timestamp_scheduled_finish,
+        timestamp_updated
       )
 
       console.log('Logging Created Rescue:', rescue_payload)
@@ -118,7 +122,8 @@ async function createRescuePayload(
   status_scheduled,
   timestamp_created,
   timestamp_scheduled_start,
-  timestamp_scheduled_finish
+  timestamp_scheduled_finish,
+  timestamp_updated
 ) {
   const resource = await createEventResource(
     formData,
@@ -154,7 +159,7 @@ async function createRescuePayload(
     status: status_scheduled,
     notes: '',
     timestamp_created: timestamp_created,
-    timestamp_updated: timestamp_created,
+    timestamp_updated: timestamp_updated,
     timestamp_scheduled_start: timestamp_scheduled_start,
     timestamp_scheduled_finish: timestamp_scheduled_finish,
     timestamp_logged_start: null,
@@ -172,7 +177,8 @@ async function createStopsPayload(
   status_scheduled,
   timestamp_created,
   timestamp_scheduled_start,
-  timestamp_scheduled_finish
+  timestamp_scheduled_finish,
+  timestamp_updated
 ) {
   const stop_payload = {
     id: stop.id,
@@ -185,7 +191,7 @@ async function createStopsPayload(
     timestamp_created: stop.timestamp_created
       ? new Date(stop.timestamp_created)
       : timestamp_created,
-    timestamp_updated: timestamp_created,
+    timestamp_updated: timestamp_updated,
     timestamp_logged_start:
       stop.timestamp_logged_start != null
         ? new Date(stop.timestamp_logged_start)
