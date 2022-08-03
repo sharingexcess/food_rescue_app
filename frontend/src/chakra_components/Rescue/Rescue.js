@@ -16,6 +16,7 @@ import { formatTimestamp, generateDirectionsLink } from 'helpers'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { Page } from 'chakra_components/Page/Page'
+import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
 
 // { id, initialData }
 
@@ -48,6 +49,7 @@ export function Rescue() {
   // FROM OLD RESCUE
 
   const [openStopId, setOpenStopId] = useState(null)
+  const [openStopCardId, setOpenStopCardId] = useState(null)
 
   const getActiveStopId = data => {
     let activeStopId
@@ -74,7 +76,9 @@ export function Rescue() {
         { label: rescue_id, link: `/chakra/rescues/${rescue_id}` },
       ]}
     >
-      <RescueContext.Provider value={{ openStopId, setOpenStopId }}>
+      <RescueContext.Provider
+        value={{ openStopId, setOpenStopId, setOpenStopCardId }}
+      >
         <Flex direction="column" w="100%">
           {data && <RescueHeader rescue={data} />}
           <Box h="4" />
@@ -87,6 +91,10 @@ export function Rescue() {
             />
           )}
         </Flex>
+        <CardOverlay
+          isOpen={openStopCardId}
+          onClose={() => setOpenStopCardId(null)}
+        />
       </RescueContext.Provider>
     </Page>
   )
@@ -254,6 +262,7 @@ function MapButton({ location }) {
 
 function ActiveStop({ stop }) {
   const cardColor = useColorModeValue('card-light', 'card-dark')
+  const { setOpenStopCardId } = useRescueContext()
   return (
     <Box
       px="4"
@@ -305,8 +314,9 @@ function ActiveStop({ stop }) {
         size="lg"
         textTransform="capitalize"
         mb="2"
+        onClick={() => setOpenStopCardId(stop.id)}
       >
-        Log {stop.type} Details
+        Open {stop.type}
       </Button>
     </Box>
   )
