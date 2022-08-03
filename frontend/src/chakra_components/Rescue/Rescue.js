@@ -7,7 +7,6 @@ import {
   Heading,
   IconButton,
   Text,
-  useColorModeValue,
   Collapse,
 } from '@chakra-ui/react'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
@@ -93,9 +92,6 @@ export function Rescue() {
 }
 
 function RescueHeader({ rescue }) {
-  const subtextColor = useColorModeValue('gray.400', 'gray.500')
-  // const { setOpenStopId } = useRescueContext()
-
   return (
     <Flex py="4">
       <Avatar
@@ -108,7 +104,7 @@ function RescueHeader({ rescue }) {
         <Heading as="h4" size="md" mb="4px">
           {rescue.handler?.name || 'Available Rescue'}
         </Heading>
-        <Text color={subtextColor} fontSize="xs">
+        <Text color="element.secondary" fontSize="xs">
           {formatTimestamp(
             rescue.timestamp_scheduled_start,
             'dddd, MMMM DD | h:mma'
@@ -194,7 +190,7 @@ function UnselectedStop({ stop, openStopId, setOpenStopId }) {
           fontWeight="700"
           letterSpacing={1}
           fontSize="md"
-          color="gray"
+          color="element.secondary"
           textTransform="uppercase"
           py="2"
         >
@@ -253,13 +249,12 @@ function MapButton({ location }) {
 }
 
 function ActiveStop({ stop }) {
-  const cardColor = useColorModeValue('card-light', 'card-dark')
   return (
     <Box
       px="4"
       my="2"
       py="2"
-      background={cardColor}
+      background="surface.background"
       boxShadow="dark-lg"
       borderRadius="xl"
     >
@@ -289,8 +284,6 @@ function ActiveStop({ stop }) {
           size="sm"
         >
           {stop.location.contact_phone || 'No Phone #'}
-          {/* <Text>{stop.location}</Text> */}
-          {console.log('location', stop.location)}
         </Button>
         <Button variant="outline" w="100%" size="sm">
           Map

@@ -52,6 +52,7 @@ export function Autocomplete({
         onChange={e => setInputValue(e.target.value)}
         variant="flushed"
         fontSize="sm"
+        color="element.primary"
         {...props}
       />
       {value && (
