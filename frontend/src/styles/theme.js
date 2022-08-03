@@ -131,10 +131,12 @@ const theme = extendTheme({
                 : darken('se.brand.primary', 5),
             _disabled: {
               bg: 'element.disabled',
+              opacity: 1,
             },
           },
           _disabled: {
             bg: 'element.disabled',
+            opacity: 1,
           },
         }),
         secondary: props => ({
@@ -153,11 +155,13 @@ const theme = extendTheme({
             _disabled: {
               color: 'element.disabled',
               borderColor: 'element.disabled',
+              opacity: 1,
             },
           },
           _disabled: {
             color: 'element.disabled',
             borderColor: 'element.disabled',
+            opacity: 1,
           },
         }),
         tertiary: props => ({
@@ -170,10 +174,12 @@ const theme = extendTheme({
                 : darken('se.brand.primary', 10),
             _disabled: {
               color: 'element.disabled',
+              opacity: 1,
             },
           },
           _disabled: {
             color: 'element.disabled',
+            opacity: 1,
           },
         }),
       },

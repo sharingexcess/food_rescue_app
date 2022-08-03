@@ -16,55 +16,27 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { Page } from 'chakra_components/Page/Page'
 import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
-
-// { id, initialData }
+import { getActiveStopId } from './Rescue.utils'
+import { Error, Loading } from 'components'
 
 const RescueContext = createContext({})
 const useRescueContext = () => useContext(RescueContext)
 
 export function Rescue() {
-  const { admin, user } = useAuth()
-  // const { data, refetch } = useQuery(
-  //   ['rescue', id],
-  //   async () => {
-  //     const token = await user.getIdToken()
-  //     if (!token) return
-  //     const res = await axios.get(`/api/rescues/${id}?token=${token}`)
-  //     return res.data
-  //   },
-  //   { initialData }
-  // )
-
-  // useEffect(() => {
-  //   refetch()
-  // }, [user])
-
-  // FROM OLD RESCUE
-  const navigate = useNavigate()
   const { rescue_id } = useParams()
-
-  const [working, setWorking] = useState(false)
-  const { data, refresh, loading, error } = useApi(`/rescues/${rescue_id}`)
-  // FROM OLD RESCUE
+  const { data: rescue, loading, error } = useApi(`/rescues/${rescue_id}`)
 
   const [openStopId, setOpenStopId] = useState(null)
   const [openStopCardId, setOpenStopCardId] = useState(null)
 
-  const getActiveStopId = data => {
-    let activeStopId
-    for (const stop of data.stops) {
-      if (stop.status !== 'cancelled' && stop.status !== 'completed') {
-        activeStopId = stop.id
-        break
-      }
-    }
-    return activeStopId
-  }
-
   const activeStopId = useMemo(
-    () => (data ? getActiveStopId(data) : null),
-    [data]
+    () => (rescue ? getActiveStopId(rescue) : null),
+    [rescue]
   )
+
+  if (loading) return <Loading text="Loading Rescue" />
+  if (error) return <Error message={error} />
+  if (!rescue) return <Error message="No Rescue Found" />
 
   return (
     <Page
@@ -76,7 +48,7 @@ export function Rescue() {
       ]}
     >
       <RescueContext.Provider
-        value={{ openStopId, setOpenStopId, setOpenStopCardId }}
+        value={{ openStopId, setOpenStopId, setOpenStopCardId, activeStopId }}
       >
         <Flex direction="column" w="100%">
           {data && <RescueHeader rescue={data} />}
@@ -103,14 +75,14 @@ function RescueHeader({ rescue }) {
   return (
     <Flex py="4">
       <Avatar
-        src={rescue.handler.icon}
-        name={rescue.handler.name}
-        bg="gray.500"
+        src={rescue?.handler?.icon}
+        name={rescue?.handler?.name}
+        bg="element.secondary"
       />
       <Box w="4" />
       <Flex direction="column">
-        <Heading as="h4" size="md" mb="4px">
-          {rescue.handler?.name || 'Available Rescue'}
+        <Heading as="h4" size="md" mb="4px" color="element.primary">
+          {rescue?.handler?.name || 'Available Rescue'}
         </Heading>
         <Text color="element.secondary" fontSize="xs">
           {formatTimestamp(
@@ -143,48 +115,55 @@ function SelectedToggle({ open, onClick }) {
   return (
     <IconButton
       aria-label="Rescue stop"
+      variant="tertiary"
+      color="element.tertiary"
       icon={
-        open ? <ChevronUpIcon h={6} w={6} /> : <ChevronDownIcon h={6} w={6} />
+        open ? <ChevronUpIcon h={8} w={8} /> : <ChevronDownIcon h={8} w={8} />
       }
       onClick={onClick}
     />
   )
 }
 
-function StopButtonsBox({
-  stop,
-  // visible
-}) {
-  // const [visible, setVisible] = useState(false)
-  const { openStopId, setOpenStopId } = useRescueContext()
+function StopButtonsBox({ stop }) {
+  const { setOpenStopCardId, activeStopId } = useRescueContext()
+  const isActive = stop.id === activeStopId
   return (
     <>
-      <Button
-        onClick={() => setOpenStopId(stop.id === openStopId ? null : stop.id)}
-      >
-        expand
-      </Button>
-      <Collapse
-        in={stop.id === openStopId}
-        startingHeight={0}
-        endingHeight={28}
-      >
-        {/* <Flex
-        direction="column"
-        justify="start"
-        // h={visible ? '28' : '0'}
-        // overflow="hidden"
-      > */}
-        <Flex justify="space-between" mb="2">
-          <Button variant="outline">Number</Button>
-          <Button variant="outline">Map</Button>
-          <Button variant="outline">Instructions</Button>
-        </Flex>
-        <Button variant="solid" bg="brand.primary">
-          Open Pickup
+      <Flex justify="space-between" mb="4" gap="2">
+        <Button
+          variant={isActive ? 'secondary' : 'tertiary'}
+          disabled={!stop.location.contact_phone}
+          size="sm"
+          flexGrow="1"
+        >
+          {stop.location.contact_phone || 'No Phone #'}
         </Button>
-        {/* </Flex> */}
-      </Collapse>
+        <Button
+          variant={isActive ? 'secondary' : 'tertiary'}
+          size="sm"
+          flexGrow="1"
+        >
+          Map
+        </Button>
+        <Button
+          variant={isActive ? 'secondary' : 'tertiary'}
+          size="sm"
+          flexGrow="1"
+        >
+          Show Instructions
+        </Button>
+      </Flex>
+      <Button
+        width="100%"
+        variant={isActive ? 'primary' : 'secondary'}
+        size="lg"
+        textTransform="capitalize"
+        mb="2"
+        onClick={() => setOpenStopCardId(stop.id)}
+      >
+        Open {stop.type}
+      </Button>
     </>
   )
 }
@@ -198,7 +177,7 @@ function UnselectedStop({ stop, openStopId, setOpenStopId }) {
           fontWeight="700"
           letterSpacing={1}
           fontSize="md"
-          color="element.secondary"
+          color="element.tertiary"
           textTransform="uppercase"
           py="2"
         >
@@ -221,7 +200,13 @@ function UnselectedStop({ stop, openStopId, setOpenStopId }) {
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h={4} />
-      <StopButtonsBox stop={stop} visible={openStopId === stop.id} />
+      <Collapse
+        in={stop.id === openStopId}
+        startingHeight={0}
+        endingHeight={120}
+      >
+        <StopButtonsBox stop={stop} visible={openStopId === stop.id} />
+      </Collapse>
       <Divider orientation="horizontal" />
     </Box>
   )
@@ -257,60 +242,34 @@ function MapButton({ location }) {
 }
 
 function ActiveStop({ stop }) {
-  const { setOpenStopCardId } = useRescueContext()
   return (
     <Box
       px="4"
       my="2"
       py="2"
-      background="surface.background"
-      boxShadow="dark-lg"
-      borderRadius="xl"
+      background="surface.card"
+      boxShadow="default"
+      borderRadius="lg"
     >
       <Heading
         as="h6"
         fontWeight="700"
         letterSpacing={1}
         fontSize="md"
-        color="brand.primary"
+        color="se.brand.primary"
         textTransform="uppercase"
-        py="4"
+        py="2"
       >
         {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
       </Heading>
-      <Heading as="h3" size="md" fontWeight="600">
+      <Heading as="h3" size="md" fontWeight="600" color="element.primary">
         {stop.organization.name}
       </Heading>
-      <Text as="p" fontWeight="200">
+      <Text as="p" fontWeight="200" color="element.secondary">
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h="4" />
-      <Flex justify="space-between" mb="4" gap="2">
-        <Button
-          variant="outline"
-          w="100%"
-          disabled={!stop.location.contact_phone}
-          size="sm"
-        >
-          {stop.location.contact_phone || 'No Phone #'}
-        </Button>
-        <Button variant="outline" w="100%" size="sm">
-          Map
-        </Button>
-        <Button variant="outline" w="100%" size="sm">
-          Instructions
-        </Button>
-      </Flex>
-      <Button
-        width="100%"
-        bg="brand.primary"
-        size="lg"
-        textTransform="capitalize"
-        mb="2"
-        onClick={() => setOpenStopCardId(stop.id)}
-      >
-        Open {stop.type}
-      </Button>
+      <StopButtonsBox stop={stop} />
     </Box>
   )
 }
