@@ -145,7 +145,6 @@ export function EditRescue() {
   }
 
   ///This is a function to call when we want to update a rescue rather than calling handleCreateRescue
-  /*
   async function handleUpdateRescue() {
     setWorking(true)
     const new_rescue_id = rescue_id || (await generateUniqueId('rescues'))
@@ -167,15 +166,19 @@ export function EditRescue() {
 
     for (const stop of formData.stops) {
       SE_API.post(`/stops/${stop.id}/update`, {
-        timestamp_scheduled_start: formData.timestamp_scheduled_start,
-        timestamp_finished_start: formData.timestamp_finished_start,
+        ...stop,
+        rescue_id: rescue_id,
+        timestamp_updated: createTimestamp(),
+        handler_id: formData.handler_id,
+        timestamp_scheduled_start: formData.timestamp_scheduled_finish,
+        timestamp_scheduled_finish: formData.timestamp_scheduled_finish,
       })
     }
 
     setWorking(false)
     navigate(`/rescues/${new_rescue_id}`)
   }
-*/
+
   async function handleRemoveStop(id, type) {
     setFormData({
       ...formData,
@@ -445,7 +448,7 @@ export function EditRescue() {
           size="large"
           type="secondary"
           disabled={working}
-          handler={handleCreateRescue}
+          handler={rescue_id ? handleUpdateRescue : handleCreateRescue}
         >
           {generateSubmitButtonText()}
         </Button>
