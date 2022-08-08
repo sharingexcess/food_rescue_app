@@ -1,4 +1,5 @@
-import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
 import {
   Button,
   Divider,
@@ -9,37 +10,26 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react'
-import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
-import { useRescueContext } from 'chakra_components/Rescue/Rescue'
-import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { CardOverlay, useRescueContext } from 'chakra_components'
+import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
 import { Ellipsis } from 'components'
 
 const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
 export const usePickupContext = () => useContext(PickupContext)
 
-export function EditPickup({ pickup }) {
+export function Pickup({ pickup }) {
   const { setOpenStop } = useRescueContext()
   const [entryRows, setEntryRows] = useState([])
   const [notes, setNotes] = useState('')
   const session_storage_key = useMemo(
-    () => (pickup ? 'pickup_' + pickup?.id + '_cache' : undefined),
+    () => (pickup ? `pickup_cache_${pickup.id}` : undefined),
     [pickup]
   )
-
-  const initFormData = {
-    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
-    impact_data_total_weight: 0,
-    notes: '',
-  }
-
-  const [formData, setFormData] = useState(initFormData)
+  const isChanged = window.sessionStorage.getItem(session_storage_key)
 
   useEffect(() => {
-    console.log('session key:', session_storage_key)
     const sessionObject = sessionStorage.getItem(session_storage_key)
-    console.log('session storage:', sessionObject)
 
     if (sessionObject) {
       const { sessionEntryRows, sessionNotes } = JSON.parse(sessionObject)
@@ -60,30 +50,43 @@ export function EditPickup({ pickup }) {
     }
   }, [pickup])
 
+  function handleClosePickup() {
+    if (isChanged) {
+      if (
+        window.confirm(
+          'You have unsaved changes on this pickup. Are you sure you want to exit?'
+        )
+      ) {
+        window.sessionStorage.removeItem(session_storage_key)
+        setOpenStop(null)
+      } else return
+    } else setOpenStop(null)
+  }
+
   const pickupContextValue = {
     pickup,
-    formData,
     entryRows,
     setEntryRows,
     notes,
     setNotes,
     session_storage_key,
+    isChanged,
   }
 
   return (
     <PickupContext.Provider value={pickupContextValue}>
       <CardOverlay
         isOpen={!!pickup}
-        handleClose={() => setOpenStop(null)}
-        CardHeader={EditPickupHeader}
-        CardBody={EditPickupBody}
-        CardFooter={EditPickupFooter}
+        handleClose={handleClosePickup}
+        CardHeader={PickupHeader}
+        CardBody={PickupBody}
+        CardFooter={PickupFooter}
       />
     </PickupContext.Provider>
   )
 }
 
-export function EditPickupHeader() {
+export function PickupHeader() {
   const { pickup } = usePickupContext()
   return (
     <>
@@ -121,7 +124,7 @@ export function EditPickupHeader() {
   )
 }
 
-function EditPickupBody() {
+function PickupBody() {
   const { entryRows, setEntryRows, notes, setNotes, session_storage_key } =
     usePickupContext()
   const [category, setCategory] = useState('')
@@ -247,19 +250,23 @@ function EditPickupBody() {
   )
 }
 
-export function EditPickupFooter() {
+export function PickupFooter() {
   const { setOpenStop } = useRescueContext()
-  const { entryRows, formData, notes, pickup, session_storage_key } =
+  const { entryRows, notes, pickup, session_storage_key, isChanged } =
     usePickupContext()
-  const total = entryRows.reduce(
-    (total, current) => total + current.weight,
-    formData.impact_data_total_weight
-  )
+  const total = entryRows.reduce((total, current) => total + current.weight, 0)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  console.log(window.sessionStorage.getItem(session_storage_key))
 
   async function handleSubmit() {
     setIsSubmitting(true)
+
+    const formData = {
+      ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
+      impact_data_total_weight: 0,
+      notes: '',
+    }
 
     for (const row of entryRows) {
       formData[row.category] = formData[row.category] + row.weight
@@ -280,7 +287,7 @@ export function EditPickupFooter() {
     <Button
       size="lg"
       w="100%"
-      disabled={total < 1 || isSubmitting}
+      disabled={total < 1 || isSubmitting || !isChanged}
       onClick={handleSubmit}
     >
       {isSubmitting ? (
