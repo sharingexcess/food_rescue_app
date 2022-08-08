@@ -166,3 +166,4 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
 }
 
 exports.reportsEndpoint = reportsEndpoint
+exports.generateReport = generateReport
