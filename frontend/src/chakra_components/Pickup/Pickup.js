@@ -11,25 +11,6 @@ import {
 } from '@chakra-ui/react'
 import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
 import { useRescueContext } from 'chakra_components/Rescue/Rescue'
-<<<<<<< HEAD
-import { FOOD_CATEGORIES } from 'helpers'
-import { createContext, useContext, useState } from 'react'
-
-const StopContext = createContext({})
-StopContext.displayName = 'StopContext'
-export const useStopContext = () => useContext(StopContext)
-
-export function EditPickup({ stop }) {
-  const { setOpenStop } = useRescueContext()
-  const [entryRows, setEntryRows] = useState([])
-
-  const stopContextValue = { stop, entryRows, setEntryRows }
-
-  return (
-    <StopContext.Provider value={stopContextValue}>
-      <CardOverlay
-        isOpen={!!stop}
-=======
 import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
@@ -38,27 +19,18 @@ const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
 export const usePickupContext = () => useContext(PickupContext)
 
-export function EditPickup({ pickup }) {
+export function Pickup({ pickup }) {
   const { setOpenStop } = useRescueContext()
   const [entryRows, setEntryRows] = useState([])
   const [notes, setNotes] = useState('')
   const session_storage_key = useMemo(
-    () => (pickup ? 'pickup_' + pickup?.id + '_cache' : undefined),
+    () => (pickup ? `pickup_cache_${pickup.id}` : undefined),
     [pickup]
   )
-
-  const initFormData = {
-    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
-    impact_data_total_weight: 0,
-    notes: '',
-  }
-
-  const [formData, setFormData] = useState(initFormData)
+  const isChanged = window.sessionStorage.getItem(session_storage_key)
 
   useEffect(() => {
-    console.log('session key:', session_storage_key)
     const sessionObject = sessionStorage.getItem(session_storage_key)
-    console.log('session storage:', sessionObject)
 
     if (sessionObject) {
       const { sessionEntryRows, sessionNotes } = JSON.parse(sessionObject)
@@ -79,55 +51,49 @@ export function EditPickup({ pickup }) {
     }
   }, [pickup])
 
+  function handleClosePickup() {
+    if (isChanged) {
+      if (
+        window.confirm(
+          'You have unsaved changes on this pickup. Are you sure you want to exit?'
+        )
+      ) {
+        window.sessionStorage.removeItem(session_storage_key)
+        setOpenStop(null)
+      } else return
+    } else setOpenStop(null)
+  }
+
   const pickupContextValue = {
     pickup,
-    formData,
     entryRows,
     setEntryRows,
     notes,
     setNotes,
     session_storage_key,
+    isChanged,
   }
 
   return (
     <PickupContext.Provider value={pickupContextValue}>
       <CardOverlay
         isOpen={!!pickup}
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
-        handleClose={() => setOpenStop(null)}
-        CardHeader={EditPickupHeader}
-        CardBody={EditPickupBody}
-        CardFooter={EditPickupFooter}
+        handleClose={handleClosePickup}
+        CardHeader={PickupHeader}
+        CardBody={PickupBody}
+        CardFooter={PickupFooter}
       />
-<<<<<<< HEAD
-    </StopContext.Provider>
-  )
-}
-
-function EditPickupHeader() {
-  const { stop } = useStopContext()
-=======
     </PickupContext.Provider>
   )
 }
 
-export function EditPickupHeader() {
+export function PickupHeader() {
   const { pickup } = usePickupContext()
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
   return (
     <>
       <Heading as="h2" pb={8}>
         Pickup
       </Heading>
-<<<<<<< HEAD
-      <Text>{stop.organization.name}</Text>
-      <Text fontSize="sm" fontWeight={200} color="element.secondary" pb={4}>
-        {stop.location.nickname || stop.location.address1}
-      </Text>
-      <Text fontSize="xs" fontWeight="light" color="element.secondary" mb="6">
-        <Text fontWeight="bold">Instructions:</Text>
-        {stop.location.notes}
-=======
       <Text>{pickup.organization.name}</Text>
       <Text fontSize="sm" fontWeight={200} color="element.secondary" pb={4}>
         {pickup.location.nickname || pickup.location.address1}
@@ -137,22 +103,15 @@ export function EditPickupHeader() {
           Instructions:{' '}
         </Text>
         {pickup.location.notes}
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
       </Text>
       <Flex justify="space-between" gap={4}>
         <Button
           size="sm"
           flexGrow={1}
           variant="secondary"
-<<<<<<< HEAD
-          disabled={!stop.location.number}
-        >
-          {stop.location.number ? stop.location.number : 'No phone #'}
-=======
           disabled={!pickup.location.number}
         >
           {pickup.location.number ? pickup.location.number : 'No phone #'}
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
         </Button>
         <Button size="sm" flexGrow={1} variant="secondary">
           Map
@@ -166,23 +125,15 @@ export function EditPickupHeader() {
   )
 }
 
-function EditPickupBody() {
-<<<<<<< HEAD
-  const { entryRows, setEntryRows } = useStopContext()
-=======
+function PickupBody() {
   const { entryRows, setEntryRows, notes, setNotes, session_storage_key } =
     usePickupContext()
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
   const [category, setCategory] = useState('')
   const [weight, setWeight] = useState('')
 
   function addEntryRow() {
-<<<<<<< HEAD
-    setEntryRows([...entryRows, { category, weight }])
-=======
     const updatedEntryRows = [...entryRows, { category, weight }]
     setEntryRows(updatedEntryRows)
-
     session_storage_key &&
       sessionStorage.setItem(
         session_storage_key,
@@ -191,8 +142,6 @@ function EditPickupBody() {
           sessionNotes: notes,
         })
       )
-
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
     setCategory('')
     setWeight('')
   }
@@ -202,16 +151,6 @@ function EditPickupBody() {
       const filtered = [...entryRows]
       filtered.splice(index, 1)
       setEntryRows(filtered)
-<<<<<<< HEAD
-    }
-  }
-
-  return (
-    <Flex direction="column">
-      {entryRows.map((row, i) => (
-        <Flex justify="flex-end" gap="2" py="2">
-=======
-
       session_storage_key &&
         sessionStorage.setItem(
           session_storage_key,
@@ -225,7 +164,6 @@ function EditPickupBody() {
 
   function handleNotesChange(value) {
     setNotes(value)
-
     session_storage_key &&
       sessionStorage.setItem(
         session_storage_key,
@@ -235,11 +173,11 @@ function EditPickupBody() {
         })
       )
   }
+
   return (
     <Flex direction="column">
       {entryRows.map((row, i) => (
         <Flex key={i} justify="flex-end" gap="2" py="2">
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
           <Text mr="auto" textTransform="capitalize">
             {row.category.replace('impact_data_', '').replace('_', ' ')}
           </Text>
@@ -261,22 +199,14 @@ function EditPickupBody() {
           size="sm"
           color="element.secondary"
           variant="flushed"
-<<<<<<< HEAD
-          value={category}
-=======
           value={category || ''}
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
           onChange={e => setCategory(e.target.value)}
           textTransform="capitalize"
           mr="4"
         >
           <option>Select a category...</option>
           {FOOD_CATEGORIES.map(i => (
-<<<<<<< HEAD
-            <option value={i} style={{ textTransform: 'capitalize' }}>
-=======
             <option key={i} value={i} style={{ textTransform: 'capitalize' }}>
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
               {i.replace('impact_data_', '').replace('_', ' ')}
             </option>
           ))}
@@ -289,11 +219,7 @@ function EditPickupBody() {
           min="0"
           maxLength="6"
           w="28"
-<<<<<<< HEAD
-          value={weight}
-=======
           value={weight || ''}
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
           onChange={e => setWeight(parseInt(e.target.value) || '')}
           px="3"
           mr="1"
@@ -310,25 +236,6 @@ function EditPickupBody() {
           onClick={addEntryRow}
         />
       </Flex>
-<<<<<<< HEAD
-    </Flex>
-  )
-  /*
-  button and form control to add another impact category
-  after submitting form, make text component from form submission and push it to box
-  box displays all submitted impact categories
-  */
-}
-
-function EditPickupFooter() {
-  const { entryRows } = useStopContext()
-
-  const total = entryRows.reduce((total, current) => total + current.weight, 0)
-
-  return (
-    <Button size="lg" w="100%" disabled={total < 1}>
-      Complete Pickup{total ? ` (${total} lbs.)` : ''}
-=======
       <Input
         size="sm"
         color="element.secondary"
@@ -341,19 +248,23 @@ function EditPickupFooter() {
   )
 }
 
-export function EditPickupFooter() {
+export function PickupFooter() {
   const { setOpenStop } = useRescueContext()
-  const { entryRows, formData, notes, pickup, session_storage_key } =
+  const { entryRows, notes, pickup, session_storage_key, isChanged } =
     usePickupContext()
-  const total = entryRows.reduce(
-    (total, current) => total + current.weight,
-    formData.impact_data_total_weight
-  )
+  const total = entryRows.reduce((total, current) => total + current.weight, 0)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  console.log(window.sessionStorage.getItem(session_storage_key))
 
   async function handleSubmit() {
     setIsSubmitting(true)
+
+    const formData = {
+      ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
+      impact_data_total_weight: 0,
+      notes: '',
+    }
 
     for (const row of entryRows) {
       formData[row.category] = formData[row.category] + row.weight
@@ -374,7 +285,7 @@ export function EditPickupFooter() {
     <Button
       size="lg"
       w="100%"
-      disabled={total < 1 || isSubmitting}
+      disabled={total < 1 || isSubmitting || !isChanged}
       onClick={handleSubmit}
     >
       {isSubmitting ? (
@@ -388,7 +299,6 @@ export function EditPickupFooter() {
           {total ? ` (${total} lbs.)` : ''}
         </>
       )}
->>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
     </Button>
   )
 }
