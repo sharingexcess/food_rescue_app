@@ -53,6 +53,7 @@ async function createRescueEndpoint(request, response) {
         payload.timestamp_scheduled_finish
       )
       const timestamp_updated = new Date(payload.timestamp_updated)
+      const timestamp_logged_start = new Date(payload.timestamp_logged_start)
 
       console.log(
         '\n\n\nTIMESTAMPS:\n\n\n',
@@ -97,7 +98,8 @@ async function createRescueEndpoint(request, response) {
         timestamp_created,
         timestamp_scheduled_start,
         timestamp_scheduled_finish,
-        timestamp_updated
+        timestamp_updated,
+        timestamp_logged_start
       )
 
       console.log('Logging Created Rescue:', rescue_payload)
@@ -123,7 +125,8 @@ async function createRescuePayload(
   timestamp_created,
   timestamp_scheduled_start,
   timestamp_scheduled_finish,
-  timestamp_updated
+  timestamp_updated,
+  timestamp_logged_start
 ) {
   const resource = await createEventResource(
     formData,
@@ -162,7 +165,7 @@ async function createRescuePayload(
     timestamp_updated: timestamp_updated,
     timestamp_scheduled_start: timestamp_scheduled_start,
     timestamp_scheduled_finish: timestamp_scheduled_finish,
-    timestamp_logged_start: null,
+    timestamp_logged_start: timestamp_logged_start,
     timestamp_logged_finish: null,
     driving_distance: total_distance,
   }

@@ -138,6 +138,9 @@ export function EditRescue() {
         formData.timestamp_scheduled_finish
       ).toDate(),
       timestamp_updated: createTimestamp(),
+      timestamp_logged_start: rescue?.timestamp_logged_start
+        ? rescue.timestamp_logged_start
+        : null,
     })
 
     setWorking(false)
@@ -448,7 +451,7 @@ export function EditRescue() {
           size="large"
           type="secondary"
           disabled={working}
-          handler={rescue_id ? handleUpdateRescue : handleCreateRescue}
+          handler={handleCreateRescue}
         >
           {generateSubmitButtonText()}
         </Button>
