@@ -13,7 +13,12 @@ export const useRescueContext = () => useContext(RescueContext)
 
 export function Rescue() {
   const { rescue_id } = useParams()
-  const { data: rescue, loading, error } = useApi(`/rescues/${rescue_id}`)
+  const {
+    data: rescue,
+    loading,
+    error,
+    refresh,
+  } = useApi(`/rescues/${rescue_id}`)
   const [expandedStop, setExpandedStop] = useState(null)
   const [openStop, setOpenStop] = useState(null)
   const activeStop = useMemo(() => getActiveStop(rescue), [rescue])
@@ -25,9 +30,10 @@ export function Rescue() {
     setExpandedStop,
     openStop,
     setOpenStop,
+    refresh,
   }
 
-  if (loading) return <Loading text="Loading Rescue" />
+  if (loading && !rescue) return <Loading text="Loading Rescue" />
   else if (error) return <Error message={error} />
   else if (!rescue) return <Error message="No Rescue Found" />
   else

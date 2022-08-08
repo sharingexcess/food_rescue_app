@@ -6,11 +6,16 @@ import {
   Flex,
   Heading,
   IconButton,
+  Link,
   Text,
   Collapse,
 } from '@chakra-ui/react'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
-import { formatTimestamp, generateDirectionsLink } from 'helpers'
+import {
+  formatTimestamp,
+  generateDirectionsLink,
+  formatPhoneNumber,
+} from 'helpers'
 import { useRescueContext } from './Rescue'
 
 export function RescueHeader() {
@@ -67,6 +72,15 @@ function SelectedToggle({ open, onClick }) {
 function StopButtonsBox({ stop }) {
   const { setOpenStop, activeStop } = useRescueContext()
   const isActive = stop.id === activeStop?.id
+  /* <Link
+        href={generateDirectionsLink(
+          pickup.location.address1,
+          pickup.location.city,
+          pickup.location.state,
+          pickup.location.zip
+        )}
+        isExternal
+      >*/
   return (
     <>
       <Flex justify="space-between" mb="4" gap="2">
@@ -76,19 +90,33 @@ function StopButtonsBox({ stop }) {
           size="sm"
           flexGrow="1"
         >
-          {stop.location.contact_phone || 'No Phone #'}
+          {stop.location.contact_phone ? (
+            <a href={`tel:+${stop.location.contact_phone}`}>
+              {formatPhoneNumber(stop.location.contact_phone)}
+            </a>
+          ) : (
+            'No Phone #'
+          )}
         </Button>
-        <Button
-          variant={isActive ? 'secondary' : 'tertiary'}
-          size="sm"
-          flexGrow="1"
+        <Link
+          href={generateDirectionsLink(
+            stop.location.address1,
+            stop.location.city,
+            stop.location.state,
+            stop.location.zip
+          )}
+          isExternal
+          textDecoration="none !important"
         >
-          Map
-        </Button>
+          <Button size="sm" flexGrow={1} variant="secondary">
+            Map
+          </Button>
+        </Link>
         <Button
           variant={isActive ? 'secondary' : 'tertiary'}
           size="sm"
           flexGrow="1"
+          onClick={() => setOpenStop(stop)}
         >
           Show Instructions
         </Button>
@@ -147,32 +175,31 @@ function InactiveStop({ stop }) {
   )
 }
 
-function MapButton({ location }) {
+export function MapButton({ location, link }) {
   const { address1, address2, city, state, zip } = location
-  const button = (
-    <Button variant="outline">
-      <Emoji name="round-pushpin" width={20} />
-      <Spacer width={8} />
-      {address1}
-      {address2 && ` - ${address2}`}
-      <br />
-      {city}, {state} {zip}
-    </Button>
-  )
 
-  return s.status && s.status !== STATUSES.COMPLETED ? (
-    <ExternalLink
-      to={generateDirectionsLink(
-        s.location.address1,
-        s.location.city,
-        s.location.state,
-        s.location.zip
-      )}
+  return (
+    <a
+      href={generateDirectionsLink(address1, city, state, zip)}
+      target="_blank"
     >
-      {button}
-    </ExternalLink>
-  ) : (
-    button
+      {link}
+    </a>
+  )
+}
+
+export function LocationAddress({ location }) {
+  return (
+    <Text
+      fontSize="sm"
+      fontWeight={500}
+      color="element.active"
+      textDecoration="underline"
+    >
+      {location.address1}
+      <br />
+      {location.city}, {location.state} {location.zip}
+    </Text>
   )
 }
 
