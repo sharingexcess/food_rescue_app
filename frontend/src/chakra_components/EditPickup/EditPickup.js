@@ -11,18 +11,59 @@ import {
 } from '@chakra-ui/react'
 import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
 import { useRescueContext } from 'chakra_components/Rescue/Rescue'
-import { FOOD_CATEGORIES } from 'helpers'
-import { createContext, useContext, useState } from 'react'
+import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
+import { useApi } from 'hooks'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { Ellipsis } from 'components'
 
 const StopContext = createContext({})
 StopContext.displayName = 'StopContext'
 export const useStopContext = () => useContext(StopContext)
 
 export function EditPickup({ stop }) {
-  const { setOpenStop } = useRescueContext()
+  const { setOpenStop, openStop } = useRescueContext()
+  const pickup_id = openStop && openStop.id
+  // window.alert(pickup_id) // pickup = 1egzc7hep44u, delivery = 2bydwwnif9g8
   const [entryRows, setEntryRows] = useState([])
+  const [notes, setNotes] = useState('')
+  const { data: pickup, refresh } = useApi(
+    pickup_id ? `/stops/${pickup_id}` : null
+  )
+  // console.log('data', pickup)
 
-  const stopContextValue = { stop, entryRows, setEntryRows }
+  const initFormData = {
+    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
+    impact_data_total_weight: 0,
+    notes: '',
+  }
+
+  const [formData, setFormData] = useState(initFormData)
+
+  useEffect(() => {
+    if (pickup && pickup_id) {
+      const initialEntryRows = []
+      for (const category of FOOD_CATEGORIES) {
+        if (pickup[category]) {
+          initialEntryRows.push({
+            category: category,
+            weight: pickup[category],
+          })
+        }
+      }
+      setEntryRows(initialEntryRows)
+      setNotes(pickup.notes)
+    }
+  }, [pickup, pickup_id])
+
+  const stopContextValue = {
+    stop,
+    formData,
+    pickup_id,
+    entryRows,
+    setEntryRows,
+    notes,
+    setNotes,
+  }
 
   return (
     <StopContext.Provider value={stopContextValue}>
@@ -74,7 +115,7 @@ function EditPickupHeader() {
 }
 
 function EditPickupBody() {
-  const { entryRows, setEntryRows } = useStopContext()
+  const { entryRows, setEntryRows, notes, setNotes } = useStopContext()
   const [category, setCategory] = useState('')
   const [weight, setWeight] = useState('')
 
@@ -95,7 +136,7 @@ function EditPickupBody() {
   return (
     <Flex direction="column">
       {entryRows.map((row, i) => (
-        <Flex justify="flex-end" gap="2" py="2">
+        <Flex key={i} justify="flex-end" gap="2" py="2">
           <Text mr="auto" textTransform="capitalize">
             {row.category.replace('impact_data_', '').replace('_', ' ')}
           </Text>
@@ -154,23 +195,61 @@ function EditPickupBody() {
           onClick={addEntryRow}
         />
       </Flex>
+      <Input
+        size="sm"
+        color="element.secondary"
+        value={notes}
+        placeholder="Notes..."
+        variant="flushed"
+        onChange={e => setNotes(e.target.value)}
+      />
     </Flex>
   )
-  /*
-  button and form control to add another impact category
-  after submitting form, make text component from form submission and push it to box
-  box displays all submitted impact categories
-  */
 }
 
 function EditPickupFooter() {
-  const { entryRows } = useStopContext()
+  // is submitting
+  const { setOpenStop } = useRescueContext()
+  const { entryRows, formData, notes, pickup_id, setNotes } = useStopContext()
+  const total = entryRows.reduce(
+    (total, current) => total + current.weight,
+    formData.impact_data_total_weight
+  )
 
-  const total = entryRows.reduce((total, current) => total + current.weight, 0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  async function handleSubmit() {
+    setIsSubmitting(true)
+
+    for (const row of entryRows) {
+      formData[row.category] = formData[row.category] + row.weight
+    }
+    formData.impact_data_total_weight = total
+    formData.notes = notes
+    await SE_API.post(`/stops/${pickup_id}/update`, {
+      ...formData,
+      status: STATUSES.COMPLETED,
+      timestamp_logged_finish: createTimestamp(),
+    })
+    setIsSubmitting(false)
+    setOpenStop(null)
+  }
 
   return (
-    <Button size="lg" w="100%" disabled={total < 1}>
-      Complete Pickup{total ? ` (${total} lbs.)` : ''}
+    <Button
+      size="lg"
+      w="100%"
+      disabled={total < 1 || isSubmitting}
+      onClick={handleSubmit}
+    >
+      {isSubmitting ? (
+        <>
+          Updating Pickup
+          <Ellipsis />
+        </>
+      ) : (
+        <>Complete Pickup{total ? `(${total} lbs.)` : ''}</>
+      )}
     </Button>
   )
 }
