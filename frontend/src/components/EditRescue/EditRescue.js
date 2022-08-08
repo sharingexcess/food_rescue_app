@@ -125,24 +125,58 @@ export function EditRescue() {
       }
     }
 
-    // const event = await updateGoogleCalendarEvent(formData, user.accessToken)
-    // if (!event.id) {
-    //   alert('Error creating Google Calendar event. Please contact support!')
-    //   return
-    // }
-
     await SE_API.post(`/rescues/${new_rescue_id}/create`, {
-      // event: event,
       formData: formData,
-      status_scheduled: STATUSES.SCHEDULED,
-      timestamp_created: createTimestamp(),
+      status_scheduled: rescue?.status ? rescue.status : STATUSES.SCHEDULED,
+      timestamp_created: rescue?.timestamp_created
+        ? rescue.timestamp_created
+        : createTimestamp(),
       timestamp_scheduled_start: moment(
         formData.timestamp_scheduled_start
       ).toDate(),
       timestamp_scheduled_finish: moment(
         formData.timestamp_scheduled_finish
       ).toDate(),
+      timestamp_updated: createTimestamp(),
+      timestamp_logged_start: rescue?.timestamp_logged_start
+        ? rescue.timestamp_logged_start
+        : null,
     })
+
+    setWorking(false)
+    navigate(`/rescues/${new_rescue_id}`)
+  }
+
+  ///This is a function to call when we want to update a rescue rather than calling handleCreateRescue
+  async function handleUpdateRescue() {
+    setWorking(true)
+    const new_rescue_id = rescue_id || (await generateUniqueId('rescues'))
+    if (rescue_id) {
+      // if this is an existing rescue with pre-created stops,
+      // make sure we delete any old and now deleted pickups and deliveries
+      for (const stop of deletedStops) {
+        await deleteFirestoreData(['stops', stop.id])
+      }
+    }
+
+    await SE_API.post(`/rescues/${rescue.id}/update`, {
+      timestamp_updated: createTimestamp(),
+      handler_id: formData.handler_id,
+      stops: formData.stops,
+      timestamp_scheduled_start: formData.timestamp_scheduled_finish,
+      timestamp_scheduled_finish: formData.timestamp_scheduled_finish,
+    })
+
+    for (const stop of formData.stops) {
+      SE_API.post(`/stops/${stop.id}/update`, {
+        ...stop,
+        rescue_id: rescue_id,
+        timestamp_updated: createTimestamp(),
+        handler_id: formData.handler_id,
+        timestamp_scheduled_start: formData.timestamp_scheduled_finish,
+        timestamp_scheduled_finish: formData.timestamp_scheduled_finish,
+      })
+    }
 
     setWorking(false)
     navigate(`/rescues/${new_rescue_id}`)
