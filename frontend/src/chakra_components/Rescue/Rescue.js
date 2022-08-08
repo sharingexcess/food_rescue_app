@@ -3,7 +3,11 @@ import { useApi } from 'hooks'
 import { useParams } from 'react-router-dom'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { Error, Loading } from 'components'
+<<<<<<< HEAD
 import { Page, EditPickup } from 'chakra_components'
+=======
+import { Page, EditPickup, EditDelivery } from 'chakra_components'
+>>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
 import { getActiveStop } from './Rescue.utils'
 import { RescueHeader, RescueStops } from './Rescue.children'
 
@@ -45,7 +49,12 @@ export function Rescue() {
             <RescueHeader />
             <RescueStops />
           </Flex>
+<<<<<<< HEAD
           <EditPickup stop={openStop} />
+=======
+          <EditPickup pickup={openStop} />
+          {/* <EditDelivery stop={openStop} /> */}
+>>>>>>> ccf2b23dba0e205a28cdc7ece3c87e38e9bede8c
         </RescueContext.Provider>
       </Page>
     )

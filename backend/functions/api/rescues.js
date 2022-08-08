@@ -10,7 +10,15 @@ const {
 async function rescuesEndpoint(request, response) {
   try {
     console.log('INVOKING ENDPOINT: rescues()\n', 'params:', request.query)
-    const { date, status, handler_id, limit, start_after } = request.query
+    const {
+      date,
+      status,
+      handler_id,
+      limit,
+      start_after,
+      date_range_start,
+      date_range_end,
+    } = request.query
 
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
@@ -29,7 +37,9 @@ async function rescuesEndpoint(request, response) {
       status,
       handler_id,
       start_after,
-      limit
+      limit,
+      date_range_start,
+      date_range_end
     )
     response.status(200).send(JSON.stringify(rescues))
   } catch (e) {
@@ -38,7 +48,15 @@ async function rescuesEndpoint(request, response) {
   }
 }
 
-async function getRescues(date, status, handler_id, start_after, limit = 100) {
+async function getRescues(
+  date,
+  status,
+  handler_id,
+  start_after,
+  limit = 100,
+  date_range_start,
+  date_range_end
+) {
   const start = performance.now()
   const rescues = []
 
@@ -56,8 +74,16 @@ async function getRescues(date, status, handler_id, start_after, limit = 100) {
   }
 
   // apply filters
+  if (date_range_start && date_range_end) {
+    const start = moment(date_range_start).startOf('day').toDate()
+    const end = moment(date_range_end).endOf('day').toDate()
+    console.log(start, end)
+    rescues_query = rescues_query
+      .where('timestamp_scheduled_start', '>=', start)
+      .where('timestamp_scheduled_start', '<=', end)
+  }
 
-  if (date) {
+  if (date && !(date_range_start & date_range_end)) {
     const start = new Date(date)
     const end = moment(start).add(24, 'hours').toDate()
     console.log(start, end)
@@ -72,12 +98,11 @@ async function getRescues(date, status, handler_id, start_after, limit = 100) {
   } else if (handler_id) {
     rescues_query = rescues_query.where('handler_id', '==', handler_id)
   }
-
   if (status) {
     rescues_query = rescues_query.where('status', '==', status)
   }
 
-  if (limit) {
+  if (limit && !(date_range_start && date_range_start)) {
     rescues_query = rescues_query.limit(parseInt(limit))
   }
 

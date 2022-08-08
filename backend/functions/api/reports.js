@@ -2,6 +2,8 @@ const {
   db,
   authenticateRequest,
   rejectUnauthorizedRequest,
+  DONOR_SUB_TYPES,
+  fetchCollection,
 } = require('../../helpers')
 
 const moment = require('moment')
@@ -74,6 +76,13 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
     .get()
     .then(snapshot => snapshot.forEach(doc => deliveries.push(doc.data())))
 
+  const organizations = await fetchCollection('organizations')
+
+  deliveries = deliveries.filter(d => {
+    const org = organizations.find(o => o.id === d.organization_id)
+    return org.subtype !== 'holding'
+  })
+
   console.log('Got Deliveries\n', 'total:', deliveries.length, deliveries[0])
 
   switch (breakdown) {
@@ -84,9 +93,11 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       //initialize buckets
       let current_date = new Date(date_range_start)
       while (current_date < new Date(date_range_end)) {
+        //create buckets with month, value, and year
         buckets.push({
-          label: moment(current_date).startOf('month').format('MMM yyyy'),
+          label: moment(current_date).startOf('month').format('MMM'),
           value: 0,
+          year: current_date.getFullYear(),
         })
         current_date = moment(current_date).add(1, 'month').toDate()
       }
@@ -95,16 +106,28 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       //populate buckets
       for (const delivery of deliveries) {
         const deliveryTimestamp = delivery.timestamp_scheduled_start.toDate()
-        const deliveryTimestampString =
-          moment(deliveryTimestamp).format('MMM yyyy')
+        //Get Month and Year of current delivery
+        const deliveryTimestampMonth = moment(deliveryTimestamp).format('MMM')
+        const deliveryTimestampYear = moment(deliveryTimestamp).format('yyy')
+        // console.log(
+        //   'Delivery month and year:',
+        //   deliveryTimestampMonth,
+        //   deliveryTimestampYear
+        // )
         for (const bucket of buckets) {
-          if (bucket.label === deliveryTimestampString) {
+          if (
+            bucket.label === deliveryTimestampMonth &&
+            bucket.year == deliveryTimestampYear
+          ) {
             //add delivery weight into value
+            console.log('Delivery date:', deliveryTimestamp)
+            console.log('Bucket Month and Year:', bucket.label, bucket.year)
             bucket.value += delivery.impact_data_total_weight
             break
           }
         }
       }
+      console.log(buckets)
       return buckets
     }
     case 'day': {
@@ -115,7 +138,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       let current_date = new Date(date_range_start)
       while (current_date <= new Date(date_range_end)) {
         buckets.push({
-          label: moment(current_date).format('MMM Do'),
+          label: moment(current_date).format('ddd, M/D'),
           value: 0,
         })
         current_date = moment(current_date).add(1, 'days').toDate()
@@ -125,7 +148,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       for (const delivery of deliveries) {
         const deliveryTimestamp = delivery.timestamp_scheduled_start.toDate()
         const deliveryTimestampString =
-          moment(deliveryTimestamp).format('MMM Do')
+          moment(deliveryTimestamp).format('ddd, M/D')
         for (bucket of buckets) {
           if (bucket.label === deliveryTimestampString) {
             bucket.value += delivery.impact_data_total_weight

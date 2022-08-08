@@ -101,6 +101,8 @@ const semanticTokens = {
 const fonts = {
   heading: `'Poppins', sans-serif`,
   body: `'Poppins', sans-serif`,
+  // heading: `'Montserrat', sans-serif`,
+  // body: `'Montserrat', sans-serif`,
 }
 
 const colors = { se: SE_COLORS }
