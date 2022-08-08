@@ -4,7 +4,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
-import { createRoot } from 'react-dom/client'
 import {
   Calendar,
   CompletedRescue,
@@ -140,156 +139,156 @@ function AdminRoute({ children }) {
 
 function RescueAppRoutes() {
   return (
-    // <Sentry.ErrorBoundary fallback={<Error crash />}>
-    <ChakraProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <EmojiProvider data={emojiData}>
-          <BrowserRouter>
-            <Auth>
-              {/* Auth component handles login and will show a login page if no user is authenticated */}
-              <Firestore>
-                <App>
-                  <Routes>
-                    {/* Public Routes */}
-                    <Route
-                      path="/"
-                      element={
-                        <PublicRoute>
-                          <Home />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="profile"
-                      element={
-                        <PublicRoute>
-                          <Profile />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="privacy"
-                      element={
-                        <PublicRoute>
-                          <Privacy />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="/tos"
-                      element={
-                        <PublicRoute>
-                          <Terms />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="/contact"
-                      element={
-                        <PublicRoute>
-                          <ContactUs />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="/food-safety"
-                      element={
-                        <PublicRoute>
-                          <FoodSafety />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="/liability"
-                      element={
-                        <PublicRoute>
-                          <Liability />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="/driver-info"
-                      element={
-                        <PublicRoute>
-                          <DriverInfo />
-                        </PublicRoute>
-                      }
-                    />
-                    <Route
-                      path="/tutorial"
-                      element={
-                        <PublicRoute>
-                          <Tutorial />
-                        </PublicRoute>
-                      }
-                    />
+    <Sentry.ErrorBoundary fallback={<Error crash />}>
+      <ChakraProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <EmojiProvider data={emojiData}>
+            <BrowserRouter>
+              <Auth>
+                {/* Auth component handles login and will show a login page if no user is authenticated */}
+                <Firestore>
+                  <App>
+                    <Routes>
+                      {/* Public Routes */}
+                      <Route
+                        path="/"
+                        element={
+                          <PublicRoute>
+                            <Home />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="profile"
+                        element={
+                          <PublicRoute>
+                            <Profile />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="privacy"
+                        element={
+                          <PublicRoute>
+                            <Privacy />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="/tos"
+                        element={
+                          <PublicRoute>
+                            <Terms />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="/contact"
+                        element={
+                          <PublicRoute>
+                            <ContactUs />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="/food-safety"
+                        element={
+                          <PublicRoute>
+                            <FoodSafety />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="/liability"
+                        element={
+                          <PublicRoute>
+                            <Liability />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="/driver-info"
+                        element={
+                          <PublicRoute>
+                            <DriverInfo />
+                          </PublicRoute>
+                        }
+                      />
+                      <Route
+                        path="/tutorial"
+                        element={
+                          <PublicRoute>
+                            <Tutorial />
+                          </PublicRoute>
+                        }
+                      />
 
-                    {/* Driver Routes */}
-                    <Route
-                      path="/calendar"
-                      element={
-                        <DriverRoute>
-                          <Calendar />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/rescues"
-                      element={
-                        <DriverRoute>
-                          <Rescues />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/rescues/:rescue_id"
-                      element={
-                        <DriverRoute>
-                          <Rescue />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/rescues/:rescue_id/pickup/:pickup_id"
-                      element={
-                        <DriverRoute>
-                          <PickupReport />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/rescues/:rescue_id/delivery/:delivery_id"
-                      element={
-                        <DriverRoute>
-                          <DeliveryReport />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/rescues/:rescue_id/edit"
-                      element={
-                        <DriverRoute>
-                          <EditRescue />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/rescues/:rescue_id/completed"
-                      element={
-                        <DriverRoute>
-                          <CompletedRescue />
-                        </DriverRoute>
-                      }
-                    />
-                    <Route
-                      path="/stats"
-                      element={
-                        <DriverRoute>
-                          <Impact />
-                        </DriverRoute>
-                      }
-                    />
-                    {/* Admin Routes */}
+                      {/* Driver Routes */}
+                      <Route
+                        path="/calendar"
+                        element={
+                          <DriverRoute>
+                            <Calendar />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/rescues"
+                        element={
+                          <DriverRoute>
+                            <Rescues />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/rescues/:rescue_id"
+                        element={
+                          <DriverRoute>
+                            <Rescue />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/rescues/:rescue_id/pickup/:pickup_id"
+                        element={
+                          <DriverRoute>
+                            <PickupReport />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/rescues/:rescue_id/delivery/:delivery_id"
+                        element={
+                          <DriverRoute>
+                            <DeliveryReport />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/rescues/:rescue_id/edit"
+                        element={
+                          <DriverRoute>
+                            <EditRescue />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/rescues/:rescue_id/completed"
+                        element={
+                          <DriverRoute>
+                            <CompletedRescue />
+                          </DriverRoute>
+                        }
+                      />
+                      <Route
+                        path="/stats"
+                        element={
+                          <DriverRoute>
+                            <Impact />
+                          </DriverRoute>
+                        }
+                      />
+                      {/* Admin Routes */}
 
                       <Route
                         path="/admin/create-rescue"

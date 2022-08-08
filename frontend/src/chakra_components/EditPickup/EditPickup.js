@@ -12,24 +12,21 @@ import {
 import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
 import { useRescueContext } from 'chakra_components/Rescue/Rescue'
 import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
-import { useApi } from 'hooks'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
 
-const StopContext = createContext({})
-StopContext.displayName = 'StopContext'
-export const useStopContext = () => useContext(StopContext)
+const PickupContext = createContext({})
+PickupContext.displayName = 'PickupContext'
+export const usePickupContext = () => useContext(PickupContext)
 
-export function EditPickup({ stop }) {
-  const { setOpenStop, openStop } = useRescueContext()
-  const pickup_id = openStop && openStop.id
-  // window.alert(pickup_id) // pickup = 1egzc7hep44u, delivery = 2bydwwnif9g8
+export function EditPickup({ pickup }) {
+  const { setOpenStop } = useRescueContext()
   const [entryRows, setEntryRows] = useState([])
   const [notes, setNotes] = useState('')
-  const { data: pickup, refresh } = useApi(
-    pickup_id ? `/stops/${pickup_id}` : null
+  const session_storage_key = useMemo(
+    () => (pickup ? 'pickup_' + pickup?.id + '_cache' : undefined),
+    [pickup]
   )
-  // console.log('data', pickup)
 
   const initFormData = {
     ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
@@ -40,7 +37,15 @@ export function EditPickup({ stop }) {
   const [formData, setFormData] = useState(initFormData)
 
   useEffect(() => {
-    if (pickup && pickup_id) {
+    console.log('session key:', session_storage_key)
+    const sessionObject = sessionStorage.getItem(session_storage_key)
+    console.log('session storage:', sessionObject)
+
+    if (sessionObject) {
+      const { sessionEntryRows, sessionNotes } = JSON.parse(sessionObject)
+      setEntryRows(sessionEntryRows)
+      setNotes(sessionNotes)
+    } else if (pickup) {
       const initialEntryRows = []
       for (const category of FOOD_CATEGORIES) {
         if (pickup[category]) {
@@ -53,54 +58,56 @@ export function EditPickup({ stop }) {
       setEntryRows(initialEntryRows)
       setNotes(pickup.notes)
     }
-  }, [pickup, pickup_id])
+  }, [pickup])
 
-  const stopContextValue = {
-    stop,
+  const pickupContextValue = {
+    pickup,
     formData,
-    pickup_id,
     entryRows,
     setEntryRows,
     notes,
     setNotes,
+    session_storage_key,
   }
 
   return (
-    <StopContext.Provider value={stopContextValue}>
+    <PickupContext.Provider value={pickupContextValue}>
       <CardOverlay
-        isOpen={!!stop}
+        isOpen={!!pickup}
         handleClose={() => setOpenStop(null)}
         CardHeader={EditPickupHeader}
         CardBody={EditPickupBody}
         CardFooter={EditPickupFooter}
       />
-    </StopContext.Provider>
+    </PickupContext.Provider>
   )
 }
 
-function EditPickupHeader() {
-  const { stop } = useStopContext()
+export function EditPickupHeader() {
+  const { pickup } = usePickupContext()
   return (
     <>
       <Heading as="h2" pb={8}>
         Pickup
       </Heading>
-      <Text>{stop.organization.name}</Text>
+      <Text>{pickup.organization.name}</Text>
       <Text fontSize="sm" fontWeight={200} color="element.secondary" pb={4}>
-        {stop.location.nickname || stop.location.address1}
+        {pickup.location.nickname || pickup.location.address1}
       </Text>
       <Text fontSize="xs" fontWeight="light" color="element.secondary" mb="6">
-        <Text fontWeight="bold">Instructions:</Text>
-        {stop.location.notes}
+        <Text as="span" fontWeight="bold">
+          Instructions:{' '}
+        </Text>
+        {pickup.location.notes}
       </Text>
       <Flex justify="space-between" gap={4}>
         <Button
           size="sm"
           flexGrow={1}
           variant="secondary"
-          disabled={!stop.location.number}
+          disabled={!pickup.location.number}
         >
-          {stop.location.number ? stop.location.number : 'No phone #'}
+          {pickup.location.number ? pickup.location.number : 'No phone #'}
         </Button>
         <Button size="sm" flexGrow={1} variant="secondary">
           Map
@@ -115,12 +122,24 @@ function EditPickupHeader() {
 }
 
 function EditPickupBody() {
-  const { entryRows, setEntryRows, notes, setNotes } = useStopContext()
+  const { entryRows, setEntryRows, notes, setNotes, session_storage_key } =
+    usePickupContext()
   const [category, setCategory] = useState('')
   const [weight, setWeight] = useState('')
 
   function addEntryRow() {
-    setEntryRows([...entryRows, { category, weight }])
+    const updatedEntryRows = [...entryRows, { category, weight }]
+    setEntryRows(updatedEntryRows)
+
+    session_storage_key &&
+      sessionStorage.setItem(
+        session_storage_key,
+        JSON.stringify({
+          sessionEntryRows: updatedEntryRows,
+          sessionNotes: notes,
+        })
+      )
+
     setCategory('')
     setWeight('')
   }
@@ -130,9 +149,30 @@ function EditPickupBody() {
       const filtered = [...entryRows]
       filtered.splice(index, 1)
       setEntryRows(filtered)
+
+      session_storage_key &&
+        sessionStorage.setItem(
+          session_storage_key,
+          JSON.stringify({
+            sessionEntryRows: filtered,
+            sessionNotes: notes,
+          })
+        )
     }
   }
 
+  function handleNotesChange(value) {
+    setNotes(value)
+
+    session_storage_key &&
+      sessionStorage.setItem(
+        session_storage_key,
+        JSON.stringify({
+          sessionEntryRows: entryRows,
+          sessionNotes: value,
+        })
+      )
+  }
   return (
     <Flex direction="column">
       {entryRows.map((row, i) => (
@@ -158,14 +198,14 @@ function EditPickupBody() {
           size="sm"
           color="element.secondary"
           variant="flushed"
-          value={category}
+          value={category || ''}
           onChange={e => setCategory(e.target.value)}
           textTransform="capitalize"
           mr="4"
         >
           <option>Select a category...</option>
           {FOOD_CATEGORIES.map(i => (
-            <option value={i} style={{ textTransform: 'capitalize' }}>
+            <option key={i} value={i} style={{ textTransform: 'capitalize' }}>
               {i.replace('impact_data_', '').replace('_', ' ')}
             </option>
           ))}
@@ -178,7 +218,7 @@ function EditPickupBody() {
           min="0"
           maxLength="6"
           w="28"
-          value={weight}
+          value={weight || ''}
           onChange={e => setWeight(parseInt(e.target.value) || '')}
           px="3"
           mr="1"
@@ -198,19 +238,19 @@ function EditPickupBody() {
       <Input
         size="sm"
         color="element.secondary"
-        value={notes}
+        value={notes || ''}
         placeholder="Notes..."
         variant="flushed"
-        onChange={e => setNotes(e.target.value)}
+        onChange={e => handleNotesChange(e.target.value)}
       />
     </Flex>
   )
 }
 
-function EditPickupFooter() {
-  // is submitting
+export function EditPickupFooter() {
   const { setOpenStop } = useRescueContext()
-  const { entryRows, formData, notes, pickup_id, setNotes } = useStopContext()
+  const { entryRows, formData, notes, pickup, session_storage_key } =
+    usePickupContext()
   const total = entryRows.reduce(
     (total, current) => total + current.weight,
     formData.impact_data_total_weight
@@ -226,11 +266,12 @@ function EditPickupFooter() {
     }
     formData.impact_data_total_weight = total
     formData.notes = notes
-    await SE_API.post(`/stops/${pickup_id}/update`, {
+    await SE_API.post(`/stops/${pickup.id}/update`, {
       ...formData,
       status: STATUSES.COMPLETED,
       timestamp_logged_finish: createTimestamp(),
     })
+    sessionStorage.removeItem(session_storage_key)
     setIsSubmitting(false)
     setOpenStop(null)
   }
@@ -248,7 +289,10 @@ function EditPickupFooter() {
           <Ellipsis />
         </>
       ) : (
-        <>Complete Pickup{total ? `(${total} lbs.)` : ''}</>
+        <>
+          {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
+          {total ? ` (${total} lbs.)` : ''}
+        </>
       )}
     </Button>
   )
