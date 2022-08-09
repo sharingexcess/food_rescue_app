@@ -24,151 +24,159 @@ async function analyticsEndpoint(request, response) {
       rejectUnauthorizedRequest(response)
       return
     }
-
     const { date_range_start, date_range_end } = request.query
     let { breakdown } = request.query
     breakdown = decodeURIComponent(breakdown)
 
-    let rescues = []
-    await db
-      .collection('rescues')
-      .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-      .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-      .get()
-      .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
-    rescues = rescues.filter(i => i.status === 'completed')
+    const payload = await analytics(date_range_start, date_range_end, breakdown)
+    console.log('Payload returned from analytics:', payload)
 
-    let stops = []
-    await db
-      .collection('stops')
-      .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-      .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
-      .get()
-      .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
-    stops = stops.filter(i => i.status === 'completed')
-
-    const organizations = await fetchCollection('organizations')
-    const users = await fetchCollection('users')
-
-    const pickups = stops.filter(s => s.type === 'pickup')
-    const deliveries = stops.filter(s => s.type === 'delivery')
-
-    console.log('DATA:', rescues.length, stops.length, organizations.length)
-
-    const {
-      total_weight,
-      total_categorized_weight,
-      retail_value,
-      fair_market_value,
-      emissions_reduced,
-    } = calculateMetrics(deliveries, organizations)
-
-    console.log(
-      'METRICS:',
-      total_weight,
-      total_categorized_weight,
-      retail_value,
-      fair_market_value,
-      emissions_reduced
-    )
-
-    switch (breakdown) {
-      case 'Food Category': {
-        console.log('Handling breakdown by food category')
-        const payload = {
-          total_weight,
-          total_categorized_weight,
-          retail_value,
-          fair_market_value,
-          emissions_reduced,
-          view_data: breakdownByFoodCategory(deliveries),
-        }
-        console.log('returning payload:', payload)
-        response.status(200).send(JSON.stringify(payload))
-        resolve()
-        return
-      }
-      case 'Donor Type': {
-        console.log('Handling breakdown by donor type')
-        const payload = {
-          total_weight,
-          total_categorized_weight,
-          retail_value,
-          fair_market_value,
-          emissions_reduced,
-          view_data: breakdownByDonorType(pickups, organizations),
-        }
-        console.log('returning payload:', payload)
-        response.status(200).send(JSON.stringify(payload))
-        resolve()
-        return
-      }
-      case 'Recipient Type': {
-        console.log('Handling breakdown by recipient type')
-        const payload = {
-          total_weight,
-          total_categorized_weight,
-          retail_value,
-          fair_market_value,
-          emissions_reduced,
-          view_data: breakdownByRecipientType(deliveries, organizations),
-        }
-        console.log('returning payload:', payload)
-        response.status(200).send(JSON.stringify(payload))
-        resolve()
-        return
-      }
-      case 'Donor': {
-        console.log('Handling breakdown by donor')
-        const payload = {
-          total_weight,
-          total_categorized_weight,
-          retail_value,
-          fair_market_value,
-          emissions_reduced,
-          view_data: breakdownByDonor(pickups, organizations),
-        }
-        console.log('returning payload:', payload)
-        response.status(200).send(JSON.stringify(payload))
-        resolve()
-        return
-      }
-      case 'Recipient': {
-        console.log('Handling breakdown by recipient')
-        const payload = {
-          total_weight,
-          total_categorized_weight,
-          retail_value,
-          fair_market_value,
-          emissions_reduced,
-          view_data: breakdownByRecipient(deliveries, organizations),
-        }
-        console.log('returning payload:', payload)
-        response.status(200).send(JSON.stringify(payload))
-        resolve()
-        return
-      }
-      case 'Driver': {
-        console.log('Handling breakdown by driver')
-        const payload = {
-          total_weight,
-          total_categorized_weight,
-          retail_value,
-          fair_market_value,
-          emissions_reduced,
-          view_data: breakdownByDriver(deliveries, users),
-        }
-        console.log('returning payload:', payload)
-        response.status(200).send(JSON.stringify(payload))
-        resolve()
-        return
-      }
-      default: {
-        response.status(500).send('No breakdown provided!')
-        resolve()
-      }
+    if (payload != null) {
+      response.status(200).send(JSON.stringify(payload))
+      resolve()
+      return
+    } else {
+      response.status(500).send('No breakdown provided!')
+      resolve()
+      return
     }
   })
+}
+
+async function analytics(date_range_start, date_range_end, breakdown) {
+  console.log(
+    'Calculating metrics with:',
+    date_range_start,
+    date_range_end,
+    breakdown
+  )
+
+  let rescues = []
+  await db
+    .collection('rescues')
+    .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
+    .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    .get()
+    .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
+  rescues = rescues.filter(i => i.status === 'completed')
+
+  let stops = []
+  await db
+    .collection('stops')
+    .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
+    .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    .get()
+    .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
+  stops = stops.filter(i => i.status === 'completed')
+
+  const organizations = await fetchCollection('organizations')
+  const users = await fetchCollection('users')
+
+  const pickups = stops.filter(s => s.type === 'pickup')
+  const deliveries = stops.filter(s => s.type === 'delivery')
+
+  console.log('DATA:', rescues.length, stops.length, organizations.length)
+
+  const {
+    total_weight,
+    total_categorized_weight,
+    retail_value,
+    fair_market_value,
+    emissions_reduced,
+  } = calculateMetrics(deliveries, organizations)
+
+  console.log(
+    'METRICS:',
+    total_weight,
+    total_categorized_weight,
+    retail_value,
+    fair_market_value,
+    emissions_reduced
+  )
+
+  switch (breakdown) {
+    case 'Food Category': {
+      console.log('Handling breakdown by food category')
+      const payload = {
+        total_weight,
+        total_categorized_weight,
+        retail_value,
+        fair_market_value,
+        emissions_reduced,
+        view_data: breakdownByFoodCategory(deliveries),
+      }
+      console.log('returning payload:', payload)
+      return payload
+    }
+    case 'Donor Type': {
+      console.log('Handling breakdown by donor type')
+      const payload = {
+        total_weight,
+        total_categorized_weight,
+        retail_value,
+        fair_market_value,
+        emissions_reduced,
+        view_data: breakdownByDonorType(pickups, organizations),
+      }
+      console.log('returning payload:', payload)
+      return payload
+    }
+    case 'Recipient Type': {
+      console.log('Handling breakdown by recipient type')
+      const payload = {
+        total_weight,
+        total_categorized_weight,
+        retail_value,
+        fair_market_value,
+        emissions_reduced,
+        view_data: breakdownByRecipientType(deliveries, organizations),
+      }
+      console.log('returning payload:', payload)
+      return payload
+    }
+    case 'Donor': {
+      console.log('Handling breakdown by donor')
+      const payload = {
+        total_weight,
+        total_categorized_weight,
+        retail_value,
+        fair_market_value,
+        emissions_reduced,
+        view_data: breakdownByDonor(pickups, organizations),
+      }
+      console.log('returning payload:', payload)
+      return payload
+    }
+    case 'Recipient': {
+      console.log('Handling breakdown by recipient')
+      const payload = {
+        total_weight,
+        total_categorized_weight,
+        retail_value,
+        fair_market_value,
+        emissions_reduced,
+        view_data: breakdownByRecipient(deliveries, organizations),
+      }
+      console.log('returning payload:', payload)
+      return payload
+    }
+    case 'Driver': {
+      console.log('Handling breakdown by driver')
+      const payload = {
+        total_weight,
+        total_categorized_weight,
+        retail_value,
+        fair_market_value,
+        emissions_reduced,
+        view_data: breakdownByDriver(deliveries, users),
+      }
+      console.log('returning payload:', payload)
+      return payload
+    }
+    default: {
+      return null
+    }
+  }
 }
 
 function calculateMetrics(deliveries, organizations) {
@@ -321,3 +329,4 @@ function sortObjectByValues(object) {
 }
 
 exports.analyticsEndpoint = analyticsEndpoint
+exports.analytics = analytics
