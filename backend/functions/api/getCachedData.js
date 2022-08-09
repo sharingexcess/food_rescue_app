@@ -1,4 +1,8 @@
 const { getRetoolCachedData, deleteFile } = require('../../helpers')
+const {
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 const moment = require('moment-timezone')
 
 async function getCachedDataEndpoint(request, response) {
