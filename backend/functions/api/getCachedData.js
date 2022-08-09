@@ -6,15 +6,15 @@ async function getCachedDataEndpoint(request, response) {
     try {
       console.log('INVOKING ENDPOINT: getCachedData()')
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   () => false // only approve requests from retool
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        () => false // only approve requests from retool
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       const data = await getCachedData()
 

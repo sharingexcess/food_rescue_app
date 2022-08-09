@@ -15,15 +15,15 @@ async function analyticsEndpoint(request, response) {
   return new Promise(async resolve => {
     console.log('INVOKING ENDPOINT: analytics()\n', 'params:', request.query)
 
-    // const requestIsAuthenticated = await authenticateRequest(
-    //   request.get('accessToken'),
-    //   user => user.is_admin
-    // )
+    const requestIsAuthenticated = await authenticateRequest(
+      request.get('accessToken'),
+      user => user.is_admin
+    )
 
-    // if (!requestIsAuthenticated) {
-    //   rejectUnauthorizedRequest(response)
-    //   return
-    // }
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
+      return
+    }
     const { date_range_start, date_range_end } = request.query
     let { breakdown } = request.query
     breakdown = decodeURIComponent(breakdown)
