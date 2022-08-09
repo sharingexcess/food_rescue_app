@@ -39,13 +39,47 @@ DeliveryContext.displayName = 'DeliveryContext'
 export const useDeliveryContext = () => useContext(DeliveryContext)
 
 export function Delivery({ delivery }) {
-  const { setOpenStop, openStop } = useRescueContext()
+  const { setOpenStop, openStop, rescue } = useRescueContext()
   const [notes, setNotes] = useState('')
+  const [percentTotalDropped, setPercentTotalDropped] = useState(100)
+
+  const currentLoad = useMemo(() => {
+    let weight = 0
+    if (rescue) {
+      for (const stop of rescue.stops) {
+        if (stop.type === 'pickup') {
+          weight += stop.impact_data_total_weight || 0
+        } else if (stop.id === delivery?.id) {
+          break
+        } else {
+          weight -= stop.impact_data_total_weight || 0
+        }
+      }
+    } else return undefined
+    return weight
+  }, [rescue, delivery, percentTotalDropped])
+
+  const [poundsDropped, setPoundsDropped] = useState(
+    currentLoad * (percentTotalDropped / 100) || ''
+  )
+
+  useEffect(() => {
+    if (delivery) {
+      setNotes(delivery.notes)
+      setPercentTotalDropped(delivery.percent_of_total_dropped)
+      setPoundsDropped(0)
+    }
+  }, [delivery])
 
   const deliveryContextValue = {
     delivery,
     notes,
     setNotes,
+    percentTotalDropped,
+    setPercentTotalDropped,
+    poundsDropped,
+    setPoundsDropped,
+    currentLoad,
   }
 
   return (
@@ -182,21 +216,61 @@ function DeliveryHeader() {
 }
 
 function DeliveryBody() {
+  const {
+    currentLoad,
+    poundsDropped,
+    setPoundsDropped,
+    percentTotalDropped,
+    setPercentTotalDropped,
+  } = useDeliveryContext()
+
   return (
-    <Slider aria-label="slider-ex-1" defaultValue={30}>
-      <SliderTrack>
-        <SliderFilledTrack />
-      </SliderTrack>
-      <SliderThumb />
-    </Slider>
+    <Flex direction="column" align="center">
+      <Text>You have {currentLoad} lbs. from your rescue</Text>
+      <Text fontSize="lg" mb="4">
+        Amount Received
+      </Text>
+      <Flex>
+        <Input
+          h="90px"
+          w="250px"
+          fontSize="6xl"
+          color="element.primary"
+          variant="flushed"
+          type="tel"
+          min="0"
+          maxLength="6"
+          value={poundsDropped}
+          onChange={e => setPoundsDropped(parseInt(e.target.value) || '')}
+          textAlign="right"
+        />
+        <Text ml="4px" fontSize="6xl">
+          lbs.
+        </Text>
+      </Flex>
+      <Flex wrap="wrap" justify="space-around" w="100%">
+        <Text fontWeight="bold">{percentTotalDropped}%</Text>
+        <Slider
+          aria-label="slider-ex-1"
+          colorScheme="green"
+          defaultValue={percentTotalDropped}
+          h="12"
+          maxW="500px"
+          onChange={value => setPercentTotalDropped(value)}
+        >
+          <SliderTrack h="2" borderRadius="4px">
+            <SliderFilledTrack h="2" borderRadius="4px" />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
+      </Flex>
+    </Flex>
   )
 }
 
 function DeliveryFooter() {
   const { setOpenStop, refresh } = useRescueContext()
-  const { notes, delivery } = useDeliveryContext()
-  const total = 100
-  // const total = entryRows.reduce((total, current) => total + current.weight, 0)
+  const { notes, delivery, poundsDropped } = useDeliveryContext()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -227,7 +301,7 @@ function DeliveryFooter() {
       <Button
         size="lg"
         w="100%"
-        disabled={total < 1 || isSubmitting}
+        disabled={poundsDropped < 1 || isSubmitting}
         onClick={handleSubmit}
       >
         {isSubmitting ? (
@@ -238,7 +312,6 @@ function DeliveryFooter() {
         ) : (
           <>
             {delivery.status === 'completed' ? 'Update' : 'Complete'} Delivery
-            {total ? ` (${total} lbs.)` : ''}
           </>
         )}
       </Button>
