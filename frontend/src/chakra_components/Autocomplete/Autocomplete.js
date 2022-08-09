@@ -6,15 +6,10 @@ import {
   IconButton,
   Input,
   ListItem,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
   UnorderedList,
 } from '@chakra-ui/react'
 
-const { useEffect, useState } = require('react')
+const { useEffect, useState, Fragment } = require('react')
 
 export function Autocomplete({
   label,
@@ -22,7 +17,7 @@ export function Autocomplete({
   value,
   setValue,
   handleChange,
-  displayField,
+  optionLabel,
   ...props
 }) {
   const [inputValue, setInputValue] = useState('')
@@ -31,8 +26,6 @@ export function Autocomplete({
   useEffect(() => {
     async function onChange() {
       const results = await handleChange(inputValue)
-      console.log('results', results)
-
       setOptions(results)
     }
     if (inputValue) onChange()
@@ -77,18 +70,17 @@ export function Autocomplete({
         >
           <UnorderedList styleType="none" m="0">
             {options.slice(0, 10).map((option, i) => (
-              <>
+              <Fragment key={i}>
                 <ListItem
                   fontSize="xs"
                   py={2}
-                  key={i}
                   onClick={() => handleSelect(option)}
                   cursor="pointer"
                 >
-                  {option[displayField]}
+                  {optionLabel(option)}
                 </ListItem>
-                {i !== 9 && <Divider />}
-              </>
+                {i !== 9 && i !== options.length - 1 && <Divider />}
+              </Fragment>
             ))}
           </UnorderedList>
         </Box>

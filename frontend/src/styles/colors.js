@@ -25,8 +25,8 @@ export const SE_COLORS = {
     900: '#483532',
   },
   yellow: {
-    100: '#FFD852',
-    200: '#FFF1BF',
+    100: '#FFF1BF',
+    200: '#FFE6A6',
     300: '#FFD852',
     400: '#F8A61F',
     500: '#975A16',

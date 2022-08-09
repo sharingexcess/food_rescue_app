@@ -72,13 +72,9 @@ export function Pickup({ pickup }) {
 
   function verifyClose() {
     if (isChanged) {
-      if (
-        window.confirm(
-          'You have unsaved changes on this pickup. Are you sure you want to exit?'
-        )
-      ) {
-        return true
-      } else return false
+      return window.confirm(
+        'You have unsaved changes on this pickup. Are you sure you want to exit?'
+      )
     } else return true
   }
 
