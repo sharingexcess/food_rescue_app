@@ -21,12 +21,7 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react'
-import {
-  useRescueContext,
-  PickupFooter,
-  PickupHeader,
-  CardOverlay,
-} from 'chakra_components'
+import { useRescueContext, CardOverlay } from 'chakra_components'
 import {
   createTimestamp,
   FOOD_CATEGORIES,
@@ -89,7 +84,7 @@ function DeliveryHeader() {
   return (
     <>
       <Heading as="h2" mb="6" size="2xl">
-        Pickup
+        Delivery
       </Heading>
       <Heading as="h4" size="md" fontWeight="600">
         {delivery.organization.name}
@@ -178,7 +173,7 @@ function DeliveryHeader() {
           flexGrow={1}
           leftIcon={<WarningIcon />}
         >
-          Cancel Pickup
+          Cancel Delivery
         </Button>
       </Flex>
       <Divider pt={4} />
@@ -229,21 +224,20 @@ function DeliveryFooter() {
 
   return (
     <Flex direction="column" w="100%">
-      <NoteInput />
       <Button
         size="lg"
         w="100%"
-        disabled={total < 1 || isSubmitting || !isChanged}
+        disabled={total < 1 || isSubmitting}
         onClick={handleSubmit}
       >
         {isSubmitting ? (
           <>
-            Updating Pickup
+            Updating Delivery
             <Ellipsis />
           </>
         ) : (
           <>
-            {delivery.status === 'completed' ? 'Update' : 'Complete'} Pickup
+            {delivery.status === 'completed' ? 'Update' : 'Complete'} Delivery
             {total ? ` (${total} lbs.)` : ''}
           </>
         )}

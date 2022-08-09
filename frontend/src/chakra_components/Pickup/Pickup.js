@@ -334,7 +334,7 @@ function EntryRowInput() {
   )
 }
 
-function NoteInput() {
+export function NoteInput() {
   const { openStop } = useRescueContext()
   const { notes, session_storage_key, entryRows, setNotes } = usePickupContext()
 
