@@ -7,7 +7,6 @@ import {
   Heading,
   IconButton,
   Link,
-  Link,
   Text,
   Collapse,
 } from '@chakra-ui/react'
@@ -185,7 +184,7 @@ function InactiveStop({ stop }) {
   )
 }
 
-export export function MapButton({ location, link, link }) {
+export function MapButton({ location, link }) {
   const { address1, address2, city, state, zip } = location
 
   return (
@@ -196,7 +195,6 @@ export export function MapButton({ location, link, link }) {
       {link}
     </a>
   )
-}
 }
 
 export function LocationAddress({ location }) {
