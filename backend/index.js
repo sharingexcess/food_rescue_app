@@ -24,10 +24,12 @@ exports.backup_data_to_storage = functions
 
 exports.cache_retool_data = functions
   .runWith({
-    timeoutSeconds: 15,
-    memory: '8GB',
+    timeoutSeconds: 540,
+    memory: '4GB',
   })
-  .https.onRequest(cache_retool_data)
+  .pubsub.schedule('01 0 * * *') // run every day at 12:01am (00:01)
+  .timeZone('America/New_York')
+  .onRun(cache_retool_data)
 
 // Database Trigger version to calculate distance ***** UNTESTED *****
 // exports.rescueOnWrite = functions.firestore
