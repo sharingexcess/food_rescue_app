@@ -38,6 +38,7 @@ import {
 import {
   Rescues as ChakraRescues,
   Rescue as ChakraRescue,
+  CreateRescue as ChakraCreateRescue,
   ChakraTest,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
@@ -391,6 +392,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraRescue />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/create-rescue"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraCreateRescue />
                           </PublicChakraRoute>
                         }
                       />

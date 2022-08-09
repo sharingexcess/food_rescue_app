@@ -65,7 +65,7 @@ const semanticTokens = {
       _light: 'se.blue.100',
     },
     'yellow.primary': {
-      _dark: 'se.yellow.200',
+      _dark: 'se.yellow.100',
       _light: 'se.yellow.500',
     },
     'yellow.secondary': {

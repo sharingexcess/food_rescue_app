@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, Heading } from '@chakra-ui/react'
 import { useApi } from 'hooks'
 import { useParams } from 'react-router-dom'
 import { createContext, useContext, useMemo, useState } from 'react'
@@ -47,6 +47,16 @@ export function Rescue() {
         ]}
       >
         <RescueContext.Provider value={contextValue}>
+          <Heading
+            as="h1"
+            fontWeight="700"
+            size="2xl"
+            mb="24px"
+            textTransform="capitalize"
+            color="element.primary"
+          >
+            {rescue.status} Rescue
+          </Heading>
           <Flex direction="column" w="100%">
             <RescueHeader />
             <RescueStops />

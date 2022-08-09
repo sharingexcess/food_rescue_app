@@ -63,7 +63,7 @@ export function CardOverlay({
     <Modal isOpen={open} onClose={closeWithAnimation}>
       <ModalOverlay />
 
-      <ModalContent>
+      <ModalContent bg="surface.card">
         <ModalCloseButton />
 
         <ModalHeader pt="8">

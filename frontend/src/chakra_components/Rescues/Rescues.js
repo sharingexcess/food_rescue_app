@@ -4,57 +4,24 @@ import {
   Button,
   Flex,
   Heading,
+  IconButton,
   Input,
   Select,
   Tag,
   Text,
-  useColorModeValue,
+  Link,
 } from '@chakra-ui/react'
-import axios from 'axios'
-import { useApi, useAuth, useFirestore, useIsMobile } from 'hooks'
-import { API_ENDPOINTS, formatTimestamp, SE_API, STATUSES } from 'helpers'
-import { Link, useNavigate } from 'react-router-dom'
+import { useApi, useAuth, useIsMobile } from 'hooks'
+import { formatTimestamp, STATUSES } from 'helpers'
 import { useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Page, Autocomplete } from 'chakra_components'
 import moment from 'moment'
 import './Rescues.scss'
+import { AddIcon } from '@chakra-ui/icons'
 
 export function Rescues() {
   const { admin, user } = useAuth()
   const url_params = new URLSearchParams(window.location.search)
-  // const handlers = useFirestore('users')
-  // const navigate = useNavigate()
-  // console.log('status:', url_params.get('status'))
-
-  // const query = useQuery(['rescues'], async () => {
-  //   const token = await user.accessToken
-  //   if (!token) {
-  //     console.log('no access token')
-  //     return
-  //   }
-  //   console.log('running fetch', `${API_URL}/rescues?limit=5&status=scheduled`)
-  //   const res = await axios.get(`${API_URL}/rescues?limit=5&status=scheduled`)
-  //   console.log(res)
-  //   return res
-  // })
-
-  // FROM OLD RESCUES
-
-  // console.log(query)
-
-  // const { data, refetch } = query
-
-  // useEffect(() => {
-  //   // const params = new URLSearchParams({ status, limit })
-  //   // navigate('/chakra/rescues?' + params.toString(), undefined, {
-  //   //   shallow: true,
-  //   // })
-  //   console.log('refetching')
-  //   refetch()
-  // }, [status, user])
-
-  // FROM OLD RESCUES
   const [state, setState] = useState({
     status: url_params.get('status') || STATUSES.SCHEDULED,
     handler_id: admin ? url_params.get('handler_id') || '' : user.id, // ensure that non-admins can't fetch data by transforming the url
@@ -87,10 +54,7 @@ export function Rescues() {
     [date, handler, status]
   )
 
-  const { data, loading, loadMore, refresh, error } = useApi(
-    '/rescues',
-    api_params
-  )
+  const { data } = useApi('/rescues', api_params)
 
   const { data: handlers } = useApi('/users')
 
@@ -123,6 +87,21 @@ export function Rescues() {
       title="Rescues"
       breadcrumbs={[{ label: 'Rescues', link: '/chakra/rescues' }]}
     >
+      <Flex justify="space-between" w="100%">
+        <Heading
+          as="h1"
+          fontWeight="700"
+          size="2xl"
+          mb="24px"
+          textTransform="capitalize"
+          color="element.primary"
+        >
+          Rescues
+        </Heading>
+        <Link href="/chakra/create-rescue">
+          <IconButton icon={<AddIcon />} borderRadius="3xl" />
+        </Link>
+      </Flex>
       <Flex
         justify="space-between"
         id="RescuesHeaderBox"
@@ -159,7 +138,7 @@ export function Rescues() {
 
 function RescueCard({ rescue }) {
   return (
-    <Link to={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
+    <Link href={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
       <Box
         my={6}
         boxShadow="default"

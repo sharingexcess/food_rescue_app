@@ -30,9 +30,11 @@ export function Page({ id, title, children, breadcrumbs }) {
         id={id}
         className="se-page"
         w="100%"
+        h="100vh"
         bg="surface.background"
       >
         <Helmet>
+          <title>{title} | SE Food Rescue</title>
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content={colorMode === 'dark' ? 'black-translucent' : 'default'}
@@ -46,24 +48,14 @@ export function Page({ id, title, children, breadcrumbs }) {
           w={isMobile ? '100%' : 'calc(100% - 424px)'}
           maxW="720"
           overflow="visible"
-          overflowY="scroll"
           pt="112px"
           pb="32px"
           mx="auto"
           ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
           px="4"
+          minH="100%"
         >
           <PullToRefresh onRefresh={() => window.location.reload()}>
-            <Heading
-              as="h1"
-              fontWeight="700"
-              size="2xl"
-              mb="24px"
-              textTransform="capitalize"
-              color="element.primary"
-            >
-              {title}
-            </Heading>
             {children}
           </PullToRefresh>
         </Box>
