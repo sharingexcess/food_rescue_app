@@ -70,7 +70,12 @@ function SelectedToggle({ open, onClick }) {
       variant="tertiary"
       color="element.tertiary"
       icon={
-        open ? <ChevronUpIcon h={8} w={8} /> : <ChevronDownIcon h={8} w={8} />
+        <ChevronUpIcon
+          h={8}
+          w={8}
+          transform={`rotate(${open ? '-180deg' : '0deg'})`}
+          transition="transform 0.3s ease"
+        />
       }
       onClick={onClick}
     />
@@ -146,7 +151,11 @@ function StopButtonsBox({ stop }) {
 function InactiveStop({ stop }) {
   // const { expandedStop, setExpandedStop } = useRescueContext()
   const [isExpanded, setIsExpanded] = useState()
-  // const isExpanded = expandedStop?.id === stop.id
+
+  function toggleIsExpanded() {
+    setIsExpanded(!isExpanded)
+  }
+
   return (
     <Box px="4" my="3">
       <Flex justify={'space-between'} align="center">
@@ -161,12 +170,7 @@ function InactiveStop({ stop }) {
         >
           {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
         </Heading>
-        <SelectedToggle
-          open={isExpanded}
-          onClick={() =>
-            isExpanded ? setIsExpanded(false) : setIsExpanded(true)
-          }
-        />
+        <SelectedToggle open={isExpanded} onClick={toggleIsExpanded} />
       </Flex>
 
       <Heading as="h3" size="md" fontWeight="600" color="element.primary">

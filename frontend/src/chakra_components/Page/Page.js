@@ -48,6 +48,7 @@ export function Page({ id, title, children, breadcrumbs }) {
           overflow="visible"
           overflowY="scroll"
           pt="112px"
+          pb="32px"
           mx="auto"
           ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
           px="4"

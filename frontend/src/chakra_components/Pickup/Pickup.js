@@ -16,8 +16,7 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react'
-import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
-import { useRescueContext } from 'chakra_components/Rescue/Rescue'
+import { CardOverlay, useRescueContext } from 'chakra_components'
 import {
   createTimestamp,
   FOOD_CATEGORIES,
@@ -28,7 +27,6 @@ import {
 } from 'helpers'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
-import { LocationAddress } from 'chakra_components/Rescue/Rescue.children'
 
 const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
@@ -68,16 +66,20 @@ export function Pickup({ pickup }) {
   }, [pickup])
 
   function handleClosePickup() {
+    window.sessionStorage.removeItem(session_storage_key)
+    setOpenStop(null)
+  }
+
+  function verifyClose() {
     if (isChanged) {
       if (
         window.confirm(
           'You have unsaved changes on this pickup. Are you sure you want to exit?'
         )
       ) {
-        window.sessionStorage.removeItem(session_storage_key)
-        setOpenStop(null)
-      } else return
-    } else setOpenStop(null)
+        return true
+      } else return false
+    } else return true
   }
 
   const pickupContextValue = {
@@ -94,7 +96,8 @@ export function Pickup({ pickup }) {
     <PickupContext.Provider value={pickupContextValue}>
       <CardOverlay
         isOpen={!!pickup}
-        handleClose={handleClosePickup}
+        closeHandler={handleClosePickup}
+        preCloseHandler={verifyClose}
         CardHeader={PickupHeader}
         CardBody={PickupBody}
         CardFooter={PickupFooter}
