@@ -3,6 +3,9 @@ exports.app = admin.initializeApp()
 exports.db = admin.firestore()
 const moment = require('moment-timezone')
 const fetch = require('node-fetch')
+const { google } = require('googleapis')
+const fs = require('fs')
+const { Console } = require('console')
 
 exports.recalculateRescue = async id => {
   let rescue
@@ -226,4 +229,21 @@ exports.formatLocationAsAddressString = location => {
   return `${location.address1}${
     location.address2 ? ' ' + location.address2 : ''
   }, ${location.city}, ${location.state}, ${location.zip}`
+}
+
+exports.getRetoolCachedData = async (path, destination) => {
+  console.log(`Grabbing ${path} from Storage`)
+
+  const bucket = admin.storage().bucket()
+  const file = await bucket.file(path)
+
+  await file.download({ destination: destination })
+  console.log(`File created with ${path} contents at ${destination}`)
+
+  return JSON.parse(fs.readFileSync(destination, 'utf8'))
+}
+
+exports.deleteFile = async destination => {
+  fs.unlinkSync(destination)
+  console.log('File Deleted:', destination)
 }

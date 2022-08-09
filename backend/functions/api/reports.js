@@ -2,7 +2,6 @@ const {
   db,
   authenticateRequest,
   rejectUnauthorizedRequest,
-  DONOR_SUB_TYPES,
   fetchCollection,
 } = require('../../helpers')
 

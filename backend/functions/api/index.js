@@ -41,6 +41,8 @@ api.post('/rescues/:id/create', (req, res) =>
   loadEndpoint('createRescue', req, res)
 )
 
+api.get('/getCachedData', (req, res) => loadEndpoint('getCachedData', req, res))
+
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
   const module = require(`./${name}`)
