@@ -35,7 +35,7 @@ export function CardOverlay({
     // if there's a close handler, only close if it evaluates true
     if (!preCloseHandler || preCloseHandler()) {
       setOpen(false)
-      setTimeout(closeHandler, 2000)
+      setTimeout(closeHandler, 200)
     } else return
   }
 
