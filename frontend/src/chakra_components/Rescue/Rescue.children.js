@@ -112,11 +112,12 @@ function StopButtonsBox({ stop }) {
             stop.location.zip
           )}
           isExternal
+          flexGrow={1}
           textDecoration="none !important"
         >
           <Button
             size="sm"
-            flexGrow={1}
+            width="100%"
             variant={isActive ? 'secondary' : 'tertiary'}
             leftIcon={<ExternalLinkIcon />}
           >
