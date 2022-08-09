@@ -5,7 +5,7 @@ import { SE_COLORS } from './colors'
 const styles = {
   global: props => ({
     'html, body': {
-      bg: props.colorMode === 'dark' ? '#212429' : '#F9FAFC',
+      bg: 'surface.background',
     },
   }),
 }
@@ -142,30 +142,47 @@ const theme = extendTheme({
           },
         }),
         secondary: props => ({
-          color: 'se.brand.primary',
-          border: '1px solid',
-          borderColor: 'se.brand.green',
+          bg: 'green.secondary',
+          color: 'green.primary',
+          fontWeight: 'medium',
           _hover: {
-            color:
-              props.colorMode === 'dark'
-                ? whiten('se.brand.primary', 20)
-                : darken('se.brand.primary', 10),
-            borderColor:
-              props.colorMode === 'dark'
-                ? whiten('se.brand.primary', 20)
-                : darken('se.brand.primary', 10),
             _disabled: {
-              color: 'element.disabled',
-              borderColor: 'element.disabled',
-              opacity: 1,
+              bg: 'green.secondary',
+              color: 'green.primary',
+              opacity: 0.5,
             },
           },
           _disabled: {
-            color: 'element.disabled',
-            borderColor: 'element.disabled',
-            opacity: 1,
+            bg: 'green.secondary',
+            color: 'green.primary',
+            opacity: 0.5,
           },
         }),
+        // secondary: props => ({
+        //   color: 'se.brand.primary',
+        //   border: '1px solid',
+        //   borderColor: 'se.brand.green',
+        //   _hover: {
+        //     color:
+        //       props.colorMode === 'dark'
+        //         ? whiten('se.brand.primary', 20)
+        //         : darken('se.brand.primary', 10),
+        //     borderColor:
+        //       props.colorMode === 'dark'
+        //         ? whiten('se.brand.primary', 20)
+        //         : darken('se.brand.primary', 10),
+        //     _disabled: {
+        //       color: 'element.disabled',
+        //       borderColor: 'element.disabled',
+        //       opacity: 1,
+        //     },
+        //   },
+        //   _disabled: {
+        //     color: 'element.disabled',
+        //     borderColor: 'element.disabled',
+        //     opacity: 1,
+        //   },
+        // }),
         tertiary: props => ({
           color: 'se.brand.primary',
           textDecoration: 'underline',

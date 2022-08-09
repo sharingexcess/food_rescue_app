@@ -229,7 +229,7 @@ function CardTags({ rescue }) {
 function StatusSelect({ status, setStatus }) {
   return (
     <Select
-      variant="outline"
+      variant="flushed"
       onChange={e => setStatus(e.target.value)}
       value={status}
       flexBasis={['100%', '100%', '180px', '180px', '180px']}

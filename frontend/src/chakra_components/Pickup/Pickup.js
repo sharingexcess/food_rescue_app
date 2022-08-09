@@ -1,4 +1,10 @@
-import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
+import {
+  CheckIcon,
+  DeleteIcon,
+  ExternalLinkIcon,
+  PhoneIcon,
+  WarningIcon,
+} from '@chakra-ui/icons'
 import {
   Button,
   Divider,
@@ -32,8 +38,6 @@ export function Pickup({ pickup }) {
   const { setOpenStop } = useRescueContext()
   const [entryRows, setEntryRows] = useState([])
   const [notes, setNotes] = useState('')
-  const [category, setCategory] = useState('')
-  const [weight, setWeight] = useState('')
 
   const session_storage_key = useMemo(
     () => (pickup ? `pickup_cache_${pickup.id}` : undefined),
@@ -84,10 +88,6 @@ export function Pickup({ pickup }) {
     setNotes,
     session_storage_key,
     isChanged,
-    category,
-    setCategory,
-    weight,
-    setWeight,
   }
 
   return (
@@ -106,11 +106,11 @@ export function Pickup({ pickup }) {
 export function PickupHeader() {
   const { openStop, refresh, setOpenStop } = useRescueContext()
   const { pickup } = usePickupContext()
-  const capitalizedStatus =
-    openStop.status.charAt(0).toUpperCase() + openStop.status.slice(1)
 
   async function handleCancel() {
-    let reason = window.prompt('Why do you want to cancel?')
+    const reason = window.prompt(
+      'Let us know why you need to cancel this pickup.\n\nNote: cancelling a pickup cannot be undone.\n'
+    )
     if (reason) {
       await SE_API.post(`/rescues/${openStop.id}/pickup/${pickup.id}/cancel`, {
         status: STATUSES.CANCELLED,
@@ -122,13 +122,17 @@ export function PickupHeader() {
   }
   return (
     <>
-      <Heading as="h2" pb={8}>
-        {capitalizedStatus} Pickup
+      <Heading as="h2" mb="6" size="2xl">
+        Pickup
       </Heading>
-      <Text>{pickup.organization.name}</Text>
-      <Text fontSize="sm" fontWeight={200} color="element.secondary" pb={2}>
-        {pickup.location.nickname || pickup.location.address1}
-      </Text>
+      <Heading as="h4" size="md" fontWeight="600">
+        {pickup.organization.name}
+      </Heading>
+      {pickup.location.nickname && (
+        <Text fontSize="sm" fontWeight={300} color="element.secondary">
+          {pickup.location.nickname}
+        </Text>
+      )}
       <Link
         href={generateDirectionsLink(
           pickup.location.address1,
@@ -138,33 +142,39 @@ export function PickupHeader() {
         )}
         isExternal
       >
-        <LocationAddress location={pickup.location} />
-      </Link>
-      <Text
-        fontSize="xs"
-        fontWeight="light"
-        color="element.secondary"
-        mb="6"
-        pt={4}
-      >
-        <Text as="span" fontWeight="bold">
-          Instructions:{' '}
+        <Text
+          fontSize="sm"
+          fontWeight={300}
+          color="element.active"
+          textDecoration="underline"
+          mb="4"
+        >
+          {pickup.location.address1}, {pickup.location.city},{' '}
+          {pickup.location.state} {pickup.location.zip}
         </Text>
-        {pickup.location.notes}
-      </Text>
-      <Flex justify="space-between" gap={4}>
+      </Link>
+      {pickup.location.notes && (
+        <Text fontSize="xs" fontWeight="light" color="element.secondary" mb="4">
+          <Text as="span" fontWeight="bold">
+            Instructions:{' '}
+          </Text>
+          {pickup.location.notes}
+        </Text>
+      )}
+      <Flex justify="space-between" gap={2}>
         <Button
           size="sm"
           flexGrow={1}
           variant="secondary"
           disabled={!pickup.location.contact_phone}
+          leftIcon={<PhoneIcon />}
         >
           {pickup.location.contact_phone ? (
             <a href={`tel:+${pickup.location.contact_phone}`}>
               {formatPhoneNumber(pickup.location.contact_phone)}
             </a>
           ) : (
-            'No phone #'
+            'No Phone'
           )}
         </Button>
 
@@ -177,21 +187,30 @@ export function PickupHeader() {
           )}
           isExternal
           textDecoration="none !important"
+          flexGrow={1}
         >
-          <Button size="sm" flexGrow={1} variant="secondary">
+          <Button
+            size="sm"
+            w="100%"
+            variant="secondary"
+            leftIcon={<ExternalLinkIcon />}
+          >
             Map
           </Button>
         </Link>
 
         <Button
           size="sm"
-          variant="tertiary"
+          variant="secondary"
           disabled={
             openStop.status === STATUSES.CANCELLED ||
             openStop.status === STATUSES.COMPLETED
           }
-          color="element.error"
+          color="yellow.primary"
+          bg="yellow.secondary"
           onClick={handleCancel}
+          flexGrow={1}
+          leftIcon={<WarningIcon />}
         >
           Cancel Pickup
         </Button>
@@ -201,38 +220,25 @@ export function PickupHeader() {
   )
 }
 
-function addEntryRow() {
-  const updatedEntryRows = [...entryRows, { category, weight }]
-  setEntryRows(updatedEntryRows)
-  session_storage_key &&
-    sessionStorage.setItem(
-      session_storage_key,
-      JSON.stringify({
-        sessionEntryRows: updatedEntryRows,
-        sessionNotes: notes,
-      })
-    )
-  setCategory('')
-  setWeight('')
-}
-
-function removeEntryRow(index) {
-  if (window.confirm('Are you sure you want to remove this row?')) {
-    const filtered = [...entryRows]
-    filtered.splice(index, 1)
-    setEntryRows(filtered)
-    session_storage_key &&
-      sessionStorage.setItem(
-        session_storage_key,
-        JSON.stringify({
-          sessionEntryRows: filtered,
-          sessionNotes: notes,
-        })
-      )
-  }
-}
-
 function SubmittedEntryRows({ entryRows }) {
+  const { setEntryRows, session_storage_key, notes } = usePickupContext()
+
+  function removeEntryRow(index) {
+    if (window.confirm('Are you sure you want to remove this row?')) {
+      const filtered = [...entryRows]
+      filtered.splice(index, 1)
+      setEntryRows(filtered)
+      session_storage_key &&
+        sessionStorage.setItem(
+          session_storage_key,
+          JSON.stringify({
+            sessionEntryRows: filtered,
+            sessionNotes: notes,
+          })
+        )
+    }
+  }
+
   return (
     <>
       {entryRows.map((row, i) => (
@@ -258,9 +264,29 @@ function SubmittedEntryRows({ entryRows }) {
 }
 
 function EntryRowInput() {
-  const { category, weight, setWeight } = usePickupContext()
+  const { entryRows, setEntryRows, session_storage_key, notes } =
+    usePickupContext()
+  const [category, setCategory] = useState('')
+  const [weight, setWeight] = useState('')
+
+  function addEntryRow() {
+    const updatedEntryRows = [...entryRows, { category, weight }]
+    setEntryRows(updatedEntryRows)
+
+    sessionStorage.setItem(
+      session_storage_key,
+      JSON.stringify({
+        sessionEntryRows: updatedEntryRows,
+        sessionNotes: notes,
+      })
+    )
+
+    setCategory('')
+    setWeight('')
+  }
+
   return (
-    <Flex py="4">
+    <Flex mb="6">
       <Select
         size="sm"
         color="element.secondary"
@@ -307,24 +333,7 @@ function EntryRowInput() {
 
 function NoteInput() {
   const { openStop } = useRescueContext()
-  const { notes } = usePickupContext()
-  return (
-    <Input
-      size="sm"
-      color="element.secondary"
-      value={notes || ''}
-      placeholder="Notes..."
-      variant="flushed"
-      readOnly={openStop.status === STATUSES.CANCELLED}
-      onChange={e => handleNotesChange(e.target.value)}
-    />
-  )
-}
-
-function PickupBody() {
-  const { entryRows, setEntryRows, notes, setNotes, session_storage_key } =
-    usePickupContext()
-  const { openStop } = useRescueContext()
+  const { notes, session_storage_key, entryRows, setNotes } = usePickupContext()
 
   function handleNotesChange(value) {
     setNotes(value)
@@ -339,10 +348,27 @@ function PickupBody() {
   }
 
   return (
+    <Input
+      size="sm"
+      color="element.secondary"
+      value={notes || ''}
+      placeholder="Notes..."
+      variant="flushed"
+      readOnly={openStop.status === STATUSES.CANCELLED}
+      onChange={e => handleNotesChange(e.target.value)}
+      mb="4"
+    />
+  )
+}
+
+function PickupBody() {
+  const { entryRows } = usePickupContext()
+  const { openStop } = useRescueContext()
+
+  return (
     <Flex direction="column">
       <SubmittedEntryRows entryRows={entryRows} />
       {openStop.status !== STATUSES.CANCELLED && <EntryRowInput />}
-      <NoteInput />
     </Flex>
   )
 }
@@ -381,23 +407,26 @@ export function PickupFooter() {
   }
 
   return (
-    <Button
-      size="lg"
-      w="100%"
-      disabled={total < 1 || isSubmitting || !isChanged}
-      onClick={handleSubmit}
-    >
-      {isSubmitting ? (
-        <>
-          Updating Pickup
-          <Ellipsis />
-        </>
-      ) : (
-        <>
-          {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
-          {total ? ` (${total} lbs.)` : ''}
-        </>
-      )}
-    </Button>
+    <Flex direction="column" w="100%">
+      <NoteInput />
+      <Button
+        size="lg"
+        w="100%"
+        disabled={total < 1 || isSubmitting || !isChanged}
+        onClick={handleSubmit}
+      >
+        {isSubmitting ? (
+          <>
+            Updating Pickup
+            <Ellipsis />
+          </>
+        ) : (
+          <>
+            {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
+            {total ? ` (${total} lbs.)` : ''}
+          </>
+        )}
+      </Button>
+    </Flex>
   )
 }

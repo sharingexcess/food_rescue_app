@@ -73,20 +73,20 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // handle installed on home screen
-let debounce
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  window.scrollTo({ top: 54, behavior: 'smooth' })
+// let debounce
+// if (window.matchMedia('(display-mode: standalone)').matches) {
+//   window.scrollTo({ top: 54, behavior: 'smooth' })
 
-  window.addEventListener('scroll', () => {
-    if (window.scrollY < 54) {
-      if (debounce) window.clearTimeout(debounce)
-      debounce = window.setTimeout(
-        () => window.scrollTo({ top: 54, behavior: 'smooth' }),
-        50
-      )
-    }
-  })
-}
+//   window.addEventListener('scroll', () => {
+//     if (window.scrollY < 54) {
+//       if (debounce) window.clearTimeout(debounce)
+//       debounce = window.setTimeout(
+//         () => window.scrollTo({ top: 54, behavior: 'smooth' }),
+//         50
+//       )
+//     }
+//   })
+// }
 
 function PublicRoute({ children }) {
   return (

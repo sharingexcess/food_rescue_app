@@ -7,16 +7,25 @@ import {
   Heading,
   IconButton,
   Link,
+  Link,
   Text,
   Collapse,
 } from '@chakra-ui/react'
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  EditIcon,
+  ExternalLinkIcon,
+  InfoIcon,
+  PhoneIcon,
+} from '@chakra-ui/icons'
 import {
   formatTimestamp,
   generateDirectionsLink,
   formatPhoneNumber,
 } from 'helpers'
 import { useRescueContext } from './Rescue'
+import { useState } from 'react'
 
 export function RescueHeader() {
   const { rescue } = useRescueContext()
@@ -72,15 +81,7 @@ function SelectedToggle({ open, onClick }) {
 function StopButtonsBox({ stop }) {
   const { setOpenStop, activeStop } = useRescueContext()
   const isActive = stop.id === activeStop?.id
-  /* <Link
-        href={generateDirectionsLink(
-          pickup.location.address1,
-          pickup.location.city,
-          pickup.location.state,
-          pickup.location.zip
-        )}
-        isExternal
-      >*/
+
   return (
     <>
       <Flex justify="space-between" mb="4" gap="2">
@@ -89,13 +90,14 @@ function StopButtonsBox({ stop }) {
           disabled={!stop.location.contact_phone}
           size="sm"
           flexGrow="1"
+          leftIcon={<PhoneIcon />}
         >
           {stop.location.contact_phone ? (
             <a href={`tel:+${stop.location.contact_phone}`}>
               {formatPhoneNumber(stop.location.contact_phone)}
             </a>
           ) : (
-            'No Phone #'
+            'No Phone'
           )}
         </Button>
         <Link
@@ -108,7 +110,12 @@ function StopButtonsBox({ stop }) {
           isExternal
           textDecoration="none !important"
         >
-          <Button size="sm" flexGrow={1} variant="secondary">
+          <Button
+            size="sm"
+            flexGrow={1}
+            variant={isActive ? 'secondary' : 'tertiary'}
+            leftIcon={<ExternalLinkIcon />}
+          >
             Map
           </Button>
         </Link>
@@ -117,8 +124,9 @@ function StopButtonsBox({ stop }) {
           size="sm"
           flexGrow="1"
           onClick={() => setOpenStop(stop)}
+          leftIcon={<InfoIcon />}
         >
-          Show Instructions
+          Instructions
         </Button>
       </Flex>
       <Button
@@ -128,6 +136,7 @@ function StopButtonsBox({ stop }) {
         textTransform="capitalize"
         mb="2"
         onClick={() => setOpenStop(stop)}
+        leftIcon={<EditIcon />}
       >
         Open {stop.type}
       </Button>
@@ -136,16 +145,17 @@ function StopButtonsBox({ stop }) {
 }
 
 function InactiveStop({ stop }) {
-  const { expandedStop, setExpandedStop } = useRescueContext()
-  const isExpanded = expandedStop?.id === stop.id
+  // const { expandedStop, setExpandedStop } = useRescueContext()
+  const [isExpanded, setIsExpanded] = useState()
+  // const isExpanded = expandedStop?.id === stop.id
   return (
     <Box px="4" my="3">
       <Flex justify={'space-between'} align="center">
         <Heading
           as="h6"
-          fontWeight="700"
+          fontWeight="600"
           letterSpacing={1}
-          fontSize="md"
+          fontSize="sm"
           color="element.tertiary"
           textTransform="uppercase"
           py="2"
@@ -155,15 +165,15 @@ function InactiveStop({ stop }) {
         <SelectedToggle
           open={isExpanded}
           onClick={() =>
-            isExpanded ? setExpandedStop(null) : setExpandedStop(stop)
+            isExpanded ? setIsExpanded(false) : setIsExpanded(true)
           }
         />
       </Flex>
 
-      <Heading as="h3" size="md" fontWeight="600">
+      <Heading as="h3" size="md" fontWeight="600" color="element.primary">
         {stop.organization.name}
       </Heading>
-      <Text as="p" fontWeight="200">
+      <Text as="p" fontWeight="300" color="element.secondary">
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h={4} />
@@ -175,7 +185,7 @@ function InactiveStop({ stop }) {
   )
 }
 
-export function MapButton({ location, link }) {
+export export function MapButton({ location, link, link }) {
   const { address1, address2, city, state, zip } = location
 
   return (
@@ -187,18 +197,18 @@ export function MapButton({ location, link }) {
     </a>
   )
 }
+}
 
 export function LocationAddress({ location }) {
   return (
     <Text
       fontSize="sm"
-      fontWeight={500}
+      fontWeight={300}
       color="element.active"
       textDecoration="underline"
+      mb="4"
     >
-      {location.address1}
-      <br />
-      {location.city}, {location.state} {location.zip}
+      {location.address1}, {location.city}, {location.state} {location.zip}
     </Text>
   )
 }
@@ -215,9 +225,9 @@ function ActiveStop({ stop }) {
     >
       <Heading
         as="h6"
-        fontWeight="700"
+        fontWeight="600"
         letterSpacing={1}
-        fontSize="md"
+        fontSize="sm"
         color="se.brand.primary"
         textTransform="uppercase"
         py="2"
@@ -227,7 +237,7 @@ function ActiveStop({ stop }) {
       <Heading as="h3" size="md" fontWeight="600" color="element.primary">
         {stop.organization.name}
       </Heading>
-      <Text as="p" fontWeight="200" color="element.secondary">
+      <Text as="p" fontWeight="300" color="element.secondary">
         {stop.location.nickname || stop.location.address1}
       </Text>
       <Box h="4" />

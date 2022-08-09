@@ -6,6 +6,7 @@ import {
   BreadcrumbLink,
   Flex,
   Heading,
+  useColorMode,
   useDisclosure,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
@@ -13,9 +14,12 @@ import { Menu } from '../'
 import { useIsMobile, useAuth } from 'hooks'
 import { Auth } from 'contexts'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
+import PullToRefresh from 'react-simple-pull-to-refresh'
 
 export function Page({ id, title, children, breadcrumbs }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { colorMode } = useColorMode()
 
   return (
     <Auth>
@@ -27,6 +31,12 @@ export function Page({ id, title, children, breadcrumbs }) {
         p={['16px', '18px', '24px', '32px', '48px']}
         bg="surface.background"
       >
+        <Helmet>
+          <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content={colorMode === 'dark' ? 'black-translucent' : 'default'}
+          />
+        </Helmet>
         <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
         <Flex h="calc(100% - 80px)" w="100%" justify="center">
           <Menu isOpen={isOpen} onClose={onClose} />
@@ -38,17 +48,19 @@ export function Page({ id, title, children, breadcrumbs }) {
             pb="4"
             overflow="visible"
           >
-            <Heading
-              as="h1"
-              fontWeight="700"
-              size="2xl"
-              mb="24px"
-              textTransform="capitalize"
-              color="element.primary"
-            >
-              {title}
-            </Heading>
-            {children}
+            <PullToRefresh onRefresh={() => window.location.reload()}>
+              <Heading
+                as="h1"
+                fontWeight="700"
+                size="2xl"
+                mb="24px"
+                textTransform="capitalize"
+                color="element.primary"
+              >
+                {title}
+              </Heading>
+              {children}
+            </PullToRefresh>
           </Box>
         </Flex>
       </Box>
@@ -58,6 +70,7 @@ export function Page({ id, title, children, breadcrumbs }) {
 
 function PageHead({ breadcrumbs, openMenu }) {
   const isMobile = useIsMobile()
+
   return (
     <Flex
       as="header"

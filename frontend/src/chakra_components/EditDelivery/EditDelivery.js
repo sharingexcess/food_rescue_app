@@ -5,9 +5,12 @@ import {
   SliderThumb,
   SliderMark,
 } from '@chakra-ui/react'
-import { CardOverlay } from 'chakra_components/CardOverlay/CardOverlay'
-import { PickupFooter, PickupHeader } from 'chakra_components/Pickup/Pickup'
-import { useRescueContext } from 'chakra_components/Rescue/Rescue'
+import {
+  useRescueContext,
+  PickupFooter,
+  PickupHeader,
+  CardOverlay,
+} from 'chakra_components'
 import { useApi } from 'hooks'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -24,7 +27,7 @@ export function EditDelivery({ stop }) {
         isOpen={!!stop}
         handleClose={() => setOpenStop(null)}
         CardHeader={PickupHeader}
-        // CardBody={PickupBody}
+        CardBody={EditDeliveryBody}
         CardFooter={PickupFooter}
       />
     </StopContext.Provider>
