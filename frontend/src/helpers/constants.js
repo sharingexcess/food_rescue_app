@@ -20,7 +20,7 @@ export const IS_DEV_ENVIRONMENT = process.env.REACT_APP_FIREBASE_ENV === 'dev'
 export const IS_PWA = window.matchMedia('(display-mode: standalone)').matches
 
 // 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
-export const MOBILE_THRESHOLD = 600
+export const MOBILE_THRESHOLD = 992
 
 export const FORMSPREE_FORM_ID = 'xlezdgjl'
 

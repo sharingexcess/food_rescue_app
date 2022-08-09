@@ -8,18 +8,20 @@ import {
   Heading,
   useColorMode,
   useDisclosure,
+  Link,
+  Image,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Menu } from '../'
 import { useIsMobile, useAuth } from 'hooks'
 import { Auth } from 'contexts'
-import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
 
 export function Page({ id, title, children, breadcrumbs }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode } = useColorMode()
+  const isMobile = useIsMobile()
 
   return (
     <Auth>
@@ -28,7 +30,6 @@ export function Page({ id, title, children, breadcrumbs }) {
         id={id}
         className="se-page"
         w="100%"
-        p={['16px', '18px', '24px', '32px', '48px']}
         bg="surface.background"
       >
         <Helmet>
@@ -38,31 +39,33 @@ export function Page({ id, title, children, breadcrumbs }) {
           />
         </Helmet>
         <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
-        <Flex h="calc(100% - 80px)" w="100%" justify="center">
-          <Menu isOpen={isOpen} onClose={onClose} />
-          <Box
-            as="section"
-            className="se-page-content"
-            w="100%"
-            maxW="640"
-            pb="4"
-            overflow="visible"
-          >
-            <PullToRefresh onRefresh={() => window.location.reload()}>
-              <Heading
-                as="h1"
-                fontWeight="700"
-                size="2xl"
-                mb="24px"
-                textTransform="capitalize"
-                color="element.primary"
-              >
-                {title}
-              </Heading>
-              {children}
-            </PullToRefresh>
-          </Box>
-        </Flex>
+        <Menu isOpen={isOpen} onClose={onClose} />
+        <Box
+          as="section"
+          className="se-page-content"
+          w={isMobile ? '100%' : 'calc(100% - 424px)'}
+          maxW="720"
+          overflow="visible"
+          overflowY="scroll"
+          pt="112px"
+          mx="auto"
+          ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
+          px="4"
+        >
+          <PullToRefresh onRefresh={() => window.location.reload()}>
+            <Heading
+              as="h1"
+              fontWeight="700"
+              size="2xl"
+              mb="24px"
+              textTransform="capitalize"
+              color="element.primary"
+            >
+              {title}
+            </Heading>
+            {children}
+          </PullToRefresh>
+        </Box>
       </Box>
     </Auth>
   )
@@ -77,23 +80,34 @@ function PageHead({ breadcrumbs, openMenu }) {
       className="se-page-header"
       align="center"
       justify="start"
-      pb="24px"
-      maxW="984"
-      m="auto"
+      pb="10"
+      w="100%"
+      maxW="1000px"
+      top="0"
+      left={isMobile ? 0 : 'max(32px, calc(50vw - 600px))'}
+      mx="auto"
+      my="0"
+      position="fixed"
+      zIndex="20"
+      bgGradient="linear(to-b, surface.background, transparent)"
+      py={['16px', '16px', '16px', '32px', '32px']}
+      px={['16px', '16px', '16px', '0', '0']}
     >
       <HomeButton />
       <Box w="1" />
       {breadcrumbs && (
-        <Breadcrumb separator={<ChevronRightIcon color="gray.400" />}>
+        <Breadcrumb
+          separator={<ChevronRightIcon color="gray.400" />}
+          fontSize="sm"
+        >
           <BreadcrumbItem m="0" />
           {breadcrumbs.map((crumb, i) => {
-            const isCurrentPage = i === breadcrumbs.length - 1
             return (
-              <BreadcrumbItem m="0" key={i} isCurrentPage={isCurrentPage}>
+              <BreadcrumbItem m="0" key={i}>
                 <BreadcrumbLink
                   href={crumb.link}
-                  fontWeight={isCurrentPage ? 'medium' : 'light'}
-                  textDecoration={isCurrentPage ? 'none' : 'underline'}
+                  fontWeight="light"
+                  textDecoration="underline"
                 >
                   {crumb.label}
                 </BreadcrumbLink>
@@ -109,12 +123,8 @@ function PageHead({ breadcrumbs, openMenu }) {
 
 function HomeButton() {
   return (
-    <Link to="/">
-      <img
-        src="/logo.png"
-        style={{ height: 48, width: 48 }}
-        alt="Sharing Excess Logo"
-      />
+    <Link href="/" flexShrink="0" w="48px" h="48px">
+      <Image src="/logo.png" w="100%" alt="Sharing Excess Logo" />
     </Link>
   )
 }

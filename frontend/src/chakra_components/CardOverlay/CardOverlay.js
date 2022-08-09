@@ -36,11 +36,11 @@ export function CardOverlay({
           <CardHeader />
         </DrawerHeader>
 
-        <DrawerBody py="8">
+        <DrawerBody>
           <CardBody />
         </DrawerBody>
 
-        <DrawerFooter>
+        <DrawerFooter pb="8">
           <CardFooter />
         </DrawerFooter>
       </DrawerContent>

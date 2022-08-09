@@ -45,11 +45,14 @@ export function Menu({ isOpen, onClose }) {
     </Drawer>
   ) : (
     <Flex
+      as="aside"
       direction="column"
+      position="fixed"
+      top="112px"
+      left="max(32px, calc(50vw - 600px))"
       w="280px"
-      h="100%"
+      h="calc(100vh - 144px)"
       p="16px"
-      mr="64px"
       boxShadow="default"
       bg="surface.card"
       borderRadius="xl"

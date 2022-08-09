@@ -286,7 +286,7 @@ function EntryRowInput() {
   }
 
   return (
-    <Flex mb="6">
+    <Flex my="4">
       <Select
         size="sm"
         color="element.secondary"
@@ -352,7 +352,7 @@ function NoteInput() {
       size="sm"
       color="element.secondary"
       value={notes || ''}
-      placeholder="Notes..."
+      placeholder="Add notes to this pickup..."
       variant="flushed"
       readOnly={openStop.status === STATUSES.CANCELLED}
       onChange={e => handleNotesChange(e.target.value)}

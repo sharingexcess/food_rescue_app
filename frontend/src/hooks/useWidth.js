@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 
+let debounce_timer
+
 export function useWidth() {
   const [width, setWidth] = useState(window.innerWidth)
   useEffect(() => {
@@ -8,7 +10,12 @@ export function useWidth() {
   })
 
   function updateWidth() {
-    setWidth(window.innerWidth)
+    if (debounce_timer) {
+      clearTimeout(debounce_timer)
+    }
+    setTimeout(() => {
+      setWidth(window.innerWidth)
+    }, 500)
   }
 
   return width
