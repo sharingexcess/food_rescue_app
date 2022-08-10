@@ -13,10 +13,11 @@ import {
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Menu } from '../'
-import { useIsMobile, useAuth } from 'hooks'
+import { useIsMobile, useAuth, useScroll } from 'hooks'
 import { Auth } from 'contexts'
 import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
+import { useEffect, useState } from 'react'
 
 export function Page({ id, title, children, breadcrumbs }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -66,6 +67,21 @@ export function Page({ id, title, children, breadcrumbs }) {
 
 function PageHead({ breadcrumbs, openMenu }) {
   const isMobile = useIsMobile()
+  const scroll = useScroll()
+  const [prevScroll, setPrevScroll] = useState(scroll)
+  const [position, setPosition] = useState(0)
+
+  useEffect(() => {
+    // handle scroll down
+    if (scroll > prevScroll && scroll > 0) {
+      setPosition(Math.max(-100, position - 20))
+    }
+    // handle scroll up
+    if (scroll < prevScroll && prevScroll - scroll > 5) {
+      setPosition(0)
+    }
+    setPrevScroll(scroll)
+  }, [scroll]) // eslint-disable-line
 
   return (
     <Flex
@@ -75,16 +91,21 @@ function PageHead({ breadcrumbs, openMenu }) {
       justify="start"
       w="100%"
       maxW="1000px"
-      top="0"
+      top={isMobile ? position : 0}
       left={isMobile ? 0 : 'max(32px, calc(50vw - 600px))'}
       mx="auto"
       my="0"
       position="fixed"
       zIndex="20"
-      bgGradient="linear(to-b, surface.background, transparent)"
-      py={['16px', '16px', '16px', '32px', '32px']}
-      // pb={['64px', '64px', '64px', '32px', '32px']}
+      bgGradient={
+        isMobile
+          ? 'linear(to-b, surface.background, surface.background, transparent)'
+          : 'linear(to-b, surface.background, transparent)'
+      }
+      pt={['16px', '16px', '16px', '32px', '32px']}
+      pb={['64px', '64px', '64px', '32px', '32px']}
       px={['16px', '16px', '16px', '0', '0']}
+      transition="top 0.3s ease"
     >
       <HomeButton />
       <Box w="1" />
@@ -96,7 +117,7 @@ function PageHead({ breadcrumbs, openMenu }) {
           py="1"
           pr="4"
         >
-          <Box
+          {/*  <Box
             position="absolute"
             h="100%"
             w="100%"
@@ -107,7 +128,7 @@ function PageHead({ breadcrumbs, openMenu }) {
             zIndex="2"
             borderRadius="2xl"
             blur="px"
-          />
+          /> */}
           <BreadcrumbItem m="0" />
           {breadcrumbs.map((crumb, i) => {
             return (
