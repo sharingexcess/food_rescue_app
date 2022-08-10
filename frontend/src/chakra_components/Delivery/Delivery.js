@@ -79,7 +79,7 @@ export function Delivery({ delivery }) {
     <DeliveryContext.Provider value={deliveryContextValue}>
       <CardOverlay
         isOpen={!!delivery}
-        handleClose={() => setOpenStop(null)}
+        closeHandler={() => setOpenStop(null)}
         CardHeader={DeliveryHeader}
         CardBody={DeliveryBody}
         CardFooter={DeliveryFooter}
@@ -154,6 +154,7 @@ function DeliveryHeader() {
       <Flex justify="space-between" gap={2}>
         <Button
           size="sm"
+          fontSize="xs"
           flexGrow={1}
           variant="secondary"
           disabled={!delivery.location.contact_phone}
@@ -181,6 +182,7 @@ function DeliveryHeader() {
         >
           <Button
             size="sm"
+            fontSize="xs"
             w="100%"
             variant="secondary"
             leftIcon={<ExternalLinkIcon />}
@@ -191,6 +193,7 @@ function DeliveryHeader() {
 
         <Button
           size="sm"
+          fontSize="xs"
           variant="secondary"
           disabled={
             openStop.status === STATUSES.CANCELLED ||
