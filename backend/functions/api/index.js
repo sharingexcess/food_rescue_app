@@ -42,6 +42,9 @@ api.post('/rescues/:id/create', (req, res) =>
 )
 api.get('/users', (req, res) => loadEndpoint('users', req, res))
 api.get('/user/:id', (req, res) => loadEndpoint('user', req, res))
+api.get('/publicProfiles', (req, res) =>
+  loadEndpoint('publicProfiles', req, res)
+)
 api.post('/publicProfile/:id/update', (req, res) =>
   loadEndpoint('updatePublicProfile', req, res)
 )
