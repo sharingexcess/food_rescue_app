@@ -42,6 +42,12 @@ api.post('/rescues/:id/create', (req, res) =>
 )
 api.get('/users', (req, res) => loadEndpoint('users', req, res))
 api.get('/user/:id', (req, res) => loadEndpoint('user', req, res))
+api.post('/publicProfile/:id/update', (req, res) =>
+  loadEndpoint('updatePublicProfile', req, res)
+)
+api.post('/privateProfile/:id/update', (req, res) =>
+  loadEndpoint('updatePrivateProfile', req, res)
+)
 
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {

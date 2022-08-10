@@ -22,6 +22,7 @@ import {
   formatTimestamp,
   generateDirectionsLink,
   formatPhoneNumber,
+  STATUSES,
 } from 'helpers'
 import { useRescueContext } from './Rescue'
 import { useState } from 'react'
@@ -170,6 +171,9 @@ function InactiveStop({ stop }) {
           py="2"
         >
           {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
+          {stop.status === STATUSES.COMPLETED
+            ? ` (${stop.impact_data_total_weight} lbs.)`
+            : ''}
         </Heading>
         <SelectedToggle open={isExpanded} onClick={toggleIsExpanded} />
       </Flex>

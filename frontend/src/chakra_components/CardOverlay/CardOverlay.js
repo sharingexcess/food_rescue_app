@@ -41,7 +41,7 @@ export function CardOverlay({
 
   return isMobile ? (
     <Drawer isOpen={open} placement="bottom" onClose={closeWithAnimation}>
-      <DrawerOverlay sx={{ backdropFilter: 'blur(4px)' }} />
+      <DrawerOverlay backdropFilter="blur(4px)" />
 
       <DrawerContent bg="surface.card" h="84vh" roundedTop="xl">
         <DrawerCloseButton />

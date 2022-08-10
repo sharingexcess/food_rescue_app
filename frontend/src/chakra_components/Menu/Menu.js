@@ -70,29 +70,31 @@ function MenuHeader() {
   const { user } = useAuth()
 
   return (
-    <Flex>
-      <Avatar
-        name={user.displayName}
-        src={user.photoURL}
-        bg="blue.500"
-        color="white"
-      />
-      <Box w="3" />
-      <Box overflow="clip">
-        <Heading as="h3" size="m" noOfLines={1} color="element.primary">
-          {user.displayName}
-        </Heading>
-        <Text
-          as="p"
-          fontSize="sm"
-          fontWeight="300"
-          noOfLines={1}
-          color="element.secondary"
-        >
-          {user.email}
-        </Text>
-      </Box>
-    </Flex>
+    <Link to="/chakra/profile">
+      <Flex>
+        <Avatar
+          name={user.displayName}
+          src={user.photoURL}
+          bg="blue.500"
+          color="white"
+        />
+        <Box w="3" />
+        <Box overflow="clip">
+          <Heading as="h3" size="m" noOfLines={1} color="element.primary">
+            {user.displayName}
+          </Heading>
+          <Text
+            as="p"
+            fontSize="sm"
+            fontWeight="300"
+            noOfLines={1}
+            color="element.secondary"
+          >
+            {user.email}
+          </Text>
+        </Box>
+      </Flex>
+    </Link>
   )
 }
 

@@ -1,6 +1,8 @@
 import {
+  CheckCircleIcon,
   CheckIcon,
   DeleteIcon,
+  EditIcon,
   ExternalLinkIcon,
   PhoneIcon,
   WarningIcon,
@@ -12,6 +14,9 @@ import {
   Heading,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftAddon,
+  InputLeftElement,
   Link,
   Select,
   Text,
@@ -27,6 +32,7 @@ import {
 } from 'helpers'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
+import { useAuth } from 'hooks'
 
 const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
@@ -105,16 +111,21 @@ export function Pickup({ pickup }) {
 export function PickupHeader() {
   const { openStop, refresh, setOpenStop } = useRescueContext()
   const { pickup } = usePickupContext()
+  const { user } = useAuth()
 
   async function handleCancel() {
     const reason = window.prompt(
       'Let us know why you need to cancel this pickup.\n\nNote: cancelling a pickup cannot be undone.\n'
     )
     if (reason) {
-      await SE_API.post(`/rescues/${openStop.id}/pickup/${pickup.id}/cancel`, {
-        status: STATUSES.CANCELLED,
-        notes: reason,
-      })
+      await SE_API.post(
+        `/rescues/${openStop.id}/pickup/${pickup.id}/cancel`,
+        {
+          status: STATUSES.CANCELLED,
+          notes: reason,
+        },
+        user.accessToken
+      )
       setOpenStop(null)
       refresh()
     }
@@ -347,16 +358,22 @@ export function NoteInput() {
   }
 
   return (
-    <Input
-      size="sm"
-      color="element.secondary"
-      value={notes || ''}
-      placeholder="Add notes to this pickup..."
-      variant="flushed"
-      readOnly={openStop.status === STATUSES.CANCELLED}
-      onChange={e => handleNotesChange(e.target.value)}
-      mb="4"
-    />
+    <InputGroup>
+      <InputLeftElement
+        pointerEvents="none"
+        children={<EditIcon mb="3" color="element.tertiary" />}
+      />
+      <Input
+        size="sm"
+        color="element.secondary"
+        value={notes || ''}
+        placeholder="Add notes to this pickup..."
+        variant="flushed"
+        readOnly={openStop.status === STATUSES.CANCELLED}
+        onChange={e => handleNotesChange(e.target.value)}
+        mb="4"
+      />
+    </InputGroup>
   )
 }
 
@@ -373,6 +390,7 @@ function PickupBody() {
 }
 
 export function PickupFooter() {
+  const { user } = useAuth()
   const { setOpenStop, refresh } = useRescueContext()
   const { entryRows, notes, pickup, session_storage_key, isChanged } =
     usePickupContext()
@@ -394,11 +412,15 @@ export function PickupFooter() {
     }
     formData.impact_data_total_weight = total
     formData.notes = notes
-    await SE_API.post(`/stops/${pickup.id}/update`, {
-      ...formData,
-      status: STATUSES.COMPLETED,
-      timestamp_logged_finish: createTimestamp(),
-    })
+    await SE_API.post(
+      `/stops/${pickup.id}/update`,
+      {
+        ...formData,
+        status: STATUSES.COMPLETED,
+        timestamp_logged_finish: createTimestamp(),
+      },
+      user.accessToken
+    )
     sessionStorage.removeItem(session_storage_key)
     setIsSubmitting(false)
     setOpenStop(null)
@@ -413,6 +435,7 @@ export function PickupFooter() {
         w="100%"
         disabled={total < 1 || isSubmitting || !isChanged}
         onClick={handleSubmit}
+        leftIcon={<CheckCircleIcon />}
       >
         {isSubmitting ? (
           <>

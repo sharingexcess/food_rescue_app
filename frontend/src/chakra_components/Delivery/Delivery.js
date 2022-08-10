@@ -30,7 +30,7 @@ import {
   STATUSES,
   formatPhoneNumber,
 } from 'helpers'
-import { useApi } from 'hooks'
+import { useApi, useAuth } from 'hooks'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
 
@@ -98,6 +98,7 @@ export function Delivery({ delivery }) {
 function DeliveryHeader() {
   const { openStop, refresh, setOpenStop } = useRescueContext()
   const { delivery } = useDeliveryContext()
+  const { user } = useAuth()
 
   async function handleCancel() {
     const reason = window.prompt(
@@ -109,7 +110,8 @@ function DeliveryHeader() {
         {
           status: STATUSES.CANCELLED,
           notes: reason,
-        }
+        },
+        user.accessToken
       )
       setOpenStop(null)
       refresh()
@@ -271,6 +273,7 @@ function DeliveryBody() {
 function DeliveryFooter() {
   const { setOpenStop, refresh } = useRescueContext()
   const { notes, delivery, poundsDropped } = useDeliveryContext()
+  const { user } = useAuth()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -285,11 +288,15 @@ function DeliveryFooter() {
 
     formData.impact_data_total_weight = total
     formData.notes = notes
-    await SE_API.post(`/stops/${delivery.id}/update`, {
-      ...formData,
-      status: STATUSES.COMPLETED,
-      timestamp_logged_finish: createTimestamp(),
-    })
+    await SE_API.post(
+      `/stops/${delivery.id}/update`,
+      {
+        ...formData,
+        status: STATUSES.COMPLETED,
+        timestamp_logged_finish: createTimestamp(),
+      },
+      user.accessToken
+    )
     sessionStorage.removeItem(session_storage_key)
     setIsSubmitting(false)
     setOpenStop(null)
