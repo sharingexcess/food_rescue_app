@@ -60,7 +60,7 @@ export function Delivery({ delivery }) {
   }, [rescue, delivery, percentTotalDropped])
 
   const [poundsDropped, setPoundsDropped] = useState(
-    currentLoad * (percentTotalDropped / 100) || ''
+    '' // currentLoad * (percentTotalDropped / 100) || ''
   )
 
   useEffect(() => {
@@ -250,15 +250,17 @@ function DeliveryBody() {
           lbs.
         </Text>
       </Flex>
-      <Flex wrap="wrap" justify="space-around" w="100%">
-        <Text fontWeight="bold">{percentTotalDropped}%</Text>
+      <Flex justify="start" w="100%" gap={4} align="center" mt={8} maxW="500px">
+        <Text w="48px" fontWeight="bold">
+          {percentTotalDropped}%
+        </Text>
         <Slider
           aria-label="slider-ex-1"
           colorScheme="green"
           defaultValue={percentTotalDropped}
           h="12"
-          maxW="500px"
           onChange={value => setPercentTotalDropped(value)}
+          flexGrow={1}
         >
           <SliderTrack h="2" borderRadius="4px">
             <SliderFilledTrack h="2" borderRadius="4px" />
