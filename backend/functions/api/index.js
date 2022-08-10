@@ -48,6 +48,9 @@ api.get('/publicProfiles', (req, res) =>
 api.get('/publicProfiles/:id', (req, res) =>
   loadEndpoint('publicProfile', req, res)
 )
+api.get('/privateProfiles/:id', (req, res) =>
+  loadEndpoint('privateProfile', req, res)
+)
 api.post('/publicProfile/:id/update', (req, res) =>
   loadEndpoint('updatePublicProfile', req, res)
 )

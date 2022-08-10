@@ -30,8 +30,8 @@ async function publicProfileEndpoint(request, response) {
       return
     }
 
-    const user = await getPublicProfile(id)
-    response.status(200).send(JSON.stringify(user))
+    const publicProfile = await getPublicProfile(id)
+    response.status(200).send(JSON.stringify(publicProfile))
   } catch (e) {
     console.error('Caught error:', e)
     response.staus(500).send(e.toString())
