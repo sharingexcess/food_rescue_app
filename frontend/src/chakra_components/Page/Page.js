@@ -23,6 +23,9 @@ export function Page({ id, title, children, breadcrumbs }) {
   const { colorMode } = useColorMode()
   const isMobile = useIsMobile()
 
+  useEffect(() => console.log('breadcrumbs change'), [breadcrumbs])
+  useEffect(() => console.log('children change'), [children])
+
   return (
     <Auth>
       <Box
@@ -72,7 +75,6 @@ function PageHead({ breadcrumbs, openMenu }) {
 
   useEffect(() => {
     const pageHeight = document.getElementById('se-page-content').offsetHeight
-
     // handle scroll down only for a page with a scrollable size
     if (scroll > prevScroll && scroll > 0 && window.innerHeight < pageHeight) {
       setPosition(Math.max(-100, position - 20))
@@ -137,7 +139,7 @@ function PageHead({ breadcrumbs, openMenu }) {
           })}
         </Breadcrumb>
       )}
-      {isMobile && <MenuButton openMenu={openMenu} />}
+      <MenuButton openMenu={openMenu} />
     </Flex>
   )
 }
@@ -158,7 +160,9 @@ function HomeButton() {
 
 function MenuButton({ openMenu }) {
   const { user } = useAuth()
-  return (
+  const isMobile = useIsMobile()
+
+  return isMobile ? (
     <Avatar
       name={user.displayName}
       src={user.photoURL}
@@ -167,5 +171,5 @@ function MenuButton({ openMenu }) {
       bg="blue.500"
       color="white"
     />
-  )
+  ) : null
 }

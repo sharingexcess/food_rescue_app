@@ -1,16 +1,33 @@
-import { Avatar, Divider, Flex, Heading, Input, Text } from '@chakra-ui/react'
+import { SearchIcon } from '@chakra-ui/icons'
+import {
+  Avatar,
+  Divider,
+  Flex,
+  Heading,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Text,
+} from '@chakra-ui/react'
 import { Page } from 'chakra_components'
 import { useApi } from 'hooks'
+import { useState } from 'react'
 
 export function Users() {
   const { data: users } = useApi('/publicProfiles')
+  const [searchValue, setSearchValue] = useState('')
+
+  function handleChange(e) {
+    setSearchValue(e.target.value)
+  }
+
   return (
     <Page
       id="People"
       title="People"
-      breadcrumbs={[{ label: 'People', link: '/chakra/users' }]}
+      breadcrumbs={[{ label: 'People', link: '/chakra/people' }]}
     >
-      <Heading
+      {/* <Heading
         as="h1"
         fontWeight="700"
         size="2xl"
@@ -20,15 +37,27 @@ export function Users() {
       >
         People
       </Heading>
-      <Text>Search</Text>
-      <Input placeholder="Name" variant="flushed" color="component.secondary" />
+      <InputGroup mb="6">
+        <InputLeftElement
+          children={<SearchIcon />}
+          mr="2"
+          color="element.secondary"
+        /> */}
+      <Input
+        placeholder="Search by name..."
+        value={searchValue}
+        onChange={handleChange}
+      />
+      {/* </InputGroup>
       {users &&
-        users.map((user, i) => (
-          <>
-            <UserCard user={user} key={user.id} />
-            {i !== users.length - 1 && <Divider />}
-          </>
-        ))}
+        users
+          // .filter(i => i.name.includes(searchValue))
+          .map((user, i) => (
+            <>
+              <UserCard user={user} key={user.id} />
+              {i !== users.length - 1 && <Divider />}
+            </>
+          ))} */}
     </Page>
   )
 }
@@ -50,6 +79,6 @@ function UserCard({ user }) {
   )
 }
 
-function permissionIcon(isAdmin) {
-  return isAdmin ? '👑' : '🚛'
+function permissionIcon(permission) {
+  return permission === 'admin' ? '👑' : permission === 'standard' ? '🚛' : ''
 }

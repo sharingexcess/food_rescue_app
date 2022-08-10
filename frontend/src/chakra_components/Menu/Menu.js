@@ -122,6 +122,17 @@ function MenuBody({ colorMode, toggleColorMode }) {
           Rescues
         </Button>
       </Link>
+      <Link to="/chakra/people">
+        <Button
+          variant="link"
+          fontSize="xl"
+          mr="auto"
+          my="2"
+          fontWeight="normal"
+        >
+          People
+        </Button>
+      </Link>
     </Flex>
   )
 }

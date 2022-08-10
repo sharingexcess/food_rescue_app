@@ -1,7 +1,9 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Input } from '@chakra-ui/react'
 import { Page } from 'chakra_components'
+import { useState } from 'react'
 
 export function ChakraTest() {
+  const [searchValue, setSearchValue] = useState('')
   return (
     <Page
       id="ChakraTest"
@@ -11,9 +13,11 @@ export function ChakraTest() {
         { label: 'Page', link: `/chakra/test` },
       ]}
     >
-      <Button variant="tertiary" disabled>
-        Default Button
-      </Button>
+      <Input
+        placeholder="Search by name..."
+        value={searchValue}
+        onChange={e => setSearchValue(e.target.value)}
+      />
     </Page>
   )
 }

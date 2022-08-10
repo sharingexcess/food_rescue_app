@@ -422,7 +422,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/users"
+                        path="/chakra/people"
                         element={
                           <PublicChakraRoute>
                             <ChakraUsers />

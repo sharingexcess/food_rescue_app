@@ -77,7 +77,6 @@ export function Rescues() {
       `${window.location.pathname}?${params.toString()}`
     )
   }, [date, handler, status])
-  // FROM OLD RESCUES
 
   // this useEffect returns to the pre-update scroll position
   // when new rescues are loaded so users don't lose their place

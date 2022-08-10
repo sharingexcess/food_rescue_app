@@ -158,31 +158,6 @@ const theme = extendTheme({
             opacity: 0.5,
           },
         }),
-        // secondary: props => ({
-        //   color: 'se.brand.primary',
-        //   border: '1px solid',
-        //   borderColor: 'se.brand.green',
-        //   _hover: {
-        //     color:
-        //       props.colorMode === 'dark'
-        //         ? whiten('se.brand.primary', 20)
-        //         : darken('se.brand.primary', 10),
-        //     borderColor:
-        //       props.colorMode === 'dark'
-        //         ? whiten('se.brand.primary', 20)
-        //         : darken('se.brand.primary', 10),
-        //     _disabled: {
-        //       color: 'element.disabled',
-        //       borderColor: 'element.disabled',
-        //       opacity: 1,
-        //     },
-        //   },
-        //   _disabled: {
-        //     color: 'element.disabled',
-        //     borderColor: 'element.disabled',
-        //     opacity: 1,
-        //   },
-        // }),
         tertiary: props => ({
           color: 'se.brand.primary',
           textDecoration: 'underline',
@@ -204,6 +179,20 @@ const theme = extendTheme({
       },
       defaultProps: {
         variant: 'primary',
+      },
+    },
+    Input: {
+      defaultProps: {
+        variant: 'flushed',
+      },
+      variants: {
+        flushed: {
+          field: {
+            _placeholder: {
+              color: 'element.secondary',
+            },
+          },
+        },
       },
     },
   },
