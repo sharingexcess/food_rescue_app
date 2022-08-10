@@ -49,18 +49,18 @@ export function Delivery({ delivery }) {
         }
       }
     } else return undefined
+
     return weight
   }, [rescue, delivery, percentTotalDropped])
 
   const [poundsDropped, setPoundsDropped] = useState(
-    '' // currentLoad * (percentTotalDropped / 100) || ''
+    parseInt(currentLoad * (percentTotalDropped / 100))
   )
 
   useEffect(() => {
     if (delivery) {
       setNotes(delivery.notes)
-      setPercentTotalDropped(delivery.percent_of_total_dropped)
-      setPoundsDropped(0)
+      setPercentTotalDropped(parseInt(delivery.percent_of_total_dropped))
     }
   }, [delivery])
 
@@ -219,29 +219,46 @@ function DeliveryBody() {
     setPercentTotalDropped,
   } = useDeliveryContext()
 
+  async function handlePoundsInputChange(val) {
+    setPoundsDropped(parseInt(val) || '')
+    setPercentTotalDropped(Math.round((poundsDropped / currentLoad) * 100))
+    // await handleChangeSlider()
+  }
+
+  async function handleChangeSlider(value) {
+    setPercentTotalDropped(value)
+    setPoundsDropped(Math.round((percentTotalDropped / 100) * currentLoad))
+    // await handlePoundsInputChange(Math.round((value / 100) * currentLoad))
+  }
+
   return (
     <Flex direction="column" align="center">
-      <Text>You have {currentLoad} lbs. from your rescue</Text>
-      <Text fontSize="lg" mb="4">
-        Amount Received
+      <Text textAlign="center" fontWeight={400} mb={4}>
+        How much of your current load
+        <br />
+        <Text as="span" fontWeight={600}>
+          ({currentLoad} lbs.)
+        </Text>{' '}
+        are you giving?
       </Text>
       <Flex>
         <Input
           // h="90px"
           w="120px"
           fontSize="4xl"
+          fontWeight="bold"
           color="element.primary"
           variant="flushed"
           type="tel"
           min="0"
           maxLength="6"
           value={poundsDropped || ''}
-          onChange={e => setPoundsDropped(parseInt(e.target.value) || '')}
+          onChange={e => handlePoundsInputChange(e.target.value)}
           textAlign="right"
           py="2"
         />
 
-        <Text fontSize="3xl" ml="3">
+        <Text fontSize="3xl" fontWeight="bold" ml="3">
           lbs.
         </Text>
       </Flex>
@@ -253,8 +270,9 @@ function DeliveryBody() {
           aria-label="slider-ex-1"
           colorScheme="green"
           defaultValue={percentTotalDropped}
+          value={percentTotalDropped}
           h="12"
-          onChange={value => setPercentTotalDropped(value)}
+          onChange={handleChangeSlider}
           flexGrow={1}
         >
           <SliderTrack h="2" borderRadius="4px">
