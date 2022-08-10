@@ -73,7 +73,6 @@ function PageHead({ breadcrumbs, openMenu }) {
       className="se-page-header"
       align="center"
       justify="start"
-      pb="10"
       w="100%"
       maxW="1000px"
       top="0"
@@ -84,6 +83,7 @@ function PageHead({ breadcrumbs, openMenu }) {
       zIndex="20"
       bgGradient="linear(to-b, surface.background, transparent)"
       py={['16px', '16px', '16px', '32px', '32px']}
+      // pb={['64px', '64px', '64px', '32px', '32px']}
       px={['16px', '16px', '16px', '0', '0']}
     >
       <HomeButton />
@@ -92,7 +92,22 @@ function PageHead({ breadcrumbs, openMenu }) {
         <Breadcrumb
           separator={<ChevronRightIcon color="gray.400" />}
           fontSize="sm"
+          position="relative"
+          py="1"
+          pr="4"
         >
+          <Box
+            position="absolute"
+            h="100%"
+            w="100%"
+            top="0"
+            left="0"
+            opacity="0.6"
+            bg="surface.background"
+            zIndex="2"
+            borderRadius="2xl"
+            blur="px"
+          />
           <BreadcrumbItem m="0" />
           {breadcrumbs.map((crumb, i) => {
             return (
@@ -101,6 +116,7 @@ function PageHead({ breadcrumbs, openMenu }) {
                   href={crumb.link}
                   fontWeight="light"
                   textDecoration="underline"
+                  zIndex="3"
                 >
                   {crumb.label}
                 </BreadcrumbLink>
