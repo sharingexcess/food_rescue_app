@@ -239,7 +239,7 @@ function ActiveStop({ stop }) {
         textTransform="uppercase"
         py="2"
       >
-        {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
+        🔄&nbsp;&nbsp;{stop.type}
       </Heading>
       <Heading as="h3" size="md" fontWeight="600" color="element.primary">
         {stop.organization.name}
@@ -259,6 +259,6 @@ function statusIcon(status) {
     : status === 'scheduled'
     ? '🗓'
     : status === 'active'
-    ? '🏃'
+    ? '🔄'
     : '✅'
 }
