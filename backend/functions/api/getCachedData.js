@@ -3,9 +3,11 @@ const {
   authenticateRequest,
   rejectUnauthorizedRequest,
 } = require('../../helpers')
+const admin = require('firebase-admin')
+exports.db = admin.firestore()
 const moment = require('moment-timezone')
 
-async function getCachedDataEndpoint(request, response) {
+async function getCachedDataReportsEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
       console.log('INVOKING ENDPOINT: getCachedData()')
@@ -20,11 +22,23 @@ async function getCachedDataEndpoint(request, response) {
         return
       }
 
-      const data = await getCachedData()
+      const date = moment(new Date())
+        .tz('America/New_York')
+        .format('yyyy-MM-DD')
+      const path = `retoolCache/${date}.json`
 
-      console.log('Retool Cached File:', data)
-      response.status(200).send(JSON.stringify(data))
-      resolve()
+      console.log('Reading File')
+      const file = admin.storage().bucket().file(path).createReadStream()
+      console.log('Concat Data')
+      let buf = ''
+      file
+        .on('data', d => (buf += d))
+        .on('end', () => {
+          console.log('Cached Data:\n', buf)
+          console.log('End')
+          response.status(200).send(buf)
+          resolve()
+        })
     } catch (e) {
       console.log('Caught error:', e)
       response.status(500).send(e.toString())
@@ -32,17 +46,4 @@ async function getCachedDataEndpoint(request, response) {
   })
 }
 
-async function getCachedData() {
-  console.log('running getCachedData')
-
-  const date = moment(new Date()).tz('America/New_York').format('yyyy-MM-DD')
-  const path = `retoolCache/${date}.json`
-  const destination = './temp.json'
-
-  const data = await getRetoolCachedData(path, destination)
-  console.log('Finished Grabbing Data:', data)
-  await deleteFile(destination)
-  return data
-}
-
-exports.getCachedDataEndpoint = getCachedDataEndpoint
+exports.getCachedDataReportsEndpoint = getCachedDataReportsEndpoint
