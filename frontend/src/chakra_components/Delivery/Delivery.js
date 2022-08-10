@@ -11,8 +11,6 @@ import {
   Input,
   Link,
   Text,
-  InputGroup,
-  InputRightElement,
 } from '@chakra-ui/react'
 import { useRescueContext, CardOverlay } from 'chakra_components'
 import {
@@ -23,39 +21,24 @@ import {
   STATUSES,
   formatPhoneNumber,
 } from 'helpers'
-import { useApi, useAuth } from 'hooks'
+import { useAuth } from 'hooks'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
+import { calculateCurrentLoad } from './Delivery.utils'
 
 const DeliveryContext = createContext({})
 DeliveryContext.displayName = 'DeliveryContext'
 export const useDeliveryContext = () => useContext(DeliveryContext)
 
 export function Delivery({ delivery }) {
-  const { setOpenStop, openStop, rescue } = useRescueContext()
+  const { setOpenStop, rescue } = useRescueContext()
   const [notes, setNotes] = useState('')
   const [percentTotalDropped, setPercentTotalDropped] = useState(100)
-
-  const currentLoad = useMemo(() => {
-    let weight = 0
-    if (rescue) {
-      for (const stop of rescue.stops) {
-        if (stop.type === 'pickup') {
-          weight += stop.impact_data_total_weight || 0
-        } else if (stop.id === delivery?.id) {
-          break
-        } else {
-          weight -= stop.impact_data_total_weight || 0
-        }
-      }
-    } else return undefined
-
-    return weight
-  }, [rescue, delivery, percentTotalDropped])
-
-  const [poundsDropped, setPoundsDropped] = useState(
-    parseInt(currentLoad * (percentTotalDropped / 100))
+  const currentLoad = useMemo(
+    () => calculateCurrentLoad(rescue, delivery),
+    [rescue, delivery]
   )
+  const [poundsDropped, setPoundsDropped] = useState(currentLoad)
 
   useEffect(() => {
     if (delivery) {
@@ -219,16 +202,29 @@ function DeliveryBody() {
     setPercentTotalDropped,
   } = useDeliveryContext()
 
-  async function handlePoundsInputChange(val) {
-    setPoundsDropped(parseInt(val) || '')
-    setPercentTotalDropped(Math.round((poundsDropped / currentLoad) * 100))
-    // await handleChangeSlider()
+  // create an internal copy of poundsDropped
+  // so that we don't unfocus the input on change
+  // due to the parent component re-rendering
+  const [tempInputValue, setTempInputValue] = useState(poundsDropped)
+
+  // update the internal copy whenever the external state value updates
+  useEffect(() => setTempInputValue(poundsDropped), [poundsDropped])
+
+  async function handlePoundsInputChange() {
+    const updatedPoundsDropped = Math.min(
+      Math.max(parseInt(tempInputValue) || 0, 0),
+      currentLoad
+    )
+    setTempInputValue(updatedPoundsDropped)
+    setPoundsDropped(updatedPoundsDropped)
+    setPercentTotalDropped(
+      Math.round((updatedPoundsDropped / currentLoad) * 100)
+    )
   }
 
   async function handleChangeSlider(value) {
     setPercentTotalDropped(value)
-    setPoundsDropped(Math.round((percentTotalDropped / 100) * currentLoad))
-    // await handlePoundsInputChange(Math.round((value / 100) * currentLoad))
+    setPoundsDropped(Math.round((value / 100) * currentLoad))
   }
 
   return (
@@ -239,26 +235,26 @@ function DeliveryBody() {
         <Text as="span" fontWeight={600}>
           ({currentLoad} lbs.)
         </Text>{' '}
-        are you giving?
+        are you delivering?
       </Text>
       <Flex>
         <Input
-          // h="90px"
-          w="120px"
+          w="96px"
+          h="64px"
           fontSize="4xl"
           fontWeight="bold"
           color="element.primary"
           variant="flushed"
-          type="tel"
+          type="number"
           min="0"
-          maxLength="6"
-          value={poundsDropped || ''}
-          onChange={e => handlePoundsInputChange(e.target.value)}
+          max={currentLoad}
+          value={tempInputValue}
+          onChange={e => setTempInputValue(e.target.value)}
+          onBlur={() => handlePoundsInputChange()}
           textAlign="right"
           py="2"
         />
-
-        <Text fontSize="3xl" fontWeight="bold" ml="3">
+        <Text fontSize="3xl" fontWeight="bold" ml="3" mt="2">
           lbs.
         </Text>
       </Flex>
