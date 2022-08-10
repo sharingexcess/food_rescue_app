@@ -61,11 +61,10 @@ export function Rescue() {
             <RescueHeader />
             <RescueStops />
           </Flex>
-          {openStop?.type === 'pickup' ? (
-            <Pickup pickup={openStop} />
-          ) : (
-            <Delivery delivery={openStop} />
-          )}
+          <Pickup pickup={openStop?.type === 'pickup' ? openStop : null} />
+          <Delivery
+            delivery={openStop?.type === 'delivery' ? openStop : null}
+          />
         </RescueContext.Provider>
       </Page>
     )

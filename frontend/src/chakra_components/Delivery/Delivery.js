@@ -62,7 +62,7 @@ export function Delivery({ delivery }) {
     <DeliveryContext.Provider value={deliveryContextValue}>
       <CardOverlay
         isOpen={!!delivery}
-        handleClose={() => setOpenStop(null)}
+        closeHandler={() => setOpenStop(null)}
         CardHeader={DeliveryHeader}
         CardBody={DeliveryBody}
         CardFooter={DeliveryFooter}
