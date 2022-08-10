@@ -104,7 +104,7 @@ function PublicProfile() {
     setIsLoading(true)
     try {
       await SE_API.post(
-        `/privateProfile/${user.id}/update`,
+        `/publicProfile/${user.id}/update`,
         formData,
         user.accessToken
       )
