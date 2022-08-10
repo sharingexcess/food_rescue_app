@@ -174,6 +174,7 @@ export function PickupHeader() {
       <Flex justify="space-between" gap={2}>
         <Button
           size="sm"
+          fontSize="xs"
           flexGrow={1}
           variant="secondary"
           disabled={!pickup.location.contact_phone}
@@ -201,6 +202,7 @@ export function PickupHeader() {
         >
           <Button
             size="sm"
+            fontSize="xs"
             w="100%"
             variant="secondary"
             leftIcon={<ExternalLinkIcon />}
@@ -211,6 +213,7 @@ export function PickupHeader() {
 
         <Button
           size="sm"
+          fontSize="xs"
           variant="secondary"
           disabled={
             openStop.status === STATUSES.CANCELLED ||
