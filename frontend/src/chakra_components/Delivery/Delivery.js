@@ -1,25 +1,18 @@
-import {
-  CheckIcon,
-  DeleteIcon,
-  ExternalLinkIcon,
-  PhoneIcon,
-  WarningIcon,
-} from '@chakra-ui/icons'
+import { ExternalLinkIcon, PhoneIcon, WarningIcon } from '@chakra-ui/icons'
 import {
   Slider,
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  SliderMark,
   Button,
   Divider,
   Flex,
   Heading,
-  IconButton,
   Input,
   Link,
-  Select,
   Text,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react'
 import { useRescueContext, CardOverlay } from 'chakra_components'
 import {
@@ -234,19 +227,21 @@ function DeliveryBody() {
       </Text>
       <Flex>
         <Input
-          h="90px"
-          w="250px"
-          fontSize="6xl"
+          // h="90px"
+          w="120px"
+          fontSize="4xl"
           color="element.primary"
           variant="flushed"
           type="tel"
           min="0"
           maxLength="6"
-          value={poundsDropped}
+          value={poundsDropped || ''}
           onChange={e => setPoundsDropped(parseInt(e.target.value) || '')}
           textAlign="right"
+          py="2"
         />
-        <Text ml="4px" fontSize="6xl">
+
+        <Text fontSize="3xl" ml="3">
           lbs.
         </Text>
       </Flex>
