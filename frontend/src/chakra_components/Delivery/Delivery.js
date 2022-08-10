@@ -1,4 +1,9 @@
-import { ExternalLinkIcon, PhoneIcon, WarningIcon } from '@chakra-ui/icons'
+import {
+  EditIcon,
+  ExternalLinkIcon,
+  PhoneIcon,
+  WarningIcon,
+} from '@chakra-ui/icons'
 import {
   Slider,
   SliderTrack,
@@ -9,13 +14,14 @@ import {
   Flex,
   Heading,
   Input,
+  InputGroup,
+  InputLeftElement,
   Link,
   Text,
 } from '@chakra-ui/react'
 import { useRescueContext, CardOverlay } from 'chakra_components'
 import {
   createTimestamp,
-  FOOD_CATEGORIES,
   generateDirectionsLink,
   SE_API,
   STATUSES,
@@ -23,6 +29,7 @@ import {
 } from 'helpers'
 import { useAuth } from 'hooks'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+// import { NoteInput } from 'chakra_components/Pickup/Pickup'
 import { Ellipsis } from 'components'
 import { calculateCurrentLoad } from './Delivery.utils'
 
@@ -31,6 +38,7 @@ DeliveryContext.displayName = 'DeliveryContext'
 export const useDeliveryContext = () => useContext(DeliveryContext)
 
 export function Delivery({ delivery }) {
+  const { admin } = useAuth()
   const { setOpenStop, rescue } = useRescueContext()
   const [notes, setNotes] = useState('')
   const [percentTotalDropped, setPercentTotalDropped] = useState(100)
@@ -44,8 +52,16 @@ export function Delivery({ delivery }) {
     if (delivery) {
       setNotes(delivery.notes)
       setPercentTotalDropped(parseInt(delivery.percent_of_total_dropped))
+      setPoundsDropped(parseInt(currentLoad * (percentTotalDropped / 100)))
     }
   }, [delivery])
+
+  const canEdit = useMemo(() => {
+    return (
+      ![STATUSES.COMPLETED, STATUSES.CANCELLED].includes(delivery?.status) ||
+      admin
+    )
+  })
 
   const deliveryContextValue = {
     delivery,
@@ -56,6 +72,7 @@ export function Delivery({ delivery }) {
     poundsDropped,
     setPoundsDropped,
     currentLoad,
+    canEdit,
   }
 
   return (
@@ -194,6 +211,7 @@ function DeliveryHeader() {
 }
 
 function DeliveryBody() {
+  const { setOpenStop } = useRescueContext()
   const {
     currentLoad,
     poundsDropped,
@@ -267,7 +285,6 @@ function DeliveryBody() {
           colorScheme="green"
           defaultValue={percentTotalDropped}
           value={percentTotalDropped}
-          h="12"
           onChange={handleChangeSlider}
           flexGrow={1}
         >
@@ -277,38 +294,66 @@ function DeliveryBody() {
           <SliderThumb />
         </Slider>
       </Flex>
+      {currentLoad === 0 && (
+        <Flex direction="column" justify="center">
+          <Text textAlign="center" fontSize="xs">
+            You have nothing to deliver! If this is by accident
+          </Text>
+          <Button
+            variant="tertiary"
+            fontSize="xs"
+            onClick={() => setOpenStop(null)}
+          >
+            you can always update your previous deliveries
+          </Button>
+        </Flex>
+      )}
     </Flex>
+  )
+}
+
+function NoteInput() {
+  const { openStop } = useRescueContext()
+  const { notes, setNotes } = useDeliveryContext()
+
+  return (
+    <InputGroup>
+      <InputLeftElement
+        pointerEvents="none"
+        children={<EditIcon mb="3" color="element.tertiary" />}
+      />
+      <Input
+        size="sm"
+        color="element.secondary"
+        value={notes || ''}
+        placeholder="Add notes to this delivery..."
+        variant="flushed"
+        readOnly={openStop.status === STATUSES.CANCELLED}
+        onChange={e => setNotes(e.target.value)}
+        mb="4"
+      />
+    </InputGroup>
   )
 }
 
 function DeliveryFooter() {
   const { setOpenStop, refresh } = useRescueContext()
-  const { notes, delivery, poundsDropped } = useDeliveryContext()
+  const { notes, delivery, canEdit, percentTotalDropped } = useDeliveryContext()
   const { user } = useAuth()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   async function handleSubmit() {
     setIsSubmitting(true)
-
-    const formData = {
-      ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
-      impact_data_total_weight: 0,
-      notes: '',
+    const payload = {
+      percent_of_total_dropped: percentTotalDropped,
+      notes: notes,
+      timestamp_logged_finish:
+        delivery?.timestamp_logged_finish || createTimestamp(),
+      timestamp_updated: createTimestamp(),
+      status: STATUSES.COMPLETED,
     }
-
-    formData.impact_data_total_weight = total
-    formData.notes = notes
-    await SE_API.post(
-      `/stops/${delivery.id}/update`,
-      {
-        ...formData,
-        status: STATUSES.COMPLETED,
-        timestamp_logged_finish: createTimestamp(),
-      },
-      user.accessToken
-    )
-    sessionStorage.removeItem(session_storage_key)
+    await SE_API.post(`/stops/${delivery.id}/update`, payload, user.accessToken)
     setIsSubmitting(false)
     setOpenStop(null)
     refresh()
@@ -316,10 +361,12 @@ function DeliveryFooter() {
 
   return (
     <Flex direction="column" w="100%">
+      <NoteInput />
       <Button
         size="lg"
         w="100%"
-        disabled={poundsDropped < 1 || isSubmitting}
+        disabled={!canEdit}
+        isLoading={isSubmitting}
         onClick={handleSubmit}
       >
         {isSubmitting ? (
