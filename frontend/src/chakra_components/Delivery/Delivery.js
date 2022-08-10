@@ -49,12 +49,14 @@ export function Delivery({ delivery }) {
   const [poundsDropped, setPoundsDropped] = useState(currentLoad)
 
   useEffect(() => {
-    if (delivery) {
+    if (delivery && currentLoad) {
       setNotes(delivery.notes)
       setPercentTotalDropped(parseInt(delivery.percent_of_total_dropped))
-      setPoundsDropped(parseInt(currentLoad * (percentTotalDropped / 100)))
+      setPoundsDropped(
+        parseInt(currentLoad * (delivery.percent_of_total_dropped / 100))
+      )
     }
-  }, [delivery])
+  }, [delivery, currentLoad])
 
   const canEdit = useMemo(() => {
     return (
