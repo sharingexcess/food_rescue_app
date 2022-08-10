@@ -94,6 +94,7 @@ function StopButtonsBox({ stop }) {
           variant={isActive ? 'secondary' : 'tertiary'}
           disabled={!stop.location.contact_phone}
           size="sm"
+          fontSize="xs"
           flexGrow="1"
           leftIcon={<PhoneIcon />}
         >
@@ -118,6 +119,7 @@ function StopButtonsBox({ stop }) {
         >
           <Button
             size="sm"
+            fontSize="xs"
             width="100%"
             variant={isActive ? 'secondary' : 'tertiary'}
             leftIcon={<ExternalLinkIcon />}
@@ -128,6 +130,7 @@ function StopButtonsBox({ stop }) {
         <Button
           variant={isActive ? 'secondary' : 'tertiary'}
           size="sm"
+          fontSize="xs"
           flexGrow="1"
           onClick={() => setOpenStop(stop)}
           leftIcon={<InfoIcon />}
