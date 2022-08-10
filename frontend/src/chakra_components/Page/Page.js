@@ -3,13 +3,11 @@ import {
   Box,
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   Flex,
-  Heading,
   useColorMode,
   useDisclosure,
-  Link,
   Image,
+  Text,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Menu } from '../'
@@ -18,6 +16,7 @@ import { Auth } from 'contexts'
 import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export function Page({ id, title, children, breadcrumbs }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -45,7 +44,7 @@ export function Page({ id, title, children, breadcrumbs }) {
         <Menu isOpen={isOpen} onClose={onClose} />
         <Box
           as="section"
-          className="se-page-content"
+          id="se-page-content"
           w={isMobile ? '100%' : 'calc(100% - 424px)'}
           maxW="720"
           overflow="visible"
@@ -72,11 +71,13 @@ function PageHead({ breadcrumbs, openMenu }) {
   const [position, setPosition] = useState(0)
 
   useEffect(() => {
-    // handle scroll down
-    if (scroll > prevScroll && scroll > 0) {
+    const pageHeight = document.getElementById('se-page-content').offsetHeight
+
+    // handle scroll down only for a page with a scrollable size
+    if (scroll > prevScroll && scroll > 0 && window.innerHeight < pageHeight) {
       setPosition(Math.max(-100, position - 20))
     }
-    // handle scroll up
+    // handle scroll up only on a scroll of force > 5
     if (scroll < prevScroll && prevScroll - scroll > 5) {
       setPosition(0)
     }
@@ -117,30 +118,20 @@ function PageHead({ breadcrumbs, openMenu }) {
           py="1"
           pr="4"
         >
-          {/*  <Box
-            position="absolute"
-            h="100%"
-            w="100%"
-            top="0"
-            left="0"
-            opacity="0.6"
-            bg="surface.background"
-            zIndex="2"
-            borderRadius="2xl"
-            blur="px"
-          /> */}
           <BreadcrumbItem m="0" />
           {breadcrumbs.map((crumb, i) => {
             return (
               <BreadcrumbItem m="0" key={i}>
-                <BreadcrumbLink
-                  href={crumb.link}
-                  fontWeight="light"
-                  textDecoration="underline"
-                  zIndex="3"
-                >
-                  {crumb.label}
-                </BreadcrumbLink>
+                <Link to={crumb.link}>
+                  <Text
+                    fontWeight="light"
+                    textDecoration="underline"
+                    zIndex="3"
+                    textTransform="capitalize"
+                  >
+                    {crumb.label}
+                  </Text>
+                </Link>
               </BreadcrumbItem>
             )
           })}
@@ -153,8 +144,14 @@ function PageHead({ breadcrumbs, openMenu }) {
 
 function HomeButton() {
   return (
-    <Link href="/" flexShrink="0" w="48px" h="48px">
-      <Image src="/logo.png" w="100%" alt="Sharing Excess Logo" />
+    <Link to="/">
+      <Image
+        src="/logo.png"
+        flexShrink="0"
+        w="48px"
+        h="48px"
+        alt="Sharing Excess Logo"
+      />
     </Link>
   )
 }

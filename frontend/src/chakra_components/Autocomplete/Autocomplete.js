@@ -18,6 +18,7 @@ export function Autocomplete({
   setValue,
   handleChange,
   optionLabel,
+  displayField,
   ...props
 }) {
   const [inputValue, setInputValue] = useState('')
@@ -46,6 +47,7 @@ export function Autocomplete({
         variant="flushed"
         fontSize="sm"
         color="element.primary"
+        _placeholder={{ color: 'element.secondary' }}
         {...props}
       />
       {value && (

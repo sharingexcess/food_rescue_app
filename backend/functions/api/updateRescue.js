@@ -16,11 +16,8 @@ async function updateRescueEndpoint(request, response) {
         response.status(400).send('No id param received in request URL.')
         return
       }
-      const payload = JSON.parse(request.body)
 
-      const timestamp_updated = payload.timestamp_updated
-      const handler_id = payload.handler_id
-      const notes = payload.notes
+      const payload = JSON.parse(request.body)
 
       console.log('Received payload:', payload)
       if (!payload) {
@@ -31,30 +28,28 @@ async function updateRescueEndpoint(request, response) {
       const rescue = await getRescue(id)
       console.log('[rescue]:', rescue)
 
-      if (rescue.google_calendar_event_id) {
-        deleteEvent(rescue.google_calendar_event_id)
+      if (payloadRequiresNewCalendarEvent(payload)) {
+        if (rescue.google_calendar_event_id) {
+          deleteEvent(rescue.google_calendar_event_id)
+        }
+
+        const resource = await createEventResource(
+          { ...rescue, ...payload },
+          rescue.timestamp_scheduled_start,
+          rescue.timestamp_scheduled_finish
+        )
+        console.log('[resource]:', resource)
+
+        const event = await addCalendarEvent(resource).catch(err => {
+          console.error('Error adding event: ' + err.message)
+          response.status(500).send('There was an error with Google calendar')
+          return
+        })
+        console.log('[EVENT]:', event)
+        payload.google_calendar_event_id = event.id
       }
 
-      const resource = await createEventResource(
-        { ...rescue, ...payload },
-        rescue.timestamp_scheduled_start,
-        rescue.timestamp_scheduled_finish
-      )
-      console.log('[resource]:', resource)
-
-      const event = await addCalendarEvent(resource).catch(err => {
-        console.error('Error adding event: ' + err.message)
-        response.status(500).send('There was an error with Google calendar')
-        return
-      })
-      console.log('[EVENT]:', event)
-
-      const google_calendar_event_id = await event.id
-
-      const updated = await updateRescue(id, {
-        ...payload,
-        google_calendar_event_id,
-      })
+      const updated = await updateRescue(id, payload)
 
       response.status(200).send(JSON.stringify(updated))
       // use resolve to allow the cloud function to close
@@ -122,6 +117,15 @@ function isPayloadValid(payload) {
 function removeEmptyValues(obj) {
   // filters all keys with falsey values from object
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null))
+}
+
+function payloadRequiresNewCalendarEvent(payload) {
+  return (
+    payload.timestamp_scheduled_start ||
+    payload.timestamp_scheduled_finish ||
+    payload.handler_id ||
+    payload.stop_ids
+  )
 }
 
 exports.updateRescueEndpoint = updateRescueEndpoint

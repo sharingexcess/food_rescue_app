@@ -6,10 +6,12 @@ import {
   Heading,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
+  Skeleton,
   Tag,
   Text,
-  Link,
 } from '@chakra-ui/react'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { formatTimestamp, STATUSES } from 'helpers'
@@ -17,7 +19,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Page, Autocomplete } from 'chakra_components'
 import moment from 'moment'
 import './Rescues.scss'
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, CalendarIcon } from '@chakra-ui/icons'
+import { Link } from 'react-router-dom'
 
 export function Rescues() {
   const { admin, user } = useAuth()
@@ -36,6 +39,7 @@ export function Rescues() {
   const [handler, setHandler] = useState()
   const [date, setDate] = useState()
   const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
+  const [cachedScrollPosition, setCachedScrollPosition] = useState(null)
 
   function handleChangeDate(event) {
     const dateValue = event.target.value
@@ -54,7 +58,7 @@ export function Rescues() {
     [date, handler, status]
   )
 
-  const { data } = useApi('/rescues', api_params)
+  const { data, loading, loadMore } = useApi('/rescues', api_params)
 
   const { data: handlers } = useApi('/users')
 
@@ -75,12 +79,26 @@ export function Rescues() {
   }, [date, handler, status])
   // FROM OLD RESCUES
 
-  async function searchForHandler(value) {
+  // this useEffect returns to the pre-update scroll position
+  // when new rescues are loaded so users don't lose their place
+  useEffect(() => {
+    if (!loading && cachedScrollPosition) {
+      window.scrollTo(0, cachedScrollPosition)
+      setCachedScrollPosition(null)
+    }
+  }, [loading, cachedScrollPosition])
+
+  function handleLoadMore() {
+    // store the current scroll position to return to after loading new rescues
+    setCachedScrollPosition(window.scrollY)
+    loadMore()
+  }
+
+  function searchForHandler(value) {
     return handlers.filter(i =>
       i.name.toLowerCase().includes(value.toLowerCase())
     )
   }
-
   return (
     <Page
       id="Rescues"
@@ -98,7 +116,7 @@ export function Rescues() {
         >
           Rescues
         </Heading>
-        <Link href="/chakra/create-rescue">
+        <Link to="/chakra/create-rescue">
           <IconButton icon={<AddIcon />} borderRadius="3xl" />
         </Link>
       </Flex>
@@ -117,28 +135,63 @@ export function Rescues() {
           displayField="name"
           id="Autocomplete"
           flexGrow="1"
+          flexBasis="128px"
+          optionLabel={i => `${i.name} (${i.email})`}
         />
-        <Input
-          type="date"
-          value={date}
-          variant="flushed"
-          onChange={e => handleChangeDate(e)}
-          id="Datepicker"
-          flexGrow="1"
-          flexBasis="150px"
-          fontSize="sm"
-          color="element.secondary"
-        />
+        <InputGroup flexGrow="1" flexBasis="128px">
+          <InputLeftElement
+            pointerEvents="none"
+            children={<CalendarIcon mr="2" color="element.tertiary" />}
+          />
+          <Input
+            type="date"
+            value={date}
+            variant="flushed"
+            onChange={e => handleChangeDate(e)}
+            id="Datepicker"
+            fontSize="sm"
+            color="element.secondary"
+          />
+        </InputGroup>
       </Flex>
-      {data &&
-        data.map(rescue => <RescueCard rescue={rescue} key={rescue.id} />)}
+      {loading && !data ? (
+        <>
+          {['', '', '', ''].map(i => (
+            <Skeleton h="32" my="4" borderRadius="md" />
+          ))}
+        </>
+      ) : data?.length ? (
+        <>
+          {data.map(rescue => (
+            <RescueCard rescue={rescue} key={rescue.id} />
+          ))}
+          <Flex width="100%" my="4" justify="center">
+            <Button
+              variant="secondary"
+              onClick={handleLoadMore}
+              disabled={!loadMore || loading}
+            >
+              Load More
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <Flex direction="column" align="center" w="100%" py="16">
+          <Heading as="h4" size="md" color="element.primary" mb="1">
+            No rescues to show.
+          </Heading>
+          <Text align="center" fontSize="sm" color="element.secondary" mb="6">
+            There are no rescues that match your current filters.
+          </Text>
+        </Flex>
+      )}
     </Page>
   )
 }
 
 function RescueCard({ rescue }) {
   return (
-    <Link href={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
+    <Link to={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
       <Box
         my={6}
         boxShadow="default"

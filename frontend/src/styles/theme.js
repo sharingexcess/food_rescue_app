@@ -29,7 +29,7 @@ const semanticTokens = {
       _light: 'se.gray.600',
     },
     'element.tertiary': {
-      _dark: 'se.gray.300',
+      _dark: 'se.gray.600',
       _light: 'se.gray.300',
     },
     'element.disabled': {
@@ -133,12 +133,12 @@ const theme = extendTheme({
                 : darken('se.brand.primary', 5),
             _disabled: {
               bg: 'element.disabled',
-              opacity: 1,
+              opacity: 0.4,
             },
           },
           _disabled: {
             bg: 'element.disabled',
-            opacity: 1,
+            opacity: 0.4,
           },
         }),
         secondary: props => ({

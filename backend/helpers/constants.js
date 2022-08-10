@@ -44,3 +44,10 @@ exports.RECIPIENT_SUB_TYPES = [
 ]
 
 exports.EMISSIONS_COEFFICIENT = 3.66
+
+exports.STATUSES = {
+  CANCELLED: 'cancelled',
+  SCHEDULED: 'scheduled',
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
+}

@@ -11,52 +11,159 @@ import {
   Collapse,
 } from '@chakra-ui/react'
 import {
+  ArrowRightIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   EditIcon,
   ExternalLinkIcon,
   InfoIcon,
   PhoneIcon,
+  WarningIcon,
 } from '@chakra-ui/icons'
 import {
   formatTimestamp,
   generateDirectionsLink,
   formatPhoneNumber,
   STATUSES,
+  SE_API,
+  createTimestamp,
 } from 'helpers'
 import { useRescueContext } from './Rescue'
 import { useState } from 'react'
+import { useAuth } from 'hooks'
 
 export function RescueHeader() {
-  const { rescue } = useRescueContext()
+  const { rescue, refresh } = useRescueContext()
+  const { user } = useAuth()
+  const [isStarting, setIsStarting] = useState()
+  const [isCancelling, setIsCancelling] = useState()
+
+  async function handleStartRescue() {
+    setIsStarting(true)
+    await Promise.all([
+      SE_API.post(
+        `/rescues/${rescue.id}/update`,
+        {
+          status: STATUSES.ACTIVE,
+          timestamp_logged_start: createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        },
+        user.accessToken
+      ),
+      SE_API.post(
+        `/stops/${rescue.stops[0].id}/update`,
+        {
+          status: STATUSES.ACTIVE,
+          timestamp_logged_start: createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        },
+        user.accessToken
+      ),
+    ])
+    setIsStarting(false)
+    refresh()
+  }
+
+  async function handleCancelRescue() {
+    const reason = window.prompt(
+      'Let us know why you need to cancel this rescue.\n\nNote: cancelling a rescue cannot be undone.\n'
+    )
+    if (reason) {
+      setIsCancelling(true)
+      await SE_API.post(
+        `/rescues/${rescue.id}/cancel`,
+        {
+          status: STATUSES.CANCELLED,
+          notes: 'Cancelled - ' + reason,
+        },
+        user.accessToken
+      )
+      refresh()
+      setIsCancelling(false)
+    }
+  }
+
   return (
-    <Flex pt="4" pb="8">
-      <Avatar
-        src={rescue?.handler?.icon}
-        name={rescue?.handler?.name}
-        bg="element.secondary"
-      />
-      <Box w="4" />
-      <Flex direction="column">
-        <Heading as="h4" size="md" mb="4px" color="element.primary">
-          {rescue?.handler?.name || 'Available Rescue'}
-        </Heading>
-        <Text color="element.secondary" fontSize="xs">
-          {formatTimestamp(
-            rescue.timestamp_scheduled_start,
-            'dddd, MMMM DD | h:mma'
+    <>
+      <Flex pt="4" pb="8" align="center">
+        <Avatar
+          src={rescue?.handler?.icon}
+          name={rescue?.handler?.name}
+          bg="element.secondary"
+        />
+        <Box w="4" />
+        <Flex direction="column">
+          <Heading as="h4" size="md" mb="4px" color="element.primary">
+            {rescue?.handler?.name || 'Available Rescue'}
+          </Heading>
+          <Text color="element.secondary" fontSize="xs">
+            {formatTimestamp(
+              rescue.timestamp_scheduled_start,
+              'dddd, MMMM DD | h:mma'
+            )}
+            {formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma')}
+          </Text>
+          {rescue.notes && (
+            <Text color="element.secondary" fontSize="xs">
+              Notes: {rescue.notes}
+            </Text>
           )}
-          {formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma')}
-        </Text>
+        </Flex>
       </Flex>
-    </Flex>
+
+      <Flex justify="space-between" mb="4" gap="2">
+        {rescue.status === STATUSES.SCHEDULED && (
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<ArrowRightIcon />}
+            bg="blue.secondary"
+            color="blue.primary"
+            onClick={handleStartRescue}
+            isLoading={isStarting}
+          >
+            Start
+          </Button>
+        )}
+        {rescue.status !== STATUSES.CANCELLED && (
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<EditIcon />}
+            bg="yellow.secondary"
+            color="yellow.primary"
+          >
+            Edit
+          </Button>
+        )}
+        {rescue.status !== STATUSES.CANCELLED && (
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<WarningIcon />}
+            bg="red.secondary"
+            color="red.primary"
+            onClick={handleCancelRescue}
+            isLoading={isCancelling}
+          >
+            Cancel
+          </Button>
+        )}
+      </Flex>
+    </>
   )
 }
 
 export function RescueStops() {
   const { rescue, activeStop } = useRescueContext()
   return rescue.stops.map((stop, i) =>
-    stop.id === activeStop?.id ? (
+    stop.status === STATUSES.ACTIVE ? (
       <ActiveStop key={i} stop={stop} />
     ) : (
       <InactiveStop stop={stop} key={i} />

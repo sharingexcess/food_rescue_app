@@ -1,8 +1,15 @@
-import { Flex, Heading } from '@chakra-ui/react'
+import {
+  Flex,
+  Heading,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+  Stack,
+} from '@chakra-ui/react'
 import { useApi } from 'hooks'
 import { useParams } from 'react-router-dom'
 import { createContext, useContext, useMemo, useState } from 'react'
-import { Error, Loading } from 'components'
+import { Ellipsis, Error, Loading } from 'components'
 import { Page, Pickup, Delivery } from 'chakra_components'
 import { getActiveStop } from './Rescue.utils'
 import { RescueHeader, RescueStops } from './Rescue.children'
@@ -33,19 +40,58 @@ export function Rescue() {
     refresh,
   }
 
-  if (loading && !rescue) return <Loading text="Loading Rescue" />
-  else if (error) return <Error message={error} />
-  else if (!rescue) return <Error message="No Rescue Found" />
-  else
+  function RescuePageWrapper({ children }) {
     return (
       <Page
         id="Rescue"
-        title={`${rescue.status} Rescue`}
+        title="Rescue"
         breadcrumbs={[
           { label: 'Rescues', link: '/chakra/rescues' },
-          { label: rescue_id, link: `/chakra/rescues/${rescue_id}` },
+          {
+            label: `${rescue?.status || 'Loading'} Rescue`,
+            link: `/chakra/rescues/${rescue_id}`,
+          },
         ]}
       >
+        {children}
+      </Page>
+    )
+  }
+
+  if (loading && !rescue)
+    return (
+      <RescuePageWrapper>
+        <Heading
+          as="h1"
+          fontWeight="700"
+          size="2xl"
+          mb="24px"
+          textTransform="capitalize"
+          color="element.primary"
+        >
+          Loading Rescue...
+        </Heading>
+        <SkeletonCircle w="100%" h="16" my="8" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+      </RescuePageWrapper>
+    )
+  else if (error)
+    return (
+      <RescuePageWrapper>
+        <Error message={error} />
+      </RescuePageWrapper>
+    )
+  else if (!rescue)
+    return (
+      <RescuePageWrapper>
+        <Error message="No Rescue Found" />
+      </RescuePageWrapper>
+    )
+  else
+    return (
+      <RescuePageWrapper>
         <RescueContext.Provider value={contextValue}>
           <Heading
             as="h1"
@@ -66,6 +112,6 @@ export function Rescue() {
             delivery={openStop?.type === 'delivery' ? openStop : null}
           />
         </RescueContext.Provider>
-      </Page>
+      </RescuePageWrapper>
     )
 }

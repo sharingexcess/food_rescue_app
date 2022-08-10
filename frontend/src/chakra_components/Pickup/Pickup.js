@@ -33,6 +33,7 @@ import {
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Ellipsis } from 'components'
 import { useAuth } from 'hooks'
+import { useNavigate } from 'react-router-dom'
 
 const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
@@ -122,7 +123,7 @@ export function PickupHeader() {
         `/rescues/${openStop.id}/pickup/${pickup.id}/cancel`,
         {
           status: STATUSES.CANCELLED,
-          notes: reason,
+          notes: 'Cancelled - ' + reason,
         },
         user.accessToken
       )
@@ -211,22 +212,21 @@ export function PickupHeader() {
           </Button>
         </Link>
 
-        <Button
-          size="sm"
-          fontSize="xs"
-          variant="secondary"
-          disabled={
-            openStop.status === STATUSES.CANCELLED ||
-            openStop.status === STATUSES.COMPLETED
-          }
-          color="yellow.primary"
-          bg="yellow.secondary"
-          onClick={handleCancel}
-          flexGrow={1}
-          leftIcon={<WarningIcon />}
-        >
-          Cancel Pickup
-        </Button>
+        {openStop.status !== STATUSES.CANCELLED && (
+          <Button
+            size="sm"
+            fontSize="xs"
+            variant="secondary"
+            disabled={openStop.status === STATUSES.COMPLETED}
+            color="yellow.primary"
+            bg="yellow.secondary"
+            onClick={handleCancel}
+            flexGrow={1}
+            leftIcon={<WarningIcon />}
+          >
+            Cancel Pickup
+          </Button>
+        )}
       </Flex>
       <Divider pt={4} />
     </>
@@ -360,7 +360,14 @@ export function NoteInput() {
       )
   }
 
-  return (
+  return openStop.status === STATUSES.CANCELLED ? (
+    <Flex align="center" my="4">
+      <EditIcon mr="4" color="element.tertiary" />
+      <Text fontSize="sm" color="element.secondary">
+        {openStop.notes}
+      </Text>
+    </Flex>
+  ) : (
     <InputGroup>
       <InputLeftElement
         pointerEvents="none"
@@ -382,19 +389,41 @@ export function NoteInput() {
 
 function PickupBody() {
   const { entryRows } = usePickupContext()
-  const { openStop } = useRescueContext()
+  const { openStop, rescue } = useRescueContext()
 
   return (
     <Flex direction="column">
-      <SubmittedEntryRows entryRows={entryRows} />
-      {openStop.status !== STATUSES.CANCELLED && <EntryRowInput />}
+      {openStop.status === STATUSES.SCHEDULED ? (
+        <Flex direction="column" align="center" w="100%" py="8">
+          <Heading as="h4" size="md" color="element.primary" mb="2">
+            This pickup isn't active yet.
+          </Heading>
+          <Text align="center" fontSize="sm" color="element.secondary">
+            {rescue.status === STATUSES.ACTIVE
+              ? 'You can enter data here once you complete all previous stops along your rescue.'
+              : 'Ready to go? Start this rescue to begin entering data.'}
+          </Text>
+        </Flex>
+      ) : openStop.status === STATUSES.CANCELLED ? (
+        <Flex direction="column" align="center" w="100%" py="8">
+          <Heading as="h4" size="md" color="element.primary" mb="2">
+            This pickup has been cancelled.
+          </Heading>
+        </Flex>
+      ) : (
+        <>
+          <SubmittedEntryRows entryRows={entryRows} />
+          <EntryRowInput />
+        </>
+      )}
     </Flex>
   )
 }
 
 export function PickupFooter() {
   const { user } = useAuth()
-  const { setOpenStop, refresh } = useRescueContext()
+  const { setOpenStop, refresh, rescue } = useRescueContext()
+  const navigate = useNavigate()
   const { entryRows, notes, pickup, session_storage_key, isChanged } =
     usePickupContext()
   const total = entryRows.reduce((total, current) => total + current.weight, 0)
@@ -432,25 +461,17 @@ export function PickupFooter() {
 
   return (
     <Flex direction="column" w="100%">
-      <NoteInput />
+      {pickup.status !== STATUSES.SCHEDULED && <NoteInput />}
       <Button
         size="lg"
         w="100%"
         disabled={total < 1 || isSubmitting || !isChanged}
         onClick={handleSubmit}
-        leftIcon={<CheckCircleIcon />}
+        isLoading={isSubmitting}
+        loadingText="Updating Pickup"
       >
-        {isSubmitting ? (
-          <>
-            Updating Pickup
-            <Ellipsis />
-          </>
-        ) : (
-          <>
-            {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
-            {total ? ` (${total} lbs.)` : ''}
-          </>
-        )}
+        {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
+        {total ? ` (${total} lbs.)` : ''}
       </Button>
     </Flex>
   )

@@ -59,11 +59,8 @@ export function Delivery({ delivery }) {
   }, [delivery, currentLoad])
 
   const canEdit = useMemo(() => {
-    return (
-      ![STATUSES.COMPLETED, STATUSES.CANCELLED].includes(delivery?.status) ||
-      admin
-    )
-  })
+    return ![STATUSES.CANCELLED, STATUSES.SCHEDULED].includes(delivery?.status)
+  }, [delivery])
 
   const deliveryContextValue = {
     delivery,
@@ -104,7 +101,7 @@ function DeliveryHeader() {
         `/rescues/${openStop.id}/delivery/${delivery.id}/cancel`,
         {
           status: STATUSES.CANCELLED,
-          notes: reason,
+          notes: 'Cancelled - ' + reason,
         },
         user.accessToken
       )
@@ -112,6 +109,7 @@ function DeliveryHeader() {
       refresh()
     }
   }
+
   return (
     <>
       <Heading as="h2" mb="6" size="2xl">
@@ -193,22 +191,21 @@ function DeliveryHeader() {
           </Button>
         </Link>
 
-        <Button
-          size="sm"
-          fontSize="xs"
-          variant="secondary"
-          disabled={
-            openStop.status === STATUSES.CANCELLED ||
-            openStop.status === STATUSES.COMPLETED
-          }
-          color="yellow.primary"
-          bg="yellow.secondary"
-          onClick={handleCancel}
-          flexGrow={1}
-          leftIcon={<WarningIcon />}
-        >
-          Cancel Delivery
-        </Button>
+        {openStop.status !== STATUSES.CANCELLED && (
+          <Button
+            size="sm"
+            fontSize="xs"
+            variant="secondary"
+            disabled={openStop.status === STATUSES.COMPLETED}
+            color="yellow.primary"
+            bg="yellow.secondary"
+            onClick={handleCancel}
+            flexGrow={1}
+            leftIcon={<WarningIcon />}
+          >
+            Cancel Delivery
+          </Button>
+        )}
       </Flex>
       <Divider pt={4} />
     </>
@@ -216,8 +213,9 @@ function DeliveryHeader() {
 }
 
 function DeliveryBody() {
-  const { setOpenStop } = useRescueContext()
+  const { setOpenStop, rescue } = useRescueContext()
   const {
+    delivery,
     currentLoad,
     poundsDropped,
     setPoundsDropped,
@@ -250,7 +248,24 @@ function DeliveryBody() {
     setPoundsDropped(Math.round((value / 100) * currentLoad))
   }
 
-  return (
+  return delivery.status === STATUSES.SCHEDULED ? (
+    <Flex direction="column" align="center" w="100%" py="8">
+      <Heading as="h4" size="md" color="element.primary" mb="2">
+        This delivery isn't active yet.
+      </Heading>
+      <Text align="center" fontSize="sm" color="element.secondary">
+        {rescue.status === STATUSES.ACTIVE
+          ? 'You can enter data here once you complete all previous stops along your rescue.'
+          : 'Ready to go? Start this rescue to begin entering data.'}
+      </Text>
+    </Flex>
+  ) : delivery.status === STATUSES.CANCELLED ? (
+    <Flex direction="column" align="center" w="100%" py="8">
+      <Heading as="h4" size="md" color="element.primary" mb="2">
+        This delivery has been cancelled.
+      </Heading>
+    </Flex>
+  ) : (
     <Flex direction="column" align="center">
       <Text textAlign="center" fontWeight={400} mb={4}>
         How much of your current load
@@ -321,7 +336,14 @@ function NoteInput() {
   const { openStop } = useRescueContext()
   const { notes, setNotes } = useDeliveryContext()
 
-  return (
+  return openStop.status === STATUSES.CANCELLED ? (
+    <Flex align="center" my="4">
+      <EditIcon mr="4" color="element.tertiary" />
+      <Text fontSize="sm" color="element.secondary">
+        {openStop.notes}
+      </Text>
+    </Flex>
+  ) : (
     <InputGroup>
       <InputLeftElement
         pointerEvents="none"
@@ -366,7 +388,7 @@ function DeliveryFooter() {
 
   return (
     <Flex direction="column" w="100%">
-      <NoteInput />
+      {delivery.status !== STATUSES.SCHEDULED && <NoteInput />}
       <Button
         size="lg"
         w="100%"
