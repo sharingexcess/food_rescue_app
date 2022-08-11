@@ -18,10 +18,10 @@ async function organizationsEndpoint(request, response) {
       user => user.is_admin
     )
 
-    // if (!requestIsAuthenticated) {
-    //   rejectUnauthorizedRequest(response)
-    //   return
-    // }
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
+      return
+    }
     const organizations = await getOrganizations()
     response.status(200).send(JSON.stringify(organizations))
   } catch (e) {
