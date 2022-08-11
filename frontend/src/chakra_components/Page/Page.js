@@ -114,7 +114,7 @@ function PageHead({ breadcrumbs, openMenu }) {
       <Box w="1" />
       {breadcrumbs && (
         <Breadcrumb
-          separator={<ChevronRightIcon color="gray.400" />}
+          separator={<ChevronRightIcon color="element.tertiary" />}
           fontSize="sm"
           position="relative"
           py="1"
@@ -127,6 +127,11 @@ function PageHead({ breadcrumbs, openMenu }) {
                 <Link to={crumb.link}>
                   <Text
                     fontWeight="light"
+                    color={
+                      i === breadcrumbs.length - 1
+                        ? 'element.primary'
+                        : 'element.tertiary'
+                    }
                     textDecoration="underline"
                     zIndex="3"
                     textTransform="capitalize"
