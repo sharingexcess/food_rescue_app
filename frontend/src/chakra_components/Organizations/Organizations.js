@@ -1,4 +1,13 @@
-import { Button, Flex, Heading, Input, Select, Text } from '@chakra-ui/react'
+import {
+  Avatar,
+  Button,
+  Divider,
+  Flex,
+  Heading,
+  Input,
+  Select,
+  Text,
+} from '@chakra-ui/react'
 import { Page } from 'chakra_components'
 import { DONOR_TYPES, ORG_SUBTYPES, RECIPIENT_TYPES } from 'helpers'
 import { useApi } from 'hooks'
@@ -7,7 +16,7 @@ import { useState } from 'react'
 export function Organizations() {
   const { data: organizations } = useApi('/organizations')
   const [searchValue, setSearchValue] = useState('')
-  const [orgType, setOrgType] = useState('')
+  const [orgType, setOrgType] = useState('recipient_donor')
   const [orgSubType, setOrgSubType] = useState('')
 
   function handleChange(e) {
@@ -49,6 +58,7 @@ export function Organizations() {
           flexGrow="0.5"
           flexBasis={['40%', '40%', '180px', '180px', '180px']}
         >
+          <option value="recipient_donor">All types</option>
           <option value="recipient">Recipient</option>
           <option value="donor">Donor</option>
         </Select>
@@ -61,7 +71,7 @@ export function Organizations() {
         >
           {orgType === 'donor' ? (
             <>
-              <option value="">All subtypes</option>
+              <option value="recipient_donor">All subtypes</option>
               <option value="retail">Retail</option>
               <option value="wholesale">Wholesale</option>
               <option value="holding">Holding</option>
@@ -69,7 +79,7 @@ export function Organizations() {
             </>
           ) : (
             <>
-              <option value="">All subtypes</option>
+              <option value="recipient_donor">All subtypes</option>
               <option value="food_bank">Food Bank</option>
               <option value="agency">Agency</option>
               <option value="home_delivery">Home Delivery</option>
@@ -78,23 +88,18 @@ export function Organizations() {
               <option value="holding">Holding</option>
               <option value="other">Other</option>
             </>
-            // Object.keys(RECIPIENT_TYPES).forEach((sub, i) => (
-            //   <option key={i} value={sub}>
-            //     {sub}
-            //   </option>
-            // ))
           )}
         </Select>
       </Flex>
-      <Button variant="secondary" w="100%" mt={4}>
+      <Button variant="secondary" w="100%" my={4}>
         New
       </Button>
       {organizations &&
         organizations
-          // .filter(i => i.name.includes(searchValue))
+          .filter(i => orgType.includes(i.type))
           .map((org, i) => (
             <>
-              <OrganizationCard org={org} key={org.id} />
+              <OrganizationCard organization={org} key={org.id} />
               {i !== organizations.length - 1 && <Divider />}
             </>
           ))}
@@ -113,13 +118,18 @@ function OrganizationCard({ organization }) {
       />
       <Flex direction="column" ml="4">
         <Heading as="h2" size="md" fontWeight="600" color="element.primary">
-          {organization?.name || 'User'}
+          {organization?.name || organization?.type}
         </Heading>
-        <Text color="element.secondary" fontSize="xs">
-          {organization?.email || 'Email'}
+        <Text
+          color="element.secondary"
+          fontSize="xs"
+          textTransform="capitalize"
+        >
+          {organization?.subtype.replace('_', ' ')}{' '}
+          {organization?.type.replace('_', ' ')}
         </Text>
       </Flex>
-      <Text ml="auto">{permissionIcon(organization?.permission)}</Text>
+      {/* <Text ml="auto">{permissionIcon(organization?.permission)}</Text> */}
     </Flex>
   )
 }

@@ -57,6 +57,7 @@ api.post('/publicProfile/:id/update', (req, res) =>
 api.post('/privateProfile/:id/update', (req, res) =>
   loadEndpoint('updatePrivateProfile', req, res)
 )
+api.get('/organizations', (req, res) => loadEndpoint('organizations', req, res))
 
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
