@@ -1,10 +1,15 @@
+import { AddIcon, SearchIcon } from '@chakra-ui/icons'
 import {
   Avatar,
+  Box,
   Button,
   Divider,
   Flex,
   Heading,
+  IconButton,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   Text,
 } from '@chakra-ui/react'
@@ -12,6 +17,7 @@ import { Page } from 'chakra_components'
 import { DONOR_TYPES, ORG_SUBTYPES, RECIPIENT_TYPES } from 'helpers'
 import { useApi } from 'hooks'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export function Organizations() {
   const { data: organizations } = useApi('/organizations')
@@ -30,22 +36,33 @@ export function Organizations() {
       title="Organizations"
       breadcrumbs={[{ label: 'Organizations', link: '/chakra/organizations' }]}
     >
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="24px"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Organizations
-      </Heading>
-      <Text fontWeight={400}>Search</Text>
-      <Input
-        placeholder="Search by name..."
-        value={searchValue}
-        onChange={handleChange}
-      />
+      <Flex justify="space-between">
+        <Heading
+          as="h1"
+          fontWeight="700"
+          size="2xl"
+          mb="24px"
+          textTransform="capitalize"
+          color="element.primary"
+        >
+          Organizations
+        </Heading>
+        <Link to="/chakra/create-organization">
+          <IconButton icon={<AddIcon />} borderRadius="3xl" />
+        </Link>
+      </Flex>
+      <InputGroup mb="6">
+        <InputLeftElement
+          children={<SearchIcon />}
+          mr="2"
+          color="element.secondary"
+        />
+        <Input
+          placeholder="Search by name..."
+          value={searchValue}
+          onChange={handleChange}
+        />
+      </InputGroup>
       <Flex
         justify="space-between"
         flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
@@ -98,10 +115,10 @@ export function Organizations() {
         organizations
           .filter(i => orgType.includes(i.type))
           .map((org, i) => (
-            <>
-              <OrganizationCard organization={org} key={org.id} />
+            <Box key={i}>
+              <OrganizationCard organization={org} />
               {i !== organizations.length - 1 && <Divider />}
-            </>
+            </Box>
           ))}
     </Page>
   )

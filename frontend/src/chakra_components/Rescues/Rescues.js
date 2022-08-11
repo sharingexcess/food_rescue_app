@@ -156,7 +156,7 @@ export function Rescues() {
       {loading && !data ? (
         <>
           {['', '', '', ''].map(i => (
-            <Skeleton h="32" my="4" borderRadius="md" />
+            <Skeleton h="32" my="4" borderRadius="md" key={i} />
           ))}
         </>
       ) : data?.length ? (

@@ -133,6 +133,17 @@ function MenuBody({ colorMode, toggleColorMode }) {
           People
         </Button>
       </Link>
+      <Link to="/chakra/organizations">
+        <Button
+          variant="link"
+          fontSize="xl"
+          mr="auto"
+          my="2"
+          fontWeight="normal"
+        >
+          Organizations
+        </Button>
+      </Link>
     </Flex>
   )
 }

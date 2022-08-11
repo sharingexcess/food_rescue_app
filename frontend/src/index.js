@@ -37,6 +37,7 @@ import {
 } from 'components'
 import {
   ChakraTest,
+  CreateOrganization as ChakraCreateOrganization,
   CreateRescue as ChakraCreateRescue,
   Organizations as ChakraOrganizations,
   Profile as ChakraProfile,
@@ -435,6 +436,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraOrganizations />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/create-organization"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraCreateOrganization />
                           </PublicChakraRoute>
                         }
                       />

@@ -1,6 +1,7 @@
 import { SearchIcon } from '@chakra-ui/icons'
 import {
   Avatar,
+  Box,
   Divider,
   Flex,
   Heading,
@@ -15,11 +16,6 @@ import { useState } from 'react'
 
 export function Users() {
   const { data: users } = useApi('/publicProfiles')
-  const [searchValue, setSearchValue] = useState('')
-
-  function handleChange(e) {
-    setSearchValue(e.target.value)
-  }
 
   return (
     <Page
@@ -27,7 +23,7 @@ export function Users() {
       title="People"
       breadcrumbs={[{ label: 'People', link: '/chakra/people' }]}
     >
-      {/* <Heading
+      <Heading
         as="h1"
         fontWeight="700"
         size="2xl"
@@ -37,28 +33,40 @@ export function Users() {
       >
         People
       </Heading>
-      <InputGroup mb="6">
-        <InputLeftElement
-          children={<SearchIcon />}
-          mr="2"
-          color="element.secondary"
-        /> */}
+      <SearchBox />
+      {users &&
+        users
+          // .filter(i => i.name.includes(searchValue))
+          .map((user, i) => (
+            <Box key={i}>
+              <UserCard user={user} />
+              {i !== users.length - 1 && <Divider />}
+            </Box>
+          ))}
+    </Page>
+  )
+}
+
+function SearchBox() {
+  const [searchValue, setSearchValue] = useState('')
+
+  function handleChange(e) {
+    setSearchValue(e.target.value)
+  }
+
+  return (
+    <InputGroup mb="6">
+      <InputLeftElement
+        children={<SearchIcon />}
+        mr="2"
+        color="element.secondary"
+      />
       <Input
         placeholder="Search by name..."
         value={searchValue}
         onChange={handleChange}
       />
-      {/* </InputGroup>
-      {users &&
-        users
-          // .filter(i => i.name.includes(searchValue))
-          .map((user, i) => (
-            <>
-              <UserCard user={user} key={user.id} />
-              {i !== users.length - 1 && <Divider />}
-            </>
-          ))} */}
-    </Page>
+    </InputGroup>
   )
 }
 

@@ -23,8 +23,8 @@ export function Page({ id, title, children, breadcrumbs }) {
   const { colorMode } = useColorMode()
   const isMobile = useIsMobile()
 
-  useEffect(() => console.log('breadcrumbs change'), [breadcrumbs])
-  useEffect(() => console.log('children change'), [children])
+  // useEffect(() => console.log('breadcrumbs change'), [breadcrumbs])
+  // useEffect(() => console.log('children change'), [children])
 
   return (
     <Auth>
