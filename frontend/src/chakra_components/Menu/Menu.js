@@ -56,6 +56,7 @@ export function Menu({ isOpen, onClose }) {
       boxShadow="default"
       bg="surface.card"
       borderRadius="xl"
+      zIndex={10}
     >
       <MenuHeader />
       <Flex h={8} />

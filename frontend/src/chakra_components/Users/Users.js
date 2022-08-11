@@ -27,7 +27,7 @@ export function Users() {
       title="People"
       breadcrumbs={[{ label: 'People', link: '/chakra/people' }]}
     >
-      {/* <Heading
+      <Heading
         as="h1"
         fontWeight="700"
         size="2xl"
@@ -42,13 +42,13 @@ export function Users() {
           children={<SearchIcon />}
           mr="2"
           color="element.secondary"
-        /> */}
-      <Input
-        placeholder="Search by name..."
-        value={searchValue}
-        onChange={handleChange}
-      />
-      {/* </InputGroup>
+        />
+        <Input
+          placeholder="Search by name..."
+          value={searchValue}
+          onChange={handleChange}
+        />
+      </InputGroup>
       {users &&
         users
           // .filter(i => i.name.includes(searchValue))
@@ -57,7 +57,7 @@ export function Users() {
               <UserCard user={user} key={user.id} />
               {i !== users.length - 1 && <Divider />}
             </>
-          ))} */}
+          ))}
     </Page>
   )
 }

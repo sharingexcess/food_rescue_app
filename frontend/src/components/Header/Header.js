@@ -59,8 +59,7 @@ export function Header() {
         </div>
         {isMobile ? <UserProfile /> : null}
       </header>
-      {/* <Menu isOpen={menuOpen} setIsOpen={setMenuOpen} /> */}
-      {Menu({ isOpen: menuOpen, setIsOpen: setMenuOpen })}
+      <Menu isOpen={menuOpen} setIsOpen={setMenuOpen} />
     </>
   )
 }
