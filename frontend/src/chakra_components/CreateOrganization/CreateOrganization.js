@@ -16,7 +16,7 @@ export function CreateOrganization() {
       title="Create Organization"
       breadcrumbs={[
         { label: 'Organizations', link: '/chakra/organizations' },
-        { label: 'Add', link: '/chakra/create-organization' },
+        { label: 'Create', link: '/chakra/create-organization' },
       ]}
     >
       <Heading
