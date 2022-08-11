@@ -128,13 +128,15 @@ function PageHead({ breadcrumbs, openMenu }) {
               <BreadcrumbItem m="0" key={i}>
                 <Link to={crumb.link}>
                   <Text
-                    fontWeight="light"
+                    fontWeight={i === breadcrumbs.length - 1 ? '400' : '300'}
                     color={
                       i === breadcrumbs.length - 1
                         ? 'element.primary'
-                        : 'element.tertiary'
+                        : 'element.secondary'
                     }
-                    textDecoration="underline"
+                    textDecoration={
+                      i === breadcrumbs.length - 1 ? 'none' : 'underline'
+                    }
                     zIndex="3"
                     textTransform="capitalize"
                   >

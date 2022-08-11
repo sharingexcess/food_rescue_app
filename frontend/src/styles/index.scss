@@ -14,6 +14,11 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 // hide google maps controls
-.gmnoprint {
-  display: none !important;
+.gm-style {
+  a {
+    display: none !important;
+  }
+  .gmnoprint {
+    display: none !important;
+  }
 }
