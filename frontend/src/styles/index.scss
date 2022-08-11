@@ -6,8 +6,19 @@
 // @import './animations.scss';
 // @import './components.scss';
 
+// hide default datetime input icon
 input[type='date']::-webkit-inner-spin-button,
 input[type='date']::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
+}
+
+// hide google maps controls
+.gm-style {
+  a {
+    display: none !important;
+  }
+  .gmnoprint {
+    display: none !important;
+  }
 }

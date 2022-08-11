@@ -11,6 +11,7 @@ import {
   Collapse,
 } from '@chakra-ui/react'
 import {
+  AddIcon,
   ArrowRightIcon,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -34,34 +35,61 @@ import { useAuth } from 'hooks'
 
 export function RescueHeader() {
   const { rescue, refresh } = useRescueContext()
-  const { user } = useAuth()
+  const { user, admin } = useAuth()
   const [isStarting, setIsStarting] = useState()
   const [isCancelling, setIsCancelling] = useState()
+  const [isClaiming, setIsClaiming] = useState()
 
   async function handleStartRescue() {
-    setIsStarting(true)
-    await Promise.all([
-      SE_API.post(
+    if (
+      window.confirm(
+        "All set to go? We'll mark this as the start time of your rescue."
+      )
+    ) {
+      setIsStarting(true)
+      await Promise.all([
+        SE_API.post(
+          `/rescues/${rescue.id}/update`,
+          {
+            status: STATUSES.ACTIVE,
+            timestamp_logged_start: createTimestamp(),
+            timestamp_updated: createTimestamp(),
+          },
+          user.accessToken
+        ),
+        SE_API.post(
+          `/stops/${rescue.stops[0].id}/update`,
+          {
+            status: STATUSES.ACTIVE,
+            timestamp_logged_start: createTimestamp(),
+            timestamp_updated: createTimestamp(),
+          },
+          user.accessToken
+        ),
+      ])
+      setIsStarting(false)
+      refresh()
+    }
+  }
+
+  async function handleClaimRescue() {
+    if (
+      window.confirm(
+        "Are you sure you want to claim this rescue? We can't wait to help you rescue food!"
+      )
+    ) {
+      setIsClaiming(true)
+      await SE_API.post(
         `/rescues/${rescue.id}/update`,
         {
-          status: STATUSES.ACTIVE,
-          timestamp_logged_start: createTimestamp(),
+          handler_id: user.id,
           timestamp_updated: createTimestamp(),
         },
         user.accessToken
-      ),
-      SE_API.post(
-        `/stops/${rescue.stops[0].id}/update`,
-        {
-          status: STATUSES.ACTIVE,
-          timestamp_logged_start: createTimestamp(),
-          timestamp_updated: createTimestamp(),
-        },
-        user.accessToken
-      ),
-    ])
-    setIsStarting(false)
-    refresh()
+      )
+      setIsClaiming(false)
+      refresh()
+    }
   }
 
   async function handleCancelRescue() {
@@ -85,16 +113,16 @@ export function RescueHeader() {
 
   return (
     <>
-      <Flex pt="4" pb="8" align="center">
+      <Flex pt="8" py="8" align="center">
         <Avatar
           src={rescue?.handler?.icon}
           name={rescue?.handler?.name}
-          bg="element.secondary"
+          bg="blue.secondary"
         />
         <Box w="4" />
         <Flex direction="column">
           <Heading as="h4" size="md" mb="4px" color="element.primary">
-            {rescue?.handler?.name || 'Available Rescue'}
+            {rescue?.handler?.name || 'Available'}
           </Heading>
           <Text color="element.secondary" fontSize="xs">
             {formatTimestamp(
@@ -112,7 +140,7 @@ export function RescueHeader() {
       </Flex>
 
       <Flex justify="space-between" mb="4" gap="2">
-        {rescue.status === STATUSES.SCHEDULED && (
+        {rescue.status === STATUSES.SCHEDULED && rescue.handler_id && (
           <Button
             variant="secondary"
             size="sm"
@@ -127,34 +155,50 @@ export function RescueHeader() {
             Start
           </Button>
         )}
-        {rescue.status !== STATUSES.CANCELLED && (
+        {!rescue.handler_id && (
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<AddIcon />}
+            bg="blue.secondary"
+            color="blue.primary"
+            onClick={handleClaimRescue}
+            isLoading={isStarting}
+          >
+            Claim
+          </Button>
+        )}
+        {rescue.status !== STATUSES.CANCELLED && admin && (
           <Button
             variant="secondary"
             size="sm"
             fontSize="xs"
             flexGrow="1"
             leftIcon={<EditIcon />}
-            bg="yellow.secondary"
-            color="yellow.primary"
+            bg="green.secondary"
+            color="green.primary"
           >
             Edit
           </Button>
         )}
-        {rescue.status !== STATUSES.CANCELLED && (
-          <Button
-            variant="secondary"
-            size="sm"
-            fontSize="xs"
-            flexGrow="1"
-            leftIcon={<WarningIcon />}
-            bg="red.secondary"
-            color="red.primary"
-            onClick={handleCancelRescue}
-            isLoading={isCancelling}
-          >
-            Cancel
-          </Button>
-        )}
+        {rescue.status !== STATUSES.CANCELLED &&
+          (admin || rescue.handler_id === user.id) && (
+            <Button
+              variant="secondary"
+              size="sm"
+              fontSize="xs"
+              flexGrow="1"
+              leftIcon={<WarningIcon />}
+              bg="yellow.secondary"
+              color="yellow.primary"
+              onClick={handleCancelRescue}
+              isLoading={isCancelling}
+            >
+              Cancel
+            </Button>
+          )}
       </Flex>
     </>
   )

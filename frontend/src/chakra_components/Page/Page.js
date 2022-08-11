@@ -18,13 +18,16 @@ import PullToRefresh from 'react-simple-pull-to-refresh'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-export function Page({ id, title, children, breadcrumbs }) {
+export function Page({ id, title, children, breadcrumbs, contentProps }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode } = useColorMode()
   const isMobile = useIsMobile()
 
-  // useEffect(() => console.log('breadcrumbs change'), [breadcrumbs])
-  // useEffect(() => console.log('children change'), [children])
+  const withPullToRefresh = children => (
+    <PullToRefresh onRefresh={() => window.location.reload()}>
+      {children}
+    </PullToRefresh>
+  )
 
   return (
     <Auth>
@@ -57,10 +60,9 @@ export function Page({ id, title, children, breadcrumbs }) {
           ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
           px="4"
           minH="100%"
+          {...contentProps}
         >
-          <PullToRefresh onRefresh={() => window.location.reload()}>
-            {children}
-          </PullToRefresh>
+          {isMobile ? withPullToRefresh(children) : children}
         </Box>
       </Box>
     </Auth>
@@ -106,7 +108,7 @@ function PageHead({ breadcrumbs, openMenu }) {
           : 'linear(to-b, surface.background, transparent)'
       }
       pt={['16px', '16px', '16px', '32px', '32px']}
-      pb={['64px', '64px', '64px', '32px', '32px']}
+      pb={['32px', '32px', '32px', '32px', '32px']}
       px={['16px', '16px', '16px', '0', '0']}
       transition="top 0.3s ease"
     >
@@ -114,7 +116,7 @@ function PageHead({ breadcrumbs, openMenu }) {
       <Box w="1" />
       {breadcrumbs && (
         <Breadcrumb
-          separator={<ChevronRightIcon color="gray.400" />}
+          separator={<ChevronRightIcon color="element.tertiary" />}
           fontSize="sm"
           position="relative"
           py="1"
@@ -126,8 +128,15 @@ function PageHead({ breadcrumbs, openMenu }) {
               <BreadcrumbItem m="0" key={i}>
                 <Link to={crumb.link}>
                   <Text
-                    fontWeight="light"
-                    textDecoration="underline"
+                    fontWeight={i === breadcrumbs.length - 1 ? '400' : '300'}
+                    color={
+                      i === breadcrumbs.length - 1
+                        ? 'element.primary'
+                        : 'element.secondary'
+                    }
+                    textDecoration={
+                      i === breadcrumbs.length - 1 ? 'none' : 'underline'
+                    }
                     zIndex="3"
                     textTransform="capitalize"
                   >

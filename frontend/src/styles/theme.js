@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react'
 import { darken, whiten } from '@chakra-ui/theme-tools'
+import { unstable_HistoryRouter } from 'react-router-dom'
 import { SE_COLORS } from './colors'
 
 const styles = {
@@ -146,17 +147,21 @@ const theme = extendTheme({
           color: 'green.primary',
           fontWeight: 'medium',
           _hover: {
+            filter:
+              props.colorMode === 'dark'
+                ? 'brightness(1.2)'
+                : 'brightness(0.95)',
             _disabled: {
+              filter: 'unset',
               bg: 'green.secondary',
               color: 'green.primary',
-              opacity: 0.5,
             },
           },
           _disabled: {
             bg: 'green.secondary',
             color: 'green.primary',
-            opacity: 0.5,
           },
+          transition: 'all 0.5s ease',
         }),
         tertiary: props => ({
           color: 'se.brand.primary',

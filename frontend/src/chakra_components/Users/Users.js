@@ -70,6 +70,29 @@ function SearchBox() {
   )
 }
 
+function SearchBox() {
+  const [searchValue, setSearchValue] = useState('')
+
+  function handleChange(e) {
+    setSearchValue(e.target.value)
+  }
+
+  return (
+    <InputGroup mb="6">
+      <InputLeftElement
+        children={<SearchIcon />}
+        mr="2"
+        color="element.secondary"
+      />
+      <Input
+        placeholder="Search by name..."
+        value={searchValue}
+        onChange={handleChange}
+      />
+    </InputGroup>
+  )
+}
+
 function UserCard({ user }) {
   return (
     <Flex justify="start" align="center" py="4">

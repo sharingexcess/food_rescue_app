@@ -166,7 +166,7 @@ export function Rescues() {
           ))}
           <Flex width="100%" my="4" justify="center">
             <Button
-              variant="secondary"
+              variant="primary"
               onClick={handleLoadMore}
               disabled={!loadMore || loading}
             >
