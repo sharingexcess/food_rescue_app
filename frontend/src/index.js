@@ -36,12 +36,13 @@ import {
   Impact,
 } from 'components'
 import {
-  Rescues as ChakraRescues,
-  Rescue as ChakraRescue,
-  CreateRescue as ChakraCreateRescue,
-  Profile as ChakraProfile,
-  Users as ChakraUsers,
   ChakraTest,
+  CreateRescue as ChakraCreateRescue,
+  Organizations as ChakraOrganizations,
+  Profile as ChakraProfile,
+  Rescue as ChakraRescue,
+  Rescues as ChakraRescues,
+  Users as ChakraUsers,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -426,6 +427,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraUsers />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/organizations"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraOrganizations />
                           </PublicChakraRoute>
                         }
                       />
