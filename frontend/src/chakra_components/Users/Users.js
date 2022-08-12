@@ -73,7 +73,7 @@ function SearchBox() {
 function UserCard({ user }) {
   return (
     <Flex justify="start" align="center" py="4">
-      <Avatar src={user?.icon} name={user?.name} bg="gray.400" color="white" />
+      <Avatar src={user?.icon} name={user?.name} />
       <Flex direction="column" ml="4">
         <Heading as="h2" size="md" fontWeight="600" color="element.primary">
           {user?.name || 'User'}

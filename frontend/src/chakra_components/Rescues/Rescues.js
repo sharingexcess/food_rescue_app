@@ -211,12 +211,7 @@ function RescueCard({ rescue }) {
 function CardHeader({ rescue }) {
   return (
     <Flex align="center">
-      <Avatar
-        src={rescue.handler?.icon}
-        name={rescue.handler?.name}
-        bg="gray.400"
-        color="white"
-      />
+      <Avatar src={rescue.handler?.icon} name={rescue.handler?.name} />
       <Box w={4} />
       <Flex direction="column">
         <Heading as="h2" size="md" color="element.primary">

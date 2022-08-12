@@ -111,11 +111,7 @@ export function RescueHeader() {
   return (
     <>
       <Flex pt="8" py="8" align="center">
-        <Avatar
-          src={rescue?.handler?.icon}
-          name={rescue?.handler?.name}
-          bg="blue.secondary"
-        />
+        <Avatar src={rescue?.handler?.icon} name={rescue?.handler?.name} />
         <Box w="4" />
         <Flex direction="column">
           <Heading as="h4" size="md" mb="4px" color="element.primary">

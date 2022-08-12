@@ -14,7 +14,12 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { Page } from 'chakra_components'
-import { DONOR_TYPES, ORG_SUBTYPES, RECIPIENT_TYPES } from 'helpers'
+import {
+  DONOR_TYPES,
+  ORG_SUBTYPES,
+  ORG_TYPE_ICONS,
+  RECIPIENT_TYPES,
+} from 'helpers'
 import { useApi } from 'hooks'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -125,12 +130,7 @@ export function Organizations() {
 function OrganizationCard({ organization }) {
   return (
     <Flex justify="start" align="center" py="4">
-      <Avatar
-        src={organization?.icon}
-        name={organization?.name}
-        bg="gray.400"
-        color="white"
-      />
+      <Text fontSize="2xl">{ORG_TYPE_ICONS[organization.subtype]}</Text>
       <Flex direction="column" ml="4">
         <Heading as="h2" size="md" fontWeight="600" color="element.primary">
           {organization?.name || organization?.type}
@@ -140,8 +140,10 @@ function OrganizationCard({ organization }) {
           fontSize="xs"
           textTransform="capitalize"
         >
-          {organization?.subtype.replace('_', ' ')}{' '}
-          {organization?.type.replace('_', ' ')}
+          {`${organization?.type.replace(
+            '_',
+            ' '
+          )} - ${organization?.subtype.replace('_', ' ')}`}
         </Text>
       </Flex>
       {/* <Text ml="auto">{permissionIcon(organization?.permission)}</Text> */}

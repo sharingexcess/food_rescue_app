@@ -87,15 +87,15 @@ export const ORG_SUBTYPES = {
 }
 
 export const ORG_TYPE_ICONS = {
-  retail: 'department-store',
-  wholesale: 'package',
-  holding: 'palms-up-together',
-  other: 'red-question-mark',
-  food_bank: 'red-apple',
-  agency: 'briefcase',
-  popup: 'person-raising-hand',
-  community_fridge: 'cityscape',
-  home_delivery: 'house',
+  retail: '🏬',
+  wholesale: '📦',
+  holding: '🤲',
+  other: '❓',
+  food_bank: '🍎',
+  agency: '💼',
+  popup: '🎪',
+  community_fridge: '🏙',
+  home_delivery: '🏠',
 }
 
 export const STATUSES = {
