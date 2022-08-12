@@ -21,7 +21,7 @@ async function updatePublicProfileEndpoint(request, response) {
       // driver's own route (that data isn't available until after we fetch the rescue)
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
-        user => user.id === id // only allow users to update their own public profile
+        user => user.id === id || user.is_admin // only allow users to update their own public profile
       )
 
       if (!requestIsAuthenticated) {

@@ -13,6 +13,7 @@ import {
 import { Page } from 'chakra_components'
 import { useApi } from 'hooks'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export function Users() {
   const { data: users } = useApi('/publicProfiles')
@@ -72,18 +73,20 @@ function SearchBox() {
 
 function UserCard({ user }) {
   return (
-    <Flex justify="start" align="center" py="4">
-      <Avatar src={user?.icon} name={user?.name} />
-      <Flex direction="column" ml="4">
-        <Heading as="h2" size="md" fontWeight="600" color="element.primary">
-          {user?.name || 'User'}
-        </Heading>
-        <Text color="element.secondary" fontSize="xs">
-          {user?.email || 'Email'}
-        </Text>
+    <Link to={`/chakra/people/${user.id}`}>
+      <Flex justify="start" align="center" py="4">
+        <Avatar src={user?.icon} name={user?.name} />
+        <Flex direction="column" ml="4">
+          <Heading as="h2" size="md" fontWeight="600" color="element.primary">
+            {user?.name || 'User'}
+          </Heading>
+          <Text color="element.secondary" fontSize="xs">
+            {user?.email || 'Email'}
+          </Text>
+        </Flex>
+        <Text ml="auto">{permissionIcon(user?.permission)}</Text>
       </Flex>
-      <Text ml="auto">{permissionIcon(user?.permission)}</Text>
-    </Flex>
+    </Link>
   )
 }
 
