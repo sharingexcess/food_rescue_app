@@ -207,22 +207,6 @@ function AvailableRescues() {
         availableRescues.map(rescue => (
           <RescueCard key={rescue.id} rescue={rescue} />
         ))}
-      {availableRescues &&
-        availableRescues.map(rescue => (
-          <RescueCard key={rescue.id} rescue={rescue} />
-        ))}
-      {availableRescues &&
-        availableRescues.map(rescue => (
-          <RescueCard key={rescue.id} rescue={rescue} />
-        ))}
-      {availableRescues &&
-        availableRescues.map(rescue => (
-          <RescueCard key={rescue.id} rescue={rescue} />
-        ))}
-      {availableRescues &&
-        availableRescues.map(rescue => (
-          <RescueCard key={rescue.id} rescue={rescue} />
-        ))}
     </Box>
   )
 }
