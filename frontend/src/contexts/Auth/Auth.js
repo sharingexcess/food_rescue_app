@@ -4,9 +4,10 @@ import 'firebase/compat/auth'
 import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
-import { createTimestamp, getCollection } from 'helpers'
+import { getCollection } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
-import { Landing, Loading, Onboarding } from 'components'
+import { Landing, Onboarding } from 'components'
+import { Loading } from 'chakra_components/Loading/Loading'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop

@@ -14,7 +14,6 @@ import {
   generateDirectionsLink,
   generateUniqueId,
   STATUSES,
-  updateGoogleCalendarEvent,
   SE_API,
 } from 'helpers'
 import moment from 'moment'

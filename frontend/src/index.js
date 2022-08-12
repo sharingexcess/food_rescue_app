@@ -109,7 +109,6 @@ function PublicChakraRoute({ children }) {
   return (
     <>
       {children}
-      <Modal />
       <EnvWarning />
     </>
   )

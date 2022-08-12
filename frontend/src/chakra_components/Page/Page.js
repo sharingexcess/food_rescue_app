@@ -12,7 +12,6 @@ import {
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Menu } from '../'
 import { useIsMobile, useAuth, useScroll } from 'hooks'
-import { Auth } from 'contexts'
 import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
 import { useEffect, useState } from 'react'
@@ -37,42 +36,40 @@ export function Page({
   )
 
   return (
-    <Auth>
+    <Box
+      as="main"
+      id={id}
+      className="se-page"
+      w="100%"
+      h="100vh"
+      bg="surface.background"
+    >
+      <Helmet>
+        <title>{title} | SE Food Rescue</title>
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content={colorMode === 'dark' ? 'black-translucent' : 'default'}
+        />
+      </Helmet>
+      <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
+      <Menu isOpen={isOpen} onClose={onClose} />
       <Box
-        as="main"
-        id={id}
-        className="se-page"
-        w="100%"
-        h="100vh"
-        bg="surface.background"
+        as="section"
+        id="se-page-content"
+        w={isMobile ? '100%' : 'calc(100% - 424px)'}
+        maxW="720"
+        overflow="visible"
+        pt="112px"
+        pb="32px"
+        mx="auto"
+        ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
+        px="4"
+        minH="100%"
+        {...contentProps}
       >
-        <Helmet>
-          <title>{title} | SE Food Rescue</title>
-          <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content={colorMode === 'dark' ? 'black-translucent' : 'default'}
-          />
-        </Helmet>
-        <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
-        <Menu isOpen={isOpen} onClose={onClose} />
-        <Box
-          as="section"
-          id="se-page-content"
-          w={isMobile ? '100%' : 'calc(100% - 424px)'}
-          maxW="720"
-          overflow="visible"
-          pt="112px"
-          pb="32px"
-          mx="auto"
-          ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
-          px="4"
-          minH="100%"
-          {...contentProps}
-        >
-          {isMobile && pullToRefresh ? withPullToRefresh(children) : children}
-        </Box>
+        {isMobile && pullToRefresh ? withPullToRefresh(children) : children}
       </Box>
-    </Auth>
+    </Box>
   )
 }
 
@@ -179,8 +176,8 @@ function MenuButton({ openMenu }) {
 
   return isMobile ? (
     <Avatar
-      name={user.displayName}
-      src={user.photoURL}
+      name={user?.displayName}
+      src={user?.photoURL}
       ml="auto"
       onClick={openMenu}
       bg="blue.500"

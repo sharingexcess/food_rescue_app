@@ -111,31 +111,34 @@ export function Rescue() {
 
 // Alternate States for Loading/Error
 
-export function LoadingRescue({ RescuePageWrapper }) {
+function LoadingRescue({ RescuePageWrapper }) {
   const isMobile = useIsMobile()
   return (
     <RescuePageWrapper>
-      <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="6"
-        mt="4"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Loading Rescue...
-      </Heading>
-      <SkeletonCircle w="100%" h="16" my="8" />
-      <Skeleton h="32" my="4" />
-      <Skeleton h="32" my="4" />
-      <Skeleton h="32" my="4" />
+      <Box px="4">
+        <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
+        <Heading
+          as="h1"
+          fontWeight="700"
+          size="2xl"
+          mb="6"
+          mt="4"
+          textTransform="capitalize"
+          color="element.primary"
+        >
+          Loading Rescue...
+        </Heading>
+        <SkeletonCircle w="100%" h="16" my="4" />
+        <SkeletonCircle w="100%" h="12" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+      </Box>
     </RescuePageWrapper>
   )
 }
 
-export function RescuePageError({ RescuePageWrapper, message }) {
+function RescuePageError({ RescuePageWrapper, message }) {
   return (
     <RescuePageWrapper>
       <Error message={message} />

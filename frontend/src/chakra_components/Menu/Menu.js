@@ -73,11 +73,11 @@ function MenuHeader() {
   return (
     <Link to="/chakra/profile">
       <Flex>
-        <Avatar name={user.displayName} src={user.photoURL} />
+        <Avatar name={user?.displayName} src={user?.photoURL} />
         <Box w="3" />
         <Box overflow="clip">
           <Heading as="h3" size="m" noOfLines={1} color="element.primary">
-            {user.displayName}
+            {user?.displayName}
           </Heading>
           <Text
             as="p"
@@ -86,7 +86,7 @@ function MenuHeader() {
             noOfLines={1}
             color="element.secondary"
           >
-            {user.email}
+            {user?.email}
           </Text>
         </Box>
       </Flex>

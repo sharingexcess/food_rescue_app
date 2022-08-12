@@ -1,6 +1,7 @@
 import { Text } from '@sharingexcess/designsystem'
 import { IS_DEV_ENVIRONMENT } from 'helpers'
 import React, { useState } from 'react'
+import './EnvWarning.scss'
 
 export function EnvWarning() {
   const [expanded, setExpanded] = useState(false)

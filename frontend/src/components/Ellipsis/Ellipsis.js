@@ -6,20 +6,20 @@ export const Ellipsis = ({ style }) => {
   useEffect(() => {
     const int = window.setInterval(() => {
       setText(text.length === 3 ? '.' : text + '.')
-    }, 400)
+    }, 600)
     return () => window.clearInterval(int)
   }, [text])
 
   return (
-    <div
+    <span
       style={{
-        display: 'inline-block',
+        display: 'inline-flex',
         width: '1.1rem',
         textAlign: 'left',
         ...style,
       }}
     >
       {text}
-    </div>
+    </span>
   )
 }

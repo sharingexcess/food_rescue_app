@@ -24,7 +24,6 @@ import {
 } from 'helpers'
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Loading } from 'components'
 
 export function EditRescue() {
   const { user } = useAuth()
@@ -140,12 +139,11 @@ export function EditRescue() {
   return (
     <Page
       title="Edit Rescue"
-      minH="64vh"
       pullToRefresh={false}
       breadcrumbs={[
         { label: 'Rescues', link: '/chakra/rescues' },
         {
-          label: rescue.status + ' Rescue',
+          label: 'Rescue',
           link: `/chakra/rescues/${rescue_id}`,
         },
         { label: 'Edit', link: `/chakra/rescues/${rescue_id}/edit` },
@@ -368,18 +366,20 @@ function Stops({ stops, setStops, removeStop }) {
   // Because the Drag and Drop component can only handle string items,
   // stringify each stop here, then parse as we pass to the component
 
-  const cancelledStops = stops.filter(i => i.status === STATUSES.CANCELLED)
-  const completedStops = stops.filter(i => i.status === STATUSES.COMPLETED)
+  const cancelledStops =
+    stops?.filter(i => i.status === STATUSES.CANCELLED) || []
+  const completedStops =
+    stops?.filter(i => i.status === STATUSES.COMPLETED) || []
   const [remainingStringStops, setRemainingStringStops] = useState(
     stops
-      .filter(i => [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(i.status))
-      .map(stop => JSON.stringify(stop))
+      ?.filter(i => [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(i.status))
+      .map(stop => JSON.stringify(stop)) || []
   )
   useEffect(() => {
     setRemainingStringStops(
       stops
-        .filter(i => [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(i.status))
-        .map(stop => JSON.stringify(stop))
+        ?.filter(i => [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(i.status))
+        .map(stop => JSON.stringify(stop)) || []
     )
   }, [stops])
 
@@ -530,13 +530,13 @@ const LoadingEditRescue = memo(() => {
   return (
     <Page
       title="Edit Rescue"
-      minH="64vh"
       pullToRefresh={false}
       breadcrumbs={[
         { label: 'Rescues', link: '/chakra/rescues' },
-        { label: 'Loading Rescue', link: `/chakra/rescues/${rescue_id}` },
-        { label: 'Update', link: `/chakra/rescues/${rescue_id}/update` },
+        { label: 'Rescue', link: `/chakra/rescues/${rescue_id}` },
+        { label: 'Edit', link: `/chakra/rescues/${rescue_id}/edit` },
       ]}
+      contentProps={{ overflow: 'hidden', maxH: '100vh' }}
     >
       <Heading
         as="h1"
@@ -548,7 +548,12 @@ const LoadingEditRescue = memo(() => {
       >
         Loading Rescue...
       </Heading>
-      <SkeletonCircle w="100%" h="16" my="8" />
+      <Skeleton h="16" my="6" />
+      <Skeleton h="16" my="6" />
+      <Skeleton h="16" my="6" />
+      <Box h="8" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
       <Skeleton h="32" my="4" />
       <Skeleton h="32" my="4" />
       <Skeleton h="32" my="4" />

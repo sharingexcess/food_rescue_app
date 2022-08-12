@@ -155,7 +155,7 @@ export function Rescues() {
       </Flex>
       {loading && !data ? (
         <>
-          {['', '', '', ''].map(i => (
+          {['', '', '', ''].map((_, i) => (
             <Skeleton h="32" my="4" borderRadius="md" key={i} />
           ))}
         </>

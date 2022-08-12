@@ -6,14 +6,12 @@ import {
   Flex,
   Heading,
   IconButton,
-  Link,
   Text,
   Collapse,
 } from '@chakra-ui/react'
 import {
   AddIcon,
   ArrowRightIcon,
-  ChevronDownIcon,
   ChevronUpIcon,
   EditIcon,
   ExternalLinkIcon,
@@ -32,6 +30,7 @@ import {
 import { useRescueContext } from './Rescue'
 import { useState } from 'react'
 import { useAuth } from 'hooks'
+import { Link } from 'react-router-dom'
 
 export function RescueHeader() {
   const { rescue, refresh } = useRescueContext()
@@ -164,20 +163,17 @@ export function RescueHeader() {
           </Button>
         )}
         {rescue.status !== STATUSES.CANCELLED && admin && (
-          <Link href={`/chakra/rescues/${rescue.id}/edit`} flexGrow="1">
-            <Button
-              variant="secondary"
-              size="sm"
-              fontSize="xs"
-              flexGrow="1"
-              leftIcon={<EditIcon />}
-              bg="green.secondary"
-              w="100%"
-              color="green.primary"
-            >
-              Edit
-            </Button>
-          </Link>
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<EditIcon />}
+            bg="green.secondary"
+            color="green.primary"
+          >
+            <Link to={`/chakra/rescues/${rescue.id}/edit`}>Edit</Link>
+          </Button>
         )}
         {rescue.status !== STATUSES.CANCELLED &&
           (admin || rescue.handler_id === user.id) && (
@@ -254,20 +250,18 @@ function StopButtonsBox({ stop }) {
           )}
         </Button>
         <Link
-          href={generateDirectionsLink(
+          to={generateDirectionsLink(
             stop.location.address1,
             stop.location.city,
             stop.location.state,
             stop.location.zip
           )}
-          isExternal
-          flexGrow={1}
-          textDecoration="none !important"
         >
           <Button
             size="sm"
             fontSize="xs"
-            width="100%"
+            flexGrow={1}
+            textDecoration="none !important"
             variant={isActive ? 'secondary' : 'tertiary'}
             leftIcon={<ExternalLinkIcon />}
           >
