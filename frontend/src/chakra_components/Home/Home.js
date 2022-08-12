@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Image,
+  Skeleton,
   Spinner,
   Text,
   useColorMode,
@@ -142,7 +143,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {totalWeight ? totalWeight + ' lbs.' : '0 lbs.'}
+            {totalWeight == null ? <Spinner /> : totalWeight + ' lbs.'}
           </Heading>
           <Text color="element.tertiary">rescued this year</Text>
         </Flex>
@@ -162,7 +163,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {deliveries?.length || '0'}
+            {deliveries ? deliveries.length : <Spinner />}
           </Heading>
           <Text color="element.tertiary">rescues this year</Text>
         </Flex>
@@ -182,7 +183,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {totalOrgs || '0'}
+            {totalOrgs == null ? <Spinner /> : totalOrgs}
           </Heading>
           <Text color="element.tertiary">different recipients</Text>
         </Flex>
@@ -198,35 +199,59 @@ function AvailableRescues() {
   )
   const isMobile = useIsMobile()
 
+  function ShowAvailableRescues() {
+    return availableRescues.map(rescue => (
+      <RescueCard key={rescue.id} rescue={rescue} />
+    ))
+  }
+
+  function NoAvailableRescues() {
+    return (
+      <Flex direction="column" align="center" w="100%" py="8">
+        <Heading size="xl" color="element.secondary" mb="4">
+          😐
+        </Heading>
+        <Heading
+          as="h4"
+          size="sm"
+          color="element.secondary"
+          align="center"
+          mb="2"
+        >
+          There are currently no available rescues.
+        </Heading>
+        <Box px={'4'}>
+          <Text align="center" fontSize="sm" color="element.secondary">
+            Check back another time if you'd like to claim a rescue!
+          </Text>
+        </Box>
+      </Flex>
+    )
+  }
+
+  function LoadingAvailableRescues() {
+    return (
+      <Box mt="6">
+        <Skeleton h="32" w="100%" my="4" />
+        <Skeleton h="32" w="100%" my="4" />
+        <Skeleton h="32" w="100%" my="4" />
+      </Box>
+    )
+  }
+
   return (
     <Box px={isMobile ? '4' : '8'} pt="8">
       <Heading as="h4" color="element.primary" fontSize="lg" my="0">
         Available Rescues
       </Heading>
-      {(availableRescues &&
-        availableRescues.length &&
-        availableRescues.map(rescue => (
-          <RescueCard key={rescue.id} rescue={rescue} />
-        ))) || (
-        <Flex direction="column" align="center" w="100%" py="8">
-          <Heading size="xl" color="element.secondary" mb="4">
-            🙁
-          </Heading>
-          <Heading
-            as="h4"
-            size="sm"
-            color="element.secondary"
-            align="center"
-            mb="2"
-          >
-            There are currently no available rescues.
-          </Heading>
-          <Box px={'4'}>
-            <Text align="center" fontSize="sm" color="element.secondary">
-              Check back another time if you'd like to claim a rescue!
-            </Text>
-          </Box>
-        </Flex>
+      {availableRescues ? (
+        availableRescues.length ? (
+          <ShowAvailableRescues />
+        ) : (
+          <NoAvailableRescues />
+        )
+      ) : (
+        <LoadingAvailableRescues />
       )}
     </Box>
   )
