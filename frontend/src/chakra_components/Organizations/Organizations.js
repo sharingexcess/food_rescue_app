@@ -67,6 +67,7 @@ export function Organizations() {
         justify="space-between"
         flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
         gap="4"
+        mb="8"
       >
         <Select
           variant="flushed"
@@ -108,9 +109,6 @@ export function Organizations() {
           )}
         </Select>
       </Flex>
-      <Button variant="secondary" w="100%" my={4}>
-        New
-      </Button>
       {organizations &&
         organizations
           .filter(i => orgType.includes(i.type))
