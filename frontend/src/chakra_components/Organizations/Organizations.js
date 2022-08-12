@@ -129,24 +129,25 @@ export function Organizations() {
 
 function OrganizationCard({ organization }) {
   return (
-    <Flex justify="start" align="center" py="4">
-      <Text fontSize="2xl">{ORG_TYPE_ICONS[organization.subtype]}</Text>
-      <Flex direction="column" ml="4">
-        <Heading as="h2" size="md" fontWeight="600" color="element.primary">
-          {organization?.name || organization?.type}
-        </Heading>
-        <Text
-          color="element.secondary"
-          fontSize="xs"
-          textTransform="capitalize"
-        >
-          {`${organization?.type.replace(
-            '_',
-            ' '
-          )} - ${organization?.subtype.replace('_', ' ')}`}
-        </Text>
+    <Link to={`/chakra/organizations/${organization.id}`}>
+      <Flex justify="start" align="center" py="4">
+        <Text fontSize="2xl">{ORG_TYPE_ICONS[organization.subtype]}</Text>
+        <Flex direction="column" ml="4">
+          <Heading as="h2" size="md" fontWeight="600" color="element.primary">
+            {organization?.name || organization?.type}
+          </Heading>
+          <Text
+            color="element.secondary"
+            fontSize="xs"
+            textTransform="capitalize"
+          >
+            {`${organization?.type.replace(
+              '_',
+              ' '
+            )} - ${organization?.subtype.replace('_', ' ')}`}
+          </Text>
+        </Flex>
       </Flex>
-      {/* <Text ml="auto">{permissionIcon(organization?.permission)}</Text> */}
-    </Flex>
+    </Link>
   )
 }
