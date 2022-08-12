@@ -1,8 +1,8 @@
 const { performance } = require('perf_hooks')
 const {
-  authenticateRequest,
   db,
   formatDocumentTimestamps,
+  authenticateRequest,
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
@@ -13,6 +13,9 @@ async function organizationsEndpoint(request, response) {
       'params:',
       request.query
     )
+
+    const { type, subtype } = request.query
+
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
       user => user.is_admin
@@ -22,7 +25,7 @@ async function organizationsEndpoint(request, response) {
       rejectUnauthorizedRequest(response)
       return
     }
-    const organizations = await getOrganizations()
+    const organizations = await getOrganizations(type, subtype)
     response.status(200).send(JSON.stringify(organizations))
   } catch (e) {
     console.error('Caught error:', e)
@@ -30,18 +33,46 @@ async function organizationsEndpoint(request, response) {
   }
 }
 
-async function getOrganizations() {
+async function getOrganizations(type, subtype) {
   const start = performance.now()
   const organizations = []
+  const locations = []
 
-  await db
-    .collection('organizations')
-    .get()
-    .then(snapshot => {
+  let query = db.collection('organizations')
+
+  if (type) {
+    query = query.where('type', '==', type)
+  }
+
+  if (type && subtype) {
+    query = query.where('subtype', '==', subtype)
+  }
+
+  await Promise.all([
+    query.get().then(snapshot => {
       snapshot.forEach(doc =>
-        organizations.push({ ...formatDocumentTimestamps(doc.data()) })
+        organizations.push({
+          ...formatDocumentTimestamps(doc.data()),
+          locations: [],
+        })
       )
-    })
+    }),
+    db
+      .collection('locations')
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc =>
+          locations.push({ ...formatDocumentTimestamps(doc.data()) })
+        )
+      }),
+  ])
+
+  for (const location of locations) {
+    const org = organizations.find(i => i.id === location.organization_id)
+    if (org) {
+      org.locations.push(location)
+    }
+  }
 
   console.log(
     'finished organizations query:',
@@ -59,7 +90,6 @@ async function getOrganizations() {
     (performance.now() - start) / 1000,
     'seconds'
   )
-
   return organizations
 }
 

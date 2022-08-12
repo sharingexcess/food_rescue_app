@@ -18,7 +18,14 @@ import PullToRefresh from 'react-simple-pull-to-refresh'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-export function Page({ id, title, children, breadcrumbs, contentProps }) {
+export function Page({
+  id,
+  title,
+  children,
+  breadcrumbs,
+  contentProps,
+  pullToRefresh = true,
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode } = useColorMode()
   const isMobile = useIsMobile()
@@ -62,7 +69,7 @@ export function Page({ id, title, children, breadcrumbs, contentProps }) {
           minH="100%"
           {...contentProps}
         >
-          {isMobile ? withPullToRefresh(children) : children}
+          {isMobile && pullToRefresh ? withPullToRefresh(children) : children}
         </Box>
       </Box>
     </Auth>
@@ -95,7 +102,6 @@ function PageHead({ breadcrumbs, openMenu }) {
       align="center"
       justify="start"
       w="100%"
-      maxW="1000px"
       top={isMobile ? position : 0}
       left={isMobile ? 0 : 'max(32px, calc(50vw - 600px))'}
       mx="auto"

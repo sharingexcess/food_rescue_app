@@ -1,16 +1,8 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  Stack,
-} from '@chakra-ui/react'
+import { Box, Flex, Heading, Skeleton, SkeletonCircle } from '@chakra-ui/react'
 import { useApi, useIsMobile } from 'hooks'
 import { useParams } from 'react-router-dom'
 import { createContext, useContext, useMemo, useState } from 'react'
-import { Error, Loading } from 'components'
+import { Error } from 'components'
 import { Page, Pickup, Delivery, Directions } from 'chakra_components'
 import { getActiveStop } from './Rescue.utils'
 import { RescueHeader, RescueStops } from './Rescue.children'
@@ -120,14 +112,16 @@ export function Rescue() {
 // Alternate States for Loading/Error
 
 export function LoadingRescue({ RescuePageWrapper }) {
+  const isMobile = useIsMobile()
   return (
     <RescuePageWrapper>
-      <Skeleton h="48" my="4" />
+      <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
       <Heading
         as="h1"
         fontWeight="700"
         size="2xl"
         mb="6"
+        mt="4"
         textTransform="capitalize"
         color="element.primary"
       >

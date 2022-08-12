@@ -40,7 +40,7 @@ async function cancelStopEndpoint(request, response) {
         )
 
       if (type === 'delivery') {
-        canceled_stop = await db.collection('stops').doc(stop_id).set(
+        await db.collection('stops').doc(stop_id).set(
           {
             percent_of_total_dropped: 0,
           },

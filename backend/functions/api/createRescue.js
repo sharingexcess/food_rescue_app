@@ -18,15 +18,15 @@ async function createRescueEndpoint(request, response) {
         JSON.parse(request.body)
       )
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   user => user.is_admin
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.is_admin
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       const { id } = request.params
       console.log('Received id:', id)
@@ -53,7 +53,9 @@ async function createRescueEndpoint(request, response) {
         payload.timestamp_scheduled_finish
       )
       const timestamp_updated = new Date(payload.timestamp_updated)
-      const timestamp_logged_start = new Date(payload.timestamp_logged_start)
+      const timestamp_logged_start = payload.timestamp_logged_start
+        ? new Date(payload.timestamp_logged_start)
+        : null
 
       console.log(
         '\n\n\nTIMESTAMPS:\n\n\n',
@@ -107,7 +109,7 @@ async function createRescueEndpoint(request, response) {
         .collection('rescues')
         .doc(rescue_payload.id)
         .set(rescue_payload, { merge: true })
-        .then(doc => formatDocumentTimestamps(doc))
+      // .then(doc => formatDocumentTimestamps(doc))
 
       response.status(200).send(JSON.stringify(created_rescue))
       resolve()
@@ -165,7 +167,7 @@ async function createRescuePayload(
     timestamp_updated: timestamp_updated,
     timestamp_scheduled_start: timestamp_scheduled_start,
     timestamp_scheduled_finish: timestamp_scheduled_finish,
-    timestamp_logged_start: timestamp_logged_start,
+    timestamp_logged_start: timestamp_logged_start || null,
     timestamp_logged_finish: null,
     driving_distance: total_distance,
   }

@@ -7,19 +7,29 @@ import {
   IconButton,
   Input,
   Select,
+  Skeleton,
+  SkeletonCircle,
   Text,
 } from '@chakra-ui/react'
 import { Page, Autocomplete } from 'chakra_components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
-import { useEffect, useMemo, useState } from 'react'
-import { getDefaultEndTime, getDefaultStartTime } from './CreateRescue.utils'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Reorder } from 'framer-motion'
-import { createTimestamp, generateUniqueId, SE_API, STATUSES } from 'helpers'
+import {
+  createTimestamp,
+  formatTimestamp,
+  generateUniqueId,
+  SE_API,
+  STATUSES,
+} from 'helpers'
 import moment from 'moment'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Loading } from 'components'
 
-export function CreateRescue() {
+export function EditRescue() {
   const { user } = useAuth()
+  const { rescue_id } = useParams()
+  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
   const { data: handlers } = useApi('/publicProfiles')
   const { data: donors } = useApi(
     '/organizations',
@@ -29,42 +39,43 @@ export function CreateRescue() {
     '/organizations',
     useMemo(() => ({ type: 'recipient' }), [])
   )
-
-  const form_data_cache = sessionStorage.getItem(
-    'se_create_rescue_form_data_cache'
-  )
-  const [formData, setFormData] = useState(
-    form_data_cache
-      ? JSON.parse(form_data_cache)
-      : {
-          timestamp_scheduled_start: getDefaultStartTime(),
-          timestamp_scheduled_finish: getDefaultEndTime(),
-          handler: null,
-        }
-  )
+  const [formData, setFormData] = useState({
+    timestamp_scheduled_start: '',
+    timestamp_scheduled_finish: '',
+    handler: null,
+  })
   const [view, setView] = useState(null)
   const [working, setWorking] = useState(false)
   const isMobile = useIsMobile()
   const navigate = useNavigate()
 
-  const stops_cache = sessionStorage.getItem('se_create_rescue_stops_cache')
-  const [stops, setStops] = useState(stops_cache ? JSON.parse(stops_cache) : [])
+  const [stops, setStops] = useState()
+
+  useEffect(
+    () =>
+      console.log(
+        'updated stops',
+        stops?.map(i => i.organization.name)
+      ),
+    [stops]
+  )
 
   useEffect(() => {
-    sessionStorage.setItem(
-      'se_create_rescue_form_data_cache',
-      JSON.stringify(formData)
-    )
-  }, [formData])
-
-  useEffect(() => {
-    stops?.length
-      ? sessionStorage.setItem(
-          'se_create_rescue_stops_cache',
-          JSON.stringify(stops)
-        )
-      : sessionStorage.removeItem('se_create_rescue_stops_cache')
-  }, [stops])
+    if (rescue && !stops) {
+      setFormData({
+        timestamp_scheduled_start: formatTimestamp(
+          rescue.timestamp_scheduled_start,
+          'YYYY-MM-DDTHH:mm'
+        ),
+        timestamp_scheduled_finish: formatTimestamp(
+          rescue.timestamp_scheduled_finish,
+          'YYYY-MM-DDTHH:mm'
+        ),
+        handler: rescue.handler,
+      })
+      setStops(rescue.stops)
+    }
+  }, [rescue])
 
   async function handleAddStop(stop) {
     const id = await generateUniqueId('stops')
@@ -75,6 +86,7 @@ export function CreateRescue() {
         id,
         organization_id: stop.organization.id,
         location_id: stop.location.id,
+        status: STATUSES.SCHEDULED,
       },
     ])
     setView(null)
@@ -86,21 +98,18 @@ export function CreateRescue() {
     }
   }
 
-  async function handleCreateRescue() {
+  async function handleUpdateRescue() {
     setWorking(true)
-    const id = await generateUniqueId('rescues')
-    sessionStorage.removeItem('se_create_rescue_stops_cache')
-    sessionStorage.removeItem('se_create_rescue_form_data_cache')
 
     await SE_API.post(
-      `/rescues/${id}/create`,
+      `/rescues/${rescue_id}/create`,
       {
         formData: {
           handler_id: formData.handler?.id || null,
           stops,
           is_direct_link: false,
         },
-        status_scheduled: STATUSES.SCHEDULED,
+        status_scheduled: rescue.status,
         timestamp_scheduled_start: moment(
           formData.timestamp_scheduled_start
         ).toDate(),
@@ -109,10 +118,13 @@ export function CreateRescue() {
         ).toDate(),
         timestamp_created: createTimestamp(),
         timestamp_updated: createTimestamp(),
+        timestamp_logged_start: rescue?.timestamp_logged_start
+          ? rescue.timestamp_logged_start
+          : null,
       },
       user.accessToken
     )
-    navigate(`/chakra/rescues/${id}`)
+    navigate(`/chakra/rescues/${rescue_id}`)
   }
 
   const isValidRescue =
@@ -123,14 +135,20 @@ export function CreateRescue() {
     stops[0].type == 'pickup' &&
     stops[stops.length - 1].type === 'delivery'
 
+  if (!rescue) return <LoadingEditRescue />
+
   return (
     <Page
-      title="Create Rescue"
+      title="Edit Rescue"
       minH="64vh"
       pullToRefresh={false}
       breadcrumbs={[
         { label: 'Rescues', link: '/chakra/rescues' },
-        { label: 'Create', link: '/chakra/create-rescue' },
+        {
+          label: rescue.status + ' Rescue',
+          link: `/chakra/rescues/${rescue_id}`,
+        },
+        { label: 'Edit', link: `/chakra/rescues/${rescue_id}/edit` },
       ]}
     >
       <Heading
@@ -141,7 +159,7 @@ export function CreateRescue() {
         textTransform="capitalize"
         color="element.primary"
       >
-        Create Rescue
+        Edit Rescue
       </Heading>
       <InfoForm
         formData={formData}
@@ -168,9 +186,9 @@ export function CreateRescue() {
             color="blue.primary"
             isLoading={!donors}
           >
-            {stops.length === 0 ? 'Add Stops' : 'Add Pickup'}
+            {stops?.length === 0 ? 'Add Stops' : 'Add Pickup'}
           </Button>
-          {stops.length > 0 && (
+          {stops?.length > 0 && (
             <Button
               variant="secondary"
               onClick={() => setView('delivery')}
@@ -183,14 +201,14 @@ export function CreateRescue() {
 
           <Button
             variant="primary"
-            onClick={handleCreateRescue}
+            onClick={handleUpdateRescue}
             flexGrow="1"
             flexBasis={isMobile ? '100%' : null}
             isLoading={working}
             disabled={!isValidRescue}
-            loadingText="Creating Rescue..."
+            loadingText="Updating Rescue..."
           >
-            Create Rescue
+            Update Rescue
           </Button>
         </Flex>
       )}
@@ -349,22 +367,35 @@ function AddStop({ type, handleAddStop, handleCancel, organizations }) {
 function Stops({ stops, setStops, removeStop }) {
   // Because the Drag and Drop component can only handle string items,
   // stringify each stop here, then parse as we pass to the component
-  const [stringStops, setStringStops] = useState(
-    stops.map(stop => JSON.stringify(stop))
+
+  const cancelledStops = stops.filter(i => i.status === STATUSES.CANCELLED)
+  const completedStops = stops.filter(i => i.status === STATUSES.COMPLETED)
+  const [remainingStringStops, setRemainingStringStops] = useState(
+    stops
+      .filter(i => [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(i.status))
+      .map(stop => JSON.stringify(stop))
   )
   useEffect(() => {
-    setStringStops(stops.map(stop => JSON.stringify(stop)))
+    setRemainingStringStops(
+      stops
+        .filter(i => [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(i.status))
+        .map(stop => JSON.stringify(stop))
+    )
   }, [stops])
 
   // keep track of when drag events finish to update parent state
   const [shouldReorder, setShouldReorder] = useState(false)
   useEffect(() => {
-    if (shouldReorder && stringStops) {
+    if (shouldReorder && remainingStringStops) {
       // if we have reordered stops, update the parent state
-      setStops(stringStops.map(stop => JSON.parse(stop)))
+      setStops([
+        ...cancelledStops,
+        ...completedStops,
+        ...remainingStringStops.map(stop => JSON.parse(stop)),
+      ])
       setShouldReorder(false)
     }
-  }, [shouldReorder, stringStops])
+  }, [shouldReorder, remainingStringStops])
 
   function handlePointerUp() {
     // when a drag event stops, allow animations to finish smoothly
@@ -375,26 +406,77 @@ function Stops({ stops, setStops, removeStop }) {
   }
 
   return (
-    <Reorder.Group
-      as="section"
-      axis="y"
-      values={stringStops}
-      onReorder={setStringStops}
-    >
-      {stringStops.map((stringStop, i) => (
-        <Reorder.Item
-          as="div"
-          key={stringStop}
-          value={stringStop}
-          onPointerUp={handlePointerUp}
+    <>
+      {cancelledStops.length ? (
+        <Heading
+          as="h4"
+          size="sm"
+          mt="12"
+          fontWeight="600"
+          letterSpacing="1"
+          fontSize="sm"
+          color="element.secondary"
+          textTransform="uppercase"
         >
-          <Stop
-            stop={JSON.parse(stringStop)}
-            removeStop={() => removeStop(i)}
-          />
-        </Reorder.Item>
+          ❌&nbsp;&nbsp;Cancelled Stops
+        </Heading>
+      ) : null}
+      {cancelledStops.map((stop, i) => (
+        <Stop key={i} stop={stop} removeStop={() => removeStop(i)} />
       ))}
-    </Reorder.Group>
+      {completedStops.length ? (
+        <Heading
+          as="h4"
+          size="sm"
+          mt="12"
+          fontWeight="600"
+          letterSpacing="1"
+          fontSize="sm"
+          color="element.secondary"
+          textTransform="uppercase"
+        >
+          ✅&nbsp;&nbsp;Completed Stops
+        </Heading>
+      ) : null}
+      {completedStops.map((stop, i) => (
+        <Stop key={i} stop={stop} removeStop={() => removeStop(i)} />
+      ))}
+      {remainingStringStops.length ? (
+        <Heading
+          as="h4"
+          size="sm"
+          mt="12"
+          fontWeight="600"
+          letterSpacing="1"
+          fontSize="sm"
+          color="element.secondary"
+          textTransform="uppercase"
+        >
+          ⏩&nbsp;&nbsp;Remaining Stops
+        </Heading>
+      ) : null}
+      <Reorder.Group
+        as="section"
+        axis="y"
+        values={remainingStringStops}
+        onReorder={setRemainingStringStops}
+      >
+        {remainingStringStops.map((stringStop, i) => (
+          <Reorder.Item
+            as="div"
+            key={stringStop}
+            value={stringStop}
+            onPointerUp={handlePointerUp}
+          >
+            <Stop
+              stop={JSON.parse(stringStop)}
+              removeStop={() => removeStop(i)}
+            />
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+      <Box h="2" />
+    </>
   )
 }
 
@@ -410,10 +492,14 @@ function Stop({ stop, removeStop }) {
       cursor="grab"
       _active={{ cursor: 'grabbing' }}
     >
-      <IconButton
-        variant="ghosted"
-        icon={<DragHandleIcon color="element.tertiary" w="3" />}
-      />
+      {[STATUSES.SCHEDULED, STATUSES.ACTIVE].includes(stop.status) ? (
+        <IconButton
+          variant="ghosted"
+          icon={<DragHandleIcon color="element.tertiary" w="3" />}
+        />
+      ) : (
+        <Box w="4" />
+      )}
       <Box w="100%" pb="4" pt="3">
         <Flex justify={'space-between'} align="center" py="1">
           <Heading
@@ -426,13 +512,6 @@ function Stop({ stop, removeStop }) {
           >
             {stop.type}
           </Heading>
-          <IconButton
-            variant="ghosted"
-            icon={<CloseIcon w="3" color="element.tertiary" />}
-            onClick={removeStop}
-            height="unset"
-            px="2"
-          />
         </Flex>
         <Heading as="h3" size="md" fontWeight="600" color="element.primary">
           {stop.organization.name}
@@ -444,3 +523,35 @@ function Stop({ stop, removeStop }) {
     </Flex>
   )
 }
+
+const LoadingEditRescue = memo(() => {
+  const { rescue_id } = useParams()
+
+  return (
+    <Page
+      title="Edit Rescue"
+      minH="64vh"
+      pullToRefresh={false}
+      breadcrumbs={[
+        { label: 'Rescues', link: '/chakra/rescues' },
+        { label: 'Loading Rescue', link: `/chakra/rescues/${rescue_id}` },
+        { label: 'Update', link: `/chakra/rescues/${rescue_id}/update` },
+      ]}
+    >
+      <Heading
+        as="h1"
+        fontWeight="700"
+        size="2xl"
+        mb="24px"
+        textTransform="capitalize"
+        color="element.primary"
+      >
+        Loading Rescue...
+      </Heading>
+      <SkeletonCircle w="100%" h="16" my="8" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+    </Page>
+  )
+})

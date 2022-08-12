@@ -15,10 +15,25 @@ input[type='date']::-webkit-calendar-picker-indicator {
 
 // hide google maps controls
 .gm-style {
+  iframe {
+    background-color: var(--chakra-colors-surface-background);
+  }
   a {
     display: none !important;
   }
   .gmnoprint {
     display: none !important;
+  }
+}
+
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+#Autocomplete {
+  input {
+    &:disabled {
+      opacity: 1;
+    }
   }
 }

@@ -40,6 +40,12 @@ api.get('/reports', (req, res) => loadEndpoint('reports', req, res))
 api.post('/rescues/:id/create', (req, res) =>
   loadEndpoint('createRescue', req, res)
 )
+
+api.get('/organization/:id', (req, res) =>
+  loadEndpoint('organization', req, res)
+)
+api.get('/organizations', (req, res) => loadEndpoint('organizations', req, res))
+
 api.get('/users', (req, res) => loadEndpoint('users', req, res))
 api.get('/user/:id', (req, res) => loadEndpoint('user', req, res))
 api.get('/publicProfiles', (req, res) =>

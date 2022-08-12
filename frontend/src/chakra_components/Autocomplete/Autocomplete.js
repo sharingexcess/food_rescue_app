@@ -1,10 +1,12 @@
-import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons'
+import { CloseIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
   Flex,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   ListItem,
   UnorderedList,
 } from '@chakra-ui/react'
@@ -34,31 +36,36 @@ export function Autocomplete({
 
   function handleSelect(option) {
     setValue(option)
+    setInputValue('')
   }
 
   return (
-    <Flex position="relative" {...props}>
+    <Flex id="Autocomplete" position="relative" {...props}>
       {label && <label>{label}</label>}
-      <Input
-        placeholder={placeholder}
-        value={value ? value[displayField] : inputValue}
-        disabled={!!value}
-        onChange={e => setInputValue(e.target.value)}
-        variant="flushed"
-        fontSize="sm"
-        color="element.primary"
-        _placeholder={{ color: 'element.secondary' }}
-        {...props}
-      />
-      {value && (
-        <IconButton
-          variant="tertiary"
-          icon={<CloseIcon />}
-          color="element.secondary"
-          onClick={() => setValue()}
+      <InputGroup>
+        <Input
+          placeholder={placeholder}
+          value={value ? value[displayField] : inputValue}
+          disabled={!!value}
+          onChange={e => setInputValue(e.target.value)}
+          variant="flushed"
+          fontSize="sm"
+          color="element.primary"
+          _placeholder={{ color: 'element.secondary' }}
+          {...props}
         />
-      )}
-      {options.length && inputValue.length ? (
+        {value && (
+          <InputRightElement>
+            <IconButton
+              variant="tertiary"
+              icon={<CloseIcon w="3" color="element.tertiary" />}
+              color="element.secondary"
+              onClick={() => setValue()}
+            />
+          </InputRightElement>
+        )}
+      </InputGroup>
+      {options.length && inputValue.length && !value ? (
         <Box
           position="absolute"
           top="12"
@@ -79,7 +86,7 @@ export function Autocomplete({
                   onClick={() => handleSelect(option)}
                   cursor="pointer"
                 >
-                  {optionLabel(option)}
+                  {optionLabel ? optionLabel(option) : option[displayField]}
                 </ListItem>
                 {i !== 9 && i !== options.length - 1 && <Divider />}
               </Fragment>

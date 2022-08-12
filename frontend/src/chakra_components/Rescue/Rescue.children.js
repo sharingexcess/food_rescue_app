@@ -67,7 +67,6 @@ export function RescueHeader() {
           user.accessToken
         ),
       ])
-      setIsStarting(false)
       refresh()
     }
   }
@@ -87,7 +86,6 @@ export function RescueHeader() {
         },
         user.accessToken
       )
-      setIsClaiming(false)
       refresh()
     }
   }
@@ -107,7 +105,6 @@ export function RescueHeader() {
         user.accessToken
       )
       refresh()
-      setIsCancelling(false)
     }
   }
 
@@ -155,7 +152,7 @@ export function RescueHeader() {
             Start
           </Button>
         )}
-        {!rescue.handler_id && (
+        {rescue.status !== STATUSES.CANCELLED && !rescue.handler_id && (
           <Button
             variant="secondary"
             size="sm"
@@ -171,17 +168,20 @@ export function RescueHeader() {
           </Button>
         )}
         {rescue.status !== STATUSES.CANCELLED && admin && (
-          <Button
-            variant="secondary"
-            size="sm"
-            fontSize="xs"
-            flexGrow="1"
-            leftIcon={<EditIcon />}
-            bg="green.secondary"
-            color="green.primary"
-          >
-            Edit
-          </Button>
+          <Link href={`/chakra/rescues/${rescue.id}/edit`} flexGrow="1">
+            <Button
+              variant="secondary"
+              size="sm"
+              fontSize="xs"
+              flexGrow="1"
+              leftIcon={<EditIcon />}
+              bg="green.secondary"
+              w="100%"
+              color="green.primary"
+            >
+              Edit
+            </Button>
+          </Link>
         )}
         {rescue.status !== STATUSES.CANCELLED &&
           (admin || rescue.handler_id === user.id) && (

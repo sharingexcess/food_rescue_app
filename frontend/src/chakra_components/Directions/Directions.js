@@ -12,7 +12,15 @@ const {
 export const Directions = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_FIREBASE_API_KEY}&g&v=3.exp&libraries=geometry,drawing,places`,
-    loadingElement: <div style={{ height: `100%`, width: '100%' }} />,
+    loadingElement: (
+      <div
+        style={{
+          height: `100%`,
+          width: '100%',
+          backgroundColor: 'var(--chakra-colors-surface-background)',
+        }}
+      />
+    ),
     containerElement: (
       <div
         style={{
@@ -22,10 +30,20 @@ export const Directions = compose(
           marginTop: window.innerWidth < 992 ? '64px' : 0,
           zIndex: '0',
           border: 'none',
+          backgroundColor: 'var(--chakra-colors-surface-background)',
         }}
       />
     ),
-    mapElement: <div style={{ height: `100%`, zIndex: '0', width: '100%' }} />,
+    mapElement: (
+      <div
+        style={{
+          height: `100%`,
+          zIndex: '0',
+          width: '100%',
+          backgroundColor: 'var(--chakra-colors-surface-background)',
+        }}
+      />
+    ),
   }),
   withScriptjs,
   withGoogleMap,

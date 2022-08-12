@@ -39,6 +39,7 @@ import {
   ChakraTest,
   CreateOrganization as ChakraCreateOrganization,
   CreateRescue as ChakraCreateRescue,
+  EditRescue as ChakraEditRescue,
   Organizations as ChakraOrganizations,
   Profile as ChakraProfile,
   Rescue as ChakraRescue,
@@ -227,7 +228,6 @@ function RescueAppRoutes() {
                           </PublicRoute>
                         }
                       />
-
                       {/* Driver Routes */}
                       <Route
                         path="/calendar"
@@ -294,7 +294,6 @@ function RescueAppRoutes() {
                         }
                       />
                       {/* Admin Routes */}
-
                       <Route
                         path="/admin/create-rescue"
                         element={
@@ -396,6 +395,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraRescue />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/rescues/:rescue_id/edit"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraEditRescue />
                           </PublicChakraRoute>
                         }
                       />
