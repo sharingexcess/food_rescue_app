@@ -175,7 +175,7 @@ export function EditRescue() {
           }
         />
       ) : (
-        <Flex w="100%" gap="4" mt="8" justify="center" wrap="wrap">
+        <Flex w="100%" gap="4" mt="8" mb="4" justify="center" wrap="wrap">
           <Button
             variant="secondary"
             onClick={() => setView('pickup')}
