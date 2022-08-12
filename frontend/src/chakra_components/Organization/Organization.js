@@ -46,12 +46,10 @@ export function Organization() {
   }
 
   if (loading && !organization) {
-    console.log('loading')
     return (
       <LoadingOrganization OrganizationPageWrapper={OrganizationPageWrapper} />
     )
   } else if (error) {
-    console.log('error')
     return (
       <OrganizationPageError
         OrganizationPageWrapper={OrganizationPageWrapper}
@@ -59,7 +57,6 @@ export function Organization() {
       />
     )
   } else if (!organization) {
-    console.log('no org')
     return (
       <OrganizationPageError
         OrganizationPageWrapper={OrganizationPageWrapper}
@@ -115,7 +112,6 @@ export function Organization() {
             >
               {formatPhoneNumber(location.contact_phone)}
             </Link>
-            {/* <Button variant="secondary"></Button> */}
           </Box>
         ))}
 
@@ -130,8 +126,6 @@ export function Organization() {
                   {DAYS[hour.day_of_week]}:{' '}
                   <Text as="span" fontWeight={300}>
                     {hour.time_open} - {hour.time_close}
-                    {/* {Date.parse(hour.time_open)} - {Date.parse(hour.time_close)} */}
-                    {/* {formatTimestamp(hour.time_close, 'dddd, MMMM DD | h:mma')} */}
                   </Text>
                 </Text>
               </Box>

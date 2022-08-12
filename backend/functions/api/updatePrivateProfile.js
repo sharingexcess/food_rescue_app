@@ -66,6 +66,9 @@ function isPayloadValid(payload) {
       payload.vehicle_make_model
     )
     return false
+  } else if (payload.phone?.replace(/[^0-9]/g, '').length < 10) {
+    console.log('[phone] field is invalid, rejecting update.', payload.phone)
+    return false
   } else if (payload.license_state?.length < 2) {
     console.log(
       '[license_state] field is invalid, rejecting update.',

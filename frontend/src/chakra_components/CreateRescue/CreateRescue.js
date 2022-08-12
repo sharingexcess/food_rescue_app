@@ -284,7 +284,9 @@ function AddStop({ type, handleAddStop, handleCancel, organizations }) {
   }, [organization, location])
 
   function handleSearchForOrganization(value) {
-    return organizations.filter(i => i.name.includes(value))
+    return organizations.filter(i =>
+      i.name.toLowerCase().includes(value.toLowerCase())
+    )
   }
 
   return (

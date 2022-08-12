@@ -21,7 +21,7 @@ async function updatePublicProfileEndpoint(request, response) {
       // driver's own route (that data isn't available until after we fetch the rescue)
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
-        user => user.id === id // only allow users to update their own public profile
+        user => user.id === id || user.is_admin // only allow users to update their own public profile
       )
 
       if (!requestIsAuthenticated) {
@@ -68,9 +68,6 @@ function isPayloadValid(payload) {
       '[pronouns] field is invalid, rejecting update.',
       payload.pronouns
     )
-    return false
-  } else if (payload.phone?.replace(/[^0-9]/g, '').length < 10) {
-    console.log('[phone] field is invalid, rejecting update.', payload.phone)
     return false
   } else if (payload.email?.length < 6 || !payload.email?.includes('@')) {
     console.log('[email] field is invalid, rejecting update.', payload.email)
