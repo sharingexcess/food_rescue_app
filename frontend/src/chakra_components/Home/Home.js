@@ -61,7 +61,7 @@ export function Home() {
     <Page title="Home" contentProps={{ px: 0, pt: 8, mt: '-64px' }}>
       <Flex
         w="100%"
-        h="32vh"
+        h="38vh"
         direction="column"
         justify="center"
         align="start"
@@ -73,7 +73,7 @@ export function Home() {
         <Heading
           as="h1"
           zIndex="3"
-          color="se.gray.100"
+          color="se.gray.50"
           px={isMobile ? '4' : '8'}
           pt="8"
           fontWeight="800"
@@ -84,7 +84,7 @@ export function Home() {
         <Heading
           as="h3"
           zIndex="3"
-          color="se.gray.100"
+          color="se.gray.50"
           px={isMobile ? '4' : '8'}
           fontWeight="300"
           size="lg"
@@ -142,7 +142,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {totalWeight ? totalWeight + ' lbs.' : <Spinner />}
+            {totalWeight ? totalWeight + ' lbs.' : '0 lbs.'}
           </Heading>
           <Text color="element.tertiary">rescued this year</Text>
         </Flex>
@@ -162,7 +162,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {deliveries?.length || <Spinner />}
+            {deliveries?.length || '0'}
           </Heading>
           <Text color="element.tertiary">rescues this year</Text>
         </Flex>
@@ -182,7 +182,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {totalOrgs || <Spinner />}
+            {totalOrgs || '0'}
           </Heading>
           <Text color="element.tertiary">different recipients</Text>
         </Flex>
@@ -200,13 +200,34 @@ function AvailableRescues() {
 
   return (
     <Box px={isMobile ? '4' : '8'} pt="8">
-      <Heading as="h4" color="element.secondary" fontSize="lg" my="0">
+      <Heading as="h4" color="element.primary" fontSize="lg" my="0">
         Available Rescues
       </Heading>
-      {availableRescues &&
+      {(availableRescues &&
+        availableRescues.length &&
         availableRescues.map(rescue => (
           <RescueCard key={rescue.id} rescue={rescue} />
-        ))}
+        ))) || (
+        <Flex direction="column" align="center" w="100%" py="8">
+          <Heading size="xl" color="element.secondary" mb="4">
+            🙁
+          </Heading>
+          <Heading
+            as="h4"
+            size="sm"
+            color="element.secondary"
+            align="center"
+            mb="2"
+          >
+            There are currently no available rescues.
+          </Heading>
+          <Box px={'4'}>
+            <Text align="center" fontSize="sm" color="element.secondary">
+              Check back another time if you'd like to claim a rescue!
+            </Text>
+          </Box>
+        </Flex>
+      )}
     </Box>
   )
 }
