@@ -188,7 +188,7 @@ export function Rescues() {
   )
 }
 
-function RescueCard({ rescue }) {
+export function RescueCard({ rescue }) {
   return (
     <Link to={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
       <Box
