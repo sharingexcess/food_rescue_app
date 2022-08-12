@@ -37,6 +37,7 @@ async function getPublicProfiles() {
 
   await db
     .collection('public_profiles')
+    .orderBy('name', 'asc')
     .get()
     .then(snapshot => {
       snapshot.forEach(doc =>
