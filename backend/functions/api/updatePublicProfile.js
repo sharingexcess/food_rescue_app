@@ -69,9 +69,6 @@ function isPayloadValid(payload) {
       payload.pronouns
     )
     return false
-  } else if (payload.phone?.replace(/[^0-9]/g, '').length < 10) {
-    console.log('[phone] field is invalid, rejecting update.', payload.phone)
-    return false
   } else if (payload.email?.length < 6 || !payload.email?.includes('@')) {
     console.log('[email] field is invalid, rejecting update.', payload.email)
     return false

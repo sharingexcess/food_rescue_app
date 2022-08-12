@@ -53,7 +53,6 @@ export function Home() {
           orgs[d.organization.id] = 1
         }
       }
-      console.log(orgs)
       return Object.keys(orgs).length
     } else return null
   }, [deliveries])

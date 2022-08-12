@@ -24,17 +24,28 @@ function Auth({ children }) {
   const [user, loading, error] = useAuthState(firebase.auth())
   // profile looks up the user in the firestore db
   // to get additional permissions and profile data
-  const [profile, setProfile] = useState()
+  const [publicProfile, setPublicProfile] = useState()
+  const [privateProfile, setPrivateProfile] = useState()
 
   useEffect(() => {
     const uid = user ? user.uid : localStorage.getItem('se_user_id')
-    let unsubscribe
+    let publicProfileUnsubscribe
+    let privateProfileUnsubscribe
     if (uid) {
-      const userRef = getCollection('users').doc(uid)
-      unsubscribe = userRef.onSnapshot(doc => setProfile(doc.data()))
+      const publicProfileRef = getCollection('public_profiles').doc(uid)
+      const privateProfileRef = getCollection('private_profiles').doc(uid)
+      publicProfileUnsubscribe = publicProfileRef.onSnapshot(doc =>
+        setPublicProfile(doc.data())
+      )
+      privateProfileUnsubscribe = privateProfileRef.onSnapshot(doc =>
+        setPrivateProfile(doc.data())
+      )
       user && localStorage.setItem('se_user_id', user.uid)
     }
-    return () => unsubscribe && unsubscribe()
+    return () => {
+      publicProfileUnsubscribe && publicProfileUnsubscribe()
+      privateProfileUnsubscribe && privateProfileUnsubscribe()
+    }
   }, [user])
 
   function handleLogout() {
@@ -63,14 +74,18 @@ function Auth({ children }) {
   }
 
   function AuthWrapper({ children }) {
-    const permission = profile.is_admin || profile.is_driver
+    const permission = publicProfile?.permission
     return (
       <AuthContext.Provider
         value={{
           user: user ? { ...user, ...profile } : null,
-          admin: profile && profile.is_admin,
-          driver: profile && profile.is_driver && !profile.is_admin,
-          permission: profile && (profile.is_admin || profile.is_driver),
+          // admin: profile && profile.is_admin,
+          // driver: profile && profile.is_driver && !profile.is_admin,
+          // permission: profile && (profile.is_admin || profile.is_driver),
+          hasAdminPermission: publicProfile?.permission === 'admin',
+          hasStandardPermissions: publicProfile?.permission === 'standard',
+          hasPermission: publicProfile?.permission,
+          hasCompletedPrivateProfile: privateProfile,
           handleLogout,
           handleLogin,
         }}
@@ -80,11 +95,11 @@ function Auth({ children }) {
     )
   }
 
-  if (user && profile) {
+  if (user && publicProfile) {
     return <AuthWrapper>{children}</AuthWrapper>
   } else if (error) {
     return <Error />
-  } else if (loading || (user && !profile)) {
+  } else if (loading || (user && !publicProfile)) {
     return <Loading text="Signing In" />
   } else return <Landing handleLogin={handleLogin} />
 }

@@ -97,7 +97,7 @@ function PublicProfile() {
     email: user.email,
     name: user.name || '',
     pronouns: user.pronouns || '',
-    phone: user.phone || '',
+    about_me: user.about_me || '',
   })
 
   async function handleSubmit() {
@@ -138,7 +138,7 @@ function PublicProfile() {
       title: 'Preferred Pronouns',
       isValid: formData.pronouns?.length > 2,
     },
-    { id: 'phone', title: 'Phone Number', isValid: formData.phone?.length > 9 },
+    { id: 'about_me', title: 'About Me', isValid: true, isOptional: true },
   ]
 
   const isFormComplete = (() => {
@@ -162,6 +162,7 @@ function PublicProfile() {
           isValid={i.isValid}
           formData={formData}
           setFormData={setFormData}
+          isOptional={i.isOptional}
         />
       ))}
 
@@ -190,16 +191,19 @@ function PrivateProfile() {
   const { user } = useAuth()
   const isMobile = useIsMobile()
   const [isLoading, setIsLoading] = useState()
+  const [hidden, setHidden] = useState(true)
+
   const toast = useToast()
+
   const [formData, setFormData] = useState({
     email: user.email,
+    phone: user.phone || '',
     vehicle_make_model: user.vehicle_make_model || '',
     license_number: user.license_number || '',
     license_state: user.license_state || '',
     insurance_provider: user.insurance_provider || '',
     insurance_policy_number: user.insurance_policy_number || '',
   })
-  const [hidden, setHidden] = useState(true)
 
   async function handleSubmit() {
     setIsLoading(true)
@@ -233,6 +237,7 @@ function PrivateProfile() {
   }
 
   const FIELDS = [
+    { id: 'phone', title: 'Phone Number', isValid: formData.phone?.length > 9 },
     {
       id: 'vehicle_make_model',
       title: 'Vehicle Make & Model',
@@ -272,7 +277,7 @@ function PrivateProfile() {
   })()
 
   return (
-    <Box py="6">
+    <Box py="6" position="relative">
       {hidden && (
         <Flex
           position="absolute"
@@ -328,10 +333,25 @@ function PrivateProfile() {
   )
 }
 
-function FormField({ formData, setFormData, title, id, isValid }) {
+function FormField({ formData, setFormData, title, id, isValid, isOptional }) {
   return (
     <>
-      <Text fontWeight="600">{title}</Text>
+      <Text fontWeight="600">
+        {title}
+        {isOptional && (
+          <Text
+            as="span"
+            verticalAlign="5%"
+            fontWeight="300"
+            fontSize="xs"
+            pb="1"
+            ml="2"
+            color="element.secondary"
+          >
+            (optional)
+          </Text>
+        )}
+      </Text>
       <InputGroup>
         <Input
           type="text"
@@ -341,7 +361,7 @@ function FormField({ formData, setFormData, title, id, isValid }) {
           isInvalid={!isValid}
           mb="8"
         />
-        {isValid && (
+        {isValid && formData[id].length && (
           <InputRightElement
             children={<CheckIcon color="se.brand.primary" />}
           />
