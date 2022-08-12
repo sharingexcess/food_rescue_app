@@ -45,6 +45,7 @@ import {
   Profile as ChakraProfile,
   Rescue as ChakraRescue,
   Rescues as ChakraRescues,
+  User as ChakraUser,
   Users as ChakraUsers,
   Home as ChakraHome,
 } from './chakra_components'
@@ -436,6 +437,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraUsers />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/people/:person_id"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraUser />
                           </PublicChakraRoute>
                         }
                       />
