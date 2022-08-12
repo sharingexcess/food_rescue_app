@@ -5,8 +5,9 @@
   height: 48px;
   width: 48px;
   border-radius: 24px;
-  background: var(--se-red-primary);
-  box-shadow: var(--se-shadow-medium);
+  background: red;
+  color: white;
+  font-size: 12px;
   z-index: 50;
   overflow: hidden;
   display: flex;
@@ -26,6 +27,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 20px;
+    font-weight: 900;
   }
   .small {
     flex-grow: 1;

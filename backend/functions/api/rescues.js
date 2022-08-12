@@ -117,9 +117,13 @@ async function getRescues(
   // execute rescues query
 
   await rescues_query.get().then(snapshot => {
-    snapshot.forEach(doc =>
-      rescues.push({ ...formatDocumentTimestamps(doc.data()), stops: [] })
-    )
+    snapshot.forEach(doc => {
+      const data = doc.data()
+      rescues.push({
+        ...formatDocumentTimestamps(data),
+        stops: data.stop_ids.map(i => null), // populate stops array with correct length
+      })
+    })
   })
 
   console.log(
@@ -147,9 +151,11 @@ async function getRescues(
         .where('rescue_id', '==', rescue.id)
         .get()
         .then(snapshot =>
-          snapshot.forEach(doc =>
-            rescue.stops.push(formatDocumentTimestamps(doc.data()))
-          )
+          snapshot.forEach(doc => {
+            const data = doc.data()
+            rescue.stops[rescue.stop_ids.findIndex(i => i === data.id)] =
+              formatDocumentTimestamps(data)
+          })
         )
     ),
   ])
