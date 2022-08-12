@@ -73,7 +73,7 @@ export function Home() {
         <Heading
           as="h1"
           zIndex="3"
-          color="se.gray.100"
+          color="se.gray.50"
           px={isMobile ? '4' : '8'}
           pt="8"
           fontWeight="800"
@@ -84,7 +84,7 @@ export function Home() {
         <Heading
           as="h3"
           zIndex="3"
-          color="se.gray.100"
+          color="se.gray.50"
           px={isMobile ? '4' : '8'}
           fontWeight="300"
           size="lg"
