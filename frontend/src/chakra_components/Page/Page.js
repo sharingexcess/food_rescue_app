@@ -92,6 +92,8 @@ function PageHead({ breadcrumbs, openMenu }) {
     setPrevScroll(scroll)
   }, [scroll]) // eslint-disable-line
 
+  const isHomePage = location.pathname === '/chakra'
+
   return (
     <Flex
       as="header"
@@ -106,7 +108,9 @@ function PageHead({ breadcrumbs, openMenu }) {
       position="fixed"
       zIndex="20"
       bgGradient={
-        isMobile
+        isHomePage
+          ? null
+          : isMobile
           ? 'linear(to-b, surface.background, surface.background, transparent)'
           : 'linear(to-b, surface.background, transparent)'
       }
@@ -157,10 +161,13 @@ function PageHead({ breadcrumbs, openMenu }) {
 }
 
 function HomeButton() {
+  const isMobile = useIsMobile()
+  const isHomePage = location.pathname === '/chakra'
+
   return (
-    <Link to="/">
+    <Link to="/chakra">
       <Image
-        src="/logo.png"
+        src={isHomePage && isMobile ? '/logo_white.png' : '/logo.png'}
         flexShrink="0"
         w="48px"
         h="48px"
