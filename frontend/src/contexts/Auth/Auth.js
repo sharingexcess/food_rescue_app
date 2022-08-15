@@ -78,7 +78,7 @@ function Auth({ children }) {
     return (
       <AuthContext.Provider
         value={{
-          user: user ? { ...user, ...profile } : null,
+          user: user ? { ...user, ...publicProfile, ...privateProfile } : null,
           // admin: profile && profile.is_admin,
           // driver: profile && profile.is_driver && !profile.is_admin,
           // permission: profile && (profile.is_admin || profile.is_driver),

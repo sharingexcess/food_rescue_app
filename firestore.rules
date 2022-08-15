@@ -77,13 +77,13 @@ service cloud.firestore {
     	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
     }
 
-    match /publicProfile/{userId}{
+    match /public_profiles/{userId}{
       allow create
       allow read, delete: if isTheSameUser(userId);
       allow update: if false;
     }
 
-    match /privateProfile/{userId}{
+    match /private_profiles/{userId}{
       allow create
       allow read, delete: if isTheSameUser(userId);
       allow update: if false;

@@ -11,6 +11,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { Page, RescueCard } from 'chakra_components'
+import { formatLargeNumber } from 'helpers'
 
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import moment from 'moment'
@@ -142,7 +143,11 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {totalWeight == null ? <Spinner /> : totalWeight + ' lbs.'}
+            {totalWeight == null ? (
+              <Spinner />
+            ) : (
+              formatLargeNumber(totalWeight) + ' lbs.'
+            )}
           </Heading>
           <Text color="element.tertiary">rescued this year</Text>
         </Flex>
