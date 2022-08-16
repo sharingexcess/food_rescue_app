@@ -46,6 +46,17 @@ async function updatePublicProfileEndpoint(request, response) {
 
 async function updatePublicProfile(id, payload) {
   if (isPayloadValid(payload)) {
+    const existingPublicProfile = await db
+      .collection('public_profiles')
+      .doc(id)
+      .get()
+      .then(doc => doc.data())
+
+    if (!existingPublicProfile) {
+      // grant standard permission to new users
+      payload.permission = 'standard'
+    }
+
     await db
       .collection('public_profiles')
       .doc(id)

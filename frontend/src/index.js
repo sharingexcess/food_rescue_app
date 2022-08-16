@@ -158,7 +158,7 @@ function RescueAppRoutes() {
                   <App>
                     <Routes>
                       {/* Public Routes */}
-                      <Route
+                      {/* <Route
                         path="/"
                         element={
                           <PublicRoute>
@@ -230,7 +230,6 @@ function RescueAppRoutes() {
                           </PublicRoute>
                         }
                       />
-                      {/* Driver Routes */}
                       <Route
                         path="/calendar"
                         element={
@@ -295,7 +294,6 @@ function RescueAppRoutes() {
                           </DriverRoute>
                         }
                       />
-                      {/* Admin Routes */}
                       <Route
                         path="/admin/create-rescue"
                         element={
@@ -383,9 +381,9 @@ function RescueAppRoutes() {
                             <Analytics />
                           </AdminRoute>
                         }
-                      />
+                      /> */}
                       <Route
-                        path="/chakra/rescues"
+                        path="/rescues"
                         element={
                           <PublicChakraRoute>
                             <ChakraRescues />
@@ -393,7 +391,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/rescues/:rescue_id"
+                        path="/rescues/:rescue_id"
                         element={
                           <PublicChakraRoute>
                             <ChakraRescue />
@@ -401,7 +399,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/rescues/:rescue_id/edit"
+                        path="/rescues/:rescue_id/edit"
                         element={
                           <PublicChakraRoute>
                             <ChakraEditRescue />
@@ -409,7 +407,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/create-rescue"
+                        path="/create-rescue"
                         element={
                           <PublicChakraRoute>
                             <ChakraCreateRescue />
@@ -417,7 +415,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/test"
+                        path="/test"
                         element={
                           <PublicChakraRoute>
                             <ChakraTest />
@@ -425,7 +423,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/profile"
+                        path="/profile"
                         element={
                           <PublicChakraRoute>
                             <ChakraProfile />
@@ -433,7 +431,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/people"
+                        path="/people"
                         element={
                           <PublicChakraRoute>
                             <ChakraUsers />
@@ -441,7 +439,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/people/:person_id"
+                        path="/people/:person_id"
                         element={
                           <PublicChakraRoute>
                             <ChakraUser />
@@ -449,7 +447,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/organizations"
+                        path="/organizations"
                         element={
                           <PublicChakraRoute>
                             <ChakraOrganizations />
@@ -457,7 +455,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/organizations/:organization_id"
+                        path="/organizations/:organization_id"
                         element={
                           <PublicChakraRoute>
                             <ChakraOrganization />
@@ -465,7 +463,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra/create-organization"
+                        path="/create-organization"
                         element={
                           <PublicChakraRoute>
                             <ChakraCreateOrganization />
@@ -473,7 +471,7 @@ function RescueAppRoutes() {
                         }
                       />
                       <Route
-                        path="/chakra"
+                        path="/"
                         element={
                           <PublicChakraRoute>
                             <ChakraHome />

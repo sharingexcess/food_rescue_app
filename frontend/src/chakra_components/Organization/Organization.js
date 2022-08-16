@@ -33,10 +33,10 @@ export function Organization() {
         id="Organization"
         title="Organization"
         breadcrumbs={[
-          { label: 'Organizations', link: '/chakra/organizations' },
+          { label: 'Organizations', link: '/organizations' },
           {
             label: 'Organization',
-            link: `/chakra/organizations/${organization_id}`,
+            link: `/organizations/${organization_id}`,
           },
         ]}
       >

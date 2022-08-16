@@ -123,7 +123,7 @@ export function EditRescue() {
       },
       user.accessToken
     )
-    navigate(`/chakra/rescues/${rescue_id}`)
+    navigate(`/rescues/${rescue_id}`)
   }
 
   const isValidRescue =
@@ -141,12 +141,12 @@ export function EditRescue() {
       title="Edit Rescue"
       pullToRefresh={false}
       breadcrumbs={[
-        { label: 'Rescues', link: '/chakra/rescues' },
+        { label: 'Rescues', link: '/rescues' },
         {
           label: 'Rescue',
-          link: `/chakra/rescues/${rescue_id}`,
+          link: `/rescues/${rescue_id}`,
         },
-        { label: 'Edit', link: `/chakra/rescues/${rescue_id}/edit` },
+        { label: 'Edit', link: `/rescues/${rescue_id}/edit` },
       ]}
     >
       <Heading
@@ -532,9 +532,9 @@ const LoadingEditRescue = memo(() => {
       title="Edit Rescue"
       pullToRefresh={false}
       breadcrumbs={[
-        { label: 'Rescues', link: '/chakra/rescues' },
-        { label: 'Rescue', link: `/chakra/rescues/${rescue_id}` },
-        { label: 'Edit', link: `/chakra/rescues/${rescue_id}/edit` },
+        { label: 'Rescues', link: '/rescues' },
+        { label: 'Rescue', link: `/rescues/${rescue_id}` },
+        { label: 'Edit', link: `/rescues/${rescue_id}/edit` },
       ]}
       contentProps={{ overflow: 'hidden', maxH: '100vh' }}
     >

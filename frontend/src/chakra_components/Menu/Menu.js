@@ -71,7 +71,7 @@ function MenuHeader() {
   const { user } = useAuth()
 
   return (
-    <Link to="/chakra/profile">
+    <Link to="/profile">
       <Flex>
         <Avatar name={user?.displayName} src={user?.photoURL} />
         <Box w="3" />
@@ -95,10 +95,18 @@ function MenuHeader() {
 }
 
 function MenuBody({ colorMode, toggleColorMode }) {
+  const { hasPermission } = useAuth()
+
   return (
     <Flex direction="column">
       <Flex w="100%" justify="space-between" my="2">
-        <Button variant="link" fontSize="xl" mr="auto" fontWeight="normal">
+        <Button
+          variant="ghosted"
+          fontSize="xl"
+          mr="auto"
+          color="element.primary"
+          fontWeight="300"
+        >
           Dark Mode
         </Button>
         <Switch
@@ -107,35 +115,51 @@ function MenuBody({ colorMode, toggleColorMode }) {
           onChange={() => toggleColorMode()}
         />
       </Flex>
-      <Link to="/chakra/rescues">
+      <Link to="/rescues">
         <Button
-          variant="link"
+          variant="ghosted"
+          color={
+            location.pathname === '/rescues'
+              ? 'blue.primary'
+              : 'element.primary'
+          }
+          fontWeight={location.pathname === '/rescues' ? '600' : '300'}
           fontSize="xl"
           mr="auto"
           my="2"
-          fontWeight="normal"
+          disabled={!hasPermission}
         >
           Rescues
         </Button>
       </Link>
-      <Link to="/chakra/people">
+      <Link to="/people">
         <Button
-          variant="link"
+          variant="ghosted"
+          color={
+            location.pathname === '/people' ? 'blue.primary' : 'element.primary'
+          }
+          fontWeight={location.pathname === '/people' ? '600' : '300'}
           fontSize="xl"
           mr="auto"
           my="2"
-          fontWeight="normal"
+          disabled={!hasPermission}
         >
           People
         </Button>
       </Link>
-      <Link to="/chakra/organizations">
+      <Link to="/organizations">
         <Button
-          variant="link"
+          variant="ghosted"
+          color={
+            location.pathname === '/organizations'
+              ? 'blue.primary'
+              : 'element.primary'
+          }
+          fontWeight={location.pathname === '/organizations' ? '600' : '300'}
           fontSize="xl"
           mr="auto"
           my="2"
-          fontWeight="normal"
+          disabled={!hasPermission}
         >
           Organizations
         </Button>
@@ -145,10 +169,8 @@ function MenuBody({ colorMode, toggleColorMode }) {
 }
 
 function MenuFooter() {
-  function handleLogout() {
-    // firebase.auth().signOut()
-    auth.signOut()
-  }
+  const { handleLogout } = useAuth()
+
   return (
     <Flex justify="space-around" w="100%">
       <Button variant="link" size="xs" onClick={handleLogout}>

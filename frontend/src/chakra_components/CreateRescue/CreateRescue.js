@@ -112,7 +112,7 @@ export function CreateRescue() {
       },
       user.accessToken
     )
-    navigate(`/chakra/rescues/${id}`)
+    navigate(`/rescues/${id}`)
   }
 
   const isValidRescue =
@@ -129,8 +129,8 @@ export function CreateRescue() {
       minH="64vh"
       pullToRefresh={false}
       breadcrumbs={[
-        { label: 'Rescues', link: '/chakra/rescues' },
-        { label: 'Create', link: '/chakra/create-rescue' },
+        { label: 'Rescues', link: '/rescues' },
+        { label: 'Create', link: '/create-rescue' },
       ]}
     >
       <Heading

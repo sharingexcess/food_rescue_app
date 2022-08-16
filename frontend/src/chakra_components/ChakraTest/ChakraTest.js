@@ -10,8 +10,8 @@ export function ChakraTest() {
       id="ChakraTest"
       title="Test Page"
       breadcrumbs={[
-        { label: 'Breadcrumb', link: '/chakra/test' },
-        { label: 'Page', link: `/chakra/test` },
+        { label: 'Breadcrumb', link: '/test' },
+        { label: 'Page', link: `/test` },
       ]}
     >
       <Input

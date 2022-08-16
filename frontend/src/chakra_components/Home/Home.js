@@ -266,7 +266,7 @@ function RescuesButton() {
 
   if (!isMobile) return null
   return (
-    <Link to="/chakra/rescues">
+    <Link to="/rescues">
       <Button
         position="fixed"
         bottom="8"
