@@ -1,22 +1,17 @@
 import {
   Box,
   Heading,
+  Link as Clink,
   Flex,
-  Link,
   Skeleton,
   Text,
   Button,
 } from '@chakra-ui/react'
 import { Page } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Error } from 'components'
-import {
-  formatPhoneNumber,
-  ORG_TYPE_ICONS,
-  DAYS,
-  formatTimestamp,
-} from 'helpers'
+import { formatPhoneNumber, ORG_TYPE_ICONS, DAYS } from 'helpers'
 
 export function Organization() {
   const { organization_id } = useParams()
@@ -102,16 +97,20 @@ export function Organization() {
         {organization.locations.map((location, i) => (
           <Box key={i}>
             <Text fontWeight={600}>{location.address1}</Text>
-            <Text fontWeight={600}>
-              {location.city}, {location.state} {location.zip}
-            </Text>
             <Link
+              to={`/chakra/organizations/${organization_id}/locations/${location?.id}`}
+            >
+              <Text fontWeight={600}>
+                {location.city}, {location.state} {location.zip}
+              </Text>
+            </Link>
+            <Clink
               href={`tel:+${location.contact_phone}`}
               color="element.active"
               textDecoration="underline"
             >
               {formatPhoneNumber(location.contact_phone)}
-            </Link>
+            </Clink>
           </Box>
         ))}
 
