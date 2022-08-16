@@ -132,6 +132,23 @@ function MenuBody({ colorMode, toggleColorMode }) {
           Rescues
         </Button>
       </Link>
+      <Link to="/wholesale">
+        <Button
+          variant="ghosted"
+          color={
+            location.pathname === '/wholesale'
+              ? 'blue.primary'
+              : 'element.primary'
+          }
+          fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
+          fontSize="xl"
+          mr="auto"
+          my="2"
+          disabled={!hasPermission}
+        >
+          Wholesale
+        </Button>
+      </Link>
       <Link to="/people">
         <Button
           variant="ghosted"

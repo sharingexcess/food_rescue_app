@@ -48,6 +48,7 @@ import {
   User as ChakraUser,
   Users as ChakraUsers,
   Home as ChakraHome,
+  Wholesale,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { useAuth } from 'hooks'
@@ -475,6 +476,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraHome />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/wholesale"
+                        element={
+                          <PublicChakraRoute>
+                            <Wholesale />
                           </PublicChakraRoute>
                         }
                       />
