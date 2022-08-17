@@ -40,7 +40,7 @@ export function Autocomplete({
   }
 
   return (
-    <Flex id="Autocomplete" position="relative" {...props}>
+    <Flex id="Autocomplete" position="relative" direction="column" {...props}>
       {label && <label>{label}</label>}
       <InputGroup>
         <Input
