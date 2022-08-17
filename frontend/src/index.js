@@ -41,6 +41,7 @@ import {
   CreateRescue as ChakraCreateRescue,
   EditRescue as ChakraEditRescue,
   Organization as ChakraOrganization,
+  CreateLocation as ChakraCreateLocation,
   EditLocation as ChakraEditLocation,
   Organizations as ChakraOrganizations,
   Profile as ChakraProfile,
@@ -470,6 +471,14 @@ function RescueAppRoutes() {
                         element={
                           <PublicChakraRoute>
                             <ChakraCreateOrganization />
+                          </PublicChakraRoute>
+                        }
+                      />
+                      <Route
+                        path="/chakra/organizations/:organization_id/locations/"
+                        element={
+                          <PublicChakraRoute>
+                            <ChakraCreateLocation />
                           </PublicChakraRoute>
                         }
                       />

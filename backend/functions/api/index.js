@@ -44,6 +44,9 @@ api.post('/rescues/:id/create', (req, res) =>
 api.get('/organization/:id', (req, res) =>
   loadEndpoint('organization', req, res)
 )
+api.get('/organization/:id/create', (req, res) =>
+  loadEndpoint('createOrganization', req, res)
+)
 api.get('/organizations', (req, res) => loadEndpoint('organizations', req, res))
 
 api.get('/users', (req, res) => loadEndpoint('users', req, res))
