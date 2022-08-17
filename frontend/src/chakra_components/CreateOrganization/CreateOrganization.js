@@ -53,8 +53,8 @@ export function CreateOrganization() {
     <Page
       title="Create Organization"
       breadcrumbs={[
-        { label: 'Organizations', link: '/chakra/organizations' },
-        { label: 'Create', link: '/chakra/create-organization' },
+        { label: 'Organizations', link: '/organizations' },
+        { label: 'Create', link: '/create-organization' },
       ]}
     >
       <Flex direction="column" h="100%">

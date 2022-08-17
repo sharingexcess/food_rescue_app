@@ -6,7 +6,8 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
 import { getCollection } from 'helpers'
 import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
-import { Landing, Onboarding } from 'components'
+import { Landing } from 'components'
+import { Onboarding } from 'chakra_components'
 import { Loading } from 'chakra_components/Loading/Loading'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
@@ -24,8 +25,8 @@ function Auth({ children }) {
   const [user, loading, error] = useAuthState(firebase.auth())
   // profile looks up the user in the firestore db
   // to get additional permissions and profile data
-  const [publicProfile, setPublicProfile] = useState()
-  const [privateProfile, setPrivateProfile] = useState()
+  const [publicProfile, setPublicProfile] = useState(null)
+  const [privateProfile, setPrivateProfile] = useState(null)
 
   useEffect(() => {
     const uid = user ? user.uid : localStorage.getItem('se_user_id')
@@ -41,6 +42,9 @@ function Auth({ children }) {
         setPrivateProfile(doc.data())
       )
       user && localStorage.setItem('se_user_id', user.uid)
+    } else {
+      setPublicProfile(undefined)
+      setPrivateProfile(undefined)
     }
     return () => {
       publicProfileUnsubscribe && publicProfileUnsubscribe()
@@ -74,7 +78,6 @@ function Auth({ children }) {
   }
 
   function AuthWrapper({ children }) {
-    const permission = publicProfile?.permission
     return (
       <AuthContext.Provider
         value={{
@@ -90,18 +93,47 @@ function Auth({ children }) {
           handleLogin,
         }}
       >
-        {permission ? children : <Onboarding />}
+        {children}
       </AuthContext.Provider>
     )
   }
 
-  if (user && publicProfile) {
+  if (publicProfile === null) {
+    // Case 1: the user has signed in,
+    // and the query to check for a public profile
+    // has not yet returned.
+    // Render a loading screen until the query returns.
+    return (
+      <AuthWrapper>
+        <Loading text="Signing In" />
+      </AuthWrapper>
+    )
+  } else if (user && publicProfile === undefined) {
+    // Case 2: this is a brand new user.
+    // They have signed in, and the public profile
+    // query returned 'undefined', meaning they
+    // do not have a public profile yet.
+    // Render the onboarding component,
+    // with access to the user object.
+    return (
+      <AuthWrapper>
+        <Onboarding />
+      </AuthWrapper>
+    )
+  } else if (user && publicProfile) {
+    // Case 3: the user has signed in,
+    // and has completed their public profile.
+    // We can now render the app normally. Woo!
     return <AuthWrapper>{children}</AuthWrapper>
   } else if (error) {
+    // Case 4: there was an error in the auth process,
+    // Render an error screen.
     return <Error />
-  } else if (loading || (user && !publicProfile)) {
-    return <Loading text="Signing In" />
-  } else return <Landing handleLogin={handleLogin} />
+  } else {
+    // Case 5: if there is no signed in user,
+    // render the landing page with sign in action.
+    return <Landing handleLogin={handleLogin} />
+  }
 }
 
 export { Auth, AuthContext }

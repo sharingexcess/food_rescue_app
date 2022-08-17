@@ -30,16 +30,27 @@ import {
 import { useRescueContext } from './Rescue'
 import { useState } from 'react'
 import { useAuth } from 'hooks'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export function RescueHeader() {
   const { rescue, refresh } = useRescueContext()
-  const { user, admin } = useAuth()
+  const navigate = useNavigate()
+  const { user, admin, hasCompletedPrivateProfile } = useAuth()
   const [isStarting, setIsStarting] = useState()
   const [isCancelling, setIsCancelling] = useState()
   const [isClaiming, setIsClaiming] = useState()
 
   async function handleStartRescue() {
+    if (!hasCompletedPrivateProfile) {
+      if (
+        window.confirm(
+          'Heads up!\n\nIn order to start this rescue, we need some more information about your vehicle.\n\nClick "OK" to go to your profile now.'
+        )
+      ) {
+        navigate('/profile?tab=private')
+      }
+      return
+    }
     if (
       window.confirm(
         "All set to go? We'll mark this as the start time of your rescue."
@@ -71,6 +82,16 @@ export function RescueHeader() {
   }
 
   async function handleClaimRescue() {
+    if (!hasCompletedPrivateProfile) {
+      if (
+        window.confirm(
+          'Heads up!\n\nIn order to claim a rescue, we need some more information about your vehicle.\n\nClick "OK" to go to your profile now.'
+        )
+      ) {
+        navigate('/profile?tab=private')
+      }
+      return
+    }
     if (
       window.confirm(
         "Are you sure you want to claim this rescue? We can't wait to help you rescue food!"
@@ -172,7 +193,7 @@ export function RescueHeader() {
             bg="green.secondary"
             color="green.primary"
           >
-            <Link to={`/chakra/rescues/${rescue.id}/edit`}>Edit</Link>
+            <Link to={`/rescues/${rescue.id}/edit`}>Edit</Link>
           </Button>
         )}
         {rescue.status !== STATUSES.CANCELLED &&

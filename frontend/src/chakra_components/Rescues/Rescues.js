@@ -102,7 +102,7 @@ export function Rescues() {
     <Page
       id="Rescues"
       title="Rescues"
-      breadcrumbs={[{ label: 'Rescues', link: '/chakra/rescues' }]}
+      breadcrumbs={[{ label: 'Rescues', link: '/rescues' }]}
     >
       <Flex justify="space-between" w="100%">
         <Heading
@@ -115,7 +115,7 @@ export function Rescues() {
         >
           Rescues
         </Heading>
-        <Link to="/chakra/create-rescue">
+        <Link to="/create-rescue">
           <IconButton icon={<AddIcon />} borderRadius="3xl" />
         </Link>
       </Flex>
@@ -190,7 +190,7 @@ export function Rescues() {
 
 export function RescueCard({ rescue }) {
   return (
-    <Link to={`/chakra/rescues/${rescue.id}`} className="Rescue-Link">
+    <Link to={`/rescues/${rescue.id}`} className="Rescue-Link">
       <Box
         my={6}
         boxShadow="default"

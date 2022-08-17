@@ -40,10 +40,10 @@ export function Rescue() {
         id="Rescue"
         title="Rescue"
         breadcrumbs={[
-          { label: 'Rescues', link: '/chakra/rescues' },
+          { label: 'Rescues', link: '/rescues' },
           {
             label: `${rescue?.status || 'Loading'} Rescue`,
-            link: `/chakra/rescues/${rescue_id}`,
+            link: `/rescues/${rescue_id}`,
           },
         ]}
         contentProps={{ px: 0, pt: 8, mt: '-64px' }}

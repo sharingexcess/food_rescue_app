@@ -44,10 +44,10 @@ export function User() {
         id="Person"
         title="Person"
         breadcrumbs={[
-          { label: 'People', link: '/chakra/people' },
+          { label: 'People', link: '/people' },
           {
             label: person ? person.name : 'Person',
-            link: `/chakra/people/${person_id}`,
+            link: `/people/${person_id}`,
           },
         ]}
       >

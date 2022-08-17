@@ -1,5 +1,4 @@
 import {
-  CheckCircleIcon,
   CheckIcon,
   DeleteIcon,
   EditIcon,
@@ -15,7 +14,6 @@ import {
   IconButton,
   Input,
   InputGroup,
-  InputLeftAddon,
   InputLeftElement,
   Link,
   Select,
@@ -31,9 +29,7 @@ import {
   formatPhoneNumber,
 } from 'helpers'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { Ellipsis } from 'components'
 import { useAuth } from 'hooks'
-import { useNavigate } from 'react-router-dom'
 
 const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
@@ -422,8 +418,7 @@ function PickupBody() {
 
 export function PickupFooter() {
   const { user } = useAuth()
-  const { setOpenStop, refresh, rescue } = useRescueContext()
-  const navigate = useNavigate()
+  const { setOpenStop, refresh } = useRescueContext()
   const { entryRows, notes, pickup, session_storage_key, isChanged } =
     usePickupContext()
   const total = entryRows.reduce((total, current) => total + current.weight, 0)

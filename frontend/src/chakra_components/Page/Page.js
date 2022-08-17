@@ -92,7 +92,7 @@ function PageHead({ breadcrumbs, openMenu }) {
     setPrevScroll(scroll)
   }, [scroll]) // eslint-disable-line
 
-  const isHomePage = location.pathname === '/chakra'
+  const isHomePage = location.pathname === '/'
 
   return (
     <Flex
@@ -162,15 +162,15 @@ function PageHead({ breadcrumbs, openMenu }) {
 
 function HomeButton() {
   const isMobile = useIsMobile()
-  const isHomePage = location.pathname === '/chakra'
+  const isHomePage = location.pathname === '/'
 
   return (
-    <Link to="/chakra">
+    <Link to="/">
       <Image
         src={isHomePage && isMobile ? '/logo_white.png' : '/logo.png'}
         flexShrink="0"
-        w="48px"
-        h="48px"
+        w="42px"
+        h="42px"
         alt="Sharing Excess Logo"
       />
     </Link>
@@ -184,6 +184,8 @@ function MenuButton({ openMenu }) {
   return isMobile ? (
     <Avatar
       name={user?.displayName}
+      w="42px"
+      h="42px"
       src={user?.photoURL}
       ml="auto"
       onClick={openMenu}

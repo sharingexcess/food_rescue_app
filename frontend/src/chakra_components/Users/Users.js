@@ -22,7 +22,7 @@ export function Users() {
     <Page
       id="People"
       title="People"
-      breadcrumbs={[{ label: 'People', link: '/chakra/people' }]}
+      breadcrumbs={[{ label: 'People', link: '/people' }]}
     >
       <Heading
         as="h1"
@@ -73,7 +73,7 @@ function SearchBox() {
 
 function UserCard({ user }) {
   return (
-    <Link to={`/chakra/people/${user.id}`}>
+    <Link to={`/people/${user.id}`}>
       <Flex justify="start" align="center" py="4">
         <Avatar src={user?.icon} name={user?.name} />
         <Flex direction="column" ml="4">

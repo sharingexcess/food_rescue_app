@@ -15,7 +15,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react'
 import { useIsMobile } from 'hooks'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function CardOverlay({
   isOpen,
@@ -30,6 +30,8 @@ export function CardOverlay({
   // for a delayed state change, letting the
   // closing animation play
   const [open, setOpen] = useState(isOpen)
+
+  useEffect(() => setOpen(isOpen), [isOpen])
 
   function closeWithAnimation() {
     // if there's a close handler, only close if it evaluates true
@@ -70,7 +72,7 @@ export function CardOverlay({
           <CardHeader />
         </ModalHeader>
 
-        <ModalBody maxH="36vh" overflowY="auto">
+        <ModalBody maxH="60vh" overflowY="auto">
           <CardBody />
         </ModalBody>
 

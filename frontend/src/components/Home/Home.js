@@ -37,7 +37,7 @@ export function Home() {
     if (!admin) return null
     return (
       <>
-        <Tile name="Chakra" icon="house" link="/chakra/rescues" />
+        <Tile name="Chakra" icon="house" link="/rescues" />
         <Tile name="Rescues" icon="articulated-lorry" link="/rescues" />
         <Tile name="Schedule Rescue" icon="plus" link="/admin/create-rescue" />
         <Tile name="Log Rescue" icon="writing-hand" link="admin/log-rescue" />

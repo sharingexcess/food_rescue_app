@@ -39,7 +39,7 @@ export function Organizations() {
     <Page
       id="Organizations"
       title="Organizations"
-      breadcrumbs={[{ label: 'Organizations', link: '/chakra/organizations' }]}
+      breadcrumbs={[{ label: 'Organizations', link: '/organizations' }]}
     >
       <Flex justify="space-between">
         <Heading
@@ -52,7 +52,7 @@ export function Organizations() {
         >
           Organizations
         </Heading>
-        <Link to="/chakra/create-organization">
+        <Link to="/create-organization">
           <IconButton icon={<AddIcon />} borderRadius="3xl" />
         </Link>
       </Flex>
@@ -129,7 +129,7 @@ export function Organizations() {
 
 function OrganizationCard({ organization }) {
   return (
-    <Link to={`/chakra/organizations/${organization.id}`}>
+    <Link to={`/organizations/${organization.id}`}>
       <Flex justify="start" align="center" py="4">
         <Text fontSize="2xl">{ORG_TYPE_ICONS[organization.subtype]}</Text>
         <Flex direction="column" ml="4">

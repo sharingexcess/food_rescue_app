@@ -1,14 +1,9 @@
-import {
-  CheckIcon,
-  EditIcon,
-  LockIcon,
-  ViewIcon,
-  ViewOffIcon,
-} from '@chakra-ui/icons'
+import { CheckIcon, LockIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import {
   Avatar,
   Box,
   Button,
+  Checkbox,
   Flex,
   Heading,
   Input,
@@ -17,19 +12,21 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { Page } from 'chakra_components'
+import { Page, Liability } from 'chakra_components'
 import { SE_API } from 'helpers'
 import { useAuth, useIsMobile } from 'hooks'
 import { useState } from 'react'
 
-export function Profile() {
-  const [tab, setTab] = useState('public')
+export function Profile({ onSubmitCallback }) {
+  const search_params = new URLSearchParams(window.location.search)
+  const cached_tab = search_params.get('tab')
+  const [tab, setTab] = useState(cached_tab || 'public')
   const { user } = useAuth()
 
   return (
     <Page
       title="Profile"
-      breadcrumbs={[{ label: 'Profile', link: '/chakra/profile' }]}
+      breadcrumbs={[{ label: 'Profile', link: '/profile' }]}
     >
       <Heading
         as="h1"
@@ -42,7 +39,11 @@ export function Profile() {
         Your Profile
       </Heading>
       <ProfileHeader tab={tab} setTab={setTab} />
-      {tab === 'public' ? <PublicProfile /> : <PrivateProfile />}
+      {tab === 'public' ? (
+        <PublicProfile onSubmitCallback={onSubmitCallback} />
+      ) : (
+        <PrivateProfile onSubmitCallback={onSubmitCallback} />
+      )}
     </Page>
   )
 }
@@ -87,7 +88,7 @@ function ProfileHeader({ tab, setTab }) {
   )
 }
 
-function PublicProfile() {
+function PublicProfile({ onSubmitCallback }) {
   const { user } = useAuth()
   const isMobile = useIsMobile()
   const [isLoading, setIsLoading] = useState()
@@ -104,7 +105,7 @@ function PublicProfile() {
     setIsLoading(true)
     try {
       await SE_API.post(
-        `/publicProfile/${user.id}/update`,
+        `/publicProfile/${user.uid}/update`,
         formData,
         user.accessToken
       )
@@ -129,6 +130,7 @@ function PublicProfile() {
       position: 'top',
     })
     setIsLoading(false)
+    onSubmitCallback && onSubmitCallback()
   }
 
   const FIELDS = [
@@ -187,11 +189,12 @@ function PublicProfile() {
   )
 }
 
-function PrivateProfile() {
+function PrivateProfile({ onSubmitCallback }) {
   const { user } = useAuth()
   const isMobile = useIsMobile()
   const [isLoading, setIsLoading] = useState()
   const [hidden, setHidden] = useState(true)
+  const [showLiability, setShowLiability] = useState(false)
 
   const toast = useToast()
 
@@ -203,13 +206,14 @@ function PrivateProfile() {
     license_state: user.license_state || '',
     insurance_provider: user.insurance_provider || '',
     insurance_policy_number: user.insurance_policy_number || '',
+    completed_liability_release: user.completed_liability_release || false,
   })
 
   async function handleSubmit() {
     setIsLoading(true)
     try {
       await SE_API.post(
-        `/privateProfile/${user.id}/update`,
+        `/privateProfile/${user.uid}/update`,
         formData,
         user.accessToken
       )
@@ -234,6 +238,7 @@ function PrivateProfile() {
       position: 'top',
     })
     setIsLoading(false)
+    onSubmitCallback && onSubmitCallback()
   }
 
   const FIELDS = [
@@ -273,8 +278,14 @@ function PrivateProfile() {
         break
       }
     }
+    if (!formData.completed_liability_release) return false
     return result
   })()
+
+  console.log(
+    user.completed_liability_release,
+    formData.completed_liability_release
+  )
 
   return (
     <Box py="6" position="relative">
@@ -311,6 +322,36 @@ function PrivateProfile() {
           setFormData={setFormData}
         />
       ))}
+
+      <Flex mb="12">
+        <Checkbox
+          size="lg"
+          isInvalid={!formData.completed_liability_release}
+          isChecked={formData.completed_liability_release}
+          onChange={() =>
+            setFormData({
+              ...formData,
+              completed_liability_release:
+                !formData.completed_liability_release,
+            })
+          }
+        ></Checkbox>
+        <Text ml="3">
+          I agree to the
+          <Button
+            variant="link"
+            textDecoration="underline"
+            color="blue.primary"
+            onClick={() => setShowLiability(true)}
+            ml="1"
+          >
+            Liability Release
+          </Button>
+        </Text>
+      </Flex>
+      {showLiability && (
+        <Liability handleClose={() => setShowLiability(false)} />
+      )}
 
       <Box h="8" />
 

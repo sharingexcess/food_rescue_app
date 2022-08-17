@@ -4,37 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
-import {
-  Calendar,
-  CompletedRescue,
-  ContactUs,
-  DeliveryReport,
-  DriverInfo,
-  EditRescue,
-  Error,
-  FoodSafety,
-  Header,
-  Home,
-  Liability,
-  PickupReport,
-  Privacy,
-  Profile,
-  Rescues,
-  Terms,
-  Tutorial,
-  Rescue,
-  LogRescue,
-  EditOrganization,
-  Organizations,
-  Organization,
-  EditLocation,
-  Users,
-  User,
-  Analytics,
-  Modal,
-  EnvWarning,
-  Impact,
-} from 'components'
+import { Error, Header, Modal, EnvWarning } from 'components'
 import {
   ChakraTest,
   CreateOrganization as ChakraCreateOrganization,
@@ -50,17 +20,13 @@ import {
   User as ChakraUser,
   Users as ChakraUsers,
   Home as ChakraHome,
+  Wholesale,
+  WholesaleDonation,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
-import { useAuth } from 'hooks'
-import { IS_DEV_ENVIRONMENT, SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
-import { EmojiProvider } from 'react-apple-emojis'
-import emojiData from 'assets/emojis.json'
-import './styles/index.scss'
+import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-const queryClient = new QueryClient()
+import './styles/index.scss'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -68,6 +34,7 @@ const queryClient = new QueryClient()
 // by default, we turn them on only for DEV, not PROD.
 // window.se_api_logs = IS_DEV_ENVIRONMENT
 window.se_api_logs = true
+
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: SENTRY_DSN,
@@ -83,33 +50,6 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-// handle installed on home screen
-// let debounce
-// if (window.matchMedia('(display-mode: standalone)').matches) {
-//   window.scrollTo({ top: 54, behavior: 'smooth' })
-
-//   window.addEventListener('scroll', () => {
-//     if (window.scrollY < 54) {
-//       if (debounce) window.clearTimeout(debounce)
-//       debounce = window.setTimeout(
-//         () => window.scrollTo({ top: 54, behavior: 'smooth' }),
-//         50
-//       )
-//     }
-//   })
-// }
-
-function PublicRoute({ children }) {
-  return (
-    <>
-      <Header />
-      {children}
-      <Modal />
-      <EnvWarning />
-    </>
-  )
-}
-
 function PublicChakraRoute({ children }) {
   return (
     <>
@@ -119,393 +59,131 @@ function PublicChakraRoute({ children }) {
   )
 }
 
-function DriverRoute({ children }) {
-  const { permission } = useAuth()
-  return permission ? (
-    <>
-      <Header />
-      {children}
-      <Modal />
-      <EnvWarning />
-    </>
-  ) : (
-    <Navigate to="/error" />
-  )
-}
-
-function AdminRoute({ children }) {
-  const { admin } = useAuth()
-  return admin ? (
-    <>
-      <Header />
-      {children}
-      <Modal />
-      <EnvWarning />
-    </>
-  ) : (
-    <Navigate to="/error" />
-  )
-}
-
 function RescueAppRoutes() {
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
       <ChakraProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <EmojiProvider data={emojiData}>
-            <BrowserRouter>
-              <Auth>
-                {/* Auth component handles login and will show a login page if no user is authenticated */}
-                <Firestore>
-                  <App>
-                    <Routes>
-                      {/* Public Routes */}
-                      <Route
-                        path="/"
-                        element={
-                          <PublicRoute>
-                            <Home />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="profile"
-                        element={
-                          <PublicRoute>
-                            <Profile />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="privacy"
-                        element={
-                          <PublicRoute>
-                            <Privacy />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="/tos"
-                        element={
-                          <PublicRoute>
-                            <Terms />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="/contact"
-                        element={
-                          <PublicRoute>
-                            <ContactUs />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="/food-safety"
-                        element={
-                          <PublicRoute>
-                            <FoodSafety />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="/liability"
-                        element={
-                          <PublicRoute>
-                            <Liability />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="/driver-info"
-                        element={
-                          <PublicRoute>
-                            <DriverInfo />
-                          </PublicRoute>
-                        }
-                      />
-                      <Route
-                        path="/tutorial"
-                        element={
-                          <PublicRoute>
-                            <Tutorial />
-                          </PublicRoute>
-                        }
-                      />
-                      {/* Driver Routes */}
-                      <Route
-                        path="/calendar"
-                        element={
-                          <DriverRoute>
-                            <Calendar />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/rescues"
-                        element={
-                          <DriverRoute>
-                            <Rescues />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/rescues/:rescue_id"
-                        element={
-                          <DriverRoute>
-                            <Rescue />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/rescues/:rescue_id/pickup/:pickup_id"
-                        element={
-                          <DriverRoute>
-                            <PickupReport />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/rescues/:rescue_id/delivery/:delivery_id"
-                        element={
-                          <DriverRoute>
-                            <DeliveryReport />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/rescues/:rescue_id/edit"
-                        element={
-                          <DriverRoute>
-                            <EditRescue />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/rescues/:rescue_id/completed"
-                        element={
-                          <DriverRoute>
-                            <CompletedRescue />
-                          </DriverRoute>
-                        }
-                      />
-                      <Route
-                        path="/stats"
-                        element={
-                          <DriverRoute>
-                            <Impact />
-                          </DriverRoute>
-                        }
-                      />
-                      {/* Admin Routes */}
-                      <Route
-                        path="/admin/create-rescue"
-                        element={
-                          <AdminRoute>
-                            <EditRescue />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/log-rescue"
-                        element={
-                          <AdminRoute>
-                            <LogRescue />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/create-organization"
-                        element={
-                          <AdminRoute>
-                            <EditOrganization />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/organizations"
-                        element={
-                          <AdminRoute>
-                            <Organizations />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/organizations/:organization_id"
-                        element={
-                          <AdminRoute>
-                            <Organization />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/organizations/:organization_id/edit"
-                        element={
-                          <AdminRoute>
-                            <EditOrganization />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/organizations/:organization_id/create-location"
-                        element={
-                          <AdminRoute>
-                            <EditLocation />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/organizations/:organization_id/location/:location_id"
-                        element={
-                          <AdminRoute>
-                            <EditLocation />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/users"
-                        element={
-                          <AdminRoute>
-                            <Users />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/users/:id"
-                        element={
-                          <AdminRoute>
-                            <User />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin/analytics"
-                        element={
-                          <AdminRoute>
-                            <Analytics />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/rescues"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraRescues />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/rescues/:rescue_id"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraRescue />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/rescues/:rescue_id/edit"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraEditRescue />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/create-rescue"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraCreateRescue />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/test"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraTest />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/profile"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraProfile />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/people"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraUsers />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/people/:person_id"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraUser />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/organizations"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraOrganizations />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/organizations/:organization_id"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraOrganization />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/create-organization"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraCreateOrganization />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/organizations/:organization_id/locations/"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraCreateLocation />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra/organizations/:organization_id/locations/:location_id"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraEditLocation />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route
-                        path="/chakra"
-                        element={
-                          <PublicChakraRoute>
-                            <ChakraHome />
-                          </PublicChakraRoute>
-                        }
-                      />
-                      <Route path="*" element={<Error />} />
-                    </Routes>
-                  </App>
-                </Firestore>
-              </Auth>
-            </BrowserRouter>
-          </EmojiProvider>
-        </QueryClientProvider>
+        <BrowserRouter>
+          <Auth>
+            <App>
+              <Routes>
+                <Route
+                  path="/rescues"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraRescues />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/rescues/:rescue_id"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraRescue />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/rescues/:rescue_id/edit"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraEditRescue />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/create-rescue"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraCreateRescue />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/test"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraTest />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraProfile />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/people"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraUsers />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/people/:person_id"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraUser />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraOrganizations />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations/:organization_id"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraOrganization />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/create-organization"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraCreateOrganization />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraHome />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/wholesale"
+                  element={
+                    <PublicChakraRoute>
+                      <Wholesale />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/wholesale/:id"
+                  element={
+                    <PublicChakraRoute>
+                      <WholesaleDonation />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route path="*" element={<Error />} />
+              </Routes>
+            </App>
+          </Auth>
+        </BrowserRouter>
       </ChakraProvider>
     </Sentry.ErrorBoundary>
   )
