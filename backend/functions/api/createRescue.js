@@ -20,7 +20,7 @@ async function createRescueEndpoint(request, response) {
 
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
-        user => user.is_admin
+        user => user.permission == 'admin'
       )
 
       if (!requestIsAuthenticated) {

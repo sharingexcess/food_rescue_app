@@ -23,9 +23,9 @@ async function rescuesEndpoint(request, response) {
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
       user =>
-        user.is_admin ||
+        user.permission == 'admin' ||
         (handler_id && user.id === handler_id) ||
-        (user.is_driver && handler_id === 'null') // allow drivers search for available rescues
+        (user.permission == 'standard' && handler_id === 'null') // allow drivers search for available rescues
     )
 
     if (!requestIsAuthenticated) {
