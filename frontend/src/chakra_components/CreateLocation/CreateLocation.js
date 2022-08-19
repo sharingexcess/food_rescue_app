@@ -10,15 +10,26 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { Directions, Page } from 'chakra_components'
+import { Directions, Page, Location } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
-import { useParams } from 'react-router-dom'
-import { Error, GoogleMap } from 'components'
-import { formatPhoneNumber, DAYS } from 'helpers'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Error, GoogleAutoComplete, GoogleMap } from 'components'
+import {
+  formatPhoneNumber,
+  DAYS,
+  SE_API,
+  removeSpecialCharacters,
+  createTimestamp,
+  generateUniqueId,
+  TIMES,
+} from 'helpers'
 import { useState } from 'react'
+import { Spacer } from '@sharingexcess/designsystem'
+// import { initializeFormData } from './utils'
 
 export function CreateLocation() {
-  const { organization_id, location_id } = useParams()
+  const { organization_id } = useParams()
+  const navigate = useNavigate()
   const {
     data: organization,
     loading,
@@ -47,6 +58,62 @@ export function CreateLocation() {
     setFormData({ ...formData, [e.target.id]: e.target.value })
   }
 
+  function isFormDataValid() {
+    if (!formData.lat || !formData.lng) {
+      window.alert('Address is not complete!')
+    }
+    return true
+  }
+
+  function handleReceiveAddress(address) {
+    setFormData(prevData => ({ ...prevData, ...address }))
+  }
+
+  async function handleSubmit() {
+    if (isFormDataValid()) {
+      try {
+        const location_id = await generateUniqueId('locations')
+        await SE_API.post(`location/${location_id}/update`, {
+          id: location_id,
+          organization_id,
+          ...formData,
+          contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
+          hours: checkMonToFriday(),
+          timestamp_created: createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        })
+        navigate(`/organizations/${organization_id}`)
+      } catch (e) {
+        console.error('Error writing document: ', e)
+      }
+    }
+  }
+
+  function checkMonToFriday() {
+    const indexOfMonFriday = formData.hours.findIndex(
+      hour => hour.day_of_week === 7
+    )
+    if (indexOfMonFriday !== -1) {
+      const open = formData.hours[indexOfMonFriday].time_open
+      const close = formData.hours[indexOfMonFriday].time_close
+      const hours = []
+      setFormData({
+        ...formData,
+        hours: formData.hours.splice(indexOfMonFriday, 1),
+      })
+      for (let i = 1; i <= 5; i++) {
+        hours.push({
+          day_of_week: i,
+          time_open: open,
+          time_close: close,
+        })
+      }
+      const newHours = formData.hours.concat(hours)
+      return newHours
+    }
+    return formData.hours
+  }
+
   function CreateLocationPageWrapper({ children }) {
     return (
       <Page
@@ -59,7 +126,7 @@ export function CreateLocation() {
             link: `/chakra/organizations/${organization_id}`,
           },
           {
-            label: 'Create Org',
+            label: 'Location',
             link: `/chakra/organizations/${organization_id}/locations/`,
           },
         ]}
@@ -91,29 +158,61 @@ export function CreateLocation() {
     )
   } else
     return (
-      <CreateLocationPageWrapper>
-        <Flex
-          bgGradient="linear(to-b, transparent, surface.background)"
-          h="32"
-          mt="-32"
-          zIndex={1}
-          position="relative"
-          direction="column"
-          justify="flex-end"
-        />
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          textTransform="capitalize"
-          color="element.primary"
-          mb={4}
-        >
-          CreateLocation
-        </Heading>
+      // <CreateLocationPageWrapper>
+      // <Flex
+      //   bgGradient="linear(to-b, transparent, surface.background)"
+      //   h="32"
+      //   mt="-32"
+      //   zIndex={1}
+      //   position="relative"
+      //   direction="column"
+      //   justify="flex-end"
+      // />
+      // <Heading
+      //   as="h1"
+      //   fontWeight="700"
+      //   size="2xl"
+      //   textTransform="capitalize"
+      //   color="element.primary"
+      //   mb={4}
+      // >
+      //   Create Location
+      // </Heading>
 
-        <Flex align="start" direction="column" w="100%">
-          <Text fontWeight={400}>Address</Text>
+      <div>
+        {' '}
+        {/* align="start" direction="column" w="100%"> */}
+        {formData.address1 ? (
+          <div style={{ zIndex: 100 }} id="map">
+            {formData.lat && formData.lng && (
+              // <Location
+              //   location={{
+              //     lat: parseFloat(40.0043771),
+              //     lng: parseFloat(-75.21819719999999),
+              //   }}
+              // />
+              <Location
+                googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_FIREBASE_API_KEY}&g&v=3.exp&libraries=geometry,drawing,places`}
+                loadingElement={<div style={{ height: `100%` }} />}
+                containerElement={<div style={{ height: `400px` }} />}
+                mapElement={<div style={{ height: `100%` }} />}
+              />
+            )}
+            {/* console.log('form', formData) */}
+            {/* lat 40.0043771 */}
+            {/* lng -75.21819719999999 */}
+            {/* {formData.lat && formData.lng ? (
+              <>
+                <Spacer height={24} />
+                <GoogleMap address={formData} />
+                <Spacer height={24} />
+              </>
+            ) : null} */}
+          </div>
+        ) : (
+          <GoogleAutoComplete handleSelect={handleReceiveAddress} />
+        )}
+        {/* <Text fontWeight={400}>Address</Text>
           <Input
             id="apartmentNumber"
             value={formData.apartment_number}
@@ -248,9 +347,9 @@ export function CreateLocation() {
             >
               Delete Location
             </Button>
-          </Flex>
-        </Flex>
-      </CreateLocationPageWrapper>
+          </Flex> */}
+      </div>
+      // </CreateLocationPageWrapper>
     )
 }
 

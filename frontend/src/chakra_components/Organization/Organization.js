@@ -9,12 +9,13 @@ import {
 } from '@chakra-ui/react'
 import { Page } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Error } from 'components'
 import { formatPhoneNumber, ORG_TYPE_ICONS, DAYS } from 'helpers'
 
 export function Organization() {
   const { organization_id } = useParams()
+  const navigate = useNavigate()
   const {
     data: organization,
     loading,
@@ -87,7 +88,11 @@ export function Organization() {
           <Text textTransform="capitalize">
             {organization.type} ({organization.subtype})
           </Text>
-          <Button variant="secondary" mt={4}>
+          <Button
+            variant="secondary"
+            mt={4}
+            onClick={() => navigate(`/organizations/${organization_id}/edit`)}
+          >
             Edit Organization
           </Button>
         </Flex>

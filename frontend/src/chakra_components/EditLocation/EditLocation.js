@@ -12,13 +12,14 @@ import {
 import { CloseIcon } from '@chakra-ui/icons'
 import { Directions, Page } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Error, GoogleMap } from 'components'
 import { formatPhoneNumber, DAYS } from 'helpers'
 import { useState } from 'react'
 
 export function EditLocation() {
   const { organization_id, location_id } = useParams()
+  const navigate = useNavigate()
   const {
     data: organization,
     loading,
@@ -28,19 +29,18 @@ export function EditLocation() {
 
   // console.log('org', organization)
   const locations = organization?.locations
-
   const location = locations?.filter(i => i.id === location_id)[0]
   // console.log('loc', location)
 
   const [formData, setFormData] = useState({
-    address1: '5109 Warren St',
+    address1: '',
     address2: '',
     apartment_number: '',
-    contact_name: 'Evan Ehlers',
-    contact_email: 'evan@sharingexcess.com',
-    contact_phone: '1234567890',
-    notes: 'Knock first',
-    nickname: 'The warehouse',
+    contact_name: '',
+    contact_email: '',
+    contact_phone: '',
+    notes: '',
+    nickname: '',
     hours: [],
     is_philabundance_partner: false,
   })
@@ -51,6 +51,34 @@ export function EditLocation() {
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
+  }
+
+  function isFormDataValid() {
+    if (!formData.lat || !formData.lng) {
+      window.alert('Address is not complete!')
+    }
+    return true
+  }
+
+  async function handleSubmit() {
+    if (isFormDataValid()) {
+      try {
+        const new_location_id =
+          location_id || (await generateUniqueId('locations'))
+        await setFirestoreData(['locations', new_location_id], {
+          id: new_location_id,
+          organization_id,
+          ...formData,
+          hours: checkMonToFriday(),
+          contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
+          timestamp_created: location.timestamp_created || createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        })
+        navigate(`/admin/organizations/${organization_id}`)
+      } catch (e) {
+        console.error('Error writing document: ', e)
+      }
+    }
   }
 
   function EditLocationPageWrapper({ children }) {

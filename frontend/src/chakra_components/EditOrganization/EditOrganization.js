@@ -9,12 +9,14 @@ import {
   setFirestoreData,
   SE_API,
 } from 'helpers'
-import { useAuth } from 'hooks'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useApi, useAuth } from 'hooks'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
-export function CreateOrganization() {
+export function EditOrganization() {
   const { user } = useAuth()
+  const { organization_id } = useParams()
+  const { data: organization } = useApi(`/organization/${organization_id}`)
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
@@ -29,18 +31,25 @@ export function CreateOrganization() {
     })
   }
 
-  useEffect(() => console.log(formData), [formData])
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      name: organization?.name,
+      subtype: organization?.subtype,
+      type: organization?.type,
+    })
+    console.log('org', organization)
+  }, [organization])
 
   async function handleSubmit() {
-    const organization_id = await generateUniqueId('organizations')
+    const id = organization_id || (await generateUniqueId('organizations'))
     await SE_API.post(
       `/organization/${organization_id}/update`,
       {
-        id: organization_id,
+        id: id,
         name: formData.name,
         subtype: formData.subtype,
         type: formData.type,
-        timestamp_created: createTimestamp(),
         timestamp_updated: createTimestamp(),
       },
       user.accessToken
@@ -50,10 +59,10 @@ export function CreateOrganization() {
 
   return (
     <Page
-      title="Create Organization"
+      title="Edit Organization"
       breadcrumbs={[
         { label: 'Organizations', link: '/organizations' },
-        { label: 'Create', link: '/create-organization' },
+        { label: 'Edit', link: `/organizations/${organization_id}/edit` },
       ]}
     >
       <Flex direction="column" h="100%">
@@ -65,7 +74,7 @@ export function CreateOrganization() {
           textTransform="capitalize"
           color="element.primary"
         >
-          Create Organization
+          Edit Organization
         </Heading>
 
         <Text color="element.primary" fontWeight="400">
@@ -77,9 +86,7 @@ export function CreateOrganization() {
           mb="6"
           id="name"
           placeholder="Name..."
-          onChange={
-            e => handleChange(e) // same problem for onchange as in people search box
-          }
+          onChange={e => handleChange(e)}
         />
         <Text color="element.primary" fontWeight="400">
           Organization Type
@@ -91,7 +98,7 @@ export function CreateOrganization() {
           value={formData.type}
           flexGrow="0.5"
         >
-          <option value="recipient_donor">None</option>
+          <option value="">None</option>
           <option value="recipient">Recipient</option>
           <option value="donor">Donor</option>
         </Select>
@@ -102,37 +109,39 @@ export function CreateOrganization() {
         <Select
           variant="flushed"
           id="subtype"
+          textTransform="capitalize"
           onChange={e => handleChange(e)}
           value={formData.subtype}
           flexGrow="0.5"
         >
-          {formData.type === 'donor' ? (
-            <>
-              <option value="recipient_donor">None</option>
-              <option value="retail">Retail</option>
-              <option value="wholesale">Wholesale</option>
-              <option value="holding">Holding</option>
-              <option value="other">Other</option>
-            </>
-          ) : (
-            <>
-              <option value="recipient_donor">None</option>
-              <option value="food_bank">Food Bank</option>
-              <option value="agency">Agency</option>
-              <option value="home_delivery">Home Delivery</option>
-              <option value="community_fridge">Community Fridge</option>
-              <option value="popup">Popup</option>
-              <option value="holding">Holding</option>
-              <option value="other">Other</option>
-            </>
-          )}
+          {formData.type === 'donor'
+            ? Object.keys(DONOR_TYPES).map((t, i) => (
+                <option
+                  value={DONOR_TYPES[t]}
+                  key={i}
+                  style={{ textTransform: 'capitalize' }}
+                >
+                  {DONOR_TYPES[t].replace('_', ' ')}
+                </option>
+              ))
+            : Object.keys(RECIPIENT_TYPES).map((t, i) => (
+                <option
+                  value={RECIPIENT_TYPES[t]}
+                  key={i}
+                  style={{ textTransform: 'capitalize' }}
+                >
+                  {RECIPIENT_TYPES[t].replace('_', ' ')}
+                </option>
+              ))}
         </Select>
         <Flex direction="column" mt="96px">
-          <Button variant="secondary" my={4}>
-            Add Location
-          </Button>
+          <Link to={`/organizations/${organization_id}/create-location`}>
+            <Button variant="secondary" my={4} w="100%">
+              Add Location
+            </Button>
+          </Link>
           <Button variant="primary" onClick={handleSubmit}>
-            Create Organiztion
+            Edit Organiztion
           </Button>
         </Flex>
       </Flex>
