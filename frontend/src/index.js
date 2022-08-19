@@ -22,6 +22,7 @@ import {
   Home as ChakraHome,
   Wholesale,
   WholesaleDonation,
+  FoodSafety,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -176,6 +177,14 @@ function RescueAppRoutes() {
                   element={
                     <PublicChakraRoute>
                       <WholesaleDonation />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/food-safety"
+                  element={
+                    <PublicChakraRoute>
+                      <FoodSafety />
                     </PublicChakraRoute>
                   }
                 />
