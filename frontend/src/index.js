@@ -4,13 +4,14 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
-import { Error, Header, Modal, EnvWarning } from 'components'
+import { Error, Header, Modal, EnvWarning, Analytics } from 'components'
 import {
   ChakraTest,
   CreateOrganization as ChakraCreateOrganization,
   CreateRescue as ChakraCreateRescue,
   EditRescue as ChakraEditRescue,
   Organization as ChakraOrganization,
+  EditOrganization as ChakraEditOrganization,
   CreateLocation as ChakraCreateLocation,
   EditLocation as ChakraEditLocation,
   Organizations as ChakraOrganizations,
@@ -22,6 +23,8 @@ import {
   Home as ChakraHome,
   Wholesale,
   WholesaleDonation,
+  FoodSafety,
+  Page,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -59,6 +62,15 @@ function PublicChakraRoute({ children }) {
   )
 }
 
+function PublicChakraRouteWithPage({ children }) {
+  return (
+    <>
+      {children}
+      <EnvWarning />
+    </>
+  )
+}
+
 function RescueAppRoutes() {
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
@@ -70,9 +82,14 @@ function RescueAppRoutes() {
                 <Route
                   path="/rescues"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraRescues />
-                    </PublicChakraRoute>
+                    <PublicChakraRouteWithPage>
+                      <Page
+                        title="Rescues"
+                        breadcrumbs={[{ label: 'Rescues', link: '/rescues' }]}
+                      >
+                        <ChakraRescues />
+                      </Page>
+                    </PublicChakraRouteWithPage>
                   }
                 />
                 <Route
@@ -156,6 +173,32 @@ function RescueAppRoutes() {
                   }
                 />
                 <Route
+                  path="/organizations/:organization_id/edit"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraEditOrganization />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations/:organization_id/create-location"
+                  element={
+                    <PublicChakraRoute>
+                      <Page id="CreateLocation" title="Create Location">
+                        <ChakraCreateLocation />
+                      </Page>
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations/:organization_id/locations/:location_id"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraEditLocation />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
                   path="/"
                   element={
                     <PublicChakraRoute>
@@ -176,6 +219,14 @@ function RescueAppRoutes() {
                   element={
                     <PublicChakraRoute>
                       <WholesaleDonation />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/food-safety"
+                  element={
+                    <PublicChakraRoute>
+                      <FoodSafety />
                     </PublicChakraRoute>
                   }
                 />

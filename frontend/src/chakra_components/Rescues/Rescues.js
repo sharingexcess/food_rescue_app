@@ -22,7 +22,8 @@ import './Rescues.scss'
 import { AddIcon, CalendarIcon } from '@chakra-ui/icons'
 import { Link } from 'react-router-dom'
 
-export function Rescues() {
+export function Rescues({ setTitle }) {
+  useEffect(() => setTitle('test'), [])
   const { admin, user } = useAuth()
   const url_params = new URLSearchParams(window.location.search)
   const [state, setState] = useState({
@@ -99,11 +100,7 @@ export function Rescues() {
     )
   }
   return (
-    <Page
-      id="Rescues"
-      title="Rescues"
-      breadcrumbs={[{ label: 'Rescues', link: '/rescues' }]}
-    >
+    <>
       <Flex justify="space-between" w="100%">
         <Heading
           as="h1"
@@ -184,7 +181,7 @@ export function Rescues() {
           </Text>
         </Flex>
       )}
-    </Page>
+    </>
   )
 }
 

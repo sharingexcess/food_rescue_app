@@ -40,15 +40,16 @@ api.get('/reports', (req, res) => loadEndpoint('reports', req, res))
 api.post('/rescues/:id/create', (req, res) =>
   loadEndpoint('createRescue', req, res)
 )
-
 api.get('/organization/:id', (req, res) =>
   loadEndpoint('organization', req, res)
 )
-api.get('/organization/:id/create', (req, res) =>
-  loadEndpoint('createOrganization', req, res)
+api.post('/organization/:id/update', (req, res) =>
+  loadEndpoint('updateOrganization', req, res)
 )
 api.get('/organizations', (req, res) => loadEndpoint('organizations', req, res))
-
+api.post('/location/:id/update', (req, res) =>
+  loadEndpoint('updateLocation', req, res)
+)
 api.get('/users', (req, res) => loadEndpoint('users', req, res))
 api.get('/user/:id', (req, res) => loadEndpoint('user', req, res))
 api.get('/publicProfiles', (req, res) =>
@@ -66,7 +67,6 @@ api.post('/publicProfile/:id/update', (req, res) =>
 api.post('/privateProfile/:id/update', (req, res) =>
   loadEndpoint('updatePrivateProfile', req, res)
 )
-api.get('/organizations', (req, res) => loadEndpoint('organizations', req, res))
 
 api.post('/updateUserPermission/:id', (req, res) =>
   loadEndpoint('updateUserPermission', req, res)

@@ -17,16 +17,27 @@ async function updatePublicProfileEndpoint(request, response) {
         return
       }
 
-      // we wait until here to authenticate the request so we can see if this is the
-      // driver's own route (that data isn't available until after we fetch the rescue)
-      const requestIsAuthenticated = await authenticateRequest(
-        request.get('accessToken'),
-        user => user.id === id || user.permission == 'admin' // only allow users to update their own public profile
-      )
+      const existingProfile = await db
+        .collection('public_profiles')
+        .doc(id)
+        .get()
+        .then(doc => doc.data())
+        .catch(error => {
+          throw new Error('Error while fetching from Firestore:', error)
+        })
 
-      if (!requestIsAuthenticated) {
-        rejectUnauthorizedRequest(response)
-        return
+      if (existingProfile) {
+        // only authenticate this request for a previously created profile
+        // allow all users to create a new profile
+        const requestIsAuthenticated = await authenticateRequest(
+          request.get('accessToken'),
+          user => user.id === id || user.permission == 'admin' // only allow users to update their own public profile
+        )
+
+        if (!requestIsAuthenticated) {
+          rejectUnauthorizedRequest(response)
+          return
+        }
       }
 
       const payload = { ...JSON.parse(request.body), id }

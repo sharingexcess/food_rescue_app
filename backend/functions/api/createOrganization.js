@@ -49,7 +49,7 @@ async function createOrganizationEndpoint(request, response) {
         timestamp_updated
       )
 
-      console.log('logging created organization:', organization_payload)
+      console.log('logging Created Organization:', organization_payload)
 
       const created_organization = await db
         .collection('organizations')

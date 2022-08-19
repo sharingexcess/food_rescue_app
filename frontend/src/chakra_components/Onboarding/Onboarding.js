@@ -12,9 +12,9 @@ import { useEffect, useState } from 'react'
 
 export function Onboarding() {
   // const cached_stage = sessionStorage.getItem('se_onboarding_stage')
-  const cached_stage = 0
+  const cached_stage = 1
   const [stage, setStage] = useState(cached_stage || 0)
-  const [showProgress, setShowProgress] = useState(true)
+  const [showProgress, setShowProgress] = useState(false)
 
   useEffect(() => {
     sessionStorage.setItem('se_onboarding_stage', stage)

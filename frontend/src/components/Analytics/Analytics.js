@@ -176,7 +176,7 @@ export function Analytics() {
           width={5}
           textAnchor="end"
         >
-          {payload.value.substring(0, 13)}
+          {payload.value.slice(0, 13)}
           {payload.value.length >= 13 ? '...' : ''}
         </text>
       </g>
