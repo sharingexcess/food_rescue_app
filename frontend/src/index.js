@@ -23,6 +23,7 @@ import {
   Home as ChakraHome,
   Wholesale,
   WholesaleDonation,
+  FoodSafety,
   Page,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
@@ -218,6 +219,14 @@ function RescueAppRoutes() {
                   element={
                     <PublicChakraRoute>
                       <WholesaleDonation />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/food-safety"
+                  element={
+                    <PublicChakraRoute>
+                      <FoodSafety />
                     </PublicChakraRoute>
                   }
                 />
