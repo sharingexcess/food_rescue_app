@@ -22,7 +22,7 @@ async function publicProfileEndpoint(request, response) {
     }
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
-      user => user.permission == 'admin' || user.id === id
+      user => user.permission
     )
 
     if (!requestIsAuthenticated) {
@@ -34,7 +34,7 @@ async function publicProfileEndpoint(request, response) {
     response.status(200).send(JSON.stringify(publicProfile))
   } catch (e) {
     console.error('Caught error:', e)
-    response.staus(500).send(e.toString())
+    response.status(500).send(e.toString())
   }
 }
 

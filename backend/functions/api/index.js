@@ -68,6 +68,10 @@ api.post('/privateProfile/:id/update', (req, res) =>
 )
 api.get('/organizations', (req, res) => loadEndpoint('organizations', req, res))
 
+api.post('/updateUserPermission/:id', (req, res) =>
+  loadEndpoint('updateUserPermission', req, res)
+)
+
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
   const module = require(`./${name}`)

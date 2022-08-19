@@ -7,37 +7,46 @@ import {
   Text,
   Avatar,
   Select,
+  IconButton,
 } from '@chakra-ui/react'
 import { Page, RescueCard } from 'chakra_components'
 import { useApi, useIsMobile, useAuth } from 'hooks'
 import { Error } from 'components'
-import { formatPhoneNumber, SE_API } from 'helpers'
+import { SE_API } from 'helpers'
 import { useParams } from 'react-router-dom'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useInsertionEffect, useMemo, useState } from 'react'
+import { CheckIcon } from '@chakra-ui/icons'
 
 export function User() {
-  const { person_id } = useParams()
-  const { admin, user } = useAuth()
+  const [userPermission, setUserPermission] = useState('')
+  const [isLoading, setLoading] = useState(false)
+  const { profile_id } = useParams()
+  const { hasAdminPermission, user } = useAuth()
   const {
-    data: person,
+    data: profile,
     loading,
     error,
-  } = useApi(`/publicProfiles/${person_id}`)
+  } = useApi(`/publicProfiles/${profile_id}`)
 
   const { data: rescues } = useApi(
     '/rescues',
     useMemo(
       () => ({
         status: 'completed',
-        handler_id: person_id,
+        handler_id: profile_id,
         limit: 3,
       }),
       []
     )
   )
 
-  useEffect(() => console.log('rescues', rescues), [person_id])
+  useEffect(() => console.log('rescues', rescues), [profile_id])
 
+  useEffect(() => {
+    if (profile) setUserPermission(profile.permission)
+  }, [profile])
+
+  console.log('UserPermission is', userPermission)
   function PersonPageWrapper({ children }) {
     return (
       <Page
@@ -46,8 +55,8 @@ export function User() {
         breadcrumbs={[
           { label: 'People', link: '/people' },
           {
-            label: person ? person.name : 'Person',
-            link: `/people/${person_id}`,
+            label: profile ? profile.name : 'Person',
+            link: `/people/${profile_id}`,
           },
         ]}
       >
@@ -57,28 +66,42 @@ export function User() {
   }
 
   async function handleChange(e) {
-    if (!e.target.value || !admin) return
-    const id = person_id
+    if (!e.target.value || !hasAdminPermission) return
+    setUserPermission(e.target.value)
+    // const id = profile_id
+    // await SE_API.post(
+    //   `/publicProfile/${id}/update`,
+    //   {
+    //     name: profile.name,
+    //     email: profile.email,
+    //     pronouns: profile.pronouns,
+    //     phone: profile.phone,
+    //   },
+    //   user.accessToken
+    // )
+  }
+
+  async function changeUserPermission() {
+    setLoading(true)
+    const id = profile_id
+    console.log('Id:', id)
     await SE_API.post(
-      `/publicProfile/${id}/update`,
+      `/updateUserPermission/${id}`,
       {
-        name: person.name,
-        email: person.email,
-        pronouns: person.pronouns,
-        phone: person.phone,
-        permission: e.target.value,
+        permission: userPermission,
       },
       user.accessToken
     )
+    setLoading(true)
   }
 
-  if (loading && !person) {
+  if (loading && !profile) {
     return <LoadingPerson PersonPageWrapper={PersonPageWrapper} />
   } else if (error) {
     return (
       <PersonPageError PersonPageWrapper={PersonPageWrapper} message={error} />
     )
-  } else if (!person) {
+  } else if (!profile) {
     return (
       <PersonPageError
         PersonPageWrapper={PersonPageWrapper}
@@ -98,52 +121,45 @@ export function User() {
           justify="flex-end"
         />
         <Flex direction="column" align="center">
-          <Heading
-            as="h1"
-            fontWeight="700"
-            size="2xl"
-            textTransform="capitalize"
-            color="element.primary"
-            mb={4}
-          >
-            Person Profile
-          </Heading>
-          <Avatar src={person.icon} name={person.name} size="2xl" />
+          <Avatar src={profile.icon} name={profile.name} size="2xl" />
           <Text fontSize="lg" fontWeight={700}>
-            {person.name}
+            {profile.name}
           </Text>
-          {admin && (
+          {hasAdminPermission && (
             <Link
-              href={`mailto:+${person.email}`}
+              href={`mailto:+${profile.email}`}
               color="element.active"
               textDecoration="underline"
             >
-              {formatPhoneNumber(person.email)}
+              {profile.email}
             </Link>
           )}
           <Text fontSize="sm" fontWeight={300}>
-            {person.pronouns}
+            {profile.pronouns}
           </Text>
-          {admin && (
-            <Link
-              href={`tel:+${person.phone}`}
-              color="element.active"
-              textDecoration="underline"
-            >
-              {formatPhoneNumber(person.phone)}
-            </Link>
-          )}
         </Flex>
-        {admin && (
-          <Flex direction="column" align="center">
-            <Text fontWeight={700} mb={4}>
-              Access Level
-            </Text>
-            <Select onChange={handleChange}>
-              <option value="">Select user permission level</option>
-              <option value="standard">standard</option>
-              <option value="admin">admin</option>
-            </Select>
+        {hasAdminPermission && profile && (
+          <Flex direction="column" align="flex-start" my="8">
+            <Text fontWeight={700}>Access Level</Text>
+            <Flex w="100%" gap="4">
+              <Select
+                variant="flushed"
+                onChange={handleChange}
+                flexGrow="1"
+                value={userPermission}
+              >
+                <option value="">Select user permission level</option>
+                <option value="\0">None</option>
+                <option value="standard">Standard</option>
+                <option value="admin">Admin</option>
+              </Select>
+              <IconButton
+                disabled={userPermission === profile.permission}
+                onClick={changeUserPermission}
+                icon={<CheckIcon />}
+                isLoading={isLoading}
+              />
+            </Flex>
           </Flex>
         )}
         <Text fontWeight={700} mt={8}>
@@ -152,7 +168,7 @@ export function User() {
         {rescues && rescues.length ? (
           rescues.map((rescue, i) => <RescueCard rescue={rescue} key={i} />)
         ) : (
-          <Text mt={8}>{person.name} has no completed rescues</Text>
+          <Text mt={8}>{profile.name} has no completed rescues</Text>
         )}
       </PersonPageWrapper>
     )

@@ -60,7 +60,7 @@ export function Rescues() {
 
   const { data, loading, loadMore } = useApi('/rescues', api_params)
 
-  const { data: handlers } = useApi('/users')
+  const { data: handlers } = useApi('/publicProfiles')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
