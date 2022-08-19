@@ -14,7 +14,7 @@ import { Menu } from '../'
 import { useIsMobile, useAuth, useScroll } from 'hooks'
 import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, cloneElement } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Page({
@@ -25,13 +25,18 @@ export function Page({
   contentProps,
   pullToRefresh = true,
 }) {
+  const [state, setState] = useState({ title, breadcrumbs })
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode } = useColorMode()
   const isMobile = useIsMobile()
 
   const withPullToRefresh = children => (
     <PullToRefresh onRefresh={() => window.location.reload()}>
-      {children}
+      {cloneElement(children, {
+        setTitle: title => setState(state => ({ ...state, title })),
+        setBreadcrumbs: breadcrumbs =>
+          setState(state => ({ ...state, breadcrumbs })),
+      })}
     </PullToRefresh>
   )
 
@@ -45,13 +50,13 @@ export function Page({
       bg="surface.background"
     >
       <Helmet>
-        <title>{title} | SE Food Rescue</title>
+        <title>{state.title} | SE Food Rescue</title>
         <meta
           name="apple-mobile-web-app-status-bar-style"
           content={colorMode === 'dark' ? 'black-translucent' : 'default'}
         />
       </Helmet>
-      <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
+      <PageHead breadcrumbs={state.breadcrumbs} openMenu={onOpen} />
       <Menu isOpen={isOpen} onClose={onClose} />
       <Box
         as="section"
@@ -67,7 +72,13 @@ export function Page({
         minH="100%"
         {...contentProps}
       >
-        {isMobile && pullToRefresh ? withPullToRefresh(children) : children}
+        {isMobile && pullToRefresh
+          ? withPullToRefresh(children)
+          : cloneElement(children, {
+              setTitle: title => setState(state => ({ ...state, title })),
+              setBreadcrumbs: breadcrumbs =>
+                setState(state => ({ ...state, breadcrumbs })),
+            })}
       </Box>
     </Box>
   )

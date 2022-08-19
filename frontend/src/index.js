@@ -23,6 +23,7 @@ import {
   Home as ChakraHome,
   Wholesale,
   WholesaleDonation,
+  Page,
 } from './chakra_components'
 import { Firestore, Auth, App } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -60,6 +61,15 @@ function PublicChakraRoute({ children }) {
   )
 }
 
+function PublicChakraRouteWithPage({ children }) {
+  return (
+    <>
+      {children}
+      <EnvWarning />
+    </>
+  )
+}
+
 function RescueAppRoutes() {
   return (
     <Sentry.ErrorBoundary fallback={<Error crash />}>
@@ -71,9 +81,14 @@ function RescueAppRoutes() {
                 <Route
                   path="/rescues"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraRescues />
-                    </PublicChakraRoute>
+                    <PublicChakraRouteWithPage>
+                      <Page
+                        title="Rescues"
+                        breadcrumbs={[{ label: 'Rescues', link: '/rescues' }]}
+                      >
+                        <ChakraRescues />
+                      </Page>
+                    </PublicChakraRouteWithPage>
                   }
                 />
                 <Route
@@ -168,7 +183,17 @@ function RescueAppRoutes() {
                   path="/organizations/:organization_id/create-location"
                   element={
                     <PublicChakraRoute>
-                      <ChakraCreateLocation />
+                      <Page id="CreateLocation" title="Create Location">
+                        <ChakraCreateLocation />
+                      </Page>
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations/:organization_id/locations/:location_id"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraEditLocation />
                     </PublicChakraRoute>
                   }
                 />

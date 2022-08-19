@@ -10,7 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { Directions, Page } from 'chakra_components'
+import { MapLocation, Page } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Error, GoogleMap } from 'components'
@@ -134,11 +134,9 @@ export function EditLocation() {
           justify="flex-end"
         />
         <Flex direction="column">
-          <Box h={4} />
-          <Text>Google maps start</Text>
-          <GoogleMap address={formData} />
-          <Text>Google maps end</Text>
-          <Box h={4} />
+          {formData.lat && formData.lng ? (
+            <MapLocation lat={formData.lat} lng={formData.lng} />
+          ) : null}
         </Flex>
         <Heading
           as="h1"
@@ -148,7 +146,7 @@ export function EditLocation() {
           color="element.primary"
           mb={4}
         >
-          EditLocation
+          Edit Location
         </Heading>
         <Flex justify="start" gap={4} align="start" mb={8}>
           <Text fontSize="20px">📍</Text>
