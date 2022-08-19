@@ -4,13 +4,14 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
-import { Error, Header, Modal, EnvWarning } from 'components'
+import { Error, Header, Modal, EnvWarning, Analytics } from 'components'
 import {
   ChakraTest,
   CreateOrganization as ChakraCreateOrganization,
   CreateRescue as ChakraCreateRescue,
   EditRescue as ChakraEditRescue,
   Organization as ChakraOrganization,
+  EditOrganization as ChakraEditOrganization,
   CreateLocation as ChakraCreateLocation,
   EditLocation as ChakraEditLocation,
   Organizations as ChakraOrganizations,
@@ -153,6 +154,22 @@ function RescueAppRoutes() {
                   element={
                     <PublicChakraRoute>
                       <ChakraCreateOrganization />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations/:organization_id/edit"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraEditOrganization />
+                    </PublicChakraRoute>
+                  }
+                />
+                <Route
+                  path="/organizations/:organization_id/create-location"
+                  element={
+                    <PublicChakraRoute>
+                      <ChakraCreateLocation />
                     </PublicChakraRoute>
                   }
                 />
