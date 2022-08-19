@@ -25,7 +25,8 @@ async function organizationEndpoint(request, response) {
 
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
-      organization => organization.is_admin || organization.id === id
+      organization =>
+        organization.permission == 'admin' || organization.id === id
     )
 
     if (!requestIsAuthenticated) {

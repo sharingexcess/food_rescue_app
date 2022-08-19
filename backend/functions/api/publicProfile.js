@@ -22,7 +22,7 @@ async function publicProfileEndpoint(request, response) {
     }
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
-      user => user.is_admin || user.id === id
+      user => user.permission == 'admin' || user.id === id
     )
 
     if (!requestIsAuthenticated) {

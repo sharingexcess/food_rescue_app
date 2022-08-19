@@ -100,9 +100,9 @@ async function getUserIdFromToken(token) {
 
 async function getUserRecordFromId(uid) {
   console.log(`Getting User Record for id ${uid} from Firestore...`)
-  const { email, id, is_driver, is_admin } = await admin
+  const { email, id, permission } = await admin
     .firestore()
-    .collection('users')
+    .collection('public_profiles')
     .doc(uid)
     .get()
     .then(doc => doc.data())
@@ -110,7 +110,7 @@ async function getUserRecordFromId(uid) {
       throw new Error('Error while fetching from Firestore:', error)
     })
 
-  const user = { email, id, is_driver, is_admin }
+  const user = { email, id, permission }
 
   if (!user) {
     throw new Error(`No user found matching uid: ${uid}`)
