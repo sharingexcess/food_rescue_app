@@ -201,7 +201,7 @@ export function FoodSafety({ handleNext }) {
               temperature guidelines, please contact your volunteer coordinator
               after your pickup.
             </Text>
-            <Text>
+            <Text as="div">
               <OrderedList spacing="4" stylePosition="inside" fontWeight="600">
                 <ListItem>Frozen: 32*F and below</ListItem>
                 <ListItem>Cold: 40*F and below</ListItem>
