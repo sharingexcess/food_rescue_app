@@ -59,7 +59,7 @@ export function Home() {
   }, [deliveries])
 
   return (
-    <Page title="Home" contentProps={{ px: 0, pt: 8, mt: '-64px' }}>
+    <>
       <Flex
         w="100%"
         h="38vh"
@@ -108,7 +108,7 @@ export function Home() {
       />
       <AvailableRescues />
       <RescuesButton />
-    </Page>
+    </>
   )
 }
 

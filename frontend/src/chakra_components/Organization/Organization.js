@@ -12,56 +12,34 @@ import { useApi, useIsMobile } from 'hooks'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Error } from 'components'
 import { formatPhoneNumber, ORG_TYPE_ICONS, DAYS } from 'helpers'
+import { useEffect } from 'react'
 
-export function Organization() {
+export function Organization({ setBreadcrumbs }) {
   const { organization_id } = useParams()
   const navigate = useNavigate()
   const {
     data: organization,
     loading,
     error,
-    refresh,
   } = useApi(`/organization/${organization_id}`)
 
-  function OrganizationPageWrapper({ children }) {
-    return (
-      <Page
-        id="Organization"
-        title="Organization"
-        breadcrumbs={[
-          { label: 'Organizations', link: '/organizations' },
-          {
-            label: 'Organization',
-            link: `/organizations/${organization_id}`,
-          },
-        ]}
-      >
-        {children}
-      </Page>
-    )
-  }
+  useEffect(() => {
+    organization &&
+      setBreadcrumbs([
+        { label: 'Organizations', link: '/organizations' },
+        { label: organization.name, link: `/organizations/${organization.id}` },
+      ])
+  }, [organization])
 
   if (loading && !organization) {
-    return (
-      <LoadingOrganization OrganizationPageWrapper={OrganizationPageWrapper} />
-    )
+    return <LoadingOrganization />
   } else if (error) {
-    return (
-      <OrganizationPageError
-        OrganizationPageWrapper={OrganizationPageWrapper}
-        message={error}
-      />
-    )
+    return <OrganizationPageError message={error} />
   } else if (!organization) {
-    return (
-      <OrganizationPageError
-        OrganizationPageWrapper={OrganizationPageWrapper}
-        message="No Organization Found"
-      />
-    )
+    return <OrganizationPageError message="No Organization Found" />
   } else
     return (
-      <OrganizationPageWrapper>
+      <>
         <Flex
           bgGradient="linear(to-b, transparent, surface.background)"
           h="32"
@@ -103,7 +81,7 @@ export function Organization() {
           <Box key={i}>
             <Text fontWeight={600}>{location.address1}</Text>
             <Link
-              to={`/chakra/organizations/${organization_id}/locations/${location?.id}`}
+              to={`/organizations/${organization_id}/locations/${location?.id}`}
             >
               <Text fontWeight={600}>
                 {location.city}, {location.state} {location.zip}
@@ -136,14 +114,14 @@ export function Organization() {
             ))}
           </Box>
         ))}
-      </OrganizationPageWrapper>
+      </>
     )
 }
 
-function LoadingOrganization({ OrganizationPageWrapper }) {
+function LoadingOrganization({}) {
   const isMobile = useIsMobile()
   return (
-    <OrganizationPageWrapper>
+    <>
       <Box px="4">
         <Heading
           as="h1"
@@ -166,14 +144,10 @@ function LoadingOrganization({ OrganizationPageWrapper }) {
         </Text>
         <Skeleton h="32" my="4" />
       </Box>
-    </OrganizationPageWrapper>
+    </>
   )
 }
 
-function OrganizationPageError({ OrganizationPageWrapper, message }) {
-  return (
-    <OrganizationPageWrapper>
-      <Error message={message} />
-    </OrganizationPageWrapper>
-  )
+function OrganizationPageError({ message }) {
+  return <Error message={message} />
 }

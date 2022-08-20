@@ -112,7 +112,7 @@ export function CreateRescue() {
       },
       user.accessToken
     )
-    navigate(`/chakra/rescues/${id}`)
+    navigate(`/rescues/${id}`)
   }
 
   const isValidRescue =
@@ -124,15 +124,7 @@ export function CreateRescue() {
     stops[stops.length - 1].type === 'delivery'
 
   return (
-    <Page
-      title="Create Rescue"
-      minH="64vh"
-      pullToRefresh={false}
-      breadcrumbs={[
-        { label: 'Rescues', link: '/chakra/rescues' },
-        { label: 'Create', link: '/chakra/create-rescue' },
-      ]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -194,7 +186,7 @@ export function CreateRescue() {
           </Button>
         </Flex>
       )}
-    </Page>
+    </>
   )
 }
 

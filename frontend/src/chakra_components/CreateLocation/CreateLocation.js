@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { Directions, Page, Location, MapLocation } from 'chakra_components'
+import { Page, MapLocation } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Error, GoogleAutoComplete, GoogleMap } from 'components'
@@ -24,18 +24,15 @@ import {
   generateUniqueId,
   TIMES,
 } from 'helpers'
-import { useEffect, useState } from 'react'
-import { Spacer } from '@sharingexcess/designsystem'
-// import { initializeFormData } from './utils'
+import { useState } from 'react'
 
-export function CreateLocation() {
+export function CreateLocation({ setBreadcrumbs }) {
   const { organization_id } = useParams()
   const navigate = useNavigate()
   const {
     data: organization,
     loading,
     error,
-    refresh,
   } = useApi(`/organization/${organization_id}`)
 
   const [formData, setFormData] = useState({
@@ -50,8 +47,6 @@ export function CreateLocation() {
     hours: [],
     is_philabundance_partner: false,
   })
-
-  useEffect(() => console.log('form', formData), [formData])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -147,14 +142,14 @@ export function CreateLocation() {
         id="CreateLocation"
         title="Create Location"
         breadcrumbs={[
-          { label: 'Organizations', link: '/chakra/organizations' },
+          { label: 'Organizations', link: '/organizations' },
           {
             label: 'Organization',
-            link: `/chakra/organizations/${organization_id}`,
+            link: `/organizations/${organization_id}`,
           },
           {
             label: 'Location',
-            link: `/chakra/organizations/${organization_id}/locations/`,
+            link: `/organizations/${organization_id}/locations/`,
           },
         ]}
       >
@@ -242,28 +237,14 @@ export function CreateLocation() {
   }
 
   if (loading && !organization) {
-    return (
-      <LoadingCreateLocation
-        CreateLocationPageWrapper={CreateLocationPageWrapper}
-      />
-    )
+    return <LoadingCreateLocation />
   } else if (error) {
-    return (
-      <CreateLocationPageError
-        CreateLocationPageWrapper={CreateLocationPageWrapper}
-        message={error}
-      />
-    )
+    return <CreateLocationPageError message={error} />
   } else if (!organization) {
-    return (
-      <CreateLocationPageError
-        CreateLocationPageWrapper={CreateLocationPageWrapper}
-        message="No CreateLocation Found"
-      />
-    )
+    return <CreateLocationPageError message="No CreateLocation Found" />
   } else
     return (
-      <CreateLocationPageWrapper>
+      <>
         {formData.address1 ? (
           <>
             {formData.lat && formData.lng ? (
@@ -423,14 +404,14 @@ export function CreateLocation() {
         ) : (
           <GoogleAutoComplete handleSelect={handleReceiveAddress} />
         )}
-      </CreateLocationPageWrapper>
+      </>
     )
 }
 
-function LoadingCreateLocation({ CreateLocationPageWrapper }) {
+function LoadingCreateLocation() {
   const isMobile = useIsMobile()
   return (
-    <CreateLocationPageWrapper>
+    <>
       <Box px="4">
         <Heading
           as="h1"
@@ -453,14 +434,10 @@ function LoadingCreateLocation({ CreateLocationPageWrapper }) {
         </Text>
         <Skeleton h="32" my="4" />
       </Box>
-    </CreateLocationPageWrapper>
+    </>
   )
 }
 
-function CreateLocationPageError({ CreateLocationPageWrapper, message }) {
-  return (
-    <CreateLocationPageWrapper>
-      <Error message={message} />
-    </CreateLocationPageWrapper>
-  )
+function CreateLocationPageError({ message }) {
+  return <Error message={message} />
 }

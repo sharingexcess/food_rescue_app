@@ -36,11 +36,7 @@ export function Organizations() {
   }
 
   return (
-    <Page
-      id="Organizations"
-      title="Organizations"
-      breadcrumbs={[{ label: 'Organizations', link: '/organizations' }]}
-    >
+    <>
       <Flex justify="space-between">
         <Heading
           as="h1"
@@ -123,7 +119,7 @@ export function Organizations() {
               {i !== organizations.length - 1 && <Divider />}
             </Box>
           ))}
-    </Page>
+    </>
   )
 }
 

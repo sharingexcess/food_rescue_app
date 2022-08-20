@@ -9,14 +9,21 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
-import { Page } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-export function WholesaleDonation() {
+export function WholesaleDonation({ setBreadcrumbs }) {
   const { id } = useParams()
   const isMobile = useIsMobile()
   const { data: rescue } = useApi(`/rescues/${id}`)
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Wholesale', link: '/wholesale' },
+      { label: 'Donation', link: `/wholesale/${id}` },
+    ])
+  }, [id])
 
   if (!rescue) return <LoadingDonation />
 
@@ -27,14 +34,7 @@ export function WholesaleDonation() {
     recipients.reduce((total, curr) => total + curr.impact_data_total_weight, 0)
 
   return (
-    <Page
-      title="Donation"
-      id="WholesaleDonation"
-      breadcrumbs={[
-        { label: 'Wholesale', link: '/wholesale' },
-        { label: 'Donation', link: `/wholesale/${id}` },
-      ]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -76,7 +76,7 @@ export function WholesaleDonation() {
           Update Donation
         </Button>
       </Flex>
-    </Page>
+    </>
   )
 }
 
@@ -114,14 +114,7 @@ function LoadingDonation() {
   const { id } = useParams()
 
   return (
-    <Page
-      title="Donation"
-      id="WholesaleDonation"
-      breadcrumbs={[
-        { label: 'Wholesale', link: '/wholesale' },
-        { label: 'Donation', link: `/wholesale/${id}` },
-      ]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -136,6 +129,6 @@ function LoadingDonation() {
       <Skeleton w="100%" h="32" my="4" />
       <Skeleton w="100%" h="32" my="4" />
       <Skeleton w="100%" h="32" my="4" />
-    </Page>
+    </>
   )
 }

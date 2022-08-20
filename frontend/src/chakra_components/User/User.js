@@ -17,58 +17,46 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useInsertionEffect, useMemo, useState } from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
 
-export function User() {
+export function User({ setBreadcrumbs }) {
   const [userPermission, setUserPermission] = useState('')
   const [isLoading, setLoading] = useState(false)
-  const { profile_id } = useParams()
+  const { user_id } = useParams()
   const { hasAdminPermission, user } = useAuth()
-  const {
-    data: profile,
-    loading,
-    error,
-  } = useApi(`/publicProfiles/${profile_id}`)
+  const { data: profile, loading, error } = useApi(`/publicProfiles/${user_id}`)
+
+  useEffect(() => {
+    profile &&
+      setBreadcrumbs([
+        { label: 'People', link: '/people' },
+        {
+          label: profile.name,
+          link: `/people/${profile.id}`,
+        },
+      ])
+  }, [profile])
 
   const { data: rescues } = useApi(
     '/rescues',
     useMemo(
       () => ({
         status: 'completed',
-        handler_id: profile_id,
+        handler_id: user_id,
         limit: 3,
       }),
       []
     )
   )
 
-  useEffect(() => console.log('rescues', rescues), [profile_id])
+  useEffect(() => console.log('rescues', rescues), [user_id])
 
   useEffect(() => {
     if (profile) setUserPermission(profile.permission)
   }, [profile])
 
-  console.log('UserPermission is', userPermission)
-  function PersonPageWrapper({ children }) {
-    return (
-      <Page
-        id="Person"
-        title="Person"
-        breadcrumbs={[
-          { label: 'People', link: '/people' },
-          {
-            label: profile ? profile.name : 'Person',
-            link: `/people/${profile_id}`,
-          },
-        ]}
-      >
-        {children}
-      </Page>
-    )
-  }
-
   async function handleChange(e) {
     if (!e.target.value || !hasAdminPermission) return
     setUserPermission(e.target.value)
-    // const id = profile_id
+    // const id = user_id
     // await SE_API.post(
     //   `/publicProfile/${id}/update`,
     //   {
@@ -83,7 +71,7 @@ export function User() {
 
   async function changeUserPermission() {
     setLoading(true)
-    const id = profile_id
+    const id = user_id
     console.log('Id:', id)
     await SE_API.post(
       `/updateUserPermission/${id}`,
@@ -96,21 +84,14 @@ export function User() {
   }
 
   if (loading && !profile) {
-    return <LoadingPerson PersonPageWrapper={PersonPageWrapper} />
+    return <LoadingPerson />
   } else if (error) {
-    return (
-      <PersonPageError PersonPageWrapper={PersonPageWrapper} message={error} />
-    )
+    return <PersonPageError message={error} />
   } else if (!profile) {
-    return (
-      <PersonPageError
-        PersonPageWrapper={PersonPageWrapper}
-        message="No Person Found"
-      />
-    )
+    return <PersonPageError message="No Person Found" />
   } else
     return (
-      <PersonPageWrapper>
+      <>
         <Flex
           bgGradient="linear(to-b, transparent, surface.background)"
           h="32"
@@ -170,14 +151,14 @@ export function User() {
         ) : (
           <Text mt={8}>{profile.name} has no completed rescues</Text>
         )}
-      </PersonPageWrapper>
+      </>
     )
 }
 
-function LoadingPerson({ PersonPageWrapper }) {
+function LoadingPerson() {
   const isMobile = useIsMobile()
   return (
-    <PersonPageWrapper>
+    <>
       <Box px="4">
         <Heading
           as="h1"
@@ -198,14 +179,10 @@ function LoadingPerson({ PersonPageWrapper }) {
         <Skeleton h="32" my="4" />
         <Skeleton h="32" my="4" />
       </Box>
-    </PersonPageWrapper>
+    </>
   )
 }
 
-function PersonPageError({ PersonPageWrapper, message }) {
-  return (
-    <PersonPageWrapper>
-      <Error message={message} />
-    </PersonPageWrapper>
-  )
+function PersonPageError({ message }) {
+  return <Error message={message} />
 }

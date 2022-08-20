@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, Skeleton, SkeletonCircle } from '@chakra-ui/react'
 import { useApi, useIsMobile } from 'hooks'
 import { useParams } from 'react-router-dom'
-import { createContext, useContext, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Error } from 'components'
 import { Page, Pickup, Delivery, Directions } from 'chakra_components'
 import { getActiveStop } from './Rescue.utils'
@@ -11,7 +11,7 @@ const RescueContext = createContext({})
 RescueContext.displayName = 'RescueContext'
 export const useRescueContext = () => useContext(RescueContext)
 
-export function Rescue() {
+export function Rescue({ setBreadcrumbs }) {
   const { rescue_id } = useParams()
   const {
     data: rescue,
@@ -24,6 +24,16 @@ export function Rescue() {
   const activeStop = useMemo(() => getActiveStop(rescue), [rescue])
   const isMobile = useIsMobile()
 
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Rescues', link: '/rescues' },
+      {
+        label: `${rescue?.status || 'Loading'} Rescue`,
+        link: `/rescues/${rescue_id}`,
+      },
+    ])
+  }, [rescue])
+
   const contextValue = {
     rescue,
     activeStop,
@@ -34,114 +44,75 @@ export function Rescue() {
     refresh,
   }
 
-  function RescuePageWrapper({ children }) {
-    return (
-      <Page
-        id="Rescue"
-        title="Rescue"
-        breadcrumbs={[
-          { label: 'Rescues', link: '/rescues' },
-          {
-            label: `${rescue?.status || 'Loading'} Rescue`,
-            link: `/rescues/${rescue_id}`,
-          },
-        ]}
-        contentProps={{ px: 0, pt: 8, mt: '-64px' }}
-      >
-        {children}
-      </Page>
-    )
-  }
-
-  if (loading && !rescue)
-    return <LoadingRescue RescuePageWrapper={RescuePageWrapper} />
-  else if (error)
-    return (
-      <RescuePageError RescuePageWrapper={RescuePageWrapper} message={error} />
-    )
-  else if (!rescue)
-    return (
-      <RescuePageError
-        RescuePageWrapper={RescuePageWrapper}
-        message="No Rescue Found"
-      />
-    )
+  if (loading && !rescue) return <LoadingRescue />
+  else if (error) return <RescuePageError message={error} />
+  else if (!rescue) return <RescuePageError message="No Rescue Found" />
   else
     return (
-      <RescuePageWrapper>
-        <RescueContext.Provider value={contextValue}>
-          <Directions stops={rescue.stops} />
-          <Flex
-            bgGradient="linear(to-b, transparent, surface.background)"
-            h="32"
-            mt="-32"
-            zIndex={1}
-            position="relative"
-            direction="column"
-            justify="flex-end"
-          />
-          <Box
-            px={isMobile ? '4' : '0'}
-            mt={isMobile ? '4' : '4'}
-            zIndex="2"
-            position="relative"
+      <RescueContext.Provider value={contextValue}>
+        <Directions stops={rescue.stops} />
+        <Flex
+          bgGradient="linear(to-b, transparent, surface.background)"
+          h="32"
+          mt="-32"
+          zIndex={1}
+          position="relative"
+          direction="column"
+          justify="flex-end"
+        />
+        <Box
+          px={isMobile ? '4' : '0'}
+          mt={isMobile ? '4' : '4'}
+          zIndex="2"
+          position="relative"
+        >
+          <Heading
+            as="h1"
+            fontWeight="700"
+            size="2xl"
+            textTransform="capitalize"
+            color="element.primary"
           >
-            <Heading
-              as="h1"
-              fontWeight="700"
-              size="2xl"
-              textTransform="capitalize"
-              color="element.primary"
-            >
-              {rescue.status} Rescue
-            </Heading>
-            <Flex direction="column" w="100%">
-              <RescueHeader />
-              <RescueStops />
-            </Flex>
-          </Box>
-          <Pickup pickup={openStop?.type === 'pickup' ? openStop : null} />
-          <Delivery
-            delivery={openStop?.type === 'delivery' ? openStop : null}
-          />
-        </RescueContext.Provider>
-      </RescuePageWrapper>
+            {rescue.status} Rescue
+          </Heading>
+          <Flex direction="column" w="100%">
+            <RescueHeader />
+            <RescueStops />
+          </Flex>
+        </Box>
+        <Pickup pickup={openStop?.type === 'pickup' ? openStop : null} />
+        <Delivery delivery={openStop?.type === 'delivery' ? openStop : null} />
+      </RescueContext.Provider>
     )
 }
 
 // Alternate States for Loading/Error
 
-function LoadingRescue({ RescuePageWrapper }) {
+function LoadingRescue({}) {
   const isMobile = useIsMobile()
   return (
-    <RescuePageWrapper>
-      <Box px="4">
-        <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="6"
-          mt="4"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Loading Rescue...
-        </Heading>
-        <SkeletonCircle w="100%" h="16" my="4" />
-        <SkeletonCircle w="100%" h="12" my="4" />
-        <Skeleton h="32" my="4" />
-        <Skeleton h="32" my="4" />
-        <Skeleton h="32" my="4" />
-      </Box>
-    </RescuePageWrapper>
+    <Box px="4">
+      <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
+      <Heading
+        as="h1"
+        fontWeight="700"
+        size="2xl"
+        mb="6"
+        mt="4"
+        textTransform="capitalize"
+        color="element.primary"
+      >
+        Loading Rescue...
+      </Heading>
+      <SkeletonCircle w="100%" h="16" my="4" />
+      <SkeletonCircle w="100%" h="12" my="4" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+    </Box>
   )
 }
 
-function RescuePageError({ RescuePageWrapper, message }) {
-  return (
-    <RescuePageWrapper>
-      <Error message={message} />
-    </RescuePageWrapper>
-  )
+function RescuePageError({ message }) {
+  return <Error message={message} />
 }

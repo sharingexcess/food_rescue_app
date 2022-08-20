@@ -1,16 +1,7 @@
 import { Button, Flex, Heading, Input, Select, Text } from '@chakra-ui/react'
-import { Page, Autocomplete } from 'chakra_components'
-import {
-  createTimestamp,
-  DONOR_TYPES,
-  generateUniqueId,
-  ORG_TYPES,
-  RECIPIENT_TYPES,
-  setFirestoreData,
-  SE_API,
-} from 'helpers'
+import { createTimestamp, generateUniqueId, SE_API } from 'helpers'
 import { useAuth } from 'hooks'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export function CreateOrganization() {
@@ -28,8 +19,6 @@ export function CreateOrganization() {
       [e.target.id]: e.target.value,
     })
   }
-
-  useEffect(() => console.log(formData), [formData])
 
   async function handleSubmit() {
     const organization_id = await generateUniqueId('organizations')
@@ -49,13 +38,7 @@ export function CreateOrganization() {
   }
 
   return (
-    <Page
-      title="Create Organization"
-      breadcrumbs={[
-        { label: 'Organizations', link: '/organizations' },
-        { label: 'Create', link: '/create-organization' },
-      ]}
-    >
+    <>
       <Flex direction="column" h="100%">
         <Heading
           as="h1"
@@ -136,6 +119,6 @@ export function CreateOrganization() {
           </Button>
         </Flex>
       </Flex>
-    </Page>
+    </>
   )
 }

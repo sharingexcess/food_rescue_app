@@ -16,29 +16,21 @@ import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
 import { useEffect, useState, cloneElement } from 'react'
 import { Link } from 'react-router-dom'
+import { EnvWarning } from 'components'
 
 export function Page({
   id,
-  title,
-  children,
-  breadcrumbs,
-  contentProps,
+  defaultTitle,
+  defaultBreadcrumbs,
+  Content,
+  pageContentStyle,
   pullToRefresh = true,
 }) {
-  const [state, setState] = useState({ title, breadcrumbs })
+  const [title, setTitle] = useState(defaultTitle)
+  const [breadcrumbs, setBreadcrumbs] = useState(defaultBreadcrumbs)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode } = useColorMode()
   const isMobile = useIsMobile()
-
-  const withPullToRefresh = children => (
-    <PullToRefresh onRefresh={() => window.location.reload()}>
-      {cloneElement(children, {
-        setTitle: title => setState(state => ({ ...state, title })),
-        setBreadcrumbs: breadcrumbs =>
-          setState(state => ({ ...state, breadcrumbs })),
-      })}
-    </PullToRefresh>
-  )
 
   return (
     <Box
@@ -50,13 +42,13 @@ export function Page({
       bg="surface.background"
     >
       <Helmet>
-        <title>{state.title} | SE Food Rescue</title>
+        <title>{title} | SE Food Rescue</title>
         <meta
           name="apple-mobile-web-app-status-bar-style"
           content={colorMode === 'dark' ? 'black-translucent' : 'default'}
         />
       </Helmet>
-      <PageHead breadcrumbs={state.breadcrumbs} openMenu={onOpen} />
+      <PageHead breadcrumbs={breadcrumbs} openMenu={onOpen} />
       <Menu isOpen={isOpen} onClose={onClose} />
       <Box
         as="section"
@@ -70,16 +62,17 @@ export function Page({
         ml={isMobile ? 'auto' : 'calc(360px + max(32px, calc(50vw - 600px)))'}
         px="4"
         minH="100%"
-        {...contentProps}
+        {...pageContentStyle}
       >
-        {isMobile && pullToRefresh
-          ? withPullToRefresh(children)
-          : cloneElement(children, {
-              setTitle: title => setState(state => ({ ...state, title })),
-              setBreadcrumbs: breadcrumbs =>
-                setState(state => ({ ...state, breadcrumbs })),
-            })}
+        {isMobile && pullToRefresh ? (
+          <PullToRefresh onRefresh={() => window.location.reload()}>
+            <Content setTitle={setTitle} setBreadcrumbs={setBreadcrumbs} />
+          </PullToRefresh>
+        ) : (
+          <Content setTitle={setTitle} setBreadcrumbs={setBreadcrumbs} />
+        )}
       </Box>
+      <EnvWarning />
     </Box>
   )
 }
@@ -138,14 +131,15 @@ function PageHead({ breadcrumbs, openMenu }) {
           fontSize="sm"
           position="relative"
           py="1"
-          pr="4"
+          px="4"
         >
-          <BreadcrumbItem m="0" />
+          {!isMobile && <BreadcrumbItem m="0" ml="-4" />}
           {breadcrumbs.map((crumb, i) => {
             return (
               <BreadcrumbItem m="0" key={i}>
                 <Link to={crumb.link}>
                   <Text
+                    py="1px"
                     fontWeight={i === breadcrumbs.length - 1 ? '400' : '300'}
                     color={
                       i === breadcrumbs.length - 1
@@ -176,7 +170,7 @@ function HomeButton() {
   const isHomePage = location.pathname === '/'
 
   return (
-    <Link to="/">
+    <Link to="/" style={{ flexShrink: 0 }}>
       <Image
         src={isHomePage && isMobile ? '/logo_white.png' : '/logo.png'}
         flexShrink="0"

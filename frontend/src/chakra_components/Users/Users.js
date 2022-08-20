@@ -10,20 +10,20 @@ import {
   InputLeftElement,
   Text,
 } from '@chakra-ui/react'
-import { Page } from 'chakra_components'
 import { useApi } from 'hooks'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Users() {
   const { data: users } = useApi('/publicProfiles')
+  const [searchValue, setSearchValue] = useState('')
+
+  function handleChange(e) {
+    setSearchValue(e.target.value)
+  }
 
   return (
-    <Page
-      id="People"
-      title="People"
-      breadcrumbs={[{ label: 'People', link: '/people' }]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -34,40 +34,28 @@ export function Users() {
       >
         People
       </Heading>
-      <SearchBox />
+      <InputGroup mb="6">
+        <InputLeftElement
+          children={<SearchIcon />}
+          mr="2"
+          color="element.secondary"
+        />
+        <Input
+          placeholder="Search by name..."
+          value={searchValue}
+          onChange={handleChange}
+        />
+      </InputGroup>
       {users &&
         users
-          // .filter(i => i.name.includes(searchValue))
+          .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))
           .map((user, i) => (
             <Box key={i}>
               <UserCard user={user} />
               {i !== users.length - 1 && <Divider />}
             </Box>
           ))}
-    </Page>
-  )
-}
-
-function SearchBox() {
-  const [searchValue, setSearchValue] = useState('')
-
-  function handleChange(e) {
-    setSearchValue(e.target.value)
-  }
-
-  return (
-    <InputGroup mb="6">
-      <InputLeftElement
-        children={<SearchIcon />}
-        mr="2"
-        color="element.secondary"
-      />
-      <Input
-        placeholder="Search by name..."
-        value={searchValue}
-        onChange={handleChange}
-      />
-    </InputGroup>
+    </>
   )
 }
 

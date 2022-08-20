@@ -11,28 +11,28 @@ export function Loading({ text = 'Loading' }) {
   `} 2s ease-in-out infinite`
 
   return (
-    <Page
-      title="Loading"
-      pullToRefresh={false}
-      contentProps={{ overflow: 'hidden', maxH: '100vh' }}
-    >
-      <Fade in>
-        <Flex
-          w="100%"
-          h="64vh"
-          justify="center"
-          align="center"
-          as={motion.div}
-          animation={animation}
-          direction="column"
-        >
-          <Image w="48" src="/logo.png" alt="Sharing Excess" mb="8" />
-          <Heading>
-            {text}
-            <Ellipsis />
-          </Heading>
-        </Flex>
-      </Fade>
-    </Page>
+    // <Page
+    //   title="Loading"
+    //   pullToRefresh={false}
+    //   pageContentStyle={{ overflow: 'hidden', maxH: '100vh' }}
+    // >
+    <Fade in>
+      <Flex
+        w="100%"
+        h="64vh"
+        justify="center"
+        align="center"
+        as={motion.div}
+        animation={animation}
+        direction="column"
+      >
+        <Image w="48" src="/logo.png" alt="Sharing Excess" mb="8" />
+        <Heading>
+          {text}
+          <Ellipsis />
+        </Heading>
+      </Flex>
+    </Fade>
+    // </Page>
   )
 }

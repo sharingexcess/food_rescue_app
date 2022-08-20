@@ -1,19 +1,17 @@
 import { Button, Flex, Heading, Input, Select, Text } from '@chakra-ui/react'
-import { Page, Autocomplete } from 'chakra_components'
+import { Page } from 'chakra_components'
 import {
   createTimestamp,
   DONOR_TYPES,
   generateUniqueId,
-  ORG_TYPES,
   RECIPIENT_TYPES,
-  setFirestoreData,
   SE_API,
 } from 'helpers'
 import { useApi, useAuth } from 'hooks'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-export function EditOrganization() {
+export function EditOrganization({ setBreadcrumbs }) {
   const { user } = useAuth()
   const { organization_id } = useParams()
   const { data: organization } = useApi(`/organization/${organization_id}`)
@@ -30,6 +28,15 @@ export function EditOrganization() {
       [e.target.id]: e.target.value,
     })
   }
+
+  useEffect(() => {
+    organization &&
+      setBreadcrumbs([
+        { label: 'Organizations', link: '/organizations' },
+        { label: organization.name, link: `/organizations/${organization.id}` },
+        { label: 'Edit', link: `/organizations/${organization.id}/edit` },
+      ])
+  })
 
   useEffect(() => {
     setFormData({
@@ -58,13 +65,7 @@ export function EditOrganization() {
   }
 
   return (
-    <Page
-      title="Edit Organization"
-      breadcrumbs={[
-        { label: 'Organizations', link: '/organizations' },
-        { label: 'Edit', link: `/organizations/${organization_id}/edit` },
-      ]}
-    >
+    <>
       <Flex direction="column" h="100%">
         <Heading
           as="h1"
@@ -145,6 +146,6 @@ export function EditOrganization() {
           </Button>
         </Flex>
       </Flex>
-    </Page>
+    </>
   )
 }

@@ -36,14 +36,7 @@ export function Wholesale() {
   }
 
   return (
-    <Page
-      id="Wholesale"
-      title="Wholesale"
-      breadcrumbs={[
-        { label: 'Wholesale', link: '/wholesale' },
-        { label: formatTimestamp(date, 'MMM DD'), link: '/wholesale' },
-      ]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -103,7 +96,7 @@ export function Wholesale() {
         isOpen={addDonation}
         handleClose={() => setAddDonation(false)}
       />
-    </Page>
+    </>
   )
 }
 

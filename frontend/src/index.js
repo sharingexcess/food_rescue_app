@@ -4,29 +4,28 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
-import { Error, Header, Modal, EnvWarning, Analytics } from 'components'
+import { Error, EnvWarning } from 'components'
 import {
-  ChakraTest,
-  CreateOrganization as ChakraCreateOrganization,
-  CreateRescue as ChakraCreateRescue,
-  EditRescue as ChakraEditRescue,
-  Organization as ChakraOrganization,
-  EditOrganization as ChakraEditOrganization,
-  CreateLocation as ChakraCreateLocation,
-  EditLocation as ChakraEditLocation,
-  Organizations as ChakraOrganizations,
-  Profile as ChakraProfile,
-  Rescue as ChakraRescue,
-  Rescues as ChakraRescues,
-  User as ChakraUser,
-  Users as ChakraUsers,
-  Home as ChakraHome,
+  CreateOrganization,
+  CreateRescue,
+  EditRescue,
+  Organization,
+  EditOrganization,
+  CreateLocation,
+  EditLocation,
+  Organizations,
+  Profile,
+  Rescue,
+  Rescues,
+  User,
+  Users,
+  Home,
   Wholesale,
   WholesaleDonation,
   FoodSafety,
   Page,
 } from './chakra_components'
-import { Firestore, Auth, App } from 'contexts'
+import { Auth, App } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.scss'
@@ -53,16 +52,7 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-function PublicChakraRoute({ children }) {
-  return (
-    <>
-      {children}
-      <EnvWarning />
-    </>
-  )
-}
-
-function PublicChakraRouteWithPage({ children }) {
+function PublicRoute({ children }) {
   return (
     <>
       {children}
@@ -80,154 +70,232 @@ function RescueAppRoutes() {
             <App>
               <Routes>
                 <Route
+                  path="/"
+                  element={
+                    <Page
+                      defaultTitle="Home"
+                      pageContentStyle={{ px: 0, pt: 8, mt: '-64px' }}
+                      Content={Home}
+                    />
+                  }
+                />
+                <Route
                   path="/rescues"
                   element={
-                    <PublicChakraRouteWithPage>
-                      <Page
-                        title="Rescues"
-                        breadcrumbs={[{ label: 'Rescues', link: '/rescues' }]}
-                      >
-                        <ChakraRescues />
-                      </Page>
-                    </PublicChakraRouteWithPage>
+                    <Page
+                      defaultTitle="Rescues"
+                      defaultBreadcrumbs={[
+                        { label: 'Rescues', link: '/rescues' },
+                      ]}
+                      Content={Rescues}
+                    />
                   }
                 />
                 <Route
                   path="/rescues/:rescue_id"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraRescue />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Loading Rescue"
+                      defaultBreadcrumbs={[
+                        { label: 'Rescues', link: '/rescues' },
+                        { label: 'Loading...', link: '' },
+                      ]}
+                      Content={Rescue}
+                      pageContentStyle={{ px: 0, pt: 8, mt: '-64px' }}
+                    />
                   }
                 />
                 <Route
                   path="/rescues/:rescue_id/edit"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraEditRescue />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Loading Rescue"
+                      defaultBreadcrumbs={[
+                        { label: 'Rescues', link: '/rescues' },
+                        { label: 'Loading...', link: '' },
+                      ]}
+                      pullToRefresh={false}
+                      pageContentStyle={{ overflow: 'hidden', maxH: '100vh' }}
+                      Content={EditRescue}
+                    />
                   }
                 />
                 <Route
                   path="/create-rescue"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraCreateRescue />
-                    </PublicChakraRoute>
-                  }
-                />
-                <Route
-                  path="/test"
-                  element={
-                    <PublicChakraRoute>
-                      <ChakraTest />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Create Rescue"
+                      pullToRefresh={false}
+                      defaultBreadcrumbs={[
+                        { label: 'Rescues', link: '/rescues' },
+                        { label: 'Create', link: '/create-rescue' },
+                      ]}
+                      Content={CreateRescue}
+                    />
                   }
                 />
                 <Route
                   path="/profile"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraProfile />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Profile"
+                      defaultBreadcrumbs={[
+                        { label: 'Profile', link: '/profile' },
+                      ]}
+                      Content={Profile}
+                    />
                   }
                 />
                 <Route
                   path="/people"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraUsers />
-                    </PublicChakraRoute>
+                    <Page
+                      id="Users"
+                      defaultTitle="People"
+                      defaultBreadcrumbs={[
+                        { label: 'People', link: '/people' },
+                      ]}
+                      Content={Users}
+                    />
                   }
                 />
                 <Route
-                  path="/people/:profile_id"
+                  path="/people/:user_id"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraUser />
-                    </PublicChakraRoute>
+                    <Page
+                      id="User"
+                      defaultTitle="Loading Profile"
+                      defaultBreadcrumbs={[
+                        { label: 'People', link: '/people' },
+                        { label: 'Loading', link: '' },
+                      ]}
+                      Content={User}
+                    />
                   }
                 />
                 <Route
                   path="/organizations"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraOrganizations />
-                    </PublicChakraRoute>
+                    <Page
+                      id="Organizations"
+                      defaultTitle="Organizations"
+                      defaultBreadcrumbs={[
+                        { label: 'Organizations', link: '/organizations' },
+                      ]}
+                      Content={Organizations}
+                    />
                   }
                 />
                 <Route
                   path="/organizations/:organization_id"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraOrganization />
-                    </PublicChakraRoute>
+                    <Page
+                      id="Organizations"
+                      defaultTitle="Loading Organization"
+                      defaultBreadcrumbs={[
+                        { label: 'Organizations', link: '/organizations' },
+                        { label: 'Loading...', link: '' },
+                      ]}
+                      Content={Organization}
+                    />
                   }
                 />
                 <Route
                   path="/create-organization"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraCreateOrganization />
-                    </PublicChakraRoute>
+                    <Page
+                      id="CreateOrganization"
+                      defaultTitle="Create Organization"
+                      defaultBreadcrumbs={[
+                        { label: 'Organizations', link: '/organizations' },
+                        { label: 'Create', link: '/create-organization' },
+                      ]}
+                      Content={CreateOrganization}
+                    />
                   }
                 />
                 <Route
                   path="/organizations/:organization_id/edit"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraEditOrganization />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Edit Organization"
+                      defaultBreadcrumbs={[
+                        { label: 'Organizations', link: '/organizations' },
+                        { label: 'Loading...', link: '' },
+                      ]}
+                      Content={EditOrganization}
+                    />
                   }
                 />
                 <Route
                   path="/organizations/:organization_id/create-location"
                   element={
-                    <PublicChakraRoute>
-                      <Page id="CreateLocation" title="Create Location">
-                        <ChakraCreateLocation />
-                      </Page>
-                    </PublicChakraRoute>
+                    <Page
+                      id="CreateLocation"
+                      defaultTitle="Create Location"
+                      defaultBreadcrumbs={[
+                        {
+                          label: 'Organizations',
+                          link: '/organizations',
+                        },
+                        {
+                          label: 'Loading',
+                          link: '',
+                        },
+                      ]}
+                      Content={CreateLocation}
+                    />
                   }
                 />
                 <Route
                   path="/organizations/:organization_id/locations/:location_id"
                   element={
-                    <PublicChakraRoute>
-                      <ChakraEditLocation />
-                    </PublicChakraRoute>
-                  }
-                />
-                <Route
-                  path="/"
-                  element={
-                    <PublicChakraRoute>
-                      <ChakraHome />
-                    </PublicChakraRoute>
+                    <Page
+                      id="EditLocation"
+                      defaultTitle="Edit Location"
+                      defaultBreadcrumbs={[
+                        {
+                          label: 'Organizations',
+                          link: '/organizations',
+                        },
+                        {
+                          label: 'Loading',
+                          link: '',
+                        },
+                      ]}
+                      Content={EditLocation}
+                    />
                   }
                 />
                 <Route
                   path="/wholesale"
                   element={
-                    <PublicChakraRoute>
-                      <Wholesale />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Wholesale"
+                      defaultBreadcrumbs={[
+                        { label: 'Wholesale', link: '/wholesale' },
+                      ]}
+                      Content={Wholesale}
+                    />
                   }
                 />
                 <Route
                   path="/wholesale/:id"
                   element={
-                    <PublicChakraRoute>
-                      <WholesaleDonation />
-                    </PublicChakraRoute>
+                    <Page
+                      defaultTitle="Wholesale"
+                      defaultBreadcrumbs={[
+                        { label: 'Wholesale', link: '/wholesale' },
+                        { label: 'Loading...', link: '' },
+                      ]}
+                      Content={WholesaleDonation}
+                    />
                   }
                 />
                 <Route
                   path="/food-safety"
                   element={
-                    <PublicChakraRoute>
-                      <FoodSafety />
-                    </PublicChakraRoute>
+                    <Page defaultTitle="Food Safety" Content={FoodSafety} />
                   }
                 />
                 <Route path="*" element={<Error />} />

@@ -48,13 +48,7 @@ export function FoodSafety({ handleNext }) {
   }
 
   return (
-    <Page
-      id="FoodSafety"
-      title="Food Safety Rules"
-      breadcrumbs={
-        hasPermission ? [{ label: 'Food Safety', link: '/food-safety' }] : null
-      } // don't show breadcrumb during onboarding
-    >
+    <>
       <Heading mt="8" mb="8" color="se.brand.primary" size="2xl">
         Food safety is our priority
       </Heading>
@@ -425,6 +419,6 @@ export function FoodSafety({ handleNext }) {
           </Button>
         </Flex>
       )}
-    </Page>
+    </>
   )
 }

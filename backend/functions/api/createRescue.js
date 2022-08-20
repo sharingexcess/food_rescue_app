@@ -231,7 +231,6 @@ async function createEventResource(
   timestamp_scheduled_start,
   timestamp_scheduled_finish
 ) {
-  // console.log('resource handler id', resource.handler_id)
   let handler
   if (resource.handler_id) {
     const handler_ref = await db

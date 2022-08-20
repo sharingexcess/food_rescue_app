@@ -24,10 +24,7 @@ export function Profile({ onSubmitCallback }) {
   const { user } = useAuth()
 
   return (
-    <Page
-      title="Profile"
-      breadcrumbs={[{ label: 'Profile', link: '/profile' }]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -44,7 +41,7 @@ export function Profile({ onSubmitCallback }) {
       ) : (
         <PrivateProfile onSubmitCallback={onSubmitCallback} />
       )}
-    </Page>
+    </>
   )
 }
 
@@ -281,11 +278,6 @@ function PrivateProfile({ onSubmitCallback }) {
     if (!formData.completed_liability_release) return false
     return result
   })()
-
-  console.log(
-    user.completed_liability_release,
-    formData.completed_liability_release
-  )
 
   return (
     <Box py="6" position="relative">

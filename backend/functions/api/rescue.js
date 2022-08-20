@@ -32,10 +32,7 @@ async function rescueEndpoint(request, response) {
       // driver's own route (that data isn't available until after we fetch the rescue)
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
-        user =>
-          user.permission == 'admin' ||
-          (rescue && user.id === rescue.handler_id) ||
-          (user.permission == 'standard' && rescue.handler_id === null) // allow drivers search for available rescues
+        user => user.permission
       )
 
       if (!requestIsAuthenticated) {

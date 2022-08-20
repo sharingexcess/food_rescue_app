@@ -13,18 +13,17 @@ import { CloseIcon } from '@chakra-ui/icons'
 import { MapLocation, Page } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Error, GoogleMap } from 'components'
+import { Error } from 'components'
 import { formatPhoneNumber, DAYS } from 'helpers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export function EditLocation() {
+export function EditLocation({ setBreadcrumbs }) {
   const { organization_id, location_id } = useParams()
   const navigate = useNavigate()
   const {
     data: organization,
     loading,
     error,
-    refresh,
   } = useApi(`/organization/${organization_id}`)
 
   // console.log('org', organization)
@@ -48,6 +47,21 @@ export function EditLocation() {
   const [day, setDay] = useState('')
   const [openTime, setOpenTime] = useState('')
   const [closeTime, setCloseTime] = useState('')
+
+  useEffect(() => {
+    organization &&
+      setBreadcrumbs([
+        { label: 'Organizations', link: '/organizations' },
+        {
+          label: organization.name,
+          link: `/organizations/${organization.id}`,
+        },
+        {
+          label: location.nickname || location.address1,
+          link: `/organizations/${organization_id}/locations/${location_id}`,
+        },
+      ])
+  }, [organization])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -81,49 +95,15 @@ export function EditLocation() {
     }
   }
 
-  function EditLocationPageWrapper({ children }) {
-    return (
-      <Page
-        id="EditLocation"
-        title="Edit Location"
-        breadcrumbs={[
-          { label: 'Organizations', link: '/chakra/organizations' },
-          {
-            label: 'Organization',
-            link: `/chakra/organizations/${organization_id}`,
-          },
-          {
-            label: 'Location',
-            link: `/chakra/organizations/${organization_id}/locations/${location_id}`,
-          },
-        ]}
-      >
-        {children}
-      </Page>
-    )
-  }
-
   if (loading && !organization) {
-    return (
-      <LoadingEditLocation EditLocationPageWrapper={EditLocationPageWrapper} />
-    )
+    return <LoadingEditLocation />
   } else if (error) {
-    return (
-      <EditLocationPageError
-        EditLocationPageWrapper={EditLocationPageWrapper}
-        message={error}
-      />
-    )
+    return <EditLocationPageError message={error} />
   } else if (!organization) {
-    return (
-      <EditLocationPageError
-        EditLocationPageWrapper={EditLocationPageWrapper}
-        message="No EditLocation Found"
-      />
-    )
+    return <EditLocationPageError message="No EditLocation Found" />
   } else
     return (
-      <EditLocationPageWrapper>
+      <>
         <Flex
           bgGradient="linear(to-b, transparent, surface.background)"
           h="32"
@@ -294,14 +274,14 @@ export function EditLocation() {
             </Button>
           </Flex>
         </Flex>
-      </EditLocationPageWrapper>
+      </>
     )
 }
 
-function LoadingEditLocation({ EditLocationPageWrapper }) {
+function LoadingEditLocation({}) {
   const isMobile = useIsMobile()
   return (
-    <EditLocationPageWrapper>
+    <>
       <Box px="4">
         <Heading
           as="h1"
@@ -312,7 +292,7 @@ function LoadingEditLocation({ EditLocationPageWrapper }) {
           textTransform="capitalize"
           color="element.primary"
         >
-          Loading EditLocation...
+          Loading Location...
         </Heading>
         <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
         <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
@@ -324,14 +304,10 @@ function LoadingEditLocation({ EditLocationPageWrapper }) {
         </Text>
         <Skeleton h="32" my="4" />
       </Box>
-    </EditLocationPageWrapper>
+    </>
   )
 }
 
-function EditLocationPageError({ EditLocationPageWrapper, message }) {
-  return (
-    <EditLocationPageWrapper>
-      <Error message={message} />
-    </EditLocationPageWrapper>
-  )
+function EditLocationPageError({ message }) {
+  return <Error message={message} />
 }

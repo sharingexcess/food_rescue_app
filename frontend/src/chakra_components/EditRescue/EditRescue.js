@@ -25,7 +25,7 @@ import {
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
 
-export function EditRescue() {
+export function EditRescue({ setBreadcrumbs }) {
   const { user } = useAuth()
   const { rescue_id } = useParams()
   const { data: rescue } = useApi(`/rescues/${rescue_id}`)
@@ -50,14 +50,16 @@ export function EditRescue() {
 
   const [stops, setStops] = useState()
 
-  useEffect(
-    () =>
-      console.log(
-        'updated stops',
-        stops?.map(i => i.organization.name)
-      ),
-    [stops]
-  )
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Rescues', link: '/rescues' },
+      {
+        label: 'Rescue',
+        link: `/rescues/${rescue_id}`,
+      },
+      { label: 'Edit', link: `/rescues/${rescue_id}/edit` },
+    ])
+  }, [rescue_id])
 
   useEffect(() => {
     if (rescue && !stops) {
@@ -137,18 +139,7 @@ export function EditRescue() {
   if (!rescue) return <LoadingEditRescue />
 
   return (
-    <Page
-      title="Edit Rescue"
-      pullToRefresh={false}
-      breadcrumbs={[
-        { label: 'Rescues', link: '/rescues' },
-        {
-          label: 'Rescue',
-          link: `/rescues/${rescue_id}`,
-        },
-        { label: 'Edit', link: `/rescues/${rescue_id}/edit` },
-      ]}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -210,7 +201,7 @@ export function EditRescue() {
           </Button>
         </Flex>
       )}
-    </Page>
+    </>
   )
 }
 
@@ -480,7 +471,7 @@ function Stops({ stops, setStops, removeStop }) {
   )
 }
 
-function Stop({ stop, removeStop }) {
+function Stop({ stop }) {
   return (
     <Flex
       my="3"
@@ -528,16 +519,7 @@ const LoadingEditRescue = memo(() => {
   const { rescue_id } = useParams()
 
   return (
-    <Page
-      title="Edit Rescue"
-      pullToRefresh={false}
-      breadcrumbs={[
-        { label: 'Rescues', link: '/rescues' },
-        { label: 'Rescue', link: `/rescues/${rescue_id}` },
-        { label: 'Edit', link: `/rescues/${rescue_id}/edit` },
-      ]}
-      contentProps={{ overflow: 'hidden', maxH: '100vh' }}
-    >
+    <>
       <Heading
         as="h1"
         fontWeight="700"
@@ -557,6 +539,6 @@ const LoadingEditRescue = memo(() => {
       <Skeleton h="32" my="4" />
       <Skeleton h="32" my="4" />
       <Skeleton h="32" my="4" />
-    </Page>
+    </>
   )
 })

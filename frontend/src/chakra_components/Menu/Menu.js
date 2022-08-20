@@ -181,6 +181,23 @@ function MenuBody({ colorMode, toggleColorMode }) {
           Organizations
         </Button>
       </Link>
+      <Link to="/food-safety">
+        <Button
+          variant="ghosted"
+          color={
+            location.pathname === '/food-safety'
+              ? 'blue.primary'
+              : 'element.primary'
+          }
+          fontWeight={location.pathname === '/food-safety' ? '600' : '300'}
+          fontSize="xl"
+          mr="auto"
+          my="2"
+          disabled={!hasPermission}
+        >
+          Food Safety
+        </Button>
+      </Link>
     </Flex>
   )
 }
