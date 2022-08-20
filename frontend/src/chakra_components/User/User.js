@@ -150,6 +150,7 @@ export function User({ setBreadcrumbs }) {
             {profile.pronouns}
           </Text>
         </Flex>
+        <Stats totalWeight={totalWeight} />
         {hasAdminPermission && profile && profile.id !== user.id && (
           <Flex direction="column" align="flex-start" pt="8">
             <Text fontWeight={700}>Access Level</Text>
@@ -174,7 +175,6 @@ export function User({ setBreadcrumbs }) {
             </Flex>
           </Flex>
         )}
-        <Stats totalWeight={totalWeight} />
         <Text fontWeight="700" mt="12">
           Recently Completed Rescues
         </Text>
