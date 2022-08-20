@@ -108,7 +108,7 @@ export function Pickup({ pickup }) {
 export function PickupHeader() {
   const { openStop, refresh, setOpenStop } = useRescueContext()
   const { pickup } = usePickupContext()
-  const { user } = useAuth()
+  const { user, hasAdminPermission } = useAuth()
 
   async function handleCancel() {
     const reason = window.prompt(
@@ -299,7 +299,6 @@ function EntryRowInput() {
       <Select
         size="sm"
         color="element.secondary"
-        variant="flushed"
         value={category || ''}
         onChange={e => setCategory(e.target.value)}
         textTransform="capitalize"
@@ -315,7 +314,6 @@ function EntryRowInput() {
       <Input
         size="sm"
         color="element.secondary"
-        variant="flushed"
         type="tel"
         min="0"
         maxLength="6"
@@ -374,7 +372,6 @@ export function NoteInput() {
         color="element.secondary"
         value={notes || ''}
         placeholder="Add notes to this pickup..."
-        variant="flushed"
         readOnly={openStop.status === STATUSES.CANCELLED}
         onChange={e => handleNotesChange(e.target.value)}
         mb="4"
@@ -460,7 +457,12 @@ export function PickupFooter() {
       <Button
         size="lg"
         w="100%"
-        disabled={total < 1 || isSubmitting || !isChanged}
+        disabled={
+          total < 1 ||
+          isSubmitting ||
+          !isChanged ||
+          !(rescue.handler_id === user.id || hasAdminPermission)
+        }
         onClick={handleSubmit}
         isLoading={isSubmitting}
         loadingText="Updating Pickup"

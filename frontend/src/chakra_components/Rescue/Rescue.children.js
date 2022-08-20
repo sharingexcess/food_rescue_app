@@ -35,7 +35,7 @@ import { Link, useNavigate } from 'react-router-dom'
 export function RescueHeader() {
   const { rescue, refresh } = useRescueContext()
   const navigate = useNavigate()
-  const { user, admin, hasCompletedPrivateProfile } = useAuth()
+  const { user, hasAdminPermission, hasCompletedPrivateProfile } = useAuth()
   const [isStarting, setIsStarting] = useState()
   const [isCancelling, setIsCancelling] = useState()
   const [isClaiming, setIsClaiming] = useState()
@@ -153,7 +153,7 @@ export function RescueHeader() {
       </Flex>
 
       <Flex justify="space-between" mb="4" gap="2">
-        {rescue.status === STATUSES.SCHEDULED && rescue.handler_id && (
+        {rescue.status === STATUSES.SCHEDULED && rescue.handler_id === user.id && (
           <Button
             variant="secondary"
             size="sm"
@@ -178,26 +178,28 @@ export function RescueHeader() {
             bg="blue.secondary"
             color="blue.primary"
             onClick={handleClaimRescue}
-            isLoading={isStarting}
+            isLoading={isClaiming}
           >
             Claim
           </Button>
         )}
-        {rescue.status !== STATUSES.CANCELLED && admin && (
-          <Button
-            variant="secondary"
-            size="sm"
-            fontSize="xs"
-            flexGrow="1"
-            leftIcon={<EditIcon />}
-            bg="green.secondary"
-            color="green.primary"
-          >
-            <Link to={`/rescues/${rescue.id}/edit`}>Edit</Link>
-          </Button>
+        {rescue.status !== STATUSES.CANCELLED && hasAdminPermission && (
+          <Link to={`/rescues/${rescue.id}/edit`} style={{ flexGrow: 1 }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              fontSize="xs"
+              w="100%"
+              leftIcon={<EditIcon />}
+              bg="green.secondary"
+              color="green.primary"
+            >
+              Edit
+            </Button>
+          </Link>
         )}
         {rescue.status !== STATUSES.CANCELLED &&
-          (admin || rescue.handler_id === user.id) && (
+          (hasAdminPermission || rescue.handler_id === user.id) && (
             <Button
               variant="secondary"
               size="sm"
@@ -270,13 +272,15 @@ function StopButtonsBox({ stop }) {
             'No Phone'
           )}
         </Button>
-        <Link
-          to={generateDirectionsLink(
+        <a
+          href={generateDirectionsLink(
             stop.location.address1,
             stop.location.city,
             stop.location.state,
             stop.location.zip
           )}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <Button
             size="sm"
@@ -288,7 +292,7 @@ function StopButtonsBox({ stop }) {
           >
             Map
           </Button>
-        </Link>
+        </a>
         <Button
           variant={isActive ? 'secondary' : 'tertiary'}
           size="sm"
@@ -296,8 +300,9 @@ function StopButtonsBox({ stop }) {
           flexGrow="1"
           onClick={() => setOpenStop(stop)}
           leftIcon={<InfoIcon />}
+          disabled={!stop.location.notes}
         >
-          Instructions
+          {stop.location.notes ? 'Instructions' : 'No Instructions'}
         </Button>
       </Flex>
       <Button

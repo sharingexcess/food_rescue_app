@@ -189,7 +189,7 @@ function Stats({ totalWeight, totalOrgs, deliveries }) {
           >
             {totalOrgs == null ? <Spinner /> : totalOrgs}
           </Heading>
-          <Text color="element.tertiary">different recipients</Text>
+          <Text color="element.tertiary">individual recipients</Text>
         </Flex>
       </Flex>
     </Fade>
@@ -204,9 +204,13 @@ function AvailableRescues() {
   const isMobile = useIsMobile()
 
   function ShowAvailableRescues() {
-    return availableRescues.map(rescue => (
-      <RescueCard key={rescue.id} rescue={rescue} />
-    ))
+    return (
+      <Box pb="24">
+        {availableRescues.map(rescue => (
+          <RescueCard key={rescue.id} rescue={rescue} />
+        ))}
+      </Box>
+    )
   }
 
   function NoAvailableRescues() {

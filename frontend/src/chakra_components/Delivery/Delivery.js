@@ -29,7 +29,6 @@ import {
 } from 'helpers'
 import { useAuth } from 'hooks'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-// import { NoteInput } from 'chakra_components/Pickup/Pickup'
 import { Ellipsis } from 'components'
 import { calculateCurrentLoad } from './Delivery.utils'
 
@@ -38,7 +37,7 @@ DeliveryContext.displayName = 'DeliveryContext'
 export const useDeliveryContext = () => useContext(DeliveryContext)
 
 export function Delivery({ delivery }) {
-  const { admin } = useAuth()
+  const { hasAdminPermission, user } = useAuth()
   const { setOpenStop, rescue } = useRescueContext()
   const [notes, setNotes] = useState('')
   const [percentTotalDropped, setPercentTotalDropped] = useState(100)
@@ -59,7 +58,10 @@ export function Delivery({ delivery }) {
   }, [delivery, currentLoad])
 
   const canEdit = useMemo(() => {
-    return ![STATUSES.CANCELLED, STATUSES.SCHEDULED].includes(delivery?.status)
+    return (
+      ![STATUSES.CANCELLED, STATUSES.SCHEDULED].includes(delivery?.status) &&
+      (rescue.handler_id === user.id || hasAdminPermission)
+    )
   }, [delivery])
 
   const deliveryContextValue = {
@@ -282,7 +284,6 @@ function DeliveryBody() {
           fontSize="4xl"
           fontWeight="bold"
           color="element.primary"
-          variant="flushed"
           type="number"
           min="0"
           max={currentLoad}
@@ -354,7 +355,6 @@ function NoteInput() {
         color="element.secondary"
         value={notes || ''}
         placeholder="Add notes to this delivery..."
-        variant="flushed"
         readOnly={openStop.status === STATUSES.CANCELLED}
         onChange={e => setNotes(e.target.value)}
         mb="4"

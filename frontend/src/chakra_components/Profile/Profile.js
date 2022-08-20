@@ -121,7 +121,7 @@ function PublicProfile({ onSubmitCallback }) {
     toast({
       title: 'All set!',
       description: 'Your profile has been updated.',
-      status: 'success',
+      status: 'info',
       duration: 2000,
       isClosable: true,
       position: 'top',
@@ -229,7 +229,7 @@ function PrivateProfile({ onSubmitCallback }) {
     toast({
       title: 'All set!',
       description: 'Your profile has been updated.',
-      status: 'success',
+      status: 'info',
       duration: 2000,
       isClosable: true,
       position: 'top',
@@ -388,7 +388,6 @@ function FormField({ formData, setFormData, title, id, isValid, isOptional }) {
       <InputGroup>
         <Input
           type="text"
-          variant="flushed"
           value={formData[id]}
           onChange={e => setFormData({ ...formData, [id]: e.target.value })}
           isInvalid={!isValid}

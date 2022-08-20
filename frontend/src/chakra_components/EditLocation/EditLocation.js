@@ -88,7 +88,7 @@ export function EditLocation({ setBreadcrumbs }) {
           timestamp_created: location.timestamp_created || createTimestamp(),
           timestamp_updated: createTimestamp(),
         })
-        navigate(`/admin/organizations/${organization_id}`)
+        navigate(`/organizations/${organization_id}`)
       } catch (e) {
         console.error('Error writing document: ', e)
       }
@@ -151,7 +151,6 @@ export function EditLocation({ setBreadcrumbs }) {
             id="apartmentNumber"
             value={formData.apartment_number}
             onChange={e => handleChange(e)}
-            variant="flushed"
             mb={4}
           />
           <Text fontWeight={400}>Contact Name</Text>
@@ -159,7 +158,6 @@ export function EditLocation({ setBreadcrumbs }) {
             id="contactName"
             value={formData.contact_name}
             onChange={e => handleChange(e)}
-            variant="flushed"
             mb={4}
           />
           <Text fontWeight={400}>Contact Email</Text>
@@ -167,7 +165,6 @@ export function EditLocation({ setBreadcrumbs }) {
             id="contactEmail"
             value={formData.contact_email}
             onChange={e => handleChange(e)}
-            variant="flushed"
             mb={4}
           />
           <Text fontWeight={400}>Phone Number</Text>
@@ -175,7 +172,6 @@ export function EditLocation({ setBreadcrumbs }) {
             id="phoneNumber"
             value={formData.contact_phone}
             onChange={e => handleChange(e)}
-            variant="flushed"
             mb={4}
           />
           <Text fontWeight={400}>Location Nickname (optional)</Text>
@@ -183,7 +179,6 @@ export function EditLocation({ setBreadcrumbs }) {
             id="nickname"
             value={formData.nickname}
             onChange={e => handleChange(e)}
-            variant="flushed"
             mb={4}
           />
           <Text fontWeight={400}>Notes + Instructions</Text>
@@ -191,7 +186,6 @@ export function EditLocation({ setBreadcrumbs }) {
             id="notes"
             value={formData.notes}
             onChange={e => handleChange(e)}
-            variant="flushed"
             mb={4}
           />
           <Flex
@@ -202,7 +196,6 @@ export function EditLocation({ setBreadcrumbs }) {
             w="100%"
           >
             <Select
-              variant="flushed"
               onChange={e => setDay(e.target.value)}
               value={day}
               flexGrow="0.2"
@@ -219,7 +212,6 @@ export function EditLocation({ setBreadcrumbs }) {
             </Select>
 
             <Select
-              variant="flushed"
               onChange={e => setOpenTime(e.target.value)}
               value={openTime}
               flexGrow="0.2"
@@ -236,7 +228,6 @@ export function EditLocation({ setBreadcrumbs }) {
             </Select>
 
             <Select
-              variant="flushed"
               onChange={e => setCloseTime(e.target.value)}
               value={closeTime}
               flexGrow="0.2"

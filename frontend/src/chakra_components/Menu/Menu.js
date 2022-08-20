@@ -181,6 +181,23 @@ function MenuBody({ colorMode, toggleColorMode }) {
           Organizations
         </Button>
       </Link>
+      <Link to="/analytics">
+        <Button
+          variant="ghosted"
+          color={
+            location.pathname === '/analytics'
+              ? 'blue.primary'
+              : 'element.primary'
+          }
+          fontWeight={location.pathname === '/analytics' ? '600' : '300'}
+          fontSize="xl"
+          mr="auto"
+          my="2"
+          disabled={!hasPermission}
+        >
+          Analytics
+        </Button>
+      </Link>
       <Link to="/food-safety">
         <Button
           variant="ghosted"

@@ -1,8 +1,6 @@
 import { AddIcon, SearchIcon } from '@chakra-ui/icons'
 import {
-  Avatar,
   Box,
-  Button,
   Divider,
   Flex,
   Heading,
@@ -11,28 +9,23 @@ import {
   InputGroup,
   InputLeftElement,
   Select,
+  Skeleton,
   Text,
 } from '@chakra-ui/react'
-import { Page } from 'chakra_components'
-import {
-  DONOR_TYPES,
-  ORG_SUBTYPES,
-  ORG_TYPE_ICONS,
-  RECIPIENT_TYPES,
-} from 'helpers'
-import { useApi } from 'hooks'
+import { ORG_TYPE_ICONS } from 'helpers'
+import { useApi, useAuth } from 'hooks'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Organizations() {
   const { data: organizations } = useApi('/organizations')
   const [searchValue, setSearchValue] = useState('')
-  const [orgType, setOrgType] = useState('recipient_donor')
-  const [orgSubType, setOrgSubType] = useState('')
+  const [type, setType] = useState()
+  const [subtype, setSubtype] = useState()
+  const { hasAdminPermission } = useAuth()
 
   function handleChange(e) {
-    // setSearchValue(e.target.value)
-    console.log(e.target.value)
+    setSearchValue(e.target.value)
   }
 
   return (
@@ -48,9 +41,11 @@ export function Organizations() {
         >
           Organizations
         </Heading>
-        <Link to="/create-organization">
-          <IconButton icon={<AddIcon />} borderRadius="3xl" />
-        </Link>
+        {hasAdminPermission && (
+          <Link to="/create-organization">
+            <IconButton icon={<AddIcon />} borderRadius="3xl" />
+          </Link>
+        )}
       </Flex>
       <InputGroup mb="6">
         <InputLeftElement
@@ -71,9 +66,8 @@ export function Organizations() {
         mb="8"
       >
         <Select
-          variant="flushed"
-          onChange={e => setOrgType(e.target.value)}
-          value={orgType}
+          onChange={e => setType(e.target.value)}
+          value={type}
           flexGrow="0.5"
           flexBasis={['40%', '40%', '180px', '180px', '180px']}
         >
@@ -82,13 +76,12 @@ export function Organizations() {
           <option value="donor">Donor</option>
         </Select>
         <Select
-          variant="flushed"
-          onChange={e => setOrgSubType(e.target.value)}
-          value={orgSubType}
+          onChange={e => setSubtype(e.target.value)}
+          value={subtype}
           flexGrow="0.5"
           flexBasis={['40%', '40%', '180px', '180px', '180px']}
         >
-          {orgType === 'donor' ? (
+          {type === 'donor' ? (
             <>
               <option value="recipient_donor">All subtypes</option>
               <option value="retail">Retail</option>
@@ -110,15 +103,30 @@ export function Organizations() {
           )}
         </Select>
       </Flex>
-      {organizations &&
+      {organizations ? (
         organizations
-          .filter(i => orgType.includes(i.type))
+          .filter(i => (type ? i.type === type : true))
+          .filter(i => (subtype ? i.subtype === subtype : true))
+          .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))
           .map((org, i) => (
             <Box key={i}>
               <OrganizationCard organization={org} />
               {i !== organizations.length - 1 && <Divider />}
             </Box>
-          ))}
+          ))
+      ) : (
+        <>
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+        </>
+      )}
     </>
   )
 }

@@ -24,7 +24,7 @@ import {
   generateUniqueId,
   TIMES,
 } from 'helpers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function CreateLocation({ setBreadcrumbs }) {
   const { organization_id } = useParams()
@@ -47,6 +47,18 @@ export function CreateLocation({ setBreadcrumbs }) {
     hours: [],
     is_philabundance_partner: false,
   })
+
+  useEffect(() => {
+    organization &&
+      setBreadcrumbs([
+        { label: 'Organizations', link: '/organizations' },
+        { label: organization.name, link: `/organizations/${organization.id}` },
+        {
+          label: 'Create Location',
+          link: `/organizations/${organization.id}/create-location`,
+        },
+      ])
+  }, [organization])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -168,7 +180,6 @@ export function CreateLocation({ setBreadcrumbs }) {
         w="100%"
       >
         <Select
-          variant="flushed"
           id="day_of_week"
           onChange={e =>
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
@@ -188,7 +199,6 @@ export function CreateLocation({ setBreadcrumbs }) {
         </Select>
 
         <Select
-          variant="flushed"
           id="time_open"
           onChange={e =>
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
@@ -208,7 +218,6 @@ export function CreateLocation({ setBreadcrumbs }) {
         </Select>
 
         <Select
-          variant="flushed"
           id="time_close"
           onChange={e =>
             handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
@@ -301,7 +310,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                     value={formData.address1}
                     onChange={e => handleChange(e)}
                     placeholder="Location..."
-                    variant="flushed"
                     mb={4}
                   />
                 </>
@@ -312,7 +320,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                 id="apartment_number"
                 value={formData.address2}
                 onChange={e => handleChange(e)}
-                variant="flushed"
                 mb={4}
               />
               <Text fontWeight={400}>Contact Name</Text>
@@ -320,7 +327,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                 id="contact_name"
                 value={formData.contact_name}
                 onChange={e => handleChange(e)}
-                variant="flushed"
                 mb={4}
               />
               <Text fontWeight={400}>Contact Email</Text>
@@ -328,7 +334,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                 id="contact_email"
                 value={formData.contact_email}
                 onChange={e => handleChange(e)}
-                variant="flushed"
                 mb={4}
               />
               <Text fontWeight={400}>Phone Number</Text>
@@ -336,7 +341,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                 id="contact_phone"
                 value={formData.contact_phone}
                 onChange={e => handleChange(e)}
-                variant="flushed"
                 mb={4}
               />
               <Text fontWeight={400}>Location Nickname (optional)</Text>
@@ -344,7 +348,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                 id="nickname"
                 value={formData.nickname}
                 onChange={e => handleChange(e)}
-                variant="flushed"
                 mb={4}
               />
               <Text fontWeight={400}>Notes + Instructions</Text>
@@ -352,7 +355,6 @@ export function CreateLocation({ setBreadcrumbs }) {
                 id="notes"
                 value={formData.notes}
                 onChange={e => handleChange(e)}
-                variant="flushed"
                 mb={4}
               />
               <Text fontWeight={700}>Open Hours</Text>

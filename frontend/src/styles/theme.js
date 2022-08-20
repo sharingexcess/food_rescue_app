@@ -200,6 +200,20 @@ const theme = extendTheme({
         },
       },
     },
+    Select: {
+      defaultProps: {
+        variant: 'flushed',
+      },
+      variants: {
+        flushed: {
+          field: {
+            _placeholder: {
+              color: 'element.secondary',
+            },
+          },
+        },
+      },
+    },
   },
 })
 

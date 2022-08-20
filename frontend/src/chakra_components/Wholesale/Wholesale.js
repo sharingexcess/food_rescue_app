@@ -15,13 +15,14 @@ import {
 } from '@chakra-ui/react'
 import { Page, CardOverlay, Autocomplete } from 'chakra_components'
 import { formatTimestamp, STATUSES } from 'helpers'
-import { useApi, useIsMobile } from 'hooks'
+import { useApi, useAuth, useIsMobile } from 'hooks'
 import { Fragment, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Wholesale() {
   const [date, setDate] = useState(formatTimestamp(new Date(), 'YYYY-MM-DD'))
   const [addDonation, setAddDonation] = useState(false)
+  const { hasAdminPermission } = useAuth()
   const { data: rescues } = useApi(
     '/rescues',
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
@@ -55,7 +56,6 @@ export function Wholesale() {
           <Input
             type="date"
             value={date}
-            variant="flushed"
             onChange={e => handleChangeDate(e)}
             fontSize="sm"
             color="element.secondary"
@@ -81,17 +81,20 @@ export function Wholesale() {
           <Skeleton w="100%" h="32" my="4" />
         </>
       )}
-      <Button
-        size="lg"
-        w={isMobile ? 'calc(100% - 32px)' : 'auto'}
-        position={isMobile ? 'fixed' : 'relative'}
-        mt="4"
-        left={isMobile ? '4' : 'unset'}
-        bottom={isMobile ? '4' : 'unset'}
-        onClick={() => setAddDonation(true)}
-      >
-        Add Donation
-      </Button>
+
+      {hasAdminPermission && (
+        <Button
+          size="lg"
+          w={isMobile ? 'calc(100% - 32px)' : 'auto'}
+          position={isMobile ? 'fixed' : 'relative'}
+          mt="4"
+          left={isMobile ? '4' : 'unset'}
+          bottom={isMobile ? '4' : 'unset'}
+          onClick={() => setAddDonation(true)}
+        >
+          Add Donation
+        </Button>
+      )}
       <AddDonation
         isOpen={addDonation}
         handleClose={() => setAddDonation(false)}
@@ -215,7 +218,6 @@ function AddDonationBody({ formData, setFormData }) {
         type="number"
         min="0"
         fontSize="sm"
-        variant="flushed"
         value={weight}
         onChange={updateWeight}
         onBlur={updateParentWeight}
@@ -225,7 +227,6 @@ function AddDonationBody({ formData, setFormData }) {
       <Select
         value={formData.category}
         onChange={e => setFormData({ ...formData, category: e.target.value })}
-        variant="flushed"
       >
         <option value="impact_data_produce">Produce</option>
         <option value="impact_data_dairy">Dairy</option>
@@ -240,7 +241,6 @@ function AddDonationBody({ formData, setFormData }) {
       <Input
         type="text"
         fontSize="sm"
-        variant="flushed"
         value={notes}
         onChange={e => setNotes(e.target.value)}
         onBlur={updateParentNotes}
@@ -281,8 +281,8 @@ function AddDonationBody({ formData, setFormData }) {
   )
 }
 function AddDonationFooter({ formData }) {
-  console.log(formData)
   const totalWeight = formData.weight - palletWeight(formData.pallet)
+
   return (
     <Button size="lg" w="100%" disabled={!formData.donor || totalWeight < 0}>
       Add Donation ({totalWeight} lbs.)

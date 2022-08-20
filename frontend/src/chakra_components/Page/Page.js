@@ -133,7 +133,9 @@ function PageHead({ breadcrumbs, openMenu }) {
           py="1"
           px="4"
         >
-          {!isMobile && <BreadcrumbItem m="0" ml="-4" />}
+          {isMobile && breadcrumbs.length > 1 ? null : (
+            <BreadcrumbItem m="0" ml="-4" />
+          )}
           {breadcrumbs.map((crumb, i) => {
             return (
               <BreadcrumbItem m="0" key={i}>

@@ -14,28 +14,17 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useApi, useAuth, useIsMobile } from 'hooks'
-import { formatTimestamp, STATUSES } from 'helpers'
+import { formatTimestamp } from 'helpers'
 import { useEffect, useMemo, useState } from 'react'
-import { Page, Autocomplete } from 'chakra_components'
-import moment from 'moment'
-import './Rescues.scss'
+import { Autocomplete } from 'chakra_components'
 import { AddIcon, CalendarIcon } from '@chakra-ui/icons'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
 
 export function Rescues({ setTitle }) {
   useEffect(() => setTitle('test'), [])
-  const { admin, user } = useAuth()
+  const { hasAdminPermission, user } = useAuth()
   const url_params = new URLSearchParams(window.location.search)
-  const [state, setState] = useState({
-    status: url_params.get('status') || STATUSES.SCHEDULED,
-    handler_id: admin ? url_params.get('handler_id') || '' : user.id, // ensure that non-admins can't fetch data by transforming the url
-    date: '', // url_params.get('date') ||
-    limit: 10,
-    handler_name: admin ? url_params.get('handler_name') || '' : user.name,
-    handler_suggestions: null,
-    scroll_position: null,
-    status: 'scheduled',
-  })
 
   const [handler, setHandler] = useState()
   const [date, setDate] = useState()
@@ -112,9 +101,11 @@ export function Rescues({ setTitle }) {
         >
           Rescues
         </Heading>
-        <Link to="/create-rescue">
-          <IconButton icon={<AddIcon />} borderRadius="3xl" />
-        </Link>
+        {hasAdminPermission && (
+          <Link to="/create-rescue">
+            <IconButton icon={<AddIcon />} borderRadius="3xl" />
+          </Link>
+        )}
       </Flex>
       <Flex
         justify="space-between"
@@ -142,7 +133,6 @@ export function Rescues({ setTitle }) {
           <Input
             type="date"
             value={date}
-            variant="flushed"
             onChange={e => handleChangeDate(e)}
             id="Datepicker"
             fontSize="sm"
@@ -252,7 +242,6 @@ function CardTags({ rescue }) {
 function StatusSelect({ status, setStatus }) {
   return (
     <Select
-      variant="flushed"
       onChange={e => setStatus(e.target.value)}
       value={status}
       flexBasis={['100%', '100%', '180px', '180px', '180px']}

@@ -8,6 +8,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Skeleton,
   Text,
 } from '@chakra-ui/react'
 import { useApi } from 'hooks'
@@ -46,7 +47,7 @@ export function Users() {
           onChange={handleChange}
         />
       </InputGroup>
-      {users &&
+      {users ? (
         users
           .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))
           .map((user, i) => (
@@ -54,7 +55,20 @@ export function Users() {
               <UserCard user={user} />
               {i !== users.length - 1 && <Divider />}
             </Box>
-          ))}
+          ))
+      ) : (
+        <>
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+        </>
+      )}
     </>
   )
 }

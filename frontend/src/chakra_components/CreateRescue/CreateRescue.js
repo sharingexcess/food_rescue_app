@@ -204,7 +204,6 @@ function InfoForm({ formData, setFormData, handlers }) {
       </Text>
       <Input
         value={formData.timestamp_scheduled_start}
-        variant="flushed"
         type="datetime-local"
         textAlign="left"
         mb="6"
@@ -221,7 +220,6 @@ function InfoForm({ formData, setFormData, handlers }) {
       </Text>
       <Input
         value={formData.timestamp_scheduled_finish}
-        variant="flushed"
         type="datetime-local"
         textAlign="left"
         mb="6"
@@ -318,7 +316,6 @@ function AddStop({ type, handleAddStop, handleCancel, organizations }) {
       />
       {organization && (
         <Select
-          variant="flushed"
           fontSize="sm"
           my="2"
           placeholder="Choose a location..."

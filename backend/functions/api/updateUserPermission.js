@@ -1,15 +1,14 @@
-const { performance } = require('perf_hooks')
 const {
   authenticateRequest,
   rejectUnauthorizedRequest,
   db,
 } = require('../../helpers')
 
-async function updateUserPermissionEndpoint(response, request) {
+async function updateUserPermissionEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
       console.log('running changeUserPermission')
-      console.log(request)
+      console.log(request.params)
       const { id } = request.params
       console.log('Received id:', id)
 
@@ -58,9 +57,9 @@ async function updatePermission(id, payload) {
 
 function isValidUserPermission(updatedUserPermission) {
   return (
-    updatedUserPermission == NULL ||
-    updatedUserPermission == 'standard' ||
-    updatedUserPermission == 'admin'
+    updatedUserPermission === null ||
+    updatedUserPermission === 'standard' ||
+    updatedUserPermission === 'admin'
   )
 }
 

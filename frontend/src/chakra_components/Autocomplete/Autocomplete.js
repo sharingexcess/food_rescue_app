@@ -48,7 +48,6 @@ export function Autocomplete({
           value={value ? value[displayField] : inputValue}
           disabled={!!value}
           onChange={e => setInputValue(e.target.value)}
-          variant="flushed"
           fontSize="sm"
           color="element.primary"
           _placeholder={{ color: 'element.secondary' }}

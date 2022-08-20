@@ -8,21 +8,56 @@ import {
   Avatar,
   Select,
   IconButton,
+  useToast,
+  Fade,
+  Spinner,
 } from '@chakra-ui/react'
-import { Page, RescueCard } from 'chakra_components'
+import { RescueCard } from 'chakra_components'
 import { useApi, useIsMobile, useAuth } from 'hooks'
 import { Error } from 'components'
-import { SE_API } from 'helpers'
+import { formatLargeNumber, SE_API } from 'helpers'
 import { useParams } from 'react-router-dom'
 import { useEffect, useInsertionEffect, useMemo, useState } from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
+import moment from 'moment'
 
 export function User({ setBreadcrumbs }) {
   const [userPermission, setUserPermission] = useState('')
   const [isLoading, setLoading] = useState(false)
   const { user_id } = useParams()
   const { hasAdminPermission, user } = useAuth()
-  const { data: profile, loading, error } = useApi(`/publicProfiles/${user_id}`)
+
+  const {
+    data: profile,
+    loading,
+    error,
+    refresh,
+  } = useApi(`/publicProfiles/${user_id}`)
+
+  const toast = useToast()
+
+  const { data: deliveries } = useApi(
+    '/stops',
+    useMemo(
+      () => ({
+        status: 'completed',
+        handler_id: user_id,
+        date_range_start: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+        date_range_finish: moment().format('YYYY-MM-DD'),
+      }),
+      []
+    )
+  )
+
+  const totalWeight = useMemo(
+    () =>
+      deliveries &&
+      deliveries.reduce(
+        (total, current) => (total += current.impact_data_total_weight),
+        0
+      ),
+    [deliveries]
+  )
 
   useEffect(() => {
     profile &&
@@ -56,31 +91,27 @@ export function User({ setBreadcrumbs }) {
   async function handleChange(e) {
     if (!e.target.value || !hasAdminPermission) return
     setUserPermission(e.target.value)
-    // const id = user_id
-    // await SE_API.post(
-    //   `/publicProfile/${id}/update`,
-    //   {
-    //     name: profile.name,
-    //     email: profile.email,
-    //     pronouns: profile.pronouns,
-    //     phone: profile.phone,
-    //   },
-    //   user.accessToken
-    // )
   }
 
-  async function changeUserPermission() {
+  async function updateUserPermission() {
     setLoading(true)
-    const id = user_id
-    console.log('Id:', id)
     await SE_API.post(
-      `/updateUserPermission/${id}`,
+      `/updateUserPermission/${user_id}`,
       {
         permission: userPermission,
       },
       user.accessToken
     )
-    setLoading(true)
+    toast({
+      title: 'All set!',
+      description: 'Permission has been updated.',
+      status: 'info',
+      duration: 2000,
+      isClosable: true,
+      position: 'top',
+    })
+    refresh()
+    setLoading(false)
   }
 
   if (loading && !profile) {
@@ -102,7 +133,7 @@ export function User({ setBreadcrumbs }) {
           justify="flex-end"
         />
         <Flex direction="column" align="center">
-          <Avatar src={profile.icon} name={profile.name} size="2xl" />
+          <Avatar src={profile.icon} name={profile.name} size="2xl" mb="4" />
           <Text fontSize="lg" fontWeight={700}>
             {profile.name}
           </Text>
@@ -119,12 +150,11 @@ export function User({ setBreadcrumbs }) {
             {profile.pronouns}
           </Text>
         </Flex>
-        {hasAdminPermission && profile && (
-          <Flex direction="column" align="flex-start" my="8">
+        {hasAdminPermission && profile && profile.id !== user.id && (
+          <Flex direction="column" align="flex-start" pt="8">
             <Text fontWeight={700}>Access Level</Text>
             <Flex w="100%" gap="4">
               <Select
-                variant="flushed"
                 onChange={handleChange}
                 flexGrow="1"
                 value={userPermission}
@@ -136,14 +166,16 @@ export function User({ setBreadcrumbs }) {
               </Select>
               <IconButton
                 disabled={userPermission === profile.permission}
-                onClick={changeUserPermission}
+                onClick={updateUserPermission}
                 icon={<CheckIcon />}
+                borderRadius="3xl"
                 isLoading={isLoading}
               />
             </Flex>
           </Flex>
         )}
-        <Text fontWeight={700} mt={8}>
+        <Stats totalWeight={totalWeight} />
+        <Text fontWeight="700" mt="12">
           Recently Completed Rescues
         </Text>
         {rescues && rescues.length ? (
@@ -185,4 +217,39 @@ function LoadingPerson() {
 
 function PersonPageError({ message }) {
   return <Error message={message} />
+}
+
+function Stats({ totalWeight }) {
+  const isMobile = useIsMobile()
+
+  return (
+    <Fade in>
+      <Flex
+        mt="8"
+        px={isMobile ? '4' : '8'}
+        py="4"
+        gap="4"
+        zIndex="3"
+        position="relative"
+        direction="column"
+      >
+        <Flex
+          borderRadius="md"
+          justify="center"
+          align="center"
+          direction="column"
+          w="100%"
+        >
+          <Heading color="element.primary">
+            {totalWeight == null ? (
+              <Spinner />
+            ) : (
+              formatLargeNumber(totalWeight) + ' lbs.'
+            )}
+          </Heading>
+          <Text color="se.brand.primary">rescued this year</Text>
+        </Flex>
+      </Flex>
+    </Fade>
+  )
 }

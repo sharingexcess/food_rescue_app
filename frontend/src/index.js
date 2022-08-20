@@ -10,7 +10,6 @@ import {
   CreateRescue,
   EditRescue,
   Organization,
-  EditOrganization,
   CreateLocation,
   EditLocation,
   Organizations,
@@ -24,6 +23,7 @@ import {
   WholesaleDonation,
   FoodSafety,
   Page,
+  Analytics,
 } from './chakra_components'
 import { Auth, App } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -215,19 +215,6 @@ function RescueAppRoutes() {
                   }
                 />
                 <Route
-                  path="/organizations/:organization_id/edit"
-                  element={
-                    <Page
-                      defaultTitle="Edit Organization"
-                      defaultBreadcrumbs={[
-                        { label: 'Organizations', link: '/organizations' },
-                        { label: 'Loading...', link: '' },
-                      ]}
-                      Content={EditOrganization}
-                    />
-                  }
-                />
-                <Route
                   path="/organizations/:organization_id/create-location"
                   element={
                     <Page
@@ -271,6 +258,7 @@ function RescueAppRoutes() {
                   path="/wholesale"
                   element={
                     <Page
+                      id="Wholesale"
                       defaultTitle="Wholesale"
                       defaultBreadcrumbs={[
                         { label: 'Wholesale', link: '/wholesale' },
@@ -283,6 +271,7 @@ function RescueAppRoutes() {
                   path="/wholesale/:id"
                   element={
                     <Page
+                      id="WholesaleDonation"
                       defaultTitle="Wholesale"
                       defaultBreadcrumbs={[
                         { label: 'Wholesale', link: '/wholesale' },
@@ -295,7 +284,25 @@ function RescueAppRoutes() {
                 <Route
                   path="/food-safety"
                   element={
-                    <Page defaultTitle="Food Safety" Content={FoodSafety} />
+                    <Page
+                      id="FoodSafety"
+                      defaultTitle="Food Safety"
+                      Content={FoodSafety}
+                    />
+                  }
+                />
+                <Route
+                  path="/analytics"
+                  element={
+                    <Page
+                      id="Analytics"
+                      title="Analytics"
+                      defaultBreadcrumbs={[
+                        { label: 'Analytics', link: '/analytics' },
+                      ]}
+                      defaultTitle="Analytics"
+                      Content={Analytics}
+                    />
                   }
                 />
                 <Route path="*" element={<Error />} />

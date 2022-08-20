@@ -9,7 +9,7 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
-import { useApi, useIsMobile } from 'hooks'
+import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -17,6 +17,7 @@ export function WholesaleDonation({ setBreadcrumbs }) {
   const { id } = useParams()
   const isMobile = useIsMobile()
   const { data: rescue } = useApi(`/rescues/${id}`)
+  const { hasAdminPermission } = useAuth()
 
   useEffect(() => {
     setBreadcrumbs([
@@ -50,7 +51,10 @@ export function WholesaleDonation({ setBreadcrumbs }) {
           <Heading as="h2" size="md" fontWeight="600" color="element.primary">
             {donation.organization.name}
           </Heading>
-          <Button variant="tertiary">Edit Donation</Button>
+
+          {hasAdminPermission && (
+            <Button variant="tertiary">Edit Donation</Button>
+          )}
         </Flex>
         <Text size="sm" fontWeight="300" color="element.secondary">
           {donation.impact_data_total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -61,26 +65,30 @@ export function WholesaleDonation({ setBreadcrumbs }) {
       {recipients.map(i => (
         <Recipient key={i.id} recipient={i} />
       ))}
-      <Flex direction="column">
-        <Button variant="secondary" mt="8" w={isMobile ? '100%' : 'auto'}>
-          Add Recipient ({remainingWeight} lbs. remaining)
-        </Button>
-        <Button
-          size="lg"
-          w={isMobile ? 'calc(100% - 32px)' : 'auto'}
-          position={isMobile ? 'fixed' : 'relative'}
-          mt="4"
-          left={isMobile ? '4' : 'unset'}
-          bottom={isMobile ? '4' : 'unset'}
-        >
-          Update Donation
-        </Button>
-      </Flex>
+
+      {hasAdminPermission && (
+        <Flex direction="column">
+          <Button variant="secondary" mt="8" w={isMobile ? '100%' : 'auto'}>
+            Add Recipient ({remainingWeight} lbs. remaining)
+          </Button>
+          <Button
+            size="lg"
+            w={isMobile ? 'calc(100% - 32px)' : 'auto'}
+            position={isMobile ? 'fixed' : 'relative'}
+            mt="4"
+            left={isMobile ? '4' : 'unset'}
+            bottom={isMobile ? '4' : 'unset'}
+          >
+            Update Donation
+          </Button>
+        </Flex>
+      )}
     </>
   )
 }
 
 function Recipient({ recipient }) {
+  const { hasAdminPermission } = useAuth()
   return (
     <Flex w="100%" justify="space-between" align="center" py="4">
       <Box>
@@ -105,7 +113,10 @@ function Recipient({ recipient }) {
           {recipient.location.nickname || recipient.location.address1}
         </Text>
       </Box>
-      <IconButton variant="ghosted" icon={<EditIcon w="6" h="6" />} />
+
+      {hasAdminPermission && (
+        <IconButton variant="ghosted" icon={<EditIcon w="6" h="6" />} />
+      )}
     </Flex>
   )
 }

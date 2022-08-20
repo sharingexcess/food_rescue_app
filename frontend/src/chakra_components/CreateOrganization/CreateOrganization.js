@@ -56,7 +56,6 @@ export function CreateOrganization() {
         </Text>
         <Input
           value={formData.name}
-          variant="flushed"
           mb="6"
           id="name"
           placeholder="Name..."
@@ -68,7 +67,6 @@ export function CreateOrganization() {
           Organization Type
         </Text>
         <Select
-          variant="flushed"
           id="type"
           onChange={e => handleChange(e)}
           value={formData.type}
@@ -83,7 +81,6 @@ export function CreateOrganization() {
           {formData.type === 'donor' ? 'Donor Type' : 'Recipient Type'}
         </Text>
         <Select
-          variant="flushed"
           id="subtype"
           onChange={e => handleChange(e)}
           value={formData.subtype}

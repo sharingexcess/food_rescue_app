@@ -67,7 +67,6 @@ api.post('/publicProfile/:id/update', (req, res) =>
 api.post('/privateProfile/:id/update', (req, res) =>
   loadEndpoint('updatePrivateProfile', req, res)
 )
-
 api.post('/updateUserPermission/:id', (req, res) =>
   loadEndpoint('updateUserPermission', req, res)
 )
