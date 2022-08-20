@@ -101,15 +101,7 @@ export const darkMode = [
       },
     ],
   },
-  {
-    featureType: 'road',
-    elementType: 'all',
-    stylers: [
-      {
-        visibility: 'off',
-      },
-    ],
-  },
+  ,
   {
     featureType: 'transit',
     elementType: 'all',
@@ -155,15 +147,6 @@ export const lightMode = [
     stylers: [
       {
         visibility: 'on',
-      },
-    ],
-  },
-  {
-    featureType: 'road',
-    elementType: 'all',
-    stylers: [
-      {
-        visibility: 'off',
       },
     ],
   },

@@ -1,4 +1,7 @@
-const { compose, withProps, lifecycle } = require('recompose')
+import { useColorMode } from '@chakra-ui/react'
+import { darkMode, lightMode } from 'styles/mapStyles'
+
+const { compose, withProps } = require('recompose')
 const {
   withScriptjs,
   withGoogleMap,
@@ -21,13 +24,14 @@ export const MapLocation = compose(
     containerElement: (
       <div
         style={{
-          height: `320px`,
+          height: `240px`,
           width: '100%',
           position: 'relative',
-          marginTop: window.innerWidth < 992 ? '64px' : 0,
           zIndex: '0',
           border: 'none',
           backgroundColor: 'var(--chakra-colors-surface-background)',
+          borderRadius: 8,
+          overflow: 'hidden',
         }}
       />
     ),
@@ -44,11 +48,18 @@ export const MapLocation = compose(
   }),
   withScriptjs,
   withGoogleMap
-)(props => (
-  <GoogleMap
-    defaultZoom={14}
-    defaultCenter={{ lat: props.lat, lng: props.lng }}
-  >
-    <Marker position={{ lat: props.lat, lng: props.lng }} />
-  </GoogleMap>
-))
+)(props => {
+  const { colorMode } = useColorMode()
+  return (
+    <GoogleMap
+      defaultZoom={12}
+      defaultCenter={{ lat: props.lat, lng: props.lng }}
+      defaultOptions={{
+        styles: colorMode === 'dark' ? darkMode : lightMode,
+        disableDefaultUI: true,
+      }}
+    >
+      <Marker position={{ lat: props.lat, lng: props.lng }} />
+    </GoogleMap>
+  )
+})

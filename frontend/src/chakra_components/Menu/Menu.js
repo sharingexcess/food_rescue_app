@@ -15,11 +15,9 @@ import {
   Button,
   Switch,
   Spacer,
-  Divider,
 } from '@chakra-ui/react'
 import { useAuth, useIsMobile } from 'hooks'
 import { Link } from 'react-router-dom'
-import { auth } from 'helpers'
 
 export function Menu({ isOpen, onClose }) {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -30,11 +28,11 @@ export function Menu({ isOpen, onClose }) {
       <DrawerOverlay />
       <DrawerContent bg="surface.card">
         <DrawerCloseButton />
-        <DrawerHeader>
+        <DrawerHeader py="0">
           <MenuHeader />
         </DrawerHeader>
 
-        <DrawerBody py="8">
+        <DrawerBody py="0">
           <MenuBody colorMode={colorMode} toggleColorMode={toggleColorMode} />
         </DrawerBody>
 
@@ -59,7 +57,6 @@ export function Menu({ isOpen, onClose }) {
       zIndex={10}
     >
       <MenuHeader />
-      <Flex h={8} />
       <MenuBody colorMode={colorMode} toggleColorMode={toggleColorMode} />
       <Spacer />
       <MenuFooter />
@@ -69,43 +66,52 @@ export function Menu({ isOpen, onClose }) {
 
 function MenuHeader() {
   const { user } = useAuth()
+  const isMobile = useIsMobile()
 
   return (
-    <Link to="/profile">
-      <Flex>
-        <Avatar name={user?.displayName} src={user?.photoURL} />
-        <Box w="3" />
-        <Box overflow="clip">
-          <Heading as="h3" size="m" noOfLines={1} color="element.primary">
-            {user?.displayName}
-          </Heading>
-          <Text
-            as="p"
-            fontSize="sm"
-            fontWeight="300"
-            noOfLines={1}
-            color="element.secondary"
-          >
-            {user?.email}
-          </Text>
-        </Box>
-      </Flex>
-    </Link>
+    <>
+      {isMobile && (
+        <Heading mb="6" mt="4">
+          Menu
+        </Heading>
+      )}
+      <Link to="/profile">
+        <Flex bg="surface.background" borderRadius="xl" p="2">
+          <Avatar name={user?.displayName} src={user?.photoURL} />
+          <Box w="3" />
+          <Box overflow="clip">
+            <Heading as="h3" size="m" noOfLines={1} color="element.primary">
+              {user?.displayName}
+            </Heading>
+            <Text
+              as="p"
+              fontSize="xs"
+              fontWeight="300"
+              noOfLines={1}
+              color="element.secondary"
+            >
+              {user?.email}
+            </Text>
+          </Box>
+        </Flex>
+      </Link>
+    </>
   )
 }
 
 function MenuBody({ colorMode, toggleColorMode }) {
   const { hasPermission } = useAuth()
+  const isMobile = useIsMobile()
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" py="4">
       <Flex w="100%" justify="space-between" my="2">
         <Button
           variant="ghosted"
-          fontSize="xl"
-          mr="auto"
+          px={isMobile ? '0' : '2'}
           color="element.primary"
           fontWeight="300"
+          fontSize="lg"
         >
           Dark Mode
         </Button>
@@ -118,15 +124,16 @@ function MenuBody({ colorMode, toggleColorMode }) {
       <Link to="/rescues">
         <Button
           variant="ghosted"
+          px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/rescues'
               ? 'blue.primary'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/rescues' ? '600' : '300'}
-          fontSize="xl"
+          fontSize="lg"
           mr="auto"
-          my="2"
+          my={isMobile ? '2' : '1'}
           disabled={!hasPermission}
         >
           Rescues
@@ -135,15 +142,16 @@ function MenuBody({ colorMode, toggleColorMode }) {
       <Link to="/wholesale">
         <Button
           variant="ghosted"
+          px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/wholesale'
               ? 'blue.primary'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
-          fontSize="xl"
+          fontSize="lg"
           mr="auto"
-          my="2"
+          my={isMobile ? '2' : '1'}
           disabled={!hasPermission}
         >
           Wholesale
@@ -152,13 +160,14 @@ function MenuBody({ colorMode, toggleColorMode }) {
       <Link to="/people">
         <Button
           variant="ghosted"
+          px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/people' ? 'blue.primary' : 'element.primary'
           }
           fontWeight={location.pathname === '/people' ? '600' : '300'}
-          fontSize="xl"
+          fontSize="lg"
           mr="auto"
-          my="2"
+          my={isMobile ? '2' : '1'}
           disabled={!hasPermission}
         >
           People
@@ -167,15 +176,16 @@ function MenuBody({ colorMode, toggleColorMode }) {
       <Link to="/organizations">
         <Button
           variant="ghosted"
+          px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/organizations'
               ? 'blue.primary'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/organizations' ? '600' : '300'}
-          fontSize="xl"
+          fontSize="lg"
           mr="auto"
-          my="2"
+          my={isMobile ? '2' : '1'}
           disabled={!hasPermission}
         >
           Organizations
@@ -184,15 +194,16 @@ function MenuBody({ colorMode, toggleColorMode }) {
       <Link to="/analytics">
         <Button
           variant="ghosted"
+          px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/analytics'
               ? 'blue.primary'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/analytics' ? '600' : '300'}
-          fontSize="xl"
+          fontSize="lg"
           mr="auto"
-          my="2"
+          my={isMobile ? '2' : '1'}
           disabled={!hasPermission}
         >
           Analytics
@@ -201,15 +212,16 @@ function MenuBody({ colorMode, toggleColorMode }) {
       <Link to="/food-safety">
         <Button
           variant="ghosted"
+          px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/food-safety'
               ? 'blue.primary'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/food-safety' ? '600' : '300'}
-          fontSize="xl"
+          fontSize="lg"
           mr="auto"
-          my="2"
+          my={isMobile ? '2' : '1'}
           disabled={!hasPermission}
         >
           Food Safety

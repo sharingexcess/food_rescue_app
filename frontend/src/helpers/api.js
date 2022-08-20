@@ -21,7 +21,7 @@ export const SE_API = {
       throw new Error('Error in POST api:', e)
     })
     if (!response.ok) {
-      throw new Error('Error in POST api:', e)
+      throw new Error('Error in POST api:', response)
     }
     console.log(
       `%c[SE_API.post()] Received Response:`,
@@ -49,7 +49,7 @@ export const SE_API = {
       throw new Error('Error in GET api:', e)
     })
     if (!response.ok) {
-      throw new Error('Error in GET api:', e)
+      throw new Error('Error in GET api:', response)
     }
     return response
   },

@@ -6,7 +6,6 @@ import { Card, Spacer, Text } from '@sharingexcess/designsystem'
 import { Emoji } from 'react-apple-emojis'
 
 export function Home() {
-  // access current user and admin state from the Auth Context in Auth.js
   const { user, admin } = useAuth()
 
   function Tile({ name, icon, link }) {

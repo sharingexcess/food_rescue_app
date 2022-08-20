@@ -1,4 +1,10 @@
-import { CheckIcon, LockIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import {
+  CheckIcon,
+  LockIcon,
+  StarIcon,
+  ViewIcon,
+  ViewOffIcon,
+} from '@chakra-ui/icons'
 import {
   Avatar,
   Box,
@@ -59,11 +65,20 @@ function ProfileHeader({ tab, setTab }) {
         h="128px"
         mb="4"
       />
-      <Heading as="h3" color="element.primary">
+      <Heading as="h3" color="element.primary" mb="1">
         {user.name}
       </Heading>
+      <Text color="element.secondary">{user.email}</Text>
       <Text color="element.secondary" mb="8">
-        {user.email}
+        {user.permission === 'admin' ? (
+          <>
+            <StarIcon /> Admin Access
+          </>
+        ) : (
+          <>
+            <CheckIcon /> Standard Access
+          </>
+        )}
       </Text>
       <Flex gap="4">
         <Button

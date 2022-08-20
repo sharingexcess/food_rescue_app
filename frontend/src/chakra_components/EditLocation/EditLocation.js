@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Heading,
+  IconButton,
   Input,
   Link,
   Select,
@@ -26,30 +27,16 @@ export function EditLocation({ setBreadcrumbs }) {
     error,
   } = useApi(`/organization/${organization_id}`)
 
-  // console.log('org', organization)
   const locations = organization?.locations
   const location = locations?.filter(i => i.id === location_id)[0]
-  // console.log('loc', location)
 
-  const [formData, setFormData] = useState({
-    address1: '',
-    address2: '',
-    apartment_number: '',
-    contact_name: '',
-    contact_email: '',
-    contact_phone: '',
-    notes: '',
-    nickname: '',
-    hours: [],
-    is_philabundance_partner: false,
-  })
-
+  const [formData, setFormData] = useState()
   const [day, setDay] = useState('')
   const [openTime, setOpenTime] = useState('')
   const [closeTime, setCloseTime] = useState('')
 
   useEffect(() => {
-    organization &&
+    if (organization) {
       setBreadcrumbs([
         { label: 'Organizations', link: '/organizations' },
         {
@@ -61,7 +48,28 @@ export function EditLocation({ setBreadcrumbs }) {
           link: `/organizations/${organization_id}/locations/${location_id}`,
         },
       ])
+    }
   }, [organization])
+
+  useEffect(() => {
+    if (location) {
+      setFormData({
+        address1: location.address1 || '',
+        address2: location.address2 || '',
+        city: location.city || '',
+        state: location.state || '',
+        zip: location.zip || '',
+        contact_name: location.contact_name || '',
+        contact_email: location.contact_email || '',
+        contact_phone: location.contact_phone || '',
+        notes: location.notes || '',
+        nickname: location.nickname || '',
+        hours: location.hours || [],
+        lat: location.lat,
+        lng: location.lng,
+      })
+    }
+  }, [location])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -95,29 +103,15 @@ export function EditLocation({ setBreadcrumbs }) {
     }
   }
 
-  if (loading && !organization) {
+  if (loading && !formData) {
     return <LoadingEditLocation />
   } else if (error) {
     return <EditLocationPageError message={error} />
-  } else if (!organization) {
-    return <EditLocationPageError message="No EditLocation Found" />
+  } else if (!formData) {
+    return <EditLocationPageError message="No Location Found" />
   } else
     return (
       <>
-        <Flex
-          bgGradient="linear(to-b, transparent, surface.background)"
-          h="32"
-          mt="-32"
-          zIndex={1}
-          position="relative"
-          direction="column"
-          justify="flex-end"
-        />
-        <Flex direction="column">
-          {formData.lat && formData.lng ? (
-            <MapLocation lat={formData.lat} lng={formData.lng} />
-          ) : null}
-        </Flex>
         <Heading
           as="h1"
           fontWeight="700"
@@ -128,52 +122,26 @@ export function EditLocation({ setBreadcrumbs }) {
         >
           Edit Location
         </Heading>
-        <Flex justify="start" gap={4} align="start" mb={8}>
-          <Text fontSize="20px">📍</Text>
-          <Box>
-            <Text fontWeight={600}>{location.address1}</Text>
-            <Text fontWeight={600}>
-              {location.city}, {location.state} {location.zip}
-            </Text>
-            <Link
-              href={`tel:+${location.contact_phone}`}
-              color="element.active"
-              textDecoration="underline"
-            >
-              {formatPhoneNumber(location.contact_phone)}
-            </Link>
-          </Box>
-          <CloseIcon color="element.error" ml="auto" />
+        <MapLocation lat={formData.lat} lng={formData.lng} />
+        <Flex align="start" direction="column" w="100%">
+          <Flex justify="start" gap="4" align="start" py="8" w="100%">
+            <Box>
+              <Heading size="lg" fontWeight="600">
+                {formData.address1}
+              </Heading>
+              <Heading size="md" color="element.secondary" fontWeight="300">
+                {formData.city}, {formData.state} {formData.zip}
+              </Heading>
+            </Box>
+            <IconButton
+              icon={<CloseIcon color="element.tertiary" />}
+              onClick={() => setFormData({ ...formData, address1: '' })}
+              variant="tertiary"
+              ml="auto"
+            />
+          </Flex>
         </Flex>
         <Flex align="start" direction="column" w="100%">
-          <Text fontWeight={400}>Apartment Number (optional)</Text>
-          <Input
-            id="apartmentNumber"
-            value={formData.apartment_number}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-          <Text fontWeight={400}>Contact Name</Text>
-          <Input
-            id="contactName"
-            value={formData.contact_name}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-          <Text fontWeight={400}>Contact Email</Text>
-          <Input
-            id="contactEmail"
-            value={formData.contact_email}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-          <Text fontWeight={400}>Phone Number</Text>
-          <Input
-            id="phoneNumber"
-            value={formData.contact_phone}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
           <Text fontWeight={400}>Location Nickname (optional)</Text>
           <Input
             id="nickname"
@@ -181,6 +149,39 @@ export function EditLocation({ setBreadcrumbs }) {
             onChange={e => handleChange(e)}
             mb={4}
           />
+
+          <Text fontWeight={400}>Apartment Number (optional)</Text>
+          <Input
+            id="address2"
+            value={formData.address2}
+            onChange={e => handleChange(e)}
+            mb={4}
+          />
+
+          <Text fontWeight={400}>Contact Name</Text>
+          <Input
+            id="contact_name"
+            value={formData.contact_name}
+            onChange={e => handleChange(e)}
+            mb={4}
+          />
+
+          <Text fontWeight={400}>Contact Email</Text>
+          <Input
+            id="contact_email"
+            value={formData.contact_email}
+            onChange={e => handleChange(e)}
+            mb={4}
+          />
+
+          <Text fontWeight={400}>Phone Number</Text>
+          <Input
+            id="contact_phone"
+            value={formData.contact_phone}
+            onChange={e => handleChange(e)}
+            mb={4}
+          />
+
           <Text fontWeight={400}>Notes + Instructions</Text>
           <Input
             id="notes"
@@ -188,6 +189,8 @@ export function EditLocation({ setBreadcrumbs }) {
             onChange={e => handleChange(e)}
             mb={4}
           />
+
+          <Text fontWeight="700">Open Hours</Text>
           <Flex
             justify="space-between"
             flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
@@ -286,11 +289,11 @@ function LoadingEditLocation({}) {
           Loading Location...
         </Heading>
         <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
-        <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
+        <Text as="h2" fontWeight="700" size="lg" textTransform="capitalize">
           Locations
         </Text>
         <Skeleton h="32" my="4" />
-        <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
+        <Text as="h2" fontWeight="700" size="lg" textTransform="capitalize">
           Open Hours
         </Text>
         <Skeleton h="32" my="4" />

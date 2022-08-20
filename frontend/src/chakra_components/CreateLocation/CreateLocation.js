@@ -5,18 +5,14 @@ import {
   Heading,
   IconButton,
   Input,
-  Link,
   Select,
-  Skeleton,
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { Page, MapLocation } from 'chakra_components'
-import { useApi, useIsMobile } from 'hooks'
+import { MapLocation, AddressAutocomplete } from 'chakra_components'
+import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Error, GoogleAutoComplete, GoogleMap } from 'components'
 import {
-  formatPhoneNumber,
   DAYS,
   SE_API,
   removeSpecialCharacters,
@@ -29,23 +25,20 @@ import { useEffect, useState } from 'react'
 export function CreateLocation({ setBreadcrumbs }) {
   const { organization_id } = useParams()
   const navigate = useNavigate()
-  const {
-    data: organization,
-    loading,
-    error,
-  } = useApi(`/organization/${organization_id}`)
+  const { data: organization } = useApi(`/organization/${organization_id}`)
+  const isMobile = useIsMobile()
+  const [isLoading, setIsLoading] = useState(false)
+  const { user } = useAuth()
 
   const [formData, setFormData] = useState({
     address1: '',
     address2: '',
-    apartment_number: '',
     contact_name: '',
     contact_email: '',
     contact_phone: '',
     notes: '',
     nickname: '',
     hours: [],
-    is_philabundance_partner: false,
   })
 
   useEffect(() => {
@@ -77,21 +70,29 @@ export function CreateLocation({ setBreadcrumbs }) {
 
   async function handleSubmit() {
     if (isFormDataValid()) {
+      setIsLoading(true)
       try {
         const location_id = await generateUniqueId('locations')
-        await SE_API.post(`location/${location_id}/update`, {
-          id: location_id,
-          organization_id,
-          ...formData,
-          contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
-          hours: checkMonToFriday(),
-          timestamp_created: createTimestamp(),
-          timestamp_updated: createTimestamp(),
-        })
+        await SE_API.post(
+          `/location/${location_id}/update`,
+          {
+            id: location_id,
+            organization_id,
+            ...formData,
+            contact_phone: removeSpecialCharacters(
+              formData.contact_phone || ''
+            ),
+            hours: checkMonToFriday(),
+            timestamp_created: createTimestamp(),
+            timestamp_updated: createTimestamp(),
+          },
+          user.accessToken
+        )
         navigate(`/organizations/${organization_id}`)
       } catch (e) {
         console.error('Error writing document: ', e)
       }
+      setIsLoading(false)
     }
   }
 
@@ -146,28 +147,6 @@ export function CreateLocation({ setBreadcrumbs }) {
         hours: formData.hours.filter((element, index) => index !== alter),
       })
     }
-  }
-
-  function CreateLocationPageWrapper({ children }) {
-    return (
-      <Page
-        id="CreateLocation"
-        title="Create Location"
-        breadcrumbs={[
-          { label: 'Organizations', link: '/organizations' },
-          {
-            label: 'Organization',
-            link: `/organizations/${organization_id}`,
-          },
-          {
-            label: 'Location',
-            link: `/organizations/${organization_id}/locations/`,
-          },
-        ]}
-      >
-        {children}
-      </Page>
-    )
   }
 
   function Hours({ dayOfWeek, openTime, closeTime }) {
@@ -245,201 +224,146 @@ export function CreateLocation({ setBreadcrumbs }) {
     )
   }
 
-  if (loading && !organization) {
-    return <LoadingCreateLocation />
-  } else if (error) {
-    return <CreateLocationPageError message={error} />
-  } else if (!organization) {
-    return <CreateLocationPageError message="No CreateLocation Found" />
-  } else
-    return (
-      <>
-        {formData.address1 ? (
-          <>
-            {formData.lat && formData.lng ? (
-              <MapLocation lat={formData.lat} lng={formData.lng} />
-            ) : null}
-            <Flex
-              bgGradient="linear(to-b, transparent, surface.background)"
-              h="32"
-              mt="-32"
-              zIndex={1}
-              position="relative"
-              direction="column"
-              justify="flex-end"
-            />
-            <Heading
-              as="h1"
-              fontWeight="700"
-              size="2xl"
-              textTransform="capitalize"
-              color="element.primary"
-              mb={4}
-            >
-              Create Location
-            </Heading>
-            <Flex align="start" direction="column" w="100%">
-              {formData.address1 ? (
-                <Flex justify="start" gap={4} align="start" mb={8} w="100%">
-                  <Text fontSize="20px">📍</Text>
-                  <Box>
-                    <Text fontWeight={600}>{formData.address1}</Text>
-                    <Text fontWeight={600}>
-                      {formData.city}, {formData.state} {formData.zip}
-                    </Text>
-                    <Link
-                      href={`tel:+${formData.contact_phone}`}
-                      color="element.active"
-                      textDecoration="underline"
-                    >
-                      {formatPhoneNumber(formData.contact_phone)}
-                    </Link>
-                  </Box>
-                  <IconButton
-                    icon={<CloseIcon color="element.error" />}
-                    onClick={() => setFormData({ ...formData, address1: '' })}
-                    variant="tertiary"
-                    ml="auto"
-                  />
-                </Flex>
-              ) : (
-                <>
-                  <Text fontWeight={400}>Address</Text>
-                  <Input
-                    id="address1"
-                    value={formData.address1}
-                    onChange={e => handleChange(e)}
-                    placeholder="Location..."
-                    mb={4}
-                  />
-                </>
-              )}
-
-              <Text fontWeight={400}>Apartment Number (optional)</Text>
-              <Input
-                id="apartment_number"
-                value={formData.address2}
-                onChange={e => handleChange(e)}
-                mb={4}
-              />
-              <Text fontWeight={400}>Contact Name</Text>
-              <Input
-                id="contact_name"
-                value={formData.contact_name}
-                onChange={e => handleChange(e)}
-                mb={4}
-              />
-              <Text fontWeight={400}>Contact Email</Text>
-              <Input
-                id="contact_email"
-                value={formData.contact_email}
-                onChange={e => handleChange(e)}
-                mb={4}
-              />
-              <Text fontWeight={400}>Phone Number</Text>
-              <Input
-                id="contact_phone"
-                value={formData.contact_phone}
-                onChange={e => handleChange(e)}
-                mb={4}
-              />
-              <Text fontWeight={400}>Location Nickname (optional)</Text>
-              <Input
-                id="nickname"
-                value={formData.nickname}
-                onChange={e => handleChange(e)}
-                mb={4}
-              />
-              <Text fontWeight={400}>Notes + Instructions</Text>
-              <Input
-                id="notes"
-                value={formData.notes}
-                onChange={e => handleChange(e)}
-                mb={4}
-              />
-              <Text fontWeight={700}>Open Hours</Text>
-              {formData.hours.map((hour, index) => {
-                return (
-                  <Hours
-                    dayOfWeek={hour.day_of_week}
-                    openTime={hour.time_open}
-                    closeTime={hour.time_close}
-                    key={index}
-                  />
-                )
-              })}
-              <Button
-                alignSelf="center"
-                variant="secondary"
-                mt={8}
-                onClick={() => {
-                  setFormData({
-                    ...formData,
-                    hours: [
-                      ...formData.hours,
-                      {
-                        day_of_week: null,
-                        time_open: null,
-                        time_close: null,
-                      },
-                    ],
-                  })
-                }}
-              >
-                Add Hours
-              </Button>
-              <Flex justify="space-between" w="100%" mt={6}>
-                <Button alignSelf="center" variant="primary" mt={4}>
-                  Save Location
-                </Button>
-                <Button
-                  alignSelf="center"
-                  variant="primary"
-                  color="element.warning"
-                  mt={4}
-                >
-                  Delete Location
-                </Button>
-              </Flex>
-            </Flex>
-          </>
-        ) : (
-          <GoogleAutoComplete handleSelect={handleReceiveAddress} />
-        )}
-      </>
-    )
-}
-
-function LoadingCreateLocation() {
-  const isMobile = useIsMobile()
   return (
     <>
-      <Box px="4">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="6"
-          mt="4"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Loading CreateLocation...
-        </Heading>
-        <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
-        <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
-          Locations
-        </Text>
-        <Skeleton h="32" my="4" />
-        <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
-          Open Hours
-        </Text>
-        <Skeleton h="32" my="4" />
-      </Box>
+      <Heading
+        as="h1"
+        fontWeight="700"
+        size="2xl"
+        textTransform="capitalize"
+        color="element.primary"
+      >
+        Create Location
+      </Heading>
+      {formData.address1 ? (
+        <>
+          <Box h="8" />
+          <MapLocation lat={formData.lat} lng={formData.lng} />
+          <Flex align="start" direction="column" w="100%">
+            <Flex justify="start" gap="4" align="start" py="8" w="100%">
+              <Box>
+                <Heading size="lg" fontWeight="600">
+                  {formData.address1}
+                </Heading>
+                <Heading size="md" color="element.secondary" fontWeight="300">
+                  {formData.city}, {formData.state} {formData.zip}
+                </Heading>
+              </Box>
+              <IconButton
+                icon={<CloseIcon color="element.tertiary" />}
+                onClick={() => setFormData({ ...formData, address1: '' })}
+                variant="tertiary"
+                ml="auto"
+              />
+            </Flex>
+
+            <Text fontWeight="400">Location Nickname (optional)</Text>
+            <Input
+              id="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              mb={4}
+            />
+
+            <Text fontWeight="400">Apartment Number (optional)</Text>
+            <Input
+              id="address2"
+              value={formData.address2}
+              onChange={handleChange}
+              mb={4}
+            />
+
+            <Text fontWeight="400">Contact Name</Text>
+            <Input
+              id="contact_name"
+              value={formData.contact_name}
+              onChange={handleChange}
+              mb={4}
+            />
+
+            <Text fontWeight="400">Contact Email</Text>
+            <Input
+              id="contact_email"
+              value={formData.contact_email}
+              onChange={handleChange}
+              mb={4}
+            />
+
+            <Text fontWeight="400">Phone Number</Text>
+            <Input
+              id="contact_phone"
+              value={formData.contact_phone}
+              onChange={handleChange}
+              mb={4}
+            />
+
+            <Text fontWeight="400">Notes + Instructions</Text>
+            <Input
+              id="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              mb={4}
+            />
+
+            <Text fontWeight={700}>Open Hours</Text>
+            {formData.hours.map((hour, index) => {
+              return (
+                <Hours
+                  dayOfWeek={hour.day_of_week}
+                  openTime={hour.time_open}
+                  closeTime={hour.time_close}
+                  key={index}
+                />
+              )
+            })}
+
+            <Button
+              alignSelf="center"
+              variant="secondary"
+              mt={8}
+              onClick={() => {
+                setFormData({
+                  ...formData,
+                  hours: [
+                    ...formData.hours,
+                    {
+                      day_of_week: null,
+                      time_open: null,
+                      time_close: null,
+                    },
+                  ],
+                })
+              }}
+            >
+              Add Hours
+            </Button>
+
+            <Button
+              size="lg"
+              position={isMobile ? 'fixed' : 'relative'}
+              w={isMobile ? 'calc(100% - 32px)' : null}
+              bottom={isMobile ? '4' : null}
+              left={isMobile ? '4' : null}
+              loadingText="Saving Location..."
+              zIndex="8"
+              mt="4"
+              onClick={handleSubmit}
+              isLoading={isLoading}
+            >
+              Save New Location
+            </Button>
+          </Flex>
+          <Box h="24" />
+        </>
+      ) : (
+        <>
+          <Text color="element.secondary" mb="4" fontSize="sm">
+            Select an address below using the Google Maps Autocomplete to being
+            creating a new location.
+          </Text>
+          <AddressAutocomplete handleSelect={handleReceiveAddress} />
+        </>
+      )}
     </>
   )
-}
-
-function CreateLocationPageError({ message }) {
-  return <Error message={message} />
 }

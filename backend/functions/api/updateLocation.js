@@ -16,7 +16,7 @@ async function updateLocationEndpoint(request, response) {
       }
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
-        user => user.is_admin
+        user => user.permission === 'admin'
       )
       if (!requestIsAuthenticated) {
         rejectUnauthorizedRequest(response)
@@ -36,14 +36,8 @@ async function updateLocationEndpoint(request, response) {
 
 async function updateLocation(id, payload) {
   if (isPayloadValid(payload)) {
-    const exisitingLocation = await db
+    await db
       .collection('locations')
-      .doc(id)
-      .get()
-      .then(doc => doc.data())
-
-    await db.collection
-      .apply('locations')
       .doc(id)
       .set({ id, ...payload }, { merge: true })
       .then(ref => console.log(ref))

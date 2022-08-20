@@ -5,7 +5,7 @@ import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
 import { getCollection } from 'helpers'
-import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
+import { getAuthenticatedUser } from './utils'
 import { Landing } from 'components'
 import { Onboarding } from 'chakra_components'
 import { Loading } from 'chakra_components/Loading/Loading'
@@ -60,7 +60,6 @@ function Auth({ children }) {
 
   async function handleLogin() {
     const user = await getAuthenticatedUser()
-    updatePublicUserProfile(user)
     navigate('/')
   }
 
@@ -82,9 +81,6 @@ function Auth({ children }) {
       <AuthContext.Provider
         value={{
           user: user ? { ...user, ...publicProfile, ...privateProfile } : null,
-          // admin: profile && profile.is_admin,
-          // driver: profile && profile.is_driver && !profile.is_admin,
-          // permission: profile && (profile.is_admin || profile.is_driver),
           hasAdminPermission: publicProfile?.permission === 'admin',
           hasStandardPermissions: publicProfile?.permission === 'standard',
           hasPermission: publicProfile?.permission,

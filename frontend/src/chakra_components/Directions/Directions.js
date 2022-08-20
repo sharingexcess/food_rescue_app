@@ -1,5 +1,5 @@
 import { useColorMode } from '@chakra-ui/react'
-import { darkMode, lightMode } from './styles'
+import { darkMode, lightMode } from '../../styles/mapStyles'
 
 const { compose, withProps, lifecycle } = require('recompose')
 const {
