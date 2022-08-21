@@ -10,6 +10,12 @@ import {
   Input,
   useToast,
   Select,
+  HStack,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  TagLeftIcon,
+  TagRightIcon,
 } from '@chakra-ui/react'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { Link, useParams } from 'react-router-dom'
@@ -23,7 +29,9 @@ import {
 } from 'helpers'
 import { useEffect, useState } from 'react'
 import {
+  AddIcon,
   CheckCircleIcon,
+  CheckIcon,
   ChevronRightIcon,
   CloseIcon,
   EditIcon,
@@ -40,8 +48,9 @@ export function Organization({ setBreadcrumbs }) {
   } = useApi(`/organization/${organization_id}`)
   const { user } = useAuth()
   const [edit, setEdit] = useState(false)
-  const [formData, setFormData] = useState(organization)
+  const [formData, setFormData] = useState({})
   const [isWorking, setIsWorking] = useState(false)
+  const [addTag, setAddTag] = useState()
   const toast = useToast()
 
   useEffect(() => {
@@ -56,6 +65,8 @@ export function Organization({ setBreadcrumbs }) {
 
   async function handleUpdateOrganization() {
     setIsWorking(true)
+    const payload = { ...formData }
+    delete payload.locations
     await SE_API.post(
       `/organization/${organization_id}/update`,
       formData,
@@ -74,6 +85,33 @@ export function Organization({ setBreadcrumbs }) {
     setEdit(false)
   }
 
+  function handleRemoveTag(tag) {
+    if (window.confirm(`Are you sure you want to remove the ${tag} tag?`)) {
+      const updatedTags = formData.tags.filter(i => i !== tag)
+      setFormData({ ...formData, tags: updatedTags })
+      const payload = { ...formData, tags: updatedTags }
+      delete payload.locations
+      SE_API.post(
+        `/organization/${organization_id}/update`,
+        payload,
+        user.accessToken
+      )
+    }
+  }
+
+  function handleAddTag() {
+    const updatedTags = formData.tags ? [...formData.tags, addTag] : [addTag]
+    setFormData({ ...formData, tags: updatedTags })
+    const payload = { ...formData, tags: updatedTags }
+    delete payload.locations
+    SE_API.post(
+      `/organization/${organization_id}/update`,
+      payload,
+      user.accessToken
+    )
+    setAddTag()
+  }
+
   if (loading && !organization) {
     return <LoadingOrganization />
   } else if (error) {
@@ -83,7 +121,7 @@ export function Organization({ setBreadcrumbs }) {
   } else
     return (
       <>
-        <Flex w="100%" mb="8" justify="space-between" align="start" gap="2">
+        <Flex w="100%" mb="4" justify="space-between" align="start" gap="2">
           {edit ? (
             <>
               <Box flexGrow="1">
@@ -186,6 +224,65 @@ export function Organization({ setBreadcrumbs }) {
               )}
             </>
           )}
+        </Flex>
+        <Flex gap="2" py="4" wrap="wrap" w="100%">
+          {formData?.tags &&
+            formData.tags.map(i => (
+              <Tag
+                key={i}
+                size="md"
+                py="1"
+                px="3"
+                borderRadius="full"
+                variant="solid"
+                bg="green.secondary"
+                color="green.primary"
+              >
+                <TagLabel fontSize="sm">{i}</TagLabel>
+                <TagCloseButton onClick={() => handleRemoveTag(i)} />
+              </Tag>
+            ))}
+          <Tag
+            size="md"
+            py="1"
+            px="3"
+            borderRadius="full"
+            variant="solid"
+            bg="green.secondary"
+            color="green.primary"
+            cursor={typeof addTag === 'string' ? null : 'pointer'}
+            onClick={() => (typeof addTag === 'string' ? null : setAddTag(''))}
+          >
+            {typeof addTag === 'string' ? (
+              <>
+                <TagLabel>
+                  <Input
+                    variant="flushed"
+                    autoFocus
+                    size="xs"
+                    value={addTag}
+                    w={addTag.length * 6 + 8 + 'px'}
+                    border="none"
+                    minW="4"
+                    ml="2"
+                    // onBlur={() => setAddTag()}
+                    onChange={e => setAddTag(e.target.value)}
+                  />
+                </TagLabel>
+                <TagRightIcon
+                  boxSize="12px"
+                  as={CheckIcon}
+                  cursor="pointer"
+                  onClick={handleAddTag}
+                />
+              </>
+            ) : (
+              <>
+                <TagLeftIcon boxSize="12px" as={AddIcon} />
+                <TagLabel>Add a Tag</TagLabel>
+              </>
+            )}
+          </Tag>
         </Flex>
         {organization.locations.map((location, i) => (
           <Link

@@ -36,12 +36,6 @@ async function updateOrganizationEndpoint(request, response) {
 
 async function updateOrganization(id, payload) {
   if (isPayloadValid(payload)) {
-    const existingOrganization = await db
-      .collection('organizations')
-      .doc(id)
-      .get()
-      .then(doc => doc.data())
-
     await db
       .collection('organizations')
       .doc(id)

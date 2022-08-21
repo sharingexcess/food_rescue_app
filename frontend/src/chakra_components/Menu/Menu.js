@@ -55,6 +55,7 @@ export function Menu({ isOpen, onClose }) {
       bg="surface.card"
       borderRadius="xl"
       zIndex={10}
+      overflow="auto"
     >
       <MenuHeader />
       <MenuBody colorMode={colorMode} toggleColorMode={toggleColorMode} />

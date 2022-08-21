@@ -249,9 +249,18 @@ function AvailableRescues() {
 
   return (
     <Box px={isMobile ? '4' : '8'} pt="8">
-      <Heading as="h4" color="element.primary" fontSize="lg" my="0">
-        Available Rescues
-      </Heading>
+      <Flex w="100%" justify="space-between" align="center">
+        <Heading as="h4" color="element.primary" fontSize="lg" my="0">
+          Available Rescues
+        </Heading>
+        {!isMobile && (
+          <Link to="/rescues">
+            <Button variant="tertiary" size="sm">
+              View All Rescues
+            </Button>
+          </Link>
+        )}
+      </Flex>
       {availableRescues ? (
         availableRescues.length ? (
           <ShowAvailableRescues />
