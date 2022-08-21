@@ -4,23 +4,25 @@ import {
   Flex,
   Heading,
   IconButton,
-  Input,
-  Link,
   Select,
   Skeleton,
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { MapLocation, AddressAutocomplete } from 'chakra_components'
+import {
+  MapLocation,
+  AddressAutocomplete,
+  FormField,
+  PageTitle,
+} from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Error } from 'components'
 import { DAYS } from 'helpers'
 import { useEffect, useState } from 'react'
 
 export function EditLocation({ setBreadcrumbs }) {
   const { organization_id, location_id } = useParams()
-  const navigate = useNavigate()
   const {
     data: organization,
     loading,
@@ -82,30 +84,77 @@ export function EditLocation({ setBreadcrumbs }) {
     return true
   }
 
-  async function handleSubmit() {
-    if (isFormDataValid()) {
-      try {
-        const new_location_id =
-          location_id || (await generateUniqueId('locations'))
-        await setFirestoreData(['locations', new_location_id], {
-          id: new_location_id,
-          organization_id,
-          ...formData,
-          hours: checkMonToFriday(),
-          contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
-          timestamp_created: location.timestamp_created || createTimestamp(),
-          timestamp_updated: createTimestamp(),
-        })
-        navigate(`/organizations/${organization_id}`)
-      } catch (e) {
-        console.error('Error writing document: ', e)
-      }
-    }
-  }
+  // async function handleSubmit() {
+  //   if (isFormDataValid()) {
+  //     try {
+  //       const new_location_id =
+  //         location_id || (await generateUniqueId('locations'))
+  //       await setFirestoreData(['locations', new_location_id], {
+  //         id: new_location_id,
+  //         organization_id,
+  //         ...formData,
+  //         hours: checkMonToFriday(),
+  //         contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
+  //         timestamp_created: location.timestamp_created || createTimestamp(),
+  //         timestamp_updated: createTimestamp(),
+  //       })
+  //       navigate(`/organizations/${organization_id}`)
+  //     } catch (e) {
+  //       console.error('Error writing document: ', e)
+  //     }
+  //   }
+  // }
 
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
+
+  const FIELDS = [
+    {
+      id: 'nickname',
+      title: 'Location Nickname',
+      isOptional: true,
+      isValid: true,
+    },
+    {
+      id: 'address2',
+      title: 'Apartment/Suite Number',
+      isOptional: true,
+      isValid: true,
+    },
+    {
+      id: 'contact_name',
+      title: 'Contact Name',
+      isValid: true,
+    },
+    {
+      id: 'contact_email',
+      title: 'Contact Email',
+      isValid: true,
+    },
+    {
+      id: 'contact_phone',
+      type: 'tel',
+      title: 'Phone Number',
+      isValid: formData?.contact_phone?.length > 9,
+    },
+    {
+      id: 'notes',
+      title: 'Notes/Instructions',
+      isValid: true,
+    },
+  ]
+
+  const isFormComplete = (() => {
+    let result = true
+    for (const field of FIELDS) {
+      if (!field.isValid) {
+        result = false
+        break
+      }
+    }
+    return result
+  })()
 
   if (loading && !formData) {
     return <LoadingEditLocation />
@@ -116,16 +165,7 @@ export function EditLocation({ setBreadcrumbs }) {
   } else
     return (
       <>
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          textTransform="capitalize"
-          color="element.primary"
-          mb={4}
-        >
-          Edit Location
-        </Heading>
+        <PageTitle>Edit Location</PageTitle>
         {formData.lat && formData.lng ? (
           <MapLocation lat={formData.lat} lng={formData.lng} />
         ) : null}
@@ -167,54 +207,17 @@ export function EditLocation({ setBreadcrumbs }) {
           </Box>
         )}
         <Flex align="start" direction="column" w="100%">
-          <Text fontWeight={400}>Location Nickname (optional)</Text>
-          <Input
-            id="nickname"
-            value={formData.nickname}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-
-          <Text fontWeight={400}>Apartment Number (optional)</Text>
-          <Input
-            id="address2"
-            value={formData.address2}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-
-          <Text fontWeight={400}>Contact Name</Text>
-          <Input
-            id="contact_name"
-            value={formData.contact_name}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-
-          <Text fontWeight={400}>Contact Email</Text>
-          <Input
-            id="contact_email"
-            value={formData.contact_email}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-
-          <Text fontWeight={400}>Phone Number</Text>
-          <Input
-            id="contact_phone"
-            value={formData.contact_phone}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-
-          <Text fontWeight={400}>Notes + Instructions</Text>
-          <Input
-            id="notes"
-            value={formData.notes}
-            onChange={e => handleChange(e)}
-            mb={4}
-          />
-
+          {FIELDS.map(i => (
+            <FormField
+              id={i.id}
+              key={i.id}
+              title={i.title}
+              isValid={i.isValid}
+              isOptional={i.isOptional}
+              formData={formData}
+              setFormData={setFormData}
+            />
+          ))}
           <Text fontWeight="700">Open Hours</Text>
           <Flex
             justify="space-between"
@@ -297,22 +300,12 @@ export function EditLocation({ setBreadcrumbs }) {
     )
 }
 
-function LoadingEditLocation({}) {
+function LoadingEditLocation() {
   const isMobile = useIsMobile()
   return (
     <>
       <Box px="4">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="6"
-          mt="4"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Loading Location...
-        </Heading>
+        <PageTitle>Loading Location...</PageTitle>
         <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
         <Text as="h2" fontWeight="700" size="lg" textTransform="capitalize">
           Locations

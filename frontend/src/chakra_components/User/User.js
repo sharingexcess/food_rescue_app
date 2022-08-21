@@ -12,12 +12,12 @@ import {
   Fade,
   Spinner,
 } from '@chakra-ui/react'
-import { RescueCard } from 'chakra_components'
+import { RescueCard, PageTitle } from 'chakra_components'
 import { useApi, useIsMobile, useAuth } from 'hooks'
 import { Error } from 'components'
 import { formatLargeNumber, SE_API } from 'helpers'
 import { useParams } from 'react-router-dom'
-import { useEffect, useInsertionEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
 import moment from 'moment'
 
@@ -192,17 +192,7 @@ function LoadingPerson() {
   return (
     <>
       <Box px="4">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="6"
-          mt="4"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Loading Person...
-        </Heading>
+        <PageTitle>Loading Person...</PageTitle>
         <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
         <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
           Recent Rescues

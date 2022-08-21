@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createTimestamp, SE_API, STATUSES } from 'helpers'
 import { Ellipsis, Input, Loading } from 'components'
@@ -9,7 +9,7 @@ export function DeliveryReport() {
   const { setModal } = useApp()
   const { delivery_id, rescue_id } = useParams()
   const navigate = useNavigate()
-  const { data: rescue, refresh } = useApi(`/rescues/${rescue_id}`)
+  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
   const { data: delivery } = useApi(`/stops/${delivery_id}`)
   const [formData, setFormData] = useState({
     percent_of_total_dropped: 100,

@@ -11,6 +11,7 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
+import { PageTitle } from 'chakra_components/PageTitle/PageTitle'
 import { useApi } from 'hooks'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -25,22 +26,11 @@ export function Users() {
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="24px"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        People
-      </Heading>
+      <PageTitle>People</PageTitle>
       <InputGroup mb="6">
-        <InputLeftElement
-          children={<SearchIcon />}
-          mr="2"
-          color="element.secondary"
-        />
+        <InputLeftElement mr="2" color="element.secondary">
+          <SearchIcon />
+        </InputLeftElement>
         <Input
           placeholder="Search by name..."
           value={searchValue}

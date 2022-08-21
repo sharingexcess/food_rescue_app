@@ -16,14 +16,14 @@ import {
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { formatTimestamp } from 'helpers'
 import { useEffect, useMemo, useState } from 'react'
-import { Autocomplete } from 'chakra_components'
+import { PageTitle, Autocomplete } from 'chakra_components'
 import { AddIcon, CalendarIcon } from '@chakra-ui/icons'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 
 export function Rescues({ setTitle }) {
   useEffect(() => setTitle('test'), [])
-  const { hasAdminPermission, user } = useAuth()
+  const { hasAdminPermission } = useAuth()
   const url_params = new URLSearchParams(window.location.search)
 
   const [handler, setHandler] = useState()
@@ -91,16 +91,7 @@ export function Rescues({ setTitle }) {
   return (
     <>
       <Flex justify="space-between" w="100%">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="24px"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Rescues
-        </Heading>
+        <PageTitle mb="6">Rescues</PageTitle>
         {hasAdminPermission && (
           <Link to="/create-rescue">
             <IconButton icon={<AddIcon />} borderRadius="3xl" />
@@ -126,10 +117,9 @@ export function Rescues({ setTitle }) {
           optionLabel={i => `${i.name} (${i.email})`}
         />
         <InputGroup flexGrow="1" flexBasis="128px">
-          <InputLeftElement
-            pointerEvents="none"
-            children={<CalendarIcon mr="2" color="element.tertiary" />}
-          />
+          <InputLeftElement pointerEvents="none">
+            <CalendarIcon mr="2" color="element.tertiary" />
+          </InputLeftElement>
           <Input
             type="date"
             value={date}
@@ -252,26 +242,5 @@ function StatusSelect({ status, setStatus }) {
       <option value="completed">Completed</option>
       <option value="cancelled">Cancelled</option>
     </Select>
-  )
-}
-
-function TabButton({ label }) {
-  return (
-    <Button variant="outline">
-      <Text fontSize="md" col>
-        {label}
-      </Text>
-    </Button>
-  )
-}
-
-function TabButtons() {
-  return (
-    <Flex justify="start">
-      <TabButton label={'Scheduled'} />
-      <TabButton label={'Active'} />
-      <TabButton label={'Completed'} />
-      <TabButton label={'Cancelled'} />
-    </Flex>
   )
 }

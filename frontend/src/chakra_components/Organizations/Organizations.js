@@ -12,6 +12,7 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
+import { PageTitle } from 'chakra_components/PageTitle/PageTitle'
 import { ORG_TYPE_ICONS } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { useState } from 'react'
@@ -31,16 +32,7 @@ export function Organizations() {
   return (
     <>
       <Flex justify="space-between">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="24px"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Organizations
-        </Heading>
+        <PageTitle>Organizations</PageTitle>
         {hasAdminPermission && (
           <Link to="/create-organization">
             <IconButton icon={<AddIcon />} borderRadius="3xl" />
@@ -48,11 +40,9 @@ export function Organizations() {
         )}
       </Flex>
       <InputGroup mb="6">
-        <InputLeftElement
-          children={<SearchIcon />}
-          mr="2"
-          color="element.secondary"
-        />
+        <InputLeftElement mr="2" color="element.secondary">
+          <SearchIcon />
+        </InputLeftElement>
         <Input
           placeholder="Search by name..."
           value={searchValue}

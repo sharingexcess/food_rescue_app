@@ -8,10 +8,9 @@ import {
   Input,
   Select,
   Skeleton,
-  SkeletonCircle,
   Text,
 } from '@chakra-ui/react'
-import { Page, Autocomplete } from 'chakra_components'
+import { PageTitle, Autocomplete } from 'chakra_components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { Reorder } from 'framer-motion'
@@ -140,16 +139,7 @@ export function EditRescue({ setBreadcrumbs }) {
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="24px"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Edit Rescue
-      </Heading>
+      <PageTitle>Edit Rescue</PageTitle>
       <InfoForm
         formData={formData}
         setFormData={setFormData}
@@ -512,21 +502,10 @@ function Stop({ stop }) {
   )
 }
 
-const LoadingEditRescue = memo(() => {
-  const { rescue_id } = useParams()
-
+const LoadingEditRescue = memo(function LoadingEditRescue() {
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="24px"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Loading Rescue...
-      </Heading>
+      <PageTitle>Loading Rescue...</PageTitle>
       <Skeleton h="16" my="6" />
       <Skeleton h="16" my="6" />
       <Skeleton h="16" my="6" />

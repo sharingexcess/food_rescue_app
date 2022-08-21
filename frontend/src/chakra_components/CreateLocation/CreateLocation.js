@@ -8,8 +8,13 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { MapLocation, AddressAutocomplete, FormField } from 'chakra_components'
-import { useApi, useAuth, useIsMobile } from 'hooks'
+import {
+  MapLocation,
+  AddressAutocomplete,
+  FormField,
+  PageTitle,
+} from 'chakra_components'
+import { useApi, useAuth } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   DAYS,
@@ -20,14 +25,14 @@ import {
   TIMES,
 } from 'helpers'
 import { useEffect, useState } from 'react'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
 
 export function CreateLocation({ setBreadcrumbs }) {
-  const { organization_id } = useParams()
-  const navigate = useNavigate()
-  const { data: organization } = useApi(`/organization/${organization_id}`)
-  const isMobile = useIsMobile()
-  const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
+  const navigate = useNavigate()
+  const { organization_id } = useParams()
+  const [isLoading, setIsLoading] = useState(false)
+  const { data: organization } = useApi(`/organization/${organization_id}`)
 
   const [formData, setFormData] = useState({
     address1: '',
@@ -51,53 +56,6 @@ export function CreateLocation({ setBreadcrumbs }) {
         },
       ])
   }, [organization])
-
-  const FIELDS = [
-    {
-      id: 'nickname',
-      title: 'Location Nickname',
-      isOptional: true,
-      isValid: true,
-    },
-    {
-      id: 'address2',
-      title: 'Apartment/Suite Number',
-      isOptional: true,
-      isValid: true,
-    },
-    {
-      id: 'contact_name',
-      title: 'Contact Name',
-      isValid: true,
-    },
-    {
-      id: 'contact_email',
-      title: 'Contact Email',
-      isValid: true,
-    },
-    {
-      id: 'contact_phone',
-      type: 'tel',
-      title: 'Phone Number',
-      isValid: formData.contact_phone.length > 9,
-    },
-    {
-      id: 'notes',
-      title: 'Notes/Instructions',
-      isValid: true,
-    },
-  ]
-
-  const isFormComplete = (() => {
-    let result = true
-    for (const field of FIELDS) {
-      if (!field.isValid) {
-        result = false
-        break
-      }
-    }
-    return result
-  })()
 
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
@@ -180,186 +138,243 @@ export function CreateLocation({ setBreadcrumbs }) {
     }
   }
 
-  function Hours({ dayOfWeek, openTime, closeTime }) {
-    return (
-      <Flex
-        justify="space-between"
-        flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
-        gap="1"
-        mb="8"
-        w="100%"
-      >
-        <Select
-          id="day_of_week"
-          onChange={e =>
-            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-          }
-          value={dayOfWeek}
-          flexGrow="0.2"
-          flexBasis={['30%', '30%', '180px', '180px', '180px']}
-          fontSize="12px"
-          color="element.secondary"
-        >
-          <option value={0}>Day Of Week</option>
-          {DAYS.map((day, i) => (
-            <option key={i} value={i}>
-              {day}
-            </option>
-          ))}
-        </Select>
+  const FIELDS = [
+    {
+      id: 'nickname',
+      title: 'Location Nickname',
+      isOptional: true,
+      isValid: true,
+    },
+    {
+      id: 'address2',
+      title: 'Apartment/Suite Number',
+      isOptional: true,
+      isValid: true,
+    },
+    {
+      id: 'contact_name',
+      title: 'Contact Name',
+      isValid: true,
+    },
+    {
+      id: 'contact_email',
+      title: 'Contact Email',
+      isValid: true,
+    },
+    {
+      id: 'contact_phone',
+      type: 'tel',
+      title: 'Phone Number',
+      isValid: formData.contact_phone.length > 9,
+    },
+    {
+      id: 'notes',
+      title: 'Notes/Instructions',
+      isValid: true,
+    },
+  ]
 
-        <Select
-          id="time_open"
-          onChange={e =>
-            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-          }
-          value={openTime}
-          flexGrow="0.2"
-          flexBasis={['30%', '30%', '180px', '180px', '180px']}
-          fontSize="12px"
-          color="element.secondary"
-        >
-          <option value="">Open Time</option>
-          {TIMES.map((time, i) => (
-            <option key={i} value={time}>
-              {time}
-            </option>
-          ))}
-        </Select>
-
-        <Select
-          id="time_close"
-          onChange={e =>
-            handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)
-          }
-          value={closeTime}
-          flexGrow="0.2"
-          flexBasis={['30%', '30%', '180px', '180px', '180px']}
-          fontSize="12px"
-          color="element.secondary"
-        >
-          <option value="">Close Time</option>
-          {TIMES.map((time, i) => (
-            <option key={i} value={time}>
-              {time}
-            </option>
-          ))}
-        </Select>
-        <IconButton
-          icon={<CloseIcon color="element.error" />}
-          onClick={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
-          variant="tertiary"
-          ml="auto"
-        />
-      </Flex>
-    )
-  }
+  const isFormComplete = (() => {
+    let result = true
+    for (const field of FIELDS) {
+      if (!field.isValid) {
+        result = false
+        break
+      }
+    }
+    return result
+  })()
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Create Location
-      </Heading>
+      <PageTitle>Create Location</PageTitle>
       {formData.address1 ? (
         <>
-          <Box h="8" />
-          <MapLocation lat={formData.lat} lng={formData.lng} />
-          <Flex align="start" direction="column" w="100%">
-            <Flex justify="start" gap="4" align="start" py="8" w="100%">
-              <Box>
-                <Heading size="lg" fontWeight="600">
-                  {formData.address1}
-                </Heading>
-                <Heading size="md" color="element.secondary" fontWeight="300">
-                  {formData.city}, {formData.state} {formData.zip}
-                </Heading>
-              </Box>
-              <IconButton
-                icon={<CloseIcon color="element.tertiary" />}
-                onClick={() => setFormData({ ...formData, address1: '' })}
-                variant="tertiary"
-                ml="auto"
-              />
-            </Flex>
-
-            {FIELDS.map(i => (
-              <FormField
-                id={i.id}
-                key={i.id}
-                title={i.title}
-                isValid={i.isValid}
-                isOptional={i.isOptional}
-                formData={formData}
-                setFormData={setFormData}
-              />
-            ))}
-
-            <Text fontWeight={700}>Open Hours</Text>
-            {formData.hours.map((hour, index) => {
-              return (
-                <Hours
-                  dayOfWeek={hour.day_of_week}
-                  openTime={hour.time_open}
-                  closeTime={hour.time_close}
-                  key={index}
-                />
-              )
-            })}
-
-            <Button
-              alignSelf="center"
-              variant="secondary"
-              mt={8}
-              onClick={() => {
-                setFormData({
-                  ...formData,
-                  hours: [
-                    ...formData.hours,
-                    {
-                      day_of_week: null,
-                      time_open: null,
-                      time_close: null,
-                    },
-                  ],
-                })
-              }}
-            >
-              Add Hours
-            </Button>
-
-            <Button
-              size="lg"
-              position={isMobile ? 'fixed' : 'relative'}
-              w={isMobile ? 'calc(100% - 32px)' : null}
-              bottom={isMobile ? '4' : null}
-              left={isMobile ? '4' : null}
-              loadingText="Saving Location..."
-              zIndex="8"
-              mt="4"
-              onClick={handleSubmit}
-              isLoading={isLoading}
-              disabled={!isFormComplete}
-            >
-              Save New Location
-            </Button>
-          </Flex>
-          <Box h="24" />
+          <SetDetails
+            formData={formData}
+            setFormData={setFormData}
+            isLoading={isLoading}
+            handleSubmit={handleSubmit}
+            FIELDS={FIELDS}
+          />
+          <SetHours
+            formData={formData}
+            setFormData={setFormData}
+            handleChangeTimeSlot={handleChangeTimeSlot}
+          />
+          <FooterButton
+            loadingText="Saving Location..."
+            onClick={handleSubmit}
+            isLoading={isLoading}
+            disabled={!isFormComplete}
+          >
+            Save New Location
+          </FooterButton>
         </>
       ) : (
-        <>
-          <Text color="element.secondary" my="4" fontSize="sm">
-            Select an address below using the Google Maps Autocomplete to being
-            creating a new location.
-          </Text>
-          <AddressAutocomplete handleSelect={handleReceiveAddress} />
-        </>
+        <SetAddress handleReceiveAddress={handleReceiveAddress} />
       )}
+    </>
+  )
+}
+
+function SetAddress({ handleReceiveAddress }) {
+  return (
+    <>
+      <Text color="element.secondary" my="4" fontSize="sm">
+        Select an address below using the Google Maps Autocomplete to being
+        creating a new location.
+      </Text>
+      <AddressAutocomplete handleSelect={handleReceiveAddress} />
+    </>
+  )
+}
+
+function SetDetails({ formData, setFormData, FIELDS }) {
+  return (
+    <>
+      <Box h="8" />
+      <MapLocation lat={formData.lat} lng={formData.lng} />
+      <Flex align="start" direction="column" w="100%">
+        <Flex justify="start" gap="4" align="start" py="8" w="100%">
+          <Box>
+            <Heading size="lg" fontWeight="600">
+              {formData.address1}
+            </Heading>
+            <Heading size="md" color="element.secondary" fontWeight="300">
+              {formData.city}, {formData.state} {formData.zip}
+            </Heading>
+          </Box>
+          <IconButton
+            icon={<CloseIcon color="element.tertiary" />}
+            onClick={() => setFormData({ ...formData, address1: '' })}
+            variant="tertiary"
+            ml="auto"
+          />
+        </Flex>
+
+        {FIELDS.map(i => (
+          <FormField
+            id={i.id}
+            key={i.id}
+            title={i.title}
+            isValid={i.isValid}
+            isOptional={i.isOptional}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        ))}
+      </Flex>
+      <Box h="24" />
+    </>
+  )
+}
+
+function Hours({ dayOfWeek, openTime, closeTime, handleChangeTimeSlot }) {
+  return (
+    <Flex
+      justify="space-between"
+      flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
+      gap="1"
+      mb="8"
+      w="100%"
+    >
+      <Select
+        id="day_of_week"
+        onChange={e => handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)}
+        value={dayOfWeek}
+        flexGrow="0.2"
+        flexBasis={['30%', '30%', '180px', '180px', '180px']}
+        fontSize="12px"
+        color="element.secondary"
+      >
+        <option value={0}>Day Of Week</option>
+        {DAYS.map((day, i) => (
+          <option key={i} value={i}>
+            {day}
+          </option>
+        ))}
+      </Select>
+
+      <Select
+        id="time_open"
+        onChange={e => handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)}
+        value={openTime}
+        flexGrow="0.2"
+        flexBasis={['30%', '30%', '180px', '180px', '180px']}
+        fontSize="12px"
+        color="element.secondary"
+      >
+        <option value="">Open Time</option>
+        {TIMES.map((time, i) => (
+          <option key={i} value={time}>
+            {time}
+          </option>
+        ))}
+      </Select>
+
+      <Select
+        id="time_close"
+        onChange={e => handleChangeTimeSlot(dayOfWeek, openTime, closeTime, e)}
+        value={closeTime}
+        flexGrow="0.2"
+        flexBasis={['30%', '30%', '180px', '180px', '180px']}
+        fontSize="12px"
+        color="element.secondary"
+      >
+        <option value="">Close Time</option>
+        {TIMES.map((time, i) => (
+          <option key={i} value={time}>
+            {time}
+          </option>
+        ))}
+      </Select>
+      <IconButton
+        icon={<CloseIcon color="element.error" />}
+        onClick={() => handleChangeTimeSlot(dayOfWeek, openTime, closeTime)}
+        variant="tertiary"
+        ml="auto"
+      />
+    </Flex>
+  )
+}
+
+function SetHours({ formData, setFormData, handleChangeTimeSlot }) {
+  return (
+    <>
+      <Text fontWeight={700}>Open Hours</Text>
+      {formData.hours.map((hour, index) => {
+        return (
+          <Hours
+            dayOfWeek={hour.day_of_week}
+            openTime={hour.time_open}
+            closeTime={hour.time_close}
+            key={index}
+            handleChangeTimeSlot={handleChangeTimeSlot}
+          />
+        )
+      })}
+
+      <Button
+        alignSelf="center"
+        variant="secondary"
+        mt={8}
+        onClick={() => {
+          setFormData({
+            ...formData,
+            hours: [
+              ...formData.hours,
+              {
+                day_of_week: null,
+                time_open: null,
+                time_close: null,
+              },
+            ],
+          })
+        }}
+      >
+        Add Hours
+      </Button>
     </>
   )
 }

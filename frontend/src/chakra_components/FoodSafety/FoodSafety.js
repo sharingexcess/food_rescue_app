@@ -12,11 +12,10 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Box,
 } from '@chakra-ui/react'
-import { Page } from 'chakra_components'
 import { CheckCircleIcon } from '@chakra-ui/icons'
 import { useAuth } from 'hooks'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
 
 export function FoodSafety({ handleNext }) {
   const { hasPermission } = useAuth()
@@ -410,13 +409,13 @@ export function FoodSafety({ handleNext }) {
 
       {!hasPermission && (
         <Flex w="100%" justify="center" mt="8" mb="8">
-          <Button
+          <FooterButton
             disabled={!allSectionsOpened()}
             leftIcon={<CheckCircleIcon mx="2" />}
             onClick={handleNext}
           >
             Next
-          </Button>
+          </FooterButton>
         </Flex>
       )}
     </>

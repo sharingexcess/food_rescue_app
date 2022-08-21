@@ -1,9 +1,9 @@
-import { Box, Flex, Heading, Skeleton, SkeletonCircle } from '@chakra-ui/react'
+import { Box, Flex, Skeleton, SkeletonCircle } from '@chakra-ui/react'
 import { useApi, useIsMobile } from 'hooks'
 import { useParams } from 'react-router-dom'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Error } from 'components'
-import { Page, Pickup, Delivery, Directions } from 'chakra_components'
+import { PageTitle, Pickup, Delivery, Directions } from 'chakra_components'
 import { getActiveStop } from './Rescue.utils'
 import { RescueHeader, RescueStops } from './Rescue.children'
 
@@ -66,15 +66,7 @@ export function Rescue({ setBreadcrumbs }) {
           zIndex="2"
           position="relative"
         >
-          <Heading
-            as="h1"
-            fontWeight="700"
-            size="2xl"
-            textTransform="capitalize"
-            color="element.primary"
-          >
-            {rescue.status} Rescue
-          </Heading>
+          <PageTitle>{rescue.status} Rescue</PageTitle>
           <Flex direction="column" w="100%">
             <RescueHeader />
             <RescueStops />
@@ -88,22 +80,12 @@ export function Rescue({ setBreadcrumbs }) {
 
 // Alternate States for Loading/Error
 
-function LoadingRescue({}) {
+function LoadingRescue() {
   const isMobile = useIsMobile()
   return (
     <Box px="4">
       <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="6"
-        mt="4"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Loading Rescue...
-      </Heading>
+      <PageTitle>Loading Rescue...</PageTitle>
       <SkeletonCircle w="100%" h="16" my="4" />
       <SkeletonCircle w="100%" h="12" my="4" />
       <Skeleton h="32" my="4" />

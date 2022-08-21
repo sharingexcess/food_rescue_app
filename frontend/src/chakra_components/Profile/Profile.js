@@ -15,7 +15,8 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { FormField, Liability } from 'chakra_components'
+import { FormField, Liability, PageTitle } from 'chakra_components'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
 import { SE_API } from 'helpers'
 import { useAuth, useIsMobile } from 'hooks'
 import { useState } from 'react'
@@ -27,16 +28,7 @@ export function Profile({ onSubmitCallback }) {
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="8"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Your Profile
-      </Heading>
+      <PageTitle>Your Profile</PageTitle>
       <ProfileHeader tab={tab} setTab={setTab} />
       {tab === 'public' ? (
         <PublicProfile onSubmitCallback={onSubmitCallback} />
@@ -98,7 +90,6 @@ function ProfileHeader({ tab, setTab }) {
 
 function PublicProfile({ onSubmitCallback }) {
   const { user } = useAuth()
-  const isMobile = useIsMobile()
   const [isLoading, setIsLoading] = useState()
   const toast = useToast()
 
@@ -178,28 +169,21 @@ function PublicProfile({ onSubmitCallback }) {
 
       <Box h="8" />
 
-      <Button
-        size="lg"
-        position={isMobile ? 'fixed' : 'relative'}
-        w={isMobile ? 'calc(100% - 32px)' : null}
-        bottom={isMobile ? '4' : null}
-        left={isMobile ? '4' : null}
+      <FooterButton
         onClick={handleSubmit}
         isLoading={isLoading}
         loadingText="Updating public profile..."
         leftIcon={<ViewIcon />}
         disabled={!isFormComplete}
-        zIndex="8"
       >
         Update Public Profile
-      </Button>
+      </FooterButton>
     </Box>
   )
 }
 
 function PrivateProfile({ onSubmitCallback }) {
   const { user } = useAuth()
-  const isMobile = useIsMobile()
   const [isLoading, setIsLoading] = useState()
   const [hidden, setHidden] = useState(true)
   const [showLiability, setShowLiability] = useState(false)
@@ -358,21 +342,15 @@ function PrivateProfile({ onSubmitCallback }) {
 
       <Box h="8" />
 
-      <Button
-        size="lg"
-        position={isMobile ? 'fixed' : 'relative'}
-        w={isMobile ? 'calc(100% - 32px)' : null}
-        bottom={isMobile ? '4' : null}
-        left={isMobile ? '4' : null}
+      <FooterButton
         onClick={handleSubmit}
         isLoading={isLoading}
         loadingText="Updating private profile..."
         leftIcon={<ViewOffIcon />}
         disabled={!isFormComplete}
-        zIndex="8"
       >
         Update Private Profile
-      </Button>
+      </FooterButton>
     </Box>
   )
 }

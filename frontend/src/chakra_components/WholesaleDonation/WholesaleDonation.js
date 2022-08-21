@@ -9,6 +9,8 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
+import { PageTitle } from 'chakra_components/PageTitle/PageTitle'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
@@ -36,16 +38,7 @@ export function WholesaleDonation({ setBreadcrumbs }) {
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        textTransform="capitalize"
-        color="element.primary"
-        mb="8"
-      >
-        Donation
-      </Heading>
+      <PageTitle>Donation</PageTitle>
       <Flex my="6" direction="column">
         <Flex justify="space-between" align="center">
           <Heading as="h2" size="md" fontWeight="600" color="element.primary">
@@ -71,16 +64,7 @@ export function WholesaleDonation({ setBreadcrumbs }) {
           <Button variant="secondary" mt="8" w={isMobile ? '100%' : 'auto'}>
             Add Recipient ({remainingWeight} lbs. remaining)
           </Button>
-          <Button
-            size="lg"
-            w={isMobile ? 'calc(100% - 32px)' : 'auto'}
-            position={isMobile ? 'fixed' : 'relative'}
-            mt="4"
-            left={isMobile ? '4' : 'unset'}
-            bottom={isMobile ? '4' : 'unset'}
-          >
-            Update Donation
-          </Button>
+          <FooterButton>Update Donation</FooterButton>
         </Flex>
       )}
     </>
@@ -122,20 +106,9 @@ function Recipient({ recipient }) {
 }
 
 function LoadingDonation() {
-  const { id } = useParams()
-
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        textTransform="capitalize"
-        color="element.primary"
-        mb="8"
-      >
-        Loading Donation...
-      </Heading>
+      <PageTitle>Loading Donation...</PageTitle>
       <Skeleton w="100%" h="32" my="4" />
       <Skeleton w="100%" h="32" my="4" />
       <Skeleton w="100%" h="32" my="4" />

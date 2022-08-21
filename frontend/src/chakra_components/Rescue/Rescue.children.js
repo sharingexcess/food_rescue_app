@@ -130,7 +130,7 @@ export function RescueHeader() {
 
   return (
     <>
-      <Flex pt="8" py="8" align="center">
+      <Flex pt="2" pb="8" align="center">
         <Avatar src={rescue?.handler?.icon} name={rescue?.handler?.name} />
         <Box w="4" />
         <Flex direction="column">
@@ -364,12 +364,13 @@ function InactiveStop({ stop }) {
 }
 
 export function MapButton({ location, link }) {
-  const { address1, address2, city, state, zip } = location
+  const { address1, city, state, zip } = location
 
   return (
     <a
       href={generateDirectionsLink(address1, city, state, zip)}
       target="_blank"
+      rel="noopener noreferrer"
     >
       {link}
     </a>

@@ -13,14 +13,21 @@
     "no-var": "warn",
     "prefer-const": "warn",
     "no-duplicate-imports": "error",
-    "react/prop-types": 0
+    "no-unused-vars": "warn",
+    "react/prop-types": 0,
+    "react/no-unescaped-entities": 0
   },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:prettier/recommended",
-    "prettier"
+    "prettier",
+    "plugin:react/jsx-runtime"
   ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "parserOptions": {
     "requireConfigFile": false,
     "babelOptions": {

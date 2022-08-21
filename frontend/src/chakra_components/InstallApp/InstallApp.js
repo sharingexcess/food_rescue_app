@@ -2,21 +2,17 @@ import { CheckCircleIcon } from '@chakra-ui/icons'
 import {
   Button,
   Flex,
-  Box,
   Text,
-  Heading,
   OrderedList,
   ListItem,
   Image,
 } from '@chakra-ui/react'
-import { Page } from 'chakra_components'
-import { useIsMobile } from 'hooks'
+import { PageTitle } from 'chakra_components'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
 import { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Navigate } from 'react-router'
 
 export function InstallApp({ handleNext }) {
-  const isMobile = useIsMobile()
   const [os, setOS] = useState(getMobileOperatingSystem())
 
   function getMobileOperatingSystem() {
@@ -30,18 +26,12 @@ export function InstallApp({ handleNext }) {
   }
 
   return (
-    <Page id="Install" title="Install the App">
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="4"
-        color="element.primary"
-      >
+    <>
+      <PageTitle>
         Installing the
         <br />
         Food Rescue App
-      </Heading>
+      </PageTitle>
       <Text mb="8">
         The Food Rescue App works best when it's installed on your mobile
         device, so you can be sure to have easy access on the road. Follow the
@@ -107,10 +97,10 @@ export function InstallApp({ handleNext }) {
         You're all set! Can't wait to have you on board 💚
       </Text>
       <Flex w="100%" justify="center" mt="4" mb="8">
-        <Button leftIcon={<CheckCircleIcon />} onClick={handleNext}>
+        <FooterButton leftIcon={<CheckCircleIcon />} onClick={handleNext}>
           Next
-        </Button>
+        </FooterButton>
       </Flex>
-    </Page>
+    </>
   )
 }

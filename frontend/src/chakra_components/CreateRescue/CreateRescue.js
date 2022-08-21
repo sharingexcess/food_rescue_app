@@ -9,7 +9,7 @@ import {
   Select,
   Text,
 } from '@chakra-ui/react'
-import { Page, Autocomplete } from 'chakra_components'
+import { PageTitle, Autocomplete } from 'chakra_components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
 import { getDefaultEndTime, getDefaultStartTime } from './CreateRescue.utils'
@@ -125,16 +125,7 @@ export function CreateRescue() {
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        mb="24px"
-        textTransform="capitalize"
-        color="element.primary"
-      >
-        Create Rescue
-      </Heading>
+      <PageTitle>Create Rescue</PageTitle>
       <InfoForm
         formData={formData}
         setFormData={setFormData}

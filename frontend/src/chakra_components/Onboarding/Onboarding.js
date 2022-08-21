@@ -1,20 +1,12 @@
-import {
-  background,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Image,
-  Text,
-} from '@chakra-ui/react'
-import { InstallApp, Page, FoodSafety, Profile } from 'chakra_components'
+import { Box, Button, Flex, Heading, Image, Text } from '@chakra-ui/react'
+import { InstallApp, FoodSafety, Profile, PageTitle } from 'chakra_components'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
 import { useEffect, useState } from 'react'
 
 export function Onboarding() {
-  // const cached_stage = sessionStorage.getItem('se_onboarding_stage')
-  const cached_stage = 1
+  const cached_stage = parseInt(sessionStorage.getItem('se_onboarding_stage'))
   const [stage, setStage] = useState(cached_stage || 0)
-  const [showProgress, setShowProgress] = useState(false)
+  const [showProgress, setShowProgress] = useState(true)
 
   useEffect(() => {
     sessionStorage.setItem('se_onboarding_stage', stage)
@@ -47,16 +39,8 @@ export function Onboarding() {
       },
     ]
     return (
-      <Page title="Getting Started" id="Onboarding">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Getting Started
-        </Heading>
+      <>
+        <PageTitle>Getting Started</PageTitle>
         <Image
           src={content[stage].image}
           alt="Getting Started"
@@ -79,7 +63,7 @@ export function Onboarding() {
           {content[stage].body}
         </Text>
         <Flex w="100%" justify="center" onClick={() => setShowProgress(false)}>
-          <Button>{content[stage].button}</Button>
+          <FooterButton>{content[stage].button}</FooterButton>
         </Flex>
         <Flex w="100%" justify="center" gap="4" mt="10">
           {[0, 1, 2].map(i => (
@@ -93,7 +77,7 @@ export function Onboarding() {
             />
           ))}
         </Flex>
-      </Page>
+      </>
     )
   }
 

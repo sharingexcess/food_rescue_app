@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
 import Logo from 'assets/logo.svg'
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { getCollection } from 'helpers'
 import { getAuthenticatedUser } from './utils'
 import { Landing } from 'components'
-import { Onboarding } from 'chakra_components'
+import { Onboarding, Page } from 'chakra_components'
 import { Loading } from 'chakra_components/Loading/Loading'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
@@ -22,7 +22,7 @@ function Auth({ children }) {
   // user defines the current auth state,
   // loading defines whether a request is currently running
   // error defines whether we received a bad response from firebase
-  const [user, loading, error] = useAuthState(firebase.auth())
+  const [user, error] = useAuthState(firebase.auth())
   // profile looks up the user in the firestore db
   // to get additional permissions and profile data
   const [publicProfile, setPublicProfile] = useState(null)
@@ -59,7 +59,7 @@ function Auth({ children }) {
   }
 
   async function handleLogin() {
-    const user = await getAuthenticatedUser()
+    await getAuthenticatedUser()
     navigate('/')
   }
 
@@ -113,7 +113,11 @@ function Auth({ children }) {
     // with access to the user object.
     return (
       <AuthWrapper>
-        <Onboarding />
+        <Page
+          defaultTitle="Onboarding"
+          id="Onboarding"
+          Content={Onboarding}
+        ></Page>
       </AuthWrapper>
     )
   } else if (user && publicProfile) {

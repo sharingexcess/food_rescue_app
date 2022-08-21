@@ -1,4 +1,4 @@
-import { CalendarIcon, ChevronRightIcon, CloseIcon } from '@chakra-ui/icons'
+import { CalendarIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -13,9 +13,10 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
-import { Page, CardOverlay, Autocomplete } from 'chakra_components'
+import { PageTitle, CardOverlay, Autocomplete } from 'chakra_components'
+import { FooterButton } from 'chakra_components/FooterButton/FooterButton'
 import { formatTimestamp, STATUSES } from 'helpers'
-import { useApi, useAuth, useIsMobile } from 'hooks'
+import { useApi, useAuth } from 'hooks'
 import { Fragment, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -27,7 +28,6 @@ export function Wholesale() {
     '/rescues',
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
   )
-  const isMobile = useIsMobile()
 
   function handleChangeDate(event) {
     const dateValue = event.target.value
@@ -38,16 +38,7 @@ export function Wholesale() {
 
   return (
     <>
-      <Heading
-        as="h1"
-        fontWeight="700"
-        size="2xl"
-        textTransform="capitalize"
-        color="element.primary"
-        mb="8"
-      >
-        Wholesale
-      </Heading>
+      <PageTitle>Wholesale</PageTitle>
       <Flex w="100%" justify="space-between" align="center" mb="4">
         <Heading size="md" flexBasis="50%">
           {formatTimestamp(date, 'dddd, MMM. DD')}
@@ -60,10 +51,9 @@ export function Wholesale() {
             fontSize="sm"
             color="element.secondary"
           />
-          <InputRightElement
-            pointerEvents="none"
-            children={<CalendarIcon mr="2" color="element.tertiary" />}
-          />
+          <InputRightElement pointerEvents="none">
+            <CalendarIcon mr="2" color="element.tertiary" />
+          </InputRightElement>
         </InputGroup>
       </Flex>
       {rescues ? (
@@ -83,17 +73,9 @@ export function Wholesale() {
       )}
 
       {hasAdminPermission && (
-        <Button
-          size="lg"
-          w={isMobile ? 'calc(100% - 32px)' : 'auto'}
-          position={isMobile ? 'fixed' : 'relative'}
-          mt="4"
-          left={isMobile ? '4' : 'unset'}
-          bottom={isMobile ? '4' : 'unset'}
-          onClick={() => setAddDonation(true)}
-        >
+        <FooterButton onClick={() => setAddDonation(true)}>
           Add Donation
-        </Button>
+        </FooterButton>
       )}
       <AddDonation
         isOpen={addDonation}

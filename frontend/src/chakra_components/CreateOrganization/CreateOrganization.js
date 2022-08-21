@@ -1,4 +1,5 @@
-import { Button, Flex, Heading, Input, Select, Text } from '@chakra-ui/react'
+import { Button, Flex, Input, Select, Text } from '@chakra-ui/react'
+import { PageTitle } from 'chakra_components/PageTitle/PageTitle'
 import { createTimestamp, generateUniqueId, SE_API } from 'helpers'
 import { useAuth } from 'hooks'
 import { useState } from 'react'
@@ -40,16 +41,7 @@ export function CreateOrganization() {
   return (
     <>
       <Flex direction="column" h="100%">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="24px"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Create Organization
-        </Heading>
+        <PageTitle>Create Organization</PageTitle>
 
         <Text color="element.primary" fontWeight="400">
           Organization Name

@@ -10,11 +10,11 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { Menu } from '../'
+import { Menu } from 'chakra_components'
 import { useIsMobile, useAuth, useScroll } from 'hooks'
 import { Helmet } from 'react-helmet'
 import PullToRefresh from 'react-simple-pull-to-refresh'
-import { useEffect, useState, cloneElement } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EnvWarning } from 'components'
 

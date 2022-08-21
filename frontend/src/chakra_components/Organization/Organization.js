@@ -1,7 +1,6 @@
 import {
   Box,
   Heading,
-  Link as Clink,
   Flex,
   Skeleton,
   Text,
@@ -10,14 +9,13 @@ import {
   Input,
   useToast,
   Select,
-  HStack,
   Tag,
   TagLabel,
   TagCloseButton,
   TagLeftIcon,
   TagRightIcon,
 } from '@chakra-ui/react'
-import { useApi, useAuth, useIsMobile } from 'hooks'
+import { useApi, useAuth } from 'hooks'
 import { Link, useParams } from 'react-router-dom'
 import { Error } from 'components'
 import {
@@ -36,6 +34,7 @@ import {
   CloseIcon,
   EditIcon,
 } from '@chakra-ui/icons'
+import { PageTitle } from 'chakra_components/PageTitle/PageTitle'
 
 export function Organization({ setBreadcrumbs }) {
   const { organization_id } = useParams()
@@ -195,14 +194,7 @@ export function Organization({ setBreadcrumbs }) {
           ) : (
             <>
               <Box>
-                <Heading
-                  as="h1"
-                  fontWeight="700"
-                  size="2xl"
-                  color="element.primary"
-                >
-                  {organization.name}
-                </Heading>
+                <PageTitle>{organization.name}</PageTitle>
                 <Text
                   textTransform="capitalize"
                   color="element.secondary"
@@ -339,22 +331,11 @@ export function Organization({ setBreadcrumbs }) {
     )
 }
 
-function LoadingOrganization({}) {
-  const isMobile = useIsMobile()
+function LoadingOrganization() {
   return (
     <>
       <Box px="4">
-        <Heading
-          as="h1"
-          fontWeight="700"
-          size="2xl"
-          mb="6"
-          mt="4"
-          textTransform="capitalize"
-          color="element.primary"
-        >
-          Loading...
-        </Heading>
+        <PageTitle>Loading...</PageTitle>
         <Skeleton h="32" my="4" />
         <Skeleton h="32" my="4" />
         <Skeleton h="32" my="4" />
