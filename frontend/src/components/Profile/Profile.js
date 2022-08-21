@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth, useFirestore } from 'hooks'
+import { useAuth } from 'hooks'
 import { Input, Loading } from 'components'
 import { Button, Image, Spacer, Text } from '@sharingexcess/designsystem'
 import {

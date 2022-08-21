@@ -1,5 +1,6 @@
 {
   "name": "rescue-backend",
+  "license": "MIT",
   "scripts": {
     "start": "firebase emulators:start --only functions",
     "lint": "eslint .",
@@ -18,8 +19,13 @@
     "moment-timezone": "^0.5.34"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.17.0",
-    "eslint": "^7.28.0",
+    "@babel/core": "^7.18.10",
+    "@babel/eslint-parser": "^7.18.9",
+    "@babel/node": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.22.0",
+    "eslint-config-recommended": "^4.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "firebase-functions-test": "^0.2.3"

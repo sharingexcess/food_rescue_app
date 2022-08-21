@@ -12,13 +12,10 @@ import {
   Checkbox,
   Flex,
   Heading,
-  Input,
-  InputGroup,
-  InputRightElement,
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { Page, Liability } from 'chakra_components'
+import { FormField, Liability } from 'chakra_components'
 import { SE_API } from 'helpers'
 import { useAuth, useIsMobile } from 'hooks'
 import { useState } from 'react'
@@ -27,7 +24,6 @@ export function Profile({ onSubmitCallback }) {
   const search_params = new URLSearchParams(window.location.search)
   const cached_tab = search_params.get('tab')
   const [tab, setTab] = useState(cached_tab || 'public')
-  const { user } = useAuth()
 
   return (
     <>
@@ -378,42 +374,5 @@ function PrivateProfile({ onSubmitCallback }) {
         Update Private Profile
       </Button>
     </Box>
-  )
-}
-
-function FormField({ formData, setFormData, title, id, isValid, isOptional }) {
-  return (
-    <>
-      <Text fontWeight="600">
-        {title}
-        {isOptional && (
-          <Text
-            as="span"
-            verticalAlign="5%"
-            fontWeight="300"
-            fontSize="xs"
-            pb="1"
-            ml="2"
-            color="element.secondary"
-          >
-            (optional)
-          </Text>
-        )}
-      </Text>
-      <InputGroup>
-        <Input
-          type="text"
-          value={formData[id]}
-          onChange={e => setFormData({ ...formData, [id]: e.target.value })}
-          isInvalid={!isValid}
-          mb="8"
-        />
-        {isValid && formData[id].length && (
-          <InputRightElement
-            children={<CheckIcon color="se.brand.primary" />}
-          />
-        )}
-      </InputGroup>
-    </>
   )
 }

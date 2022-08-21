@@ -48,18 +48,18 @@ export const MapLocation = compose(
   }),
   withScriptjs,
   withGoogleMap
-)(props => {
+)(({ lat, lng }) => {
   const { colorMode } = useColorMode()
   return (
     <GoogleMap
       defaultZoom={12}
-      defaultCenter={{ lat: props.lat, lng: props.lng }}
+      defaultCenter={{ lat, lng }}
       defaultOptions={{
         styles: colorMode === 'dark' ? darkMode : lightMode,
         disableDefaultUI: true,
       }}
     >
-      <Marker position={{ lat: props.lat, lng: props.lng }} />
+      <Marker position={{ lat, lng }} />
     </GoogleMap>
   )
 })

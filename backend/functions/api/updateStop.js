@@ -1,14 +1,9 @@
-const {
-  db,
-  formatDocumentTimestamps,
-  recalculateRescue,
-} = require('../../helpers')
+const { db, recalculateRescue } = require('../../helpers')
 
 async function updateStopEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
       console.log('running updateStop')
-
       const { id } = request.params
       console.log('Received id:', id)
 

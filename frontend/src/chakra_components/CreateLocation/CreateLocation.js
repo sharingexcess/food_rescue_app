@@ -4,12 +4,11 @@ import {
   Flex,
   Heading,
   IconButton,
-  Input,
   Select,
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { MapLocation, AddressAutocomplete } from 'chakra_components'
+import { MapLocation, AddressAutocomplete, FormField } from 'chakra_components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
@@ -53,47 +52,79 @@ export function CreateLocation({ setBreadcrumbs }) {
       ])
   }, [organization])
 
-  function handleChange(e) {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-  }
+  const FIELDS = [
+    {
+      id: 'nickname',
+      title: 'Location Nickname',
+      isOptional: true,
+      isValid: true,
+    },
+    {
+      id: 'address2',
+      title: 'Apartment/Suite Number',
+      isOptional: true,
+      isValid: true,
+    },
+    {
+      id: 'contact_name',
+      title: 'Contact Name',
+      isValid: true,
+    },
+    {
+      id: 'contact_email',
+      title: 'Contact Email',
+      isValid: true,
+    },
+    {
+      id: 'contact_phone',
+      type: 'tel',
+      title: 'Phone Number',
+      isValid: formData.contact_phone.length > 9,
+    },
+    {
+      id: 'notes',
+      title: 'Notes/Instructions',
+      isValid: true,
+    },
+  ]
 
-  function isFormDataValid() {
-    if (!formData.lat || !formData.lng) {
-      window.alert('Address is not complete!')
+  const isFormComplete = (() => {
+    let result = true
+    for (const field of FIELDS) {
+      if (!field.isValid) {
+        result = false
+        break
+      }
     }
-    return true
-  }
+    return result
+  })()
 
   function handleReceiveAddress(address) {
     setFormData(prevData => ({ ...prevData, ...address }))
   }
 
   async function handleSubmit() {
-    if (isFormDataValid()) {
-      setIsLoading(true)
-      try {
-        const location_id = await generateUniqueId('locations')
-        await SE_API.post(
-          `/location/${location_id}/update`,
-          {
-            id: location_id,
-            organization_id,
-            ...formData,
-            contact_phone: removeSpecialCharacters(
-              formData.contact_phone || ''
-            ),
-            hours: checkMonToFriday(),
-            timestamp_created: createTimestamp(),
-            timestamp_updated: createTimestamp(),
-          },
-          user.accessToken
-        )
-        navigate(`/organizations/${organization_id}`)
-      } catch (e) {
-        console.error('Error writing document: ', e)
-      }
-      setIsLoading(false)
+    setIsLoading(true)
+    try {
+      const location_id = await generateUniqueId('locations')
+      await SE_API.post(
+        `/location/${location_id}/update`,
+        {
+          id: location_id,
+          organization_id,
+          ...formData,
+          contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
+          hours: checkMonToFriday(),
+          timestamp_created: createTimestamp(),
+          timestamp_updated: createTimestamp(),
+        },
+        user.accessToken
+      )
+      navigate(`/organizations/${organization_id}`)
+    } catch (e) {
+      console.error('Error writing document: ', e)
     }
+    setIsLoading(false)
   }
 
   function checkMonToFriday() {
@@ -257,53 +288,17 @@ export function CreateLocation({ setBreadcrumbs }) {
               />
             </Flex>
 
-            <Text fontWeight="400">Location Nickname (optional)</Text>
-            <Input
-              id="nickname"
-              value={formData.nickname}
-              onChange={handleChange}
-              mb={4}
-            />
-
-            <Text fontWeight="400">Apartment Number (optional)</Text>
-            <Input
-              id="address2"
-              value={formData.address2}
-              onChange={handleChange}
-              mb={4}
-            />
-
-            <Text fontWeight="400">Contact Name</Text>
-            <Input
-              id="contact_name"
-              value={formData.contact_name}
-              onChange={handleChange}
-              mb={4}
-            />
-
-            <Text fontWeight="400">Contact Email</Text>
-            <Input
-              id="contact_email"
-              value={formData.contact_email}
-              onChange={handleChange}
-              mb={4}
-            />
-
-            <Text fontWeight="400">Phone Number</Text>
-            <Input
-              id="contact_phone"
-              value={formData.contact_phone}
-              onChange={handleChange}
-              mb={4}
-            />
-
-            <Text fontWeight="400">Notes + Instructions</Text>
-            <Input
-              id="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              mb={4}
-            />
+            {FIELDS.map(i => (
+              <FormField
+                id={i.id}
+                key={i.id}
+                title={i.title}
+                isValid={i.isValid}
+                isOptional={i.isOptional}
+                formData={formData}
+                setFormData={setFormData}
+              />
+            ))}
 
             <Text fontWeight={700}>Open Hours</Text>
             {formData.hours.map((hour, index) => {
@@ -349,6 +344,7 @@ export function CreateLocation({ setBreadcrumbs }) {
               mt="4"
               onClick={handleSubmit}
               isLoading={isLoading}
+              disabled={!isFormComplete}
             >
               Save New Location
             </Button>
@@ -357,7 +353,7 @@ export function CreateLocation({ setBreadcrumbs }) {
         </>
       ) : (
         <>
-          <Text color="element.secondary" mb="4" fontSize="sm">
+          <Text color="element.secondary" my="4" fontSize="sm">
             Select an address below using the Google Maps Autocomplete to being
             creating a new location.
           </Text>

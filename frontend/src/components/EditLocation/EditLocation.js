@@ -51,10 +51,6 @@ export function EditLocation() {
     if (!formData.lat || !formData.lng) {
       window.alert('Address is not complete!')
     }
-    // if (!formData.contact_phone) {
-    //   window.alert('Phone number is required when adding a location!')
-    //   return false
-    // }
     return true
   }
 

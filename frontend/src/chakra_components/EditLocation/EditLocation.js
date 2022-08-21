@@ -11,11 +11,11 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
-import { MapLocation, Page } from 'chakra_components'
+import { MapLocation, AddressAutocomplete } from 'chakra_components'
 import { useApi, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Error } from 'components'
-import { formatPhoneNumber, DAYS } from 'helpers'
+import { DAYS } from 'helpers'
 import { useEffect, useState } from 'react'
 
 export function EditLocation({ setBreadcrumbs }) {
@@ -103,6 +103,10 @@ export function EditLocation({ setBreadcrumbs }) {
     }
   }
 
+  function handleReceiveAddress(address) {
+    setFormData(prevData => ({ ...prevData, ...address }))
+  }
+
   if (loading && !formData) {
     return <LoadingEditLocation />
   } else if (error) {
@@ -122,8 +126,10 @@ export function EditLocation({ setBreadcrumbs }) {
         >
           Edit Location
         </Heading>
-        <MapLocation lat={formData.lat} lng={formData.lng} />
-        <Flex align="start" direction="column" w="100%">
+        {formData.lat && formData.lng ? (
+          <MapLocation lat={formData.lat} lng={formData.lng} />
+        ) : null}
+        {formData.address1 ? (
           <Flex justify="start" gap="4" align="start" py="8" w="100%">
             <Box>
               <Heading size="lg" fontWeight="600">
@@ -135,12 +141,31 @@ export function EditLocation({ setBreadcrumbs }) {
             </Box>
             <IconButton
               icon={<CloseIcon color="element.tertiary" />}
-              onClick={() => setFormData({ ...formData, address1: '' })}
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  address1: '',
+                  city: null,
+                  state: null,
+                  zip: null,
+                  lat: null,
+                  lng: null,
+                })
+              }
               variant="tertiary"
               ml="auto"
             />
           </Flex>
-        </Flex>
+        ) : (
+          <Box mb="8">
+            <Text color="element.secondary" mb="4" fontSize="sm">
+              Select an address below using the Google Maps Autocomplete to
+              being creating a new location.
+            </Text>
+            <Text fontWeight="400">Address</Text>
+            <AddressAutocomplete handleSelect={handleReceiveAddress} />
+          </Box>
+        )}
         <Flex align="start" direction="column" w="100%">
           <Text fontWeight={400}>Location Nickname (optional)</Text>
           <Input
