@@ -79,6 +79,7 @@ function Auth({ children }) {
 
   function hasCompletedPrivateProfile(profile) {
     return (
+      profile &&
       profile.phone &&
       profile.vehicle_make_model &&
       profile.license_number &&
