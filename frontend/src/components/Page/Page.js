@@ -121,8 +121,20 @@ function PageHead({ breadcrumbs, openMenu }) {
       pt={['16px', '16px', '16px', '32px', '32px']}
       pb={['32px', '32px', '32px', '32px', '32px']}
       px={['16px', '16px', '16px', '0', '0']}
-      transition="top 0.3s ease"
+      transition="top 0.3s ease,opacity 0.3s ease"
+      opacity={(100 - position) / 100}
     >
+      <Box
+        position="fixed"
+        top={isMobile ? `${position - 96}px` : '-96px'}
+        transition="top 0.1s ease,opacity 0.3s ease"
+        opacity={(100 - position) / 100}
+        left="0"
+        h="96px"
+        w="100%"
+        bg="surface.background"
+        zIndex="20"
+      />
       <HomeButton />
       <Box w="1" />
       {breadcrumbs && (

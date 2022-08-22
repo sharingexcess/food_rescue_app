@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/icons'
 import { Button, Flex } from '@chakra-ui/react'
 import { useRescueContext } from 'components'
-import { createTimestamp, SE_API, STATUSES } from 'helpers'
+import { createTimestamp, formatTimestamp, SE_API, STATUSES } from 'helpers'
 import { useAuth } from 'hooks'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -73,7 +73,10 @@ export function RescueActionButtons() {
     }
     if (
       window.confirm(
-        "Are you sure you want to claim this rescue? We can't wait to help you rescue food!"
+        `You're about to claim this food rescue ${formatTimestamp(
+          rescue.timestamp_scheduled_start,
+          'dddd, MMMM DD [at] h:mma'
+        )}. All set?`
       )
     ) {
       setIsClaiming(true)
