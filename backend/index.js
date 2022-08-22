@@ -8,7 +8,7 @@ const {
 
 exports.api = functions
   .runWith({
-    timeoutSeconds: 15,
+    timeoutSeconds: 60,
     memory: '8GB',
   })
   .https.onRequest(api)
