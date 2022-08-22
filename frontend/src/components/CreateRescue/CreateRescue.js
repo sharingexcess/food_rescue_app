@@ -7,7 +7,7 @@ import { createTimestamp, generateUniqueId, SE_API, STATUSES } from 'helpers'
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import { AddStop } from './CreateRescue.AddStop'
-import { Stops } from 'components/EditRescue/EditRescue.Stops'
+import { Stops } from 'components/CreateRescue/CreateRescue.Stops'
 import { InfoForm } from './CreateRescue.InfoForm'
 
 export function CreateRescue() {

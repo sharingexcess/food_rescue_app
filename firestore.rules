@@ -15,14 +15,14 @@ service cloud.firestore {
     }
 
     function isAdmin (userId){
-    	let userData = document('users', userId);
-      let adminStatus = userData.permission == "admin";
+    	let profile = document('public_profiles', userId);
+      let adminStatus = profile.permission == "admin";
       return adminStatus;
     }
     
     function isDriver (userId){
-    	let userData = document('users', userId);
-      let driverStatus = userData.is_driver == true;
+    	let profile = document('public_profiles', userId);
+      let driverStatus = profile.permission;
       return driverStatus;
     }
     

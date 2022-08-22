@@ -48,7 +48,7 @@ async function impactEndpoint(request, response) {
     // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
     filteredStops = stops.filter(d => {
       const org = organizations.find(o => o.id === d.organization_id)
-      return org.subtype !== 'holding'
+      return !['holding', 'compost'].includes(org.subtype)
     })
 
     const pickups = filteredStops.filter(s => s.type === 'pickup')

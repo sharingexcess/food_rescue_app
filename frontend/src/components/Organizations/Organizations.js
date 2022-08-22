@@ -13,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { PageTitle } from 'components/PageTitle/PageTitle'
-import { ORG_TYPE_ICONS } from 'helpers'
+import { DONOR_TYPES, ORG_TYPE_ICONS, RECIPIENT_TYPES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -61,7 +61,7 @@ export function Organizations() {
           flexGrow="0.5"
           flexBasis={['40%', '40%', '180px', '180px', '180px']}
         >
-          <option value="recipient_donor">All types</option>
+          <option value="">All types</option>
           <option value="recipient">Recipient</option>
           <option value="donor">Donor</option>
         </Select>
@@ -70,27 +70,28 @@ export function Organizations() {
           value={subtype}
           flexGrow="0.5"
           flexBasis={['40%', '40%', '180px', '180px', '180px']}
+          textTransform="capitalize"
         >
-          {type === 'donor' ? (
-            <>
-              <option value="recipient_donor">All subtypes</option>
-              <option value="retail">Retail</option>
-              <option value="wholesale">Wholesale</option>
-              <option value="holding">Holding</option>
-              <option value="other">Other</option>
-            </>
-          ) : (
-            <>
-              <option value="recipient_donor">All subtypes</option>
-              <option value="food_bank">Food Bank</option>
-              <option value="agency">Agency</option>
-              <option value="home_delivery">Home Delivery</option>
-              <option value="community_fridge">Community Fridge</option>
-              <option value="popup">Popup</option>
-              <option value="holding">Holding</option>
-              <option value="other">Other</option>
-            </>
-          )}
+          <option value="">All Subtypes</option>
+          {type === 'donor'
+            ? Object.keys(DONOR_TYPES).map((t, i) => (
+                <option
+                  value={DONOR_TYPES[t]}
+                  key={i}
+                  style={{ textTransform: 'capitalize' }}
+                >
+                  {DONOR_TYPES[t].replace('_', ' ')}
+                </option>
+              ))
+            : Object.keys(RECIPIENT_TYPES).map((t, i) => (
+                <option
+                  value={RECIPIENT_TYPES[t]}
+                  key={i}
+                  style={{ textTransform: 'capitalize' }}
+                >
+                  {RECIPIENT_TYPES[t].replace('_', ' ')}
+                </option>
+              ))}
         </Select>
       </Flex>
       {organizations ? (

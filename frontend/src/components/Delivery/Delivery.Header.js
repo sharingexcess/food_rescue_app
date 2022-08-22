@@ -32,6 +32,7 @@ export function Header() {
     }
   }
 
+  if (!delivery) return null
   return (
     <>
       <Heading as="h2" mb="6" size="2xl">

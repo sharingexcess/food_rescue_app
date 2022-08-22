@@ -23,6 +23,9 @@ import {
   Page,
   Analytics,
   Error,
+  Privacy,
+  Legal,
+  Help,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -53,8 +56,8 @@ if (process.env.NODE_ENV === 'production') {
 
 function RescueAppRoutes() {
   return (
-    <Sentry.ErrorBoundary fallback={<Error crash />}>
-      <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+      <Sentry.ErrorBoundary fallback={<Error crash />}>
         <BrowserRouter>
           <Auth>
             <Routes>
@@ -104,10 +107,13 @@ function RescueAppRoutes() {
                       { label: 'Loading...', link: '' },
                     ]}
                     pullToRefresh={false}
-                    pageContentStyle={{ overflow: 'hidden', maxH: '100vh' }}
                     Content={EditRescue}
                   />
                 }
+              />
+              <Route
+                path="/rescues/:rescue_id/completed"
+                element={<div>completed rescue!</div>}
               />
               <Route
                 path="/create-rescue"
@@ -292,6 +298,41 @@ function RescueAppRoutes() {
                 }
               />
               <Route
+                path="/privacy"
+                element={
+                  <Page
+                    id="Privacy"
+                    defaultBreadcrumbs={[
+                      { label: 'Privacy', link: '/privacy' },
+                    ]}
+                    defaultTitle="Privacy"
+                    Content={Privacy}
+                  />
+                }
+              />
+              <Route
+                path="/legal"
+                element={
+                  <Page
+                    id="Legal"
+                    defaultBreadcrumbs={[{ label: 'Legal', link: '/legal' }]}
+                    defaultTitle="Legal"
+                    Content={Legal}
+                  />
+                }
+              />
+              <Route
+                path="/help"
+                element={
+                  <Page
+                    id="Help"
+                    defaultBreadcrumbs={[{ label: 'Help', link: '/help' }]}
+                    defaultTitle="Help"
+                    Content={Help}
+                  />
+                }
+              />
+              <Route
                 path="*"
                 element={
                   <Page id="Error" defaultTitle="Uh oh..." Content={Error} />
@@ -300,8 +341,8 @@ function RescueAppRoutes() {
             </Routes>
           </Auth>
         </BrowserRouter>
-      </ChakraProvider>
-    </Sentry.ErrorBoundary>
+      </Sentry.ErrorBoundary>
+    </ChakraProvider>
   )
 }
 

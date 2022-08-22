@@ -28,6 +28,7 @@ export function Footer() {
     refresh()
   }
 
+  if (!delivery) return null
   return (
     <Flex direction="column" w="100%">
       {delivery.status !== STATUSES.SCHEDULED && <NoteInput />}

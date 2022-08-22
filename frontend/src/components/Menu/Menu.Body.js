@@ -1,10 +1,16 @@
 import { Button, Flex, Switch } from '@chakra-ui/react'
 import { useAuth, useIsMobile } from 'hooks'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function MenuBody({ colorMode, toggleColorMode }) {
   const { hasPermission } = useAuth()
   const isMobile = useIsMobile()
+  const [darkMode, setDarkMode] = useState(colorMode === 'dark')
+
+  useEffect(() => {
+    setDarkMode(colorMode === 'dark')
+  }, [colorMode])
 
   return (
     <Flex direction="column" py="4">
@@ -18,11 +24,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
         >
           Dark Mode
         </Button>
-        <Switch
-          size="lg"
-          isChecked={colorMode === 'dark'}
-          onChange={() => toggleColorMode()}
-        />
+        <Switch size="lg" isChecked={darkMode} onChange={toggleColorMode} />
       </Flex>
       <Link to="/rescues">
         <Button
@@ -128,6 +130,22 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           disabled={!hasPermission}
         >
           Food Safety
+        </Button>
+      </Link>
+      <Link to="/help">
+        <Button
+          variant="ghosted"
+          px={isMobile ? '0' : '2'}
+          color={
+            location.pathname === '/help' ? 'blue.primary' : 'element.primary'
+          }
+          fontWeight={location.pathname === '/help' ? '600' : '300'}
+          fontSize="lg"
+          mr="auto"
+          my={isMobile ? '2' : '1'}
+          disabled={!hasPermission}
+        >
+          Help
         </Button>
       </Link>
     </Flex>

@@ -139,22 +139,23 @@ export function RescueActionButtons() {
           Claim
         </Button>
       )}
-      {rescue.status !== STATUSES.CANCELLED && hasAdminPermission && (
-        <Link to={`/rescues/${rescue.id}/edit`} style={{ flexGrow: 1 }}>
-          <Button
-            variant="secondary"
-            size="sm"
-            fontSize="xs"
-            w="100%"
-            leftIcon={<EditIcon />}
-            bg="green.secondary"
-            color="green.primary"
-          >
-            Edit
-          </Button>
-        </Link>
-      )}
-      {rescue.status !== STATUSES.CANCELLED &&
+      {![STATUSES.CANCELLED, STATUSES.COMPLETED].includes(rescue.status) &&
+        hasAdminPermission && (
+          <Link to={`/rescues/${rescue.id}/edit`} style={{ flexGrow: 1 }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              fontSize="xs"
+              w="100%"
+              leftIcon={<EditIcon />}
+              bg="green.secondary"
+              color="green.primary"
+            >
+              Edit
+            </Button>
+          </Link>
+        )}
+      {![STATUSES.CANCELLED, STATUSES.COMPLETED].includes(rescue.status) &&
         (hasAdminPermission || rescue.handler_id === user.id) && (
           <Button
             variant="secondary"

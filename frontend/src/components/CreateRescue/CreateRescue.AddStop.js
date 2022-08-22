@@ -65,7 +65,7 @@ export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
           fontSize="sm"
           my="2"
           placeholder="Choose a location..."
-          value={location}
+          value={location?.id}
           onChange={e =>
             setLocation(
               organization.locations.find(i => i.id === e.target.value)

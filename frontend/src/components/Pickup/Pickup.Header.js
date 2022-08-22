@@ -31,6 +31,8 @@ export function PickupHeader() {
       refresh()
     }
   }
+
+  if (!pickup) return null
   return (
     <>
       <Heading as="h2" mb="6" size="2xl">

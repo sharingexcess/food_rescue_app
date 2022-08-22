@@ -10,3 +10,5 @@ package-lock.json
 *credentials*
 *serviceAccount*
 *.log*
+*environments*
+environments.zip

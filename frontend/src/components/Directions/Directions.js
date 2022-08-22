@@ -1,4 +1,3 @@
-import { useColorMode } from '@chakra-ui/react'
 import { darkMode, lightMode } from '../../styles/maps'
 import { compose, withProps, lifecycle } from 'recompose'
 import {
@@ -7,6 +6,7 @@ import {
   GoogleMap,
   DirectionsRenderer,
 } from 'react-google-maps'
+import { useColorMode } from '@chakra-ui/react'
 
 export const Directions = compose(
   withProps({
@@ -89,7 +89,8 @@ export const Directions = compose(
 
   return (
     <GoogleMap
-      defaultZoom={7}
+      key={colorMode} // this is necessary to force re-render when the colorMode changes
+      defaultZoom={6}
       defaultCenter={
         new window.google.maps.LatLng(
           props.stops[0].location.lat,

@@ -14,8 +14,7 @@ import { Link } from 'react-router-dom'
 import { RescueCard } from './Rescues.Card'
 import { Filters } from './Rescues.Filters'
 
-export function Rescues({ setTitle }) {
-  useEffect(() => setTitle('test'), [])
+export function Rescues() {
   const { hasAdminPermission } = useAuth()
   const url_params = new URLSearchParams(window.location.search)
 

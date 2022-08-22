@@ -165,6 +165,9 @@ async function getRescues(
 
   // execute query for organization and location for each stop
 
+  console.log(rescues.filter(r => r.stops.includes(null)))
+  // console.log(rescues.map(r => r.stops.filter(i => !i.organization_id)))
+
   await Promise.all(
     rescues
       .map(rescue => [

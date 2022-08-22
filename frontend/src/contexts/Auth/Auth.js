@@ -5,9 +5,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
 import { firestore } from 'helpers'
 import { getAuthenticatedUser } from './utils'
-import { Onboarding, Page, Loading } from 'components'
-
-const Landing = () => <></>
+import { Onboarding, Page, Loading, Landing } from 'components'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -24,8 +22,8 @@ function Auth({ children }) {
   const [user, error] = useAuthState(firebase.auth())
   // profile looks up the user in the firestore db
   // to get additional permissions and profile data
-  const [publicProfile, setPublicProfile] = useState(null)
-  const [privateProfile, setPrivateProfile] = useState(null)
+  const [publicProfile, setPublicProfile] = useState()
+  const [privateProfile, setPrivateProfile] = useState()
 
   useEffect(() => {
     const uid = user ? user.uid : localStorage.getItem('se_user_id')
@@ -44,8 +42,8 @@ function Auth({ children }) {
       )
       user && localStorage.setItem('se_user_id', user.uid)
     } else {
-      setPublicProfile(undefined)
-      setPrivateProfile(undefined)
+      setPublicProfile(null)
+      setPrivateProfile(null)
     }
     return () => {
       publicProfileUnsubscribe && publicProfileUnsubscribe()
@@ -95,7 +93,7 @@ function Auth({ children }) {
     )
   }
 
-  if (publicProfile === null) {
+  if (publicProfile === undefined) {
     // Case 1: the user has signed in,
     // and the query to check for a public profile
     // has not yet returned.
@@ -105,7 +103,7 @@ function Auth({ children }) {
         <Loading text="Signing In" />
       </AuthWrapper>
     )
-  } else if (user && publicProfile === undefined) {
+  } else if (user && publicProfile === null) {
     // Case 2: this is a brand new user.
     // They have signed in, and the public profile
     // query returned 'undefined', meaning they

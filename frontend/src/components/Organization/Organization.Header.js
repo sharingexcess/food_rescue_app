@@ -10,7 +10,7 @@ export function OrganizationHeader({ organization, setEdit }) {
   return (
     <>
       <Box>
-        <PageTitle>{organization.name}</PageTitle>
+        <PageTitle mb="2">{organization.name}</PageTitle>
         <Text textTransform="capitalize" color="element.secondary" mt="1">
           <Text as="span" mr="2">
             {ORG_TYPE_ICONS[organization.subtype]}

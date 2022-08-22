@@ -20,7 +20,9 @@ export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
   }, [organization, location])
 
   function handleSearchForOrganization(value) {
-    return organizations.filter(i => i.name.includes(value))
+    return organizations.filter(i =>
+      i.name.toLowerCase().includes(value.toLowerCase())
+    )
   }
 
   return (
@@ -63,7 +65,7 @@ export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
           fontSize="sm"
           my="2"
           placeholder="Choose a location..."
-          value={location}
+          value={location?.id}
           onChange={e =>
             setLocation(
               organization.locations.find(i => i.id === e.target.value)

@@ -10,9 +10,9 @@ export function PickupFooter() {
   const { setOpenStop, refresh, rescue } = useRescueContext()
   const { entryRows, notes, pickup, session_storage_key, isChanged } =
     usePickupContext()
-  const total = entryRows.reduce((total, current) => total + current.weight, 0)
-
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const total = entryRows.reduce((total, current) => total + current.weight, 0)
 
   async function handleSubmit() {
     setIsSubmitting(true)
@@ -37,12 +37,25 @@ export function PickupFooter() {
       },
       user.accessToken
     )
+    const stop_index = rescue.stop_ids.findIndex(i => i === pickup.id)
+    if (stop_index < rescue.stop_ids.length - 1) {
+      // if this is not the last stop, mark the next stop as active
+      await SE_API.post(
+        `/stops/${rescue.stop_ids[stop_index + 1]}/update`,
+        {
+          status: STATUSES.ACTIVE,
+        },
+        user.accessToken
+      )
+    }
+
     sessionStorage.removeItem(session_storage_key)
     setIsSubmitting(false)
     setOpenStop(null)
     refresh()
   }
 
+  if (!pickup) return null
   return (
     <Flex direction="column" w="100%">
       {pickup.status !== STATUSES.SCHEDULED && <NoteInput />}

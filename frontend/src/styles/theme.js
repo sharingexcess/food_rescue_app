@@ -1,14 +1,16 @@
 import { extendTheme } from '@chakra-ui/react'
 import { darken, whiten } from '@chakra-ui/theme-tools'
-import { unstable_HistoryRouter } from 'react-router-dom'
 import { SE_COLORS } from './colors'
 
 const styles = {
-  global: props => ({
+  global: {
     'html, body': {
       bg: 'surface.background',
     },
-  }),
+    '*::placeholder': {
+      color: 'element.secondary',
+    },
+  },
 }
 
 const semanticTokens = {

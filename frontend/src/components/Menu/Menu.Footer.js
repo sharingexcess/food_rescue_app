@@ -1,5 +1,6 @@
 import { Button, Flex } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
+import { Link } from 'react-router-dom'
 
 export function MenuFooter() {
   const { handleLogout } = useAuth()
@@ -9,12 +10,16 @@ export function MenuFooter() {
       <Button variant="link" size="xs" onClick={handleLogout}>
         Logout
       </Button>
-      <Button variant="link" size="xs">
-        Legal
-      </Button>
-      <Button variant="link" size="xs">
-        Privacy Policy
-      </Button>
+      <Link to="/legal">
+        <Button variant="link" size="xs">
+          Legal
+        </Button>
+      </Link>
+      <Link to="/privacy">
+        <Button variant="link" size="xs">
+          Privacy Policy
+        </Button>
+      </Link>
     </Flex>
   )
 }

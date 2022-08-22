@@ -27,7 +27,7 @@ export function Landing({ handleLogin }) {
           stores, and restaurants to help fight food scarcity in our community.
         </Text>
         <Box height="8" />
-        <Button size="lg" handler={handleLogin}>
+        <Button size="lg" onClick={handleLogin}>
           Start Saving Food
         </Button>
       </Flex>

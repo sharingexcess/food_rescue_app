@@ -280,10 +280,10 @@ export function Analytics() {
           </Flex>
           <Box height={8} />
           <section className="PoundsInDateRange-graph">
-            <ResponsiveContainer width="100%" height={500}>
+            <ResponsiveContainer width="100%" height={320}>
               {chart === 'Bar Chart' ? (
                 <BarChart
-                  width={300}
+                  width="100%"
                   height={300}
                   data={graphData}
                   margin={{ top: 20, bottom: 96, right: 20 }}
@@ -313,7 +313,7 @@ export function Analytics() {
                   />
                 </BarChart>
               ) : chart === 'Pie Chart' ? (
-                <PieChart width={400} height={400}>
+                <PieChart width="100%" height={400}>
                   <Pie data={graphData} outerRadius={120} dataKey="value">
                     {graphData.map((_entry, index) => (
                       <Cell
@@ -364,7 +364,6 @@ export function Analytics() {
         </>
       ) : (
         <>
-          <Box height={32} />
           <Loading relative text="Calculating" />
         </>
       )}

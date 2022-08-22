@@ -49,6 +49,14 @@ export function Body() {
     setPoundsDropped(Math.round((value / 100) * currentLoad))
   }
 
+  // prevent editing the last delivery of completed rescues
+  // this could leave a rescue in an invalid state
+  const disabled =
+    rescue.status === STATUSES.COMPLETED &&
+    rescue.stop_ids.findIndex(i => i === delivery.id) ===
+      rescue.stop_ids.length - 1
+
+  if (!delivery) return null
   return delivery.status === STATUSES.SCHEDULED ? (
     <Flex direction="column" align="center" w="100%" py="8">
       <Heading as="h4" size="md" color="element.primary" mb="2">
@@ -91,6 +99,7 @@ export function Body() {
           onBlur={() => handlePoundsInputChange()}
           textAlign="right"
           py="2"
+          disabled={disabled}
         />
         <Text fontSize="3xl" fontWeight="bold" ml="3" mt="2">
           lbs.
@@ -107,6 +116,7 @@ export function Body() {
           value={percentTotalDropped}
           onChange={handleChangeSlider}
           flexGrow={1}
+          disabled={disabled}
         >
           <SliderTrack h="2" borderRadius="4px">
             <SliderFilledTrack h="2" borderRadius="4px" />
@@ -114,6 +124,12 @@ export function Body() {
           <SliderThumb />
         </Slider>
       </Flex>
+      {disabled && (
+        <Text fontSize="sm" my="8" align="center" color="element.secondary">
+          Heads up: you can't update the percentage for the last stop of a
+          completed rescue.
+        </Text>
+      )}
       {currentLoad === 0 && (
         <Flex direction="column" justify="center">
           <Text textAlign="center" fontSize="xs">

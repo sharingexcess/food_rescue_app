@@ -98,6 +98,7 @@ export const ORG_TYPE_ICONS = {
   popup: '🎪',
   community_fridge: '🏙',
   home_delivery: '🏠',
+  compost: '🥦',
 }
 
 export const STATUSES = {
@@ -121,6 +122,7 @@ export const RECIPIENT_TYPES = {
   COMMUNITY_FRIDGE: 'community_fridge',
   POPUP: 'popup',
   HOLDING: 'holding',
+  COMPOST: 'compost',
   OTHER: 'other',
 }
 

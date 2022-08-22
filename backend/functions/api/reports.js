@@ -80,7 +80,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
 
   deliveries = deliveries.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
-    return org.subtype !== 'holding'
+    return !['holding', 'compost'].includes(org.subtype)
   })
 
   console.log('Got Deliveries\n', 'total:', deliveries.length, deliveries[0])

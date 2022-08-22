@@ -40,6 +40,7 @@ exports.RECIPIENT_SUB_TYPES = [
   'community_fridge',
   'home_delivery',
   'holding',
+  'compost',
   'other',
 ]
 

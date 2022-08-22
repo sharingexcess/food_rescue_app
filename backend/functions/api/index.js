@@ -26,6 +26,9 @@ api.post('/calendar/delete', (req, res) =>
 api.post('/rescues/:id/update', (req, res) =>
   loadEndpoint('updateRescue', req, res)
 )
+api.post('/stops/:id/create', (req, res) =>
+  loadEndpoint('createStop', req, res)
+)
 api.post('/stops/:id/update', (req, res) =>
   loadEndpoint('updateStop', req, res)
 )

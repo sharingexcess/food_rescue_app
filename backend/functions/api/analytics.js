@@ -175,7 +175,7 @@ function calculateMetrics(deliveries, organizations) {
   // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
   deliveries = deliveries.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
-    return org.subtype !== 'holding'
+    return !['holding', 'compost'].includes(org.subtype)
   })
   let total_categorized_weight = 0,
     retail_value = 0,

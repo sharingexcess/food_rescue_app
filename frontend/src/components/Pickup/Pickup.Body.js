@@ -8,6 +8,7 @@ export function PickupBody() {
   const { entryRows } = usePickupContext()
   const { openStop, rescue } = useRescueContext()
 
+  if (!openStop) return null
   return (
     <Flex direction="column">
       {openStop.status === STATUSES.SCHEDULED ? (

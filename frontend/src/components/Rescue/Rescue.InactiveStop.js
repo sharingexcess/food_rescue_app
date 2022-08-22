@@ -9,12 +9,15 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { STATUSES } from 'helpers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StopButtons } from './Rescue.StopButtons'
 import { statusIcon } from './Rescue.utils'
 
 export function InactiveStop({ stop }) {
   const [isExpanded, setIsExpanded] = useState()
+
+  // close the stop whenever it's updated from inside the card overlay
+  useEffect(() => setIsExpanded(false), [stop])
 
   function toggleIsExpanded() {
     setIsExpanded(!isExpanded)

@@ -1,4 +1,4 @@
-const { db } = require('../../helpers')
+const { db, recalculateRescue } = require('../../helpers')
 const { addCalendarEvent } = require('./addCalendarEvent')
 const { deleteEvent } = require('./deleteCalendarEvent')
 const { createEventResource } = require('./createRescue')
@@ -50,8 +50,9 @@ async function updateRescueEndpoint(request, response) {
       }
 
       const updated = await updateRescue(id, payload)
+      const recalculated = await recalculateRescue(id)
 
-      response.status(200).send(JSON.stringify(updated))
+      response.status(200).send(JSON.stringify(recalculated))
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
