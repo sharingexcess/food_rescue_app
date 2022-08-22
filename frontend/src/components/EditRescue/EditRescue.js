@@ -103,38 +103,44 @@ export function EditRescue({ setBreadcrumbs }) {
       handler_id: formData.handler?.id || null,
     }
 
-    let activeStop = null
-    for (const stop of stops) {
-      if ([STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(stop.status)) {
-        if (activeStop) {
-          promises.push(
-            SE_API.post(
-              `/stops/${stop.id}/update`,
-              { ...defaultPayload, status: STATUSES.SCHEDULED },
-              user.accessToken
+    if (rescue.status === STATUSES.ACTIVE) {
+      let activeStop = null
+      for (const stop of stops) {
+        if ([STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(stop.status)) {
+          if (activeStop) {
+            promises.push(
+              SE_API.post(
+                `/stops/${stop.id}/update`,
+                { ...defaultPayload, status: STATUSES.SCHEDULED },
+                user.accessToken
+              )
             )
-          )
+          } else {
+            activeStop = stop
+            promises.push(
+              SE_API.post(
+                `/stops/${stop.id}/update`,
+                {
+                  ...defaultPayload,
+                  status: STATUSES.ACTIVE,
+                  timestamp_logged_start: createTimestamp(),
+                },
+                user.accessToken
+              )
+            )
+          }
         } else {
-          activeStop = stop
           promises.push(
             SE_API.post(
               `/stops/${stop.id}/update`,
-              { ...defaultPayload, status: STATUSES.ACTIVE },
+              defaultPayload,
               user.accessToken
             )
           )
         }
-      } else {
-        promises.push(
-          SE_API.post(
-            `/stops/${stop.id}/update`,
-            defaultPayload,
-            user.accessToken
-          )
-        )
       }
+      await Promise.all(promises)
     }
-    await Promise.all(promises)
 
     // make the rescue update call last, after all stops are updated
     // this is to ensure that the final recalculation happens
