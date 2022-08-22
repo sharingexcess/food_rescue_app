@@ -1,97 +1,107 @@
-import React, { useEffect } from 'react'
-import { Link, Route, Routes } from 'react-router-dom'
-import { useAuth } from 'hooks'
-import { Card, Spacer, Text } from '@sharingexcess/designsystem'
-import { Profile, Header, Tutorial, Liability, FoodSafety } from 'components'
-import { setFirestoreData } from 'helpers'
+import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react'
+import {
+  InstallApp,
+  FoodSafety,
+  Profile,
+  PageTitle,
+  FooterButton,
+} from 'components'
+import { useEffect, useState } from 'react'
 
 export function Onboarding() {
-  const { user } = useAuth()
+  const cached_stage = parseInt(sessionStorage.getItem('se_onboarding_stage'))
+  const [stage, setStage] = useState(cached_stage || 0)
+  const [showProgress, setShowProgress] = useState(true)
 
   useEffect(() => {
-    if (
-      user.completed_app_tutorial &&
-      user.completed_food_safety &&
-      user.completed_liability_release &&
-      user.phone &&
-      user.pronouns &&
-      user.name &&
-      !user.is_driver
-    ) {
-      setFirestoreData(['users', user.uid], { is_driver: true })
+    sessionStorage.setItem('se_onboarding_stage', stage)
+  }, [stage])
+
+  function handleNext() {
+    setStage(current => current + 1)
+    setShowProgress(true)
+  }
+
+  function Progress() {
+    const content = [
+      {
+        image: '/onboarding_stage_0.png',
+        header: 'Welcome to Food Rescue!',
+        body: "We'll walk you through the basics so you can get right to rescuing food.",
+        button: "Let's Go!",
+      },
+      {
+        image: '/onboarding_stage_1.png',
+        header: 'Food Safety Rules',
+        body: "We'll walk you through all the important things to know about produce pickup and delivery.",
+        button: 'Get Started',
+      },
+      {
+        image: '/onboarding_stage_2.png',
+        header: 'Complete Your Profile',
+        body: 'Your public profile controls how other volunteers see you on the app.',
+        button: 'Go to Profile',
+      },
+    ]
+
+    function StatusIndicator() {
+      return (
+        <Flex w="100%" justify="center" gap="4" mt="10">
+          {[0, 1, 2].map(i => (
+            <Box
+              key={i}
+              w="2"
+              h="2"
+              borderRadius="xl"
+              bg="se.brand.primary"
+              opacity={stage === i ? 1 : 0.3}
+            />
+          ))}
+        </Flex>
+      )
     }
-  }, [user])
-
-  const sections = [
-    {
-      name: 'Complete your Profile',
-      page: '/profile',
-      completed: user.name && user.phone && user.pronouns,
-    },
-    {
-      name: 'Liability Release',
-      page: '/liability',
-      completed: user.completed_liability_release,
-    },
-    {
-      name: 'App Tutorial',
-      page: '/tutorial',
-      completed: user.completed_app_tutorial,
-    },
-    {
-      name: 'Food Safety Training',
-      page: '/food-safety',
-      completed: user.completed_food_safety,
-    },
-  ]
-
-  function OnboardingHome() {
     return (
-      <main id="Onboarding">
-        <Text type="secondary-header" color="white" shadow>
-          Welcome to Sharing Excess!
+      <>
+        <PageTitle>Getting Started</PageTitle>
+        <Image
+          src={content[stage].image}
+          alt="Getting Started"
+          w="64%"
+          maxW="300px"
+          mx="auto"
+          my="8"
+        />
+        <Heading
+          as="h3"
+          fontWeight="700"
+          size="md"
+          color="element.primary"
+          align="center"
+          mb="2"
+        >
+          {content[stage].header}
+        </Heading>
+        <Text mb="8" color="element.secondary" align="center">
+          {content[stage].body}
         </Text>
-        <Spacer height={8} />
-        <Text type="paragraph" color="white" shadow>
-          {user.name &&
-          user.phone &&
-          user.pronouns &&
-          user.license_number &&
-          user.license_state &&
-          user.insurance_policy_number &&
-          user.insurance_provider &&
-          user.completed_food_safety &&
-          user.completed_liability_release
-            ? "You've completed all the onboarding steps!\n\nHang tight while we approve your info, and grant you permission to start rescuing food."
-            : 'Complete the onboarding steps below to begin rescuing food as soon as possible.'}
-        </Text>
-        <Spacer height={16} />
-        {sections.map(s => (
-          <Link to={s.page} key={s.name}>
-            <Card
-              classList={['Onboarding-section', s.completed && 'completed']}
-            >
-              <i
-                className={s.completed ? 'fa fa-check' : 'fa fa-clipboard-list'}
-              />
-              {s.name}
-            </Card>
-          </Link>
-        ))}
-      </main>
+        <Flex w="100%" justify="center" onClick={() => setShowProgress(false)}>
+          <FooterButton>{content[stage].button}</FooterButton>
+        </Flex>
+        <StatusIndicator />
+      </>
     )
   }
 
-  return (
-    <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<OnboardingHome />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/liability" element={<Liability />} />
-        <Route path="/tutorial" element={<Tutorial />} />
-        <Route path="/food-safety" element={<FoodSafety />} />
-      </Routes>
-    </>
-  )
+  if (showProgress) return <Progress />
+
+  switch (stage) {
+    case 0:
+      return <InstallApp handleNext={handleNext} />
+    case 1:
+      return <FoodSafety handleNext={handleNext} />
+    case 2:
+      return <Profile />
+    default:
+      return null
+  }
 }

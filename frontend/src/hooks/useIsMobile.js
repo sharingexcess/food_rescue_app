@@ -1,19 +1,29 @@
-import { useWidth } from './useWidth'
 import { useEffect, useState } from 'react'
 import { MOBILE_THRESHOLD } from '../helpers/constants'
 
+let debounce_timer
+
 export function useIsMobile() {
-  const width = useWidth()
   const [isMobile, setIsMobile] = useState(window.innerWidth < MOBILE_THRESHOLD)
 
   useEffect(() => {
-    if (!isMobile && width && width < 600) {
-      setIsMobile(true)
+    window.addEventListener('resize', updateWidth)
+    return () => window.removeEventListener('resize', updateWidth)
+  })
+
+  function updateWidth() {
+    if (debounce_timer) {
+      clearTimeout(debounce_timer)
     }
-    if (isMobile && width && width > 600) {
-      setIsMobile(false)
-    }
-  }, [width, isMobile])
+    setTimeout(() => {
+      if (!isMobile && window.innerWidth < MOBILE_THRESHOLD) {
+        setIsMobile(true)
+      }
+      if (isMobile && window.innerWidth > MOBILE_THRESHOLD) {
+        setIsMobile(false)
+      }
+    }, 200)
+  }
 
   return isMobile
 }

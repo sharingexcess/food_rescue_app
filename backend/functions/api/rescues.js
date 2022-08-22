@@ -22,10 +22,7 @@ async function rescuesEndpoint(request, response) {
 
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
-      user =>
-        user.is_admin ||
-        (handler_id && user.id === handler_id) ||
-        (user.is_driver && handler_id === 'null') // allow drivers search for available rescues
+      user => user.permission
     )
 
     if (!requestIsAuthenticated) {
@@ -117,9 +114,13 @@ async function getRescues(
   // execute rescues query
 
   await rescues_query.get().then(snapshot => {
-    snapshot.forEach(doc =>
-      rescues.push({ ...formatDocumentTimestamps(doc.data()), stops: [] })
-    )
+    snapshot.forEach(doc => {
+      const data = doc.data()
+      rescues.push({
+        ...formatDocumentTimestamps(data),
+        stops: data.stop_ids.map(i => null), // populate stops array with correct length
+      })
+    })
   })
 
   console.log(
@@ -147,9 +148,11 @@ async function getRescues(
         .where('rescue_id', '==', rescue.id)
         .get()
         .then(snapshot =>
-          snapshot.forEach(doc =>
-            rescue.stops.push(formatDocumentTimestamps(doc.data()))
-          )
+          snapshot.forEach(doc => {
+            const data = doc.data()
+            rescue.stops[rescue.stop_ids.findIndex(i => i === data.id)] =
+              formatDocumentTimestamps(data)
+          })
         )
     ),
   ])
@@ -161,6 +164,9 @@ async function getRescues(
   )
 
   // execute query for organization and location for each stop
+
+  console.log(rescues.filter(r => r.stops.includes(null)))
+  // console.log(rescues.map(r => r.stops.filter(i => !i.organization_id)))
 
   await Promise.all(
     rescues

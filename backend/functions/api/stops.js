@@ -24,7 +24,8 @@ async function stopsEndpoint(request, response) {
 
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
-      user => user.is_admin || (handler_id && user.id === handler_id)
+      user =>
+        user.permission == 'admin' || (handler_id && user.id === handler_id)
     )
 
     if (!requestIsAuthenticated) {

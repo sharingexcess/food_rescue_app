@@ -30,15 +30,15 @@ async function reportsEndpoint(request, response) {
         return
       }
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   () => false // only approve requests from retool
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        () => false // only approve requests from retool
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
       const report = await generateReport(
         date_range_start,
         date_range_end,
@@ -79,7 +79,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
 
   deliveries = deliveries.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
-    return org.subtype !== 'holding'
+    return !['holding', 'compost'].includes(org.subtype)
   })
 
   console.log('Got Deliveries\n', 'total:', deliveries.length, deliveries[0])

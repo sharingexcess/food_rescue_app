@@ -1,12 +1,11 @@
-import React, { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
-import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
-import { createTimestamp, getCollection } from 'helpers'
-import { getAuthenticatedUser, updatePublicUserProfile } from './utils'
-import { Landing, Loading, Onboarding } from 'components'
+import { firestore } from 'helpers'
+import { getAuthenticatedUser } from './utils'
+import { Onboarding, Page, Loading, Landing } from 'components'
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -20,20 +19,36 @@ function Auth({ children }) {
   // user defines the current auth state,
   // loading defines whether a request is currently running
   // error defines whether we received a bad response from firebase
-  const [user, loading, error] = useAuthState(firebase.auth())
+  const [user, error] = useAuthState(firebase.auth())
   // profile looks up the user in the firestore db
   // to get additional permissions and profile data
-  const [profile, setProfile] = useState()
+  const [publicProfile, setPublicProfile] = useState()
+  const [privateProfile, setPrivateProfile] = useState()
 
   useEffect(() => {
     const uid = user ? user.uid : localStorage.getItem('se_user_id')
-    let unsubscribe
+    let publicProfileUnsubscribe
+    let privateProfileUnsubscribe
     if (uid) {
-      const userRef = getCollection('users').doc(uid)
-      unsubscribe = userRef.onSnapshot(doc => setProfile(doc.data()))
+      const publicProfileRef = firestore.collection('public_profiles').doc(uid)
+      const privateProfileRef = firestore
+        .collection('private_profiles')
+        .doc(uid)
+      publicProfileUnsubscribe = publicProfileRef.onSnapshot(doc =>
+        setPublicProfile(doc.data())
+      )
+      privateProfileUnsubscribe = privateProfileRef.onSnapshot(doc =>
+        setPrivateProfile(doc.data())
+      )
       user && localStorage.setItem('se_user_id', user.uid)
+    } else {
+      setPublicProfile(null)
+      setPrivateProfile(null)
     }
-    return () => unsubscribe && unsubscribe()
+    return () => {
+      publicProfileUnsubscribe && publicProfileUnsubscribe()
+      privateProfileUnsubscribe && privateProfileUnsubscribe()
+    }
   }, [user])
 
   function handleLogout() {
@@ -43,8 +58,7 @@ function Auth({ children }) {
   }
 
   async function handleLogin() {
-    const user = await getAuthenticatedUser()
-    updatePublicUserProfile(user)
+    await getAuthenticatedUser()
     navigate('/')
   }
 
@@ -55,37 +69,70 @@ function Auth({ children }) {
           <span className="green">Sharing</span> Excess
         </h1>
         <p>Looks like there was an error logging in.</p>
-        <img className="background" src={Logo} alt="Sharing Excess Logo" />
+        <img className="background" src="/logo.png" alt="Sharing Excess Logo" />
         <button onClick={() => window.location.reload()}>try again</button>
       </main>
     )
   }
 
   function AuthWrapper({ children }) {
-    const permission = profile.is_admin || profile.is_driver
     return (
       <AuthContext.Provider
         value={{
-          user: user ? { ...user, ...profile } : null,
-          admin: profile && profile.is_admin,
-          driver: profile && profile.is_driver && !profile.is_admin,
-          permission: profile && (profile.is_admin || profile.is_driver),
+          user: user ? { ...user, ...publicProfile, ...privateProfile } : null,
+          hasAdminPermission: publicProfile?.permission === 'admin',
+          hasStandardPermissions: publicProfile?.permission === 'standard',
+          hasPermission: publicProfile?.permission,
+          hasCompletedPrivateProfile: privateProfile,
           handleLogout,
           handleLogin,
         }}
       >
-        {permission ? children : <Onboarding />}
+        {children}
       </AuthContext.Provider>
     )
   }
 
-  if (user && profile) {
+  if (publicProfile === undefined) {
+    // Case 1: the user has signed in,
+    // and the query to check for a public profile
+    // has not yet returned.
+    // Render a loading screen until the query returns.
+    return (
+      <AuthWrapper>
+        <Loading text="Signing In" />
+      </AuthWrapper>
+    )
+  } else if (user && publicProfile === null) {
+    // Case 2: this is a brand new user.
+    // They have signed in, and the public profile
+    // query returned 'undefined', meaning they
+    // do not have a public profile yet.
+    // Render the onboarding component,
+    // with access to the user object.
+    return (
+      <AuthWrapper>
+        <Page
+          defaultTitle="Onboarding"
+          id="Onboarding"
+          Content={Onboarding}
+        ></Page>
+      </AuthWrapper>
+    )
+  } else if (user && publicProfile) {
+    // Case 3: the user has signed in,
+    // and has completed their public profile.
+    // We can now render the app normally. Woo!
     return <AuthWrapper>{children}</AuthWrapper>
   } else if (error) {
+    // Case 4: there was an error in the auth process,
+    // Render an error screen.
     return <Error />
-  } else if (loading || (user && !profile)) {
-    return <Loading text="Signing In" />
-  } else return <Landing handleLogin={handleLogin} />
+  } else {
+    // Case 5: if there is no signed in user,
+    // render the landing page with sign in action.
+    return <Landing handleLogin={handleLogin} />
+  }
 }
 
 export { Auth, AuthContext }

@@ -1,45 +1,36 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
+import { ChakraProvider } from '@chakra-ui/react'
 import {
-  Calendar,
-  CompletedRescue,
-  ContactUs,
-  DeliveryReport,
-  DriverInfo,
+  CreateOrganization,
+  CreateRescue,
   EditRescue,
-  Error,
-  FoodSafety,
-  Header,
-  Home,
-  Liability,
-  PickupReport,
-  Privacy,
-  Profile,
-  Rescues,
-  Terms,
-  Tutorial,
-  Rescue,
-  LogRescue,
-  EditOrganization,
-  Organizations,
   Organization,
+  CreateLocation,
   EditLocation,
-  Users,
+  Organizations,
+  Profile,
+  Rescue,
+  Rescues,
   User,
+  Users,
+  Home,
+  Wholesale,
+  WholesaleDonation,
+  FoodSafety,
+  Page,
   Analytics,
-  Modal,
-  EnvWarning,
-  Impact,
-} from 'components'
-import { Firestore, Auth, App } from 'contexts'
-import { useAuth } from 'hooks'
-import { IS_DEV_ENVIRONMENT, SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
-import { EmojiProvider } from 'react-apple-emojis'
-import emojiData from 'assets/emojis.json'
-import './styles/index.scss'
+  Error,
+  Privacy,
+  Legal,
+  Help,
+} from './components'
+import { Auth } from 'contexts'
+import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
+import theme from 'styles/theme'
+import './styles/index.css'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -47,6 +38,7 @@ import './styles/index.scss'
 // by default, we turn them on only for DEV, not PROD.
 // window.se_api_logs = IS_DEV_ENVIRONMENT
 window.se_api_logs = true
+
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: SENTRY_DSN,
@@ -62,311 +54,298 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-// handle installed on home screen
-let debounce
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  window.scrollTo({ top: 54, behavior: 'smooth' })
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY < 54) {
-      if (debounce) window.clearTimeout(debounce)
-      debounce = window.setTimeout(
-        () => window.scrollTo({ top: 54, behavior: 'smooth' }),
-        50
-      )
-    }
-  })
-}
-
-function PublicRoute({ children }) {
-  return (
-    <>
-      <Header />
-      {children}
-      <Modal />
-      <EnvWarning />
-    </>
-  )
-}
-
-function DriverRoute({ children }) {
-  const { permission } = useAuth()
-  return permission ? (
-    <>
-      <Header />
-      {children}
-      <Modal />
-      <EnvWarning />
-    </>
-  ) : (
-    <Navigate to="/error" />
-  )
-}
-
-function AdminRoute({ children }) {
-  const { admin } = useAuth()
-  return admin ? (
-    <>
-      <Header />
-      {children}
-      <Modal />
-      <EnvWarning />
-    </>
-  ) : (
-    <Navigate to="/error" />
-  )
-}
-
 function RescueAppRoutes() {
   return (
-    <Sentry.ErrorBoundary fallback={<Error crash />}>
-      <EmojiProvider data={emojiData}>
+    <ChakraProvider theme={theme}>
+      <Sentry.ErrorBoundary fallback={<Error crash />}>
         <BrowserRouter>
           <Auth>
-            {/* Auth component handles login and will show a login page if no user is authenticated */}
-            <Firestore>
-              <App>
-                <Routes>
-                  {/* Public Routes */}
-                  <Route
-                    path="/"
-                    element={
-                      <PublicRoute>
-                        <Home />
-                      </PublicRoute>
-                    }
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Page
+                    defaultTitle="Home"
+                    pageContentStyle={{ px: 0, pt: 8, mt: '-64px' }}
+                    Content={Home}
                   />
-                  <Route
-                    path="profile"
-                    element={
-                      <PublicRoute>
-                        <Profile />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/rescues"
+                element={
+                  <Page
+                    defaultTitle="Rescues"
+                    defaultBreadcrumbs={[
+                      { label: 'Rescues', link: '/rescues' },
+                    ]}
+                    Content={Rescues}
                   />
-                  <Route
-                    path="privacy"
-                    element={
-                      <PublicRoute>
-                        <Privacy />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/rescues/:rescue_id"
+                element={
+                  <Page
+                    defaultTitle="Loading Rescue"
+                    defaultBreadcrumbs={[
+                      { label: 'Rescues', link: '/rescues' },
+                      { label: 'Loading...', link: '' },
+                    ]}
+                    Content={Rescue}
+                    pageContentStyle={{ px: 0, pt: 8, mt: '-64px' }}
                   />
-                  <Route
-                    path="/tos"
-                    element={
-                      <PublicRoute>
-                        <Terms />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/rescues/:rescue_id/edit"
+                element={
+                  <Page
+                    defaultTitle="Loading Rescue"
+                    defaultBreadcrumbs={[
+                      { label: 'Rescues', link: '/rescues' },
+                      { label: 'Loading...', link: '' },
+                    ]}
+                    pullToRefresh={false}
+                    Content={EditRescue}
                   />
-                  <Route
-                    path="/contact"
-                    element={
-                      <PublicRoute>
-                        <ContactUs />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/rescues/:rescue_id/completed"
+                element={<div>completed rescue!</div>}
+              />
+              <Route
+                path="/create-rescue"
+                element={
+                  <Page
+                    defaultTitle="Create Rescue"
+                    pullToRefresh={false}
+                    defaultBreadcrumbs={[
+                      { label: 'Rescues', link: '/rescues' },
+                      { label: 'Create', link: '/create-rescue' },
+                    ]}
+                    Content={CreateRescue}
                   />
-                  <Route
-                    path="/food-safety"
-                    element={
-                      <PublicRoute>
-                        <FoodSafety />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <Page
+                    defaultTitle="Profile"
+                    defaultBreadcrumbs={[
+                      { label: 'Profile', link: '/profile' },
+                    ]}
+                    Content={Profile}
                   />
-                  <Route
-                    path="/liability"
-                    element={
-                      <PublicRoute>
-                        <Liability />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/people"
+                element={
+                  <Page
+                    id="Users"
+                    defaultTitle="People"
+                    defaultBreadcrumbs={[{ label: 'People', link: '/people' }]}
+                    Content={Users}
                   />
-                  <Route
-                    path="/driver-info"
-                    element={
-                      <PublicRoute>
-                        <DriverInfo />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/people/:user_id"
+                element={
+                  <Page
+                    id="User"
+                    defaultTitle="Loading Profile"
+                    defaultBreadcrumbs={[
+                      { label: 'People', link: '/people' },
+                      { label: 'Loading', link: '' },
+                    ]}
+                    Content={User}
                   />
-                  <Route
-                    path="/tutorial"
-                    element={
-                      <PublicRoute>
-                        <Tutorial />
-                      </PublicRoute>
-                    }
+                }
+              />
+              <Route
+                path="/organizations"
+                element={
+                  <Page
+                    id="Organizations"
+                    defaultTitle="Organizations"
+                    defaultBreadcrumbs={[
+                      { label: 'Organizations', link: '/organizations' },
+                    ]}
+                    Content={Organizations}
                   />
-
-                  {/* Driver Routes */}
-                  <Route
-                    path="/calendar"
-                    element={
-                      <DriverRoute>
-                        <Calendar />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/organizations/:organization_id"
+                element={
+                  <Page
+                    id="Organizations"
+                    defaultTitle="Loading Organization"
+                    defaultBreadcrumbs={[
+                      { label: 'Organizations', link: '/organizations' },
+                      { label: 'Loading...', link: '' },
+                    ]}
+                    Content={Organization}
                   />
-                  <Route
-                    path="/rescues"
-                    element={
-                      <DriverRoute>
-                        <Rescues />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/create-organization"
+                element={
+                  <Page
+                    id="CreateOrganization"
+                    defaultTitle="Create Organization"
+                    defaultBreadcrumbs={[
+                      { label: 'Organizations', link: '/organizations' },
+                      { label: 'Create', link: '/create-organization' },
+                    ]}
+                    Content={CreateOrganization}
                   />
-                  <Route
-                    path="/rescues/:rescue_id"
-                    element={
-                      <DriverRoute>
-                        <Rescue />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/organizations/:organization_id/create-location"
+                element={
+                  <Page
+                    id="CreateLocation"
+                    defaultTitle="Create Location"
+                    defaultBreadcrumbs={[
+                      {
+                        label: 'Organizations',
+                        link: '/organizations',
+                      },
+                      {
+                        label: 'Loading',
+                        link: '',
+                      },
+                    ]}
+                    Content={CreateLocation}
                   />
-                  <Route
-                    path="/rescues/:rescue_id/pickup/:pickup_id"
-                    element={
-                      <DriverRoute>
-                        <PickupReport />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/organizations/:organization_id/locations/:location_id"
+                element={
+                  <Page
+                    id="EditLocation"
+                    defaultTitle="Edit Location"
+                    defaultBreadcrumbs={[
+                      {
+                        label: 'Organizations',
+                        link: '/organizations',
+                      },
+                      {
+                        label: 'Loading',
+                        link: '',
+                      },
+                    ]}
+                    Content={EditLocation}
                   />
-                  <Route
-                    path="/rescues/:rescue_id/delivery/:delivery_id"
-                    element={
-                      <DriverRoute>
-                        <DeliveryReport />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/wholesale"
+                element={
+                  <Page
+                    id="Wholesale"
+                    defaultTitle="Wholesale"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                    ]}
+                    Content={Wholesale}
                   />
-                  <Route
-                    path="/rescues/:rescue_id/edit"
-                    element={
-                      <DriverRoute>
-                        <EditRescue />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/wholesale/:id"
+                element={
+                  <Page
+                    id="WholesaleDonation"
+                    defaultTitle="Wholesale"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                      { label: 'Loading...', link: '' },
+                    ]}
+                    Content={WholesaleDonation}
                   />
-                  <Route
-                    path="/rescues/:rescue_id/completed"
-                    element={
-                      <DriverRoute>
-                        <CompletedRescue />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/food-safety"
+                element={
+                  <Page
+                    id="FoodSafety"
+                    defaultTitle="Food Safety"
+                    Content={FoodSafety}
                   />
-                  <Route
-                    path="/stats"
-                    element={
-                      <DriverRoute>
-                        <Impact />
-                      </DriverRoute>
-                    }
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <Page
+                    id="Analytics"
+                    defaultBreadcrumbs={[
+                      { label: 'Analytics', link: '/analytics' },
+                    ]}
+                    defaultTitle="Analytics"
+                    Content={Analytics}
                   />
-                  {/* Admin Routes */}
-
-                  <Route
-                    path="/admin/create-rescue"
-                    element={
-                      <AdminRoute>
-                        <EditRescue />
-                      </AdminRoute>
-                    }
+                }
+              />
+              <Route
+                path="/privacy"
+                element={
+                  <Page
+                    id="Privacy"
+                    defaultBreadcrumbs={[
+                      { label: 'Privacy', link: '/privacy' },
+                    ]}
+                    defaultTitle="Privacy"
+                    Content={Privacy}
                   />
-                  <Route
-                    path="/admin/log-rescue"
-                    element={
-                      <AdminRoute>
-                        <LogRescue />
-                      </AdminRoute>
-                    }
+                }
+              />
+              <Route
+                path="/legal"
+                element={
+                  <Page
+                    id="Legal"
+                    defaultBreadcrumbs={[{ label: 'Legal', link: '/legal' }]}
+                    defaultTitle="Legal"
+                    Content={Legal}
                   />
-                  <Route
-                    path="/admin/create-organization"
-                    element={
-                      <AdminRoute>
-                        <EditOrganization />
-                      </AdminRoute>
-                    }
+                }
+              />
+              <Route
+                path="/help"
+                element={
+                  <Page
+                    id="Help"
+                    defaultBreadcrumbs={[{ label: 'Help', link: '/help' }]}
+                    defaultTitle="Help"
+                    Content={Help}
                   />
-                  <Route
-                    path="/admin/organizations"
-                    element={
-                      <AdminRoute>
-                        <Organizations />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/organizations/:organization_id"
-                    element={
-                      <AdminRoute>
-                        <Organization />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/organizations/:organization_id/edit"
-                    element={
-                      <AdminRoute>
-                        <EditOrganization />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/organizations/:organization_id/create-location"
-                    element={
-                      <AdminRoute>
-                        <EditLocation />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/organizations/:organization_id/location/:location_id"
-                    element={
-                      <AdminRoute>
-                        <EditLocation />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/users"
-                    element={
-                      <AdminRoute>
-                        <Users />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/users/:id"
-                    element={
-                      <AdminRoute>
-                        <User />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/analytics"
-                    element={
-                      <AdminRoute>
-                        <Analytics />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route path="*" element={<Error />} />
-                </Routes>
-              </App>
-            </Firestore>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <Page id="Error" defaultTitle="Uh oh..." Content={Error} />
+                }
+              />
+            </Routes>
           </Auth>
         </BrowserRouter>
-      </EmojiProvider>
-    </Sentry.ErrorBoundary>
+      </Sentry.ErrorBoundary>
+    </ChakraProvider>
   )
 }
 
-// this function call will render our React app into the DOM inside <div id='root'>
-// you can find that div in public/index.html
-ReactDOM.render(<RescueAppRoutes />, document.getElementById('root'))
+const container = document.getElementById('root')
+const root = createRoot(container)
+root.render(<RescueAppRoutes />)

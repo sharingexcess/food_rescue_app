@@ -1,136 +1,98 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import {
-  updateFieldSuggestions,
-  formFields,
-  getDefaultStartTime,
-  getDefaultEndTime,
-  parseExistingRescue,
-} from './utils'
-import UserIcon from 'assets/user.svg'
+import { Box, Button, Flex, Skeleton } from '@chakra-ui/react'
+import { PageTitle } from 'components'
+import { useApi, useAuth, useIsMobile } from 'hooks'
+import { memo, useEffect, useMemo, useState } from 'react'
 import {
   createTimestamp,
-  deleteFirestoreData,
-  generateDirectionsLink,
+  formatTimestamp,
   generateUniqueId,
-  STATUSES,
-  updateGoogleCalendarEvent,
   SE_API,
+  STATUSES,
 } from 'helpers'
 import moment from 'moment'
-import {
-  EditDelivery,
-  EditPickup,
-  Input,
-  Ellipsis,
-  Loading,
-  ReorderStops,
-} from 'components'
-import { useApi, useFirestore, useAuth } from 'hooks'
-import {
-  Button,
-  Spacer,
-  Text,
-  ExternalLink,
-  Card,
-} from '@sharingexcess/designsystem'
-import { Emoji } from 'react-apple-emojis'
+import { useNavigate, useParams } from 'react-router-dom'
+import { InfoForm } from './EditRescue.InfoForm'
+import { AddStop } from './EditRescue.AddStop'
+import { Stops } from './EditRescue.Stops'
 
-export function EditRescue() {
-  const { user, admin } = useAuth()
+export function EditRescue({ setBreadcrumbs }) {
+  const { user } = useAuth()
   const { rescue_id } = useParams()
-  const navigate = useNavigate()
-  const { data: rescue } = useApi(rescue_id ? `/rescues/${rescue_id}` : null)
-  const handlers = useFirestore('users')
+  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
+  const { data: handlers } = useApi('/publicProfiles')
+  const { data: donors } = useApi(
+    '/organizations',
+    useMemo(() => ({ type: 'donor' }), [])
+  )
+  const { data: recipients } = useApi(
+    '/organizations',
+    useMemo(() => ({ type: 'recipient' }), [])
+  )
   const [formData, setFormData] = useState({
-    // Any field used as an input value must be an empty string
-    // others can and should be initialized as null
-    handler_name: '',
-    handler_id: null,
-    timestamp_scheduled_start: getDefaultStartTime(),
-    timestamp_scheduled_finish: getDefaultEndTime(),
-    type: 'retail',
-    is_direct_link: false,
-    stops: [],
+    timestamp_scheduled_start: '',
+    timestamp_scheduled_finish: '',
+    handler: null,
   })
-  const [suggestions, setSuggestions] = useState({
-    // these will populate the dropdown suggestions for each input
-    handler_name: [],
-    handler_id: [],
-  })
-  const [list, setList] = useState(rescue_id ? null : 'pickups')
-  const [working, setWorking] = useState()
-  const [confirmedTimes, setConfirmedTime] = useState(rescue_id ? true : null)
-  const [errors, setErrors] = useState([])
-  const [isSelectedCardId, setSelectedCardId] = useState(null)
-  const [showErrors, setShowErrors] = useState(false)
-  const [canRender, setCanRender] = useState(rescue_id ? false : true)
-  const [deletedStops, setDeletedStops] = useState([])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [view, setView] = useState(null)
+  const [working, setWorking] = useState(false)
+  const isMobile = useIsMobile()
+  const navigate = useNavigate()
+
+  const [stops, setStops] = useState()
 
   useEffect(() => {
-    async function getExistingRescueData() {
-      const existingRescueData = await parseExistingRescue(rescue)
-      setFormData(prevFormData => ({
-        ...prevFormData,
-        ...existingRescueData,
-      }))
-      setSuggestions(prevSuggestions => ({
-        ...prevSuggestions,
-        handler_name: null,
-      }))
-      setCanRender(true)
-    }
-    rescue && rescue_id && getExistingRescueData()
-  }, [rescue, rescue_id])
+    setBreadcrumbs([
+      { label: 'Rescues', link: '/rescues' },
+      {
+        label: 'Rescue',
+        link: `/rescues/${rescue_id}`,
+      },
+      { label: 'Edit', link: `/rescues/${rescue_id}/edit` },
+    ])
+  }, [rescue_id])
 
   useEffect(() => {
-    formData.handler_id &&
+    if (rescue && !stops) {
       setFormData({
-        ...formData,
-        handler: handlers.find(i => i.id === formData.handler_id),
+        timestamp_scheduled_start: formatTimestamp(
+          rescue.timestamp_scheduled_start,
+          'YYYY-MM-DDTHH:mm'
+        ),
+        timestamp_scheduled_finish: formatTimestamp(
+          rescue.timestamp_scheduled_finish,
+          'YYYY-MM-DDTHH:mm'
+        ),
+        handler: rescue.handler,
       })
-  }, [formData.handler_id, handlers]) // eslint-disable-line
+      setStops(rescue.stops)
+    }
+  }, [rescue])
 
-  function deselectStop(e) {
-    if (e.target.id === 'EditRescue') {
-      setSelectedCardId(null)
+  async function handleAddStop(stop) {
+    const id = await generateUniqueId('stops')
+    setStops(currentStops => [
+      ...currentStops,
+      {
+        ...stop,
+        id,
+        organization_id: stop.organization.id,
+        location_id: stop.location.id,
+        status: STATUSES.SCHEDULED,
+      },
+    ])
+    setView(null)
+  }
+
+  function removeStop(index) {
+    if (window.confirm('Are you sure you want to remove this stop?')) {
+      setStops([...stops.slice(0, index), ...stops.slice(index + 1)])
     }
   }
 
-  async function handleAddPickup(pickup) {
-    setList()
-    setFormData({
-      ...formData,
-      stops: [...formData.stops, pickup],
-    })
-  }
-
-  async function handleAddDelivery(delivery) {
-    setList()
-    setFormData({
-      ...formData,
-      stops: [...formData.stops, delivery],
-    })
-  }
-
-  async function handleCreateRescue() {
+  async function handleUpdateRescue() {
     setWorking(true)
-    const new_rescue_id = rescue_id || (await generateUniqueId('rescues'))
-    if (rescue_id) {
-      // if this is an existing rescue with pre-created stops,
-      // make sure we delete any old and now deleted pickups and deliveries
-      for (const stop of deletedStops) {
-        await deleteFirestoreData(['stops', stop.id])
-      }
-    }
-
-    await SE_API.post(`/rescues/${new_rescue_id}/create`, {
-      formData: formData,
-      status_scheduled: rescue?.status ? rescue.status : STATUSES.SCHEDULED,
-      timestamp_created: rescue?.timestamp_created
-        ? rescue.timestamp_created
-        : createTimestamp(),
+    const promises = []
+    const defaultPayload = {
       timestamp_scheduled_start: moment(
         formData.timestamp_scheduled_start
       ).toDate(),
@@ -138,432 +100,134 @@ export function EditRescue() {
         formData.timestamp_scheduled_finish
       ).toDate(),
       timestamp_updated: createTimestamp(),
-      timestamp_logged_start: rescue?.timestamp_logged_start
-        ? rescue.timestamp_logged_start
-        : null,
-    })
-
-    setWorking(false)
-    navigate(`/rescues/${new_rescue_id}`)
-  }
-
-  ///This is a function to call when we want to update a rescue rather than calling handleCreateRescue
-  async function handleUpdateRescue() {
-    setWorking(true)
-    const new_rescue_id = rescue_id || (await generateUniqueId('rescues'))
-    if (rescue_id) {
-      // if this is an existing rescue with pre-created stops,
-      // make sure we delete any old and now deleted pickups and deliveries
-      for (const stop of deletedStops) {
-        await deleteFirestoreData(['stops', stop.id])
-      }
+      handler_id: formData.handler?.id || null,
     }
 
-    await SE_API.post(`/rescues/${rescue.id}/update`, {
-      timestamp_updated: createTimestamp(),
-      handler_id: formData.handler_id,
-      stops: formData.stops,
-      timestamp_scheduled_start: formData.timestamp_scheduled_finish,
-      timestamp_scheduled_finish: formData.timestamp_scheduled_finish,
-    })
-
-    for (const stop of formData.stops) {
-      SE_API.post(`/stops/${stop.id}/update`, {
-        ...stop,
-        rescue_id: rescue_id,
-        timestamp_updated: createTimestamp(),
-        handler_id: formData.handler_id,
-        timestamp_scheduled_start: formData.timestamp_scheduled_finish,
-        timestamp_scheduled_finish: formData.timestamp_scheduled_finish,
-      })
-    }
-
-    setWorking(false)
-    navigate(`/rescues/${new_rescue_id}`)
-  }
-
-  async function handleRemoveStop(id, type) {
-    setFormData({
-      ...formData,
-      stops: formData.stops.filter(s => s.id !== id),
-    })
-    setDeletedStops(currDeletedStops => [...currDeletedStops, { id, type }])
-  }
-
-  function isValidRescue() {
-    if (
-      formData.stops.find(s => s.type === 'pickup') &&
-      formData.stops.find(s => s.type === 'delivery') &&
-      formData.stops[formData.stops.length - 1].type === 'delivery'
-    ) {
-      return true
-    }
-    return false
-  }
-
-  function handleChange(e, field) {
-    setErrors([])
-    setShowErrors(false)
-    if (field.suggestionQuery) {
-      updateFieldSuggestions(
-        e.target.value,
-        handlers,
-        field,
-        suggestions,
-        setSuggestions
-      )
-    }
-    if (field.id === 'timestamp_scheduled_start') {
-      // automatically set time end 2 hrs later
-      const timestamp_scheduled_finish = new Date(e.target.value)
-      timestamp_scheduled_finish.setTime(
-        timestamp_scheduled_finish.getTime() + 2 * 60 * 60 * 1000
-      )
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
-        timestamp_scheduled_finish: moment(timestamp_scheduled_finish).format(
-          'yyyy-MM-DDTHH:mm'
-        ),
-      })
-    } else if (field.id === 'handler_name') {
-      setFormData({
-        ...formData,
-        handler: {},
-        handler_id: '',
-        handler_name: e.target.value,
-      })
-    } else setFormData({ ...formData, [e.target.id]: e.target.value })
-  }
-
-  function handleSelect(_e, selected, field) {
-    if (field.type !== 'select') {
-      setSuggestions({ ...suggestions, [field.id]: null })
-    }
-    const updated_fields = field.handleSelect(selected)
-    updated_fields && setFormData({ ...formData, ...updated_fields })
-  }
-
-  function handleDropdownSelect(e, field) {
-    handleSelect(
-      e,
-      suggestions[field.id].find(s => s.id === e.target.value),
-      field
-    )
-  }
-
-  function Stop({ s, onMove, handleCardSelection, position, lengthOfStops }) {
-    const isSelectedCard = isSelectedCardId === s.id
-
-    function generateStopTitle() {
-      return `${s.organization.name} (${
-        s.location.nickname || s.location.address1
-      })`
-    }
-
-    function StopAddress() {
-      return (
-        <ExternalLink
-          to={generateDirectionsLink(
-            s.location.address1,
-            s.location.city,
-            s.location.state,
-            s.location.zip
-          )}
-        >
-          <Button
-            classList={['Rescue-stop-address-button']}
-            type="tertiary"
-            size="small"
-            color="blue"
-          >
-            <Emoji name="round-pushpin" width={20} />
-            <Spacer width={8} />
-            {s.location.address1}
-            {s.location.address2 && ` - ${s.location.address2}`}
-            <br />
-            {s.location.city}, {s.location.state} {s.location.zip}
-          </Button>
-        </ExternalLink>
-      )
-    }
-
-    return (
-      <Card
-        classList={['Stop', s.type, isSelectedCard && 'selected-card']}
-        onClick={() => handleCardSelection(s.id)}
-      >
-        <div>
-          {admin && (
-            <i
-              className="fa fa-times"
-              onClick={() => handleRemoveStop(s.id, s.type)}
-            />
-          )}
-          <Text
-            type="small-header"
-            color={s.type === 'pickup' ? 'green' : 'red'}
-          >
-            {s.type === 'pickup' ? 'PICKUP' : 'DELIVERY'}
-          </Text>
-          <Text type="section-header" color="black">
-            {generateStopTitle()}
-          </Text>
-          <Spacer height={8} />
-          <StopAddress />
-        </div>
-        {isSelectedCard && (
-          <ReorderStops
-            position={position}
-            onMove={onMove}
-            id={s.id}
-            lengthOfStops={lengthOfStops}
-          />
-        )}
-      </Card>
-    )
-  }
-
-  function validateFormData() {
-    if (!moment(formData.timestamp_scheduled_start).isValid()) {
-      errors.push('Invalid Data Input: Start Time is invalid')
-    }
-    if (errors.length === 0) {
-      return true
-    }
-    return false
-  }
-
-  function FormError() {
-    if (showErrors === true) {
-      return errors.map(error => <p id="FormError">{error}</p>)
-    } else return null
-  }
-
-  function Handler() {
-    return (
-      <div id="EditRescue-handler">
-        <img
-          src={formData.handler ? formData.handler.icon : UserIcon}
-          alt={formData.handler ? formData.handler.name : 'Unassigned Rescue'}
-        />
-        <div id="EditRescue-handler-info">
-          <Text type="secondary-header" color="white" shadow>
-            {formData.handler ? formData.handler.name : 'Unassigned Rescue'}
-          </Text>
-          <Text type="subheader" color="white" shadow>
-            {`${moment(formData.timestamp_scheduled_start).format(
-              'ddd, MMM D, h:mma'
-            )}${
-              formData.timestamp_scheduled_finish
-                ? ' - ' +
-                  moment(formData.timestamp_scheduled_finish).format('h:mma')
-                : ''
-            } `}
-          </Text>
-          <Spacer height={8} />
-          {admin ? (
-            <Button
-              id="EditRescue-handler-edit"
-              type="secondary"
-              handler={() => setConfirmedTime(false)}
-            >
-              Update Rescue Info
-            </Button>
-          ) : (
-            <Text color="white" shadow>
-              Select a stop to reorder your rescue
-            </Text>
-          )}
-        </div>
-      </div>
-    )
-  }
-
-  function SelectHandler() {
-    function ConfirmTimesButton() {
-      function handleClick() {
-        if (validateFormData()) {
-          setConfirmedTime(true)
-        } else setShowErrors(true)
-      }
-
-      return (
-        formData.timestamp_scheduled_start &&
-        canRender && (
-          <Button
-            id="EditRescue-confirm-button"
-            type="primary"
-            color="white"
-            handler={handleClick}
-          >
-            {formData.stops.length ? 'Confirm' : 'Add Pickups'}
-          </Button>
-        )
-      )
-    }
-
-    return (
-      <>
-        {formFields.map(field =>
-          (!field.preReq || formData[field.preReq]) && canRender ? (
-            <Input
-              key={field.id}
-              element_id={field.id}
-              type={field.type}
-              label={field.label}
-              value={formData[field.id]}
-              onChange={e => handleChange(e, field)}
-              suggestions={suggestions[field.id]}
-              onSuggestionClick={
-                field.type === 'select'
-                  ? e => handleDropdownSelect(e, field)
-                  : (e, s) => handleSelect(e, s, field)
-              }
-              animation={false}
-            />
-          ) : null
-        )}
-        <FormError />
-        <ConfirmTimesButton />
-      </>
-    )
-  }
-
-  function SelectStops() {
-    function SubmitButton() {
-      function generateSubmitButtonText() {
-        return working ? (
-          <>
-            {rescue_id ? 'Updating Rescue' : 'Creating Rescue'}
-            <Ellipsis />
-          </>
-        ) : rescue_id ? (
-          'Update Rescue'
-        ) : (
-          'Create Rescue'
+    let activeStop = null
+    for (const stop of stops) {
+      if ([STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(stop.status)) {
+        if (activeStop) {
+          promises.push(
+            SE_API.post(
+              `/stops/${stop.id}/update`,
+              { ...defaultPayload, status: STATUSES.SCHEDULED },
+              user.accessToken
+            )
+          )
+        } else {
+          activeStop = stop
+          promises.push(
+            SE_API.post(
+              `/stops/${stop.id}/update`,
+              { ...defaultPayload, status: STATUSES.ACTIVE },
+              user.accessToken
+            )
+          )
+        }
+      } else {
+        promises.push(
+          SE_API.post(
+            `/stops/${stop.id}/update`,
+            defaultPayload,
+            user.accessToken
+          )
         )
       }
-
-      return isValidRescue() && !list ? (
-        <Button
-          id="EditRescue-submit"
-          size="large"
-          type="secondary"
-          disabled={working}
-          handler={handleCreateRescue}
-        >
-          {generateSubmitButtonText()}
-        </Button>
-      ) : null
     }
+    await Promise.all(promises)
 
-    function getPosition(id) {
-      return formData.stops.findIndex(i => i.id === id)
-    }
-
-    function handleMove(id, direction) {
-      const stops = formData.stops
-      const position = getPosition(id)
-      if (position < 0) {
-        throw new Error('Stop not found')
-      } else if (
-        (direction === -1 && position === 0) ||
-        (direction === 1 && position === stops.length - 1)
-      ) {
-        return
-      }
-      const stop = stops[position]
-      const newStops = stops.filter(i => i.id !== id)
-      newStops.splice(position + direction, 0, stop)
-
-      setFormData({
-        ...formData,
-        stops: [...newStops],
-      })
-    }
-
-    function selectCard(id) {
-      setSelectedCardId(id)
-      setSelectedCardId(state => {
-        return state
-      })
-    }
-
-    function CancelButton() {
-      return list ? (
-        <Button
-          id="EditRescue-cancel"
-          type="secondary"
-          handler={() => setList()}
-        >
-          Cancel
-        </Button>
-      ) : null
-    }
-
-    function AddPickupButton() {
-      return !list ? (
-        <Button id="EditRescue-add-pickup" handler={() => setList('pickups')}>
-          Add Pickup
-        </Button>
-      ) : null
-    }
-
-    function AddDeliveryButton() {
-      return formData.stops.length && !list ? (
-        <Button
-          id="EditRescue-add-delivery"
-          handler={() => setList('delivery')}
-        >
-          Add Delivery
-        </Button>
-      ) : null
-    }
-
-    return confirmedTimes ? (
-      <>
-        {formData.stops.map(s => (
-          <Stop
-            s={s}
-            key={s.id}
-            onMove={handleMove}
-            position={getPosition}
-            lengthOfStops={formData.stops.length}
-            handleCardSelection={selectCard}
-          />
-        ))}
-        <section id="AddStop">
-          {list === 'pickups' ? (
-            <EditPickup handleSubmit={handleAddPickup} />
-          ) : list === 'delivery' ? (
-            <EditDelivery handleSubmit={handleAddDelivery} />
-          ) : null}
-        </section>
-        <div id="EditRescue-buttons">
-          {admin && (
-            <>
-              <CancelButton />
-              <AddPickupButton />
-              <AddDeliveryButton />
-            </>
-          )}
-          <SubmitButton />
-        </div>
-      </>
-    ) : null
+    // make the rescue update call last, after all stops are updated
+    // this is to ensure that the final recalculation happens
+    // without risking race conditions
+    await SE_API.post(
+      `/rescues/${rescue_id}/update`,
+      { ...defaultPayload, stop_ids: stops.map(i => i.id) },
+      user.accessToken
+    )
+    navigate(`/rescues/${rescue_id}`)
   }
+
+  const isValidRescue =
+    formData.timestamp_scheduled_start &&
+    formData.timestamp_scheduled_finish &&
+    formData.timestamp_scheduled_start < formData.timestamp_scheduled_finish &&
+    stops.length >= 2 &&
+    stops[0].type == 'pickup' &&
+    stops[stops.length - 1].type === 'delivery'
+
+  if (!rescue) return <LoadingEditRescue />
 
   return (
-    <main id="EditRescue" onClick={deselectStop}>
-      {canRender ? (
-        <>
-          {confirmedTimes ? <Handler /> : SelectHandler()}
-          <SelectStops />
-        </>
+    <>
+      <PageTitle>Edit Rescue</PageTitle>
+      <InfoForm
+        formData={formData}
+        setFormData={setFormData}
+        handlers={handlers}
+      />
+      <Stops stops={stops} setStops={setStops} removeStop={removeStop} />
+      {view ? (
+        <AddStop
+          type={view}
+          handleAddStop={handleAddStop}
+          handleCancel={() => setView(null)}
+          organizations={
+            view === 'pickup' ? donors : view === 'delivery' ? recipients : null
+          }
+        />
       ) : (
-        <Loading />
+        <Flex w="100%" gap="4" mt="8" mb="4" justify="center" wrap="wrap">
+          <Button
+            variant="secondary"
+            onClick={() => setView('pickup')}
+            flexGrow={isMobile ? '1' : '0'}
+            background="blue.secondary"
+            color="blue.primary"
+            isLoading={!donors}
+          >
+            {stops?.length === 0 ? 'Add Stops' : 'Add Pickup'}
+          </Button>
+          {stops?.length > 0 && (
+            <Button
+              variant="secondary"
+              onClick={() => setView('delivery')}
+              flexGrow={isMobile ? '1' : '0'}
+              isLoading={!recipients}
+            >
+              Add Delivery
+            </Button>
+          )}
+
+          <Button
+            variant="primary"
+            onClick={handleUpdateRescue}
+            flexGrow="1"
+            flexBasis={isMobile ? '100%' : null}
+            isLoading={working}
+            disabled={!isValidRescue}
+            loadingText="Updating Rescue..."
+          >
+            Update Rescue
+          </Button>
+        </Flex>
       )}
-    </main>
+    </>
   )
 }
+
+const LoadingEditRescue = memo(function LoadingEditRescue() {
+  return (
+    <>
+      <PageTitle>Loading Rescue...</PageTitle>
+      <Skeleton h="16" my="6" />
+      <Skeleton h="16" my="6" />
+      <Skeleton h="16" my="6" />
+      <Box h="8" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+      <Skeleton h="32" my="4" />
+    </>
+  )
+})

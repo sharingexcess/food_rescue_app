@@ -20,7 +20,7 @@ export const IS_DEV_ENVIRONMENT = process.env.REACT_APP_FIREBASE_ENV === 'dev'
 export const IS_PWA = window.matchMedia('(display-mode: standalone)').matches
 
 // 600 pixels is our baseline threshold for handling a mobile screen vs. desktop
-export const MOBILE_THRESHOLD = 600
+export const MOBILE_THRESHOLD = 992
 
 export const FORMSPREE_FORM_ID = 'xlezdgjl'
 
@@ -72,6 +72,8 @@ export const FAIR_MARKET_VALUES = {
   impact_data_other: 1.62,
 }
 
+export const EMISSIONS_COEFFICIENT = 3.66
+
 export const ORG_TYPES = ['donor', 'recipient']
 
 export const ORG_SUBTYPES = {
@@ -87,15 +89,16 @@ export const ORG_SUBTYPES = {
 }
 
 export const ORG_TYPE_ICONS = {
-  retail: 'department-store',
-  wholesale: 'package',
-  holding: 'palms-up-together',
-  other: 'red-question-mark',
-  food_bank: 'red-apple',
-  agency: 'briefcase',
-  popup: 'person-raising-hand',
-  community_fridge: 'cityscape',
-  home_delivery: 'house',
+  retail: '🏬',
+  wholesale: '📦',
+  holding: '🤲',
+  other: '❓',
+  food_bank: '🍎',
+  agency: '💼',
+  popup: '🎪',
+  community_fridge: '🏙',
+  home_delivery: '🏠',
+  compost: '🥦',
 }
 
 export const STATUSES = {
@@ -119,6 +122,7 @@ export const RECIPIENT_TYPES = {
   COMMUNITY_FRIDGE: 'community_fridge',
   POPUP: 'popup',
   HOLDING: 'holding',
+  COMPOST: 'compost',
   OTHER: 'other',
 }
 
@@ -126,37 +130,6 @@ export const API_URL =
   process.env.NODE_ENV === 'development'
     ? process.env.REACT_APP_API_URL_LOCAL
     : process.env.REACT_APP_API_URL_HOSTED
-
-export const CLOUD_FUNCTION_URLS = {
-  addCalendarEvent: API_URL + '/calendar/add',
-  deleteCalendarEvent: API_URL + '/calendar/delete',
-}
-
-export const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-
-export const COLORS = [
-  '#205a08',
-  '#307e0e',
-  '#4ea528',
-  '#6bcf3f',
-  '#8af55c',
-  '#b8ff9a',
-]
-
-export const EMISSIONS_COEFFICIENT = 3.66
 
 export const DAYS = [
   'Sunday',

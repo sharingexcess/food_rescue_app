@@ -1,5 +1,3 @@
-import React from 'react'
-
 export function Privacy() {
   return (
     <main id="Privacy">

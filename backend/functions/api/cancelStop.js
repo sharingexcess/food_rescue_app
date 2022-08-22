@@ -19,7 +19,34 @@ async function cancelStopEndpoint(request, response) {
         return
       }
 
-      const canceled_stop = await db
+      const stop = await db
+        .collection('stops')
+        .doc(stop_id)
+        .get()
+        .then(doc => doc.data())
+
+      const rescue = await db
+        .collection('rescues')
+        .doc(stop.rescue_id)
+        .get()
+        .then(doc => doc.data())
+
+      // update the rescue to move the cancelled stop to the front
+      const updatedStopIds = [
+        stop.id,
+        ...rescue.stop_ids.filter(id => id !== stop.id),
+      ]
+
+      await db
+        .collection('rescues')
+        .doc(rescue.id)
+        .set(
+          { stop_ids: updatedStopIds, timestamp_updated: new Date() },
+          { merge: true }
+        )
+
+      // update the stop itself
+      await db
         .collection('stops')
         .doc(stop_id)
         .set(
@@ -35,12 +62,13 @@ async function cancelStopEndpoint(request, response) {
             impact_data_mixed: 0,
             impact_data_other: 0,
             impact_data_total_weight: 0,
+            timestamp_updated: new Date(),
           },
           { merge: true }
         )
 
       if (type === 'delivery') {
-        canceled_stop = await db.collection('stops').doc(stop_id).set(
+        await db.collection('stops').doc(stop_id).set(
           {
             percent_of_total_dropped: 0,
           },
@@ -48,7 +76,7 @@ async function cancelStopEndpoint(request, response) {
         )
       }
 
-      response.status(200).send(JSON.stringify(canceled_stop))
+      response.status(200).send()
       resolve()
     } catch (e) {
       console.error('Caught error:', e)

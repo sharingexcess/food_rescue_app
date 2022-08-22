@@ -14,7 +14,7 @@ async function deleteCalendarEventEndpoint(request, response) {
 
   const requestIsAuthenticated = await authenticateRequest(
     request.get('accessToken'),
-    user => user.is_admin
+    user => user.permission == 'admin'
   )
 
   if (!requestIsAuthenticated) {
@@ -36,7 +36,7 @@ async function deleteCalendarEventEndpoint(request, response) {
     })
 }
 
-function deleteEvent(eventId) {
+async function deleteEvent(eventId) {
   console.log('Deleting Event:', eventId)
 
   // loading this key from an ENV var messes up line break formatting
@@ -54,13 +54,13 @@ function deleteEvent(eventId) {
     process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
   )
 
-  return new Promise(function (resolve, reject) {
+  const res = await new Promise(resolve => {
     calendar.events.delete(
       { auth, calendarId: process.env.GOOGLE_CALENDAR_ID, eventId },
       (err, res) => {
         if (err) {
-          console.log('Rejecting because of error', err)
-          reject(err)
+          console.log('Caught error:', err)
+          resolve(err)
         } else {
           console.log('Request successful', res)
           resolve(res.data)
@@ -68,6 +68,7 @@ function deleteEvent(eventId) {
       }
     )
   })
+  return res
 }
 
 exports.deleteCalendarEventEndpoint = deleteCalendarEventEndpoint

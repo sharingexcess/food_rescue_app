@@ -15,14 +15,14 @@ service cloud.firestore {
     }
 
     function isAdmin (userId){
-    	let userData = document('users', userId);
-      let adminStatus = userData.is_admin == true;
+    	let profile = document('public_profiles', userId);
+      let adminStatus = profile.permission == "admin";
       return adminStatus;
     }
     
     function isDriver (userId){
-    	let userData = document('users', userId);
-      let driverStatus = userData.is_driver == true;
+    	let profile = document('public_profiles', userId);
+      let driverStatus = profile.permission;
       return driverStatus;
     }
     
@@ -30,21 +30,6 @@ service cloud.firestore {
     	let userData = document(collection, userId);
     	let adminChange = request.resource.data[field] != userData[field];
       return adminChange;
-    }
-    
-    function changinPermissions (userId, req){
-    	let changingAdmin = fieldChanged('users', userId, "is_admin", req);
-    	let changingDriver = fieldChanged('users', userId, "is_driver", req);
-      return changingAdmin || changingDriver;
-    }
-    
-    
-    match /users/{userId} {
-    	allow create
-      allow read: if isTheSameUser(userId) || isAdmin(request.auth.uid);
-      allow update: if (isTheSameUser(userId) && !(fieldChanged('users', userId, "is_admin", request))) 
-      										|| (changinPermissions(userId, request) && isAdmin(request.auth.uid));
-      allow delete: if isTheSameUser(userId) || isAdmin(request.auth.uid);
     }
     
     match /locations/{locationId}{
@@ -75,6 +60,18 @@ service cloud.firestore {
     match /stops/{stops}{
     	allow create, delete: if isAdmin(request.auth.uid);
     	allow read, update: if isHandler(resource) || isAdmin(request.auth.uid);
+    }
+
+    match /public_profiles/{userId}{
+      allow create: if request.auth != null;
+      allow read, delete: if isTheSameUser(userId);
+      allow update: if false;
+    }
+
+    match /private_profiles/{userId}{
+      allow create: if request.auth != null;
+      allow read, delete: if isTheSameUser(userId);
+      allow update: if false;
     }
   }
 }

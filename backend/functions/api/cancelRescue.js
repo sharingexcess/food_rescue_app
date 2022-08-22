@@ -1,8 +1,5 @@
-// update firebase (cancel rescue)
-// update all stops (cancel stops)
-// delete calendar
-// return status code
-const { db } = require('../../helpers')
+const { db, STATUSES } = require('../../helpers')
+const { deleteEvent } = require('./deleteCalendarEvent')
 
 async function cancelRescueEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -20,17 +17,54 @@ async function cancelRescueEndpoint(request, response) {
         response.status(400).send('No payload received in request body.')
         return
       }
-      const canceled_rescue = await db
+
+      const rescue = await db
         .collection('rescues')
         .doc(id)
-        .set(
-          {
-            status: payload.status,
-            notes: payload.notes || '',
-          },
-          { merge: true }
-        )
-      response.status(200).send(JSON.stringify(canceled_rescue))
+        .get()
+        .then(doc => doc.data())
+
+      console.log('Rescue to cancel:', rescue)
+
+      Promise.all([
+        // cancel all stops
+        ...rescue.stop_ids.map(stop_id =>
+          db
+            .collection('stops')
+            .doc(stop_id)
+            .set(
+              {
+                status: STATUSES.CANCELLED,
+                notes: 'Cancelled automatically because of cancelled rescue',
+              },
+              { merge: true }
+            )
+            .then(() => console.log('Successfully cancelled stop:', stop_id))
+        ),
+        // cancel the rescue itself
+        db
+          .collection('rescues')
+          .doc(id)
+          .set(
+            {
+              status: STATUSES.CANCELLED,
+              notes: payload.notes || '',
+            },
+            { merge: true }
+          )
+          .then(() => console.log('Successfully cancelled rescue:', rescue.id)),
+      ])
+
+      try {
+        if (rescue.google_calendar_event_id) {
+          await deleteEvent(rescue.google_calendar_event_id)
+        }
+      } catch (e) {
+        console.error('Error cancelling google calendar event:', e)
+      }
+
+      console.log('Successfully cancelled rescue.')
+      response.status(200).send()
       resolve()
     } catch (e) {
       console.error('Caught error:', e)

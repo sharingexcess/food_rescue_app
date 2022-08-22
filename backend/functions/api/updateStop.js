@@ -1,14 +1,9 @@
-const {
-  db,
-  formatDocumentTimestamps,
-  recalculateRescue,
-} = require('../../helpers')
+const { db, recalculateRescue } = require('../../helpers')
 
 async function updateStopEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
       console.log('running updateStop')
-
       const { id } = request.params
       console.log('Received id:', id)
 
@@ -40,6 +35,7 @@ async function updateStop(id, payload) {
   const cleaned_payload = removeEmptyValues({
     status: payload.status,
     notes: payload.notes,
+    handler_id: payload.handler_id,
     percent_of_total_dropped: payload.percent_of_total_dropped,
     impact_data_dairy: payload.impact_data_dairy,
     impact_data_bakery: payload.impact_data_bakery,

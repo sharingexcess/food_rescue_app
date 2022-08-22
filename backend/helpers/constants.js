@@ -40,7 +40,15 @@ exports.RECIPIENT_SUB_TYPES = [
   'community_fridge',
   'home_delivery',
   'holding',
+  'compost',
   'other',
 ]
 
 exports.EMISSIONS_COEFFICIENT = 3.66
+
+exports.STATUSES = {
+  CANCELLED: 'cancelled',
+  SCHEDULED: 'scheduled',
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
+}

@@ -22,10 +22,13 @@
     "to"
   ],
   "cSpell.words": [
+    "chakra",
     "designsystem",
     "falsey",
+    "firestore",
     "FORMSPREE",
     "philabundance",
+    "Scriptjs",
     "Treemap"
   ],
   "explorer.confirmDragAndDrop": false,
@@ -45,5 +48,6 @@
   },
   "redhat.telemetry.enabled": false,
   "editor.minimap.enabled": false,
-  "docker.languageserver.formatter.ignoreMultilineInstructions": true
+  "docker.languageserver.formatter.ignoreMultilineInstructions": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }]
 }

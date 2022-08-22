@@ -1,4 +1,5 @@
 {
+  "root": true,
   "parser": "@babel/eslint-parser",
   "plugins": ["prettier", "react-hooks"],
   "rules": {
@@ -11,9 +12,24 @@
     "react-hooks/rules-of-hooks": "warn",
     "no-var": "warn",
     "prefer-const": "warn",
-    "no-duplicate-imports": "error"
+    "no-duplicate-imports": "error",
+    "no-unused-vars": "warn",
+    "react/prop-types": 0,
+    "react/no-unescaped-entities": 0,
+    "no-debugger": "warn"
   },
-  "extends": ["plugin:prettier/recommended", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "prettier",
+    "plugin:react/jsx-runtime"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
   "parserOptions": {
     "requireConfigFile": false,
     "babelOptions": {
