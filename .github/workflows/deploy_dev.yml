@@ -14,11 +14,11 @@ jobs:
       - name: 'Checkout Github Repo'
         uses: actions/checkout@v3
       - name: Install Root Dependencies
-        run: npm install
+        run: yarn
       - name: Install React App Dependencies
         run: |
           cd frontend
-          npm install
+          yarn
       - name: Create .env File Locally
         run: |
           cd frontend
@@ -33,7 +33,7 @@ jobs:
       - name: Build React Application
         run: |
           cd frontend
-          REACT_APP_VERSION='${{ steps.package-version.outputs.current-version}}' npm run build
+          REACT_APP_VERSION='${{ steps.package-version.outputs.current-version}}' yarn run build
       - name: Initialize Firebase Project
         uses: docker://w9jds/firebase-action:master
         with:
@@ -55,11 +55,11 @@ jobs:
       - name: 'Checkout Github Repo'
         uses: actions/checkout@v3
       - name: Install Root Dependencies
-        run: npm install
+        run: yarn
       - name: Install Node App Dependencies
         run: |
           cd backend
-          npm install
+          yarn
       - name: Create .env File Locally
         run: |
           cd backend
