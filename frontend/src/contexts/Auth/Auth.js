@@ -77,6 +77,18 @@ function Auth({ children }) {
     )
   }
 
+  function hasCompletedPrivateProfile(profile) {
+    return (
+      profile.phone &&
+      profile.vehicle_make_model &&
+      profile.license_number &&
+      profile.license_state &&
+      profile.insurance_provider &&
+      profile.insurance_policy_number &&
+      profile.completed_liability_release
+    )
+  }
+
   function AuthWrapper({ children }) {
     return (
       <AuthContext.Provider
@@ -85,7 +97,8 @@ function Auth({ children }) {
           hasAdminPermission: publicProfile?.permission === 'admin',
           hasStandardPermissions: publicProfile?.permission === 'standard',
           hasPermission: publicProfile?.permission,
-          hasCompletedPrivateProfile: privateProfile,
+          hasCompletedPrivateProfile:
+            hasCompletedPrivateProfile(privateProfile),
           handleLogout,
           handleLogin,
         }}
