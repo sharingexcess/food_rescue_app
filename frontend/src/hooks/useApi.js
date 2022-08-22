@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState } from 'react'
-import { API_URL, DB_COLLECTIONS, generateId } from 'helpers'
+import { API_URL, generateId } from 'helpers'
 import { useAuth } from './useAuth'
 
 export function useApi(endpoint, params = null) {

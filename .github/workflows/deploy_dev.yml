@@ -33,7 +33,7 @@ jobs:
       - name: Build React Application
         run: |
           cd frontend
-          REACT_APP_VERSION='${{ steps.package-version.outputs.current-version}}' yarn run build
+          REACT_APP_VERSION='${{ steps.package-version.outputs.current-version}}' CI=false yarn run build
       - name: Initialize Firebase Project
         uses: docker://w9jds/firebase-action:master
         with:

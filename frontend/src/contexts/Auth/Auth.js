@@ -112,11 +112,7 @@ function Auth({ children }) {
     // with access to the user object.
     return (
       <AuthWrapper>
-        <Page
-          defaultTitle="Onboarding"
-          id="Onboarding"
-          Content={Onboarding}
-        ></Page>
+        <Page defaultTitle="Onboarding" id="Onboarding" Content={Onboarding} />
       </AuthWrapper>
     )
   } else if (user && publicProfile) {
@@ -131,7 +127,11 @@ function Auth({ children }) {
   } else {
     // Case 5: if there is no signed in user,
     // render the landing page with sign in action.
-    return <Landing handleLogin={handleLogin} />
+    return (
+      <AuthWrapper>
+        <Page defaultTitle="Landing" id="Landing" Content={Landing} />
+      </AuthWrapper>
+    )
   }
 }
 

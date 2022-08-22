@@ -1,6 +1,7 @@
 {
   "name": "rescue-frontend",
   "license": "MIT",
+  "version": "5.0.0",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build"

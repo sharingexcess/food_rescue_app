@@ -13,26 +13,28 @@ export function MenuHeader() {
           Menu
         </Heading>
       )}
-      <Link to="/profile">
-        <Flex bg="surface.background" borderRadius="xl" p="2">
-          <Avatar name={user?.displayName} src={user?.photoURL} />
-          <Box w="3" />
-          <Box overflow="clip">
-            <Heading as="h3" size="m" noOfLines={1} color="element.primary">
-              {user?.displayName}
-            </Heading>
-            <Text
-              as="p"
-              fontSize="xs"
-              fontWeight="300"
-              noOfLines={1}
-              color="element.secondary"
-            >
-              {user?.email}
-            </Text>
-          </Box>
-        </Flex>
-      </Link>
+      {user && (
+        <Link to="/profile">
+          <Flex bg="surface.background" borderRadius="xl" p="2">
+            <Avatar name={user?.displayName} src={user?.photoURL} />
+            <Box w="3" />
+            <Box overflow="clip">
+              <Heading as="h3" size="m" noOfLines={1} color="element.primary">
+                {user?.displayName}
+              </Heading>
+              <Text
+                as="p"
+                fontSize="xs"
+                fontWeight="300"
+                noOfLines={1}
+                color="element.secondary"
+              >
+                {user?.email}
+              </Text>
+            </Box>
+          </Flex>
+        </Link>
+      )}
     </>
   )
 }
