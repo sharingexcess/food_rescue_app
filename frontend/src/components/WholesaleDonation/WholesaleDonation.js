@@ -8,6 +8,7 @@ import {
   IconButton,
   Skeleton,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
@@ -19,6 +20,16 @@ export function WholesaleDonation({ setBreadcrumbs }) {
   const isMobile = useIsMobile()
   const { data: rescue } = useApi(`/rescues/${id}`)
   const { hasAdminPermission } = useAuth()
+  const toast = useToast()
+
+  useEffect(() => {
+    toast({
+      title: 'Work In Progress...',
+      description: `This section of the app is still under construction. Feel free to take a peak, but you can expect for less than 100% functionality.`,
+      isClosable: true,
+      position: 'top',
+    })
+  }, [])
 
   useEffect(() => {
     setBreadcrumbs([

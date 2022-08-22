@@ -132,6 +132,7 @@ function PageHead({ breadcrumbs, openMenu }) {
           position="relative"
           py="1"
           px="4"
+          textShadow="sm"
         >
           {isMobile && breadcrumbs.length > 1 ? null : (
             <BreadcrumbItem m="0" ml="-4" />
@@ -179,6 +180,7 @@ function HomeButton() {
         w="42px"
         h="42px"
         alt="Sharing Excess Logo"
+        boxShadow="md"
       />
     </Link>
   )
@@ -198,6 +200,7 @@ function MenuButton({ openMenu }) {
       onClick={openMenu}
       bg="blue.500"
       color="white"
+      boxShadow="md"
     />
   ) : null
 }
@@ -217,23 +220,22 @@ export function EnvWarning() {
   return content ? (
     <Flex
       id="EnvWarning"
-      className={expanded ? 'expanded' : null}
       onClick={() => setExpanded(!expanded)}
       position="fixed"
-      bottom="16px"
-      right="16px"
-      height="48px"
-      width="48px"
-      borderRadius="24px"
+      bottom="4"
+      right="4"
+      height="12"
+      width={expanded ? 'calc(100% - 32px)' : '12'}
+      borderRadius="full"
       background="red"
       color="white"
-      fontSize="12px"
       zIndex="50"
       overflow="hidden"
       justify="start"
       align="center"
       cursor="pointer"
-      pr="24px"
+      transition="width 0.2s ease"
+      pr="6"
     >
       <Text
         fontSize="3xl"
@@ -246,7 +248,7 @@ export function EnvWarning() {
       >
         !
       </Text>
-      <Text fontSize="sm" color="se.brand.white" align="center" flexGrow="1">
+      <Text fontSize="xs" color="se.brand.white" align="center" flexGrow="1">
         {content}
       </Text>
     </Flex>

@@ -12,11 +12,12 @@ import {
   Select,
   Skeleton,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { PageTitle, CardOverlay, Autocomplete, FooterButton } from 'components'
 import { formatTimestamp, STATUSES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Wholesale() {
@@ -27,6 +28,16 @@ export function Wholesale() {
     '/rescues',
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
   )
+  const toast = useToast()
+
+  useEffect(() => {
+    toast({
+      title: 'Work In Progress...',
+      description: `This section of the app is still under construction. Feel free to take a peak, but you can expect for less than 100% functionality.`,
+      isClosable: true,
+      position: 'top',
+    })
+  }, [])
 
   function handleChangeDate(event) {
     const dateValue = event.target.value
