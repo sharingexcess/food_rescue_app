@@ -1,133 +1,76 @@
-import React, { useCallback } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { Loading } from 'components'
-import { LocationPhone } from './utils'
-import { useFirestore } from 'hooks'
-import {
-  Button,
-  Card,
-  FlexContainer,
-  Image,
-  Spacer,
-  Text,
-} from '@sharingexcess/designsystem'
-import { ORG_TYPE_ICONS, prettyPrintDbFieldName, DAYS } from 'helpers'
-import { Emoji } from 'react-apple-emojis'
-import PhilabundanceLogo from 'assets/philabundance.png'
+import { Box, Flex, Skeleton } from '@chakra-ui/react'
+import { useApi } from 'hooks'
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { PageTitle, Error } from 'components'
+import { Locations } from './Organization.Locations'
+import { Tags } from './Organization.tags'
+import { OrganizationHeader } from './Organization.Header'
+import { EditOrganization } from './Organization.Edit'
 
-export function Organization() {
+export function Organization({ setBreadcrumbs }) {
   const { organization_id } = useParams()
-  const org = useFirestore('organizations', organization_id)
+  const {
+    data: organization,
+    loading,
+    error,
+    refresh,
+  } = useApi(`/organization/${organization_id}`)
+  const [edit, setEdit] = useState(false)
+  const [formData, setFormData] = useState({})
 
-  const locations = useFirestore(
-    'locations',
-    useCallback(
-      i => i.organization_id === organization_id && !i.is_deleted,
-      [organization_id]
-    )
-  )
-
-  function OrgLocations() {
-    if (!locations.length) {
-      return (
-        <Text id="NoLocations" color="white" align="center" shadow>
-          This organization does not have any locations.
-        </Text>
-      )
+  useEffect(() => {
+    if (organization) {
+      setFormData(organization)
+      setBreadcrumbs([
+        { label: 'Organizations', link: '/organizations' },
+        { label: organization.name, link: `/organizations/${organization.id}` },
+      ])
     }
+  }, [organization])
+
+  if (loading && !organization) {
+    return <LoadingOrganization />
+  } else if (error) {
+    return <OrganizationPageError message={error} />
+  } else if (!organization) {
+    return <OrganizationPageError message="No Organization Found" />
+  } else
     return (
-      <section id="Organization-locations">
-        <Text type="section-header" color="white" shadow>
-          Locations
-        </Text>
-        <Spacer height={16} />
-
-        {locations.map(loc => (
-          <Link
-            key={loc.id}
-            to={`/admin/organizations/${organization_id}/location/${loc.id}`}
-          >
-            <Card classList={['Organization-location']}>
-              <Text
-                classList={['Organization-location-header']}
-                type="section-header"
-                color="black"
-              >
-                {loc.address1}
-                {loc.nickname && ` (${loc.nickname})`}
-                {loc.is_philabundance_partner && (
-                  <Image
-                    classList={['Organization-philabundance']}
-                    src={PhilabundanceLogo}
-                  />
-                )}
-              </Text>
-              {loc.address2 && (
-                <Text type="paragraph" color="grey">
-                  {loc.address2}
-                </Text>
-              )}
-              <Text type="small" color="grey">
-                {loc.city}, {loc.state} {loc.zip}
-              </Text>
-              <Spacer height={4} />
-              <LocationPhone loc={loc} />
-              {loc.id === org.primary_location_id && (
-                <i className="primary fa fa-star" />
-              )}
-              {loc.hours && (
-                <>
-                  <Spacer height={10} />
-                  <Text type="small" color="black" bold>
-                    Open Hours
-                  </Text>
-                </>
-              )}
-              {loc.hours &&
-                loc.hours.map((hour, index) => {
-                  return (
-                    <div key={index}>
-                      <Text type="small" color="grey">
-                        &nbsp;&nbsp; {DAYS[hour.day_of_week]}: {hour.time_open}{' '}
-                        - {hour.time_close}
-                      </Text>
-                    </div>
-                  )
-                })}
-            </Card>
-          </Link>
-        ))}
-      </section>
+      <>
+        <Flex w="100%" mb="4" justify="space-between" align="start" gap="2">
+          {edit ? (
+            <EditOrganization
+              formData={formData}
+              setFormData={setFormData}
+              setEdit={setEdit}
+              refresh={refresh}
+            />
+          ) : (
+            <OrganizationHeader organization={organization} setEdit={setEdit} />
+          )}
+        </Flex>
+        <Tags formData={formData} setFormData={setFormData} />
+        <Locations organization={organization} />
+      </>
     )
-  }
+}
 
-  if (!org) return <Loading text="Loading organization" />
+function LoadingOrganization() {
   return (
-    <main id="Organization">
-      <FlexContainer direction="vertical">
-        <Emoji id="Organization-icon" name={ORG_TYPE_ICONS[org.subtype]} />
-        <Spacer height={16} />
-        <Text type="section-header" color="white" shadow>
-          {org.name}
-        </Text>
-        <Text id="Organization-details" type="paragraph" color="white" shadow>
-          {org.type} ({prettyPrintDbFieldName(org.subtype)})
-        </Text>
-        <Spacer height={8} />
-        <Link to={`/admin/organizations/${organization_id}/edit`}>
-          <Button type="secondary">Edit Organization</Button>
-        </Link>
-      </FlexContainer>
-      <Spacer height={32} />
-      <OrgLocations />
-      <Spacer height={24} />
-      <FlexContainer>
-        <Link to={`/admin/organizations/${organization_id}/create-location`}>
-          <Button id="Organization-new-location" type="primary" color="white">
-            + New Location
-          </Button>
-        </Link>
-      </FlexContainer>
-    </main>
+    <>
+      <Box px="4">
+        <PageTitle>Loading...</PageTitle>
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+      </Box>
+    </>
   )
+}
+
+function OrganizationPageError({ message }) {
+  return <Error message={message} />
 }

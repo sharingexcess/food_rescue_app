@@ -1,130 +1,147 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { AddIcon, SearchIcon } from '@chakra-ui/icons'
 import {
-  ORG_TYPE_ICONS,
-  prettyPrintDbFieldName,
-  DONOR_TYPES,
-  RECIPIENT_TYPES,
-} from 'helpers'
-import { Input, Loading } from 'components'
-import { useFirestore } from 'hooks'
-import {
-  Button,
-  Card,
-  FlexContainer,
-  Spacer,
+  Box,
+  Divider,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  Skeleton,
   Text,
-} from '@sharingexcess/designsystem'
-import { Emoji } from 'react-apple-emojis'
-import { useNavigate } from 'react-router'
+} from '@chakra-ui/react'
+import { PageTitle } from 'components/PageTitle/PageTitle'
+import { ORG_TYPE_ICONS } from 'helpers'
+import { useApi, useAuth } from 'hooks'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export function Organizations() {
-  const navigate = useNavigate()
-  const organizations = useFirestore(
-    'organizations',
-    useCallback(i => !i.is_deleted, [])
-  )
-  const [search, setSearch] = useState('')
-  const [type, setType] = useState(
-    new URLSearchParams(window.location.search).get('type') || 'recipient'
-  )
-  const [subtype, setSubtype] = useState(
-    new URLSearchParams(window.location.search).get('subtype') || 'all'
-  )
+  const { data: organizations } = useApi('/organizations')
+  const [searchValue, setSearchValue] = useState('')
+  const [type, setType] = useState()
+  const [subtype, setSubtype] = useState()
+  const { hasAdminPermission } = useAuth()
 
-  const query = useMemo(() => {
-    return `?type=${type}&subtype=${subtype}`
-  }, [type, subtype])
-
-  useEffect(() => {
-    if (window.location.search !== query) {
-      navigate(`?type=${type}&subtype=${subtype}`, { replace: true })
-    }
-  }, [query]) // eslint-disable-line
-
-  function handleSearch(e) {
-    setSearch(e.target.value)
+  function handleChange(e) {
+    setSearchValue(e.target.value)
   }
-
-  function filterByType(array) {
-    return type === 'all' ? array : array.filter(i => i.type === type)
-  }
-
-  function filterBySubtype(array) {
-    return subtype === 'all' ? array : array.filter(i => i.subtype === subtype)
-  }
-
-  function filterBySearch(array) {
-    return array.filter(i =>
-      i.name.toLowerCase().includes(search.toLowerCase())
-    )
-  }
-
-  if (!organizations.length) return <Loading text="Loading organizations" />
 
   return (
-    <main id="Organizations">
-      <section id="Filters">
-        <select value={type} onChange={e => setType(e.target.value)}>
-          <option value="all">All Types&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
-          <option value="recipient">
-            Recipients&nbsp;&nbsp;&nbsp;&nbsp;⬇️
-          </option>
-          <option value="donor">Donors&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
-        </select>
-        {['donor', 'recipient'].includes(type) ? (
-          <select value={subtype} onChange={e => setSubtype(e.target.value)}>
-            <option value="all">All Subtypes&nbsp;&nbsp;&nbsp;&nbsp;⬇️</option>
-            {type === 'donor'
-              ? Object.values(DONOR_TYPES).map(i => (
-                  <option value={i} key={i}>
-                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
-                  </option>
-                ))
-              : type === 'recipient'
-              ? Object.values(RECIPIENT_TYPES).map(i => (
-                  <option value={i} key={i}>
-                    {i.replace('_', ' ')}&nbsp;&nbsp;&nbsp;&nbsp;⬇️
-                  </option>
-                ))
-              : null}
-          </select>
-        ) : null}
-        <Link to="/admin/create-organization">
-          <Button type="secondary" color="white">
-            + New
-          </Button>
-        </Link>
-      </section>
-      <Input
-        label="🔎 Search..."
-        onChange={handleSearch}
-        value={search}
-        animation={false}
-      />
-      <Spacer height={16} />
-      {filterBySearch(filterByType(filterBySubtype(organizations))).map(org => (
-        <Link
-          key={org.id}
-          className="wrapper"
-          to={`/admin/organizations/${org.id}`}
+    <>
+      <Flex justify="space-between">
+        <PageTitle>Organizations</PageTitle>
+        {hasAdminPermission && (
+          <Link to="/create-organization">
+            <IconButton icon={<AddIcon />} borderRadius="3xl" />
+          </Link>
+        )}
+      </Flex>
+      <InputGroup mb="6">
+        <InputLeftElement mr="2" color="element.secondary">
+          <SearchIcon />
+        </InputLeftElement>
+        <Input
+          placeholder="Search by name..."
+          value={searchValue}
+          onChange={handleChange}
+        />
+      </InputGroup>
+      <Flex
+        justify="space-between"
+        flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
+        gap="4"
+        mb="8"
+      >
+        <Select
+          onChange={e => setType(e.target.value)}
+          value={type}
+          flexGrow="0.5"
+          flexBasis={['40%', '40%', '180px', '180px', '180px']}
         >
-          <Card classList={['Organization']}>
-            <Emoji name={ORG_TYPE_ICONS[org.subtype]} width={32} />
-            <Spacer width={16} />
-            <FlexContainer
-              direction="vertical"
-              primaryAlign="start"
-              secondaryAlign="start"
-            >
-              <Text type="section-header">{org.name}</Text>
-              <Text type="small" color="grey">
-                {prettyPrintDbFieldName(org.subtype)} {org.type}
-              </Text>
-            </FlexContainer>
-          </Card>
-        </Link>
-      ))}
-    </main>
+          <option value="recipient_donor">All types</option>
+          <option value="recipient">Recipient</option>
+          <option value="donor">Donor</option>
+        </Select>
+        <Select
+          onChange={e => setSubtype(e.target.value)}
+          value={subtype}
+          flexGrow="0.5"
+          flexBasis={['40%', '40%', '180px', '180px', '180px']}
+        >
+          {type === 'donor' ? (
+            <>
+              <option value="recipient_donor">All subtypes</option>
+              <option value="retail">Retail</option>
+              <option value="wholesale">Wholesale</option>
+              <option value="holding">Holding</option>
+              <option value="other">Other</option>
+            </>
+          ) : (
+            <>
+              <option value="recipient_donor">All subtypes</option>
+              <option value="food_bank">Food Bank</option>
+              <option value="agency">Agency</option>
+              <option value="home_delivery">Home Delivery</option>
+              <option value="community_fridge">Community Fridge</option>
+              <option value="popup">Popup</option>
+              <option value="holding">Holding</option>
+              <option value="other">Other</option>
+            </>
+          )}
+        </Select>
+      </Flex>
+      {organizations ? (
+        organizations
+          .filter(i => (type ? i.type === type : true))
+          .filter(i => (subtype ? i.subtype === subtype : true))
+          .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))
+          .map((org, i) => (
+            <Box key={i}>
+              <OrganizationCard organization={org} />
+              {i !== organizations.length - 1 && <Divider />}
+            </Box>
+          ))
+      ) : (
+        <>
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+          <Skeleton h="16" borderRadius="md" w="100%" my="3" />
+        </>
+      )}
+    </>
+  )
+}
+
+function OrganizationCard({ organization }) {
+  return (
+    <Link to={`/organizations/${organization.id}`}>
+      <Flex justify="start" align="center" py="4">
+        <Text fontSize="2xl">{ORG_TYPE_ICONS[organization.subtype]}</Text>
+        <Flex direction="column" ml="4">
+          <Heading as="h2" size="md" fontWeight="600" color="element.primary">
+            {organization?.name || organization?.type}
+          </Heading>
+          <Text
+            color="element.secondary"
+            fontSize="xs"
+            textTransform="capitalize"
+          >
+            {`${organization?.type.replace(
+              '_',
+              ' '
+            )} - ${organization?.subtype.replace('_', ' ')}`}
+          </Text>
+        </Flex>
+      </Flex>
+    </Link>
   )
 }

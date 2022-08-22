@@ -25,8 +25,10 @@
     "chakra",
     "designsystem",
     "falsey",
+    "firestore",
     "FORMSPREE",
     "philabundance",
+    "Scriptjs",
     "Treemap"
   ],
   "explorer.confirmDragAndDrop": false,

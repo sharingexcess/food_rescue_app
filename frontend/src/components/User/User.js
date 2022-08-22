@@ -1,92 +1,111 @@
-import React from 'react'
-import { Input, Loading } from 'components'
+import { Box, Skeleton, Text } from '@chakra-ui/react'
+import { RescueCard, PageTitle, Error } from 'components'
+import { useApi, useIsMobile } from 'hooks'
 import { useParams } from 'react-router-dom'
-import UserIcon from 'assets/user.svg'
-import {
-  UserPronouns,
-  UserPhone,
-  UserEmail,
-  UserAdminPermissions,
-  UserDriverAvailability,
-} from './utils'
-import { useFirestore } from 'hooks'
-import { Spacer, Text } from '@sharingexcess/designsystem'
+import { useEffect, useMemo } from 'react'
+import { UserStats } from './User.Stats'
+import { UserHeader } from './User.Header'
+import { UserPermission } from './User.Permission'
+import moment from 'moment'
 
-export function User() {
-  // get the user id from the current url parameters
-  const { id } = useParams()
-  // get that users profile from the users collection in firestore
-  const profile = useFirestore('users', id)
-  // profileIconFullUrl will be used to store the full path URL to the user's profile photo
+export function User({ setBreadcrumbs }) {
+  const { user_id } = useParams()
 
-  if (!profile) return <Loading text="Loading user" />
-  return (
-    <main id="User">
-      <img src={profile.icon || UserIcon} id="org-icon" alt={profile.name} />
-      <Spacer height={24} />
-      <div id="User-info">
-        <Text type="secondary-header" color="white" align="center" shadow>
-          {profile.name}
-        </Text>
-        <Spacer height={4} />
-        <UserEmail profile={profile} />
-        <Spacer height={4} />
-        <UserPronouns profile={profile} />
-        <Spacer height={4} />
-        <UserPhone profile={profile} />
-      </div>
-      <Spacer height={32} />
-      <UserAdminPermissions profile={profile} />
+  const {
+    data: profile,
+    loading,
+    error,
+    refresh,
+  } = useApi(`/publicProfiles/${user_id}`)
 
-      <Spacer height={32} />
-      {profile.completed_liability_release ? (
-        <Text color="white" type="small" shadow align="center">
-          This user has signed the liability release form.
-        </Text>
-      ) : (
-        <Text color="white" type="small" shadow align="center">
-          This user has not completed a liability release.
-        </Text>
-      )}
-
-      <Spacer height={32} />
-      <Text type="section-header" color="white" shadow>
-        Rescue Availability
-      </Text>
-      <Spacer height={8} />
-      <UserDriverAvailability profile={profile} />
-      <Spacer height={24} />
-      <Input
-        element_id="vehicle_make_model"
-        label="Vehicle Make + Model"
-        value={profile.vehicle_make_model}
-        readOnly
-      />
-      <Input
-        element_id="license_state"
-        label="Driver's License State"
-        value={profile.license_state}
-        readOnly
-      />
-      <Input
-        element_id="license_number"
-        label="Driver's License Number"
-        value={profile.license_number}
-        readOnly
-      />
-      <Input
-        element_id="insurance_provider"
-        label="Insurance Provider"
-        value={profile.insurance_provider}
-        readOnly
-      />
-      <Input
-        element_id="insurance_policy_number"
-        label="Insurance Policy Number"
-        value={profile.insurance_policy_number}
-        readOnly
-      />
-    </main>
-    // View Driver Document button currently has no functionality
+  const { data: deliveries } = useApi(
+    '/stops',
+    useMemo(
+      () => ({
+        status: 'completed',
+        handler_id: user_id,
+        date_range_start: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+        date_range_finish: moment().format('YYYY-MM-DD'),
+      }),
+      []
+    )
   )
+
+  const totalWeight = useMemo(
+    () =>
+      deliveries &&
+      deliveries.reduce(
+        (total, current) => (total += current.impact_data_total_weight),
+        0
+      ),
+    [deliveries]
+  )
+
+  useEffect(() => {
+    profile &&
+      setBreadcrumbs([
+        { label: 'People', link: '/people' },
+        {
+          label: profile.name,
+          link: `/people/${profile.id}`,
+        },
+      ])
+  }, [profile])
+
+  const { data: rescues } = useApi(
+    '/rescues',
+    useMemo(
+      () => ({
+        status: 'completed',
+        handler_id: user_id,
+        limit: 3,
+      }),
+      []
+    )
+  )
+
+  if (loading && !profile) {
+    return <LoadingUser />
+  } else if (error) {
+    return <UserError message={error} />
+  } else if (!profile) {
+    return <UserError message="No Person Found" />
+  } else
+    return (
+      <>
+        <UserHeader profile={profile} />
+        <UserStats totalWeight={totalWeight} />
+        <UserPermission profile={profile} refresh={refresh} />
+        <Text fontWeight="700" mt="12">
+          Recently Completed Rescues
+        </Text>
+        {rescues && rescues.length ? (
+          rescues.map((rescue, i) => <RescueCard rescue={rescue} key={i} />)
+        ) : (
+          <Text mt={8}>{profile.name} has no completed rescues</Text>
+        )}
+      </>
+    )
+}
+
+function LoadingUser() {
+  const isMobile = useIsMobile()
+  return (
+    <>
+      <Box px="4">
+        <PageTitle>Loading Person...</PageTitle>
+        <Skeleton h="320px" mt={isMobile ? '64px' : 0} />
+        <Text as="h2" fontWeight={700} size="lg" textTransform="capitalize">
+          Recent Rescues
+        </Text>
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+        <Skeleton h="32" my="4" />
+      </Box>
+    </>
+  )
+}
+
+function UserError({ message }) {
+  return <Error message={message} />
 }

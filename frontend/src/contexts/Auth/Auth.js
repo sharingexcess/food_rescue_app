@@ -1,14 +1,13 @@
 import { createContext, useEffect, useState } from 'react'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
-import Logo from 'assets/logo.svg'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
-import { getCollection } from 'helpers'
+import { firestore } from 'helpers'
 import { getAuthenticatedUser } from './utils'
-import { Landing } from 'components'
-import { Onboarding, Page } from 'chakra_components'
-import { Loading } from 'chakra_components/Loading/Loading'
+import { Onboarding, Page, Loading } from 'components'
+
+const Landing = () => <></>
 
 // We create a Context to allow Auth state to be accessed from any component in the tree
 // without passing the data directly as a prop
@@ -33,8 +32,10 @@ function Auth({ children }) {
     let publicProfileUnsubscribe
     let privateProfileUnsubscribe
     if (uid) {
-      const publicProfileRef = getCollection('public_profiles').doc(uid)
-      const privateProfileRef = getCollection('private_profiles').doc(uid)
+      const publicProfileRef = firestore.collection('public_profiles').doc(uid)
+      const privateProfileRef = firestore
+        .collection('private_profiles')
+        .doc(uid)
       publicProfileUnsubscribe = publicProfileRef.onSnapshot(doc =>
         setPublicProfile(doc.data())
       )
@@ -70,7 +71,7 @@ function Auth({ children }) {
           <span className="green">Sharing</span> Excess
         </h1>
         <p>Looks like there was an error logging in.</p>
-        <img className="background" src={Logo} alt="Sharing Excess Logo" />
+        <img className="background" src="/logo.png" alt="Sharing Excess Logo" />
         <button onClick={() => window.location.reload()}>try again</button>
       </main>
     )

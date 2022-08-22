@@ -134,12 +134,14 @@ const theme = extendTheme({
                 : darken('se.brand.primary', 5),
             _disabled: {
               bg: 'element.disabled',
-              opacity: 0.4,
+              color: 'element.secondary',
+              opacity: 1,
             },
           },
           _disabled: {
             bg: 'element.disabled',
-            opacity: 0.4,
+            color: 'element.secondary',
+            opacity: 1,
           },
         }),
         secondary: props => ({

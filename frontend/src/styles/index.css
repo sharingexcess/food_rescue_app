@@ -1,0 +1,95 @@
+/* hide default datetime input icon */
+input[type='date']::-webkit-inner-spin-button,
+input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+.gm-style iframe {
+  background-color: var(--chakra-colors-surface-background);
+}
+.gm-style a {
+  display: none !important;
+}
+.gm-style .gmnoprint {
+  display: none !important;
+}
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+#Autocomplete input:disabled {
+  opacity: 1;
+}
+
+/* Legacy Analytics Styling */
+#Analytics .Analytics-tooltip {
+  background: var(--chakra-colors-surface-background);
+  padding: 8px;
+  border-radius: 4px;
+}
+#Analytics .Analytics-tooltip .paragraph {
+  font-weight: 700;
+}
+#Analytics iframe {
+  width: 100%;
+  margin-top: 16px;
+  z-index: -1;
+  height: 100%;
+}
+#Analytics .canvas {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+#Analytics .InputSection .Input {
+  width: calc(50% - 8px);
+  margin: 0 0 16px 0;
+}
+#Analytics #PoundsInDateRange-pounds {
+  width: auto;
+}
+#Analytics .details {
+  flex-shrink: 1;
+  width: auto;
+}
+#Analytics .PoundsInDateRange-graph {
+  border-radius: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+}
+#Analytics #Analytics-table {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
+  gap: 16px;
+}
+#Analytics #Analytics-table .Analytics-table-header {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--chakra-colors-element-secondary);
+}
+#Analytics #Analytics-table .Analytics-table-header:not(:first-child) {
+  text-align: right;
+}
+#Analytics #Analytics-table .Analytics-table-name {
+  font-weight: 700;
+}
+#Analytics #Analytics-table .Analytics-table-total {
+  text-align: right;
+}
+#Analytics #Analytics-table .Analytics-table-percent {
+  text-align: right;
+}
+#Analytics foreignObject p {
+  color: var(--chakra-colors-surface-background);
+  font-weight: 700;
+  overflow: hidden;
+  padding: 0 2px;
+  width: 100%;
+  height: 100%;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

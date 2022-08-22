@@ -1,6 +1,6 @@
-import { FlexContainer, Spacer, Text } from '@sharingexcess/designsystem'
-import React, { useState, useEffect, useMemo } from 'react'
-import { getDefaultRangeStart, getDefaultRangeEnd } from './utils'
+import { Flex, Box, Text, Input, Select, Heading } from '@chakra-ui/react'
+import { useState, useEffect, useMemo } from 'react'
+import { getDefaultRangeStart, getDefaultRangeEnd } from './Analytics.utils'
 import {
   BarChart,
   Bar,
@@ -15,14 +15,18 @@ import {
   Cell,
   Treemap,
 } from 'recharts'
-import {
-  COLORS,
-  formatLargeNumber,
-  formatTimestamp,
-  shortenLargeNumber,
-} from 'helpers'
-import { Loading, Input } from 'components'
+import { formatLargeNumber, shortenLargeNumber } from 'helpers'
+import { Loading } from 'components'
 import { useApi } from 'hooks'
+
+const COLORS = [
+  '#205a08',
+  '#307e0e',
+  '#4ea528',
+  '#6bcf3f',
+  '#8af55c',
+  '#b8ff9a',
+]
 
 export function Analytics() {
   const search = new URLSearchParams(window.location.search)
@@ -171,7 +175,7 @@ export function Analytics() {
           x={0}
           y={0}
           dy={16}
-          fill="var(--se-grey-dark)"
+          fill="var(--chakra-colors-element-tertiary)"
           transform="rotate(-40)"
           width={5}
           textAnchor="end"
@@ -185,81 +189,96 @@ export function Analytics() {
 
   return (
     <main id="Analytics">
-      <FlexContainer className="InputSection" primaryAlign="space-between">
-        <Input
-          type="date"
-          value={rangeStart}
-          onChange={e => setRangeStart(e.target.value)}
-          label="From..."
-        />
-        <Input
-          type="date"
-          value={rangeEnd}
-          onChange={e => setRangeEnd(e.target.value)}
-          label="To..."
-        />
-      </FlexContainer>
-      <FlexContainer className="InputSection" primaryAlign="space-between">
-        <Input
-          type="select"
-          value={breakdown}
-          onSuggestionClick={e => setBreakdown(e.target.value)}
-          suggestions={[
-            'Food Category',
-            'Donor Type',
-            'Recipient Type',
-            'Donor',
-            'Recipient',
-            'Driver',
-          ]}
-          label="Breakdown by..."
-        />
-        <Input
-          type="select"
-          value={chart}
-          onSuggestionClick={e => setChart(e.target.value)}
-          suggestions={['Bar Chart', 'Pie Chart', 'Block Chart', 'Table']}
-          label="View as..."
-        />
-      </FlexContainer>
-      <Spacer height={16} />
+      <Flex gap="4" justify="space-between" mb="4">
+        <Box w="100%">
+          <Text fontWeight="600" color="element.tertiary">
+            From
+          </Text>
+          <Input
+            type="date"
+            value={rangeStart}
+            onChange={e => setRangeStart(e.target.value)}
+            label="From..."
+          />
+        </Box>
+        <Box w="100%">
+          <Text fontWeight="600" color="element.tertiary">
+            To
+          </Text>
+          <Input
+            type="date"
+            value={rangeEnd}
+            onChange={e => setRangeEnd(e.target.value)}
+            label="To..."
+          />
+        </Box>
+      </Flex>
+      <Flex gap="4" justify="space-between" mb="4">
+        <Box w="100%">
+          <Text fontWeight="600" color="element.tertiary">
+            Breakdown
+          </Text>
+          <Select
+            value={breakdown}
+            onChange={e => setBreakdown(e.target.value)}
+          >
+            <option>Food Category</option>
+            <option>Donor Type</option>
+            <option>Recipient Type</option>
+            <option>Donor</option>
+            <option>Recipient</option>
+            <option>Driver</option>
+          </Select>
+        </Box>
+        <Box w="100%">
+          <Text fontWeight="600" color="element.tertiary">
+            View
+          </Text>
+          <Select value={chart} onChange={e => setChart(e.target.value)}>
+            <option>Bar Chart</option>
+            <option>Pie Chart</option>
+            <option>Block Chart</option>
+            <option>Table</option>
+          </Select>
+        </Box>
+      </Flex>
+      <Box height={16} />
 
       {apiData && !loading ? (
         <>
-          <FlexContainer primaryAlign="space-between">
-            <FlexContainer
-              direction="vertical"
-              secondaryAlign="start"
+          <Flex justify="space-between">
+            <Flex
+              direction="column"
+              align="start"
               id="PoundsInDateRange-pounds"
             >
-              <Text type="primary-header" color="white" shadow>
-                {formatLargeNumber(apiData.total_weight)} lbs.
-              </Text>
-              <Text color="white" shadow>
-                Total Food Rescued
-              </Text>
-            </FlexContainer>
-            <FlexContainer
-              direction="vertical"
-              secondaryAlign="end"
-              className="details"
-            >
-              <Text type="small" color="white" shadow>
-                {formatLargeNumber(apiData.emissions_reduced)} lbs. Emissions
-                Reduced
+              <Heading>{formatLargeNumber(apiData.total_weight)} lbs.</Heading>
+              <Text color="element.tertiary">Total Food Rescued</Text>
+            </Flex>
+            <Flex direction="column" align="end">
+              <Text fontSize="sm" color="element.tertiary">
+                <Text as="span" fontWeight="700" color="element.primary">
+                  {formatLargeNumber(apiData.emissions_reduced)}
+                </Text>{' '}
+                lbs. GHG Reduced
               </Text>
 
-              <Text type="small" color="white" shadow>
-                ${formatLargeNumber(apiData.retail_value)} Total Retail Value
+              <Text fontSize="sm" color="element.tertiary">
+                <Text as="span" fontWeight="700" color="element.primary">
+                  ${formatLargeNumber(apiData.retail_value)}
+                </Text>{' '}
+                Total Retail Value
               </Text>
 
-              <Text type="small" color="white" shadow>
-                ${formatLargeNumber(apiData.fair_market_value)} Fair Market
-                Value
+              <Text fontSize="sm" color="element.tertiary">
+                <Text as="span" fontWeight="700" color="element.primary">
+                  ${formatLargeNumber(apiData.fair_market_value)}
+                </Text>{' '}
+                Fair Market Value
               </Text>
-            </FlexContainer>
-          </FlexContainer>
-          <Spacer height={32} />
+            </Flex>
+          </Flex>
+          <Box height={8} />
           <section className="PoundsInDateRange-graph">
             <ResponsiveContainer width="100%" height={500}>
               {chart === 'Bar Chart' ? (
@@ -281,13 +300,13 @@ export function Analytics() {
                   <Tooltip content={<CustomTooltip />} />
                   <Bar
                     dataKey="value"
-                    fill="var(--se-green-primary)"
+                    fill="var(--chakra-colors-se-brand-primary)"
                     barSize={30}
                   />
                   <Brush
                     dataKey="name"
                     height={20}
-                    stroke="var(--se-grey-primary)"
+                    stroke="var(--chakra-colors-element-tertiary)"
                     travellerWidth={0}
                     startIndex={0}
                     endIndex={7}
@@ -345,7 +364,7 @@ export function Analytics() {
         </>
       ) : (
         <>
-          <Spacer height={32} />
+          <Box height={32} />
           <Loading relative text="Calculating" />
         </>
       )}

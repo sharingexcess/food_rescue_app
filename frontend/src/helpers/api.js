@@ -37,20 +37,4 @@ export const SE_API = {
     )
     return response
   },
-  get: async function (endpoint, params, accessToken) {
-    const response = await fetch(
-      `${API_URL}${endpoint}?${Object.keys(params)
-        .map(i => `${i}=${full_params[i]}`)
-        .join('&')}`,
-      {
-        headers: { accessToken },
-      }
-    ).catch(e => {
-      throw new Error('Error in GET api:', e)
-    })
-    if (!response.ok) {
-      throw new Error('Error in GET api:', response)
-    }
-    return response
-  },
 }

@@ -72,6 +72,8 @@ export const FAIR_MARKET_VALUES = {
   impact_data_other: 1.62,
 }
 
+export const EMISSIONS_COEFFICIENT = 3.66
+
 export const ORG_TYPES = ['donor', 'recipient']
 
 export const ORG_SUBTYPES = {
@@ -126,37 +128,6 @@ export const API_URL =
   process.env.NODE_ENV === 'development'
     ? process.env.REACT_APP_API_URL_LOCAL
     : process.env.REACT_APP_API_URL_HOSTED
-
-export const CLOUD_FUNCTION_URLS = {
-  addCalendarEvent: API_URL + '/calendar/add',
-  deleteCalendarEvent: API_URL + '/calendar/delete',
-}
-
-export const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-
-export const COLORS = [
-  '#205a08',
-  '#307e0e',
-  '#4ea528',
-  '#6bcf3f',
-  '#8af55c',
-  '#b8ff9a',
-]
-
-export const EMISSIONS_COEFFICIENT = 3.66
 
 export const DAYS = [
   'Sunday',

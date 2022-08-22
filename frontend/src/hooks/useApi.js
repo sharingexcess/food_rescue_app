@@ -58,7 +58,9 @@ export function useApi(endpoint, params = null) {
                 const msg = await res.text()
                 console.log(msg)
                 message = msg
-              } catch (e) {}
+              } catch (e) {
+                // do nothing
+              }
               throw new Error(
                 `${res.status} ${res.statusText}${
                   message ? ' - ' + message : ''
