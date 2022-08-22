@@ -93,3 +93,11 @@ input::-webkit-date-and-time-value {
   justify-content: center;
   align-items: center;
 }
+
+.se-pull-to-refresh {
+  overflow: visible !important;
+}
+
+.se-pull-to-refresh .ptr__children {
+  overflow: visible !important;
+}

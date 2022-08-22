@@ -34,12 +34,14 @@ function Auth({ children }) {
       const privateProfileRef = firestore
         .collection('private_profiles')
         .doc(uid)
-      publicProfileUnsubscribe = publicProfileRef.onSnapshot(doc =>
-        setPublicProfile(doc.data())
-      )
-      privateProfileUnsubscribe = privateProfileRef.onSnapshot(doc =>
-        setPrivateProfile(doc.data())
-      )
+      publicProfileUnsubscribe = publicProfileRef.onSnapshot(doc => {
+        const data = doc.data() || null
+        setPublicProfile(data)
+      })
+      privateProfileUnsubscribe = privateProfileRef.onSnapshot(doc => {
+        const data = doc.data() || null
+        setPrivateProfile(data)
+      })
       user && localStorage.setItem('se_user_id', user.uid)
     } else {
       setPublicProfile(null)

@@ -78,6 +78,7 @@ export function Stats({ totalWeight, totalOrgs, deliveries }) {
           direction="column"
           flexShrink="0"
           flexGrow="1"
+          mr="2"
         >
           <Heading
             color={

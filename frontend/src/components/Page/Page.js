@@ -65,7 +65,10 @@ export function Page({
         {...pageContentStyle}
       >
         {isMobile && pullToRefresh ? (
-          <PullToRefresh onRefresh={() => window.location.reload()}>
+          <PullToRefresh
+            onRefresh={() => window.location.reload()}
+            className="se-pull-to-refresh"
+          >
             <Content setTitle={setTitle} setBreadcrumbs={setBreadcrumbs} />
           </PullToRefresh>
         ) : (
@@ -121,14 +124,12 @@ function PageHead({ breadcrumbs, openMenu }) {
       pt={['16px', '16px', '16px', '32px', '32px']}
       pb={['32px', '32px', '32px', '32px', '32px']}
       px={['16px', '16px', '16px', '0', '0']}
-      transition="top 0.3s ease,opacity 0.3s ease"
-      opacity={(100 - position) / 100}
+      transition="top 0.3s ease"
     >
       <Box
         position="fixed"
         top={isMobile ? `${position - 96}px` : '-96px'}
-        transition="top 0.1s ease,opacity 0.3s ease"
-        opacity={(100 - position) / 100}
+        transition="top 0.1s ease"
         left="0"
         h="96px"
         w="100%"
