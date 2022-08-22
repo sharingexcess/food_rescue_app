@@ -256,10 +256,10 @@ function AddDonationBody({ formData, setFormData }) {
         </Button>
         <Button
           flexGrow={1}
-          variant={formData.pallet === 'plastic' ? 'secondary' : 'tertiary'}
-          onClick={() => setFormData({ ...formData, pallet: 'plastic' })}
+          variant={formData.pallet === 'black' ? 'secondary' : 'tertiary'}
+          onClick={() => setFormData({ ...formData, pallet: 'black' })}
         >
-          Plastic
+          Black
         </Button>
         <Button
           flexGrow={1}
@@ -286,11 +286,11 @@ function palletWeight(type) {
   if (!type) return 0
   switch (type) {
     case 'wood':
-      return 175
-    case 'plastic':
-      return 200
-    case 'blue':
+      return 345
+    case 'black':
       return 350
+    case 'blue':
+      return 373
     default:
       return 0
   }
