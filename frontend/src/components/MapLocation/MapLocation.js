@@ -51,6 +51,7 @@ export const MapLocation = compose(
   const { colorMode } = useColorMode()
   return (
     <GoogleMap
+      key={colorMode}
       defaultZoom={12}
       defaultCenter={{ lat, lng }}
       defaultOptions={{
