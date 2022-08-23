@@ -288,8 +288,9 @@ export function EditLocation({ setBreadcrumbs }) {
             </Button>
             <Button
               alignSelf="center"
-              variant="primary"
-              color="element.warning"
+              variant="secondary"
+              color="yellow.primary"
+              bgColor="yellow.secondary"
               mt={4}
             >
               Delete Location
