@@ -22,14 +22,16 @@ export function UserHeader({ profile }) {
       <Text fontSize="sm" fontWeight={300}>
         {profile.pronouns}
       </Text>
-      <Flex mt={6}>
-        <Text fontSize="sm" fontWeight={700}>
-          About me:
-        </Text>
-        <Text as="span" fontSize="sm" ml={2}>
-          {profile.about_me}
-        </Text>
-      </Flex>
+      {profile.about_me && (
+        <Flex mt={6}>
+          <Text fontSize="sm" fontWeight={700}>
+            About me:
+          </Text>
+          <Text as="span" fontSize="sm" ml={2}>
+            {profile.about_me}
+          </Text>
+        </Flex>
+      )}
     </Flex>
   )
 }
