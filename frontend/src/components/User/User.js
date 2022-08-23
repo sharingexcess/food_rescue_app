@@ -1,4 +1,4 @@
-import { Box, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Skeleton, Text } from '@chakra-ui/react'
 import { RescueCard, PageTitle, Error } from 'components'
 import { useApi, useIsMobile } from 'hooks'
 import { useParams } from 'react-router-dom'
@@ -52,7 +52,7 @@ export function User({ setBreadcrumbs }) {
       ])
   }, [profile])
 
-  const { data: rescues } = useApi(
+  const { data: rescues, loadMore } = useApi(
     '/rescues',
     useMemo(
       () => ({
@@ -84,6 +84,16 @@ export function User({ setBreadcrumbs }) {
         ) : (
           <Text mt={8}>{profile.name} has no completed rescues</Text>
         )}
+        <Flex width="100%" my="4" justify="center">
+          <Button
+            alignSelf="center"
+            variant="primary"
+            onClick={loadMore}
+            disabled={!loadMore || loading}
+          >
+            Load More
+          </Button>
+        </Flex>
       </>
     )
 }
