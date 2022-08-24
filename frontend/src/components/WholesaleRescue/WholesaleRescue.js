@@ -8,28 +8,24 @@ import {
   IconButton,
   Skeleton,
   Text,
-  useToast,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
+import { STATUSES } from 'helpers'
 import { useApi, useAuth, useIsMobile } from 'hooks'
-import { useEffect } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { AddRecipient } from './WholesaleRescue.AddRecipients'
 
-export function WholesaleDonation({ setBreadcrumbs }) {
+const WholesaleRescueContext = createContext({})
+WholesaleRescueContext.displayName = 'WholesaleRescueContext'
+export const useWholesaleRescueContext = () =>
+  useContext(WholesaleRescueContext)
+
+export function WholesaleRescue({ setBreadcrumbs }) {
   const { id } = useParams()
-  const isMobile = useIsMobile()
-  const { data: rescue } = useApi(`/rescues/${id}`)
+  const { data: rescue, refresh } = useApi(`/rescues/${id}`)
   const { hasAdminPermission } = useAuth()
-  const toast = useToast()
-
-  useEffect(() => {
-    toast({
-      title: 'Work In Progress...',
-      description: `This section of the app is still under construction. Feel free to take a peak, but you can expect for less than 100% functionality.`,
-      isClosable: true,
-      position: 'top',
-    })
-  }, [])
+  const [addRecipient, setAddRecipient] = useState(false)
 
   useEffect(() => {
     setBreadcrumbs([
@@ -47,8 +43,11 @@ export function WholesaleDonation({ setBreadcrumbs }) {
     recipients.reduce((total, curr) => total + curr.impact_data_total_weight, 0)
 
   return (
-    <>
-      <PageTitle>Donation</PageTitle>
+    <WholesaleRescueContext.Provider value={{ rescue, refresh }}>
+      <PageTitle>
+        {rescue.status === STATUSES.COMPLETED ? 'Completed ' : 'Active '}
+        Donation
+      </PageTitle>
       <Flex my="6" direction="column">
         <Flex justify="space-between" align="center">
           <Heading as="h2" size="md" fontWeight="600" color="element.primary">
@@ -69,15 +68,20 @@ export function WholesaleDonation({ setBreadcrumbs }) {
         <Recipient key={i.id} recipient={i} />
       ))}
 
+      <AddRecipient
+        isOpen={addRecipient}
+        handleClose={() => setAddRecipient(false)}
+      />
+
       {hasAdminPermission && (
-        <Flex direction="column">
-          <Button variant="secondary" mt="8" w={isMobile ? '100%' : 'auto'}>
-            Add Recipient ({remainingWeight} lbs. remaining)
-          </Button>
-          <FooterButton>Update Donation</FooterButton>
-        </Flex>
+        <FooterButton
+          onClick={() => setAddRecipient(true)}
+          disabled={!remainingWeight}
+        >
+          Add Recipient ({remainingWeight} lbs. remaining)
+        </FooterButton>
       )}
-    </>
+    </WholesaleRescueContext.Provider>
   )
 }
 

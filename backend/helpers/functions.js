@@ -1,11 +1,11 @@
 const admin = require('firebase-admin')
-exports.app = admin.initializeApp()
-exports.db = admin.firestore()
 const moment = require('moment-timezone')
 const fetch = require('node-fetch')
-const { google } = require('googleapis')
-const fs = require('fs')
-const { Console } = require('console')
+const { customAlphabet } = require('nanoid')
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
+
+exports.app = admin.initializeApp()
+exports.db = admin.firestore()
 
 exports.recalculateRescue = async id => {
   let rescue
@@ -215,7 +215,7 @@ exports.calculateTotalDistanceFromLocations = async (locations = []) => {
 
 exports.fetchDocument = async (collection, id) => {
   let doc
-  await db
+  await exports.db
     .collection(collection)
     .where('id', '==', id)
     .get()
@@ -229,4 +229,15 @@ exports.formatLocationAsAddressString = location => {
   return `${location.address1}${
     location.address2 ? ' ' + location.address2 : ''
   }, ${location.city}, ${location.state}, ${location.zip}`
+}
+
+exports.generateUniqueId = async collection => {
+  const id = nanoid()
+  const exists = await exports.isExistingId(id, collection)
+  return exists ? await exports.generateUniqueId(collection) : id
+}
+
+exports.isExistingId = async (id, collection) => {
+  const snapshot = await exports.db.collection(collection).doc(id).get()
+  return snapshot.exists
 }

@@ -18,7 +18,7 @@ import {
   Users,
   Home,
   Wholesale,
-  WholesaleDonation,
+  WholesaleRescue,
   FoodSafety,
   Page,
   Analytics,
@@ -264,13 +264,13 @@ function RescueAppRoutes() {
                 path="/wholesale/:id"
                 element={
                   <Page
-                    id="WholesaleDonation"
+                    id="WholesaleRescue"
                     defaultTitle="Wholesale"
                     defaultBreadcrumbs={[
                       { label: 'Wholesale', link: '/wholesale' },
                       { label: 'Loading...', link: '' },
                     ]}
-                    Content={WholesaleDonation}
+                    Content={WholesaleRescue}
                   />
                 }
               />

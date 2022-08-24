@@ -23,6 +23,9 @@ export const SE_API = {
     if (!response.ok) {
       throw new Error('Error in POST api:', response)
     }
+    const response_payload = response.text().then(function (text) {
+      return text ? JSON.parse(text) : {}
+    })
     console.log(
       `%c[SE_API.post()] Received Response:`,
       ';font-weight:bold;background:yellow;color:black;',
@@ -30,11 +33,13 @@ export const SE_API = {
       endpoint,
       '\nresponse:',
       response,
+      'payload:',
+      response_payload,
       '\nduration:',
       `${((performance.now() - request_start_timestamp) / 1000).toFixed(
         2
       )}seconds`
     )
-    return response
+    return response_payload
   },
 }

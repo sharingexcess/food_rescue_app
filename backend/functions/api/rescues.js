@@ -11,6 +11,7 @@ async function rescuesEndpoint(request, response) {
   try {
     console.log('INVOKING ENDPOINT: rescues()\n', 'params:', request.query)
     const {
+      type,
       date,
       status,
       handler_id,
@@ -30,6 +31,7 @@ async function rescuesEndpoint(request, response) {
       return
     }
     const rescues = await getRescues(
+      type,
       date,
       status,
       handler_id,
@@ -46,6 +48,7 @@ async function rescuesEndpoint(request, response) {
 }
 
 async function getRescues(
+  type,
   date,
   status,
   handler_id,
@@ -71,6 +74,11 @@ async function getRescues(
   }
 
   // apply filters
+  if (type) {
+    console.log('Applying type filter:', type)
+    rescues_query = rescues_query.where('type', '==', type)
+  }
+
   if (date_range_start && date_range_end) {
     const start = moment(date_range_start).startOf('day').toDate()
     const end = moment(date_range_end).endOf('day').toDate()
@@ -81,8 +89,8 @@ async function getRescues(
   }
 
   if (date && !(date_range_start & date_range_end)) {
-    const start = new Date(date)
-    const end = moment(start).add(24, 'hours').toDate()
+    const start = moment(date).startOf('day').toDate()
+    const end = moment(date).endOf('day').toDate()
     console.log(start, end)
     rescues_query = rescues_query
       .where('timestamp_scheduled_start', '>=', start)

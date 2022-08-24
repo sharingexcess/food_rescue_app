@@ -16,7 +16,8 @@
     "firebase-functions": "^3.22.0",
     "googleapis": "^67.0.0",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.34"
+    "moment-timezone": "^0.5.34",
+    "nanoid": "3"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
