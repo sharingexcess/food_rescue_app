@@ -1,4 +1,5 @@
 import { Avatar, Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { CheckIcon, StarIcon } from '@chakra-ui/icons'
 import { useAuth, useIsMobile } from 'hooks'
 import { Link } from 'react-router-dom'
 
@@ -15,7 +16,13 @@ export function MenuHeader() {
       )}
       {user && (
         <Link to="/profile">
-          <Flex bg="surface.background" borderRadius="xl" p="2">
+          <Flex
+            bg="surface.background"
+            borderRadius="xl"
+            p="2"
+            outline="2px solid"
+            outlineColor="element.subtle"
+          >
             <Avatar name={user?.displayName} src={user?.photoURL} />
             <Box w="3" />
             <Box overflow="clip">
@@ -30,6 +37,16 @@ export function MenuHeader() {
                 color="element.secondary"
               >
                 {user?.email}
+              </Text>
+              <Text
+                as="p"
+                fontSize="xs"
+                fontWeight="500"
+                noOfLines={1}
+                color="se.brand.primary"
+                decoration="underline"
+              >
+                Edit Profile
               </Text>
             </Box>
           </Flex>
