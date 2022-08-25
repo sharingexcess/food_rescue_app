@@ -18,12 +18,18 @@ import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
 import { calculateCurrentLoad, SE_API } from 'helpers'
 import { useApi, useAuth } from 'hooks'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
 
-export function AddRecipient({ isOpen, handleClose }) {
-  const { rescue, refresh } = useWholesaleRescueContext()
-  const currentLoad = useMemo(() => calculateCurrentLoad(rescue), [rescue])
+export function EditRecipient({ isOpen, handleClose }) {
+  const { rescue, refresh, editRecipient: stop } = useWholesaleRescueContext()
+  const currentLoad = useMemo(
+    () =>
+      stop
+        ? calculateCurrentLoad(rescue) + stop.impact_data_total_weight
+        : null,
+    [rescue, stop]
+  )
   const donationTotal = useMemo(
     () => rescue.stops[0].impact_data_total_weight,
     [rescue]
@@ -34,18 +40,33 @@ export function AddRecipient({ isOpen, handleClose }) {
   )
   const { user } = useAuth()
   const [formData, setFormData] = useState({
-    organization: null,
-    location: null,
+    organization: stop?.organization,
+    location: stop?.location,
     weight: currentLoad,
     notes: '',
     percent_of_total_dropped: remainingPercent,
   })
+  const [isLoading, setIsLoading] = useState()
   const { data: recipients } = useApi(
     '/organizations',
     useMemo(() => ({ type: 'recipient' }), [])
   )
 
-  async function handleAddRecipient() {
+  useEffect(() => {
+    if (stop && recipients) {
+      setFormData({
+        organization: recipients.find(i => i.id === stop.organization.id),
+        location: stop.location,
+        weight: stop.impact_data_total_weight || currentLoad,
+        notes: '',
+        percent_of_total_dropped:
+          stop.percent_of_total_dropped || remainingPercent,
+      })
+    }
+  }, [stop, currentLoad, remainingPercent, recipients])
+
+  async function handleEditRecipient() {
+    setIsLoading(true)
     const payload = {
       percent_of_total_dropped: formData.percent_of_total_dropped,
       organization_id: formData.organization.id,
@@ -53,11 +74,12 @@ export function AddRecipient({ isOpen, handleClose }) {
       notes: formData.notes,
     }
     await SE_API.post(
-      `/wholesale/rescue/${rescue.id}/addRecipient`,
+      `/wholesale/rescue/${rescue.id}/updateRecipient/${stop.id}`,
       payload,
       user.accessToken
     )
     refresh()
+    setIsLoading(false)
     handleClose()
   }
 
@@ -65,9 +87,9 @@ export function AddRecipient({ isOpen, handleClose }) {
     <CardOverlay
       isOpen={isOpen}
       closeHandler={handleClose}
-      CardHeader={AddRecipientHeader}
+      CardHeader={EditRecipientHeader}
       CardBody={() => (
-        <AddRecipientBody
+        <EditRecipientBody
           formData={formData}
           currentLoad={currentLoad}
           donationTotal={donationTotal}
@@ -77,21 +99,22 @@ export function AddRecipient({ isOpen, handleClose }) {
         />
       )}
       CardFooter={() => (
-        <AddRecipientFooter
+        <EditRecipientFooter
           formData={formData}
           setFormData={setFormData}
-          handleAddRecipient={handleAddRecipient}
+          handleEditRecipient={handleEditRecipient}
+          isLoading={isLoading}
         />
       )}
     />
   )
 }
 
-function AddRecipientHeader() {
-  return <Heading>New Recipient</Heading>
+function EditRecipientHeader() {
+  return <Heading>Edit Recipient</Heading>
 }
 
-function AddRecipientBody({
+function EditRecipientBody({
   formData,
   setFormData,
   recipients,
@@ -168,7 +191,7 @@ function AddRecipientBody({
             })
           }
         >
-          {formData.organization?.locations.map(i => (
+          {formData.organization.locations.map(i => (
             <option value={i.id} key={i.id}>
               {i.nickname ? `${i.nickname} (${i.address1})` : i.address1}
             </option>
@@ -207,7 +230,7 @@ function AddRecipientBody({
         mx="auto"
       >
         <Text w="48px" fontWeight="bold">
-          {percent}%
+          {percent.toFixed(0)}%
         </Text>
         <RangeSlider
           colorScheme="green"
@@ -217,8 +240,8 @@ function AddRecipientBody({
           onChangeEnd={updateFormDataWeight}
           position="relative"
         >
-          <RangeSliderTrack h="4" borderRadius="4px" bg="se.brand.primary">
-            <RangeSliderFilledTrack h="4" bg="element.secondary" />
+          <RangeSliderTrack h="2" borderRadius="4px" bg="se.brand.primary">
+            <RangeSliderFilledTrack h="2" bg="element.secondary" />
           </RangeSliderTrack>
           <RangeSliderThumb index={0} zIndex="2" h="8" w="8" />
           <RangeSliderThumb
@@ -230,9 +253,9 @@ function AddRecipientBody({
           <Flex
             position="absolute"
             right="0"
-            top="2"
+            top="3"
             borderRadius="0 4px 4px 0"
-            h="4"
+            h="2"
             w={`${100 - remainingPercent}%`}
             bg="element.tertiary"
             justify="center"
@@ -244,7 +267,12 @@ function AddRecipientBody({
   )
 }
 
-function AddRecipientFooter({ formData, setFormData, handleAddRecipient }) {
+function EditRecipientFooter({
+  formData,
+  setFormData,
+  handleEditRecipient,
+  isLoading,
+}) {
   const [notes, setNotes] = useState(formData.notes)
 
   return (
@@ -267,9 +295,11 @@ function AddRecipientFooter({ formData, setFormData, handleAddRecipient }) {
         size="lg"
         w="100%"
         disabled={!formData.location || !formData.weight}
-        onClick={handleAddRecipient}
+        onClick={handleEditRecipient}
+        isLoading={isLoading}
+        loadingText="Updating Recipient..."
       >
-        Add Recipient
+        Update Recipient
       </Button>
     </Box>
   )

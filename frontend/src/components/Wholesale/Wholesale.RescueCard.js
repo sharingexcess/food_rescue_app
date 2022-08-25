@@ -17,13 +17,13 @@ export function WholesaleRescueCard({ rescue }) {
           bg={
             rescue.status === STATUSES.COMPLETED
               ? 'se.brand.primary'
-              : 'se.brand.white'
+              : 'surface.background'
           }
           border="3px solid"
           borderColor={
             rescue.status === STATUSES.COMPLETED
               ? 'se.brand.primary'
-              : 'blue.primary'
+              : 'element.active'
           }
         />
         <Box flexGrow="1">
@@ -33,7 +33,7 @@ export function WholesaleRescueCard({ rescue }) {
             color={
               rescue.status === STATUSES.COMPLETED
                 ? 'element.primary'
-                : 'blue.primary'
+                : 'element.active'
             }
           >
             {donation.organization.name}

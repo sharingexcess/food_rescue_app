@@ -23,7 +23,7 @@ export const SE_API = {
     if (!response.ok) {
       throw new Error('Error in POST api:', response)
     }
-    const response_payload = response.text().then(function (text) {
+    const response_payload = await response.text().then(function (text) {
       return text ? JSON.parse(text) : {}
     })
     console.log(

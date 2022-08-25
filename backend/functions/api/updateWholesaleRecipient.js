@@ -7,17 +7,18 @@ const {
   fetchDocument,
 } = require('../../helpers')
 const { getRescue } = require('./rescue')
+const { getStop } = require('./stop')
 
-async function addWholesaleRecipientEndpoint(request, response) {
+async function updateWholesaleRecipientEndpoint(request, response) {
   return new Promise(async resolve => {
     try {
       console.log(
-        'INVOKING ENDPOINT: addWholesaleRecipient()\n',
+        'INVOKING ENDPOINT: updateWholesaleRecipient()\n',
         'params:',
         JSON.parse(request.body)
       )
 
-      const { rescue_id } = request.params
+      const { id, rescue_id } = request.params
 
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
@@ -35,7 +36,7 @@ async function addWholesaleRecipientEndpoint(request, response) {
         return
       }
 
-      await addWholesaleRecipient(rescue_id, payload)
+      await updateWholesaleRecipient(rescue_id, id, payload)
       console.log('Returning successfully')
 
       response.status(200).send()
@@ -48,15 +49,16 @@ async function addWholesaleRecipientEndpoint(request, response) {
   })
 }
 
-async function addWholesaleRecipient(rescue_id, payload) {
-  const id = await generateUniqueId('stops')
+async function updateWholesaleRecipient(rescue_id, id, payload) {
   const now = new Date()
 
-  console.log('Getting rescue for addWholesaleRecipient:', rescue_id)
+  console.log('Getting stop for updateWholesaleRecipient:', rescue_id)
+  const stop = await getStop(id)
+  console.log('Getting rescue for updateWholesaleRecipient:', rescue_id)
   const rescue = await getRescue(rescue_id)
   const donation = rescue.stops[0]
 
-  console.log('Rescue:', rescue, 'Donation:', donation)
+  console.log('Rescue:', rescue, 'Stop:', stop)
 
   const percent = payload.percent_of_total_dropped / 100
 
@@ -79,36 +81,34 @@ async function addWholesaleRecipient(rescue_id, payload) {
     percent_of_total_dropped: payload.percent_of_total_dropped,
   }
 
-  const stop = {
-    id,
-    type: 'delivery',
-    rescue_id: rescue_id,
-    rescue_type: 'wholesale',
-    handler_id: rescue.handler_id,
+  const update_payload = {
     organization_id: payload.organization_id,
     location_id: payload.location_id,
     status: STATUSES.COMPLETED,
     notes: payload.notes,
-    timestamp_created: now,
     timestamp_updated: now,
-    timestamp_scheduled_start: now,
-    timestamp_logged_start: now,
-    timestamp_scheduled_finish: now,
     timestamp_logged_finish: now,
     ...impact_data,
   }
 
-  console.log('Generated new stop:', stop)
-  await db.collection('stops').doc(id).set(stop)
+  console.log('Update payload:', update_payload)
+  await db.collection('stops').doc(id).set(update_payload, { merge: true })
 
-  console.log('Adding stop to rescue')
-  await db
-    .collection('rescues')
-    .doc(rescue_id)
-    .set({ stop_ids: [...rescue.stop_ids, id] }, { merge: true })
+  if (
+    update_payload.percent_of_total_dropped < stop.percent_of_total_dropped &&
+    rescue.status === STATUSES.COMPLETED
+  ) {
+    console.log(
+      'Marking rescue as not completed because weight of stop was decreased.'
+    )
+    await db
+      .collection('rescues')
+      .doc(rescue_id)
+      .set({ status: STATUSES.ACTIVE }, { merge: true })
+  }
 
   return
 }
 
-exports.addWholesaleRecipientEndpoint = addWholesaleRecipientEndpoint
-exports.addWholesaleRecipient = addWholesaleRecipient
+exports.updateWholesaleRecipientEndpoint = updateWholesaleRecipientEndpoint
+exports.updateWholesaleRecipient = updateWholesaleRecipient

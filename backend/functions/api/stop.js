@@ -45,7 +45,6 @@ async function getStop(id) {
       .then(doc => {
         const payload = doc.data()
         stop.organization = formatDocumentTimestamps(payload)
-        delete stop.organization_id
       }),
     db
       .collection('locations')
@@ -54,7 +53,6 @@ async function getStop(id) {
       .then(doc => {
         const payload = doc.data()
         stop.location = formatDocumentTimestamps(payload)
-        delete stop.location_id
       }),
   ]
   await Promise.all(metadata_promises)

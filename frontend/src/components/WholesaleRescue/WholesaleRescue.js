@@ -1,4 +1,4 @@
-import { EditIcon } from '@chakra-ui/icons'
+import { ArrowRightIcon, EditIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -10,11 +10,14 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
-import { STATUSES } from 'helpers'
-import { useApi, useAuth, useIsMobile } from 'hooks'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { formatLargeNumber, SE_API, STATUSES } from 'helpers'
+import { useApi, useAuth } from 'hooks'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { AddRecipient } from './WholesaleRescue.AddRecipients'
+import { EditDonation } from './Wholesale.EditDonation'
+import { AddRecipient } from './WholesaleRescue.AddRecipient'
+import { EditRecipient } from './WholesaleRescue.EditRecipient'
+import { Recipient } from './WholesaleRescue.Recipient'
 
 const WholesaleRescueContext = createContext({})
 WholesaleRescueContext.displayName = 'WholesaleRescueContext'
@@ -25,7 +28,24 @@ export function WholesaleRescue({ setBreadcrumbs }) {
   const { id } = useParams()
   const { data: rescue, refresh } = useApi(`/rescues/${id}`)
   const { hasAdminPermission } = useAuth()
+  const [editDonation, setEditDonation] = useState(false)
   const [addRecipient, setAddRecipient] = useState(false)
+  const [editRecipient, setEditRecipient] = useState()
+  const { user } = useAuth()
+
+  const donation = useMemo(() => rescue?.stops[0], [rescue])
+  const recipients = useMemo(() => rescue?.stops.slice(1), [rescue])
+  const remainingWeight = useMemo(
+    () =>
+      donation && recipients
+        ? donation.impact_data_total_weight -
+          recipients.reduce(
+            (total, curr) => total + curr.impact_data_total_weight,
+            0
+          )
+        : null,
+    [recipients, donation]
+  )
 
   useEffect(() => {
     setBreadcrumbs([
@@ -34,39 +54,86 @@ export function WholesaleRescue({ setBreadcrumbs }) {
     ])
   }, [id])
 
+  useEffect(() => {
+    if (
+      remainingWeight < rescue?.stops.length &&
+      rescue?.status === STATUSES.ACTIVE
+    ) {
+      console.log('completing...')
+      // complete rescue
+      SE_API.post(
+        `/wholesale/rescue/${rescue.id}/update`,
+        { status: STATUSES.COMPLETED },
+        user.accessToken
+      ).then(refresh)
+    }
+  }, [remainingWeight, rescue])
+
   if (!rescue) return <LoadingDonation />
 
-  const donation = rescue.stops[0]
-  const recipients = rescue.stops.slice(1)
-  const remainingWeight =
-    donation.impact_data_total_weight -
-    recipients.reduce((total, curr) => total + curr.impact_data_total_weight, 0)
-
   return (
-    <WholesaleRescueContext.Provider value={{ rescue, refresh }}>
+    <WholesaleRescueContext.Provider
+      value={{ rescue, donation: rescue.stops[0], refresh, editRecipient }}
+    >
       <PageTitle>
         {rescue.status === STATUSES.COMPLETED ? 'Completed ' : 'Active '}
         Donation
       </PageTitle>
-      <Flex my="6" direction="column">
-        <Flex justify="space-between" align="center">
-          <Heading as="h2" size="md" fontWeight="600" color="element.primary">
+      <Flex my="8" justify="space-between">
+        <Box>
+          <Heading
+            as="h2"
+            size="md"
+            fontWeight="600"
+            color="element.primary"
+            mb="1"
+          >
             {donation.organization.name}
           </Heading>
-
-          {hasAdminPermission && (
-            <Button variant="tertiary">Edit Donation</Button>
-          )}
-        </Flex>
-        <Text size="sm" fontWeight="300" color="element.secondary">
-          {donation.impact_data_total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
-          {donation.notes}
-        </Text>
+          <Text size="sm" fontWeight="300" color="element.secondary">
+            {formatLargeNumber(donation.impact_data_total_weight)}{' '}
+            lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
+            {donation.notes}
+          </Text>
+        </Box>
+        {hasAdminPermission && (
+          <IconButton
+            variant="ghosted"
+            color="se.brand.primary"
+            icon={<EditIcon h="6" w="6" />}
+            onClick={() => setEditDonation(true)}
+          />
+        )}
       </Flex>
-      <Divider />
-      {recipients.map(i => (
-        <Recipient key={i.id} recipient={i} />
-      ))}
+      {recipients.length ? (
+        recipients.map(i => (
+          <Recipient
+            key={i.id}
+            recipient={i}
+            setEditRecipient={setEditRecipient}
+          />
+        ))
+      ) : (
+        <Flex direction="column" my="8" justify="center" align="center">
+          <ArrowRightIcon w="16" h="16" mb="8" color="se.brand.primary" />
+          <Heading as="h4" align="center" mb="2">
+            Let's distribute food!
+          </Heading>
+          <Text color="element.secondary" align="center">
+            Add a recipient below to allocate food from this donation.
+          </Text>
+        </Flex>
+      )}
+
+      <EditDonation
+        isOpen={editDonation}
+        handleClose={() => setEditDonation(false)}
+      />
+
+      <EditRecipient
+        isOpen={!!editRecipient}
+        handleClose={() => setEditRecipient(null)}
+      />
 
       <AddRecipient
         isOpen={addRecipient}
@@ -74,48 +141,19 @@ export function WholesaleRescue({ setBreadcrumbs }) {
       />
 
       {hasAdminPermission && (
-        <FooterButton
-          onClick={() => setAddRecipient(true)}
-          disabled={!remainingWeight}
-        >
-          Add Recipient ({remainingWeight} lbs. remaining)
-        </FooterButton>
+        <Flex justify="center" w="100%">
+          <FooterButton
+            onClick={() => setAddRecipient(true)}
+            disabled={rescue.status === STATUSES.COMPLETED}
+          >
+            Add Recipient{' '}
+            {rescue.status === STATUSES.ACTIVE
+              ? `(${formatLargeNumber(remainingWeight)} lbs. remaining)`
+              : ''}
+          </FooterButton>
+        </Flex>
       )}
     </WholesaleRescueContext.Provider>
-  )
-}
-
-function Recipient({ recipient }) {
-  const { hasAdminPermission } = useAuth()
-  return (
-    <Flex w="100%" justify="space-between" align="center" py="4">
-      <Box>
-        <Heading
-          as="h6"
-          fontWeight="600"
-          letterSpacing={1}
-          fontSize="sm"
-          color="element.tertiary"
-          textTransform="uppercase"
-          py="2"
-        >
-          RECIPIENT&nbsp;&nbsp;|&nbsp;&nbsp;
-          <Text as="span" color="se.brand.primary">
-            {recipient.impact_data_total_weight} lbs.
-          </Text>
-        </Heading>
-        <Heading as="h4" size="md" fontWeight="600" color="element.primary">
-          {recipient.organization.name}
-        </Heading>
-        <Text size="sm" fontWeight="300" color="element.secondary">
-          {recipient.location.nickname || recipient.location.address1}
-        </Text>
-      </Box>
-
-      {hasAdminPermission && (
-        <IconButton variant="ghosted" icon={<EditIcon w="6" h="6" />} />
-      )}
-    </Flex>
   )
 }
 

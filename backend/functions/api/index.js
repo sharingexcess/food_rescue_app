@@ -82,8 +82,16 @@ api.post('/wholesale/rescue/create', (req, res) =>
   loadEndpoint('createWholesaleRescue', req, res)
 )
 
-api.post('/wholesale/rescue/:id/addRecipient', (req, res) =>
+api.post('/wholesale/rescue/:id/update', (req, res) =>
+  loadEndpoint('updateWholesaleRescue', req, res)
+)
+
+api.post('/wholesale/rescue/:rescue_id/addRecipient', (req, res) =>
   loadEndpoint('addWholesaleRecipient', req, res)
+)
+
+api.post('/wholesale/rescue/:rescue_id/updateRecipient/:id', (req, res) =>
+  loadEndpoint('updateWholesaleRecipient', req, res)
 )
 
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance

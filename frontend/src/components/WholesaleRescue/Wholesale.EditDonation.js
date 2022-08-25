@@ -3,10 +3,12 @@ import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
 import { SE_API } from 'helpers'
 import { useApi, useAuth } from 'hooks'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useWholesaleRescueContext } from './WholesaleRescue'
 
-export function AddDonation({ isOpen, handleClose, refresh }) {
+export function EditDonation({ isOpen, handleClose }) {
   const { user } = useAuth()
+  const { rescue, donation, refresh } = useWholesaleRescueContext()
   const [formData, setFormData] = useState({
     organization: null,
     location: null,
@@ -21,19 +23,34 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
     useMemo(() => ({ type: 'donor' }), [])
   )
 
+  useEffect(() => {
+    if (rescue && donation && donors) {
+      setFormData({
+        organization: donors.find(i => i.id === donation.organization_id),
+        location: donation.location,
+        weight: donation.impact_data_total_weight,
+        notes: donation.notes,
+      })
+    }
+  }, [rescue, donation, donors])
+
   const totalWeight = formData.weight - palletWeight(formData.pallet)
 
-  async function handleCreateRescue() {
+  async function handleEditDonation() {
+    setIsLoading(true)
     const payload = {
-      handler_id: user.id,
       notes: formData.notes,
-      food_category: formData.food_category,
       weight: totalWeight,
       organization_id: formData.organization.id,
       location_id: formData.location.id,
     }
-    await SE_API.post('/wholesale/rescue/create', payload, user.accessToken)
+    await SE_API.post(
+      `/wholesale/rescue/${rescue.id}/update`,
+      payload,
+      user.accessToken
+    )
     refresh()
+    setIsLoading(false)
     handleClose()
   }
 
@@ -41,19 +58,19 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
     <CardOverlay
       isOpen={isOpen}
       closeHandler={handleClose}
-      CardHeader={AddDonationHeader}
+      CardHeader={EditDonationHeader}
       CardBody={() => (
-        <AddDonationBody
+        <EditDonationBody
           formData={formData}
           setFormData={setFormData}
           donors={donors}
         />
       )}
       CardFooter={() => (
-        <AddDonationFooter
+        <EditDonationFooter
           formData={formData}
           totalWeight={totalWeight}
-          handleCreateRescue={handleCreateRescue}
+          handleEditDonation={handleEditDonation}
           isLoading={isLoading}
         />
       )}
@@ -61,11 +78,11 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
   )
 }
 
-function AddDonationHeader() {
-  return <Heading>New Donation</Heading>
+function EditDonationHeader() {
+  return <Heading>Edit Donation</Heading>
 }
 
-function AddDonationBody({ formData, setFormData, donors }) {
+function EditDonationBody({ formData, setFormData, donors }) {
   const [weight, setWeight] = useState(formData.weight)
   const [notes, setNotes] = useState(formData.notes)
 
@@ -134,22 +151,6 @@ function AddDonationBody({ formData, setFormData, donors }) {
         onBlur={updateParentWeight}
         placeholder="0 lbs."
       />
-      <Text mt="6">Food Category</Text>
-      <Select
-        value={formData.food_category}
-        onChange={e =>
-          setFormData({ ...formData, food_category: e.target.value })
-        }
-      >
-        <option value="impact_data_produce">Produce</option>
-        <option value="impact_data_dairy">Dairy</option>
-        <option value="impact_data_bakery">Bakery</option>
-        <option value="impact_data_meat_fish">Meat/Fish</option>
-        <option value="impact_data_non_perishable">Non-perishable</option>
-        <option value="impact_data_prepared_frozen">Prepared/Frozen</option>
-        <option value="impact_data_mixed">Mixed</option>
-        <option value="impact_data_other">Other</option>
-      </Select>
       <Text mt="6">Notes</Text>
       <Input
         type="text"
@@ -159,45 +160,14 @@ function AddDonationBody({ formData, setFormData, donors }) {
         onBlur={updateParentNotes}
         placeholder="Add notes..."
       />
-      <Text mt="6">Subtract Pallet Weight</Text>
-      <Flex justify="space-between" gap="2" mt="4" mb="4">
-        <Button
-          flexGrow={1}
-          variant={!formData.pallet ? 'secondary' : 'tertiary'}
-          onClick={() => setFormData({ ...formData, pallet: null })}
-        >
-          None
-        </Button>
-        <Button
-          flexGrow={1}
-          variant={formData.pallet === 'wood' ? 'secondary' : 'tertiary'}
-          onClick={() => setFormData({ ...formData, pallet: 'wood' })}
-        >
-          Wood
-        </Button>
-        <Button
-          flexGrow={1}
-          variant={formData.pallet === 'black' ? 'secondary' : 'tertiary'}
-          onClick={() => setFormData({ ...formData, pallet: 'black' })}
-        >
-          Black
-        </Button>
-        <Button
-          flexGrow={1}
-          variant={formData.pallet === 'blue' ? 'secondary' : 'tertiary'}
-          onClick={() => setFormData({ ...formData, pallet: 'blue' })}
-        >
-          Blue
-        </Button>
-      </Flex>
     </Flex>
   )
 }
 
-function AddDonationFooter({
+function EditDonationFooter({
   formData,
   totalWeight,
-  handleCreateRescue,
+  handleEditDonation,
   isLoading,
 }) {
   return (
@@ -205,11 +175,11 @@ function AddDonationFooter({
       size="lg"
       w="100%"
       disabled={!formData.organization || totalWeight < 0}
-      onClick={handleCreateRescue}
+      onClick={handleEditDonation}
       isLoading={isLoading}
-      loadingText={'Saving donation...'}
+      loadingText="Updating donation..."
     >
-      Add Donation {formData.weight ? `(${totalWeight} lbs.)` : ''}
+      Update Donation {formData.weight ? `(${totalWeight} lbs.)` : ''}
     </Button>
   )
 }
