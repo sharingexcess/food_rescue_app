@@ -14,13 +14,13 @@ export function MenuBody({ colorMode, toggleColorMode }) {
 
   return (
     <Flex direction="column" py="4">
-      <Flex w="100%" justify="space-between" my="2">
+      <Flex w="100%" justify="space-between" /* my="2" */>
         <Button
           variant="ghosted"
           px={isMobile ? '0' : '2'}
           color="element.primary"
           fontWeight="300"
-          fontSize="lg"
+          fontSize="md"
         >
           Dark Mode
         </Button>
@@ -36,10 +36,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
               : 'element.primary'
           }
           fontWeight={location.pathname === '/rescues' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           Rescues
         </Button>
@@ -54,10 +55,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
               : 'element.primary'
           }
           fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /*  my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           Wholesale
         </Button>
@@ -70,10 +72,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
             location.pathname === '/people' ? 'blue.primary' : 'element.primary'
           }
           fontWeight={location.pathname === '/people' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           People
         </Button>
@@ -88,10 +91,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
               : 'element.primary'
           }
           fontWeight={location.pathname === '/organizations' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           Organizations
         </Button>
@@ -106,10 +110,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
               : 'element.primary'
           }
           fontWeight={location.pathname === '/analytics' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           Analytics
         </Button>
@@ -124,10 +129,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
               : 'element.primary'
           }
           fontWeight={location.pathname === '/food-safety' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           Food Safety
         </Button>
@@ -140,10 +146,11 @@ export function MenuBody({ colorMode, toggleColorMode }) {
             location.pathname === '/help' ? 'blue.primary' : 'element.primary'
           }
           fontWeight={location.pathname === '/help' ? '600' : '300'}
-          fontSize="lg"
+          fontSize="md"
           mr="auto"
-          my={isMobile ? '2' : '1'}
+          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
+          height={isMobile ? '12' : '9'}
         >
           Help
         </Button>
