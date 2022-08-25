@@ -1,8 +1,6 @@
 import { ArrowRightIcon, EditIcon } from '@chakra-ui/icons'
 import {
   Box,
-  Button,
-  Divider,
   Flex,
   Heading,
   IconButton,
