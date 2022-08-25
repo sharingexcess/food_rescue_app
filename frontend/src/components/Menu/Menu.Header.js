@@ -38,16 +38,6 @@ export function MenuHeader() {
               >
                 {user?.email}
               </Text>
-              <Text
-                as="p"
-                fontSize="xs"
-                fontWeight="500"
-                noOfLines={1}
-                color="se.brand.primary"
-                decoration="underline"
-              >
-                Edit Profile
-              </Text>
             </Box>
           </Flex>
         </Link>
