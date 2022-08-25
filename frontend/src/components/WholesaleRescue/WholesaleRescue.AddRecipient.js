@@ -18,7 +18,7 @@ import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
 import { calculateCurrentLoad, SE_API } from 'helpers'
 import { useApi, useAuth } from 'hooks'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
 
 export function AddRecipient({ isOpen, handleClose }) {
@@ -61,9 +61,17 @@ export function AddRecipient({ isOpen, handleClose }) {
     )
     refresh()
     setIsLoading(false)
-    setFormData({ ...formData, location: null, organization: null })
+    setFormData({ ...formData, location: null, organization: null, notes: '' })
     handleClose()
   }
+
+  useEffect(() => {
+    setFormData({ ...formData, weight: currentLoad })
+  }, [currentLoad])
+
+  useEffect(() => {
+    setFormData({ ...formData, percent_of_total_dropped: remainingPercent })
+  }, [remainingPercent])
 
   return (
     <CardOverlay

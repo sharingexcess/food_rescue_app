@@ -114,7 +114,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
           />
         ))
       ) : (
-        <Flex direction="column" my="8" justify="center" align="center">
+        <Flex direction="column" my="12" justify="center" align="center">
           <ArrowRightIcon w="16" h="16" mb="8" color="se.brand.primary" />
           <Heading as="h4" align="center" mb="2">
             Let's distribute food!
