@@ -70,9 +70,9 @@ function AddDonationBody({ formData, setFormData, donors }) {
   const [notes, setNotes] = useState(formData.notes)
 
   function handleDonorSearch(value) {
-    return donors.filter(i =>
-      i.name.toLowerCase().includes(value.toLowerCase())
-    )
+    return donors
+      .filter(i => i.locations?.length)
+      .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }
 
   function updateWeight(e) {
