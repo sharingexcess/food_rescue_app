@@ -24,11 +24,8 @@ export function Wholesale() {
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
   )
 
-  function handleChangeDate(event) {
-    const dateValue = event.target.value
-      ? formatTimestamp(event.target.value, 'YYYY-MM-DD')
-      : ''
-    setDate(dateValue)
+  function handleChangeDate(date) {
+    setDate(date || '')
   }
 
   return (

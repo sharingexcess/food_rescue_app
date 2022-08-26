@@ -1,5 +1,4 @@
 import { Avatar, Box, Flex, Heading, Text } from '@chakra-ui/react'
-import { CheckIcon, StarIcon } from '@chakra-ui/icons'
 import { useAuth, useIsMobile } from 'hooks'
 import { Link } from 'react-router-dom'
 
@@ -20,7 +19,7 @@ export function MenuHeader() {
             bg="surface.background"
             borderRadius="xl"
             p="2"
-            outline="2px solid"
+            outline="1px solid"
             outlineColor="element.subtle"
           >
             <Avatar name={user?.displayName} src={user?.photoURL} />

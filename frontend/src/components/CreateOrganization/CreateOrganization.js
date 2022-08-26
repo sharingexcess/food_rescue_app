@@ -107,7 +107,11 @@ export function CreateOrganization() {
               ))}
         </Select>
         <Flex direction="column">
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={!formData.name || !formData.type || !formData.subtype}
+          >
             Create Organization
           </Button>
         </Flex>

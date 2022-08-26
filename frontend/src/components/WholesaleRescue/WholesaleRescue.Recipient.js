@@ -15,6 +15,8 @@ export function Recipient({ recipient, setEditRecipient }) {
       boxShadow="md"
       p="4"
       my="4"
+      onClick={() => setEditRecipient(recipient)}
+      cursor="pointer"
     >
       <Box>
         <Heading
@@ -40,11 +42,7 @@ export function Recipient({ recipient, setEditRecipient }) {
       </Box>
 
       {hasAdminPermission && (
-        <IconButton
-          variant="ghosted"
-          icon={<ChevronRightIcon w="8" h="8" />}
-          onClick={() => setEditRecipient(recipient)}
-        />
+        <IconButton variant="ghosted" icon={<ChevronRightIcon w="8" h="8" />} />
       )}
     </Flex>
   )
