@@ -24,7 +24,13 @@ export function MenuBody({ colorMode, toggleColorMode }) {
         >
           Dark Mode
         </Button>
-        <Switch size="lg" isChecked={darkMode} onChange={toggleColorMode} />
+        <Switch
+          pt="2"
+          size={isMobile ? 'lg' : 'md'}
+          isChecked={darkMode}
+          onChange={toggleColorMode}
+          colorScheme="green"
+        />
       </Flex>
       <Link to="/rescues">
         <Button
