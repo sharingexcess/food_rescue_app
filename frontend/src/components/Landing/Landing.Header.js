@@ -49,7 +49,7 @@ export function LandingHeader() {
               size={isMobile ? 'lg' : 'md'}
               isChecked={darkMode}
               onChange={toggleColorMode}
-              colorScheme="green"
+              colorScheme="se_green"
             />
             <MoonIcon />
             <Button ml="8" onClick={handleLogin}>
