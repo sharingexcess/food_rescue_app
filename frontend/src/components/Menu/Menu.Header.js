@@ -19,8 +19,8 @@ export function MenuHeader() {
             bg="surface.background"
             borderRadius="xl"
             p="2"
-            outline="1px solid"
-            outlineColor="element.subtle"
+            border="1px solid"
+            borderColor="element.subtle"
           >
             <Avatar name={user?.displayName} src={user?.photoURL} />
             <Box w="3" />
