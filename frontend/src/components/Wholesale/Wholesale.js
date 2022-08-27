@@ -1,5 +1,6 @@
 import { CalendarIcon } from '@chakra-ui/icons'
 import {
+  Box,
   Divider,
   Flex,
   Heading,
@@ -24,8 +25,11 @@ export function Wholesale() {
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
   )
 
-  function handleChangeDate(date) {
-    setDate(date || '')
+  function handleChangeDate(event) {
+    const dateValue = event.target.value
+      ? formatTimestamp(event.target.value, 'YYYY-MM-DD')
+      : ''
+    setDate(dateValue)
   }
 
   return (
@@ -63,6 +67,7 @@ export function Wholesale() {
           <Skeleton w="100%" h="32" my="4" />
         </>
       )}
+      <Box h="24" />
 
       {hasAdminPermission && (
         <FooterButton onClick={() => setAddDonation(true)}>

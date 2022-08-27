@@ -96,6 +96,7 @@ export function Organizations() {
       </Flex>
       {organizations ? (
         organizations
+          .filter(i => !i.is_deleted)
           .filter(i => (type ? i.type === type : true))
           .filter(i => (subtype ? i.subtype === subtype : true))
           .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))

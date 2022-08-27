@@ -209,7 +209,7 @@ export function CreateLocation({ setBreadcrumbs }) {
             loadingText="Saving Location..."
             onClick={handleSubmit}
             isLoading={isLoading}
-            disabled={!isFormComplete}
+            disabled={!isFormComplete || isLoading}
           >
             Save New Location
           </FooterButton>

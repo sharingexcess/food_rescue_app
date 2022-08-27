@@ -4,7 +4,7 @@ const {
   authenticateRequest,
   rejectUnauthorizedRequest,
 } = require('../../helpers')
-var moment = require('moment-timezone')
+const moment = require('moment-timezone')
 
 async function impactEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -46,7 +46,7 @@ async function impactEndpoint(request, response) {
 
     const organizations = await fetchCollection('organizations')
     // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
-    filteredStops = stops.filter(d => {
+    const filteredStops = stops.filter(d => {
       const org = organizations.find(o => o.id === d.organization_id)
       return !['holding', 'compost'].includes(org.subtype)
     })

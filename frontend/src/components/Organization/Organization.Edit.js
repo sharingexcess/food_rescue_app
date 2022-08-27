@@ -1,6 +1,7 @@
 import { CheckCircleIcon, CloseIcon } from '@chakra-ui/icons'
 import {
   Box,
+  Button,
   Flex,
   IconButton,
   Input,
@@ -10,11 +11,13 @@ import {
 import { DONOR_TYPES, RECIPIENT_TYPES, SE_API } from 'helpers'
 import { useAuth } from 'hooks'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
   const [isWorking, setIsWorking] = useState(false)
   const { user } = useAuth()
   const toast = useToast()
+  const navigate = useNavigate()
 
   async function handleUpdateOrganization() {
     setIsWorking(true)
@@ -36,6 +39,23 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
     })
     setIsWorking(false)
     setEdit(false)
+  }
+
+  async function handleDeleteOrganization() {
+    if (window.confirm('Are you sure you want to delete this organization?')) {
+      if (
+        window.confirm(
+          'Like seriously, this is a big deal. You definitely want to delete this organization?'
+        )
+      ) {
+        await SE_API.post(
+          `/organization/${formData.id}/update`,
+          { ...formData, is_deleted: true },
+          user.accessToken
+        )
+        navigate('/organizations')
+      }
+    }
   }
 
   return (
@@ -92,17 +112,24 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
           </Select>
         </Flex>
       </Box>
-      <IconButton
-        variant="ghosted"
-        onClick={() => setEdit(false)}
-        icon={<CloseIcon w="4" h="4" color="element.primary" />}
-      />
-      <IconButton
-        variant="ghosted"
-        onClick={handleUpdateOrganization}
-        isLoading={isWorking}
-        icon={<CheckCircleIcon w="6" h="6" color="se.brand.primary" />}
-      />
+      <Box>
+        <Flex>
+          <IconButton
+            variant="ghosted"
+            onClick={() => setEdit(false)}
+            icon={<CloseIcon w="4" h="4" color="element.primary" />}
+          />
+          <IconButton
+            variant="ghosted"
+            onClick={handleUpdateOrganization}
+            isLoading={isWorking}
+            icon={<CheckCircleIcon w="6" h="6" color="se.brand.primary" />}
+          />
+        </Flex>
+        <Button variant="tertiary" onClick={handleDeleteOrganization}>
+          Delete
+        </Button>
+      </Box>
     </>
   )
 }

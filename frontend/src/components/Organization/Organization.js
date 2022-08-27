@@ -50,8 +50,12 @@ export function Organization({ setBreadcrumbs }) {
             <OrganizationHeader organization={organization} setEdit={setEdit} />
           )}
         </Flex>
-        <Tags formData={formData} setFormData={setFormData} />
-        <Locations organization={organization} />
+        {!organization.is_deleted && (
+          <>
+            <Tags formData={formData} setFormData={setFormData} />
+            <Locations organization={organization} />
+          </>
+        )}
       </>
     )
 }

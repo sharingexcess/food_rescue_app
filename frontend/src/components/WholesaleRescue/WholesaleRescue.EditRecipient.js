@@ -111,7 +111,21 @@ export function EditRecipient({ isOpen, handleClose }) {
 }
 
 function EditRecipientHeader() {
-  return <Heading>Edit Recipient</Heading>
+  return (
+    <>
+      <Heading>Edit Recipient</Heading>
+      <Button
+        variant="secondary"
+        bg="yellow.secondary"
+        color="yellow.primary"
+        w="100%"
+        my="2"
+        h="8"
+      >
+        Delete Recipient
+      </Button>
+    </>
+  )
 }
 
 function EditRecipientBody({
@@ -201,7 +215,7 @@ function EditRecipientBody({
 
       <Flex w="100%" justify="center" mt="16">
         <Input
-          w="96px"
+          w="128px"
           h="64px"
           fontSize="4xl"
           fontWeight="bold"

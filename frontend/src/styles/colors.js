@@ -49,4 +49,16 @@ export const SE_COLORS = {
     500: '#226305',
     900: '#334832',
   },
+  se_green: {
+    // yeah this is hectic, but it let's us use colorScheme and force our brand green :)
+    100: '#4EA528',
+    200: '#4EA528',
+    300: '#4EA528',
+    400: '#4EA528',
+    500: '#4EA528',
+    600: '#4EA528',
+    700: '#4EA528',
+    800: '#4EA528',
+    900: '#4EA528',
+  },
 }

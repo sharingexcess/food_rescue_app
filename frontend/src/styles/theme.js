@@ -108,7 +108,7 @@ const fonts = {
   // body: `'Montserrat', sans-serif`,
 }
 
-const colors = { se: SE_COLORS }
+const colors = { se: SE_COLORS, se_green: SE_COLORS.se_green }
 
 const theme = extendTheme({
   config: {

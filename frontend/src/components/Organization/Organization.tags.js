@@ -84,8 +84,8 @@ export function Tags({ formData, setFormData }) {
                 border="none"
                 minW="4"
                 ml="2"
-                // onBlur={() => setAddTag()}
                 onChange={e => setAddTag(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAddTag()}
               />
             </TagLabel>
             <TagRightIcon

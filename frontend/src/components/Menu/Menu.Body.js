@@ -13,14 +13,20 @@ export function MenuBody({ colorMode, toggleColorMode }) {
   }, [colorMode])
 
   return (
-    <Flex direction="column" py="4">
-      <Flex w="100%" justify="space-between" /* my="2" */>
+    <Flex
+      direction="column"
+      py="4"
+      justify="space-around"
+      h="100%"
+      maxH={isMobile ? '440px' : '400px'}
+      mt="2"
+    >
+      <Flex w="100%" justify="space-between">
         <Button
           variant="ghosted"
           px={isMobile ? '0' : '2'}
           color="element.primary"
           fontWeight="300"
-          fontSize="md"
         >
           Dark Mode
         </Button>
@@ -29,7 +35,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           size={isMobile ? 'lg' : 'md'}
           isChecked={darkMode}
           onChange={toggleColorMode}
-          colorScheme="green"
+          colorScheme="se_green"
         />
       </Flex>
       <Link to="/rescues">
@@ -38,15 +44,12 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/rescues'
-              ? 'blue.primary'
+              ? 'element.active'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/rescues' ? '600' : '300'}
-          fontSize="md"
-          mr="auto"
-          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
-          height={isMobile ? '12' : '9'}
+          py="0"
         >
           Rescues
         </Button>
@@ -57,7 +60,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/wholesale'
-              ? 'blue.primary'
+              ? 'element.active'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
@@ -75,7 +78,9 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           variant="ghosted"
           px={isMobile ? '0' : '2'}
           color={
-            location.pathname === '/people' ? 'blue.primary' : 'element.primary'
+            location.pathname === '/people'
+              ? 'element.active'
+              : 'element.primary'
           }
           fontWeight={location.pathname === '/people' ? '600' : '300'}
           fontSize="md"
@@ -93,7 +98,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/organizations'
-              ? 'blue.primary'
+              ? 'element.active'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/organizations' ? '600' : '300'}
@@ -112,7 +117,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/analytics'
-              ? 'blue.primary'
+              ? 'element.active'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/analytics' ? '600' : '300'}
@@ -131,7 +136,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           px={isMobile ? '0' : '2'}
           color={
             location.pathname === '/food-safety'
-              ? 'blue.primary'
+              ? 'element.active'
               : 'element.primary'
           }
           fontWeight={location.pathname === '/food-safety' ? '600' : '300'}
@@ -149,7 +154,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           variant="ghosted"
           px={isMobile ? '0' : '2'}
           color={
-            location.pathname === '/help' ? 'blue.primary' : 'element.primary'
+            location.pathname === '/help' ? 'element.active' : 'element.primary'
           }
           fontWeight={location.pathname === '/help' ? '600' : '300'}
           fontSize="md"
