@@ -145,7 +145,8 @@ function Auth({ children }) {
     // render the landing page with sign in action.
     return (
       <AuthWrapper>
-        <Page defaultTitle="Welcome" id="Landing" Content={Landing} />
+        {/* <Page defaultTitle="Welcome" id="Landing" Content={Landing} /> */}
+        <Landing />
       </AuthWrapper>
     )
   }
