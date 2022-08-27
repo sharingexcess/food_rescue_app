@@ -114,7 +114,7 @@ export function Landing() {
           alt="Sharing Excess"
         />
         <Box flexBasis="50%" flexGrow="1">
-          <Heading align="left" mb="8">
+          <Heading align="left" mb="4">
             Help Us Fight Hunger, On Your Schedule
           </Heading>
           <Text color="element.secondary" align="left" fontWeight="400">
@@ -134,7 +134,7 @@ export function Landing() {
         gap="12"
       >
         <Box flexBasis="50%" flexGrow="1">
-          <Heading align={isMobile ? 'left' : 'right'}>
+          <Heading align={isMobile ? 'left' : 'right'} mb="4">
             Make An Impact In Your Community
           </Heading>
           <Text
@@ -172,7 +172,7 @@ export function Landing() {
           alt="Sharing Excess"
         />
         <Box flexBasis="50%" flexGrow="1">
-          <Heading align="left" mb="8">
+          <Heading align="left" mb="4">
             Join the Sharing Excess Community
           </Heading>
           <Text color="element.secondary" align="left" fontWeight="400">
