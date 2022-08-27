@@ -194,7 +194,7 @@ export function Landing() {
         mb="16"
       >
         <Heading align="center" size="4xl" mb="8">
-          🎉
+          🏃
         </Heading>
         <Heading align="center" size="lg" lineHeight="1.4">
           Let's get you on board!
