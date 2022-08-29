@@ -25,6 +25,7 @@ export function Rescues() {
 
   const api_params = useMemo(
     () => ({
+      type: 'retail',
       status: status === 'available' ? 'scheduled' : status,
       handler_id: status === 'available' ? 'null' : handler ? handler.id : null,
       date: date,

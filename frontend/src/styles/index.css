@@ -101,3 +101,7 @@ input::-webkit-date-and-time-value {
 .se-pull-to-refresh .ptr__children {
   overflow: visible !important;
 }
+
+#menu-button-Datepicker input {
+  width: 0;
+}

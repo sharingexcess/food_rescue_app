@@ -12,9 +12,10 @@ export function FooterButton(props) {
         position={isMobile ? 'fixed' : 'relative'}
         w={isMobile ? 'calc(100% - 32px)' : null}
         bottom={isMobile ? '8' : null}
-        left={isMobile ? '4' : null}
+        left={isMobile ? 'max(16px, calc(50vw - 360px))' : null}
         zIndex="8"
         mt="4"
+        maxW="720px"
         {...props}
       >
         {props.children}

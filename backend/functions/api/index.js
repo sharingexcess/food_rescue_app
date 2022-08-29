@@ -94,6 +94,11 @@ api.post('/wholesale/rescue/:rescue_id/updateRecipient/:id', (req, res) =>
   loadEndpoint('updateWholesaleRecipient', req, res)
 )
 
+// THIS IS A PROD RESCUE UPDATE SCRIPT, LEAVING IN PLACE FOR NOW BUT DO NOT USE
+// api.get('/updateRescueType', (req, res) =>
+//   loadEndpoint('updateRescueType', req, res)
+// )
+
 // we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 function loadEndpoint(name, request, response) {
   const module = require(`./${name}`)

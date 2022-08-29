@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { CheckCircleIcon } from '@chakra-ui/icons'
 import { useAuth } from 'hooks'
-import { FooterButton } from 'components'
+import { FooterButton, PageTitle } from 'components'
 
 export function FoodSafety({ handleNext }) {
   const { hasPermission } = useAuth()
@@ -46,9 +46,7 @@ export function FoodSafety({ handleNext }) {
 
   return (
     <>
-      <Heading mt="8" mb="8" color="se.brand.primary" size="2xl">
-        Food safety is our priority
-      </Heading>
+      <PageTitle>Food safety is our priority.</PageTitle>
 
       <Text color="element.secondary" mb="4">
         Our goal is to safely provide healthy food excess from our donors to
@@ -67,7 +65,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 01
@@ -99,7 +97,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 02
@@ -165,7 +163,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 03
@@ -209,7 +207,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 04
@@ -244,7 +242,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 05
@@ -291,7 +289,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 06
@@ -347,7 +345,7 @@ export function FoodSafety({ handleNext }) {
                 mt="4"
                 mb="4"
                 size="md"
-                color="element.secondary"
+                color="se.brand.primary"
                 fontWeight="600"
               >
                 07

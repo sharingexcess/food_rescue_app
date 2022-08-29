@@ -24,6 +24,7 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
   const totalWeight = formData.weight - palletWeight(formData.pallet)
 
   async function handleCreateRescue() {
+    setIsLoading(true)
     const payload = {
       handler_id: user.id,
       notes: formData.notes,
@@ -34,6 +35,7 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
     }
     await SE_API.post('/wholesale/rescue/create', payload, user.accessToken)
     refresh()
+    setIsLoading(false)
     handleClose()
   }
 
@@ -70,9 +72,9 @@ function AddDonationBody({ formData, setFormData, donors }) {
   const [notes, setNotes] = useState(formData.notes)
 
   function handleDonorSearch(value) {
-    return donors.filter(i =>
-      i.name.toLowerCase().includes(value.toLowerCase())
-    )
+    return donors
+      .filter(i => i.locations?.length)
+      .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }
 
   function updateWeight(e) {
@@ -88,7 +90,7 @@ function AddDonationBody({ formData, setFormData, donors }) {
   }
 
   function handleSelectDonor(value) {
-    const location = value.locations.length === 1 ? value.locations[0] : null
+    const location = value?.locations?.length === 1 ? value.locations[0] : null
     setFormData({ ...formData, organization: value, location })
   }
 

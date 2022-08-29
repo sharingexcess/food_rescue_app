@@ -281,6 +281,9 @@ function RescueAppRoutes() {
                     id="FoodSafety"
                     defaultTitle="Food Safety"
                     Content={FoodSafety}
+                    defaultBreadcrumbs={[
+                      { label: 'Food Safety', link: '/food-safety' },
+                    ]}
                   />
                 }
               />

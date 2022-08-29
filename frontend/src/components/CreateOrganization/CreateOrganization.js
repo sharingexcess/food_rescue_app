@@ -19,6 +19,7 @@ export function CreateOrganization() {
     type: '',
     subtype: '',
   })
+  const [isLoading, setIsLoading] = useState()
 
   function handleChange(e) {
     setFormData({
@@ -28,6 +29,7 @@ export function CreateOrganization() {
   }
 
   async function handleSubmit() {
+    setIsLoading(true)
     const organization_id = await generateUniqueId('organizations')
     await SE_API.post(
       `/organization/${organization_id}/update`,
@@ -41,6 +43,7 @@ export function CreateOrganization() {
       },
       user.accessToken
     )
+    setIsLoading(false)
     navigate(`/organizations/${organization_id}`)
   }
 
@@ -107,7 +110,15 @@ export function CreateOrganization() {
               ))}
         </Select>
         <Flex direction="column">
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={
+              !formData.name || !formData.type || !formData.subtype || isLoading
+            }
+            isLoading={isLoading}
+            loadingText="Creating organization..."
+          >
             Create Organization
           </Button>
         </Flex>

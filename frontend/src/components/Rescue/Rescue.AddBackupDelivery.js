@@ -22,9 +22,10 @@ export function AddBackupDelivery() {
   }, [organization])
 
   function handleSearchForOrganization(value) {
-    return organizations.filter(i =>
-      i.name.toLowerCase().includes(value.toLowerCase())
-    )
+    return organizations
+      .filter(i => i.locations?.length)
+      .filter(i => i.type === 'delivery')
+      .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }
 
   async function handleAddBackupDelivery() {

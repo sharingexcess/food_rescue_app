@@ -28,7 +28,7 @@ export function Menu({ isOpen, onClose }) {
           <MenuHeader />
         </DrawerHeader>
 
-        <DrawerBody py="0">
+        <DrawerBody py="0" h="100%">
           <MenuBody colorMode={colorMode} toggleColorMode={toggleColorMode} />
         </DrawerBody>
 

@@ -15,7 +15,13 @@ export function MenuHeader() {
       )}
       {user && (
         <Link to="/profile">
-          <Flex bg="surface.background" borderRadius="xl" p="2">
+          <Flex
+            bg="surface.background"
+            borderRadius="xl"
+            p="2"
+            border="1px solid"
+            borderColor="element.subtle"
+          >
             <Avatar name={user?.displayName} src={user?.photoURL} />
             <Box w="3" />
             <Box overflow="clip">

@@ -1,4 +1,5 @@
 import { API_URL } from './constants'
+import { isJSON } from 'validator'
 
 export const SE_API = {
   post: async function (endpoint, payload, accessToken) {
@@ -24,7 +25,7 @@ export const SE_API = {
       throw new Error('Error in POST api:', response)
     }
     const response_payload = await response.text().then(function (text) {
-      return text ? JSON.parse(text) : {}
+      return isJSON(text) ? JSON.parse(text) : text
     })
     console.log(
       `%c[SE_API.post()] Received Response:`,

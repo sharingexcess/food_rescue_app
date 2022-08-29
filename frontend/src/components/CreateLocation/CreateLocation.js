@@ -26,6 +26,7 @@ import {
   TIMES,
 } from 'helpers'
 import { useEffect, useState } from 'react'
+import { isEmail, isNumeric } from 'validator'
 
 export function CreateLocation({ setBreadcrumbs }) {
   const { user } = useAuth()
@@ -154,23 +155,25 @@ export function CreateLocation({ setBreadcrumbs }) {
     {
       id: 'contact_name',
       title: 'Contact Name',
-      isValid: true,
+      isValid: formData.contact_name.length,
     },
     {
       id: 'contact_email',
       title: 'Contact Email',
-      isValid: true,
+      isValid: isEmail(formData.contact_email),
     },
     {
       id: 'contact_phone',
       type: 'tel',
       title: 'Phone Number',
-      isValid: formData.contact_phone.length > 9,
+      isValid:
+        isNumeric(formData.contact_phone) && formData.contact_phone.length > 9,
     },
     {
       id: 'notes',
       title: 'Notes/Instructions',
       isValid: true,
+      isOptional: true,
     },
   ]
 
@@ -206,7 +209,7 @@ export function CreateLocation({ setBreadcrumbs }) {
             loadingText="Saving Location..."
             onClick={handleSubmit}
             isLoading={isLoading}
-            disabled={!isFormComplete}
+            disabled={!isFormComplete || isLoading}
           >
             Save New Location
           </FooterButton>
