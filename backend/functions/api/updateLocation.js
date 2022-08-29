@@ -25,7 +25,7 @@ async function updateLocationEndpoint(request, response) {
       const payload = { ...JSON.parse(request.body), id }
       console.log('Received payload:', payload)
       await updateLocation(id, payload)
-      response.status(200).send('Update successful.')
+      response.status(200).send(JSON.stringify('Update successful.'))
       resolve()
     } catch (e) {
       console.error('Caught error:', e)

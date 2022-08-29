@@ -26,6 +26,7 @@ import {
   Privacy,
   Legal,
   Help,
+  CompletedResue,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -113,7 +114,18 @@ function RescueAppRoutes() {
               />
               <Route
                 path="/rescues/:rescue_id/completed"
-                element={<div>completed rescue!</div>}
+                element={
+                  <Page
+                    defaultTitle="Completed Route"
+                    defaultBreadcrumbs={[
+                      { label: 'Rescues', link: '/rescues' },
+                      { label: 'Rescue', link: '/rescues/' },
+                    ]}
+                    pullToRefresh={false}
+                    Content={CompletedResue}
+                  />
+                }
+                // element={<div>completed rescue!</div>}
               />
               <Route
                 path="/create-rescue"

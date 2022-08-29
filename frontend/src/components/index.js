@@ -1,6 +1,7 @@
 export * from './Menu/Menu'
 export * from './Page/Page'
 export * from './Rescue/Rescue'
+export * from './CompletedRescue/CompletedRescue'
 export * from './Rescues/Rescues'
 export * from './Rescues/Rescues.Card'
 export * from './Menu/Menu'

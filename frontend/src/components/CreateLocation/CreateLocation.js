@@ -34,7 +34,6 @@ export function CreateLocation({ setBreadcrumbs }) {
   const { organization_id } = useParams()
   const [isLoading, setIsLoading] = useState(false)
   const { data: organization } = useApi(`/organization/${organization_id}`)
-
   const [formData, setFormData] = useState({
     address1: '',
     address2: '',
@@ -64,6 +63,32 @@ export function CreateLocation({ setBreadcrumbs }) {
 
   async function handleSubmit() {
     setIsLoading(true)
+    const unrepeatedhours = []
+    for (let i = 0; i <= 7; i++) {
+      unrepeatedhours.push({
+        day_of_week: i,
+        time_open: null,
+        time_close: null,
+      })
+    }
+
+    for (const hour of formData.hours) {
+      if (hour.day_of_week === 7) {
+        checkMonToFriday()
+      }
+    }
+    for (const hour of formData.hours) {
+      unrepeatedhours[hour.day_of_week] = {
+        ...unrepeatedhours[hour.day_of_week],
+        time_open: hour.time_open,
+        time_close: hour.time_close,
+      }
+    }
+    setFormData({
+      ...formData,
+      hours: unrepeatedhours.filter(hour => hour.time_open && hour.time_close),
+    })
+
     try {
       const location_id = await generateUniqueId('locations')
       await SE_API.post(
@@ -112,6 +137,8 @@ export function CreateLocation({ setBreadcrumbs }) {
   }
 
   function handleChangeTimeSlot(day, open, close, e) {
+    console.log('hours', formData.hours)
+
     const alter = formData.hours
       ? formData.hours.findIndex(
           hour =>
@@ -291,7 +318,7 @@ function Hours({ dayOfWeek, openTime, closeTime, handleChangeTimeSlot }) {
         fontSize="12px"
         color="element.secondary"
       >
-        <option value={0}>Day Of Week</option>
+        <option value={-1}>Day Of Week</option>
         {DAYS.map((day, i) => (
           <option key={i} value={i}>
             {day}
@@ -368,9 +395,9 @@ function SetHours({ formData, setFormData, handleChangeTimeSlot }) {
             hours: [
               ...formData.hours,
               {
-                day_of_week: null,
-                time_open: null,
-                time_close: null,
+                day_of_week: -1,
+                time_open: '',
+                time_close: '',
               },
             ],
           })
