@@ -1,11 +1,11 @@
-import { Box, Button } from '@chakra-ui/react'
+import { Box, Button, Flex } from '@chakra-ui/react'
 import { useIsMobile } from 'hooks'
 
 export function FooterButton(props) {
   const isMobile = useIsMobile()
 
   return (
-    <>
+    <Flex w="100%" align="center" justify="center">
       <Button
         variant="primary"
         size="lg"
@@ -31,6 +31,6 @@ export function FooterButton(props) {
           bgGradient="linear(to bottom, transparent, surface.background)"
         />
       )}
-    </>
+    </Flex>
   )
 }

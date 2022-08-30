@@ -1,13 +1,14 @@
 import { Button, Select, Text, Input, Flex, Heading } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { SE_API } from 'helpers'
+import { formatTimestamp, SE_API } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { useState, useMemo } from 'react'
 
 export function AddDonation({ isOpen, handleClose, refresh }) {
   const { user } = useAuth()
   const [formData, setFormData] = useState({
+    date: formatTimestamp(new Date(), 'YYYY-MM-DD'),
     organization: null,
     location: null,
     weight: '',
@@ -32,6 +33,7 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
       weight: totalWeight,
       organization_id: formData.organization.id,
       location_id: formData.location.id,
+      date: formData.date,
     }
     await SE_API.post('/wholesale/rescue/create', payload, user.accessToken)
     refresh()
@@ -69,6 +71,7 @@ function AddDonationHeader() {
 
 function AddDonationBody({ formData, setFormData, donors }) {
   const [weight, setWeight] = useState(formData.weight)
+  const [date, setDate] = useState(formData.date)
   const [notes, setNotes] = useState(formData.notes)
 
   function handleDonorSearch(value) {
@@ -89,6 +92,10 @@ function AddDonationBody({ formData, setFormData, donors }) {
     setFormData({ ...formData, notes })
   }
 
+  function updateParentDate() {
+    setFormData({ ...formData, date })
+  }
+
   function handleSelectDonor(value) {
     const location = value?.locations?.length === 1 ? value.locations[0] : null
     setFormData({ ...formData, organization: value, location })
@@ -96,6 +103,15 @@ function AddDonationBody({ formData, setFormData, donors }) {
 
   return (
     <Flex direction="column" minH="128">
+      <Text mt="6">Date</Text>
+      <Input
+        type="date"
+        fontSize="sm"
+        value={date}
+        onChange={e => setDate(e.target.value)}
+        onBlur={updateParentDate}
+        mb="6"
+      />
       <Autocomplete
         label="Donor"
         placeholder="Name..."

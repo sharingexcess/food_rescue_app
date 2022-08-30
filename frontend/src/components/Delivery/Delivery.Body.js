@@ -40,7 +40,7 @@ export function Body() {
     setTempInputValue(updatedPoundsDropped)
     setPoundsDropped(updatedPoundsDropped)
     setPercentTotalDropped(
-      Math.round((updatedPoundsDropped / currentLoad) * 100)
+      Math.round((updatedPoundsDropped / currentLoad) * 100) || 0
     )
   }
 
@@ -131,17 +131,23 @@ export function Body() {
         </Text>
       )}
       {currentLoad === 0 && (
-        <Flex direction="column" justify="center">
-          <Text textAlign="center" fontSize="xs">
-            You have nothing to deliver! If this is by accident
+        <Flex direction="column" justify="center" mt="4">
+          <Text textAlign="center" fontSize="xs" m="0">
+            You have nothing to deliver! If this is by accident,
+            <br />
+            you can always{' '}
+            <Button
+              variant="tertiary"
+              fontSize="xs"
+              size="xs"
+              onClick={() => setOpenStop(null)}
+              display="inline"
+              px="2px"
+            >
+              update your previous deliveries
+            </Button>
+            .
           </Text>
-          <Button
-            variant="tertiary"
-            fontSize="xs"
-            onClick={() => setOpenStop(null)}
-          >
-            you can always update your previous deliveries
-          </Button>
         </Flex>
       )}
     </Flex>

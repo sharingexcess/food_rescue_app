@@ -48,7 +48,7 @@ export function InactiveStop({ stop }) {
             <ChevronUpIcon
               h={8}
               w={8}
-              transform={`rotate(${open ? '-180deg' : '0deg'})`}
+              transform={`rotate(${isExpanded ? '-180deg' : '0deg'})`}
               transition="transform 0.3s ease"
             />
           }

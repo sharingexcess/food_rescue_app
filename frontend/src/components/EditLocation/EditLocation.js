@@ -8,7 +8,7 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react'
-import { CloseIcon } from '@chakra-ui/icons'
+import { CloseIcon, DeleteIcon } from '@chakra-ui/icons'
 import {
   MapLocation,
   AddressAutocomplete,
@@ -148,8 +148,16 @@ export function EditLocation({ setBreadcrumbs }) {
   }
 
   async function handleDelete() {
-    await SE_API.post(`/location/${location_id}/delete`, user.accessToken)
-    navigate(`/organizations/${organization_id}`)
+    if (
+      window.confirm(`Are you sure you want to delete ${location.address1}?`)
+    ) {
+      if (
+        window.confirm(`You're SURE??? Deleting a location can't be undone.`)
+      ) {
+        await SE_API.post(`/location/${location_id}/delete`, user.accessToken)
+        navigate(`/organizations/${organization_id}`)
+      }
+    }
   }
 
   async function handleSubmit() {
@@ -261,7 +269,7 @@ export function EditLocation({ setBreadcrumbs }) {
     return result
   })()
 
-  if (loading && !formData) {
+  if (loading && !location) {
     return <LoadingEditLocation />
   } else if (error) {
     return <EditLocationPageError message={error} />
@@ -270,7 +278,14 @@ export function EditLocation({ setBreadcrumbs }) {
   } else
     return (
       <Box pb={24}>
-        <PageTitle>Edit Location</PageTitle>
+        <Flex justify="space-between" align="center">
+          <PageTitle m="0">Edit Location</PageTitle>
+          <IconButton
+            variant="ghosted"
+            onClick={handleDelete}
+            icon={<DeleteIcon color="element.tertiary" w="4" h="4" />}
+          />
+        </Flex>
         {formData.address1 ? (
           <Flex direction="column">
             <SetDetails
@@ -285,23 +300,14 @@ export function EditLocation({ setBreadcrumbs }) {
               setFormData={setFormData}
               handleChangeTimeSlot={handleChangeTimeSlot}
             />
-            <Flex>
-              <FooterButton
-                loadingText="Saving Location..."
-                onClick={handleSubmit}
-                isLoading={isLoading}
-                disabled={!isFormComplete}
-              >
-                Edit Location
-              </FooterButton>
-              <FooterButton
-                loadingText="Deleting Location..."
-                onClick={handleDelete}
-                isLoading={isLoading}
-              >
-                Delete Location
-              </FooterButton>
-            </Flex>
+            <FooterButton
+              loadingText="Saving Location..."
+              onClick={handleSubmit}
+              isLoading={isLoading}
+              disabled={!isFormComplete || isLoading}
+            >
+              Update Location
+            </FooterButton>
           </Flex>
         ) : (
           <Box mb="8">

@@ -1,7 +1,7 @@
 import { Button, Select, Text, Input, Flex, Heading } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { SE_API } from 'helpers'
+import { formatTimestamp, SE_API } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
@@ -16,6 +16,7 @@ export function EditDonation({ isOpen, handleClose }) {
     food_category: 'impact_data_produce',
     notes: '',
     pallet: null,
+    date: null,
   })
   const [isLoading, setIsLoading] = useState()
   const { data: donors } = useApi(
@@ -25,11 +26,13 @@ export function EditDonation({ isOpen, handleClose }) {
 
   useEffect(() => {
     if (rescue && donation && donors) {
+      console.log(donation)
       setFormData({
         organization: donors.find(i => i.id === donation.organization_id),
         location: donation.location,
         weight: donation.impact_data_total_weight,
         notes: donation.notes,
+        date: formatTimestamp(donation.timestamp_scheduled_start, 'YYYY-MM-DD'),
       })
     }
   }, [rescue, donation, donors])
@@ -43,6 +46,7 @@ export function EditDonation({ isOpen, handleClose }) {
       weight: totalWeight,
       organization_id: formData.organization.id,
       location_id: formData.location.id,
+      date: formData.date,
     }
     await SE_API.post(
       `/wholesale/rescue/${rescue.id}/update`,
@@ -85,6 +89,7 @@ function EditDonationHeader() {
 function EditDonationBody({ formData, setFormData, donors }) {
   const [weight, setWeight] = useState(formData.weight)
   const [notes, setNotes] = useState(formData.notes)
+  const [date, setDate] = useState(formData.date)
 
   function handleDonorSearch(value) {
     return donors.filter(i =>
@@ -104,6 +109,10 @@ function EditDonationBody({ formData, setFormData, donors }) {
     setFormData({ ...formData, notes })
   }
 
+  function updateParentDate() {
+    setFormData({ ...formData, date })
+  }
+
   function handleSelectDonor(value) {
     const location = value.locations.length === 1 ? value.locations[0] : null
     setFormData({ ...formData, organization: value, location })
@@ -111,6 +120,15 @@ function EditDonationBody({ formData, setFormData, donors }) {
 
   return (
     <Flex direction="column" minH="128">
+      <Text mt="6">Date</Text>
+      <Input
+        type="date"
+        fontSize="sm"
+        value={date}
+        onChange={e => setDate(e.target.value)}
+        onBlur={updateParentDate}
+        mb="6"
+      />
       <Autocomplete
         label="Donor"
         placeholder="Name..."
