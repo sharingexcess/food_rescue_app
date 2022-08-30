@@ -112,10 +112,6 @@ function RescueAppRoutes() {
                 }
               />
               <Route
-                path="/rescues/:rescue_id/completed"
-                element={<div>completed rescue!</div>}
-              />
-              <Route
                 path="/create-rescue"
                 element={
                   <Page

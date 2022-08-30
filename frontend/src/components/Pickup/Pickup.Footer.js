@@ -38,7 +38,10 @@ export function PickupFooter() {
       user.accessToken
     )
     const stop_index = rescue.stop_ids.findIndex(i => i === pickup.id)
-    if (stop_index < rescue.stop_ids.length - 1) {
+    if (
+      stop_index < rescue.stop_ids.length - 1 &&
+      rescue.stops[stop_index + 1].status === STATUSES.SCHEDULED
+    ) {
       // if this is not the last stop, mark the next stop as active
       await SE_API.post(
         `/stops/${rescue.stop_ids[stop_index + 1]}/update`,
@@ -70,7 +73,7 @@ export function PickupFooter() {
         }
         onClick={handleSubmit}
         isLoading={isSubmitting}
-        loadingText="Updating Pickup"
+        loadingText="Updating pickup..."
       >
         {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
         {total ? ` (${total} lbs.)` : ''}

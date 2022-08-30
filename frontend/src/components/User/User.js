@@ -52,7 +52,11 @@ export function User({ setBreadcrumbs }) {
       ])
   }, [profile])
 
-  const { data: rescues, loadMore } = useApi(
+  const {
+    data: rescues,
+    loadMore,
+    loading: loadingRescues,
+  } = useApi(
     '/rescues',
     useMemo(
       () => ({
@@ -89,9 +93,11 @@ export function User({ setBreadcrumbs }) {
             alignSelf="center"
             variant="primary"
             onClick={loadMore}
-            disabled={!loadMore || loading}
+            isLoading={loadingRescues}
+            loadingText="Loading more..."
+            disabled={!loadMore || loadingRescues}
           >
-            Load More
+            {loadMore ? 'Load More' : 'Loaded all rescues'}
           </Button>
         </Flex>
       </>

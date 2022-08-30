@@ -72,9 +72,9 @@ async function createWholesaleRescue(payload) {
     notes: payload.notes,
     timestamp_created: now,
     timestamp_updated: now,
-    timestamp_scheduled_start: now,
-    timestamp_logged_start: now,
-    timestamp_scheduled_finish: now,
+    timestamp_scheduled_start: new Date(payload.date),
+    timestamp_logged_start: new Date(payload.date),
+    timestamp_scheduled_finish: new Date(payload.date),
     timestamp_logged_finish: null,
   }
 

@@ -22,9 +22,10 @@ export function AddBackupDelivery() {
   }, [organization])
 
   function handleSearchForOrganization(value) {
+    console.log(value, organizations)
     return organizations
       .filter(i => i.locations?.length)
-      .filter(i => i.type === 'delivery')
+      .filter(i => i.type === 'recipient')
       .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }
 

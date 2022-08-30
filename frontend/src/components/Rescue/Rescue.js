@@ -1,8 +1,15 @@
 import { Box, Flex, Skeleton, SkeletonCircle } from '@chakra-ui/react'
 import { useApi, useAuth, useIsMobile } from 'hooks'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { PageTitle, Pickup, Delivery, Directions, Error } from 'components'
+import {
+  PageTitle,
+  Pickup,
+  Delivery,
+  Directions,
+  Error,
+  CompletedRescue,
+} from 'components'
 import { getActiveStop } from './Rescue.utils'
 import { RescueHeader } from './Rescue.Header'
 import { RescueStops } from './Rescue.Stops'
@@ -20,7 +27,6 @@ export const useRescueContext = () => useContext(RescueContext)
 
 export function Rescue({ setBreadcrumbs }) {
   const { rescue_id } = useParams()
-  const navigate = useNavigate()
   const {
     data: rescue,
     loading,
@@ -30,6 +36,7 @@ export function Rescue({ setBreadcrumbs }) {
   const { user } = useAuth()
   const [expandedStop, setExpandedStop] = useState(null)
   const [openStop, setOpenStop] = useState(null)
+  const [showCompletedPopup, setShowCompletedPopup] = useState(false)
   const activeStop = useMemo(() => getActiveStop(rescue), [rescue])
   const isMobile = useIsMobile()
 
@@ -63,7 +70,7 @@ export function Rescue({ setBreadcrumbs }) {
         },
         user.accessToken
       )
-      navigate(`/rescues/${rescue_id}/completed`)
+      setShowCompletedPopup(true)
     }
   }, [rescue, user])
 
@@ -108,6 +115,10 @@ export function Rescue({ setBreadcrumbs }) {
         </Box>
         <Pickup pickup={openStop?.type === 'pickup' ? openStop : null} />
         <Delivery delivery={openStop?.type === 'delivery' ? openStop : null} />
+        <CompletedRescue
+          isOpen={showCompletedPopup}
+          handleClose={() => setShowCompletedPopup(false)}
+        />
       </RescueContext.Provider>
     )
 }

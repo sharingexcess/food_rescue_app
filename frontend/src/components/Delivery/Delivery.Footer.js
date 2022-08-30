@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { NoteInput } from './Delivery.NoteInput'
 
 export function Footer() {
-  const { setOpenStop, refresh } = useRescueContext()
+  const { setOpenStop, refresh, rescue } = useRescueContext()
   const { notes, delivery, canEdit, percentTotalDropped } = useDeliveryContext()
   const { user } = useAuth()
 
@@ -23,6 +23,22 @@ export function Footer() {
       status: STATUSES.COMPLETED,
     }
     await SE_API.post(`/stops/${delivery.id}/update`, payload, user.accessToken)
+
+    const stop_index = rescue.stop_ids.findIndex(i => i === delivery.id)
+    if (
+      stop_index < rescue.stop_ids.length - 1 &&
+      rescue.stops[stop_index + 1].status === STATUSES.SCHEDULED
+    ) {
+      // if this is not the last stop, mark the next stop as active
+      await SE_API.post(
+        `/stops/${rescue.stop_ids[stop_index + 1]}/update`,
+        {
+          status: STATUSES.ACTIVE,
+        },
+        user.accessToken
+      )
+    }
+
     setIsSubmitting(false)
     setOpenStop(null)
     refresh()
@@ -35,20 +51,12 @@ export function Footer() {
       <Button
         size="lg"
         w="100%"
-        disabled={!canEdit}
+        disabled={!canEdit || isSubmitting}
         isLoading={isSubmitting}
+        loadingText="Updating delivery..."
         onClick={handleSubmit}
       >
-        {isSubmitting ? (
-          <>
-            Updating Delivery
-            <Ellipsis />
-          </>
-        ) : (
-          <>
-            {delivery.status === 'completed' ? 'Update' : 'Complete'} Delivery
-          </>
-        )}
+        {delivery.status === 'completed' ? 'Update' : 'Complete'} Delivery
       </Button>
     </Flex>
   )
