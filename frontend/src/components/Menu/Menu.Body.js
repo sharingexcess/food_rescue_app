@@ -1,7 +1,8 @@
-import { Button, Flex, Switch } from '@chakra-ui/react'
+import { Button, Flex, Switch, Image, TagLeftIcon } from '@chakra-ui/react'
 import { useAuth, useIsMobile } from 'hooks'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { MoonIcon } from '@chakra-ui/icons'
 
 export function MenuBody({ colorMode, toggleColorMode }) {
   const { hasPermission } = useAuth()
@@ -28,6 +29,12 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           color="element.primary"
           fontWeight="300"
         >
+          <TagLeftIcon
+            boxSize="20px"
+            as={MoonIcon}
+            mr="4"
+            color="element.secondary"
+          />
           Dark Mode
         </Button>
         <Switch
@@ -51,6 +58,13 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           disabled={!hasPermission}
           py="0"
         >
+          <Image
+            src={
+              darkMode ? '/menu/dark/rescues.png' : '/menu/light/rescues.png'
+            }
+            boxSize="20px"
+            mr="4"
+          />
           Rescues
         </Button>
       </Link>
@@ -66,10 +80,18 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
           fontSize="md"
           mr="auto"
-          /*  my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
           height={isMobile ? '12' : '9'}
         >
+          <Image
+            src={
+              darkMode
+                ? '/menu/dark/wholesale.png'
+                : '/menu/light/wholesale.png'
+            }
+            boxSize="20px"
+            mr="4"
+          />
           Wholesale
         </Button>
       </Link>
@@ -85,10 +107,14 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           fontWeight={location.pathname === '/people' ? '600' : '300'}
           fontSize="md"
           mr="auto"
-          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
           height={isMobile ? '12' : '9'}
         >
+          <Image
+            src={darkMode ? '/menu/dark/people.png' : '/menu/light/people.png'}
+            boxSize="20px"
+            mr="4"
+          />
           People
         </Button>
       </Link>
@@ -104,10 +130,14 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           fontWeight={location.pathname === '/organizations' ? '600' : '300'}
           fontSize="md"
           mr="auto"
-          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
           height={isMobile ? '12' : '9'}
         >
+          <Image
+            src={darkMode ? '/menu/dark/orgs.png' : '/menu/light/orgs.png'}
+            boxSize="20px"
+            mr="4"
+          />
           Organizations
         </Button>
       </Link>
@@ -123,10 +153,18 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           fontWeight={location.pathname === '/analytics' ? '600' : '300'}
           fontSize="md"
           mr="auto"
-          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
           height={isMobile ? '12' : '9'}
         >
+          <Image
+            src={
+              darkMode
+                ? '/menu/dark/analytics.png'
+                : '/menu/light/analytics.png'
+            }
+            boxSize="20px"
+            mr="4"
+          />
           Analytics
         </Button>
       </Link>
@@ -142,10 +180,14 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           fontWeight={location.pathname === '/food-safety' ? '600' : '300'}
           fontSize="md"
           mr="auto"
-          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
           height={isMobile ? '12' : '9'}
         >
+          <Image
+            src={darkMode ? '/menu/dark/food.png' : '/menu/light/food.png'}
+            boxSize="20px"
+            mr="4"
+          />
           Food Safety
         </Button>
       </Link>
@@ -159,10 +201,14 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           fontWeight={location.pathname === '/help' ? '600' : '300'}
           fontSize="md"
           mr="auto"
-          /* my={isMobile ? '2' : '1'} */
           disabled={!hasPermission}
           height={isMobile ? '12' : '9'}
         >
+          <Image
+            src={darkMode ? '/menu/dark/help.png' : '/menu/light/help.png'}
+            boxSize="20px"
+            mr="4"
+          />
           Help
         </Button>
       </Link>
