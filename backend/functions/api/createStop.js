@@ -1,4 +1,8 @@
-const { db, recalculateRescue } = require('../../helpers')
+const {
+  db,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 
 async function createStopEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -11,6 +15,17 @@ async function createStopEndpoint(request, response) {
         response.status(400).send('No id param received in request URL.')
         return
       }
+
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.permission === 'admin'
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
+
       const payload = JSON.parse(request.body)
       console.log('Received payload:', payload)
       if (!payload) {

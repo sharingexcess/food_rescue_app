@@ -1,4 +1,8 @@
-const { db, fetchDocument } = require('../../helpers/functions')
+const {
+  db,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers/functions')
 
 async function cancelStopEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -24,6 +28,18 @@ async function cancelStopEndpoint(request, response) {
         .doc(stop_id)
         .get()
         .then(doc => doc.data())
+
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user =>
+          user.permission === 'admin' ||
+          (stop.handler_id && user.id === stop.handler_id)
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       const rescue = await db
         .collection('rescues')
