@@ -8,9 +8,8 @@ export function UserStats({ totalWeight }) {
   return (
     <Fade in>
       <Flex
-        mt="8"
         px={isMobile ? '4' : '8'}
-        py="4"
+        py="3"
         gap="4"
         zIndex="3"
         position="relative"
@@ -23,14 +22,14 @@ export function UserStats({ totalWeight }) {
           direction="column"
           w="100%"
         >
-          <Heading color="element.primary">
+          <Heading size="lg" color="se.brand.primary">
             {totalWeight == null ? (
               <Spinner />
             ) : (
               formatLargeNumber(totalWeight) + ' lbs.'
             )}
           </Heading>
-          <Text color="se.brand.primary">rescued this year</Text>
+          <Text color="element.tertiary">rescued this year</Text>
         </Flex>
       </Flex>
     </Fade>
