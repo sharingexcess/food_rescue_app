@@ -11,13 +11,17 @@ export function UserHeader({ profile }) {
         {profile.name}
       </Text>
       {hasAdminPermission && (
-        <Link
-          href={`mailto:+${profile.email}`}
-          color="element.active"
-          textDecoration="underline"
-        >
-          {profile.email}
-        </Link>
+        <>
+          <Link
+            href={`mailto:+${profile.email}`}
+            color="element.active"
+            textDecoration="underline"
+          >
+            {profile.email}
+          </Link>
+
+          <Text mt="4">Has completed a private profile</Text>
+        </>
       )}
       <Text fontSize="sm" fontWeight={300}>
         {profile.pronouns}

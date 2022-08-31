@@ -60,7 +60,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
         >
           <Image
             src={
-              darkMode ? '/menu/dark/rescues.png' : '/menu/light/rescues.png'
+              darkMode ? '/Menu/dark/rescues.png' : '/Menu/light/rescues.png'
             }
             boxSize="20px"
             mr="4"
@@ -86,8 +86,8 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           <Image
             src={
               darkMode
-                ? '/menu/dark/wholesale.png'
-                : '/menu/light/wholesale.png'
+                ? '/Menu/dark/wholesale.png'
+                : '/Menu/light/wholesale.png'
             }
             boxSize="20px"
             mr="4"
@@ -111,7 +111,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           height={isMobile ? '12' : '9'}
         >
           <Image
-            src={darkMode ? '/menu/dark/people.png' : '/menu/light/people.png'}
+            src={darkMode ? '/Menu/dark/people.png' : '/Menu/light/people.png'}
             boxSize="20px"
             mr="4"
           />
@@ -134,7 +134,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           height={isMobile ? '12' : '9'}
         >
           <Image
-            src={darkMode ? '/menu/dark/orgs.png' : '/menu/light/orgs.png'}
+            src={darkMode ? '/Menu/dark/orgs.png' : '/Menu/light/orgs.png'}
             boxSize="20px"
             mr="4"
           />
@@ -159,8 +159,8 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           <Image
             src={
               darkMode
-                ? '/menu/dark/analytics.png'
-                : '/menu/light/analytics.png'
+                ? '/Menu/dark/analytics.png'
+                : '/Menu/light/analytics.png'
             }
             boxSize="20px"
             mr="4"
@@ -184,7 +184,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           height={isMobile ? '12' : '9'}
         >
           <Image
-            src={darkMode ? '/menu/dark/food.png' : '/menu/light/food.png'}
+            src={darkMode ? '/Menu/dark/food.png' : '/Menu/light/food.png'}
             boxSize="20px"
             mr="4"
           />
@@ -205,7 +205,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           height={isMobile ? '12' : '9'}
         >
           <Image
-            src={darkMode ? '/menu/dark/help.png' : '/menu/light/help.png'}
+            src={darkMode ? '/Menu/dark/help.png' : '/Menu/light/help.png'}
             boxSize="20px"
             mr="4"
           />
