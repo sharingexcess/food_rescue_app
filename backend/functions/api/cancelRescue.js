@@ -24,6 +24,18 @@ async function cancelRescueEndpoint(request, response) {
         .get()
         .then(doc => doc.data())
 
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user =>
+          user.permission === 'admin' ||
+          (rescue.handler_id && user.id === rescue.handler_id)
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
+
       console.log('Rescue to cancel:', rescue)
 
       Promise.all([

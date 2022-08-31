@@ -1,4 +1,9 @@
-const { db, formatDocumentTimestamps } = require('../../helpers')
+const {
+  db,
+  formatDocumentTimestamps,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 
 async function stopEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -12,7 +17,15 @@ async function stopEndpoint(request, response) {
         response.status(400).send('No id param received in request URL.')
         return
       }
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.permission
+      )
 
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
       // load base rescue object from DB
       const stop = await getStop(id)
       response.status(200).send(JSON.stringify(stop))

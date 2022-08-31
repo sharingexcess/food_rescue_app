@@ -1,4 +1,10 @@
-const { db, recalculateRescue } = require('../../helpers')
+const {
+  db,
+  recalculateRescue,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
+const { getStop } = require('./stop')
 
 async function updateStopEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -11,6 +17,21 @@ async function updateStopEndpoint(request, response) {
         response.status(400).send('No id param received in request URL.')
         return
       }
+      const stop = await getStop(id)
+      console.log('[stop]:', stop)
+
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user =>
+          user.permission === 'admin' ||
+          (stop.handler_id && user.id === stop.handler_id)
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
+
       const payload = JSON.parse(request.body)
       console.log('Received payload:', payload)
       if (!payload) {

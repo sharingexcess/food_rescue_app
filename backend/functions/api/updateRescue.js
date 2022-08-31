@@ -1,4 +1,9 @@
-const { db, recalculateRescue } = require('../../helpers')
+const {
+  db,
+  recalculateRescue,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 const { addCalendarEvent } = require('./addCalendarEvent')
 const { deleteEvent } = require('./deleteCalendarEvent')
 const { createEventResource } = require('./createRescue')
@@ -27,6 +32,18 @@ async function updateRescueEndpoint(request, response) {
 
       const rescue = await getRescue(id)
       console.log('[rescue]:', rescue)
+
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user =>
+          user.permission === 'admin' ||
+          (rescue.handler_id && user.id === rescue.handler_id)
+      )
+
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       if (payloadRequiresNewCalendarEvent(payload)) {
         if (rescue.google_calendar_event_id) {
