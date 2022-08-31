@@ -77,8 +77,7 @@ export function User({ setBreadcrumbs }) {
   } else
     return (
       <>
-        <UserHeader profile={profile} />
-        <UserStats totalWeight={totalWeight} />
+        <UserHeader profile={profile} totalWeight={totalWeight} />
         <UserPermission profile={profile} refresh={refresh} />
         <Text fontWeight="700" mt="12">
           Recently Completed Rescues
