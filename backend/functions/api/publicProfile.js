@@ -4,6 +4,7 @@ const {
   rejectUnauthorizedRequest,
   db,
   formatDocumentTimestamps,
+  fetchDocument,
 } = require('../../helpers')
 
 async function publicProfileEndpoint(request, response) {
@@ -41,19 +42,33 @@ async function publicProfileEndpoint(request, response) {
 async function getPublicProfile(id) {
   const start = performance.now()
 
-  const publicProfile = await db
+  const publicProfileRef = await db
     .collection('public_profiles')
     .doc(id)
     .get()
     .then(doc => formatDocumentTimestamps(doc.data()))
 
-  console.log(id, publicProfile)
+  console.log(id, publicProfileRef)
 
   console.log(
     'finished publicProfile query:',
     (performance.now() - start) / 1000,
     'seconds'
   )
+
+  const privateProfile = await db
+    .collection('private_profiles')
+    .doc(id)
+    .get()
+    .then(doc => doc.data())
+  console.log(privateProfile)
+
+  const publicProfile = {
+    ...publicProfileRef,
+    has_completed_private_profile: await hasCompletedPrivateProfile(
+      privateProfile
+    ),
+  }
 
   console.log('returning publicProfile:', publicProfile)
 
@@ -64,6 +79,19 @@ async function getPublicProfile(id) {
   )
 
   return publicProfile
+}
+
+function hasCompletedPrivateProfile(profile) {
+  return (
+    profile &&
+    profile.phone &&
+    profile.vehicle_make_model &&
+    profile.license_number &&
+    profile.license_state &&
+    profile.insurance_provider &&
+    profile.insurance_policy_number &&
+    profile.completed_liability_release
+  )
 }
 
 exports.publicProfileEndpoint = publicProfileEndpoint
