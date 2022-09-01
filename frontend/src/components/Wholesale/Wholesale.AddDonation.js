@@ -120,6 +120,7 @@ function AddDonationBody({ formData, setFormData, donors }) {
         setValue={handleSelectDonor}
         displayField="name"
         handleChange={handleDonorSearch}
+        listBackground="surface.background"
       />
       {formData.organization && (
         <Select

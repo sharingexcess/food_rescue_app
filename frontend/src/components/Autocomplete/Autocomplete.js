@@ -20,6 +20,7 @@ export function Autocomplete({
   handleChange,
   optionLabel,
   displayField,
+  listBackground,
   ...props
 }) {
   const [inputValue, setInputValue] = useState('')
@@ -67,7 +68,7 @@ export function Autocomplete({
         <Box
           position="absolute"
           top="12"
-          bg="surface.card"
+          bg={listBackground || 'surface.card'}
           w="100%"
           boxShadow="lg"
           zIndex="10"

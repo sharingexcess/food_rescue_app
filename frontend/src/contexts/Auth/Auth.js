@@ -55,6 +55,8 @@ function Auth({ children }) {
 
   function handleLogout() {
     localStorage.removeItem('se_user_id')
+    localStorage.clear()
+    sessionStorage.clear()
     firebase.auth().signOut()
     navigate('/')
   }
@@ -116,7 +118,10 @@ function Auth({ children }) {
     // Render a loading screen until the query returns.
     return (
       <AuthWrapper>
-        <Loading text="Signing In" />
+        <Loading
+          text="Signing In"
+          action={{ label: 'Back to Login', handler: handleLogout }}
+        />
       </AuthWrapper>
     )
   } else if (user && publicProfile === null) {

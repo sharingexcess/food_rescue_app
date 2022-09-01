@@ -56,6 +56,7 @@ export function CompletedRescue({ isOpen, handleClose }) {
         </Text>
         <Image
           w="64%"
+          maxW="240px"
           mt="16"
           mb="4"
           mx="auto"
