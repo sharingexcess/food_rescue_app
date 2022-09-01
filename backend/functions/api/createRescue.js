@@ -137,12 +137,13 @@ async function createRescuePayload(
   )
   const event = await addCalendarEvent(resource).catch(err => {
     console.error('Error adding event: ' + err.message)
-    response.status(500).send('There was an error with Google calendar')
     return
   })
 
   if (!event.id) {
-    alert('Error creating Google Calendar event. Please contact support!')
+    console.error(
+      'Error creating Google Calendar event. Please contact support!'
+    )
     return
   }
 
@@ -157,6 +158,7 @@ async function createRescuePayload(
 
   const rescue_payload = {
     id: id,
+    type: 'retail',
     handler_id: formData.handler_id,
     google_calendar_event_id: event.id,
     stop_ids: formData.stops.map(s => s.id),

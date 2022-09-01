@@ -77,80 +77,82 @@ export function WholesaleRescue({ setBreadcrumbs }) {
         {rescue.status === STATUSES.COMPLETED ? 'Completed ' : 'Active '}
         Donation
       </PageTitle>
-      <Flex my="8" justify="space-between">
-        <Box>
-          <Heading
-            as="h2"
-            size="md"
-            fontWeight="600"
-            color="element.primary"
-            mb="1"
-          >
-            {donation.organization.name}
-          </Heading>
-          <Text size="sm" fontWeight="300" color="element.secondary">
-            {formatLargeNumber(donation.impact_data_total_weight)}{' '}
-            lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
-            {donation.notes}
-          </Text>
-        </Box>
-        {hasAdminPermission && (
-          <IconButton
-            variant="ghosted"
-            color="se.brand.primary"
-            icon={<EditIcon h="6" w="6" />}
-            onClick={() => setEditDonation(true)}
-          />
+      <Box pb="16">
+        <Flex my="8" justify="space-between">
+          <Box>
+            <Heading
+              as="h2"
+              size="md"
+              fontWeight="600"
+              color="element.primary"
+              mb="1"
+            >
+              {donation.organization.name}
+            </Heading>
+            <Text size="sm" fontWeight="300" color="element.secondary">
+              {formatLargeNumber(donation.impact_data_total_weight)}{' '}
+              lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
+              {donation.notes}
+            </Text>
+          </Box>
+          {hasAdminPermission && (
+            <IconButton
+              variant="ghosted"
+              color="se.brand.primary"
+              icon={<EditIcon h="6" w="6" />}
+              onClick={() => setEditDonation(true)}
+            />
+          )}
+        </Flex>
+        {recipients.length ? (
+          recipients.map(i => (
+            <Recipient
+              key={i.id}
+              recipient={i}
+              setEditRecipient={setEditRecipient}
+            />
+          ))
+        ) : (
+          <Flex direction="column" my="12" justify="center" align="center">
+            <ArrowRightIcon w="16" h="16" mb="8" color="se.brand.primary" />
+            <Heading as="h4" align="center" mb="2">
+              Let's distribute food!
+            </Heading>
+            <Text color="element.secondary" align="center">
+              Add a recipient below to allocate food from this donation.
+            </Text>
+          </Flex>
         )}
-      </Flex>
-      {recipients.length ? (
-        recipients.map(i => (
-          <Recipient
-            key={i.id}
-            recipient={i}
-            setEditRecipient={setEditRecipient}
-          />
-        ))
-      ) : (
-        <Flex direction="column" my="12" justify="center" align="center">
-          <ArrowRightIcon w="16" h="16" mb="8" color="se.brand.primary" />
-          <Heading as="h4" align="center" mb="2">
-            Let's distribute food!
-          </Heading>
-          <Text color="element.secondary" align="center">
-            Add a recipient below to allocate food from this donation.
-          </Text>
-        </Flex>
-      )}
 
-      <EditDonation
-        isOpen={editDonation}
-        handleClose={() => setEditDonation(false)}
-      />
+        <EditDonation
+          isOpen={editDonation}
+          handleClose={() => setEditDonation(false)}
+        />
 
-      <EditRecipient
-        isOpen={!!editRecipient}
-        handleClose={() => setEditRecipient(null)}
-      />
+        <EditRecipient
+          isOpen={!!editRecipient}
+          handleClose={() => setEditRecipient(null)}
+        />
 
-      <AddRecipient
-        isOpen={addRecipient}
-        handleClose={() => setAddRecipient(false)}
-      />
+        <AddRecipient
+          isOpen={addRecipient}
+          handleClose={() => setAddRecipient(false)}
+        />
 
-      {hasAdminPermission && (
-        <Flex justify="center" w="100%">
-          <FooterButton
-            onClick={() => setAddRecipient(true)}
-            disabled={rescue.status === STATUSES.COMPLETED}
-          >
-            Add Recipient{' '}
-            {rescue.status === STATUSES.ACTIVE
-              ? `(${formatLargeNumber(remainingWeight)} lbs. remaining)`
-              : ''}
-          </FooterButton>
-        </Flex>
-      )}
+        {hasAdminPermission && (
+          <Flex justify="center" w="100%">
+            <FooterButton
+              onClick={() => setAddRecipient(true)}
+              disabled={rescue.status === STATUSES.COMPLETED}
+            >
+              Add Recipient{' '}
+              {rescue.status === STATUSES.ACTIVE
+                ? `(${formatLargeNumber(remainingWeight)} lbs. remaining)`
+                : ''}
+            </FooterButton>
+          </Flex>
+        )}
+      </Box>
     </WholesaleRescueContext.Provider>
   )
 }

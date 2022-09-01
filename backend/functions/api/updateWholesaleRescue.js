@@ -7,6 +7,7 @@ const {
 } = require('../../helpers')
 const { getRescue } = require('./rescue')
 const { getStop } = require('./stop')
+const moment = require('moment-timezone')
 
 async function updateWholesaleRescueEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -62,16 +63,27 @@ async function updateWholesaleRescue(id, payload) {
     timestamp_updated: now,
   }
 
-  if (payload.status === STATUSES.COMPLETED) {
-    updated_rescue.timestamp_logged_finish = now
-  }
-
   let updated_donation = {
     organization_id: payload.organization_id || donation.organization_id,
     location_id: payload.location_id || donation.location_id,
     notes: payload.notes || rescue.notes,
     timestamp_updated: now,
     timestamp_logged_finish: now,
+  }
+
+  if (payload.date) {
+    const timestamp = moment.tz(payload.date, 'America/New_York').toDate()
+    updated_rescue.timestamp_scheduled_start = timestamp
+    updated_rescue.timestamp_scheduled_finish = timestamp
+    updated_rescue.timestamp_logged_start = timestamp
+    updated_donation.timestamp_scheduled_start = timestamp
+    updated_donation.timestamp_scheduled_finish = timestamp
+    updated_donation.timestamp_logged_start = timestamp
+  }
+
+  if (payload.status === STATUSES.COMPLETED) {
+    updated_rescue.timestamp_logged_finish = now
+    updated_donation.timestamp_logged_finish = now
   }
 
   if (payload.weight) {

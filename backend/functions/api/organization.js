@@ -62,12 +62,14 @@ async function getOrganization(id) {
     .where('organization_id', '==', id)
     .get()
     .then(snapshot => {
-      snapshot.forEach(doc =>
-        organization.locations.push({
-          ...formatDocumentTimestamps(doc.data()),
-          stops: [],
-        })
-      )
+      snapshot.forEach(doc => {
+        if (!doc.data().is_deleted) {
+          organization.locations.push({
+            ...formatDocumentTimestamps(doc.data()),
+            stops: [],
+          })
+        }
+      })
     })
 
   console.log('returning organization:', organization)

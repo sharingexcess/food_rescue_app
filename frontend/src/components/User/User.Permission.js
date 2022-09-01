@@ -1,7 +1,8 @@
-import { Flex, Select, Text, useToast } from '@chakra-ui/react'
+import { Button, Flex, Select, Text, useToast } from '@chakra-ui/react'
 import { SE_API } from 'helpers'
 import { useAuth } from 'hooks'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export function UserPermission({ profile, refresh }) {
   const [userPermission, setUserPermission] = useState('')
@@ -62,6 +63,12 @@ export function UserPermission({ profile, refresh }) {
         <option value="standard">Standard</option>
         <option value="admin">Admin</option>
       </Select>
+    </Flex>
+  ) : profile?.id === user.id ? (
+    <Flex w="100%" justify="center" mt="8">
+      <Link to="/profile">
+        <Button variant="tertiary">Update Your Profile</Button>
+      </Link>
     </Flex>
   ) : null
 }

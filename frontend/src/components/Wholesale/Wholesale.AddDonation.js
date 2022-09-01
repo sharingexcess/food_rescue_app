@@ -5,10 +5,10 @@ import { formatTimestamp, SE_API } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { useState, useMemo } from 'react'
 
-export function AddDonation({ isOpen, handleClose, refresh }) {
+export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
   const { user } = useAuth()
   const [formData, setFormData] = useState({
-    date: formatTimestamp(new Date(), 'YYYY-MM-DD'),
+    date: formatTimestamp(defaultDate || new Date(), 'YYYY-MM-DDThh:mm'),
     organization: null,
     location: null,
     weight: '',
@@ -16,6 +16,7 @@ export function AddDonation({ isOpen, handleClose, refresh }) {
     notes: '',
     pallet: null,
   })
+  console.log(formData.date)
   const [isLoading, setIsLoading] = useState()
   const { data: donors } = useApi(
     '/organizations',
@@ -105,7 +106,7 @@ function AddDonationBody({ formData, setFormData, donors }) {
     <Flex direction="column" minH="128">
       <Text mt="6">Date</Text>
       <Input
-        type="date"
+        type="datetime-local"
         fontSize="sm"
         value={date}
         onChange={e => setDate(e.target.value)}

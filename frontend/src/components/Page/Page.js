@@ -214,6 +214,7 @@ function MenuButton({ openMenu }) {
       bg="blue.500"
       color="white"
       boxShadow="md"
+      cursor="pointer"
     />
   ) : null
 }

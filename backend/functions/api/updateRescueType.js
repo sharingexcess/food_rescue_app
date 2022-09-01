@@ -2,14 +2,13 @@
 
 // async function updateRescueTypeEndpoint(_request, response) {
 //   const collectionsRef = db.collection('rescues')
-//   const field = 'type'
 //   const pageSize = 100
 //   let lastDoc = null
 //   let count = 0
 //   let shouldBreak
 //   let batchNum = 1
 
-//   const query = collectionsRef.orderBy(field).limit(pageSize)
+//   const query = collectionsRef.orderBy('id').limit(pageSize)
 
 //   async function getPage() {
 //     const rescues = []
@@ -19,6 +18,11 @@
 //     await currQuery.get().then(snapshot => {
 //       console.log('QUERY RESULT SIZE', snapshot.docs.length)
 //       lastDoc = snapshot.docs[snapshot.docs.length - 1]
+//       console.log(
+//         'LAST DOC ID:',
+//         snapshot.docs[snapshot.docs.length - 1].data().id
+//       )
+//       console.log(snapshot.docs.map(doc => doc.data().type))
 //       if (snapshot.docs.length < pageSize) shouldBreak = true
 //       snapshot.forEach(doc => {
 //         const rescue = doc.data()
@@ -65,7 +69,6 @@
 
 //   while (true) {
 //     const current_rescues = await getPage()
-//     console.log('LAST DOC ID:', current_rescues[current_rescues.length - 1]?.id)
 //     const batch = db.batch()
 //     let batchPopulated = false
 //     for (const rescue of current_rescues) {

@@ -32,7 +32,10 @@ export function EditDonation({ isOpen, handleClose }) {
         location: donation.location,
         weight: donation.impact_data_total_weight,
         notes: donation.notes,
-        date: formatTimestamp(donation.timestamp_scheduled_start, 'YYYY-MM-DD'),
+        date: formatTimestamp(
+          donation.timestamp_scheduled_start,
+          'YYYY-MM-DDTHH:mm'
+        ),
       })
     }
   }, [rescue, donation, donors])
@@ -122,7 +125,7 @@ function EditDonationBody({ formData, setFormData, donors }) {
     <Flex direction="column" minH="128">
       <Text mt="6">Date</Text>
       <Input
-        type="date"
+        type="datetime-local"
         fontSize="sm"
         value={date}
         onChange={e => setDate(e.target.value)}

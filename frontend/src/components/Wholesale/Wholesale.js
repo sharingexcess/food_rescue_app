@@ -1,4 +1,4 @@
-import { ArrowRightIcon, CalendarIcon } from '@chakra-ui/icons'
+import { CalendarIcon, SearchIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
@@ -34,9 +34,10 @@ export function Wholesale() {
   }, [date])
 
   function handleChangeDate(event) {
+    console.log(event.target.value)
     const dateValue = event.target.value
       ? formatTimestamp(event.target.value, 'YYYY-MM-DD')
-      : ''
+      : formatTimestamp(new Date(), 'YYYY-MM-DD')
     setDate(dateValue)
   }
 
@@ -70,12 +71,13 @@ export function Wholesale() {
           ))
         ) : (
           <Flex direction="column" align="center" justify="center" my="12">
-            <ArrowRightIcon fontSize="4xl" color="se.brand.primary" mb="8" />
-            <Heading as="h4" mb="2">
-              Let's get to work!
+            <SearchIcon fontSize="6xl" color="se.brand.primary" mb="8" />
+            <Heading as="h4" mb="4" align="center" size="lg">
+              Nothing here yet...
             </Heading>
-            <Text color="element.secondary">
-              Add a donation below to begin.
+            <Text color="element.secondary" align="center" maxW="360">
+              Add a donation below, or use the date picker above to show another
+              day.
             </Text>
           </Flex>
         )
@@ -98,6 +100,7 @@ export function Wholesale() {
             isOpen={addDonation}
             handleClose={() => setAddDonation(false)}
             refresh={refresh}
+            defaultDate={date}
           />
         </>
       )}

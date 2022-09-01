@@ -13,6 +13,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import { Link } from 'react-router-dom'
 import { RescueCard } from './Rescues.Card'
 import { Filters } from './Rescues.Filters'
+import { STATUSES } from 'helpers'
 
 export function Rescues() {
   const { hasAdminPermission } = useAuth()
@@ -67,6 +68,12 @@ export function Rescues() {
     loadMore()
   }
 
+  function sortRescuesByStatus(rescues) {
+    if ([STATUSES.COMPLETED, STATUSES.CANCELLED].includes(status)) {
+      return rescues
+    } else return rescues.reverse()
+  }
+
   return (
     <>
       <Flex justify="space-between" w="100%">
@@ -89,7 +96,7 @@ export function Rescues() {
         <LoadingRescues />
       ) : data?.length ? (
         <>
-          {data.map(rescue => (
+          {sortRescuesByStatus(data).map(rescue => (
             <RescueCard rescue={rescue} key={rescue.id} />
           ))}
           <Flex width="100%" my="4" justify="center">

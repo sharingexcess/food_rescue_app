@@ -5,6 +5,7 @@ const {
   generateUniqueId,
   STATUSES,
 } = require('../../helpers')
+const moment = require('moment-timezone')
 
 async function createWholesaleRescueEndpoint(request, response) {
   return new Promise(async resolve => {
@@ -47,7 +48,8 @@ async function createWholesaleRescueEndpoint(request, response) {
 async function createWholesaleRescue(payload) {
   const rescue_id = await generateUniqueId('rescues')
   const donation_id = await generateUniqueId('stops')
-  const now = new Date()
+  const now = moment().toDate()
+  const timestamp = moment.tz(payload.date, 'America/New_York').toDate()
 
   const impact_data = {
     impact_data_produce: 0,
@@ -72,9 +74,9 @@ async function createWholesaleRescue(payload) {
     notes: payload.notes,
     timestamp_created: now,
     timestamp_updated: now,
-    timestamp_scheduled_start: new Date(payload.date),
-    timestamp_logged_start: new Date(payload.date),
-    timestamp_scheduled_finish: new Date(payload.date),
+    timestamp_scheduled_start: timestamp,
+    timestamp_logged_start: timestamp,
+    timestamp_scheduled_finish: timestamp,
     timestamp_logged_finish: null,
   }
 
@@ -90,9 +92,9 @@ async function createWholesaleRescue(payload) {
     notes: payload.notes,
     timestamp_created: now,
     timestamp_updated: now,
-    timestamp_scheduled_start: now,
-    timestamp_logged_start: now,
-    timestamp_scheduled_finish: now,
+    timestamp_scheduled_start: timestamp,
+    timestamp_logged_start: timestamp,
+    timestamp_scheduled_finish: timestamp,
     timestamp_logged_finish: now,
     ...impact_data,
   }

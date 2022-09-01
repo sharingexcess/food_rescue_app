@@ -72,7 +72,7 @@ function handleValidateAuthentication(user, permissionCallback) {
     ' => ',
     response
   )
-  if (response === true) {
+  if (response) {
     console.log('Request Authentication: Approved.')
   } else {
     console.log('Request Authentication: Denied.')

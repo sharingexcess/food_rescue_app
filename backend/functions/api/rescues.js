@@ -82,7 +82,6 @@ async function getRescues(
   if (date_range_start && date_range_end) {
     const start = moment(date_range_start).startOf('day').toDate()
     const end = moment(date_range_end).endOf('day').toDate()
-    console.log(start, end)
     rescues_query = rescues_query
       .where('timestamp_scheduled_start', '>=', start)
       .where('timestamp_scheduled_start', '<=', end)
@@ -131,6 +130,7 @@ async function getRescues(
     })
   })
 
+  console.log(rescues)
   console.log(
     'finished rescue query:',
     (performance.now() - start) / 1000,
@@ -172,9 +172,6 @@ async function getRescues(
   )
 
   // execute query for organization and location for each stop
-
-  console.log(rescues.filter(r => r.stops.includes(null)))
-  // console.log(rescues.map(r => r.stops.filter(i => !i.organization_id)))
 
   await Promise.all(
     rescues

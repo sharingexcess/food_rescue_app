@@ -154,7 +154,17 @@ export function EditLocation({ setBreadcrumbs }) {
       if (
         window.confirm(`You're SURE??? Deleting a location can't be undone.`)
       ) {
-        await SE_API.post(`/location/${location_id}/delete`, user.accessToken)
+        await SE_API.post(
+          `/location/${location_id}/update`,
+          {
+            address1: formData.address1,
+            contact_name: formData.contact_name,
+            contact_phone: formData.contact_phone,
+            contact_email: formData.contact_email,
+            is_deleted: true,
+          },
+          user.accessToken
+        )
         navigate(`/organizations/${organization_id}`)
       }
     }
