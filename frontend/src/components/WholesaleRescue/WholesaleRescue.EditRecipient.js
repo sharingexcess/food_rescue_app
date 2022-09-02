@@ -114,7 +114,7 @@ function EditRecipientHeader() {
   return (
     <>
       <Heading>Edit Recipient</Heading>
-      <Button
+      {/* <Button
         variant="secondary"
         bg="yellow.secondary"
         color="yellow.primary"
@@ -123,7 +123,7 @@ function EditRecipientHeader() {
         h="8"
       >
         Delete Recipient
-      </Button>
+      </Button> */}
     </>
   )
 }
