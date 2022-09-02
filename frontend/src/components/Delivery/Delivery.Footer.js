@@ -1,5 +1,5 @@
 import { Button, Flex } from '@chakra-ui/react'
-import { useRescueContext, useDeliveryContext, Ellipsis } from 'components'
+import { useRescueContext, useDeliveryContext } from 'components'
 import { createTimestamp, SE_API, STATUSES } from 'helpers'
 import { useAuth } from 'hooks'
 import { useState } from 'react'

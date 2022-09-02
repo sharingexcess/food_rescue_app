@@ -1,4 +1,3 @@
-import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons'
 import { Avatar, Flex, Heading, Link, Text } from '@chakra-ui/react'
 import { useAuth } from 'hooks'
 import { UserStats } from './User.Stats'
