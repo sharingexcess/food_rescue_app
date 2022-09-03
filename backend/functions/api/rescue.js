@@ -109,7 +109,7 @@ async function getRescue(id) {
     // populate rescue with handler data
     metadata_promises.push(
       db
-        .collection('users')
+        .collection('public_profiles')
         .doc(rescue.handler_id)
         .get()
         .then(doc => {

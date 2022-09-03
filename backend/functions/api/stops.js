@@ -142,7 +142,7 @@ async function getStops(
     stops
       .map(stop => [
         db
-          .collection('users')
+          .collection('public_profiles')
           .doc(stop.handler_id)
           .get()
           .then(doc => {

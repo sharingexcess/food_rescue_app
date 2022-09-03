@@ -69,8 +69,6 @@ api.get('/organizations', (req, res, next) =>
 api.post('/location/:id/update', (req, res, next) =>
   loadEndpoint('updateLocation', req, res, next)
 )
-api.get('/users', (req, res, next) => loadEndpoint('users', req, res, next))
-api.get('/user/:id', (req, res, next) => loadEndpoint('user', req, res, next))
 api.get('/publicProfiles', (req, res, next) =>
   loadEndpoint('publicProfiles', req, res, next)
 )

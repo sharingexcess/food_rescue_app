@@ -70,7 +70,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
   stops = stops.filter(i => i.status === 'completed')
 
   const organizations = await fetchCollection('organizations')
-  const users = await fetchCollection('users')
+  const handlers = await fetchCollection('public_profiles')
 
   const pickups = stops.filter(s => s.type === 'pickup')
   const deliveries = stops.filter(s => s.type === 'delivery')
@@ -168,7 +168,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByDriver(deliveries, users),
+        view_data: breakdownByDriver(deliveries, handlers),
       }
       console.log('returning payload:', payload)
       return payload
@@ -304,11 +304,11 @@ function breakdownByRecipient(deliveries, organizations) {
   return sortObjectByValues(recipients)
 }
 
-function breakdownByDriver(deliveries, users) {
+function breakdownByDriver(deliveries, handlers) {
   const recipients = {}
   for (const d of deliveries) {
     try {
-      const driver = users.find(o => o.id === d.handler_id)
+      const driver = handlers.find(o => o.id === d.handler_id)
       const { name } = driver
       recipients[name] =
         (recipients[name] || 0) + (d.impact_data_total_weight || 0)

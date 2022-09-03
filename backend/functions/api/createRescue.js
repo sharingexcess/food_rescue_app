@@ -234,8 +234,8 @@ async function createEventResource(
 ) {
   let handler
   if (resource.handler_id) {
-    const handler_ref = await db
-      .collection('users')
+    await db
+      .collection('public_profiles')
       .doc(resource.handler_id)
       .get()
       .then(doc => {

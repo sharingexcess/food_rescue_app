@@ -1,8 +1,8 @@
 const {
-  db,
   authenticateRequest,
   rejectUnauthorizedRequest,
-} = require('../../helpers/functions')
+  db,
+} = require('../../helpers')
 
 async function cancelStopEndpoint(request, response, next) {
   return new Promise(async resolve => {

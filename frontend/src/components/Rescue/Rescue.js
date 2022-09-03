@@ -74,6 +74,29 @@ export function Rescue({ setBreadcrumbs }) {
     }
   }, [rescue, user])
 
+  useEffect(() => {
+    // handle forcing a stop to be active if not by default
+    if (
+      rescue &&
+      rescue.status === STATUSES.ACTIVE &&
+      !rescue.stops.find(i => i.status === STATUSES.ACTIVE)
+    ) {
+      for (const stop of rescue.stops) {
+        if (stop.status === STATUSES.SCHEDULED) {
+          SE_API.post(
+            `/stops/${stop.id}/update`,
+            {
+              timestamp_updated: createTimestamp(),
+              status: STATUSES.ACTIVE,
+            },
+            user.accessToken
+          ).then(refresh)
+          break
+        }
+      }
+    }
+  }, [rescue])
+
   const contextValue = {
     rescue,
     activeStop,

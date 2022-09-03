@@ -7,7 +7,8 @@ exports.backup_data_to_storage = async () => {
     'organizations',
     'rescues',
     'stops',
-    'users',
+    'public_profiles',
+    'private_profiles',
   ]
   const date = moment(new Date()).format('yyyy-MM-DD')
 

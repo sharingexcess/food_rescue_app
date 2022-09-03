@@ -141,7 +141,7 @@ async function getRescues(
     ...rescues.map(rescue =>
       rescue.handler_id
         ? db
-            .collection('users')
+            .collection('public_profiles')
             .doc(rescue.handler_id)
             .get()
             .then(
