@@ -1,9 +1,11 @@
 import { useEffect, useCallback, useState } from 'react'
 import { API_URL, generateId } from 'helpers'
 import { useAuth } from './useAuth'
+import { useToast } from '@chakra-ui/react'
 
 export function useApi(endpoint, params = null) {
   const { user } = useAuth()
+  const toast = useToast()
   const [state, setState] = useState({
     data: null,
     // last identifies the id of the last document returned
@@ -56,11 +58,18 @@ export function useApi(endpoint, params = null) {
               // attempt to get an error, message, but don't let this throw it's own error
               try {
                 const msg = await res.text()
-                console.log(msg)
                 message = msg
               } catch (e) {
                 // do nothing
               }
+              toast({
+                title: 'Uhoh...',
+                description: `Looks like there was an error getting data for this page. Go to the "help" page if this problem persists.`,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'top',
+              })
               throw new Error(
                 `${res.status} ${res.statusText}${
                   message ? ' - ' + message : ''

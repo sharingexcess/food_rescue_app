@@ -4,7 +4,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
-async function updatePublicProfileEndpoint(request, response) {
+async function updatePublicProfileEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running updatePublicProfile')
@@ -49,8 +49,7 @@ async function updatePublicProfileEndpoint(request, response) {
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

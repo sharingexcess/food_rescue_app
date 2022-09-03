@@ -7,7 +7,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
-async function rescuesEndpoint(request, response) {
+async function rescuesEndpoint(request, response, next) {
   try {
     console.log('INVOKING ENDPOINT: rescues()\n', 'params:', request.query)
     const {
@@ -42,8 +42,7 @@ async function rescuesEndpoint(request, response) {
     )
     response.status(200).send(JSON.stringify(rescues))
   } catch (e) {
-    console.error('Caught error:', e)
-    response.status(500).send(e.toString())
+    next(e)
   }
 }
 

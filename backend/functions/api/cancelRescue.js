@@ -1,7 +1,12 @@
-const { db, STATUSES } = require('../../helpers')
+const {
+  db,
+  STATUSES,
+  authenticateRequest,
+  rejectUnauthorizedRequest,
+} = require('../../helpers')
 const { deleteEvent } = require('./deleteCalendarEvent')
 
-async function cancelRescueEndpoint(request, response) {
+async function cancelRescueEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running cancelRescue')
@@ -79,8 +84,7 @@ async function cancelRescueEndpoint(request, response) {
       response.status(200).send()
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

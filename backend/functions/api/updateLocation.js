@@ -4,7 +4,7 @@ const {
   db,
 } = require('../../helpers')
 
-async function updateLocationEndpoint(request, response) {
+async function updateLocationEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running updateLocation')
@@ -28,8 +28,7 @@ async function updateLocationEndpoint(request, response) {
       response.status(200).send(JSON.stringify('Update successful.'))
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

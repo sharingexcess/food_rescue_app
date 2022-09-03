@@ -7,7 +7,7 @@ const {
 } = require('../../helpers')
 const moment = require('moment-timezone')
 
-async function createWholesaleRescueEndpoint(request, response) {
+async function createWholesaleRescueEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log(
@@ -39,8 +39,7 @@ async function createWholesaleRescueEndpoint(request, response) {
 
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

@@ -1,7 +1,7 @@
 {
   "name": "rescue-backend",
   "license": "MIT",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "scripts": {
     "start": "firebase emulators:start --only functions",
     "lint": "eslint .",
@@ -11,6 +11,8 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@sentry/node": "^7.12.1",
+    "@sentry/tracing": "^7.12.1",
     "dotenv": "^16.0.1",
     "firebase": "^9.6.2",
     "firebase-admin": "^9.4.2",
@@ -26,7 +28,7 @@
     "@babel/node": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
     "babel-eslint": "^10.1.0",
-    "eslint": "^8.22.0",
+    "eslint": "^8.23.0",
     "eslint-config-recommended": "^4.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^4.2.1",

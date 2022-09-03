@@ -4,7 +4,7 @@ const {
   db,
 } = require('../../helpers')
 
-async function createOrganizationEndpoint(request, response) {
+async function createOrganizationEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log(
@@ -59,8 +59,7 @@ async function createOrganizationEndpoint(request, response) {
       response.status(200).send(JSON.stringify(created_organization))
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

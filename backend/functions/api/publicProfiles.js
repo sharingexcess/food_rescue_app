@@ -6,7 +6,7 @@ const {
   formatDocumentTimestamps,
 } = require('../../helpers')
 
-async function publicProfilesEndpoint(request, response) {
+async function publicProfilesEndpoint(request, response, next) {
   try {
     console.log(
       'INVOKING ENDPOINT: publicProfiles()\n',
@@ -26,8 +26,7 @@ async function publicProfilesEndpoint(request, response) {
     const publicProfiles = await getPublicProfiles()
     response.status(200).send(JSON.stringify(publicProfiles))
   } catch (e) {
-    console.error('Caught error:', e)
-    response.status(500).send(e.toString())
+    next(e)
   }
 }
 

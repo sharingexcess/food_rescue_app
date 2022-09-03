@@ -18,12 +18,8 @@ export const SE_API = {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: { accessToken },
-    }).catch(e => {
-      throw new Error('Error in POST api:', e)
-    })
-    if (!response.ok) {
-      throw new Error('Error in POST api:', response)
-    }
+    }).catch(handleError)
+    if (!response.ok) handleError()
     const response_payload = await response.text().then(function (text) {
       return isJSON(text) ? JSON.parse(text) : text
     })
@@ -43,4 +39,14 @@ export const SE_API = {
     )
     return response_payload
   },
+}
+
+function handleError() {
+  if (
+    window.confirm(
+      "Uhoh... looks like there's an issue with out server. Press OK to go to the help page, or cancel to ignore."
+    )
+  ) {
+    window.location.href = '/help'
+  }
 }

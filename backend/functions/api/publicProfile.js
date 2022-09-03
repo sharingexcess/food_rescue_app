@@ -7,7 +7,7 @@ const {
   fetchDocument,
 } = require('../../helpers')
 
-async function publicProfileEndpoint(request, response) {
+async function publicProfileEndpoint(request, response, next) {
   try {
     console.log(
       'INVOKING ENDPOINT: publicProfile()\n',
@@ -34,8 +34,7 @@ async function publicProfileEndpoint(request, response) {
     const publicProfile = await getPublicProfile(id)
     response.status(200).send(JSON.stringify(publicProfile))
   } catch (e) {
-    console.error('Caught error:', e)
-    response.status(500).send(e.toString())
+    next(e)
   }
 }
 

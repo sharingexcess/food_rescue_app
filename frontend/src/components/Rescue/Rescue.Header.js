@@ -1,11 +1,16 @@
 import { Avatar, Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { formatTimestamp } from 'helpers'
+import { Link } from 'react-router-dom'
 import { useRescueContext } from './Rescue'
 
 export function RescueHeader() {
   const { rescue } = useRescueContext()
 
-  return (
+  const withProfileLink = content => (
+    <Link to={`/people/${rescue?.handler_id}`}>{content}</Link>
+  )
+
+  const content = (
     <>
       <Flex pt="2" pb="8" align="center">
         <Avatar src={rescue?.handler?.icon} name={rescue?.handler?.name} />
@@ -30,4 +35,6 @@ export function RescueHeader() {
       </Flex>
     </>
   )
+
+  return rescue?.handler_id ? withProfileLink(content) : content
 }

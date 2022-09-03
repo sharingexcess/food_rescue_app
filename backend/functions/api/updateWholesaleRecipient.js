@@ -9,7 +9,7 @@ const {
 const { getRescue } = require('./rescue')
 const { getStop } = require('./stop')
 
-async function updateWholesaleRecipientEndpoint(request, response) {
+async function updateWholesaleRecipientEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log(
@@ -43,8 +43,7 @@ async function updateWholesaleRecipientEndpoint(request, response) {
 
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

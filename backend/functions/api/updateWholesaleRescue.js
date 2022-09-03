@@ -9,7 +9,7 @@ const { getRescue } = require('./rescue')
 const { getStop } = require('./stop')
 const moment = require('moment-timezone')
 
-async function updateWholesaleRescueEndpoint(request, response) {
+async function updateWholesaleRescueEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log(
@@ -43,13 +43,12 @@ async function updateWholesaleRescueEndpoint(request, response) {
 
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }
 
-async function updateWholesaleRescue(id, payload) {
+async function updateWholesaleRescue(id, payload, next) {
   const now = new Date()
 
   const rescue = await getRescue(id)

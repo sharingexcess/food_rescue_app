@@ -6,7 +6,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
-async function userEndpoint(request, response) {
+async function userEndpoint(request, response, next) {
   try {
     console.log('INVOKING ENDPOINT: user()\n', 'params:', request.params)
 
@@ -30,8 +30,7 @@ async function userEndpoint(request, response) {
     const user = await getUser(id)
     response.status(200).send(JSON.stringify(user))
   } catch (e) {
-    console.error('Caught error:', e)
-    response.status(500).send(e.toString())
+    next(e)
   }
 }
 

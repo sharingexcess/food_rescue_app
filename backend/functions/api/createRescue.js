@@ -9,7 +9,7 @@ const {
 } = require('../../helpers')
 const { addCalendarEvent } = require('./addCalendarEvent')
 
-async function createRescueEndpoint(request, response) {
+async function createRescueEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log(
@@ -114,8 +114,7 @@ async function createRescueEndpoint(request, response) {
       response.status(200).send(JSON.stringify(created_rescue))
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

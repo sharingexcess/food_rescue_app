@@ -6,7 +6,7 @@ const {
   formatDocumentTimestamps,
 } = require('../../helpers')
 
-async function privateProfileEndpoint(request, response) {
+async function privateProfileEndpoint(request, response, next) {
   try {
     console.log(
       'INVOKING ENDPOINT: privateProfile()\n',
@@ -33,8 +33,7 @@ async function privateProfileEndpoint(request, response) {
     const privateProfile = await getPrivateProfile(id)
     response.status(200).send(JSON.stringify(privateProfile))
   } catch (e) {
-    console.error('Caught error:', e)
-    response.staus(500).send(e.toString())
+    next(e)
   }
 }
 

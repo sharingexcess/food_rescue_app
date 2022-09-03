@@ -4,7 +4,7 @@ const {
   db,
 } = require('../../helpers')
 
-async function updateUserPermissionEndpoint(request, response) {
+async function updateUserPermissionEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running changeUserPermission')
@@ -35,8 +35,7 @@ async function updateUserPermissionEndpoint(request, response) {
 
       await updatePermission(id, payload)
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

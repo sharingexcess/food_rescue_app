@@ -9,7 +9,6 @@ export function Loading({ text = 'Loading', action }) {
     100% { transform: scale(1.02); opacity: 1; }
   `} 2s ease-in-out infinite`
 
-  console.log(action)
   return (
     <>
       <Fade in>

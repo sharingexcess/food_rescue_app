@@ -7,7 +7,7 @@ const {
 
 const moment = require('moment')
 
-async function reportsEndpoint(request, response) {
+async function reportsEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('INVOKING ENDPOINT: reports()\n', 'params:', {
@@ -49,8 +49,7 @@ async function reportsEndpoint(request, response) {
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(e.toString())
+      next(e)
     }
   })
 }
@@ -148,7 +147,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
         const deliveryTimestamp = delivery.timestamp_scheduled_start.toDate()
         const deliveryTimestampString =
           moment(deliveryTimestamp).format('ddd, M/D')
-        for (bucket of buckets) {
+        for (const bucket of buckets) {
           if (bucket.label === deliveryTimestampString) {
             bucket.value += delivery.impact_data_total_weight
             break

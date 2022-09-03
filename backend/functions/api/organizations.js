@@ -6,7 +6,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers')
 
-async function organizationsEndpoint(request, response) {
+async function organizationsEndpoint(request, response, next) {
   try {
     console.log(
       'INVOKING ENDPOINT: organizations()\n',
@@ -28,8 +28,7 @@ async function organizationsEndpoint(request, response) {
     const organizations = await getOrganizations(type, subtype)
     response.status(200).send(JSON.stringify(organizations))
   } catch (e) {
-    console.error('Caught error:', e)
-    response.status(500).send(e.toString())
+    next(e)
   }
 }
 

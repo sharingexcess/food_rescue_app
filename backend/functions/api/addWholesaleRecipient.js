@@ -8,7 +8,7 @@ const {
 } = require('../../helpers')
 const { getRescue } = require('./rescue')
 
-async function addWholesaleRecipientEndpoint(request, response) {
+async function addWholesaleRecipientEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log(
@@ -42,8 +42,7 @@ async function addWholesaleRecipientEndpoint(request, response) {
 
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

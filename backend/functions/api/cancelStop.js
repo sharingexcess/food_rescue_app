@@ -4,7 +4,7 @@ const {
   rejectUnauthorizedRequest,
 } = require('../../helpers/functions')
 
-async function cancelStopEndpoint(request, response) {
+async function cancelStopEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running cancelStop')
@@ -95,8 +95,7 @@ async function cancelStopEndpoint(request, response) {
       response.status(200).send()
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

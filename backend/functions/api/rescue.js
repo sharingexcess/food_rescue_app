@@ -6,7 +6,7 @@ const {
 } = require('../../helpers')
 const { performance } = require('perf_hooks')
 
-async function rescueEndpoint(request, response) {
+async function rescueEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('INVOKING ENDPOINT: rescue()\n', 'params:', {
@@ -44,8 +44,7 @@ async function rescueEndpoint(request, response) {
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(e.toString())
+      next(e)
     }
   })
 }

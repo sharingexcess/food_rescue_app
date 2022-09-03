@@ -6,7 +6,7 @@ const {
 } = require('../../helpers')
 const { getStop } = require('./stop')
 
-async function updateStopEndpoint(request, response) {
+async function updateStopEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running updateStop')
@@ -44,8 +44,7 @@ async function updateStopEndpoint(request, response) {
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }

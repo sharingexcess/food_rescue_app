@@ -9,7 +9,7 @@ const { deleteEvent } = require('./deleteCalendarEvent')
 const { createEventResource } = require('./createRescue')
 const { getRescue } = require('./rescue')
 
-async function updateRescueEndpoint(request, response) {
+async function updateRescueEndpoint(request, response, next) {
   return new Promise(async resolve => {
     try {
       console.log('running updateRescue')
@@ -73,8 +73,7 @@ async function updateRescueEndpoint(request, response) {
       // use resolve to allow the cloud function to close
       resolve()
     } catch (e) {
-      console.error('Caught error:', e)
-      response.status(500).send(JSON.stringify(e))
+      next(e)
     }
   })
 }
