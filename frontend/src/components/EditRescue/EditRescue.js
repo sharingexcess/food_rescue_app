@@ -103,6 +103,37 @@ export function EditRescue({ setBreadcrumbs }) {
       handler_id: formData.handler?.id || null,
     }
 
+    const newStops = stops.filter(i => !rescue.stop_ids.includes(i.id))
+
+    for (const stop of newStops) {
+      const payload = {
+        id: stop.id,
+        type: stop.type,
+        rescue_id: rescue.id,
+        organization_id: stop.organization.id,
+        location_id: stop.location.id,
+        status: STATUSES.SCHEDULED,
+        notes: '',
+        impact_data_dairy: 0,
+        impact_data_bakery: 0,
+        impact_data_produce: 0,
+        impact_data_meat_fish: 0,
+        impact_data_non_perishable: 0,
+        impact_data_prepared_frozen: 0,
+        impact_data_mixed: 0,
+        impact_data_other: 0,
+        impact_data_total_weight: 0,
+        timestamp_created: createTimestamp(),
+        timestamp_logged_start: null,
+        timestamp_logged_finish: null,
+        ...defaultPayload,
+      }
+      if (stop.type === 'delivery') {
+        stop.percent_of_total_dropped = 100
+      }
+      await SE_API.post(`/stops/${stop.id}/create`, payload, user.accessToken)
+    }
+
     if (rescue.status === STATUSES.ACTIVE) {
       let activeStop = null
       for (const stop of stops) {
@@ -139,8 +170,19 @@ export function EditRescue({ setBreadcrumbs }) {
           )
         }
       }
-      await Promise.all(promises)
+    } else {
+      for (const stop of stops) {
+        promises.push(
+          SE_API.post(
+            `/stops/${stop.id}/update`,
+            defaultPayload,
+            user.accessToken
+          )
+        )
+      }
     }
+
+    await Promise.all(promises)
 
     // make the rescue update call last, after all stops are updated
     // this is to ensure that the final recalculation happens
