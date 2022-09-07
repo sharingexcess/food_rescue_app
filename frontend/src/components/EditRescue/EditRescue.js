@@ -195,12 +195,16 @@ export function EditRescue({ setBreadcrumbs }) {
     navigate(`/rescues/${rescue_id}`)
   }
 
+  // should be for remaining stops only for active routes
+  // keep the same for inactive routes
+  // for scheduled routes, don't have cancel stops (don't show canceled stops for scheduled routes)
+  // be able to remove (not mark as cancelled) stops with an x in top right when editing rescue (for scheduled rescues that have not been started) (FOR ALL RESCUES)
   const isValidRescue =
     formData.timestamp_scheduled_start &&
     formData.timestamp_scheduled_finish &&
     formData.timestamp_scheduled_start < formData.timestamp_scheduled_finish &&
     stops.length >= 2 &&
-    stops[0].type == 'pickup' &&
+    stops.filter(s => s.status !== STATUSES.CANCELLED)[0]?.type == 'pickup' &&
     stops[stops.length - 1].type === 'delivery'
 
   if (!rescue) return <LoadingEditRescue />

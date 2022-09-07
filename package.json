@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@sentry/cli": "^1.71.0",
+    "@sentry/node": "^7.12.1",
     "firebase": "^9.6.6",
     "firebase-tools": "^11.7.0"
   },
