@@ -1,8 +1,26 @@
-import { DragHandleIcon } from '@chakra-ui/icons'
+import { CloseIcon, DragHandleIcon } from '@chakra-ui/icons'
 import { Box, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
-import { STATUSES } from 'helpers'
+import { SE_API, STATUSES } from 'helpers'
+import { useApi, useAuth } from 'hooks'
+import { useParams } from 'react-router-dom'
 
 export function Stop({ stop }) {
+  const { rescue_id } = useParams()
+  const { user } = useAuth()
+  const { data: rescue, refresh } = useApi(`/rescues/${rescue_id}`)
+
+  async function handleCancel() {
+    await SE_API.post(
+      `/rescues/${rescue_id}/${stop.type}/${stop.id}/cancel`,
+      {
+        status: STATUSES.SCHEDULED,
+        is_deleted: true,
+      },
+      user.accessToken
+    )
+    refresh()
+  }
+
   return (
     <Flex
       my="3"
@@ -34,6 +52,13 @@ export function Stop({ stop }) {
           >
             {stop.type}
           </Heading>
+          {rescue?.status === STATUSES.SCHEDULED && (
+            <IconButton
+              variant="ghosted"
+              icon={<CloseIcon w="3" color="element.tertiary" />}
+              onClick={handleCancel}
+            />
+          )}
         </Flex>
         <Heading as="h3" size="md" fontWeight="600" color="element.primary">
           {stop.organization.name}

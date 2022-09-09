@@ -67,7 +67,8 @@ async function cancelStopEndpoint(request, response, next) {
         .doc(stop_id)
         .set(
           {
-            status: payload.status,
+            status: payload.status || '',
+            is_deleted: payload.is_deleted || undefined,
             notes: payload.notes || '',
             impact_data_dairy: 0,
             impact_data_bakery: 0,
