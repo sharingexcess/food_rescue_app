@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
-import { formatTimestamp } from 'helpers'
+import { formatTimestamp, STATUSES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { AddDonation } from './Wholesale.AddDonation'
@@ -63,12 +63,16 @@ export function Wholesale() {
       </Flex>
       {rescues ? (
         rescues.length ? (
-          rescues.map((rescue, i) => (
-            <Fragment key={i}>
-              <WholesaleRescueCard rescue={rescue} />
-              {i < rescues.length - 1 && <Divider />}
-            </Fragment>
-          ))
+          rescues
+            .filter(i =>
+              [STATUSES.ACTIVE, STATUSES.COMPLETED].includes(i.status)
+            )
+            .map((rescue, i) => (
+              <Fragment key={i}>
+                <WholesaleRescueCard rescue={rescue} />
+                {i < rescues.length - 1 && <Divider />}
+              </Fragment>
+            ))
         ) : (
           <Flex direction="column" align="center" justify="center" my="12">
             <SearchIcon fontSize="6xl" color="se.brand.primary" mb="8" />
