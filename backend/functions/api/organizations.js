@@ -34,7 +34,7 @@ async function organizationsEndpoint(request, response, next) {
 
 async function getOrganizations(type, subtype) {
   const start = performance.now()
-  const organizations = []
+  let organizations = []
   const locations = []
 
   let query = db.collection('organizations')
@@ -78,7 +78,7 @@ async function getOrganizations(type, subtype) {
     (performance.now() - start) / 1000,
     'seconds'
   )
-
+  organizations = organizations.filter(i => !i.is_deleted)
   console.log(
     'returning organizations:',
     organizations.map(i => i.id)

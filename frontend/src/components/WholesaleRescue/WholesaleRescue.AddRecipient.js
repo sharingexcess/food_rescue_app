@@ -123,7 +123,6 @@ function AddRecipientBody({
 
   function handleRecipientSearch(value) {
     return recipients
-      .filter(i => !i?.is_deleted)
       .filter(i => i.locations?.length)
       .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }

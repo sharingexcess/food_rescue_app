@@ -11,7 +11,7 @@ export function AddBackupDelivery() {
   )
   const { rescue, refresh } = useRescueContext()
   const { user } = useAuth()
-  const [organization, setOrganization] = useState()
+  const [organization, setOrganization] = useState([])
   const [location, setLocation] = useState()
   const [isWorking, setIsWorking] = useState()
 
@@ -24,7 +24,6 @@ export function AddBackupDelivery() {
   function handleSearchForOrganization(value) {
     console.log(value, organizations)
     return organizations
-      .filter(i => !i?.is_deleted)
       .filter(i => i.locations?.length)
       .filter(i => i.type === 'recipient')
       .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
