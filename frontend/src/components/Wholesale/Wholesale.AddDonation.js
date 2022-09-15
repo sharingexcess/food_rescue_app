@@ -77,6 +77,7 @@ function AddDonationBody({ formData, setFormData, donors }) {
 
   function handleDonorSearch(value) {
     return donors
+      .filter(i => !i?.is_deleted)
       .filter(i => i.locations?.length)
       .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }
