@@ -21,8 +21,9 @@ export function Filters({
   const { data: handlers } = useApi('/publicProfiles')
 
   function searchForHandler(value) {
-    return handlers.filter(i =>
-      i.name.toLowerCase().includes(value.toLowerCase())
+    return (
+      handlers &&
+      handlers.filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
     )
   }
 
