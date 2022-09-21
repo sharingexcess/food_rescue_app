@@ -1,6 +1,5 @@
 import { ChevronUpIcon } from '@chakra-ui/icons'
 import {
-  Box,
   Heading,
   Accordion,
   AccordionItem,
