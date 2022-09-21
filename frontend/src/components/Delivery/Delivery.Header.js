@@ -62,8 +62,10 @@ export function Header() {
           textDecoration="underline"
           mb="4"
         >
-          {delivery.location.address1}, {delivery.location.city},{' '}
-          {delivery.location.state} {delivery.location.zip}
+          {delivery.location.address1},
+          {delivery.location.address2 ? `${delivery.location.address2}, ` : ''}
+          {delivery.location.city}, {delivery.location.state}{' '}
+          {delivery.location.zip}
         </Text>
       </Link>
       {delivery.location.notes && (

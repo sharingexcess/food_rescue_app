@@ -62,8 +62,9 @@ export function PickupHeader() {
           textDecoration="underline"
           mb="4"
         >
-          {pickup.location.address1}, {pickup.location.city},{' '}
-          {pickup.location.state} {pickup.location.zip}
+          {pickup.location.address1},{' '}
+          {pickup.location.address2 ? `${pickup.location.address2}, ` : ''}
+          {pickup.location.city}, {pickup.location.state} {pickup.location.zip}
         </Text>
       </Link>
       {pickup.location.notes && (
