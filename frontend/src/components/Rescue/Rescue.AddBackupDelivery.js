@@ -11,7 +11,7 @@ export function AddBackupDelivery() {
   )
   const { rescue, refresh } = useRescueContext()
   const { user } = useAuth()
-  const [organization, setOrganization] = useState()
+  const [organization, setOrganization] = useState([])
   const [location, setLocation] = useState()
   const [isWorking, setIsWorking] = useState()
 

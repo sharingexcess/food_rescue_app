@@ -4,7 +4,7 @@ import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { useEffect, useState } from 'react'
 
 export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
-  const [organization, setOrganization] = useState()
+  const [organization, setOrganization] = useState([])
   const [location, setLocation] = useState()
 
   useEffect(() => {
