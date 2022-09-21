@@ -117,7 +117,7 @@ function EditDonationBody({ formData, setFormData, donors }) {
   }
 
   function handleSelectDonor(value) {
-    const location = value.locations.length === 1 ? value.locations[0] : null
+    const location = value?.locations.length === 1 ? value.locations[0] : null
     setFormData({ ...formData, organization: value, location })
   }
 
