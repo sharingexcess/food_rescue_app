@@ -26,15 +26,15 @@ export function Stats({ totalWeight, totalOrgs, deliveries }) {
 
   // cache stats locally for improved load time
   useEffect(() => {
-    if (totalWeight) {
+    if (totalWeight != null) {
       localStorage.setItem('se_stats_total_weight', totalWeight)
       setStats(stats => ({ ...stats, totalWeight }))
     }
-    if (totalOrgs) {
+    if (totalOrgs != null) {
       localStorage.setItem('se_stats_total_orgs', totalOrgs)
       setStats(stats => ({ ...stats, totalOrgs }))
     }
-    if (deliveries?.length) {
+    if (deliveries != null) {
       localStorage.setItem('se_stats_total_deliveries', deliveries.length)
       setStats(stats => ({ ...stats, totalDeliveries: deliveries.length }))
     }
