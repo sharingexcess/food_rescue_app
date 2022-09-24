@@ -91,7 +91,11 @@ export function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {stats.totalDeliveries || <Spinner />}
+            {stats.totalDeliveries != null ? (
+              formatLargeNumber(stats.totalDeliveries)
+            ) : (
+              <Spinner />
+            )}
           </Heading>
           <Text color="element.tertiary">deliveries this year</Text>
         </Flex>
@@ -112,7 +116,11 @@ export function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {stats.totalOrgs || <Spinner />}
+            {stats.totalOrgs != null ? (
+              formatLargeNumber(stats.totalOrgs)
+            ) : (
+              <Spinner />
+            )}
           </Heading>
           <Text color="element.tertiary">individual recipients</Text>
         </Flex>
