@@ -37,7 +37,7 @@ export function Wholesale() {
   const totalPounds = useMemo(() => {
     let total = 0
     for (const rescue of rescues || []) {
-      for (const stop of rescue.stops.filter(s => s.type === 'delivery')) {
+      for (const stop of rescue.stops.filter(s => s.type === 'pickup')) {
         total += stop.impact_data_total_weight
       }
     }
