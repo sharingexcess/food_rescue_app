@@ -11,7 +11,12 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
-import { formatTimestamp, STATUSES } from 'helpers'
+import {
+  formatLargeNumber,
+  formatTimestamp,
+  ORG_SUBTYPES,
+  STATUSES,
+} from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { AddDonation } from './Wholesale.AddDonation'
@@ -29,6 +34,32 @@ export function Wholesale() {
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
   )
 
+  const totalPounds = useMemo(() => {
+    let total = 0
+    for (const rescue of rescues || []) {
+      for (const stop of rescue.stops.filter(s => s.type === 'delivery')) {
+        total += stop.impact_data_total_weight
+      }
+    }
+    return total
+  })
+
+  const totalDonated = useMemo(() => {
+    let total = 0
+    for (const rescue of rescues || []) {
+      for (const stop of rescue.stops.filter(
+        s =>
+          s.type === 'delivery' &&
+          s.organization.subtype !== ORG_SUBTYPES.COMPOST
+      )) {
+        total += stop.impact_data_total_weight
+      }
+    }
+    return total
+  })
+
+  console.log(totalPounds, totalDonated)
+
   useEffect(() => {
     date && window.history.replaceState(null, '', `/wholesale?date=${date}`)
   }, [date])
@@ -45,9 +76,17 @@ export function Wholesale() {
     <>
       <PageTitle>Wholesale</PageTitle>
       <Flex w="100%" justify="space-between" align="center" mb="4">
-        <Heading size="md" flexBasis="50%">
-          {formatTimestamp(date, 'dddd, MMM. DD')}
-        </Heading>
+        <Box>
+          <Heading size="md" flexBasis="50%">
+            {formatTimestamp(date, 'dddd, MMM. DD')}
+          </Heading>
+          {totalPounds && totalDonated ? (
+            <Text color="element.secondary" fontWeight="300">
+              {formatLargeNumber(totalPounds)} lbs. received,{' '}
+              {formatLargeNumber(totalDonated)} lbs. donated
+            </Text>
+          ) : null}
+        </Box>
         <InputGroup flexShrink="1" flexBasis="128px">
           <Input
             type="date"

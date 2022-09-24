@@ -4,7 +4,7 @@ import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { useEffect, useState } from 'react'
 
 export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
-  const [organization, setOrganization] = useState([])
+  const [organization, setOrganization] = useState()
   const [location, setLocation] = useState()
 
   useEffect(() => {
@@ -20,6 +20,7 @@ export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
   }, [organization, location])
 
   function handleSearchForOrganization(value) {
+    if (!organizations) return []
     return organizations
       .filter(i => i.locations?.length)
       .filter(i => (i.type === 'pickup' ? 'donor' : 'recipient'))

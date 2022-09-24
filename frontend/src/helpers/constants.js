@@ -85,6 +85,7 @@ export const ORG_SUBTYPES = {
   COMMUNITY_FRIDGE: 'community_fridge',
   POPUP: 'popup',
   HOLDING: 'holding',
+  COMPOST: 'compost',
   OTHER: 'other',
 }
 
