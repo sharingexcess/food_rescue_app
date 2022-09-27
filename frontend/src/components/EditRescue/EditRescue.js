@@ -39,6 +39,7 @@ export function EditRescue({ setBreadcrumbs }) {
   const navigate = useNavigate()
 
   const [stops, setStops] = useState()
+  const [stopsToDelete, setStopsToDelete] = useState([])
 
   useEffect(() => {
     setBreadcrumbs([
@@ -83,14 +84,38 @@ export function EditRescue({ setBreadcrumbs }) {
     setView(null)
   }
 
-  function removeStop(index) {
-    if (window.confirm('Are you sure you want to remove this stop?')) {
-      setStops([...stops.slice(0, index), ...stops.slice(index + 1)])
+  function removeStop(id) {
+    if (
+      window.confirm(
+        'Are you sure you want to delete this stop? This cannot be undone.'
+      )
+    ) {
+      const stop = stops.find(s => s.id === id)
+      setStops(stops.filter(s => s.id !== id))
+      setStopsToDelete(stops => [...stops, stop])
     }
+  }
+
+  async function handleDeleteStop(stop) {
+    await SE_API.post(
+      `/rescues/${rescue_id}/${stop.type}/${stop.id}/cancel`,
+      {
+        status: STATUSES.SCHEDULED,
+        is_deleted: true,
+      },
+      user.accessToken
+    )
   }
 
   async function handleUpdateRescue() {
     setWorking(true)
+
+    if (stopsToDelete.length) {
+      for (const stop of stopsToDelete) {
+        await handleDeleteStop(stop)
+      }
+    }
+
     const promises = []
     const defaultPayload = {
       timestamp_scheduled_start: moment(
@@ -204,7 +229,8 @@ export function EditRescue({ setBreadcrumbs }) {
     formData.timestamp_scheduled_finish &&
     formData.timestamp_scheduled_start < formData.timestamp_scheduled_finish &&
     stops.length >= 2 &&
-    stops.filter(s => s.status !== STATUSES.CANCELLED)[0]?.type == 'pickup' &&
+    stops.filter(s => s.status !== STATUSES.CANCELLED && !s.is_deleted)[0]
+      ?.type == 'pickup' &&
     stops[stops.length - 1].type === 'delivery'
 
   if (!rescue) return <LoadingEditRescue />

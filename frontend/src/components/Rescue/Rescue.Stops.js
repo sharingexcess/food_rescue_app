@@ -1,14 +1,9 @@
-import { ChevronUpIcon } from '@chakra-ui/icons'
 import {
   Heading,
   Accordion,
   AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Text,
   Flex,
-  IconButton,
+  Button,
 } from '@chakra-ui/react'
 import { STATUSES, calculateCurrentLoad } from 'helpers'
 import { useState } from 'react'
@@ -28,7 +23,9 @@ export function RescueStops() {
     remainingWeight > rescue.stops.length &&
     rescue.stops[rescue.stops.length - 1].status === STATUSES.COMPLETED
   // split stops to cancelled, completed, remaining
-  const [showCompletedStops, setShowCompletedStops] = useState(false)
+  const [showCompletedStops, setShowCompletedStops] = useState(
+    rescue.status === STATUSES.COMPLETED
+  )
   const [showCancelledStops, setShowCancelledStops] = useState(false)
 
   const cancelledStops =
@@ -41,118 +38,34 @@ export function RescueStops() {
     ) || []
   return (
     <>
-      {cancelledStops.length ? (
-        <Flex justify="space-between" align="end" h={8}>
-          <Heading
-            as="h4"
-            size="sm"
-            mt="12"
-            fontWeight="600"
-            letterSpacing="1"
-            fontSize="sm"
-            color="element.secondary"
-            textTransform="uppercase"
-          >
-            ❌&nbsp;&nbsp;Cancelled Stops
-          </Heading>
-          <IconButton
-            aria-label="Cancelled rescue stops"
-            variant="tertiary"
-            color="element.tertiary"
-            icon={
-              <ChevronUpIcon
-                h={8}
-                w={8}
-                transform={`rotate(${showCancelledStops ? '-180deg' : '0deg'})`}
-                transition="transform 0.3s ease"
-              />
-            }
-            onClick={() => setShowCancelledStops(!showCancelledStops)}
-          />
-        </Flex>
-      ) : null}
-      {cancelledStops.length && showCancelledStops ? (
-        <Accordion allowMultiple>
-          {cancelledStops.map((stop, i) => (
-            <AccordionItem key={i}>
-              <AccordionButton>
-                <Flex w="100%" gap={4}>
-                  <Text
-                    as="h3"
-                    size="md"
-                    fontWeight="600"
-                    textTransform="uppercase"
-                    color="element.secondary"
-                  >
-                    {stop.type}
-                  </Text>
-                  <Text as="p" fontWeight="300" color="element.secondary">
-                    {stop.location.nickname || stop.location.address1}
-                  </Text>
-                  <AccordionIcon ml="auto" />
-                </Flex>
-              </AccordionButton>
-              <AccordionPanel>
-                <InactiveStop stop={stop} key={i} />
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      ) : null}
       {completedStops.length ? (
-        <Flex justify="space-between" align="end" h={8} my={4}>
+        <Flex justify="space-between" align="center" h={8} px="4" my="4">
           <Heading
             as="h4"
             size="sm"
-            mt="12"
             fontWeight="600"
             letterSpacing="1"
             fontSize="sm"
             color="element.secondary"
             textTransform="uppercase"
           >
-            ✅&nbsp;&nbsp;Completed Stops
+            Completed Stops
           </Heading>
-          <IconButton
-            aria-label="Completed rescue stops"
+          <Button
             variant="tertiary"
+            size="sm"
             color="element.tertiary"
-            icon={
-              <ChevronUpIcon
-                h={8}
-                w={8}
-                transform={`rotate(${showCompletedStops ? '-180deg' : '0deg'})`}
-                transition="transform 0.3s ease"
-              />
-            }
             onClick={() => setShowCompletedStops(!showCompletedStops)}
-          />
+          >
+            {showCompletedStops ? 'Hide' : 'Show'}
+          </Button>
         </Flex>
       ) : null}
       {completedStops.length && showCompletedStops ? (
         <Accordion allowMultiple>
           {completedStops.map((stop, i) => (
-            <AccordionItem key={i}>
-              <AccordionButton>
-                <Flex w="100%" gap={4}>
-                  <Text
-                    as="h3"
-                    size="md"
-                    fontWeight="600"
-                    textTransform="uppercase"
-                    color="element.secondary"
-                  >
-                    {stop.type}
-                  </Text>
-                  <Text as="p" fontWeight="300" color="element.secondary">
-                    {stop.location.nickname || stop.location.address1}
-                  </Text>
-                  <AccordionIcon ml="auto" />
-                </Flex>
-              </AccordionButton>
-              <AccordionPanel>
-                <InactiveStop stop={stop} key={i} />
-              </AccordionPanel>
+            <AccordionItem key={i} border="none">
+              <InactiveStop stop={stop} key={i} />
             </AccordionItem>
           ))}
         </Accordion>
@@ -164,6 +77,38 @@ export function RescueStops() {
           <InactiveStop stop={stop} key={i} />
         ) : null
       )}
+      {cancelledStops.length ? (
+        <Flex justify="space-between" align="center" h={8} px="4" my="4">
+          <Heading
+            as="h4"
+            size="sm"
+            fontWeight="600"
+            letterSpacing="1"
+            fontSize="sm"
+            color="element.secondary"
+            textTransform="uppercase"
+          >
+            Cancelled Stops
+          </Heading>
+          <Button
+            variant="tertiary"
+            size="sm"
+            color="element.tertiary"
+            onClick={() => setShowCancelledStops(!showCancelledStops)}
+          >
+            {showCancelledStops ? 'Hide' : 'Show'}
+          </Button>
+        </Flex>
+      ) : null}
+      {showCancelledStops ? (
+        <Accordion allowMultiple>
+          {cancelledStops.map((stop, i) => (
+            <AccordionItem key={i} border="none">
+              <InactiveStop stop={stop} key={i} />
+            </AccordionItem>
+          ))}
+        </Accordion>
+      ) : null}
       {shouldAddStop && <AddBackupDelivery />}
     </>
   )

@@ -104,27 +104,8 @@ export function Stops({ stops, setStops, removeStop }) {
       {cancelledStops.length && showCancelledStops ? (
         <Accordion allowMultiple>
           {cancelledStops.map((stop, i) => (
-            <AccordionItem key={i}>
-              <AccordionButton>
-                <Flex w="100%" gap={4}>
-                  <Text
-                    as="h3"
-                    size="md"
-                    fontWeight="600"
-                    textTransform="uppercase"
-                    color="element.secondary"
-                  >
-                    {stop.type}
-                  </Text>
-                  <Text as="p" fontWeight="300" color="element.secondary">
-                    {stop.location.nickname || stop.location.address1}
-                  </Text>
-                  <AccordionIcon ml="auto" />
-                </Flex>
-              </AccordionButton>
-              <AccordionPanel>
-                <Stop stop={stop} removeStop={() => removeStop(i)} />
-              </AccordionPanel>
+            <AccordionItem key={i} border="none">
+              <Stop stop={stop} removeStop={removeStop} />
             </AccordionItem>
           ))}
         </Accordion>
@@ -181,7 +162,7 @@ export function Stops({ stops, setStops, removeStop }) {
                 </Flex>
               </AccordionButton>
               <AccordionPanel>
-                <Stop stop={stop} removeStop={() => removeStop(i)} />
+                <Stop stop={stop} removeStop={removeStop} />
               </AccordionPanel>
             </AccordionItem>
           ))}
@@ -208,17 +189,14 @@ export function Stops({ stops, setStops, removeStop }) {
         values={remainingStringStops}
         onReorder={setRemainingStringStops}
       >
-        {remainingStringStops.map((stringStop, i) => (
+        {remainingStringStops.map(stringStop => (
           <Reorder.Item
             as="div"
             key={stringStop}
             value={stringStop}
             onPointerUp={handlePointerUp}
           >
-            <Stop
-              stop={JSON.parse(stringStop)}
-              removeStop={() => removeStop(i)}
-            />
+            <Stop stop={JSON.parse(stringStop)} removeStop={removeStop} />
           </Reorder.Item>
         ))}
       </Reorder.Group>

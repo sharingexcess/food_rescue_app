@@ -68,7 +68,7 @@ async function cancelStopEndpoint(request, response, next) {
         .set(
           {
             status: payload.status || '',
-            is_deleted: payload.is_deleted || undefined,
+            is_deleted: payload.is_deleted || false,
             notes: payload.notes || '',
             impact_data_dairy: 0,
             impact_data_bakery: 0,
