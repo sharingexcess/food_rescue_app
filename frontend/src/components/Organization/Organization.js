@@ -1,6 +1,6 @@
-import { Box, Flex, Skeleton } from '@chakra-ui/react'
-import { useApi } from 'hooks'
-import { useParams } from 'react-router-dom'
+import { Box, Button, Flex, Skeleton } from '@chakra-ui/react'
+import { useApi, useAuth } from 'hooks'
+import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { PageTitle, Error } from 'components'
 import { Locations } from './Organization.Locations'
@@ -18,6 +18,7 @@ export function Organization({ setBreadcrumbs }) {
   } = useApi(`/organization/${organization_id}`)
   const [edit, setEdit] = useState(false)
   const [formData, setFormData] = useState({})
+  const { hasAdminPermission } = useAuth()
 
   useEffect(() => {
     if (organization) {
@@ -54,6 +55,13 @@ export function Organization({ setBreadcrumbs }) {
           <>
             <Tags formData={formData} setFormData={setFormData} />
             <Locations organization={organization} />
+            {hasAdminPermission && (
+              <Flex w="100%" justify="center" mt="8" gap="4">
+                <Link to={`/organizations/${organization.id}/create-location`}>
+                  <Button>+ Add Location</Button>
+                </Link>
+              </Flex>
+            )}
           </>
         )}
       </>

@@ -14,7 +14,7 @@ async function organizationsEndpoint(request, response, next) {
       request.query
     )
 
-    const { type, subtype } = request.query
+    const { type, subtype, tag } = request.query
 
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),
@@ -25,14 +25,14 @@ async function organizationsEndpoint(request, response, next) {
       rejectUnauthorizedRequest(response)
       return
     }
-    const organizations = await getOrganizations(type, subtype)
+    const organizations = await getOrganizations(type, subtype, tag)
     response.status(200).send(JSON.stringify(organizations))
   } catch (e) {
     next(e)
   }
 }
 
-async function getOrganizations(type, subtype) {
+async function getOrganizations(type, subtype, tag) {
   const start = performance.now()
   let organizations = []
   const locations = []
@@ -45,6 +45,10 @@ async function getOrganizations(type, subtype) {
 
   if (type && subtype) {
     query = query.where('subtype', '==', subtype)
+  }
+
+  if (tag) {
+    query = query.where('tags', 'array-contains', tag)
   }
 
   await Promise.all([

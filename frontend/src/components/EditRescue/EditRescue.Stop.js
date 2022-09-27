@@ -55,7 +55,8 @@ export function Stop({ stop }) {
           {rescue?.status === STATUSES.SCHEDULED && (
             <IconButton
               variant="ghosted"
-              icon={<CloseIcon w="3" color="element.tertiary" />}
+              h="auto"
+              icon={<CloseIcon w="3" h="auto" color="element.tertiary" />}
               onClick={handleCancel}
             />
           )}

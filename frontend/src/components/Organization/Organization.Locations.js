@@ -1,11 +1,9 @@
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { Box, Button, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
+import { Box, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
 import { formatPhoneNumber } from 'helpers'
-import { useAuth } from 'hooks'
 import { Link } from 'react-router-dom'
 
 export function Locations({ organization }) {
-  const { hasAdminPermission } = useAuth()
   return (
     <>
       {organization.locations.map((location, i) => (
@@ -52,13 +50,6 @@ export function Locations({ organization }) {
           </Flex>
         </Link>
       ))}
-      {hasAdminPermission && (
-        <Flex w="100%" justify="center" mt="8">
-          <Link to={`/organizations/${organization.id}/create-location`}>
-            <Button>+ Add Location</Button>
-          </Link>
-        </Flex>
-      )}
     </>
   )
 }

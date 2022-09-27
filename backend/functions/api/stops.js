@@ -20,6 +20,7 @@ async function stopsEndpoint(request, response, next) {
       organization_id,
       limit,
       start_after,
+      organization_tag,
     } = request.query
 
     const requestIsAuthenticated = await authenticateRequest(
@@ -40,7 +41,8 @@ async function stopsEndpoint(request, response, next) {
       handler_id,
       organization_id,
       start_after,
-      limit
+      limit,
+      organization_tag
     )
     response.status(200).send(JSON.stringify(stops))
   } catch (e) {
@@ -57,10 +59,11 @@ async function getStops(
   handler_id,
   organization_id,
   start_after,
-  limit
+  limit,
+  organization_tag
 ) {
   const start = performance.now()
-  const stops = []
+  let stops = []
 
   let stops_query = db.collection('stops')
 
@@ -168,6 +171,12 @@ async function getStops(
       ])
       .flat()
   )
+
+  if (organization_tag) {
+    stops = stops.filter(stop => {
+      return stop.organization.tags?.includes(organization_tag)
+    })
+  }
 
   console.log(
     'finished org/loc queries:',

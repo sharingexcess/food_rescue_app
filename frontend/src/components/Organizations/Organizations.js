@@ -1,4 +1,4 @@
-import { AddIcon, SearchIcon } from '@chakra-ui/icons'
+import { AddIcon, CopyIcon, SearchIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
@@ -15,18 +15,24 @@ import {
 import { PageTitle } from 'components/PageTitle/PageTitle'
 import { DONOR_TYPES, ORG_TYPE_ICONS, RECIPIENT_TYPES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Organizations() {
-  const { data: organizations } = useApi('/organizations')
   const [searchValue, setSearchValue] = useState('')
   const [type, setType] = useState()
   const [subtype, setSubtype] = useState()
+  const [tag, setTag] = useState('')
   const { hasAdminPermission } = useAuth()
+  const params = useMemo(() => (tag ? { tag } : null), [tag])
+  const { data: organizations } = useApi('/organizations', params)
 
   function handleChange(e) {
     setSearchValue(e.target.value)
+  }
+
+  function handleTagChange(e) {
+    setTag(e.target.value)
   }
 
   return (
@@ -39,16 +45,33 @@ export function Organizations() {
           </Link>
         )}
       </Flex>
-      <InputGroup mb="6">
-        <InputLeftElement mr="2" color="element.secondary">
-          <SearchIcon />
-        </InputLeftElement>
-        <Input
-          placeholder="Search by name..."
-          value={searchValue}
-          onChange={handleChange}
-        />
-      </InputGroup>
+      <Flex
+        justify="space-between"
+        flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
+        gap="4"
+        mb="6"
+      >
+        <InputGroup>
+          <InputLeftElement mr="2" color="element.secondary">
+            <SearchIcon />
+          </InputLeftElement>
+          <Input
+            placeholder="Search by name..."
+            value={searchValue}
+            onChange={handleChange}
+          />
+        </InputGroup>
+        <InputGroup>
+          <InputLeftElement mr="2" color="element.secondary">
+            <CopyIcon />
+          </InputLeftElement>
+          <Input
+            value={tag}
+            onChange={handleTagChange}
+            placeholder="Search by tag..."
+          />
+        </InputGroup>
+      </Flex>
       <Flex
         justify="space-between"
         flexWrap={['wrap', 'wrap', 'nowrap', 'nowrap', 'nowrap']}
