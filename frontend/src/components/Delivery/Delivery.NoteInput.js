@@ -6,18 +6,17 @@ import {
   InputLeftElement,
   Text,
 } from '@chakra-ui/react'
-import { useRescueContext, useDeliveryContext } from 'components'
+import { useDeliveryContext } from 'components'
 import { STATUSES } from 'helpers'
 
 export function NoteInput() {
-  const { openStop } = useRescueContext()
-  const { notes, setNotes } = useDeliveryContext()
+  const { delivery, notes, setNotes } = useDeliveryContext()
 
-  return openStop.status === STATUSES.CANCELLED ? (
+  return delivery.status === STATUSES.CANCELLED ? (
     <Flex align="center" my="4">
       <EditIcon mr="4" color="element.tertiary" />
       <Text fontSize="sm" color="element.secondary">
-        {openStop.notes}
+        {delivery.notes}
       </Text>
     </Flex>
   ) : (
@@ -30,7 +29,7 @@ export function NoteInput() {
         color="element.secondary"
         value={notes || ''}
         placeholder="Add notes to this delivery..."
-        readOnly={openStop.status === STATUSES.CANCELLED}
+        readOnly={delivery.status === STATUSES.CANCELLED}
         onChange={e => setNotes(e.target.value)}
         mb="4"
       />

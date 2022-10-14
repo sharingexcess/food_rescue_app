@@ -2,15 +2,15 @@ import { Button, Flex } from '@chakra-ui/react'
 import { PageTitle } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
-import { getDefaultEndTime, getDefaultStartTime } from './CreateRescue.utils'
+import { getDefaultEndTime, getDefaultStartTime } from './ScheduleRescue.utils'
 import { createTimestamp, generateUniqueId, SE_API, STATUSES } from 'helpers'
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
-import { AddStop } from './CreateRescue.AddStop'
-import { Stops } from 'components/CreateRescue/CreateRescue.Stops'
-import { InfoForm } from './CreateRescue.InfoForm'
+import { AddStop } from './ScheduleRescue.AddStop'
+import { Stops } from 'components/ScheduleRescue/ScheduleRescue.Stops'
+import { InfoForm } from './ScheduleRescue.InfoForm'
 
-export function CreateRescue() {
+export function ScheduleRescue() {
   const { user } = useAuth()
   const { data: handlers } = useApi('/publicProfiles')
   const { data: donors } = useApi(
@@ -78,7 +78,7 @@ export function CreateRescue() {
     }
   }
 
-  async function handleCreateRescue() {
+  async function handleScheduleRescue() {
     setWorking(true)
     const id = await generateUniqueId('rescues')
     sessionStorage.removeItem('se_create_rescue_stops_cache')
@@ -90,7 +90,6 @@ export function CreateRescue() {
         formData: {
           handler_id: formData.handler?.id || null,
           stops,
-          is_direct_link: false,
         },
         status_scheduled: STATUSES.SCHEDULED,
         timestamp_scheduled_start: moment(
@@ -117,7 +116,7 @@ export function CreateRescue() {
 
   return (
     <>
-      <PageTitle>Create Rescue</PageTitle>
+      <PageTitle>Schedule Rescue</PageTitle>
       <InfoForm
         formData={formData}
         setFormData={setFormData}
@@ -158,14 +157,14 @@ export function CreateRescue() {
 
           <Button
             variant="primary"
-            onClick={handleCreateRescue}
+            onClick={handleScheduleRescue}
             flexGrow="1"
             flexBasis={isMobile ? '100%' : null}
             isLoading={working}
             disabled={!isValidRescue}
             loadingText="Creating Rescue..."
           >
-            Create Rescue
+            Schedule Rescue
           </Button>
         </Flex>
       )}

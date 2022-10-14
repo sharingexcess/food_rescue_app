@@ -10,7 +10,7 @@ import {
 import { useAuth } from 'hooks'
 
 export function Header() {
-  const { openStop, refresh, setOpenStop } = useRescueContext()
+  const { rescue, refresh, setOpenStop } = useRescueContext()
   const { delivery } = useDeliveryContext()
   const { user } = useAuth()
 
@@ -20,7 +20,7 @@ export function Header() {
     )
     if (reason) {
       await SE_API.post(
-        `/rescues/${openStop.id}/delivery/${delivery.id}/cancel`,
+        `/rescues/${rescue.id}/delivery/${delivery.id}/cancel`,
         {
           status: STATUSES.CANCELLED,
           notes: 'Cancelled - ' + reason,
@@ -116,12 +116,12 @@ export function Header() {
           </Button>
         </Link>
 
-        {openStop.status !== STATUSES.CANCELLED && (
+        {delivery.status !== STATUSES.CANCELLED && (
           <Button
             size="sm"
             fontSize="xs"
             variant="secondary"
-            disabled={openStop.status === STATUSES.COMPLETED}
+            disabled={delivery.status === STATUSES.COMPLETED}
             color="yellow.primary"
             bg="yellow.secondary"
             onClick={handleCancel}

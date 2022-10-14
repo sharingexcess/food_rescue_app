@@ -17,6 +17,8 @@ export function Filters({
   setDate,
   status,
   setStatus,
+  type,
+  setType,
 }) {
   const { data: handlers } = useApi('/publicProfiles')
 
@@ -44,13 +46,26 @@ export function Filters({
       <Select
         onChange={e => setStatus(e.target.value)}
         value={status}
-        flexBasis={['100%', '100%', '180px', '180px', '180px']}
+        // flexBasis={['128px', '128px', '180px', '180px', '180px']}
+        flexBasis="128px"
+        flexGrow={1}
       >
         <option value="available">Available</option>
         <option value="scheduled">Scheduled</option>
         <option value="active">Active</option>
         <option value="completed">Completed</option>
         <option value="cancelled">Cancelled</option>
+      </Select>
+      <Select
+        onChange={e => setType(e.target.value)}
+        value={type}
+        // flexBasis={['128px', '128px', '180px', '180px', '180px']}
+        flexBasis="128px"
+        flexGrow={1}
+      >
+        <option value="retail">Retail</option>
+        <option value="direct-link">Direct Link</option>
+        {/* <option value="wholesale">Wholesale</option> */}
       </Select>
       <Autocomplete
         placeholder="Handler..."

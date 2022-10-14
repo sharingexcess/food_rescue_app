@@ -3,6 +3,11 @@ import {
   Flex,
   Heading,
   IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
   Skeleton,
   Text,
 } from '@chakra-ui/react'
@@ -22,17 +27,18 @@ export function Rescues() {
   const [handler, setHandler] = useState()
   const [date, setDate] = useState()
   const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
+  const [type, setType] = useState(url_params.get('type') || 'retail')
   const [cachedScrollPosition, setCachedScrollPosition] = useState(null)
 
   const api_params = useMemo(
     () => ({
-      type: 'retail',
+      type,
       status: status === 'available' ? 'scheduled' : status,
       handler_id: status === 'available' ? 'null' : handler ? handler.id : null,
       date: date,
       limit: 10,
     }),
-    [date, handler, status]
+    [date, handler, status, type]
   )
 
   const { data, loading, loadMore } = useApi('/rescues', api_params)
@@ -40,6 +46,7 @@ export function Rescues() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     params.set('status', status)
+    params.set('type', type)
     params.set(
       'handler_id',
       status === 'available' ? 'null' : handler?.id || ''
@@ -51,7 +58,7 @@ export function Rescues() {
       '',
       `${window.location.pathname}?${params.toString()}`
     )
-  }, [date, handler, status])
+  }, [date, handler, status, type])
 
   // this useEffect returns to the pre-update scroll position
   // when new rescues are loaded so users don't lose their place
@@ -79,9 +86,20 @@ export function Rescues() {
       <Flex justify="space-between" w="100%">
         <PageTitle mb="6">Rescues</PageTitle>
         {hasAdminPermission && (
-          <Link to="/create-rescue">
-            <IconButton icon={<AddIcon />} borderRadius="3xl" />
-          </Link>
+          <Popover placement="bottom-end">
+            <PopoverTrigger>
+              <IconButton icon={<AddIcon />} borderRadius="3xl" />
+            </PopoverTrigger>
+            <Portal>
+              <PopoverContent w="42">
+                <PopoverArrow />
+                <Flex direction="column" px="4" py="3" gap="2" align="flex-end">
+                  <Link to="/schedule-rescue">Schedule Rescue</Link>
+                  <Link to="/log-rescue">Log Past Rescue</Link>
+                </Flex>
+              </PopoverContent>
+            </Portal>
+          </Popover>
         )}
       </Flex>
       <Filters
@@ -91,6 +109,8 @@ export function Rescues() {
         setDate={setDate}
         status={status}
         setStatus={setStatus}
+        type={type}
+        setType={setType}
       />
       {loading && !data ? (
         <LoadingRescues />

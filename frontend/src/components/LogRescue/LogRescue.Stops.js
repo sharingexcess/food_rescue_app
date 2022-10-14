@@ -1,8 +1,8 @@
 import { Reorder } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { Stop } from './CreateRescue.Stop'
+import { Stop } from './LogRescue.Stop'
 
-export function Stops({ stops, setStops, removeStop }) {
+export function Stops({ stops, setStops, removeStop, setActiveStop }) {
   // Because the Drag and Drop component can only handle string items,
   // stringify each stop here, then parse as we pass to the component
   const [stringStops, setStringStops] = useState(
@@ -47,6 +47,7 @@ export function Stops({ stops, setStops, removeStop }) {
           <Stop
             stop={JSON.parse(stringStop)}
             removeStop={() => removeStop(i)}
+            setActiveStop={setActiveStop}
           />
         </Reorder.Item>
       ))}
