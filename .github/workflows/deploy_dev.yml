@@ -39,13 +39,13 @@ jobs:
         with:
           args: use default
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy React App
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only hosting:react-app-dev
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
   deploy_backend:
     name: 'Deploy Backend'
@@ -73,22 +73,22 @@ jobs:
         with:
           args: use default
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy Firebase Functions
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only functions
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy Node API
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only hosting:node-api-dev
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy Firestore Security Rules
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only firestore:rules
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}

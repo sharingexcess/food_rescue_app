@@ -37,13 +37,13 @@ jobs:
         with:
           args: use prod
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy React App
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only hosting:sharingexcess
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       # - name: Create Sentry release
       #   uses: getsentry/action-release@v1
       #   env:
@@ -79,22 +79,22 @@ jobs:
         with:
           args: use prod
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy Firebase Functions
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only functions
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy Node API
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only hosting:sharingexcess-api
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy Firestore Security Rules
         uses: docker://w9jds/firebase-action:master
         with:
           args: deploy --only firestore:rules
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
