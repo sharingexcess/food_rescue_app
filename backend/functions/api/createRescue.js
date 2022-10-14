@@ -157,11 +157,10 @@ async function createRescuePayload(
 
   const rescue_payload = {
     id: id,
-    type: 'retail',
+    type: formData.type || 'retail',
     handler_id: formData.handler_id,
     google_calendar_event_id: event.id,
     stop_ids: formData.stops.map(s => s.id),
-    is_direct_link: formData.is_direct_link,
     status: status_scheduled,
     notes: '',
     timestamp_created: timestamp_created,

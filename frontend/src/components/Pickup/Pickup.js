@@ -1,16 +1,22 @@
 import { CardOverlay, useRescueContext } from 'components'
-import { FOOD_CATEGORIES } from 'helpers'
+import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { PickupFooter } from './Pickup.Footer'
 import { PickupBody } from './Pickup.Body'
 import { PickupHeader } from './Pickup.Header'
+import { useAuth } from 'hooks'
 
 const PickupContext = createContext({})
 PickupContext.displayName = 'PickupContext'
 export const usePickupContext = () => useContext(PickupContext)
 
-export function Pickup({ pickup }) {
-  const { setOpenStop } = useRescueContext()
+export function Pickup({
+  pickup,
+  handleClosePickupOverride,
+  handleSubmitOverride,
+}) {
+  const { user } = useAuth()
+  const { setOpenStop, rescue, refresh } = useRescueContext()
   const [entryRows, setEntryRows] = useState([])
   const [notes, setNotes] = useState('')
 
@@ -42,9 +48,65 @@ export function Pickup({ pickup }) {
     }
   }, [pickup])
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const total = entryRows.reduce((total, current) => total + current.weight, 0)
+
+  async function handleSubmit() {
+    if (handleSubmitOverride) {
+      handleSubmitOverride({ entryRows, notes, total, id: pickup.id })
+    } else {
+      setIsSubmitting(true)
+
+      const formData = {
+        ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}),
+        impact_data_total_weight: 0,
+        notes: '',
+      }
+
+      for (const row of entryRows) {
+        formData[row.category] = formData[row.category] + row.weight
+      }
+      formData.impact_data_total_weight = total
+      formData.notes = notes
+      await SE_API.post(
+        `/stops/${pickup.id}/update`,
+        {
+          ...formData,
+          status: STATUSES.COMPLETED,
+          timestamp_logged_finish: createTimestamp(),
+        },
+        user.accessToken
+      )
+      const stop_index = rescue.stop_ids.findIndex(i => i === pickup.id)
+      if (
+        stop_index < rescue.stop_ids.length - 1 &&
+        rescue.stops[stop_index + 1].status === STATUSES.SCHEDULED
+      ) {
+        // if this is not the last stop, mark the next stop as active
+        await SE_API.post(
+          `/stops/${rescue.stop_ids[stop_index + 1]}/update`,
+          {
+            status: STATUSES.ACTIVE,
+          },
+          user.accessToken
+        )
+      }
+
+      sessionStorage.removeItem(session_storage_key)
+      setIsSubmitting(false)
+      setOpenStop(null)
+      refresh()
+    }
+  }
+
   function handleClosePickup() {
-    window.sessionStorage.removeItem(session_storage_key)
-    setOpenStop(null)
+    if (handleClosePickupOverride) {
+      handleClosePickupOverride()
+    } else {
+      window.sessionStorage.removeItem(session_storage_key)
+      setOpenStop(null)
+    }
   }
 
   function verifyClose() {
@@ -63,6 +125,9 @@ export function Pickup({ pickup }) {
     setNotes,
     session_storage_key,
     isChanged,
+    handleSubmit,
+    isSubmitting,
+    total,
   }
 
   return (

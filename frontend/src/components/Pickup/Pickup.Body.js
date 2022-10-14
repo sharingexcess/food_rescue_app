@@ -5,13 +5,13 @@ import { EntryRowInput } from './Pickup.EntryRowInput'
 import { EntryRows } from './Pickup.EntryRows'
 
 export function PickupBody() {
-  const { entryRows } = usePickupContext()
-  const { openStop, rescue } = useRescueContext()
+  const { entryRows, pickup } = usePickupContext()
+  const { rescue } = useRescueContext()
 
-  if (!openStop) return null
+  if (!pickup) return null
   return (
     <Flex direction="column">
-      {openStop.status === STATUSES.SCHEDULED ? (
+      {pickup.status === STATUSES.SCHEDULED ? (
         <Flex direction="column" align="center" w="100%" py="8">
           <Heading as="h4" size="md" color="element.primary" mb="2">
             This pickup isn't active yet.
@@ -22,7 +22,7 @@ export function PickupBody() {
               : 'Ready to go? Start this rescue to begin entering data.'}
           </Text>
         </Flex>
-      ) : openStop.status === STATUSES.CANCELLED ? (
+      ) : pickup.status === STATUSES.CANCELLED ? (
         <Flex direction="column" align="center" w="100%" py="8">
           <Heading as="h4" size="md" color="element.primary" mb="2">
             This pickup has been cancelled.

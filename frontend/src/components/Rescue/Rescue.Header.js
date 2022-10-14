@@ -16,6 +16,15 @@ export function RescueHeader() {
         <Avatar src={rescue?.handler?.icon} name={rescue?.handler?.name} />
         <Box w="4" />
         <Flex direction="column">
+          <Text
+            color="element.tertiary"
+            fontSize="xs"
+            textTransform="uppercase"
+            fontWeight="700"
+            mt="1"
+          >
+            {rescue.type.replace('-', ' ')}
+          </Text>
           <Heading as="h4" size="md" mb="4px" color="element.primary">
             {rescue?.handler?.name || 'Available'}
           </Heading>

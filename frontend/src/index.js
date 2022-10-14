@@ -5,7 +5,7 @@ import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
 import {
   CreateOrganization,
-  CreateRescue,
+  ScheduleRescue,
   EditRescue,
   Organization,
   CreateLocation,
@@ -31,6 +31,7 @@ import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.css'
+import { LogRescue } from 'components/LogRescue/LogRescue'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -112,16 +113,30 @@ function RescueAppRoutes() {
                 }
               />
               <Route
-                path="/create-rescue"
+                path="/schedule-rescue"
                 element={
                   <Page
-                    defaultTitle="Create Rescue"
+                    defaultTitle="Schedule Rescue"
                     pullToRefresh={false}
                     defaultBreadcrumbs={[
                       { label: 'Rescues', link: '/rescues' },
-                      { label: 'Create', link: '/create-rescue' },
+                      { label: 'Schedule', link: 'schedule-rescue' },
                     ]}
-                    Content={CreateRescue}
+                    Content={ScheduleRescue}
+                  />
+                }
+              />
+              <Route
+                path="/log-rescue"
+                element={
+                  <Page
+                    defaultTitle="Log Rescue"
+                    pullToRefresh={false}
+                    defaultBreadcrumbs={[
+                      { label: 'Rescues', link: '/rescues' },
+                      { label: 'Log', link: 'log-rescue' },
+                    ]}
+                    Content={LogRescue}
                   />
                 }
               />

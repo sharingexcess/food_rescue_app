@@ -85,7 +85,6 @@ async function updateRescue(id, payload) {
     handler_id: payload.handler_id,
     google_calendar_id: payload.google_calendar_id,
     stop_ids: payload.stop_ids,
-    is_direct_link: payload.is_direct_link,
     status: payload.status,
     notes: payload.notes,
     timestamp_logged_start: payload.timestamp_logged_start

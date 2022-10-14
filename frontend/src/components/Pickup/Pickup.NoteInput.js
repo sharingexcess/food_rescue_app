@@ -6,12 +6,12 @@ import {
   InputLeftElement,
   Text,
 } from '@chakra-ui/react'
-import { useRescueContext, usePickupContext } from 'components'
+import { usePickupContext } from 'components'
 import { STATUSES } from 'helpers'
 
 export function NoteInput() {
-  const { openStop } = useRescueContext()
-  const { notes, session_storage_key, entryRows, setNotes } = usePickupContext()
+  const { pickup, notes, session_storage_key, entryRows, setNotes } =
+    usePickupContext()
 
   function handleNotesChange(value) {
     setNotes(value)
@@ -25,11 +25,11 @@ export function NoteInput() {
       )
   }
 
-  return openStop.status === STATUSES.CANCELLED ? (
+  return pickup.status === STATUSES.CANCELLED ? (
     <Flex align="center" my="4">
       <EditIcon mr="4" color="element.tertiary" />
       <Text fontSize="sm" color="element.secondary">
-        {openStop.notes}
+        {pickup.notes}
       </Text>
     </Flex>
   ) : (
@@ -42,7 +42,7 @@ export function NoteInput() {
         color="element.secondary"
         value={notes || ''}
         placeholder="Add notes to this pickup..."
-        readOnly={openStop.status === STATUSES.CANCELLED}
+        readOnly={pickup.status === STATUSES.CANCELLED}
         onChange={e => handleNotesChange(e.target.value)}
         mb="4"
       />

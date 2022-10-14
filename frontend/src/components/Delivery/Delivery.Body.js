@@ -52,6 +52,7 @@ export function Body() {
   // prevent editing the last delivery of completed rescues
   // this could leave a rescue in an invalid state
   const disabled =
+    rescue &&
     rescue.status === STATUSES.COMPLETED &&
     rescue.stop_ids.findIndex(i => i === delivery.id) ===
       rescue.stop_ids.length - 1

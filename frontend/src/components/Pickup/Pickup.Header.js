@@ -10,7 +10,7 @@ import {
 import { useAuth } from 'hooks'
 
 export function PickupHeader() {
-  const { openStop, refresh, setOpenStop } = useRescueContext()
+  const { rescue, refresh, setOpenStop } = useRescueContext()
   const { pickup } = usePickupContext()
   const { user } = useAuth()
 
@@ -20,7 +20,7 @@ export function PickupHeader() {
     )
     if (reason) {
       await SE_API.post(
-        `/rescues/${openStop.id}/pickup/${pickup.id}/cancel`,
+        `/rescues/${rescue.id}/pickup/${pickup.id}/cancel`,
         {
           status: STATUSES.CANCELLED,
           notes: 'Cancelled - ' + reason,
@@ -115,12 +115,12 @@ export function PickupHeader() {
           </Button>
         </Link>
 
-        {openStop.status !== STATUSES.CANCELLED && (
+        {pickup.status !== STATUSES.CANCELLED && (
           <Button
             size="sm"
             fontSize="xs"
             variant="secondary"
-            disabled={openStop.status === STATUSES.COMPLETED}
+            disabled={pickup.status === STATUSES.COMPLETED}
             color="yellow.primary"
             bg="yellow.secondary"
             onClick={handleCancel}
