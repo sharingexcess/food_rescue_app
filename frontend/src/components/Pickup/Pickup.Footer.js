@@ -1,8 +1,7 @@
 import { Button, Flex } from '@chakra-ui/react'
 import { useRescueContext, usePickupContext } from 'components'
-import { createTimestamp, FOOD_CATEGORIES, SE_API, STATUSES } from 'helpers'
+import { STATUSES } from 'helpers'
 import { useAuth } from 'hooks'
-import { useState } from 'react'
 import { NoteInput } from './Pickup.NoteInput'
 
 export function PickupFooter() {
