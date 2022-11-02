@@ -1,7 +1,7 @@
 import { Button, Select, Text, Input, Flex, Heading } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { formatTimestamp, SE_API } from 'helpers'
+import { formatTimestamp, SE_API, STATUSES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
@@ -86,7 +86,24 @@ export function EditDonation({ isOpen, handleClose }) {
 }
 
 function EditDonationHeader() {
-  return <Heading>Edit Donation</Heading>
+  const { cancelDonation, donation } = useWholesaleRescueContext()
+
+  return (
+    <>
+      <Heading>Edit Donation</Heading>
+      {donation.status !== STATUSES.CANCELLED && (
+        <Button
+          onClick={cancelDonation}
+          size="xs"
+          bg="yellow.secondary"
+          color="yellow.primary"
+          mt="2"
+        >
+          Cancel Donation
+        </Button>
+      )}
+    </>
+  )
 }
 
 function EditDonationBody({ formData, setFormData, donors }) {
@@ -191,11 +208,16 @@ function EditDonationFooter({
   handleEditDonation,
   isLoading,
 }) {
+  const { donation } = useWholesaleRescueContext()
   return (
     <Button
       size="lg"
       w="100%"
-      disabled={!formData.organization || totalWeight < 0}
+      disabled={
+        !formData.organization ||
+        totalWeight < 0 ||
+        donation.status === STATUSES.CANCELLED
+      }
       onClick={handleEditDonation}
       isLoading={isLoading}
       loadingText="Updating donation..."

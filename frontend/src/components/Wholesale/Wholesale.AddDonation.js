@@ -16,7 +16,6 @@ export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
     notes: '',
     pallet: null,
   })
-  console.log(formData.date)
   const [isLoading, setIsLoading] = useState()
   const { data: donors } = useApi(
     '/organizations',
@@ -77,8 +76,10 @@ function AddDonationBody({ formData, setFormData, donors }) {
 
   function handleDonorSearch(value) {
     return donors
-      .filter(i => i.locations?.length)
-      .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
+      ? donors
+          .filter(i => i.locations?.length)
+          .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
+      : []
   }
 
   function updateWeight(e) {

@@ -7,8 +7,7 @@ import { NoteInput } from './Pickup.NoteInput'
 export function PickupFooter() {
   const { user, hasAdminPermission } = useAuth()
   const { rescue } = useRescueContext()
-  const { pickup, isChanged, isSubmitting, handleSubmit, total } =
-    usePickupContext()
+  const { pickup, isSubmitting, handleSubmit, total } = usePickupContext()
 
   if (!pickup) return null
   return (
@@ -18,9 +17,7 @@ export function PickupFooter() {
         size="lg"
         w="100%"
         disabled={
-          total < 1 ||
           isSubmitting ||
-          !isChanged ||
           !(rescue?.handler_id === user.id || hasAdminPermission)
         }
         onClick={handleSubmit}

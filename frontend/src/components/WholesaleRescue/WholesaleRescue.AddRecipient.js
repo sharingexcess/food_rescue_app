@@ -123,8 +123,10 @@ function AddRecipientBody({
 
   function handleRecipientSearch(value) {
     return recipients
-      .filter(i => i.locations?.length)
-      .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
+      ? recipients
+          .filter(i => i.locations?.length)
+          .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
+      : []
   }
 
   function updateWeight(e) {

@@ -123,7 +123,7 @@ export function AddBackupDelivery() {
             )
           }
         >
-          {organization.locations.map(i => (
+          {organization.locations?.map(i => (
             <option value={i.id} key={i.id}>
               {i.nickname ? `${i.nickname} (${i.address1})` : i.address1}
             </option>

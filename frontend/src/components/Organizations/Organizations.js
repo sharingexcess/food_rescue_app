@@ -10,6 +10,7 @@ import {
   InputLeftElement,
   Select,
   Skeleton,
+  Tag,
   Text,
 } from '@chakra-ui/react'
 import { PageTitle } from 'components/PageTitle/PageTitle'
@@ -35,6 +36,20 @@ export function Organizations() {
     setTag(e.target.value)
   }
 
+  const filteredOrgs = organizations
+    ? organizations
+        .filter(i => !i.is_deleted)
+        .filter(i => (type ? i.type === type : true))
+        .filter(i => (subtype ? i.subtype === subtype : true))
+        .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))
+    : []
+
+  const filteredOrgCount = filteredOrgs.length
+  const filteredOrgLocationCount = filteredOrgs.reduce(
+    (total, current) =>
+      total + (current.locations.filter(i => !i.is_deleted).length || 0),
+    0
+  )
   return (
     <>
       <Flex justify="space-between">
@@ -118,17 +133,18 @@ export function Organizations() {
         </Select>
       </Flex>
       {organizations ? (
-        organizations
-          .filter(i => !i.is_deleted)
-          .filter(i => (type ? i.type === type : true))
-          .filter(i => (subtype ? i.subtype === subtype : true))
-          .filter(i => i.name.toLowerCase().includes(searchValue.toLowerCase()))
-          .map((org, i) => (
+        <>
+          <Text mb="4" color="element.secondary">
+            {filteredOrgCount} organizations, {filteredOrgLocationCount}{' '}
+            locations
+          </Text>
+          {filteredOrgs.map((org, i) => (
             <Box key={i}>
               <OrganizationCard organization={org} />
               {i !== organizations.length - 1 && <Divider />}
             </Box>
-          ))
+          ))}
+        </>
       ) : (
         <>
           <Skeleton h="16" borderRadius="md" w="100%" my="3" />
@@ -165,6 +181,22 @@ function OrganizationCard({ organization }) {
               ' '
             )} - ${organization?.subtype.replace('_', ' ')}`}
           </Text>
+          <Flex mt="2" gap="1" wrap="wrap">
+            {organization.locations
+              .filter(i => !i.is_deleted)
+              .map(i => (
+                <Tag
+                  key={i.id}
+                  size="sm"
+                  bg="blue.secondary"
+                  color="blue.primary"
+                  borderRadius="xl"
+                  flexShrink={0}
+                >
+                  {i.nickname || i.address1}
+                </Tag>
+              ))}
+          </Flex>
         </Flex>
       </Flex>
     </Link>
