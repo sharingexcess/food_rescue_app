@@ -16,7 +16,6 @@ export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
     notes: '',
     pallet: null,
   })
-  console.log(formData.date)
   const [isLoading, setIsLoading] = useState()
   const { data: donors } = useApi(
     '/organizations',

@@ -11,7 +11,7 @@ import { PageTitle, FooterButton } from 'components'
 import { formatLargeNumber, SE_API, STATUSES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { EditDonation } from './Wholesale.EditDonation'
 import { AddRecipient } from './WholesaleRescue.AddRecipient'
 import { EditRecipient } from './WholesaleRescue.EditRecipient'
@@ -30,6 +30,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
   const [addRecipient, setAddRecipient] = useState(false)
   const [editRecipient, setEditRecipient] = useState()
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const donation = useMemo(() => rescue?.stops[0], [rescue])
   const recipients = useMemo(() => rescue?.stops.slice(1), [rescue])
@@ -67,16 +68,28 @@ export function WholesaleRescue({ setBreadcrumbs }) {
     }
   }, [remainingWeight, rescue])
 
+  async function cancelDonation() {
+    console.log('test cancel')
+    const notes = window.prompt('Why are you cancelling this donation?')
+    if (notes) {
+      await SE_API.post(`/rescues/${id}/cancel`, { notes }, user.accessToken)
+      navigate('/wholesale')
+    } else window.alert('This donation was not cancelled.')
+  }
+
   if (!rescue) return <LoadingDonation />
 
   return (
     <WholesaleRescueContext.Provider
-      value={{ rescue, donation: rescue.stops[0], refresh, editRecipient }}
+      value={{
+        rescue,
+        donation: rescue.stops[0],
+        refresh,
+        editRecipient,
+        cancelDonation,
+      }}
     >
-      <PageTitle>
-        {rescue.status === STATUSES.COMPLETED ? 'Completed ' : 'Active '}
-        Donation
-      </PageTitle>
+      <PageTitle>{rescue.status} Donation</PageTitle>
       <Box pb="16">
         <Flex my="8" justify="space-between">
           <Box>

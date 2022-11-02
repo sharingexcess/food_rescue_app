@@ -58,14 +58,11 @@ export function Wholesale() {
     return total
   })
 
-  console.log(totalPounds, totalDonated)
-
   useEffect(() => {
     date && window.history.replaceState(null, '', `/wholesale?date=${date}`)
   }, [date])
 
   function handleChangeDate(event) {
-    console.log(event.target.value)
     const dateValue = event.target.value
       ? formatTimestamp(event.target.value, 'YYYY-MM-DD')
       : formatTimestamp(new Date(), 'YYYY-MM-DD')
@@ -101,7 +98,9 @@ export function Wholesale() {
         </InputGroup>
       </Flex>
       {rescues ? (
-        rescues.length ? (
+        rescues.filter(i =>
+          [STATUSES.ACTIVE, STATUSES.COMPLETED].includes(i.status)
+        ).length ? (
           rescues
             .filter(i =>
               [STATUSES.ACTIVE, STATUSES.COMPLETED].includes(i.status)
