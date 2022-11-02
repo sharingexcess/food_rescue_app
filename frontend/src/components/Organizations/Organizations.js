@@ -11,12 +11,11 @@ import {
   Select,
   Skeleton,
   Tag,
-  TagLeftIcon,
   Text,
 } from '@chakra-ui/react'
 import { PageTitle } from 'components/PageTitle/PageTitle'
 import { DONOR_TYPES, ORG_TYPE_ICONS, RECIPIENT_TYPES } from 'helpers'
-import { useApi, useAuth, useIsMobile } from 'hooks'
+import { useApi, useAuth } from 'hooks'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
