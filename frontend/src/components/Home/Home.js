@@ -13,6 +13,7 @@ export function Home() {
     useMemo(
       () => ({
         status: 'completed',
+        type: 'delivery',
         handler_id: user.id,
         date_range_start: moment().subtract(1, 'year').format('YYYY-MM-DD'),
         date_range_finish: moment().format('YYYY-MM-DD'),
