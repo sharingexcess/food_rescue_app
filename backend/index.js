@@ -3,7 +3,6 @@ const {
   api,
   backup_data_to_storage,
   cache_retool_data,
-  rescueOnWrite,
 } = require('./functions')
 
 exports.api = functions
@@ -30,8 +29,3 @@ exports.cache_retool_data = functions
   .pubsub.schedule('01 0 * * *') // run every day at 12:01am (00:01)
   .timeZone('America/New_York')
   .onRun(cache_retool_data)
-
-// Database Trigger version to calculate distance ***** UNTESTED *****
-// exports.rescueOnWrite = functions.firestore
-//   .document('/rescues/{rescue_id}')
-//   .onWrite(event => rescueOnWrite(event))
