@@ -12,15 +12,16 @@ async function getCachedDataReportsEndpoint(request, response) {
     try {
       console.log('INVOKING ENDPOINT: getCachedData()')
 
-      const requestIsAuthenticated = await authenticateRequest(
-        request.get('accessToken'),
-        () => false // only approve requests from retool
-      )
+      // MAKING THIS ENDPOINT TEMPORARILY PUBLIC
+      // const requestIsAuthenticated = await authenticateRequest(
+      //   request.get('accessToken'),
+      //   () => false // only approve requests from retool
+      // )
 
-      if (!requestIsAuthenticated) {
-        rejectUnauthorizedRequest(response)
-        return
-      }
+      // if (!requestIsAuthenticated) {
+      //   rejectUnauthorizedRequest(response)
+      //   return
+      // }
 
       const date = moment(new Date())
         .tz('America/New_York')
