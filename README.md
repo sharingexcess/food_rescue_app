@@ -40,6 +40,20 @@ Reach out to tech@sharingexcess.com to get Slack access.
 
 After cloning the repo, you should simply need to run `yarn install:all` to install dependencies for both the `frontend` React app and `backend` Node/Express app. Then run `yarn dev` or `yarn prod` to run both apps simultaneously using [concurrently](https://www.npmjs.com/package/concurrently) against the Firebase backend environment of your choice. Don't be silly and use `prod` if you don't have a _really_ good reason and know what you're doing, pls.
 
+## Authentication 🥸
+
+We use [Firebase Auth](https://firebase.google.com/docs/auth), and currently only support Google OAuth as a sign-in method. This is a conscious choice, which means we don't have to handle account merging, and also are protected from phishing, at least so far as someone can mass create Google accounts 😅
+
+When a user signs in for the first time, they will be guided through a brief onboarding process, which results in them having a `public_profile` record created. The `Auth` context inside the React app ensures that there's an active Auth user, and a `public_profile` with a matching UID in order to view the inside of the app.
+
+There's a second collection of profile records `private_profiles` which contains sensitive user data such as Driver's License and insurance information. This data is not accessible by any API endpoint, but is checked alongside the public profile, and returned as a boolean whether it is complete or not. A completed `private_profile` is required for some actions within the app, such as claiming a rescue that requires driving.
+
+## Permissions 🦸
+
+Currently, we support 3 permission levels, `standard`, `admin`, and `null`. A user's permission is stored as a property of their `public_profile`, and can only be updated by another user with `admin` level permission. User's permission can be updated from inside the app at `people/[user_id]`.
+
+`standard` permission allows a user to claim, start, update and complete rescues assigned to them. They also have `read` level access throughout the majority of the app, including on the People and Organization pages. `admin` permission is required for the majority of `create`, `update`, or `delete` actions, including creating and editing rescues, organizations, and locations.
+
 ## Deployment (CI/CD) ⚙️
 
 All of the app's hosting and deployment processes are run through Firebase and Github Actions. We continuously deploy to the development environment any time a Pull Request is merged into the `main` branch. Production deploys must be invoked manually, and require approval from a lead maintainer before they run.
