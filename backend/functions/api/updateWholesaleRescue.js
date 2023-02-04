@@ -48,7 +48,7 @@ async function updateWholesaleRescueEndpoint(request, response, next) {
   })
 }
 
-async function updateWholesaleRescue(id, payload, next) {
+async function updateWholesaleRescue(id, payload) {
   const now = new Date()
 
   const rescue = await getRescue(id)
@@ -97,13 +97,9 @@ async function updateWholesaleRescue(id, payload, next) {
       impact_data_other: 0,
       impact_data_total_weight: payload.weight,
     }
-
-    for (const key in impact_data) {
-      if (key !== 'impact_data_total_weight' && impact_data[key]) {
-        // figure out which food category was used, and updated that weight accordingly
-        impact_data[key] = payload.weight
-      }
-    }
+    // figure out which food category was used, and update that weight accordingly
+    console.log('\n\n\n\n', payload.food_category, payload.weight, '\n\n\n\n')
+    impact_data[payload.food_category] = payload.weight
     updated_donation = { ...updated_donation, ...impact_data }
   }
 

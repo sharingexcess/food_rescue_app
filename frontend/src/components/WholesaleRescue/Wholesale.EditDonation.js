@@ -26,11 +26,21 @@ export function EditDonation({ isOpen, handleClose }) {
 
   useEffect(() => {
     if (rescue && donation && donors) {
-      console.log(donation)
+      // find which food category was used
+      let food_category = null
+      for (const key in donation) {
+        if (!key.includes('impact_data') || key === 'impact_data_total_weight')
+          continue
+        if (donation[key] > 0) {
+          food_category = key
+          break
+        }
+      }
       setFormData({
         organization: donors.find(i => i.id === donation.organization_id),
         location: donation.location,
         weight: donation.impact_data_total_weight,
+        food_category,
         notes: donation.notes,
         date: formatTimestamp(
           donation.timestamp_scheduled_start,
@@ -47,6 +57,7 @@ export function EditDonation({ isOpen, handleClose }) {
     const payload = {
       notes: formData.notes,
       weight: totalWeight,
+      food_category: formData.food_category,
       organization_id: formData.organization.id,
       location_id: formData.location.id,
       date: formData.date,
@@ -189,6 +200,22 @@ function EditDonationBody({ formData, setFormData, donors }) {
         onBlur={updateParentWeight}
         placeholder="0 lbs."
       />
+      <Text mt="6">Food Category</Text>
+      <Select
+        value={formData.food_category}
+        onChange={e =>
+          setFormData({ ...formData, food_category: e.target.value })
+        }
+      >
+        <option value="impact_data_produce">Produce</option>
+        <option value="impact_data_dairy">Dairy</option>
+        <option value="impact_data_bakery">Bakery</option>
+        <option value="impact_data_meat_fish">Meat/Fish</option>
+        <option value="impact_data_non_perishable">Non-perishable</option>
+        <option value="impact_data_prepared_frozen">Prepared/Frozen</option>
+        <option value="impact_data_mixed">Mixed</option>
+        <option value="impact_data_other">Other</option>
+      </Select>
       <Text mt="6">Notes</Text>
       <Input
         type="text"
