@@ -4,6 +4,8 @@ Welcome to the Food Rescue App! This project is managed by **[Sharing Excess](ht
 
 We use this app to coordinate, track and measure food rescue work across the country, picking up surplus food from food businesses and redistributing it to local nonprofits and mutual aid groups. To read more on SE, feel free to visit our [about page](https://sharingexcess.com/about).
 
+The app is hosted at app.sharingexcess.com, with a testing environment also live at app.dev.sharingexcess.com.
+
 ## Tech Stack 🤖
 
 The FRA includes two apps within the repo.
