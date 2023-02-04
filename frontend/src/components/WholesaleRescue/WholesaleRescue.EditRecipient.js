@@ -152,7 +152,7 @@ function EditRecipientBody({
   }
 
   function updateWeight(e) {
-    setWeight(Math.max(parseInt(e.target.value), 0) || '')
+    setWeight(Math.max(parseFloat(e.target.value), 0) || '')
   }
 
   async function handleChangeSlider(value) {
@@ -167,10 +167,12 @@ function EditRecipientBody({
 
   async function updateFormDataWeight() {
     const updatedWeight = Math.min(
-      Math.max(parseInt(weight) || 0, 0),
+      Math.max(parseFloat(weight) || 0, 0),
       currentLoad
     )
-    const updatedPercent = Math.round((updatedWeight / donationTotal) * 100)
+    const updatedPercent = parseFloat(
+      ((updatedWeight / donationTotal) * 100).toFixed(3)
+    )
     setFormData({
       ...formData,
       weight: updatedWeight,
@@ -244,7 +246,7 @@ function EditRecipientBody({
         mx="auto"
       >
         <Text w="48px" fontWeight="bold">
-          {percent.toFixed(0)}%
+          {percent}%
         </Text>
         <RangeSlider
           colorScheme="green"

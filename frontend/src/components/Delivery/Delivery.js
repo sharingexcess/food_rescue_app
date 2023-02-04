@@ -39,7 +39,9 @@ export function Delivery({
   useEffect(() => {
     if (delivery && currentLoad) {
       setNotes(delivery.notes)
-      setPercentTotalDropped(parseInt(delivery.percent_of_total_dropped) || 100)
+      setPercentTotalDropped(
+        parseFloat(delivery.percent_of_total_dropped) || 100
+      )
       setPoundsDropped(
         parseInt(currentLoad * (delivery.percent_of_total_dropped / 100))
       )

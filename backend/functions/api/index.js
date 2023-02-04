@@ -108,12 +108,18 @@ api.post('/wholesale/rescue/:rescue_id/updateRecipient/:id', (req, res, next) =>
   loadEndpoint('updateWholesaleRecipient', req, res, next)
 )
 
-// THIS IS A PROD RESCUE UPDATE SCRIPT, LEAVING IN PLACE FOR NOW BUT DO NOT USE
-// api.get('/updateRescueType', (req, res, next) =>
-//   loadEndpoint('updateRescueType', req, res, next)
+// THIS IS A PROD RESCUE UPDATE SCRIPT, LEAVING IN PLACE FOR NOW
+// BUT READ THE DOCUMENTATION INSIDE THE FILE BEFORE RUNNING THIS
+// api.get('/dangerous_manual_db_update_script', (req, res, next) =>
+//   loadEndpoint('_dangerousManualDbUpdateScript', req, res, next)
 // )
 
-// we do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
+// We do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
+// Reminder: all imported endpoints must have a file name matching the "name" field, and export a function
+// with the name {name}Endpoint. We do this so that we can handle all of the networking logic in the `Endpoint`
+// function, and contain all of the logic in a separate function that shares the name of the file.
+// If other endpoints therefore want to share that logic (ie the getRescue endpoint needing to use getStop),
+// they can import the logic directly without the networking/HTTP logic in the way.
 function loadEndpoint(name, request, response, next) {
   const module = require(`./${name}`)
   const endpoint = module[`${name}Endpoint`]
