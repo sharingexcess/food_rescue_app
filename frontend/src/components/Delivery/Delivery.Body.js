@@ -34,13 +34,13 @@ export function Body() {
 
   async function handlePoundsInputChange() {
     const updatedPoundsDropped = Math.min(
-      Math.max(parseInt(tempInputValue) || 0, 0),
+      Math.max(parseFloat(tempInputValue) || 0, 0),
       currentLoad
     )
     setTempInputValue(updatedPoundsDropped)
     setPoundsDropped(updatedPoundsDropped)
     setPercentTotalDropped(
-      Math.round((updatedPoundsDropped / currentLoad) * 100) || 0
+      parseFloat(((updatedPoundsDropped / currentLoad) * 100).toFixed(3)) || 0
     )
   }
 
