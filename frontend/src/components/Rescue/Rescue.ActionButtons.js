@@ -112,21 +112,22 @@ export function RescueActionButtons() {
 
   return (
     <Flex justify="space-between" mb="4" gap="2">
-      {rescue.status === STATUSES.SCHEDULED && rescue.handler_id === user.id && (
-        <Button
-          variant="secondary"
-          size="sm"
-          fontSize="xs"
-          flexGrow="1"
-          leftIcon={<ArrowRightIcon />}
-          bg="blue.secondary"
-          color="blue.primary"
-          onClick={handleStartRescue}
-          isLoading={isStarting}
-        >
-          Start
-        </Button>
-      )}
+      {rescue.status === STATUSES.SCHEDULED &&
+        (hasAdminPermission || rescue.handler_id === user.id) && (
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<ArrowRightIcon />}
+            bg="blue.secondary"
+            color="blue.primary"
+            onClick={handleStartRescue}
+            isLoading={isStarting}
+          >
+            Start
+          </Button>
+        )}
       {rescue.status !== STATUSES.CANCELLED && !rescue.handler_id && (
         <Button
           variant="secondary"
