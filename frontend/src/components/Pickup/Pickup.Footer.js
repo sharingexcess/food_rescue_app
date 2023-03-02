@@ -9,8 +9,6 @@ export function PickupFooter() {
   const { rescue } = useRescueContext()
   const { pickup, isSubmitting, handleSubmit, total } = usePickupContext()
 
-  console.log(isSubmitting, rescue?.handler_id, user.id, hasAdminPermission)
-
   if (!pickup) return null
   return (
     <Flex direction="column" w="100%">
@@ -19,8 +17,11 @@ export function PickupFooter() {
         size="lg"
         w="100%"
         disabled={
-          rescue.status !== STATUSES.ACTIVE ||
+          // disable button if the network request is loading
           isSubmitting ||
+          // disable button if the rescue is not active or complete
+          [STATUSES.SCHEDULED, STATUSES.CANCELLED].includes(rescue.status) ||
+          // disable button if the user is not the handler, or an admin
           !(rescue?.handler_id === user.id || hasAdminPermission)
         }
         onClick={handleSubmit}
