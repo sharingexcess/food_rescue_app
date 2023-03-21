@@ -20,7 +20,7 @@ export function PickupFooter() {
           // disable button if the network request is loading
           isSubmitting ||
           // disable button if the rescue is not active or complete
-          [STATUSES.SCHEDULED, STATUSES.CANCELLED].includes(rescue.status) ||
+          [STATUSES.SCHEDULED, STATUSES.CANCELLED].includes(rescue?.status) ||
           // disable button if the user is not the handler, or an admin
           !(rescue?.handler_id === user.id || hasAdminPermission)
         }
