@@ -20,6 +20,7 @@ async function stopsEndpoint(request, response, next) {
       organization_id,
       limit,
       start_after,
+      rescue_type,
       organization_tag,
     } = request.query
 
@@ -41,6 +42,7 @@ async function stopsEndpoint(request, response, next) {
       handler_id,
       organization_id,
       start_after,
+      rescue_type,
       limit,
       organization_tag
     )
@@ -59,6 +61,7 @@ async function getStops(
   handler_id,
   organization_id,
   start_after,
+  rescue_type,
   limit,
   organization_tag
 ) {
@@ -111,6 +114,10 @@ async function getStops(
 
   if (organization_id) {
     stops_query = stops_query.where('organization_id', '==', organization_id)
+  }
+
+  if (rescue_type) {
+    stops_query = stops_query.where('rescue_type', '==', rescue_type)
   }
 
   if (limit) {
