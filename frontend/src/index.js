@@ -4,34 +4,33 @@ import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
 import {
-  CreateOrganization,
-  ScheduleRescue,
-  EditRescue,
-  Organization,
-  CreateLocation,
-  EditLocation,
-  Organizations,
-  Profile,
-  Rescue,
-  Rescues,
-  User,
-  Users,
-  Home,
-  Wholesale,
-  WholesaleRescue,
-  FoodSafety,
+  // CreateOrganization,
+  // ScheduleRescue,
+  // EditRescue,
+  // Organization,
+  // CreateLocation,
+  // EditLocation,
+  // Organizations,
+  // Profile,
+  // Rescue,
+  // Rescues,
+  // User,
+  // Users,
+  // Home,
+  // Wholesale,
+  // WholesaleRescue,
+  // FoodSafety,
+  //LogRescue,
+  // Privacy,
+  // Legal,
+  // Help,
   Page,
-  Analytics,
   Error,
-  Privacy,
-  Legal,
-  Help,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.css'
-import { LogRescue } from 'components/LogRescue/LogRescue'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
