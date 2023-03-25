@@ -2,6 +2,7 @@ const admin = require('firebase-admin')
 const moment = require('moment-timezone')
 const fetch = require('node-fetch')
 const { customAlphabet } = require('nanoid')
+const { WEIGHT_CATEGORIES } = require('./constants')
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 
 exports.app = admin.initializeApp()
@@ -240,4 +241,59 @@ exports.generateUniqueId = async collection => {
 exports.isExistingId = async (id, collection) => {
   const snapshot = await exports.db.collection(collection).doc(id).get()
   return snapshot.exists
+}
+
+exports.isValidIsoDateStringInUTC = str => {
+  if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false
+  const d = new Date(str)
+  return d instanceof Date && !isNaN(d) && d.toISOString() === str // valid date
+}
+
+exports.isValidCategorizedWeightObject = (categorized_weight, total_weight) => {
+  let is_valid = true
+  let sum = 0
+  for (const key of WEIGHT_CATEGORIES) {
+    const value = categorized_weight[key]
+    if (!Number.isInteger(value) || value < 0) {
+      console.log(
+        `isValidCategorizedWeightObject: ${key} value is invalid: ${value}. Rejecting.`
+      )
+      is_valid = false
+      break
+    } else sum += value
+  }
+  // we allow for a maximum rounding error of 1lb. per category, up to 8lbs. total
+  if (Math.abs(sum - total_weight) > 8) {
+    console.log(
+      `isValidCategorizedWeightObject: categorized_weight sum (${sum}) does not equal total_weight (${total_weight}). Rejecting.`
+    )
+    is_valid = false
+  }
+  return is_valid
+}
+
+exports.isExistingDbRecord = async (id, collection) => {
+  try {
+    if (!id) {
+      console.log('isExistingDbRecord: No id provided. Rejecting.')
+      return false
+    }
+
+    const record = await exports.db
+      .collection(collection)
+      .doc(id)
+      .get()
+      .then(doc => doc.data())
+
+    if (!record) {
+      console.log(
+        `isExistingDbRecord: no record found matching in ${collection} with id: ${id}. Rejecting.`
+      )
+      return false
+    }
+    return true
+  } catch (e) {
+    console.error('Error in isExistingDbRecord:', e)
+    return false
+  }
 }

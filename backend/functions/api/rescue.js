@@ -49,7 +49,7 @@ async function rescueEndpoint(request, response, next) {
   })
 }
 
-async function getRescue(id) {
+async function getRescue(id, options = {}) {
   const start = performance.now()
   // load base rescue object from DB
   const rescue = await db
@@ -59,6 +59,12 @@ async function getRescue(id) {
     .then(doc => formatDocumentTimestamps(doc.data()))
 
   if (!rescue) return null
+
+  // if only the rescue object is needed with no "joined"/nested data, allow return early
+  if (options.shallow) {
+    console.log('returning shallow rescue:', rescue)
+    return rescue
+  }
 
   console.log('Got Rescue:', rescue)
 

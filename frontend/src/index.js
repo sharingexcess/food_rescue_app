@@ -21,7 +21,7 @@ import {
   WholesaleRescue,
   FoodSafety,
   Page,
-  Analytics,
+  // Analytics,
   Error,
   Privacy,
   Legal,
@@ -298,7 +298,7 @@ function RescueAppRoutes() {
                   />
                 }
               />
-              <Route
+              {/* <Route
                 path="/analytics"
                 element={
                   <Page
@@ -310,7 +310,7 @@ function RescueAppRoutes() {
                     Content={Analytics}
                   />
                 }
-              />
+              /> */}
               <Route
                 path="/privacy"
                 element={

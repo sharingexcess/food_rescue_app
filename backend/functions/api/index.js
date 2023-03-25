@@ -1,6 +1,15 @@
 const express = require('express')
 const cors = require('cors')
 const Sentry = require('@sentry/node')
+const {
+  getTransferEndpoint,
+  updateTransferEndpoint,
+  createTransferEndpoint,
+  listTransfersEndpoint,
+} = require('./transfers/transferEndpoints')
+const {
+  migrateStopsToTransfersEndpoint,
+} = require('./transfers/migrateStopsToTransfers')
 
 // initialize express server
 const api = express()
@@ -25,6 +34,36 @@ api.get('/rescues', (req, res, next) => loadEndpoint('rescues', req, res, next))
 api.get('/rescues/:id', (req, res, next) =>
   loadEndpoint('rescue', req, res, next)
 )
+
+// TRANSFERS
+
+api.get('/transfers/create', (req, res, next) =>
+  updateTransferEndpoint(req, res, next)
+)
+api.get('/transfers/list', (req, res, next) =>
+  listTransfersEndpoint(req, res, next)
+)
+api.get('/transfers/get/:id', (req, res, next) =>
+  getTransferEndpoint(req, res, next)
+)
+api.get('/transfers/update/:id', (req, res, next) =>
+  createTransferEndpoint(req, res, next)
+)
+api.get('/transfers/cancel/:id', (req, res, next) =>
+  createTransferEndpoint(req, res, next)
+)
+// TEMP MIGRATE SCRIPT
+api.get('/transfers/TEMP_migrate', (req, res, next) =>
+  migrateStopsToTransfersEndpoint(req, res, next)
+)
+
+//
+
+api.get('/stops/:id', (req, res, next) => loadEndpoint('stop', req, res, next))
+api.get('/analytics', (req, res, next) =>
+  loadEndpoint('analytics', req, res, next)
+)
+
 api.get('/stops', (req, res, next) => loadEndpoint('stops', req, res, next))
 api.get('/stops/:id', (req, res, next) => loadEndpoint('stop', req, res, next))
 api.get('/analytics', (req, res, next) =>
@@ -113,6 +152,10 @@ api.post('/wholesale/rescue/:rescue_id/updateRecipient/:id', (req, res, next) =>
 // api.get('/dangerous_manual_db_update_script', (req, res, next) =>
 //   loadEndpoint('_dangerousManualDbUpdateScript', req, res, next)
 // )
+
+api.get('/figureShitOut', (req, res, next) =>
+  loadEndpoint('figureShitOut', req, res, next)
+)
 
 // We do this to dynamically load only the necessary endpoint code and improve cold start/runtime performance
 // Reminder: all imported endpoints must have a file name matching the "name" field, and export a function

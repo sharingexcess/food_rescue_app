@@ -9,6 +9,19 @@ exports.FOOD_CATEGORIES = [
   'impact_data_other',
 ]
 
+// this is an update to the original FOOD_CATEGORIES above
+// to phase out the "impact_data_" prefix
+exports.WEIGHT_CATEGORIES = [
+  'dairy',
+  'bakery',
+  'produce',
+  'meat_fish',
+  'non_perishable',
+  'prepared_frozen',
+  'mixed',
+  'other',
+]
+
 exports.RETAIL_VALUES = {
   impact_data_dairy: 1.28,
   impact_data_bakery: 2.36,
@@ -51,4 +64,13 @@ exports.STATUSES = {
   SCHEDULED: 'scheduled',
   ACTIVE: 'active',
   COMPLETED: 'completed',
+}
+
+exports.COLLECTIONS = {
+  RESCUES: 'rescues',
+  TRANSFERS: 'transfers',
+  PUBLIC_PROFILES: 'public_profiles',
+  PRIVATE_PROFILES: 'private_profiles',
+  ORGANIZATIONS: 'organizations',
+  LOCATIONS: 'locations',
 }
