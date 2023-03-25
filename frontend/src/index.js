@@ -62,7 +62,7 @@ function RescueAppRoutes() {
         <BrowserRouter>
           <Auth>
             <Routes>
-              <Route
+              {/* <Route
                 path="/"
                 element={
                   <Page
@@ -345,11 +345,20 @@ function RescueAppRoutes() {
                     Content={Help}
                   />
                 }
-              />
+              /> */}
               <Route
                 path="*"
                 element={
-                  <Page id="Error" defaultTitle="Uh oh..." Content={Error} />
+                  <Page
+                    id="Error"
+                    defaultTitle="Uh oh..."
+                    Content={() =>
+                      Error({
+                        message:
+                          'The Food Rescue App is currently down for database maintenance. Contact ryan@sharingexcess.com with emergencies!',
+                      })
+                    }
+                  />
                 }
               />
             </Routes>
