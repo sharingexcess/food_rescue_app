@@ -31,22 +31,22 @@ exports.createTransfer = async ({
   const is_valid = await isValidTransferPayload(payload)
 
   if (is_valid) {
-    const id = await generateUniqueId('transfers')
+    const id = await generateUniqueId(COLLECTIONS.TRANSFERS)
     console.log('Generated new id for transfer:', id)
 
     const now = new Date().toISOString()
 
     const transfer = {
-      id, // created server side
-      timestamp_created: now, // created server side
-      timestamp_updated: now, // created server side
+      id, // always created server side
+      timestamp_created: now, // always created server side
+      timestamp_updated: now, // always created server side
       notes: payload.notes || '', // force to be empty string if null,
       ...payload,
     }
 
     console.log('Creating transfer:', transfer)
 
-    await db.collection(COLLECTIONS.TRANSFERS).doc(id).set(transfer)
+    await db.collection(COLLECTIONS.TRANSFERS).doc(id).add(transfer)
 
     return transfer
   } else {

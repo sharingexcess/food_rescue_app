@@ -9,28 +9,15 @@ exports.cancelTransfer = async (id, notes) => {
 
   console.log('Found transfer:', transfer)
 
-  const rescue = await getRescue(transfer.rescue_id, { shallow: true })
-
-  // update the rescue to move the cancelled transfer to the front
-  // NOTE: we DO NOT remove it entirely, no transfers should be without a rescue
-  const updatedStopIds = [
-    transfer.id,
-    ...rescue.stop_ids.filter(id => id !== transfer.id),
-  ]
-
-  await db
-    .collection(COLLECTIONS.RESCUES)
-    .doc(rescue.id)
-    .set(
-      { stop_ids: updatedStopIds, timestamp_updated: new Date() },
-      { merge: true }
-    )
+  const now = new Date().toISOString()
 
   const cancelled_transfer = await updateTransfer({
     ...transfer,
     status: STATUSES.CANCELLED,
     notes: notes,
     total_weight: 0,
+    timestamp_completed: now,
+    timestamp_updated: now,
     // create an empty categorized weight object
     categorized_weight: Object.fromEntries(
       WEIGHT_CATEGORIES.map(key => [key, 0])

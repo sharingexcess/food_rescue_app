@@ -49,14 +49,13 @@ exports.updateTransfer = async ({
     const transfer = {
       id: existing_transfer.id, // use existing data
       timestamp_created: existing_transfer.timestamp_created, // use existing data
-      timestamp_updated: now, // updated server side
-      notes: payload.notes || '', // force to be empty string if null,
+      timestamp_updated: now, // always updated server side
       ...payload,
     }
 
     console.log('Updating transfer:', transfer)
 
-    await db.collection('transfers').doc(id).set(transfer)
+    await db.collection(COLLECTIONS.TRANSFERS).doc(id).set(transfer)
 
     return transfer
   } else {

@@ -9,6 +9,8 @@ exports.api = functions
   .runWith({
     timeoutSeconds: 540,
     memory: '8GB',
+    minInstances: 0,
+    maxInstances: 10,
   })
   .https.onRequest(api)
 

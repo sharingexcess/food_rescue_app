@@ -11,6 +11,7 @@ const {
 const {
   migrateStopsToTransfersEndpoint,
 } = require('./transfers/migrateStopsToTransfers')
+const { duplicateCollectionEndpoint } = require('./duplicateCollection')
 
 // initialize express server
 const api = express()
@@ -56,6 +57,10 @@ api.post('/transfers/cancel/:id', (req, res, next) =>
 // TEMP MIGRATE SCRIPT
 api.get('/transfers/TEMP_migrate', (req, res, next) =>
   migrateStopsToTransfersEndpoint(req, res, next)
+)
+// TEMP DUPLICATE COLLECTION SCRIPT
+api.get('/duplicate_collection', (req, res, next) =>
+  duplicateCollectionEndpoint(req, res, next)
 )
 
 //

@@ -4,6 +4,7 @@ const {
   isValidCategorizedWeightObject,
   isExistingDbRecord,
   COLLECTIONS,
+  TRANSFER_TYPES,
 } = require('../../../helpers')
 
 /*
@@ -33,7 +34,7 @@ Example Valid Payload:
 
 exports.isValidTransferPayload = async payload => {
   // check that payload has a valid transfer type
-  if (!['collection', 'distribution'].includes(payload.type)) {
+  if (!Object.values(TRANSFER_TYPES).includes(payload.type)) {
     console.log(`Detected invalid type, value is: ${payload.type}. Rejecting.`)
     return false
   }
@@ -58,7 +59,7 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
-  // check handler_id separately, is it can be null, but if it's populated,
+  // check handler_id: it can be null, but if it's populated,
   // it needs to match a public profile
 
   if (
@@ -81,15 +82,23 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
-  // check that the timestamp_completed is an ISO string in UTC
+  // check that timestamp_completed is valid if status is cancelled or completed
   if (
-    !payload.timestamp_completed ||
+    [STATUSES.COMPLETED, STATUSES.CANCELLED].includes(payload.status) &&
     !isValidIsoDateStringInUTC(payload.timestamp_completed)
   ) {
     console.log(
-      `Invalid timestamp_completed: ${
+      `Invalid timestamp_completed value: ${
         payload.timestamp_completed
-      }, type is ${typeof payload.timestamp_completed}. Should be timestamp string in ISO format in UTC. Rejecting.`
+      }, type is ${typeof payload.timestamp_completed}. Should be timestamp string in ISO format in UTC, and cannot be null when status is completed or cancelled. Rejecting.`
+    )
+    return false
+  }
+
+  // check that the timestamp_completed is not populated if status is scheduled
+  if (payload.status === STATUSES.SCHEDULED && payload.timestamp_completed) {
+    console.log(
+      `Invalid timestamp_completed value: ${payload.timestamp_completed}, should be null when status === scheduled.`
     )
     return false
   }

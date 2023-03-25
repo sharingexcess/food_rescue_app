@@ -44,6 +44,17 @@ exports.FAIR_MARKET_VALUES = {
   impact_data_other: 1.62,
 }
 
+exports.RESCUE_TYPES = {
+  RETAIL: 'retail',
+  WHOLESALE: 'wholesale',
+  DIRECT_LINK: 'direct_link',
+}
+
+exports.TRANSFER_TYPES = {
+  COLLECTION: 'collection',
+  DISTRIBUTION: 'distribution',
+}
+
 exports.DONOR_SUB_TYPES = ['retail', 'wholesale', 'holding', 'other']
 
 exports.RECIPIENT_SUB_TYPES = [

@@ -5,22 +5,27 @@ const {
   formatDocumentTimestamps,
 } = require('../../../helpers')
 
-exports.listTransfers = async ({
-  type,
-  date_range_start,
-  date_range_end,
-  status,
-  handler_id,
-  organization_id,
-  start_after,
-  limit,
-  organization_tag,
-}) => {
+exports.listTransfers = async (
+  {
+    type,
+    date_range_start,
+    date_range_end,
+    status,
+    rescue_id,
+    handler_id,
+    organization_id,
+    start_after,
+    limit,
+    organization_tag,
+  },
+  options = { shallow: false }
+) => {
   console.log('Running listTransfers with params:', {
     type,
     date_range_start,
     date_range_end,
     status,
+    rescue_id,
     handler_id,
     organization_id,
     start_after,
@@ -61,6 +66,10 @@ exports.listTransfers = async ({
     transfers_query = transfers_query.where('type', '==', type)
   }
 
+  if (rescue_id) {
+    transfers_query = transfers_query.where('rescue_id', '==', rescue_id)
+  }
+
   if (handler_id) {
     transfers_query = transfers_query.where('handler_id', '==', handler_id)
   }
@@ -96,6 +105,13 @@ exports.listTransfers = async ({
   })
 
   console.log('Got transfers:', transfers)
+
+  if (options.shallow) {
+    console.log(
+      'Shallow option flag is true, returning without any additional data fetching.'
+    )
+    return transfers
+  }
 
   // execute query for organization and location for each transfer
 

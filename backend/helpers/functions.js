@@ -2,7 +2,11 @@ const admin = require('firebase-admin')
 const moment = require('moment-timezone')
 const fetch = require('node-fetch')
 const { customAlphabet } = require('nanoid')
-const { WEIGHT_CATEGORIES } = require('./constants')
+const {
+  WEIGHT_CATEGORIES,
+  COLLECTIONS,
+  TRANSFER_TYPES,
+} = require('./constants')
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 
 exports.app = admin.initializeApp()
@@ -249,6 +253,32 @@ exports.isValidIsoDateStringInUTC = str => {
   return d instanceof Date && !isNaN(d) && d.toISOString() === str // valid date
 }
 
+exports.isExistingDbRecord = async (id, collection) => {
+  try {
+    if (!id) {
+      console.log('isExistingDbRecord: No id provided. Rejecting.')
+      return false
+    }
+
+    const record = await exports.db
+      .collection(collection)
+      .doc(id)
+      .get()
+      .then(doc => doc.data())
+
+    if (!record) {
+      console.log(
+        `isExistingDbRecord: no record found matching in ${collection} with id: ${id}. Rejecting.`
+      )
+      return false
+    }
+    return true
+  } catch (e) {
+    console.error('Error in isExistingDbRecord:', e)
+    return false
+  }
+}
+
 exports.isValidCategorizedWeightObject = (categorized_weight, total_weight) => {
   let is_valid = true
   let sum = 0
@@ -272,24 +302,58 @@ exports.isValidCategorizedWeightObject = (categorized_weight, total_weight) => {
   return is_valid
 }
 
-exports.isExistingDbRecord = async (id, collection) => {
+exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
   try {
-    if (!id) {
-      console.log('isExistingDbRecord: No id provided. Rejecting.')
-      return false
+    if (!rescue_id || !transfer_ids) {
+      throw new Error('isValidTransferIdList: Invalid arguments provided.')
     }
 
-    const record = await exports.db
-      .collection(collection)
-      .doc(id)
-      .get()
-      .then(doc => doc.data())
+    for (const transfer_id of transfer_ids) {
+      const transfer = await exports.db
+        .collection(COLLECTIONS.TRANSFERS)
+        .doc(transfer_id)
+        .get()
+        .then(doc => doc.data())
 
-    if (!record) {
-      console.log(
-        `isExistingDbRecord: no record found matching in ${collection} with id: ${id}. Rejecting.`
-      )
-      return false
+      if (!transfer) {
+        console.log(
+          `isValidTransferIdList: no transfer found matching id: ${transfer_id}. Rejecting.`
+        )
+        return false
+      }
+
+      if (transfer.rescue_id !== rescue_id) {
+        console.log(
+          `isValidTransferIdList: transfer: ${transfer_id}
+          rescue_id property does not match provided rescue.
+          Provided value: ${rescue_id},
+          transfer's rescue_id value: ${transfer.rescue_id}.
+          Rejecting.`
+        )
+        return false
+      }
+
+      // first transfer must be a collection
+      if (
+        transfer_id === transfer_ids[0] &&
+        transfer.type !== TRANSFER_TYPES.COLLECTION
+      ) {
+        console.log(
+          `isValidTransferIdList: first transfer must be of type collection. Rejecting.`
+        )
+        return false
+      }
+
+      // last transfer must be a distribution
+      if (
+        transfer_id === transfer_ids[transfer_ids.length - 1] &&
+        transfer.type !== TRANSFER_TYPES.DISTRIBUTION
+      ) {
+        console.log(
+          `isValidTransferIdList: last transfer must be of type distribution. Rejecting.`
+        )
+        return false
+      }
     }
     return true
   } catch (e) {

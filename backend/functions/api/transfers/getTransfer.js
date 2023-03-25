@@ -1,6 +1,6 @@
 const { formatDocumentTimestamps, db } = require('../../../helpers')
 
-exports.getTransfer = async (id, options = {}) => {
+exports.getTransfer = async (id, options = { shallow: false }) => {
   const transfer = await db
     .collection('transfers')
     .doc(id)

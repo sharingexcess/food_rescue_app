@@ -5,33 +5,39 @@ const {
 } = require('../../../helpers')
 const moment = require('moment')
 const { isValidTransferPayload } = require('./isValidTransferPayload')
+const fs = require('fs')
 
 exports.migrateStopsToTransfersEndpoint = async (_request, response) => {
   const collectionsRef = db.collection('stops')
-  // .where('rescue_type', '==', 'wholesale')
-  const pageSize = 250
-  let lastDoc = null
+  const batch_size = 250
+  const max_batches = 8
+  let batch_index = 0
+  let last_doc_ref = null
+  const first_doc_id = 'h6v37ujc85e4'
   let count = 0
   let shouldBreak
-  let batchNum = 1
-  let skipCount = 0
+  const skipped = []
 
-  const query = collectionsRef.orderBy('id').limit(pageSize)
+  if (first_doc_id) {
+    // If we have an ID to start from, get a reference to that document,
+    // and set last_doc_ref to that doc so that the query grabs it below
+    last_doc_ref = await db.collection('stops').doc(first_doc_id).get()
+  }
+
+  const query = collectionsRef.orderBy('id').limit(batch_size)
 
   async function getPage() {
     const stops = []
 
     // get stops
-    const currQuery = lastDoc ? query.startAfter(lastDoc) : query
+    const currQuery = last_doc_ref ? query.startAfter(last_doc_ref) : query
     await currQuery.get().then(snapshot => {
       console.log('QUERY RESULT SIZE', snapshot.docs.length)
-      lastDoc = snapshot.docs[snapshot.docs.length - 1]
-      lastDoc &&
-        console.log(
-          'LAST DOC ID:',
-          snapshot.docs[snapshot.docs.length - 1].data().id
-        )
-      if (snapshot.docs.length < pageSize) shouldBreak = true
+
+      last_doc_ref = snapshot.docs[snapshot.docs.length - 1]
+      last_doc_ref && console.log('LAST DOC ID:', last_doc_ref.data().id)
+
+      if (snapshot.docs.length < batch_size) shouldBreak = true
       snapshot.forEach(doc => {
         const stop = doc.data()
         stops.push(formatDocumentTimestamps(stop))
@@ -41,7 +47,7 @@ exports.migrateStopsToTransfersEndpoint = async (_request, response) => {
     return stops
   }
 
-  while (batchNum < 2) {
+  while (batch_index < max_batches) {
     const current_stops = await getPage()
     const batch = db.batch()
     let batchPopulated = false
@@ -74,28 +80,51 @@ exports.migrateStopsToTransfersEndpoint = async (_request, response) => {
       console.log('stop:', stop)
       if (!(await isValidTransferPayload(transfer))) {
         console.log('\n\n\n\n\n\nSKIPPING Invalid Transfer ^^')
-        skipCount++
-        // throw new Error('stopping for an invalid transfer')
+        skipped.push(transfer)
+      } else {
+        console.log('Adding valid transfer to batch:', transfer)
+        batch.set(
+          db.collection(COLLECTIONS.TRANSFERS).doc(transfer.id),
+          transfer
+        )
       }
-      batch.set(db.collection(COLLECTIONS.TRANSFERS).doc(transfer.id), transfer)
     }
-    if (batchPopulated)
-      // await batch.commit().then(() => console.log('completed batch update.'))
-
-      count += current_stops.length
+    if (batchPopulated) {
+      await batch.commit().then(() => console.log('completed batch update.'))
+    }
+    count += current_stops.length
     console.log(
-      'BATCH:',
-      batchNum,
-      '- HANDLED:',
-      count,
-      '- SKIPPED:',
-      skipCount
+      `BATCH: ${batch_index} - HANDLED: ${count} - SKIPPED ${
+        skipped.length
+      } - LAST DOC: ${last_doc_ref.data().id}`
     )
-    batchNum++
+    batch_index++
     if (shouldBreak) break
   }
+
+  addSkippedStopsToJSONFile(skipped)
+
+  const all_stops_count = await db.collection('stops').count().get()
+  const all_transfers_count = await db.collection('transfers').count().get()
+
+  console.log(
+    all_stops_count.data().count,
+    'total stops',
+    all_transfers_count.data().count,
+    'total transfers'
+  )
 
   console.log('done.')
 
   response.status(200).send()
+}
+
+function addSkippedStopsToJSONFile(skipped) {
+  const path = './functions/api/transfers/SKIPPED_STOPS.json'
+  console.log('Writing skipped to SKIPPED_STOPS.json...')
+  const data = fs.readFileSync(path)
+  const json = JSON.parse(data)
+  json.skipped_stops.push(...skipped)
+  fs.writeFileSync(path, JSON.stringify(json))
+  console.log('File write successful.')
 }
