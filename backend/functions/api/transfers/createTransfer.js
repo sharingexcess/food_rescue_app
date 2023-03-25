@@ -47,6 +47,8 @@ exports.createTransfer = async ({
     console.log('Creating transfer:', transfer)
 
     await db.collection(COLLECTIONS.TRANSFERS).doc(id).set(transfer)
+
+    return transfer
   } else {
     throw new Error('Invalid payload')
   }

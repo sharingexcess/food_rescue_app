@@ -32,8 +32,6 @@ Example Valid Payload:
 */
 
 exports.isValidTransferPayload = async payload => {
-  console.log('Validating create transfer payload:', payload)
-
   // check that payload has a valid transfer type
   if (!['collection', 'distribution'].includes(payload.type)) {
     console.log(`Detected invalid type, value is: ${payload.type}. Rejecting.`)
@@ -115,8 +113,6 @@ exports.isValidTransferPayload = async payload => {
   ) {
     return false
   }
-
-  console.log('Valid create transfer payload. Continuing...')
 
   return true
 }

@@ -7,6 +7,8 @@ const { updateTransfer } = require('./updateTransfer')
 exports.cancelTransfer = async (id, notes) => {
   const transfer = await getTransfer(id, { shallow: true })
 
+  console.log('Found transfer:', transfer)
+
   const rescue = await getRescue(transfer.rescue_id, { shallow: true })
 
   // update the rescue to move the cancelled transfer to the front

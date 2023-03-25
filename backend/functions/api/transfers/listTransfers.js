@@ -16,6 +16,18 @@ exports.listTransfers = async ({
   limit,
   organization_tag,
 }) => {
+  console.log('Running listTransfers with params:', {
+    type,
+    date_range_start,
+    date_range_end,
+    status,
+    handler_id,
+    organization_id,
+    start_after,
+    limit,
+    organization_tag,
+  })
+
   let transfers = []
 
   let transfers_query = db.collection(COLLECTIONS.TRANSFERS)
@@ -34,12 +46,14 @@ exports.listTransfers = async ({
   // apply filters
 
   if (date_range_start) {
-    const start = moment(date_range_start).startOf('day').toDate()
+    const start = moment(date_range_start).startOf('day').toISOString()
+    console.log('Applying date_range_start:', start)
     transfers_query = transfers_query.where('timestamp_completed', '>=', start)
   }
 
   if (date_range_end) {
-    const end = moment(date_range_end).endOf('day').toDate()
+    const end = moment(date_range_end).endOf('day').toISOString()
+    console.log('Applying date_range_end:', end)
     transfers_query = transfers_query.where('timestamp_completed', '<=', end)
   }
 
@@ -78,49 +92,52 @@ exports.listTransfers = async ({
   // execute transfers query
 
   await transfers_query.get().then(snapshot => {
-    snapshot.forEach(doc =>
-      transfers.push({ ...formatDocumentTimestamps(doc.data()) })
-    )
+    snapshot.forEach(doc => transfers.push(doc.data()))
   })
 
   console.log('Got transfers:', transfers)
 
-  // execute query for organization and location for each stop
+  // execute query for organization and location for each transfer
 
   await Promise.all(
     transfers
-      .map(stop => [
-        db
-          .collection('public_profiles')
-          .doc(stop.handler_id)
-          .get()
-          .then(doc => {
-            const handler = formatDocumentTimestamps(doc.data())
-            stop.handler = handler
-          }),
+      .map(transfer => [
+        transfer.handler_id
+          ? db
+              .collection('public_profiles')
+              .doc(transfer.handler_id)
+              .get()
+              .then(doc => {
+                const handler = formatDocumentTimestamps(doc.data())
+                transfer.handler = handler
+              })
+          : new Promise(res => {
+              transfer.handler = null
+              res()
+            }),
         db
           .collection('organizations')
-          .doc(stop.organization_id)
+          .doc(transfer.organization_id)
           .get()
           .then(doc => {
             const org = formatDocumentTimestamps(doc.data())
-            stop.organization = org
+            transfer.organization = org
           }),
         db
           .collection('locations')
-          .doc(stop.location_id)
+          .doc(transfer.location_id)
           .get()
           .then(doc => {
             const loc = formatDocumentTimestamps(doc.data())
-            stop.location = loc
+            transfer.location = loc
           }),
       ])
       .flat()
   )
 
   if (organization_tag) {
-    transfers = transfers.filter(stop => {
-      return stop.organization.tags?.includes(organization_tag)
+    transfers = transfers.filter(transfer => {
+      return transfer.organization.tags?.includes(organization_tag)
     })
   }
 

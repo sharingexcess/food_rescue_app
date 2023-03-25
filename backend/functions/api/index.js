@@ -6,6 +6,7 @@ const {
   updateTransferEndpoint,
   createTransferEndpoint,
   listTransfersEndpoint,
+  cancelTransferEndpoint,
 } = require('./transfers/transferEndpoints')
 const {
   migrateStopsToTransfersEndpoint,
@@ -37,20 +38,20 @@ api.get('/rescues/:id', (req, res, next) =>
 
 // TRANSFERS
 
-api.get('/transfers/create', (req, res, next) =>
-  updateTransferEndpoint(req, res, next)
-)
 api.get('/transfers/list', (req, res, next) =>
   listTransfersEndpoint(req, res, next)
 )
 api.get('/transfers/get/:id', (req, res, next) =>
   getTransferEndpoint(req, res, next)
 )
-api.get('/transfers/update/:id', (req, res, next) =>
+api.post('/transfers/create', (req, res, next) =>
   createTransferEndpoint(req, res, next)
 )
-api.get('/transfers/cancel/:id', (req, res, next) =>
-  createTransferEndpoint(req, res, next)
+api.post('/transfers/update/:id', (req, res, next) =>
+  updateTransferEndpoint(req, res, next)
+)
+api.post('/transfers/cancel/:id', (req, res, next) =>
+  cancelTransferEndpoint(req, res, next)
 )
 // TEMP MIGRATE SCRIPT
 api.get('/transfers/TEMP_migrate', (req, res, next) =>

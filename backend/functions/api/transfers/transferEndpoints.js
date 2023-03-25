@@ -94,6 +94,8 @@ exports.updateTransferEndpoint = async (request, response, next) => {
       //   return
       // }
 
+      console.log('BODY:', request.body)
+
       const payload = JSON.parse(request.body)
 
       console.log('Received payload:', payload)
