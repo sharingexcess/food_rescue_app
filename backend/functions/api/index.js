@@ -38,6 +38,7 @@ const {
   updateRescueEndpoint,
   cancelRescueEndpoint,
 } = require('./rescues/rescueEndpoints')
+const { testBackup } = require('./testBackup')
 
 // initialize express server
 const api = express()
@@ -266,6 +267,7 @@ api.get('/repairStops', (req, res, next) => repairStops(req, res, next))
 api.get('/uploadRepairedStops', (req, res, next) =>
   uploadRepairedStops(req, res, next)
 )
+api.get('/testBackup', (req, res, next) => testBackup(req, res, next))
 
 //
 

@@ -195,7 +195,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
 }
 
 function calculateMetrics(distributions, organizations) {
-  // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
+  // IGNORE ANY DISTRIBUTIONS TO HOLDING/COMPOST ORGANIZATIONS - this means they have not reached a final end org
   distributions = distributions.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
     return ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
@@ -212,7 +212,7 @@ function calculateMetrics(distributions, organizations) {
   )
   for (const category of WEIGHT_CATEGORIES) {
     const category_weight = distributions.reduce(
-      (total, curr) => total + (curr[category] || 0),
+      (total, curr) => total + (curr.categorized_weight[category] || 0),
       0
     )
     total_categorized_weight += category_weight
@@ -220,13 +220,6 @@ function calculateMetrics(distributions, organizations) {
     retail_value += category_weight * RETAIL_VALUES[category]
     fair_market_value += category_weight * FAIR_MARKET_VALUES[category]
   }
-  // HANDLE RESCUES WHERE CATEGORIES WERE MEASURED IN BOXES INSTEAD OF POUNDS
-  const non_categorized_weight = total_weight - total_categorized_weight
-  console.log('NON CATEGORIZED:', non_categorized_weight)
-  emissions_reduced += non_categorized_weight * EMISSIONS_COEFFICIENT
-  retail_value += non_categorized_weight * RETAIL_VALUES.impact_data_mixed
-  fair_market_value +=
-    non_categorized_weight * FAIR_MARKET_VALUES.impact_data_mixed
 
   return {
     total_weight,

@@ -48,28 +48,39 @@ export const FOOD_CATEGORIES = [
   'impact_data_other',
 ]
 
+export const WEIGHT_CATEGORIES = [
+  'dairy',
+  'bakery',
+  'produce',
+  'meat_fish',
+  'non_perishable',
+  'prepared_frozen',
+  'mixed',
+  'other',
+]
+
 // Current values are from 2019 REFED values, to be updated whenever new literature is available
 // https://refed.org/downloads/ReFED-U.S.-Grocery-Retail-Value-to-Weight-Conversion-Factors.pdf
 export const RETAIL_VALUES = {
-  impact_data_dairy: 1.28,
-  impact_data_bakery: 2.36,
-  impact_data_produce: 1.57,
-  impact_data_meat_fish: 4.4,
-  impact_data_non_perishable: 3.19,
-  impact_data_prepared_frozen: 5.89,
-  impact_data_mixed: 3.1,
-  impact_data_other: 2.31,
+  dairy: 1.28,
+  bakery: 2.36,
+  produce: 1.57,
+  meat_fish: 4.4,
+  non_perishable: 3.19,
+  prepared_frozen: 5.89,
+  mixed: 3.1,
+  other: 2.31,
 }
 
 export const FAIR_MARKET_VALUES = {
-  impact_data_dairy: 1.42,
-  impact_data_bakery: 2.14,
-  impact_data_produce: 1.13,
-  impact_data_meat_fish: 2.77,
-  impact_data_non_perishable: 2.13,
-  impact_data_prepared_frozen: 2.17,
-  impact_data_mixed: 1.62,
-  impact_data_other: 1.62,
+  dairy: 1.42,
+  bakery: 2.14,
+  produce: 1.13,
+  meat_fish: 2.77,
+  non_perishable: 2.13,
+  prepared_frozen: 2.17,
+  mixed: 1.62,
+  other: 1.62,
 }
 
 export const EMISSIONS_COEFFICIENT = 3.66

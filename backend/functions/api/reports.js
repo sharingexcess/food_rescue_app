@@ -118,7 +118,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
 
       //populate buckets
       for (const distribution of distributions) {
-        const distributionTimestamp = distribution.timestamp_completed.toDate()
+        const distributionTimestamp = new Date(distribution.timestamp_completed)
         //Get Month and Year of current distribution
         const distributionTimestampMonth = moment(distributionTimestamp).format(
           'MMM'
@@ -163,7 +163,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
 
       //populate buckets
       for (const distribution of distributions) {
-        const distributionTimestamp = distribution.timestamp_completed.toDate()
+        const distributionTimestamp = new Date(distribution.timestamp_completed)
         const distributionTimestampString = moment(
           distributionTimestamp
         ).format('ddd, M/D')
