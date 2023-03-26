@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "sharing-excess-7e887",
+    "default": "sharing-excess-prod",
     "prod": "sharing-excess-prod"
   },
   "targets": {

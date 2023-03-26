@@ -2,6 +2,11 @@ const admin = require('firebase-admin')
 const moment = require('moment-timezone')
 const fetch = require('node-fetch')
 const { customAlphabet } = require('nanoid')
+const {
+  WEIGHT_CATEGORIES,
+  COLLECTIONS,
+  TRANSFER_TYPES,
+} = require('./constants')
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 
 exports.app = admin.initializeApp()
@@ -240,4 +245,119 @@ exports.generateUniqueId = async collection => {
 exports.isExistingId = async (id, collection) => {
   const snapshot = await exports.db.collection(collection).doc(id).get()
   return snapshot.exists
+}
+
+exports.isValidIsoDateStringInUTC = str => {
+  if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false
+  const d = new Date(str)
+  return d instanceof Date && !isNaN(d) && d.toISOString() === str // valid date
+}
+
+exports.isExistingDbRecord = async (id, collection) => {
+  try {
+    if (!id) {
+      console.log('isExistingDbRecord: No id provided. Rejecting.')
+      return false
+    }
+
+    const record = await exports.db
+      .collection(collection)
+      .doc(id)
+      .get()
+      .then(doc => doc.data())
+
+    if (!record) {
+      console.log(
+        `isExistingDbRecord: no record found matching in ${collection} with id: ${id}. Rejecting.`
+      )
+      return false
+    }
+    return true
+  } catch (e) {
+    console.error('Error in isExistingDbRecord:', e)
+    return false
+  }
+}
+
+exports.isValidCategorizedWeightObject = (categorized_weight, total_weight) => {
+  let is_valid = true
+  let sum = 0
+  for (const key of WEIGHT_CATEGORIES) {
+    const value = categorized_weight[key]
+    if (!Number.isInteger(value) || value < 0) {
+      console.log(
+        `isValidCategorizedWeightObject: ${key} value is invalid: ${value}. Rejecting.`
+      )
+      is_valid = false
+      break
+    } else sum += value
+  }
+  // we allow for a maximum rounding error of 1lb. per category, up to 8lbs. total
+  if (Math.abs(sum - total_weight) > 8) {
+    console.log(
+      `isValidCategorizedWeightObject: categorized_weight sum (${sum}) does not equal total_weight (${total_weight}). Rejecting.`
+    )
+    is_valid = false
+  }
+  return is_valid
+}
+
+exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
+  try {
+    if (!rescue_id || !transfer_ids) {
+      throw new Error('isValidTransferIdList: Invalid arguments provided.')
+    }
+
+    for (const transfer_id of transfer_ids) {
+      const transfer = await exports.db
+        .collection(COLLECTIONS.TRANSFERS)
+        .doc(transfer_id)
+        .get()
+        .then(doc => doc.data())
+
+      if (!transfer) {
+        console.log(
+          `isValidTransferIdList: no transfer found matching id: ${transfer_id}. Rejecting.`
+        )
+        return false
+      }
+
+      if (transfer.rescue_id !== rescue_id) {
+        console.log(
+          `isValidTransferIdList: transfer: ${transfer_id}
+          rescue_id property does not match provided rescue.
+          Provided value: ${rescue_id},
+          transfer's rescue_id value: ${transfer.rescue_id}.
+          Rejecting.`
+        )
+        return false
+      }
+
+      // first transfer must be a collection
+      if (
+        transfer_id === transfer_ids[0] &&
+        transfer.type !== TRANSFER_TYPES.COLLECTION
+      ) {
+        console.log(
+          `isValidTransferIdList: first transfer must be of type collection. Rejecting.`
+        )
+        return false
+      }
+
+      // last transfer must be a distribution
+      if (
+        transfer_id === transfer_ids[transfer_ids.length - 1] &&
+        transfer.type !== TRANSFER_TYPES.DISTRIBUTION
+      ) {
+        console.log(
+          `isValidTransferIdList: last transfer must be of type distribution, actual value: ${transfer.type}. Rejecting.`
+        )
+        return false
+      }
+    }
+    return true
+  } catch (e) {
+    console.error('Error in isExistingDbRecord:', e)
+    return false
+  }
 }

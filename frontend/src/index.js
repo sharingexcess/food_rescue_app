@@ -298,19 +298,6 @@ function RescueAppRoutes() {
                 }
               />
               <Route
-                path="/analytics"
-                element={
-                  <Page
-                    id="Analytics"
-                    defaultBreadcrumbs={[
-                      { label: 'Analytics', link: '/analytics' },
-                    ]}
-                    defaultTitle="Analytics"
-                    Content={Analytics}
-                  />
-                }
-              />
-              <Route
                 path="/privacy"
                 element={
                   <Page

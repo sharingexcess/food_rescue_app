@@ -8,8 +8,8 @@
     "install:all": "yarn && cd frontend && yarn && cd ../backend && yarn",
     "dev": "yarn run set_env:dev && concurrently \"cd backend && yarn start\" \"cd frontend && yarn start\"",
     "prod": "yarn run set_env:prod && concurrently \"cd backend && yarn start\" \"cd frontend && yarn start\"",
-    "set_env:dev": "firebase use default && cp firebase.dev.json firebase.json && cp environments/.env.frontend.dev frontend/.env && cp environments/.env.backend.dev backend/.env",
-    "set_env:prod": "firebase use prod && cp firebase.prod.json firebase.json && cp environments/.env.frontend.prod frontend/.env && cp environments/.env.backend.prod backend/.env",
+    "set_env:dev": "firebase use sharing-excess-7e887 && cp firebase.dev.json firebase.json && cp environments/.env.frontend.dev frontend/.env && cp environments/.env.backend.dev backend/.env",
+    "set_env:prod": "firebase use sharing-excess-prod && cp firebase.prod.json firebase.json && cp environments/.env.frontend.prod frontend/.env && cp environments/.env.backend.prod backend/.env",
     "wiki:pull": "git subtree pull --prefix docs wiki master --squash --message='Merge wiki updates into docs.'",
     "wiki:push": "git add docs && git commit -m 'updating wiki' && git subtree push --prefix docs wiki master"
   },

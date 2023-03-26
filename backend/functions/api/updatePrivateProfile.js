@@ -2,6 +2,7 @@ const {
   db,
   authenticateRequest,
   rejectUnauthorizedRequest,
+  getUserIdFromToken,
 } = require('../../helpers')
 
 async function updatePrivateProfileEndpoint(request, response, next) {
@@ -9,13 +10,9 @@ async function updatePrivateProfileEndpoint(request, response, next) {
     try {
       console.log('running updatePrivateProfile')
 
-      const { id } = request.params
-      console.log('Received id:', id)
-
-      if (!id) {
-        response.status(400).send('No id param received in request URL.')
-        return
-      }
+      // get the user id from the access token to ensure
+      // users cannot update someone else's private profile
+      const id = getUserIdFromToken(request.get('accessToken'))
 
       // we wait until here to authenticate the request so we can see if this is the
       // driver's own route (that data isn't available until after we fetch the rescue)
@@ -29,7 +26,7 @@ async function updatePrivateProfileEndpoint(request, response, next) {
         return
       }
 
-      const payload = { ...JSON.parse(request.body), id }
+      const payload = { ...JSON.parse(request.body) }
 
       console.log('Received payload:', payload)
       await updatePrivateProfile(id, payload)
