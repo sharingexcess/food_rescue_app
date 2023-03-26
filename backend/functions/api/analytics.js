@@ -4,11 +4,14 @@ const {
   EMISSIONS_COEFFICIENT,
   FAIR_MARKET_VALUES,
   fetchCollection,
-  FOOD_CATEGORIES,
+  WEIGHT_CATEGORIES,
   RECIPIENT_SUB_TYPES,
   RETAIL_VALUES,
   rejectUnauthorizedRequest,
   authenticateRequest,
+  COLLECTIONS,
+  TRANSFER_TYPES,
+  STATUSES,
 } = require('../../helpers')
 
 async function analyticsEndpoint(request, response) {
@@ -53,29 +56,41 @@ async function analytics(date_range_start, date_range_end, breakdown) {
 
   let rescues = []
   await db
-    .collection('rescues')
-    .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-    .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    .collection(COLLECTIONS.RESCUES)
+    .where(
+      'timestamp_completed',
+      '>=',
+      new Date(date_range_start).toISOString()
+    )
+    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
     .get()
     .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
-  rescues = rescues.filter(i => i.status === 'completed')
+  rescues = rescues.filter(i => i.status === STATUSES.COMPLETED)
 
-  let stops = []
+  let transfers = []
   await db
-    .collection('stops')
-    .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-    .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    .collection(COLLECTIONS.TRANSFERS)
+    .where(
+      'timestamp_completed',
+      '>=',
+      new Date(date_range_start).toISOString()
+    )
+    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
     .get()
-    .then(snapshot => snapshot.forEach(doc => stops.push(doc.data())))
-  stops = stops.filter(i => i.status === 'completed')
+    .then(snapshot => snapshot.forEach(doc => transfers.push(doc.data())))
+  transfers = transfers.filter(i => i.status === STATUSES.COMPLETED)
 
-  const organizations = await fetchCollection('organizations')
-  const handlers = await fetchCollection('public_profiles')
+  const organizations = await fetchCollection(COLLECTIONS.ORGANIZATIONS)
+  const handlers = await fetchCollection(COLLECTIONS.PUBLIC_PROFILES)
 
-  const pickups = stops.filter(s => s.type === 'pickup')
-  const deliveries = stops.filter(s => s.type === 'delivery')
+  const collections = transfers.filter(
+    s => s.type === TRANSFER_TYPES.COLLECTION
+  )
+  const distributions = transfers.filter(
+    s => s.type === TRANSFER_TYPES.DISTRIBUTION
+  )
 
-  console.log('DATA:', rescues.length, stops.length, organizations.length)
+  console.log('DATA:', rescues.length, transfers.length, organizations.length)
 
   const {
     total_weight,
@@ -83,7 +98,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
     retail_value,
     fair_market_value,
     emissions_reduced,
-  } = calculateMetrics(deliveries, organizations)
+  } = calculateMetrics(distributions, organizations)
 
   console.log(
     'METRICS:',
@@ -103,7 +118,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByFoodCategory(deliveries),
+        view_data: breakdownByFoodCategory(distributions),
       }
       console.log('returning payload:', payload)
       return payload
@@ -116,7 +131,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByDonorType(pickups, organizations),
+        view_data: breakdownByDonorType(collections, organizations),
       }
       console.log('returning payload:', payload)
       return payload
@@ -129,7 +144,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByRecipientType(deliveries, organizations),
+        view_data: breakdownByRecipientType(distributions, organizations),
       }
       console.log('returning payload:', payload)
       return payload
@@ -142,7 +157,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByDonor(pickups, organizations),
+        view_data: breakdownByDonor(collections, organizations),
       }
       console.log('returning payload:', payload)
       return payload
@@ -155,7 +170,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByRecipient(deliveries, organizations),
+        view_data: breakdownByRecipient(distributions, organizations),
       }
       console.log('returning payload:', payload)
       return payload
@@ -168,7 +183,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByDriver(deliveries, handlers),
+        view_data: breakdownByDriver(distributions, handlers),
       }
       console.log('returning payload:', payload)
       return payload
@@ -179,22 +194,24 @@ async function analytics(date_range_start, date_range_end, breakdown) {
   }
 }
 
-function calculateMetrics(deliveries, organizations) {
+function calculateMetrics(distributions, organizations) {
   // IGNORE ANY DELIVERIES TO HOLDING ORGANIZATIONS - this means they have not reached a final end org
-  deliveries = deliveries.filter(d => {
+  distributions = distributions.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
-    return !['holding', 'compost'].includes(org.subtype)
+    return ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
+      org.subtype
+    )
   })
   let total_categorized_weight = 0,
     retail_value = 0,
     fair_market_value = 0,
     emissions_reduced = 0
-  const total_weight = deliveries.reduce(
-    (total, curr) => total + (curr.impact_data_total_weight || 0),
+  const total_weight = distributions.reduce(
+    (total, curr) => total + (curr.total_weight || 0),
     0
   )
-  for (const category of FOOD_CATEGORIES) {
-    const category_weight = deliveries.reduce(
+  for (const category of WEIGHT_CATEGORIES) {
+    const category_weight = distributions.reduce(
       (total, curr) => total + (curr[category] || 0),
       0
     )
@@ -220,12 +237,12 @@ function calculateMetrics(deliveries, organizations) {
   }
 }
 
-function breakdownByFoodCategory(deliveries) {
+function breakdownByFoodCategory(distributions) {
   const categories = {
-    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+    ...WEIGHT_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
   }
-  for (const category of FOOD_CATEGORIES) {
-    categories[category] = deliveries.reduce(
+  for (const category of WEIGHT_CATEGORIES) {
+    categories[category] = distributions.reduce(
       (total, curr) => total + (curr[category] || 0),
       0
     )
@@ -233,15 +250,15 @@ function breakdownByFoodCategory(deliveries) {
   return sortObjectByValues(categories)
 }
 
-function breakdownByDonorType(pickups, organizations) {
+function breakdownByDonorType(collections, organizations) {
   const categories = {
     ...DONOR_SUB_TYPES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
   }
-  for (const p of pickups) {
+  for (const p of collections) {
     try {
       const organization = organizations.find(o => o.id === p.organization_id)
       const { subtype } = organization
-      categories[subtype] += p.impact_data_total_weight || 0
+      categories[subtype] += p.total_weight || 0
     } catch (e) {
       console.error(
         'Unable to add pickup to donor type totals:',
@@ -252,16 +269,16 @@ function breakdownByDonorType(pickups, organizations) {
   return sortObjectByValues(categories)
 }
 
-function breakdownByRecipientType(deliveries, organizations) {
+function breakdownByRecipientType(distributions, organizations) {
   const categories = {
     ...RECIPIENT_SUB_TYPES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
   }
-  for (const d of deliveries) {
+  for (const d of distributions) {
     try {
       const organization = organizations.find(o => o.id === d.organization_id)
       const { subtype } = organization
       console.log('found org:', organization.name, organization.subtype)
-      categories[subtype] += d.impact_data_total_weight || 0
+      categories[subtype] += d.total_weight || 0
     } catch (e) {
       console.error(
         'Unable to add delivery to recipient type totals:',
@@ -272,13 +289,13 @@ function breakdownByRecipientType(deliveries, organizations) {
   return sortObjectByValues(categories)
 }
 
-function breakdownByDonor(pickups, organizations) {
+function breakdownByDonor(collections, organizations) {
   const donors = {}
-  for (const p of pickups) {
+  for (const p of collections) {
     try {
       const organization = organizations.find(o => o.id === p.organization_id)
       const { name } = organization
-      donors[name] = (donors[name] || 0) + (p.impact_data_total_weight || 0)
+      donors[name] = (donors[name] || 0) + (p.total_weight || 0)
     } catch (e) {
       console.error('Unable to add pickup to donor totals:', JSON.stringify(p))
     }
@@ -286,14 +303,13 @@ function breakdownByDonor(pickups, organizations) {
   return sortObjectByValues(donors)
 }
 
-function breakdownByRecipient(deliveries, organizations) {
+function breakdownByRecipient(distributions, organizations) {
   const recipients = {}
-  for (const d of deliveries) {
+  for (const d of distributions) {
     try {
       const organization = organizations.find(o => o.id === d.organization_id)
       const { name } = organization
-      recipients[name] =
-        (recipients[name] || 0) + (d.impact_data_total_weight || 0)
+      recipients[name] = (recipients[name] || 0) + (d.total_weight || 0)
     } catch (e) {
       console.error(
         'Unable to add pickup to recipient totals:',
@@ -304,14 +320,13 @@ function breakdownByRecipient(deliveries, organizations) {
   return sortObjectByValues(recipients)
 }
 
-function breakdownByDriver(deliveries, handlers) {
+function breakdownByDriver(distributions, handlers) {
   const recipients = {}
-  for (const d of deliveries) {
+  for (const d of distributions) {
     try {
       const driver = handlers.find(o => o.id === d.handler_id)
       const { name } = driver
-      recipients[name] =
-        (recipients[name] || 0) + (d.impact_data_total_weight || 0)
+      recipients[name] = (recipients[name] || 0) + (d.total_weight || 0)
     } catch (e) {
       console.error(
         'Unable to add delivery to driver totals:',

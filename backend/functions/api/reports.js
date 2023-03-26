@@ -3,6 +3,10 @@ const {
   authenticateRequest,
   rejectUnauthorizedRequest,
   fetchCollection,
+  COLLECTIONS,
+  TRANSFER_TYPES,
+  STATUSES,
+  RECIPIENT_SUB_TYPES,
 } = require('../../helpers')
 
 const moment = require('moment')
@@ -64,24 +68,35 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
     '\nbreakdown:',
     breakdown
   )
-  let deliveries = []
+  let distributions = []
   await db
-    .collection('stops')
-    .where('type', '==', 'delivery')
-    .where('status', '==', 'completed')
-    .where('timestamp_scheduled_start', '>=', new Date(date_range_start))
-    .where('timestamp_scheduled_start', '<=', new Date(date_range_end))
+    .collection(COLLECTIONS.TRANSFERS)
+    .where('type', '==', TRANSFER_TYPES.DISTRIBUTION)
+    .where('status', '==', STATUSES.COMPLETED)
+    .where(
+      'timestamp_completed',
+      '>=',
+      new Date(date_range_start).toISOString()
+    )
+    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
     .get()
-    .then(snapshot => snapshot.forEach(doc => deliveries.push(doc.data())))
+    .then(snapshot => snapshot.forEach(doc => distributions.push(doc.data())))
 
-  const organizations = await fetchCollection('organizations')
+  const organizations = await fetchCollection(COLLECTIONS.ORGANIZATIONS)
 
-  deliveries = deliveries.filter(d => {
+  distributions = distributions.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
-    return !['holding', 'compost'].includes(org.subtype)
+    return ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
+      org.subtype
+    )
   })
 
-  console.log('Got Deliveries\n', 'total:', deliveries.length, deliveries[0])
+  console.log(
+    'Got distributions\n',
+    'total:',
+    distributions.length,
+    distributions[0]
+  )
 
   switch (breakdown) {
     case 'month': {
@@ -102,25 +117,29 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       console.log('initialized buckets:', buckets)
 
       //populate buckets
-      for (const delivery of deliveries) {
-        const deliveryTimestamp = delivery.timestamp_scheduled_start.toDate()
-        //Get Month and Year of current delivery
-        const deliveryTimestampMonth = moment(deliveryTimestamp).format('MMM')
-        const deliveryTimestampYear = moment(deliveryTimestamp).format('yyy')
+      for (const distribution of distributions) {
+        const distributionTimestamp = distribution.timestamp_completed.toDate()
+        //Get Month and Year of current distribution
+        const distributionTimestampMonth = moment(distributionTimestamp).format(
+          'MMM'
+        )
+        const distributionTimestampYear = moment(distributionTimestamp).format(
+          'yyy'
+        )
         // console.log(
         //   'Delivery month and year:',
-        //   deliveryTimestampMonth,
-        //   deliveryTimestampYear
+        //   distributionTimestampMonth,
+        //   distributionTimestampYear
         // )
         for (const bucket of buckets) {
           if (
-            bucket.label === deliveryTimestampMonth &&
-            bucket.year == deliveryTimestampYear
+            bucket.label === distributionTimestampMonth &&
+            bucket.year == distributionTimestampYear
           ) {
-            //add delivery weight into value
-            console.log('Delivery date:', deliveryTimestamp)
+            //add distribution weight into value
+            console.log('Delivery date:', distributionTimestamp)
             console.log('Bucket Month and Year:', bucket.label, bucket.year)
-            bucket.value += delivery.impact_data_total_weight
+            bucket.value += distribution.total_weight
             break
           }
         }
@@ -143,13 +162,14 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
       }
 
       //populate buckets
-      for (const delivery of deliveries) {
-        const deliveryTimestamp = delivery.timestamp_scheduled_start.toDate()
-        const deliveryTimestampString =
-          moment(deliveryTimestamp).format('ddd, M/D')
+      for (const distribution of distributions) {
+        const distributionTimestamp = distribution.timestamp_completed.toDate()
+        const distributionTimestampString = moment(
+          distributionTimestamp
+        ).format('ddd, M/D')
         for (const bucket of buckets) {
-          if (bucket.label === deliveryTimestampString) {
-            bucket.value += delivery.impact_data_total_weight
+          if (bucket.label === distributionTimestampString) {
+            bucket.value += distribution.total_weight
             break
           }
         }

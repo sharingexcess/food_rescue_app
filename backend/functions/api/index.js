@@ -165,7 +165,7 @@ api.get('/figureShitOut', (req, res, next) =>
 
 //
 
-// TRANSFERS
+// RESCUES
 
 api.get('/rescues/list', (req, res, next) =>
   listRescuesEndpoint(req, res, next)
