@@ -33,12 +33,14 @@ Example Valid Payload:
 */
 
 exports.isValidTransferPayload = async payload => {
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that payload has a valid transfer type
   if (!Object.values(TRANSFER_TYPES).includes(payload.type)) {
     console.log(`Detected invalid type, value is: ${payload.type}. Rejecting.`)
     return false
   }
 
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that payload has a valid transfer status
   if (!Object.values(STATUSES).includes(payload.status)) {
     console.log(
@@ -50,10 +52,12 @@ exports.isValidTransferPayload = async payload => {
   // check that all ids included in payload are valid connections to other db objects
   if (
     !(await isExistingDbRecord(payload.rescue_id, COLLECTIONS.RESCUES)) ||
+    // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
     !(await isExistingDbRecord(
       payload.organization_id,
       COLLECTIONS.ORGANIZATIONS
     )) ||
+    // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
     !(await isExistingDbRecord(payload.location_id, COLLECTIONS.LOCATIONS))
   ) {
     return false
@@ -61,7 +65,6 @@ exports.isValidTransferPayload = async payload => {
 
   // check handler_id: it can be null, but if it's populated,
   // it needs to match a public profile
-
   if (
     payload.handler_id &&
     !(await isExistingDbRecord(payload.handler_id, COLLECTIONS.PUBLIC_PROFILES))
@@ -72,6 +75,7 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that notes are either a string, or falsey.
   if (payload.notes && typeof payload.notes !== 'string') {
     console.log(
@@ -82,6 +86,7 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that timestamp_completed is valid if status is cancelled or completed
   if (
     [STATUSES.COMPLETED, STATUSES.CANCELLED].includes(payload.status) &&
@@ -95,6 +100,7 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that the timestamp_completed is not populated if status is scheduled
   if (payload.status === STATUSES.SCHEDULED && payload.timestamp_completed) {
     console.log(
@@ -103,6 +109,7 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that total_weight is a non-negative integer
   if (!Number.isInteger(payload.total_weight) || payload.total_weight < 0) {
     console.log(
@@ -113,6 +120,7 @@ exports.isValidTransferPayload = async payload => {
     return false
   }
 
+  // TEMP NOTE: ALL REPAIR STOPS ARE PASSING THIS TEST
   // check that categorized_weight contains all non-negative integers, and sums to total_weight
   if (
     !isValidCategorizedWeightObject(

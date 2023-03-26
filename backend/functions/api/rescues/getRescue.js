@@ -1,5 +1,8 @@
-const { COLLECTIONS } = require('../../../helpers')
-const { db, formatDocumentTimestamps } = require('../../helpers')
+const {
+  COLLECTIONS,
+  db,
+  formatDocumentTimestamps,
+} = require('../../../helpers')
 
 exports.getRescue = async (id, options = { shallow: false }) => {
   // load base rescue object from DB

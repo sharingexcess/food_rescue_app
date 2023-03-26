@@ -46,7 +46,7 @@ exports.authenticateRequest = async (token, permissionCallback) => {
     // if no cached user is available, look up the user to validate permission
     else {
       console.log('No user record matching this token found in cache.')
-      const userId = await getUserIdFromToken(token)
+      const userId = await exports.getUserIdFromToken(token)
       const user = await getUserRecordFromId(userId)
       cacheUserRecordByToken(token, user)
       const response = handleValidateAuthentication(user, permissionCallback)
@@ -80,7 +80,7 @@ function handleValidateAuthentication(user, permissionCallback) {
   return response
 }
 
-async function getUserIdFromToken(token) {
+exports.getUserIdFromToken = async token => {
   console.log('Verifying token with Firebase Auth...')
   const uid = await admin
     .auth()

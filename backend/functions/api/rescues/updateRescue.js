@@ -1,6 +1,5 @@
-const { db, generateUniqueId, COLLECTIONS } = require('../../../helpers')
+const { db, COLLECTIONS } = require('../../../helpers')
 const { isValidRescuePayload } = require('./isValidRescuePayload')
-const { isValidTransferPayload } = require('./isValidTransferPayload')
 
 exports.updateRescue = async ({
   id,

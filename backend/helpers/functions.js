@@ -350,7 +350,7 @@ exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
         transfer.type !== TRANSFER_TYPES.DISTRIBUTION
       ) {
         console.log(
-          `isValidTransferIdList: last transfer must be of type distribution. Rejecting.`
+          `isValidTransferIdList: last transfer must be of type distribution, actual value: ${transfer.type}. Rejecting.`
         )
         return false
       }

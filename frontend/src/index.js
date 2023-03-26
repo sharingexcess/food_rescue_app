@@ -19,9 +19,9 @@ import {
   Home,
   Wholesale,
   WholesaleRescue,
+  LogRescue,
   FoodSafety,
   Page,
-  // Analytics,
   Error,
   Privacy,
   Legal,
@@ -31,7 +31,6 @@ import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.css'
-import { LogRescue } from 'components/LogRescue/LogRescue'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -298,19 +297,6 @@ function RescueAppRoutes() {
                   />
                 }
               />
-              {/* <Route
-                path="/analytics"
-                element={
-                  <Page
-                    id="Analytics"
-                    defaultBreadcrumbs={[
-                      { label: 'Analytics', link: '/analytics' },
-                    ]}
-                    defaultTitle="Analytics"
-                    Content={Analytics}
-                  />
-                }
-              /> */}
               <Route
                 path="/privacy"
                 element={

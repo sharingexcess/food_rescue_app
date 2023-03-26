@@ -7,13 +7,13 @@ const moment = require('moment')
 const { isValidTransferPayload } = require('./isValidTransferPayload')
 const fs = require('fs')
 
-exports.migrateStopsToTransfersEndpoint = async (_request, response) => {
+exports.migrateStopsToTransfers = async (_request, response) => {
   const collectionsRef = db.collection('stops')
   const batch_size = 250
   const max_batches = 8
   let batch_index = 0
   let last_doc_ref = null
-  const first_doc_id = 'h6v37ujc85e4'
+  const first_doc_id = 'zzznkrb4nir7'
   let count = 0
   let shouldBreak
   const skipped = []
@@ -55,7 +55,7 @@ exports.migrateStopsToTransfersEndpoint = async (_request, response) => {
       batchPopulated = true
       const transfer = {
         id: stop.id,
-        type: (stop.type = 'pickup' ? 'collection' : 'distribution'),
+        type: stop.type === 'pickup' ? 'collection' : 'distribution',
         status: stop.status === 'active' ? 'scheduled' : stop.status,
         rescue_id: stop.rescue_id,
         handler_id: stop.handler_id,

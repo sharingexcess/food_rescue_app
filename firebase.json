@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "target": "react-app-dev",
+      "target": "sharingexcess",
       "public": "frontend/build",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -12,7 +12,7 @@
       ]
     },
     {
-      "target": "node-api-dev",
+      "target": "sharingexcess-api",
       "public": "backend",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [

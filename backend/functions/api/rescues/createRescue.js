@@ -5,7 +5,9 @@ const {
   TRANSFER_TYPES,
 } = require('../../../helpers')
 const { isValidRescuePayload } = require('./isValidRescuePayload')
-const { isValidTransferPayload } = require('./isValidTransferPayload')
+const {
+  isValidTransferPayload,
+} = require('../transfers/isValidTransferPayload')
 
 exports.createRescue = async ({
   type,

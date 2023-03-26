@@ -141,33 +141,6 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           Organizations
         </Button>
       </Link>
-      <Link to="/analytics">
-        <Button
-          variant="ghosted"
-          px={isMobile ? '0' : '2'}
-          color={
-            location.pathname === '/analytics'
-              ? 'element.active'
-              : 'element.primary'
-          }
-          fontWeight={location.pathname === '/analytics' ? '600' : '300'}
-          fontSize="md"
-          mr="auto"
-          disabled={!hasPermission}
-          height={isMobile ? '12' : '9'}
-        >
-          <Image
-            src={
-              darkMode
-                ? '/Menu/dark/analytics.png'
-                : '/Menu/light/analytics.png'
-            }
-            boxSize="20px"
-            mr="4"
-          />
-          Analytics
-        </Button>
-      </Link>
       <Link to="/food-safety">
         <Button
           variant="ghosted"

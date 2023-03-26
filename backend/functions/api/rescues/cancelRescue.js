@@ -1,13 +1,8 @@
-const {
-  db,
-  COLLECTIONS,
-  STATUSES,
-  WEIGHT_CATEGORIES,
-} = require('../../../helpers')
+const { db, STATUSES, WEIGHT_CATEGORIES } = require('../../../helpers')
 const { getRescue } = require('../rescue')
 const { listTransfers } = require('../transfers/listTransfers')
 const { updateRescue } = require('./updateRescue')
-const { updateTransfer } = require('./updateTransfer')
+const { updateTransfer } = require('../transfers/updateTransfer')
 
 exports.cancelRescue = async (id, notes) => {
   const now = new Date().toISOString()

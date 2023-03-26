@@ -55,6 +55,8 @@ exports.TRANSFER_TYPES = {
   DISTRIBUTION: 'distribution',
 }
 
+exports.ORGANIZATION_TYPES = { DONOR: 'donor', RECIPIENT: 'recipient' }
+
 exports.DONOR_SUB_TYPES = ['retail', 'wholesale', 'holding', 'other']
 
 exports.RECIPIENT_SUB_TYPES = [

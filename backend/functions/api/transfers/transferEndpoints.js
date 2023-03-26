@@ -21,15 +21,15 @@ exports.getTransferEndpoint = async (request, response, next) => {
         return
       }
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   user => user.permission
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.permission
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       const transfer = await getTransfer(id)
 
@@ -48,15 +48,15 @@ exports.createTransferEndpoint = async (request, response, next) => {
     try {
       console.log('API ENDPOINT CALLED: createTransfer')
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   user => user.permission
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.permission
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       const payload = JSON.parse(request.body)
 
@@ -84,15 +84,15 @@ exports.updateTransferEndpoint = async (request, response, next) => {
     try {
       console.log('API ENDPOINT CALLED: updateTransfer')
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   user => user.permission
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.permission
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       console.log('BODY:', request.body)
 
@@ -130,15 +130,15 @@ exports.cancelTransferEndpoint = async (request, response, next) => {
         return
       }
 
-      // const requestIsAuthenticated = await authenticateRequest(
-      //   request.get('accessToken'),
-      //   user => user.permission
-      // )
+      const requestIsAuthenticated = await authenticateRequest(
+        request.get('accessToken'),
+        user => user.permission
+      )
 
-      // if (!requestIsAuthenticated) {
-      //   rejectUnauthorizedRequest(response)
-      //   return
-      // }
+      if (!requestIsAuthenticated) {
+        rejectUnauthorizedRequest(response)
+        return
+      }
 
       const payload = JSON.parse(request.body)
 
@@ -169,15 +169,15 @@ exports.listTransfersEndpoint = async (request, response, next) => {
       request.query
     )
 
-    // const requestIsAuthenticated = await authenticateRequest(
-    //   request.get('accessToken'),
-    //   user => user.permission
-    // )
+    const requestIsAuthenticated = await authenticateRequest(
+      request.get('accessToken'),
+      user => user.permission
+    )
 
-    // if (!requestIsAuthenticated) {
-    //   rejectUnauthorizedRequest(response)
-    //   return
-    // }
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
+      return
+    }
 
     const transfers = await listTransfers(request.query)
     response.status(200).send(JSON.stringify(transfers))

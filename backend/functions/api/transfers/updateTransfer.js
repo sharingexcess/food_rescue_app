@@ -18,7 +18,6 @@ exports.updateTransfer = async ({
   // and combine it into "payload" here so we don't forget one line by accident
   // this also ensures we don't add any stray unexpected properties to the DB record
   const payload = {
-    id,
     type,
     status,
     rescue_id,
@@ -47,10 +46,11 @@ exports.updateTransfer = async ({
     const now = new Date().toISOString()
 
     const transfer = {
+      ...existing_transfer,
+      ...payload,
       id: existing_transfer.id, // use existing data
       timestamp_created: existing_transfer.timestamp_created, // use existing data
       timestamp_updated: now, // always updated server side
-      ...payload,
     }
 
     console.log('Updating transfer:', transfer)
