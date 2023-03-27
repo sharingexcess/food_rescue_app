@@ -4,6 +4,7 @@ const {
   db,
   formatDocumentTimestamps,
 } = require('../../../helpers')
+const { getRescue } = require('../rescue')
 
 exports.listTransfers = async (
   {
@@ -18,6 +19,7 @@ exports.listTransfers = async (
     start_after,
     limit,
     organization_tag,
+    rescue_type,
   },
   options = { shallow: false }
 ) => {
@@ -29,9 +31,11 @@ exports.listTransfers = async (
     rescue_id,
     handler_id,
     organization_id,
+    organization_subtype,
     start_after,
     limit,
     organization_tag,
+    rescue_type,
   })
 
   let transfers = []
@@ -162,6 +166,15 @@ exports.listTransfers = async (
     transfers = transfers.filter(transfer => {
       return transfer.organization.subtype === organization_subtype
     })
+  }
+
+  if (rescue_type) {
+    const filtered = []
+    for (const transfer of transfers) {
+      const rescue = await getRescue(transfer.rescue_id, { shallow: true })
+      if (rescue.type === rescue_type) filtered.push(transfer)
+    }
+    transfers = filtered
   }
 
   console.log(
