@@ -32,26 +32,22 @@ export function RescueActionButtons() {
     }
     if (
       window.confirm(
-        "All set to go? We'll mark this as the start time of your rescue."
+        "All set to go? We'll update your rescue to mark it active."
       )
     ) {
       setIsStarting(true)
       await Promise.all([
         SE_API.post(
-          `/rescues/${rescue.id}/update`,
+          `/rescues/update/${rescue.id}`,
           {
+            id: rescue.id,
+            type: rescue.type,
             status: STATUSES.ACTIVE,
-            timestamp_logged_start: createTimestamp(),
-            timestamp_updated: createTimestamp(),
-          },
-          user.accessToken
-        ),
-        SE_API.post(
-          `/stops/${rescue.stops[0].id}/update`,
-          {
-            status: STATUSES.ACTIVE,
-            timestamp_logged_start: createTimestamp(),
-            timestamp_updated: createTimestamp(),
+            handler_id: rescue.handler_id,
+            notes: rescue.notes,
+            timestamp_scheduled: rescue.timestamp_scheduled,
+            timestamp_completed: null,
+            transfer_ids: rescue.transfer_ids,
           },
           user.accessToken
         ),
@@ -74,7 +70,7 @@ export function RescueActionButtons() {
     if (
       window.confirm(
         `You're about to claim this food rescue ${formatTimestamp(
-          rescue.timestamp_scheduled_start,
+          rescue.timestamp_scheduled,
           'dddd, MMMM DD [at] h:mma'
         )}. All set?`
       )
@@ -139,6 +135,7 @@ export function RescueActionButtons() {
           color="blue.primary"
           onClick={handleClaimRescue}
           isLoading={isClaiming}
+          disabled={true} // TEMP HOTFIX
         >
           Claim
         </Button>
@@ -154,6 +151,7 @@ export function RescueActionButtons() {
               leftIcon={<EditIcon />}
               bg="green.secondary"
               color="green.primary"
+              disabled={true} // TEMP HOTFIX
             >
               Edit
             </Button>
@@ -171,6 +169,7 @@ export function RescueActionButtons() {
             color="yellow.primary"
             onClick={handleCancelRescue}
             isLoading={isCancelling}
+            disabled={true} // TEMP HOTFIX
           >
             Cancel
           </Button>

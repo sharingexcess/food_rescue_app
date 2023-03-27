@@ -14,14 +14,14 @@ export function InfoForm({ formData, setFormData, handlers }) {
         Start Time
       </Text>
       <Input
-        value={formData.timestamp_scheduled_start}
+        value={formData.timestamp_scheduled}
         type="datetime-local"
         textAlign="left"
         mb="6"
         onChange={e =>
           setFormData({
             ...formData,
-            timestamp_scheduled_start: e.target.value,
+            timestamp_scheduled: e.target.value,
           })
         }
       />

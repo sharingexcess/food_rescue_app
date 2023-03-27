@@ -34,11 +34,7 @@ export function PrivateProfile({ onSubmitCallback }) {
   async function handleSubmit() {
     setIsLoading(true)
     try {
-      await SE_API.post(
-        `/privateProfile/${user.uid}/update`,
-        formData,
-        user.accessToken
-      )
+      await SE_API.post(`/private_profile/update`, formData, user.accessToken)
     } catch (e) {
       toast({
         title: 'Whoops!',

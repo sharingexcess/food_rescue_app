@@ -40,7 +40,7 @@ exports.createLocation = async ({
   const is_valid = await isValidLocationPayload(payload)
 
   if (is_valid) {
-    const id = generateUniqueId(COLLECTIONS.LOCATIONS)
+    const id = await generateUniqueId(COLLECTIONS.LOCATIONS)
     const now = new Date().toISOString()
 
     const location = {
@@ -52,7 +52,7 @@ exports.createLocation = async ({
 
     console.log('Creating location:', location)
 
-    await db.collection(COLLECTIONS.LOCATIONS).doc(id).add(location)
+    await db.collection(COLLECTIONS.LOCATIONS).doc(id).set(location)
 
     return location
   } else {

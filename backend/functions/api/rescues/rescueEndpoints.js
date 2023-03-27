@@ -163,7 +163,7 @@ exports.cancelRescueEndpoint = async (request, response, next) => {
 
 exports.listRescuesEndpoint = async (request, response, next) => {
   try {
-    console.log('API ENDPOINT CALLED: cancelRescue\n', 'params:', request.query)
+    console.log('API ENDPOINT CALLED: listRescues\n', 'params:', request.query)
 
     const requestIsAuthenticated = await authenticateRequest(
       request.get('accessToken'),

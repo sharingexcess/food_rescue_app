@@ -72,8 +72,8 @@ async function updateStop(id, payload) {
     timestamp_logged_finish: payload.timestamp_logged_finish
       ? new Date(payload.timestamp_logged_finish)
       : null,
-    timestamp_scheduled_start: payload.timestamp_scheduled_start
-      ? new Date(payload.timestamp_scheduled_start)
+    timestamp_scheduled: payload.timestamp_scheduled
+      ? new Date(payload.timestamp_scheduled)
       : null,
     timestamp_scheduled_finish: payload.timestamp_scheduled_finish
       ? new Date(payload.timestamp_scheduled_finish)

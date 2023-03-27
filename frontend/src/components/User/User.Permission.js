@@ -22,8 +22,9 @@ export function UserPermission({ profile, refresh }) {
   async function updateUserPermission(permission) {
     if (permission === 'None') permission = null
     await SE_API.post(
-      `/updateUserPermission/${profile.id}`,
+      `/public_profiles/update/${profile.id}`,
       {
+        ...profile,
         permission,
       },
       user.accessToken

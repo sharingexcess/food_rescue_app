@@ -8,8 +8,9 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useRescueContext, CardOverlay } from 'components'
-import { createTimestamp, SE_API } from 'helpers'
+import { SE_API, STATUSES, TRANSFER_TYPES } from 'helpers'
 import { useAuth } from 'hooks'
+import moment from 'moment'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,13 +22,10 @@ export function CompletedRescue({ isOpen, handleClose }) {
 
   const totalWeight = useMemo(
     () =>
-      rescue?.stops &&
-      rescue.stops
-        .filter(i => i.type === 'delivery')
-        .reduce(
-          (total, current) => (total += current.impact_data_total_weight),
-          0
-        ),
+      rescue?.transfers &&
+      rescue.transfers
+        .filter(i => i.type === TRANSFER_TYPES.DISTRIBUTION)
+        .reduce((total, current) => (total += current.total_weight), 0),
     [rescue]
   )
 
@@ -78,8 +76,17 @@ export function CompletedRescue({ isOpen, handleClose }) {
       if (notes.length && notes !== rescue.notes) {
         setIsLoading(true)
         await SE_API.post(
-          `/rescues/${rescue.id}/update`,
-          { notes, timestamp_updated: createTimestamp() },
+          `/rescues/update/${rescue.id}`,
+          {
+            id: rescue.id,
+            type: rescue.type,
+            status: STATUSES.COMPLETED,
+            handler_id: rescue.handler_id,
+            timestamp_scheduled: rescue.timestamp_scheduled,
+            timestamp_completed: moment().toISOString(),
+            transfer_ids: rescue.transfer_ids,
+            notes,
+          },
           user.accessToken
         )
         setIsLoading(false)

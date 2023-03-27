@@ -25,7 +25,7 @@ export function AddRecipient({ isOpen, handleClose }) {
   const { rescue, refresh } = useWholesaleRescueContext()
   const currentLoad = useMemo(() => calculateCurrentLoad(rescue), [rescue])
   const donationTotal = useMemo(
-    () => rescue.stops[0].impact_data_total_weight,
+    () => rescue.transfers[0].total_weight,
     [rescue]
   )
   const remainingPercent = useMemo(
@@ -42,7 +42,7 @@ export function AddRecipient({ isOpen, handleClose }) {
   })
   const [isLoading, setIsLoading] = useState(false)
   const { data: recipients } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'recipient' }), [])
   )
 

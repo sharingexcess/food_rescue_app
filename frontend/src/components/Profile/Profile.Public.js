@@ -15,13 +15,15 @@ export function PublicProfile({ onSubmitCallback }) {
     name: user.name || '',
     pronouns: user.pronouns || '',
     about_me: user.about_me || '',
+    icon: user.icon,
+    permission: user.permission,
   })
 
   async function handleSubmit() {
     setIsLoading(true)
     try {
       await SE_API.post(
-        `/publicProfile/${user.uid}/update`,
+        `/public_profiles/update/${user.uid}`,
         formData,
         user.accessToken
       )

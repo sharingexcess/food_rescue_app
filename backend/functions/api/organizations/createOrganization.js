@@ -8,11 +8,12 @@ exports.createOrganization = async ({ name, type, subtype }) => {
   const payload = { name, type, subtype }
 
   // check separately for duplicate orgs (existing orgs with the same name)
-  const is_duplicate = db
+  const is_duplicate = await db
     .collection(COLLECTIONS.ORGANIZATIONS)
     .where('name', '==', payload.name)
     .get()
-    .then(snapshot => !snapshot.empty)
+    .then(snapshot => snapshot.size)
+
   if (is_duplicate) {
     throw new Error('Organization with this name already exists.')
   }
@@ -20,7 +21,7 @@ exports.createOrganization = async ({ name, type, subtype }) => {
   const is_valid = await isValidOrganizationPayload(payload)
 
   if (is_valid) {
-    const id = generateUniqueId(COLLECTIONS.ORGANIZATIONS)
+    const id = await generateUniqueId(COLLECTIONS.ORGANIZATIONS)
     const now = new Date().toISOString()
 
     const organization = {
@@ -32,7 +33,7 @@ exports.createOrganization = async ({ name, type, subtype }) => {
 
     console.log('Creating organization:', organization)
 
-    await db.collection(COLLECTIONS.ORGANIZATIONS).doc(id).add(organization)
+    await db.collection(COLLECTIONS.ORGANIZATIONS).doc(id).set(organization)
 
     return organization
   } else {

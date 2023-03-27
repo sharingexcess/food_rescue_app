@@ -1,12 +1,12 @@
 import { CheckIcon } from '@chakra-ui/icons'
 import { Flex, IconButton, Input, Select, Text } from '@chakra-ui/react'
-import { usePickupContext } from 'components'
+import { useCollectionContext } from 'components'
 import { FOOD_CATEGORIES } from 'helpers'
 import { useState } from 'react'
 
 export function EntryRowInput() {
   const { entryRows, setEntryRows, session_storage_key, notes } =
-    usePickupContext()
+    useCollectionContext()
   const [category, setCategory] = useState('')
   const [weight, setWeight] = useState('')
 
@@ -39,7 +39,7 @@ export function EntryRowInput() {
         <option>Select a category...</option>
         {FOOD_CATEGORIES.map(i => (
           <option key={i} value={i} style={{ textTransform: 'capitalize' }}>
-            {i.replace('impact_data_', '').replace('_', ' ')}
+            {i.replace('', '').replace('_', ' ')}
           </option>
         ))}
       </Select>

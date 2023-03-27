@@ -25,7 +25,7 @@ export function Rescues() {
   const url_params = new URLSearchParams(window.location.search)
 
   const [handler, setHandler] = useState()
-  const [date, setDate] = useState()
+  const [date, setDate] = useState(url_params.get('date_range_start') || '')
   const [status, setStatus] = useState(url_params.get('status') || 'scheduled')
   const [type, setType] = useState(url_params.get('type') || 'retail')
   const [cachedScrollPosition, setCachedScrollPosition] = useState(null)
@@ -35,13 +35,14 @@ export function Rescues() {
       type,
       status: status === 'available' ? 'scheduled' : status,
       handler_id: status === 'available' ? 'null' : handler ? handler.id : null,
-      date: date,
+      date_range_start: date,
+      date_range_end: date,
       limit: 10,
     }),
     [date, handler, status, type]
   )
 
-  const { data, loading, loadMore } = useApi('/rescues', api_params)
+  const { data, loading, loadMore } = useApi('/rescues/list', api_params)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -51,7 +52,8 @@ export function Rescues() {
       'handler_id',
       status === 'available' ? 'null' : handler?.id || ''
     )
-    params.set('date', date)
+    params.set('date_range_start', date)
+    params.set('date_range_end', date)
     params.set('handler_name', handler?.name || '')
     window.history.replaceState(
       null,
@@ -95,7 +97,7 @@ export function Rescues() {
                 <PopoverArrow />
                 <Flex direction="column" px="4" py="3" gap="2" align="flex-end">
                   <Link to="/schedule-rescue">Schedule Rescue</Link>
-                  <Link to="/log-rescue">Log Past Rescue</Link>
+                  {/* <Link to="/log-rescue">Log Past Rescue</Link> */}
                 </Flex>
               </PopoverContent>
             </Portal>

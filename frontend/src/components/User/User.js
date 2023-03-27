@@ -15,10 +15,10 @@ export function User({ setBreadcrumbs }) {
     loading,
     error,
     refresh,
-  } = useApi(`/publicProfiles/${user_id}`)
+  } = useApi(`/public_profiles/get/${user_id}`)
 
   const { data: deliveries } = useApi(
-    '/stops',
+    '/transfers/list',
     useMemo(
       () => ({
         status: 'completed',
@@ -34,10 +34,7 @@ export function User({ setBreadcrumbs }) {
   const totalWeight = useMemo(
     () =>
       deliveries &&
-      deliveries.reduce(
-        (total, current) => (total += current.impact_data_total_weight),
-        0
-      ),
+      deliveries.reduce((total, current) => (total += current.total_weight), 0),
     [deliveries]
   )
 
@@ -57,7 +54,7 @@ export function User({ setBreadcrumbs }) {
     loadMore,
     loading: loadingRescues,
   } = useApi(
-    '/rescues',
+    '/rescues/list',
     useMemo(
       () => ({
         status: 'completed',

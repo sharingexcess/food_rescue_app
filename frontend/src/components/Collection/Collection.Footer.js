@@ -1,18 +1,19 @@
 import { Button, Flex } from '@chakra-ui/react'
-import { useRescueContext, usePickupContext } from 'components'
+import { useRescueContext, useCollectionContext } from 'components'
 import { STATUSES } from 'helpers'
 import { useAuth } from 'hooks'
-import { NoteInput } from './Pickup.NoteInput'
+import { NoteInput } from './Collection.NoteInput'
 
-export function PickupFooter() {
+export function CollectionFooter() {
   const { user, hasAdminPermission } = useAuth()
   const { rescue } = useRescueContext()
-  const { pickup, isSubmitting, handleSubmit, total } = usePickupContext()
+  const { collection, isSubmitting, handleSubmit, total } =
+    useCollectionContext()
 
-  if (!pickup) return null
+  if (!collection) return null
   return (
     <Flex direction="column" w="100%">
-      {pickup.status !== STATUSES.SCHEDULED && <NoteInput />}
+      {collection.status !== STATUSES.SCHEDULED && <NoteInput />}
       <Button
         size="lg"
         w="100%"
@@ -26,9 +27,9 @@ export function PickupFooter() {
         }
         onClick={handleSubmit}
         isLoading={isSubmitting}
-        loadingText="Updating pickup..."
+        loadingText="Updating collection..."
       >
-        {pickup.status === 'completed' ? 'Update' : 'Complete'} Pickup
+        {collection.status === 'completed' ? 'Update' : 'Complete'} Collection
         {total ? ` (${total} lbs.)` : ''}
       </Button>
     </Flex>

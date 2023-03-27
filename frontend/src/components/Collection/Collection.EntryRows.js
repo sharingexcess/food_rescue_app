@@ -1,9 +1,9 @@
 import { DeleteIcon } from '@chakra-ui/icons'
 import { Flex, IconButton, Text } from '@chakra-ui/react'
-import { usePickupContext } from 'components'
+import { useCollectionContext } from 'components'
 
 export function EntryRows({ entryRows }) {
-  const { setEntryRows, session_storage_key, notes } = usePickupContext()
+  const { setEntryRows, session_storage_key, notes } = useCollectionContext()
 
   function removeEntryRow(index) {
     if (window.confirm('Are you sure you want to remove this row?')) {
@@ -26,7 +26,7 @@ export function EntryRows({ entryRows }) {
       {entryRows.map((row, i) => (
         <Flex key={i} justify="flex-end" gap="2" py="2">
           <Text mr="auto" textTransform="capitalize">
-            {row.category.replace('impact_data_', '').replace('_', ' ')}
+            {row.category.replace('', '').replace('_', ' ')}
           </Text>
           <Text px="4" color="se.brand.primary">
             {row.weight} lbs.

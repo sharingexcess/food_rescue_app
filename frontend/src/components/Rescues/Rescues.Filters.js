@@ -20,7 +20,7 @@ export function Filters({
   type,
   setType,
 }) {
-  const { data: handlers } = useApi('/publicProfiles')
+  const { data: handlers } = useApi('/public_profiles/list')
 
   function searchForHandler(value) {
     return (

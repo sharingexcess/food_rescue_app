@@ -1,4 +1,4 @@
-const { db, generateUniqueId, COLLECTIONS } = require('../../../helpers')
+const { db, COLLECTIONS } = require('../../../helpers')
 const { isValidTransferPayload } = require('./isValidTransferPayload')
 
 exports.updateTransfer = async ({

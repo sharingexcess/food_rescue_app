@@ -4,47 +4,44 @@ import { useParams } from 'react-router-dom'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   PageTitle,
-  Pickup,
-  Delivery,
+  Collection,
   Directions,
   Error,
   CompletedRescue,
+  Distribution,
 } from 'components'
-import { getActiveStop } from './Rescue.utils'
+import { getActiveTransfer } from './Rescue.utils'
 import { RescueHeader } from './Rescue.Header'
-import { RescueStops } from './Rescue.Stops'
+import { RescueTransfers } from './Rescue.Transfers'
 import { RescueActionButtons } from './Rescue.ActionButtons'
-import {
-  calculateCurrentLoad,
-  createTimestamp,
-  SE_API,
-  STATUSES,
-} from 'helpers'
+import { calculateCurrentLoad, SE_API, STATUSES } from 'helpers'
+import moment from 'moment'
 
 const RescueContext = createContext({})
 RescueContext.displayName = 'RescueContext'
 export const useRescueContext = () => useContext(RescueContext)
 
-export function Rescue({ setBreadcrumbs }) {
+export function Rescue({ setBreadcrumbs, setTitle }) {
   const { rescue_id } = useParams()
   const {
     data: rescue,
     loading,
     error,
     refresh,
-  } = useApi(`/rescues/${rescue_id}`)
+  } = useApi(`/rescues/get/${rescue_id}`)
   const { user } = useAuth()
-  const [expandedStop, setExpandedStop] = useState(null)
-  const [openStop, setOpenStop] = useState(null)
+  const [expandedTransfer, setExpandedTransfer] = useState(null)
+  const [openTransfer, setOpenTransfer] = useState(null)
   const [showCompletedPopup, setShowCompletedPopup] = useState(false)
-  const activeStop = useMemo(() => getActiveStop(rescue), [rescue])
+  const activeTransfer = useMemo(() => getActiveTransfer(rescue), [rescue])
   const isMobile = useIsMobile()
 
   useEffect(() => {
+    setTitle(rescue ? `Rescue` : 'Loading rescue...')
     setBreadcrumbs([
       { label: 'Rescues', link: '/rescues' },
       {
-        label: `${rescue?.status || 'Loading'} Rescue`,
+        label: `${rescue?.status || ''} Rescue`,
         link: `/rescues/${rescue_id}`,
       },
     ])
@@ -53,20 +50,26 @@ export function Rescue({ setBreadcrumbs }) {
   // handle auto complete rescue
   useEffect(() => {
     const remainingWeight = calculateCurrentLoad(rescue)
-    // we declare rescue complete if the final stop is complete,
-    // and the remaining weight is less than the number of stops,
-    // which leaves room for a rounding off by 1 error on each stop
+    // we declare rescue complete if the final transfer is complete,
+    // and the remaining weight is less than the number of transfers,
+    // which leaves room for a rounding off by 1 error on each transfer
     if (
       rescue?.status === STATUSES.ACTIVE &&
-      remainingWeight < rescue.stops.length &&
-      rescue.stops[rescue.stops.length - 1].status === STATUSES.COMPLETED
+      remainingWeight < rescue.transfers.length &&
+      rescue.transfers[rescue.transfers.length - 1].status ===
+        STATUSES.COMPLETED
     ) {
       SE_API.post(
-        `/rescues/${rescue.id}/update`,
+        `/rescues/update/${rescue.id}`,
         {
+          id: rescue.id,
+          type: rescue.type,
           status: STATUSES.COMPLETED,
-          timestamp_logged_finish: createTimestamp(),
-          timestamp_updated: createTimestamp(),
+          handler_id: rescue.handler_id,
+          notes: rescue.notes,
+          timestamp_scheduled: rescue.timestamp_scheduled,
+          timestamp_completed: moment().toISOString(),
+          transfer_ids: rescue.transfer_ids,
         },
         user.accessToken
       )
@@ -74,36 +77,13 @@ export function Rescue({ setBreadcrumbs }) {
     }
   }, [rescue, user])
 
-  useEffect(() => {
-    // handle forcing a stop to be active if not by default
-    if (
-      rescue &&
-      rescue.status === STATUSES.ACTIVE &&
-      !rescue.stops.find(i => i.status === STATUSES.ACTIVE)
-    ) {
-      for (const stop of rescue.stops) {
-        if (stop.status === STATUSES.SCHEDULED) {
-          SE_API.post(
-            `/stops/${stop.id}/update`,
-            {
-              timestamp_updated: createTimestamp(),
-              status: STATUSES.ACTIVE,
-            },
-            user.accessToken
-          ).then(refresh)
-          break
-        }
-      }
-    }
-  }, [rescue])
-
   const contextValue = {
     rescue,
-    activeStop,
-    expandedStop,
-    setExpandedStop,
-    openStop,
-    setOpenStop,
+    activeTransfer,
+    expandedTransfer,
+    setExpandedTransfer,
+    openTransfer,
+    setOpenTransfer,
     refresh,
   }
 
@@ -113,7 +93,7 @@ export function Rescue({ setBreadcrumbs }) {
   else
     return (
       <RescueContext.Provider value={contextValue}>
-        <Directions stops={rescue.stops} />
+        <Directions transfers={rescue.transfers} />
         <Flex
           bgGradient="linear(to-b, transparent, surface.background)"
           h="24"
@@ -133,11 +113,17 @@ export function Rescue({ setBreadcrumbs }) {
           <Flex direction="column" w="100%">
             <RescueHeader />
             <RescueActionButtons />
-            <RescueStops />
+            <RescueTransfers />
           </Flex>
         </Box>
-        <Pickup pickup={openStop?.type === 'pickup' ? openStop : null} />
-        <Delivery delivery={openStop?.type === 'delivery' ? openStop : null} />
+        <Collection
+          collection={openTransfer?.type === 'collection' ? openTransfer : null}
+        />
+        <Distribution
+          distribution={
+            openTransfer?.type === 'distribution' ? openTransfer : null
+          }
+        />
         <CompletedRescue
           isOpen={showCompletedPopup}
           handleClose={() => setShowCompletedPopup(false)}

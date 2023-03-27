@@ -2,8 +2,8 @@ import { CloseIcon, DragHandleIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
 import { STATUSES } from 'helpers'
 
-export function Stop({ stop, removeStop, setActiveStop }) {
-  const isCompleted = stop.status === STATUSES.COMPLETED
+export function Transfer({ transfer, removeTransfer, setActiveTransfer }) {
+  const isCompleted = transfer.status === STATUSES.COMPLETED
 
   return (
     <Flex
@@ -43,31 +43,30 @@ export function Stop({ stop, removeStop, setActiveStop }) {
                   isCompleted ? 'se.brand.primary' : 'element.active'
                 }
               />
-              {isCompleted ? 'completed' : 'incomplete'} {stop.type}{' '}
-              {stop.impact_data_total_weight &&
-                `(${stop.impact_data_total_weight} lbs.)`}
+              {isCompleted ? 'completed' : 'incomplete'} {transfer.type}{' '}
+              {transfer.total_weight && `(${transfer.total_weight} lbs.)`}
             </Flex>
           </Heading>
           <IconButton
             variant="ghosted"
             icon={<CloseIcon w="3" color="element.tertiary" />}
-            onClick={removeStop}
+            onClick={removeTransfer}
             height="unset"
             px="2"
           />
         </Flex>
         <Heading as="h3" size="md" fontWeight="600">
-          {stop.organization.name}
+          {transfer.organization.name}
         </Heading>
         <Text as="p" fontWeight="300" color="element.secondary">
-          {stop.location.nickname || stop.location.address1}
+          {transfer.location.nickname || transfer.location.address1}
         </Text>
         <Button
           size="sm"
           variant="tertiary"
           mt="1"
           p="0"
-          onClick={() => setActiveStop(stop)}
+          onClick={() => setActiveTransfer(transfer)}
           color={isCompleted ? 'element.success' : 'element.active'}
         >
           {isCompleted ? 'Edit Impact Data' : 'Add Impact Data'}

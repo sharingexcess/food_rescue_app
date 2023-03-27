@@ -2,18 +2,17 @@ const { db, COLLECTIONS, formatDocumentTimestamps } = require('../../helpers')
 const moment = require('moment')
 const fs = require('fs')
 
-exports.migratePublicProfiles = async (_request, response) => {
-  const src_collection = 'legacy_public_profiles'
-  const dest_collection = COLLECTIONS.PUBLIC_PROFILES
+exports.migrateCollection = async (_request, response) => {
+  const src_collection = 'legacy_stops'
+  const dest_collection = COLLECTIONS.TRANSFERS
   const collectionsRef = db.collection(src_collection)
   const batch_size = 250
-  const max_batches = 8
+  const max_batches = 100
   let batch_index = 0
   let last_doc_ref = null
-  const first_doc_id = null
+  const first_doc_id = 'byfhzukmwn7f'
   let count = 0
   let shouldBreak
-  const skipped = []
 
   if (first_doc_id) {
     // If we have an ID to start from, get a reference to that document,
@@ -22,7 +21,7 @@ exports.migratePublicProfiles = async (_request, response) => {
   }
 
   const query = collectionsRef
-    // .orderBy('id')
+    .where('percent_of_total_dropped', '>', 0)
     .limit(batch_size)
 
   async function getPage() {
@@ -48,46 +47,37 @@ exports.migratePublicProfiles = async (_request, response) => {
 
   while (batch_index < max_batches) {
     const current_page = await getPage()
+    // console.log(current_page)
     const batch = db.batch()
     let batchPopulated = false
     for (const legacy_record of current_page) {
       if (!legacy_record.id) console.log(legacy_record)
       batchPopulated = true
       const new_record = {
-        ...legacy_record,
-        timestamp_created: moment
-          .utc(legacy_record.timestamp_created || new Date())
-          .toISOString(),
-        timestamp_updated: moment
-          .utc(legacy_record.timestamp_updated || new Date())
-          .toISOString(),
+        id: legacy_record.id,
+        percent_of_total_dropped: legacy_record.percent_of_total_dropped,
+        timestamp_updated: moment().toISOString(),
       }
       // console.log('Adding to batch:', new_record)
       new_record.id &&
-        batch.set(db.collection(dest_collection).doc(new_record.id), new_record)
+        batch.set(
+          db.collection(dest_collection).doc(new_record.id),
+          new_record,
+          { merge: true }
+        )
     }
     if (batchPopulated) {
       await batch.commit().then(() => console.log('completed batch update.'))
     }
     count += current_page.length
     console.log(
-      `BATCH: ${batch_index} - HANDLED: ${count} - SKIPPED ${
-        skipped.length
-      } - LAST DOC: ${last_doc_ref.data().id}`
+      `BATCH: ${batch_index} - HANDLED: ${count} - LAST DOC: ${
+        last_doc_ref.data().id
+      }`
     )
     batch_index++
     if (shouldBreak) break
   }
-
-  const src_count = await db.collection(src_collection).count().get()
-  const dest_count = await db.collection(dest_collection).count().get()
-
-  console.log(
-    src_count.data().count,
-    'total src',
-    dest_count.data().count,
-    'total dest'
-  )
 
   console.log('done.')
 

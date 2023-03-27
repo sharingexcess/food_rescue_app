@@ -1,5 +1,10 @@
 import moment from 'moment'
-import { GOOGLE_MAPS_URL } from './constants'
+import {
+  EMPTY_CATEGORIZED_WEIGHT,
+  FOOD_CATEGORIES,
+  GOOGLE_MAPS_URL,
+  TRANSFER_TYPES,
+} from './constants'
 
 export function removeSpecialCharacters(str) {
   return str ? str.replace(/[^A-Z0-9]/gi, '') : ''
@@ -61,18 +66,38 @@ export function formatLargeNumber(x) {
   return parts.join('.')
 }
 
-export function calculateCurrentLoad(rescue, delivery) {
+export function calculateCurrentLoad(rescue, distribution) {
   let weight = 0
   if (rescue) {
-    for (const stop of rescue.stops) {
-      if (stop.type === 'pickup') {
-        weight += stop.impact_data_total_weight || 0
-      } else if (stop.id === delivery?.id) {
+    for (const transfer of rescue.transfers) {
+      if (transfer.type === 'collection') {
+        weight += transfer.total_weight || 0
+      } else if (transfer.id === distribution?.id) {
         break
       } else {
-        weight -= stop.impact_data_total_weight || 0
+        weight -= transfer.total_weight || 0
       }
     }
   } else return undefined
   return weight
+}
+
+export function calculateCurrentCategorizedLoad(rescue, distribution) {
+  const categorized_weight = EMPTY_CATEGORIZED_WEIGHT()
+  if (rescue) {
+    for (const transfer of rescue.transfers) {
+      if (transfer.type === TRANSFER_TYPES.COLLECTION) {
+        for (const key of FOOD_CATEGORIES) {
+          categorized_weight[key] += transfer.categorized_weight[key] || 0
+        }
+      } else if (transfer.id === distribution?.id) {
+        break
+      } else {
+        for (const key of FOOD_CATEGORIES) {
+          categorized_weight[key] -= transfer.categorized_weight[key] || 0
+        }
+      }
+    }
+  } else return undefined
+  return categorized_weight
 }

@@ -10,18 +10,18 @@ import { formatLargeNumber } from 'helpers'
 import { useIsMobile } from 'hooks'
 import { useEffect, useState } from 'react'
 
-export function Stats({ totalWeight, totalOrgs, deliveries }) {
+export function Stats({ totalWeight, totalOrgs, distributions }) {
   const isMobile = useIsMobile()
   const { colorMode } = useColorMode()
   const cachedTotalWeight = localStorage.getItem('se_stats_total_weight')
   const cachedTotalOrgs = localStorage.getItem('se_stats_total_orgs')
-  const cachedTotalDeliveries = localStorage.getItem(
-    'se_stats_total_deliveries'
+  const cachedTotalDistributions = localStorage.getItem(
+    'se_stats_total_distributions'
   )
   const [stats, setStats] = useState({
     totalWeight: totalWeight || cachedTotalWeight,
     totalOrgs: totalOrgs || cachedTotalOrgs,
-    totalDeliveries: deliveries?.length || cachedTotalDeliveries,
+    totalDistributions: distributions?.length || cachedTotalDistributions,
   })
 
   // cache stats locally for improved load time
@@ -34,11 +34,14 @@ export function Stats({ totalWeight, totalOrgs, deliveries }) {
       localStorage.setItem('se_stats_total_orgs', totalOrgs)
       setStats(stats => ({ ...stats, totalOrgs }))
     }
-    if (deliveries != null) {
-      localStorage.setItem('se_stats_total_deliveries', deliveries.length)
-      setStats(stats => ({ ...stats, totalDeliveries: deliveries.length }))
+    if (distributions != null) {
+      localStorage.setItem('se_stats_total_distributions', distributions.length)
+      setStats(stats => ({
+        ...stats,
+        totalDistributions: distributions.length,
+      }))
     }
-  }, [totalOrgs, totalWeight, deliveries])
+  }, [totalOrgs, totalWeight, distributions])
 
   return (
     <Fade in>
@@ -91,13 +94,13 @@ export function Stats({ totalWeight, totalOrgs, deliveries }) {
               colorMode === 'dark' ? 'element.primary' : 'se.brand.primary'
             }
           >
-            {stats.totalDeliveries != null ? (
-              formatLargeNumber(stats.totalDeliveries)
+            {stats.totalDistributions != null ? (
+              formatLargeNumber(stats.totalDistributions)
             ) : (
               <Spinner />
             )}
           </Heading>
-          <Text color="element.tertiary">deliveries this year</Text>
+          <Text color="element.tertiary">distributions this year</Text>
         </Flex>
         <Flex
           p="4"

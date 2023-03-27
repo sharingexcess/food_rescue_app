@@ -64,13 +64,13 @@ exports.migrateRescues = async (_request, response) => {
         google_calendar_event_id:
           legacy_rescue.google_calendar_event_id || null,
         notes: legacy_rescue.notes || '',
-        transfer_ids: legacy_rescue.stop_ids,
+        transfer_ids: legacy_rescue.transfer_ids,
         timestamp_created: moment(
           legacy_rescue.timestamp_created
         ).toISOString(),
         timestamp_updated: moment().toISOString(),
         timestamp_scheduled: moment(
-          legacy_rescue.timestamp_scheduled_start
+          legacy_rescue.timestamp_scheduled
         ).toISOString(),
         timestamp_completed: [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(
           legacy_rescue.status

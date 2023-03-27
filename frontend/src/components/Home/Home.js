@@ -8,8 +8,8 @@ import { Stats } from './Home.Stats'
 export function Home() {
   const isMobile = useIsMobile()
   const { user } = useAuth()
-  const { data: deliveries } = useApi(
-    '/stops',
+  const { data: distributions } = useApi(
+    '/transfers/list',
     useMemo(
       () => ({
         status: 'completed',
@@ -24,18 +24,18 @@ export function Home() {
 
   const totalWeight = useMemo(
     () =>
-      deliveries &&
-      deliveries.reduce(
-        (total, current) => (total += current.impact_data_total_weight),
+      distributions &&
+      distributions.reduce(
+        (total, current) => (total += current.total_weight),
         0
       ),
-    [deliveries]
+    [distributions]
   )
 
   const totalOrgs = useMemo(() => {
-    if (deliveries) {
+    if (distributions) {
       const orgs = {}
-      for (const d of deliveries) {
+      for (const d of distributions) {
         if (orgs[d.organization.id]) {
           orgs[d.organization.id] += 1
         } else {
@@ -44,7 +44,7 @@ export function Home() {
       }
       return Object.keys(orgs).length
     } else return null
-  }, [deliveries])
+  }, [distributions])
 
   return (
     <>
@@ -92,7 +92,7 @@ export function Home() {
       <Stats
         totalWeight={totalWeight}
         totalOrgs={totalOrgs}
-        deliveries={deliveries}
+        distributions={distributions}
       />
       <AvailableRescues />
     </>

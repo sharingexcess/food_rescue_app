@@ -1,4 +1,4 @@
-const { db, STATUSES, WEIGHT_CATEGORIES } = require('../../../helpers')
+const { db, STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
 const { getRescue } = require('../rescue')
 const { listTransfers } = require('../transfers/listTransfers')
 const { updateRescue } = require('./updateRescue')
@@ -31,7 +31,7 @@ exports.cancelRescue = async (id, notes) => {
       timestamp_updated: now,
       // create an empty categorized weight object
       categorized_weight: Object.fromEntries(
-        WEIGHT_CATEGORIES.map(key => [key, 0])
+        FOOD_CATEGORIES.map(key => [key, 0])
       ),
     })
   }

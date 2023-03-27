@@ -8,12 +8,7 @@ const {
   listTransfersEndpoint,
   cancelTransferEndpoint,
 } = require('./transfers/transferEndpoints')
-const {
-  migrateStopsToTransfers,
-} = require('./transfers/migrateStopsToTransfers')
 const { duplicateCollectionEndpoint } = require('./duplicateCollection')
-const { migrateRescues } = require('./rescues/migrateRescues')
-const { migratePublicProfiles } = require('./migratePublicProfiles')
 const {
   updateLocationEndpoint,
   createLocationEndpoint,
@@ -39,6 +34,12 @@ const {
   cancelRescueEndpoint,
 } = require('./rescues/rescueEndpoints')
 const { testBackup } = require('./testBackup')
+const { migrateCollection } = require('./migrateCollection')
+const {
+  getPublicProfileEndpoint,
+  updatePublicProfileEndpoint,
+  listPublicProfilesEndpoint,
+} = require('./public_profiles/publicProfileEndpoints')
 
 // initialize express server
 const api = express()
@@ -59,108 +60,104 @@ api.get('/', (_request, response) =>
     `Sharing Excess API, ©${new Date().getFullYear()}, All Rights Reserved.`
   )
 )
-api.get('/rescues', (req, res, next) => loadEndpoint('rescues', req, res, next))
-api.get('/rescues/:id', (req, res, next) =>
-  loadEndpoint('rescue', req, res, next)
-)
+// api.get('/rescues', (req, res, next) => loadEndpoint('rescues', req, res, next))
+// api.get('/rescues/:id', (req, res, next) =>
+//   loadEndpoint('rescue', req, res, next)
+// )
 
-api.get('/stops/:id', (req, res, next) => loadEndpoint('stop', req, res, next))
-api.get('/analytics', (req, res, next) =>
-  loadEndpoint('analytics', req, res, next)
-)
+// api.get('/stops/:id', (req, res, next) => loadEndpoint('stop', req, res, next))
+// api.get('/analytics', (req, res, next) =>
+//   loadEndpoint('analytics', req, res, next)
+// )
 
-api.get('/stops', (req, res, next) => loadEndpoint('stops', req, res, next))
-api.get('/stops/:id', (req, res, next) => loadEndpoint('stop', req, res, next))
-api.get('/analytics', (req, res, next) =>
-  loadEndpoint('analytics', req, res, next)
-)
-api.get('/impact', (req, res, next) => loadEndpoint('impact', req, res, next))
-api.post('/calendar/add', (req, res, next) =>
-  loadEndpoint('addCalendarEvent', req, res, next)
-)
-api.post('/calendar/delete', (req, res, next) =>
-  loadEndpoint('deleteCalendarEvent', req, res, next)
-)
-api.post('/rescues/:id/update', (req, res, next) =>
-  loadEndpoint('updateRescue', req, res, next)
-)
-api.post('/stops/:id/create', (req, res, next) =>
-  loadEndpoint('createStop', req, res, next)
-)
-api.post('/stops/:id/update', (req, res, next) =>
-  loadEndpoint('updateStop', req, res, next)
-)
-api.post('/rescues/:id/cancel', (req, res, middlewareHandler) =>
-  loadEndpoint('cancelRescue', req, res, middlewareHandler)
-)
-api.post('/rescues/:id/:type/:stop_id/cancel', (req, res, next) =>
-  loadEndpoint('cancelStop', req, res, next)
-)
-api.get('/reports', (req, res, next) => loadEndpoint('reports', req, res, next))
+// api.get('/stops', (req, res, next) => loadEndpoint('stops', req, res, next))
+// api.get('/stops/:id', (req, res, next) => loadEndpoint('stop', req, res, next))
+// api.get('/analytics', (req, res, next) =>
+//   loadEndpoint('analytics', req, res, next)
+// )
+// api.get('/impact', (req, res, next) => loadEndpoint('impact', req, res, next))
+// api.post('/calendar/add', (req, res, next) =>
+//   loadEndpoint('addCalendarEvent', req, res, next)
+// )
+// api.post('/calendar/delete', (req, res, next) =>
+//   loadEndpoint('deleteCalendarEvent', req, res, next)
+// )
+// api.post('/rescues/:id/update', (req, res, next) =>
+//   loadEndpoint('updateRescue', req, res, next)
+// )
+// api.post('/stops/:id/create', (req, res, next) =>
+//   loadEndpoint('createStop', req, res, next)
+// )
+// api.post('/stops/:id/update', (req, res, next) =>
+//   loadEndpoint('updateStop', req, res, next)
+// )
+// api.post('/rescues/:id/cancel', (req, res, middlewareHandler) =>
+//   loadEndpoint('cancelRescue', req, res, middlewareHandler)
+// )
+// api.post('/rescues/:id/:type/:stop_id/cancel', (req, res, next) =>
+//   loadEndpoint('cancelStop', req, res, next)
+// )
+// api.get('/reports', (req, res, next) => loadEndpoint('reports', req, res, next))
 
-api.post('/rescues/:id/create', (req, res, next) =>
-  loadEndpoint('createRescue', req, res, next)
-)
-api.get('/organization/:id', (req, res, next) =>
-  loadEndpoint('organization', req, res, next)
-)
-api.post('/organization/:id/update', (req, res, next) =>
-  loadEndpoint('updateOrganization', req, res, next)
-)
-api.get('/organizations', (req, res, next) =>
-  loadEndpoint('organizations', req, res, next)
-)
-api.post('/location/:id/update', (req, res, next) =>
-  loadEndpoint('updateLocation', req, res, next)
-)
-api.get('/publicProfiles', (req, res, next) =>
-  loadEndpoint('publicProfiles', req, res, next)
-)
-api.get('/publicProfiles/:id', (req, res, next) =>
-  loadEndpoint('publicProfile', req, res, next)
-)
-api.get('/privateProfiles/:id', (req, res, next) =>
-  loadEndpoint('privateProfile', req, res, next)
-)
-api.post('/publicProfile/:id/update', (req, res, next) =>
-  loadEndpoint('updatePublicProfile', req, res, next)
-)
-api.post('/privateProfile/:id/update', (req, res, next) =>
-  loadEndpoint('updatePrivateProfile', req, res, next)
-)
-api.post('/updateUserPermission/:id', (req, res, next) =>
-  loadEndpoint('updateUserPermission', req, res, next)
-)
+// api.post('/rescues/:id/create', (req, res, next) =>
+//   loadEndpoint('createRescue', req, res, next)
+// )
+// api.get('/organization/:id', (req, res, next) =>
+//   loadEndpoint('organization', req, res, next)
+// )
+// api.post('/organization/:id/update', (req, res, next) =>
+//   loadEndpoint('updateOrganization', req, res, next)
+// )
+// api.get('/organizations', (req, res, next) =>
+//   loadEndpoint('organizations', req, res, next)
+// )
+// api.post('/location/:id/update', (req, res, next) =>
+//   loadEndpoint('updateLocation', req, res, next)
+// )
+// api.get('/publicProfiles', (req, res, next) =>
+//   loadEndpoint('publicProfiles', req, res, next)
+// )
+// api.get('/publicProfiles/:id', (req, res, next) =>
+//   loadEndpoint('publicProfile', req, res, next)
+// )
+// api.get('/privateProfiles/:id', (req, res, next) =>
+//   loadEndpoint('privateProfile', req, res, next)
+// )
+// api.post('/publicProfile/:id/update', (req, res, next) =>
+//   loadEndpoint('updatePublicProfile', req, res, next)
+// )
+// api.post('/privateProfile/:id/update', (req, res, next) =>
+//   loadEndpoint('updatePrivateProfile', req, res, next)
+// )
+// api.post('/updateUserPermission/:id', (req, res, next) =>
+//   loadEndpoint('updateUserPermission', req, res, next)
+// )
 
-api.get('/getCachedDataReports', (req, res, next) =>
-  loadEndpoint('getCachedDataReports', req, res, next)
-)
+// api.get('/getCachedDataReports', (req, res, next) =>
+//   loadEndpoint('getCachedDataReports', req, res, next)
+// )
 
-api.post('/wholesale/rescue/create', (req, res, next) =>
-  loadEndpoint('createWholesaleRescue', req, res, next)
-)
+// api.post('/wholesale/rescue/create', (req, res, next) =>
+//   loadEndpoint('createWholesaleRescue', req, res, next)
+// )
 
-api.post('/wholesale/rescue/:id/update', (req, res, next) =>
-  loadEndpoint('updateWholesaleRescue', req, res, next)
-)
+// api.post('/wholesale/rescue/:id/update', (req, res, next) =>
+//   loadEndpoint('updateWholesaleRescue', req, res, next)
+// )
 
-api.post('/wholesale/rescue/:rescue_id/addRecipient', (req, res, next) =>
-  loadEndpoint('addWholesaleRecipient', req, res, next)
-)
+// api.post('/wholesale/rescue/:rescue_id/addRecipient', (req, res, next) =>
+//   loadEndpoint('addWholesaleRecipient', req, res, next)
+// )
 
-api.post('/wholesale/rescue/:rescue_id/updateRecipient/:id', (req, res, next) =>
-  loadEndpoint('updateWholesaleRecipient', req, res, next)
-)
+// api.post('/wholesale/rescue/:rescue_id/updateRecipient/:id', (req, res, next) =>
+//   loadEndpoint('updateWholesaleRecipient', req, res, next)
+// )
 
 // THIS IS A PROD RESCUE UPDATE SCRIPT, LEAVING IN PLACE FOR NOW
 // BUT READ THE DOCUMENTATION INSIDE THE FILE BEFORE RUNNING THIS
 // api.get('/dangerous_manual_db_update_script', (req, res, next) =>
 //   loadEndpoint('_dangerousManualDbUpdateScript', req, res, next)
 // )
-
-api.get('/figureShitOut', (req, res, next) =>
-  loadEndpoint('figureShitOut', req, res, next)
-)
 
 //
 
@@ -230,6 +227,19 @@ api.get('/organizations/list', (req, res, next) =>
   listOrganizationsEndpoint(req, res, next)
 )
 
+// PUBLIC PROFILES
+api.post('/public_profiles/update/:id', (req, res, next) =>
+  updatePublicProfileEndpoint(req, res, next)
+)
+
+api.get('/public_profiles/get/:id', (req, res, next) =>
+  getPublicProfileEndpoint(req, res, next)
+)
+
+api.get('/public_profiles/list', (req, res, next) =>
+  listPublicProfilesEndpoint(req, res, next)
+)
+
 // PRIVATE PROFILES
 
 api.get('/private_profile/get', (req, res, next) =>
@@ -238,20 +248,16 @@ api.get('/private_profile/get', (req, res, next) =>
   getPrivateProfileEndpoint(req, res, next)
 )
 
-api.get('/private_profile/update', (req, res, next) =>
+api.post('/private_profile/update', (req, res, next) =>
   // NOTE: this does not take an id as a param
   // the id is acquired from the authentication token
   updatePrivateProfileEndpoint(req, res, next)
 )
 
 // TEMP MIGRATIONS
-api.get('/migrate_stops_to_transfers', (req, res, next) =>
-  migrateStopsToTransfers(req, res, next)
-)
-api.get('/migrateRescues', (req, res, next) => migrateRescues(req, res, next))
 
-api.get('/migratePublicProfiles', (req, res, next) =>
-  migratePublicProfiles(req, res, next)
+api.get('/migrateCollection', (req, res, next) =>
+  migrateCollection(req, res, next)
 )
 
 // TEMP DUPLICATE COLLECTION SCRIPT

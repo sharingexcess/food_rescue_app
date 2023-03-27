@@ -8,24 +8,24 @@ import { Button, Flex } from '@chakra-ui/react'
 import { useRescueContext } from 'components'
 import { formatPhoneNumber, generateDirectionsLink } from 'helpers'
 
-export function StopButtons({ stop }) {
-  const { setOpenStop, activeStop } = useRescueContext()
-  const isActive = stop.id === activeStop?.id
+export function TransferButtons({ transfer }) {
+  const { setOpenTransfer, activeTransfer } = useRescueContext()
+  const isActive = transfer.id === activeTransfer?.id
 
   return (
     <>
       <Flex justify="space-between" mb="4" gap="2">
         <Button
           variant={isActive ? 'secondary' : 'tertiary'}
-          disabled={!stop.location.contact_phone}
+          disabled={!transfer.location.contact_phone}
           size="sm"
           fontSize="xs"
           flexGrow="1"
           leftIcon={<PhoneIcon />}
         >
-          {stop.location.contact_phone ? (
-            <a href={`tel:+${stop.location.contact_phone}`}>
-              {formatPhoneNumber(stop.location.contact_phone)}
+          {transfer.location.contact_phone ? (
+            <a href={`tel:+${transfer.location.contact_phone}`}>
+              {formatPhoneNumber(transfer.location.contact_phone)}
             </a>
           ) : (
             'No Phone'
@@ -33,10 +33,10 @@ export function StopButtons({ stop }) {
         </Button>
         <a
           href={generateDirectionsLink(
-            stop.location.address1,
-            stop.location.city,
-            stop.location.state,
-            stop.location.zip
+            transfer.location.address1,
+            transfer.location.city,
+            transfer.location.state,
+            transfer.location.zip
           )}
           target="_blank"
           rel="noopener noreferrer"
@@ -57,11 +57,11 @@ export function StopButtons({ stop }) {
           size="sm"
           fontSize="xs"
           flexGrow="1"
-          onClick={() => setOpenStop(stop)}
+          onClick={() => setOpenTransfer(transfer)}
           leftIcon={<InfoIcon />}
-          disabled={!stop.location.notes}
+          disabled={!transfer.location.notes}
         >
-          {stop.location.notes ? 'Instructions' : 'No Instructions'}
+          {transfer.location.notes ? 'Instructions' : 'No Instructions'}
         </Button>
       </Flex>
       <Button
@@ -70,10 +70,10 @@ export function StopButtons({ stop }) {
         size="lg"
         textTransform="capitalize"
         mb="2"
-        onClick={() => setOpenStop(stop)}
+        onClick={() => setOpenTransfer(transfer)}
         leftIcon={<EditIcon />}
       >
-        Open {stop.type}
+        Open {transfer.type}
       </Button>
     </>
   )

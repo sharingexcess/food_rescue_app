@@ -90,7 +90,7 @@ async function addWholesaleRecipient(rescue_id, payload) {
     notes: payload.notes,
     timestamp_created: now,
     timestamp_updated: now,
-    timestamp_scheduled_start: now,
+    timestamp_scheduled: now,
     timestamp_logged_start: now,
     timestamp_scheduled_finish: now,
     timestamp_logged_finish: now,
@@ -104,7 +104,7 @@ async function addWholesaleRecipient(rescue_id, payload) {
   await db
     .collection('rescues')
     .doc(rescue_id)
-    .set({ stop_ids: [...rescue.stop_ids, id] }, { merge: true })
+    .set({ transfer_ids: [...rescue.transfer_ids, id] }, { merge: true })
 
   return
 }

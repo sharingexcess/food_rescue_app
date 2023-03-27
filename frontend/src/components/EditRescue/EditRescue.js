@@ -29,7 +29,7 @@ export function EditRescue({ setBreadcrumbs }) {
     useMemo(() => ({ type: 'recipient' }), [])
   )
   const [formData, setFormData] = useState({
-    timestamp_scheduled_start: '',
+    timestamp_scheduled: '',
     timestamp_scheduled_finish: '',
     handler: null,
   })
@@ -55,8 +55,8 @@ export function EditRescue({ setBreadcrumbs }) {
   useEffect(() => {
     if (rescue && !stops) {
       setFormData({
-        timestamp_scheduled_start: formatTimestamp(
-          rescue.timestamp_scheduled_start,
+        timestamp_scheduled: formatTimestamp(
+          rescue.timestamp_scheduled,
           'YYYY-MM-DDTHH:mm'
         ),
         timestamp_scheduled_finish: formatTimestamp(
@@ -118,9 +118,7 @@ export function EditRescue({ setBreadcrumbs }) {
 
     const promises = []
     const defaultPayload = {
-      timestamp_scheduled_start: moment(
-        formData.timestamp_scheduled_start
-      ).toDate(),
+      timestamp_scheduled: moment(formData.timestamp_scheduled).toDate(),
       timestamp_scheduled_finish: moment(
         formData.timestamp_scheduled_finish
       ).toDate(),
@@ -128,7 +126,7 @@ export function EditRescue({ setBreadcrumbs }) {
       handler_id: formData.handler?.id || null,
     }
 
-    const newStops = stops.filter(i => !rescue.stop_ids.includes(i.id))
+    const newStops = stops.filter(i => !rescue.transfer_ids.includes(i.id))
 
     for (const stop of newStops) {
       const payload = {
@@ -139,15 +137,15 @@ export function EditRescue({ setBreadcrumbs }) {
         location_id: stop.location.id,
         status: STATUSES.SCHEDULED,
         notes: '',
-        impact_data_dairy: 0,
-        impact_data_bakery: 0,
-        impact_data_produce: 0,
-        impact_data_meat_fish: 0,
-        impact_data_non_perishable: 0,
-        impact_data_prepared_frozen: 0,
-        impact_data_mixed: 0,
-        impact_data_other: 0,
-        impact_data_total_weight: 0,
+        dairy: 0,
+        bakery: 0,
+        produce: 0,
+        meat_fish: 0,
+        non_perishable: 0,
+        prepared_frozen: 0,
+        mixed: 0,
+        other: 0,
+        total_weight: 0,
         timestamp_created: createTimestamp(),
         timestamp_logged_start: null,
         timestamp_logged_finish: null,
@@ -214,7 +212,7 @@ export function EditRescue({ setBreadcrumbs }) {
     // without risking race conditions
     await SE_API.post(
       `/rescues/${rescue_id}/update`,
-      { ...defaultPayload, stop_ids: stops.map(i => i.id) },
+      { ...defaultPayload, transfer_ids: stops.map(i => i.id) },
       user.accessToken
     )
     navigate(`/rescues/${rescue_id}`)
@@ -225,9 +223,9 @@ export function EditRescue({ setBreadcrumbs }) {
   // for scheduled routes, don't have cancel stops (don't show canceled stops for scheduled routes)
   // be able to remove (not mark as cancelled) stops with an x in top right when editing rescue (for scheduled rescues that have not been started) (FOR ALL RESCUES)
   const isValidRescue =
-    formData.timestamp_scheduled_start &&
+    formData.timestamp_scheduled &&
     formData.timestamp_scheduled_finish &&
-    formData.timestamp_scheduled_start < formData.timestamp_scheduled_finish &&
+    formData.timestamp_scheduled < formData.timestamp_scheduled_finish &&
     stops.length >= 2 &&
     stops.filter(s => s.status !== STATUSES.CANCELLED && !s.is_deleted)[0]
       ?.type == 'pickup' &&

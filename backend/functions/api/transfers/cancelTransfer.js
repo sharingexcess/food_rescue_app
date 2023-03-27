@@ -1,4 +1,4 @@
-const { COLLECTIONS, STATUSES, WEIGHT_CATEGORIES } = require('../../../helpers')
+const { COLLECTIONS, STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
 const { db } = require('../../../helpers')
 const { getRescue } = require('../rescue')
 const { getTransfer } = require('./getTransfer')
@@ -20,7 +20,7 @@ exports.cancelTransfer = async (id, notes) => {
     timestamp_updated: now,
     // create an empty categorized weight object
     categorized_weight: Object.fromEntries(
-      WEIGHT_CATEGORIES.map(key => [key, 0])
+      FOOD_CATEGORIES.map(key => [key, 0])
     ),
   })
 

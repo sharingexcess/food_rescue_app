@@ -20,10 +20,10 @@ export function Tags({ formData, setFormData }) {
     if (window.confirm(`Are you sure you want to remove the ${tag} tag?`)) {
       const updatedTags = formData.tags.filter(i => i !== tag)
       setFormData({ ...formData, tags: updatedTags })
-      const payload = { ...formData, tags: updatedTags }
+      const payload = { ...formData, tags: updatedTags, is_deleted: false }
       delete payload.locations
       SE_API.post(
-        `/organization/${formData.id}/update`,
+        `/organizations/update/${formData.id}`,
         payload,
         user.accessToken
       )
@@ -33,10 +33,11 @@ export function Tags({ formData, setFormData }) {
   function handleAddTag() {
     const updatedTags = formData.tags ? [...formData.tags, addTag] : [addTag]
     setFormData({ ...formData, tags: updatedTags })
-    const payload = { ...formData, tags: updatedTags }
+    const payload = { ...formData, tags: updatedTags, is_deleted: false }
     delete payload.locations
+
     SE_API.post(
-      `/organization/${formData.id}/update`,
+      `/organizations/update/${formData.id}`,
       payload,
       user.accessToken
     )

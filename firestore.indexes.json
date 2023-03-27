@@ -13,7 +13,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "timestamp_scheduled_start",
+          "fieldPath": "timestamp_scheduled",
           "order": "ASCENDING"
         }
       ]
@@ -31,7 +31,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "timestamp_scheduled_start",
+          "fieldPath": "timestamp_scheduled",
           "order": "DESCENDING"
         }
       ]
@@ -45,7 +45,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "timestamp_scheduled_start",
+          "fieldPath": "timestamp_scheduled",
           "order": "ASCENDING"
         }
       ]
@@ -59,7 +59,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "timestamp_scheduled_start",
+          "fieldPath": "timestamp_scheduled",
           "order": "DESCENDING"
         }
       ]

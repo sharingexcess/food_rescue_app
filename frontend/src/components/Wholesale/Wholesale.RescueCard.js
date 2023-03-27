@@ -4,7 +4,7 @@ import { STATUSES } from 'helpers'
 import { Link } from 'react-router-dom'
 
 export function WholesaleRescueCard({ rescue }) {
-  const donation = rescue.stops[0]
+  const donation = rescue.transfers[0]
   return (
     <Link to={`/wholesale/${rescue.id}`}>
       <Flex gap="6" justify="space-between" align="center" py="6">
@@ -44,7 +44,7 @@ export function WholesaleRescueCard({ rescue }) {
             fontWeight="300"
             noOfLines={1}
           >
-            {donation.impact_data_total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
+            {donation.total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
             {donation.notes}
           </Text>
         </Box>

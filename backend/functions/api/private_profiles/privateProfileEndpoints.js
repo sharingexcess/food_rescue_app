@@ -38,7 +38,9 @@ exports.updatePrivateProfileEndpoint = async (request, response, next) => {
 
       // get the user id from the access token to ensure
       // users cannot update someone else's private profile
-      const id = getUserIdFromToken(request.get('accessToken'))
+      const id = await getUserIdFromToken(request.get('accessToken'))
+
+      console.log('id is', id)
 
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
@@ -52,8 +54,8 @@ exports.updatePrivateProfileEndpoint = async (request, response, next) => {
       const payload = { ...JSON.parse(request.body), id }
       console.log('Received payload:', payload)
 
-      const organization = await updatePrivateProfile(payload)
-      response.status(200).send(JSON.stringify(organization))
+      const private_profile = await updatePrivateProfile(payload)
+      response.status(200).send(JSON.stringify(private_profile))
 
       resolve()
     } catch (e) {

@@ -6,7 +6,7 @@ import { useApi, useAuth } from 'hooks'
 
 export function AddBackupDelivery() {
   const { data: organizations } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'recipient' }), [])
   )
   const { rescue, refresh } = useRescueContext()
@@ -22,7 +22,6 @@ export function AddBackupDelivery() {
   }, [organization])
 
   function handleSearchForOrganization(value) {
-    console.log(value, organizations)
     return organizations
       .filter(i => i.locations?.length)
       .filter(i => i.type === 'recipient')
@@ -31,9 +30,9 @@ export function AddBackupDelivery() {
 
   async function handleAddBackupDelivery() {
     setIsWorking(true)
-    const id = await generateUniqueId('stops')
+    const id = await generateUniqueId('transfers')
     await SE_API.post(
-      `/stops/${id}/create`,
+      `/transfers/${id}/create`,
       {
         id,
         type: 'delivery',
@@ -44,20 +43,20 @@ export function AddBackupDelivery() {
         status: STATUSES.ACTIVE,
         notes: null,
         percent_of_total_dropped: 100,
-        impact_data_dairy: 0,
-        impact_data_bakery: 0,
-        impact_data_produce: 0,
-        impact_data_meat_fish: 0,
-        impact_data_non_perishable: 0,
-        impact_data_prepared_frozen: 0,
-        impact_data_mixed: 0,
-        impact_data_other: 0,
-        impact_data_total_weight: 0,
+        dairy: 0,
+        bakery: 0,
+        produce: 0,
+        meat_fish: 0,
+        non_perishable: 0,
+        prepared_frozen: 0,
+        mixed: 0,
+        other: 0,
+        total_weight: 0,
         timestamp_created: createTimestamp(),
         timestamp_updated: createTimestamp(),
         timestamp_logged_start: createTimestamp(),
         timestamp_logged_finish: null,
-        timestamp_scheduled_start: rescue.timestamp_scheduled_start,
+        timestamp_scheduled: rescue.timestamp_scheduled,
         timestamp_scheduled_finish: rescue.timestamp_scheduled_finish,
       },
       user.accessToken
@@ -65,7 +64,7 @@ export function AddBackupDelivery() {
     await SE_API.post(
       `/rescues/${rescue.id}/update`,
       {
-        stop_ids: [...rescue.stops.map(i => i.id), id],
+        transfer_ids: [...rescue.transfers.map(i => i.id), id],
         timestamp_updated: createTimestamp(),
       },
       user.accessToken
@@ -105,7 +104,7 @@ export function AddBackupDelivery() {
         .
       </Text>
       <Autocomplete
-        placeholder="Donor Organization..."
+        placeholder="Recipient Organization..."
         value={organization}
         setValue={setOrganization}
         handleChange={value => handleSearchForOrganization(value)}

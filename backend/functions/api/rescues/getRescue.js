@@ -49,25 +49,26 @@ exports.getRescue = async (id, options = { shallow: false }) => {
   // populate organization and location for each stop
   const metadata_promises = [
     // create a db request for each organization_id
-    ...rescue.stops.map((stop, index) =>
+    ...rescue.transfers.map((transfer, index) =>
       db
-        .collection('organizations')
-        .doc(stop.organization_id)
+        .collection(COLLECTIONS.ORGANIZATIONS)
+        .doc(transfer.organization_id)
         .get()
         .then(doc => {
           const payload = doc.data()
-          rescue.stops[index].organization = formatDocumentTimestamps(payload)
+          rescue.transfers[index].organization =
+            formatDocumentTimestamps(payload)
         })
     ),
     // create a db request for each location_id
-    ...rescue.stops.map((stop, index) =>
+    ...rescue.transfers.map((transfer, index) =>
       db
-        .collection('locations')
-        .doc(stop.location_id)
+        .collection(COLLECTIONS.LOCATIONS)
+        .doc(transfer.location_id)
         .get()
         .then(doc => {
           const payload = doc.data()
-          rescue.stops[index].location = formatDocumentTimestamps(payload)
+          rescue.transfers[index].location = formatDocumentTimestamps(payload)
         })
     ),
   ]
@@ -76,7 +77,7 @@ exports.getRescue = async (id, options = { shallow: false }) => {
     // populate rescue with handler data if a handler_id exists
     metadata_promises.push(
       db
-        .collection('public_profiles')
+        .collection(COLLECTIONS.PUBLIC_PROFILES)
         .doc(rescue.handler_id)
         .get()
         .then(doc => {

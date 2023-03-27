@@ -3,22 +3,22 @@ import { PageTitle } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
 import { getDefaultEndTime, getDefaultStartTime } from './ScheduleRescue.utils'
-import { createTimestamp, generateUniqueId, SE_API, STATUSES } from 'helpers'
+import { EMPTY_CATEGORIZED_WEIGHT, SE_API, STATUSES } from 'helpers'
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
-import { AddStop } from './ScheduleRescue.AddStop'
-import { Stops } from 'components/ScheduleRescue/ScheduleRescue.Stops'
+import { AddTransfer } from './ScheduleRescue.AddTransfer'
+import { Transfers } from 'components/ScheduleRescue/ScheduleRescue.Transfers'
 import { InfoForm } from './ScheduleRescue.InfoForm'
 
 export function ScheduleRescue() {
   const { user } = useAuth()
-  const { data: handlers } = useApi('/publicProfiles')
+  const { data: handlers } = useApi('/public_profiles/list')
   const { data: donors } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'donor' }), [])
   )
   const { data: recipients } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'recipient' }), [])
   )
 
@@ -29,7 +29,7 @@ export function ScheduleRescue() {
     form_data_cache
       ? JSON.parse(form_data_cache)
       : {
-          timestamp_scheduled_start: getDefaultStartTime(),
+          timestamp_scheduled: getDefaultStartTime(),
           timestamp_scheduled_finish: getDefaultEndTime(),
           handler: null,
         }
@@ -39,8 +39,12 @@ export function ScheduleRescue() {
   const isMobile = useIsMobile()
   const navigate = useNavigate()
 
-  const stops_cache = sessionStorage.getItem('se_create_rescue_stops_cache')
-  const [stops, setStops] = useState(stops_cache ? JSON.parse(stops_cache) : [])
+  const transfers_cache = sessionStorage.getItem(
+    'se_create_rescue_transfers_cache'
+  )
+  const [transfers, setTransfers] = useState(
+    transfers_cache ? JSON.parse(transfers_cache) : []
+  )
 
   useEffect(() => {
     sessionStorage.setItem(
@@ -50,69 +54,73 @@ export function ScheduleRescue() {
   }, [formData])
 
   useEffect(() => {
-    stops?.length
+    transfers?.length
       ? sessionStorage.setItem(
-          'se_create_rescue_stops_cache',
-          JSON.stringify(stops)
+          'se_create_rescue_transfers_cache',
+          JSON.stringify(transfers)
         )
-      : sessionStorage.removeItem('se_create_rescue_stops_cache')
-  }, [stops])
+      : sessionStorage.removeItem('se_create_rescue_transfers_cache')
+  }, [transfers])
 
-  async function handleAddStop(stop) {
-    const id = await generateUniqueId('stops')
-    setStops(currentStops => [
-      ...currentStops,
+  async function handleAddTransfer(transfer) {
+    setTransfers(currentTransfers => [
+      ...currentTransfers,
       {
-        ...stop,
-        id,
-        organization_id: stop.organization.id,
-        location_id: stop.location.id,
+        ...transfer,
+        organization_id: transfer.organization.id,
+        location_id: transfer.location.id,
       },
     ])
     setView(null)
   }
 
-  function removeStop(index) {
-    if (window.confirm('Are you sure you want to remove this stop?')) {
-      setStops([...stops.slice(0, index), ...stops.slice(index + 1)])
+  function removeTransfer(index) {
+    if (window.confirm('Are you sure you want to remove this transfer?')) {
+      setTransfers([
+        ...transfers.slice(0, index),
+        ...transfers.slice(index + 1),
+      ])
     }
   }
 
   async function handleScheduleRescue() {
     setWorking(true)
-    const id = await generateUniqueId('rescues')
-    sessionStorage.removeItem('se_create_rescue_stops_cache')
-    sessionStorage.removeItem('se_create_rescue_form_data_cache')
 
-    await SE_API.post(
-      `/rescues/${id}/create`,
+    const rescue = await SE_API.post(
+      `/rescues/create`,
       {
-        formData: {
+        type: 'retail',
+        status: STATUSES.SCHEDULED,
+        handler_id: formData.handler?.id || null,
+        timestamp_scheduled: moment(formData.timestamp_scheduled).toISOString(),
+        timestamp_completed: null,
+        notes: '',
+        transfers: transfers.map(transfer => ({
+          type: transfer.type,
+          organization_id: transfer.organization_id,
+          location_id: transfer.location_id,
+          status: STATUSES.SCHEDULED,
           handler_id: formData.handler?.id || null,
-          stops,
-        },
-        status_scheduled: STATUSES.SCHEDULED,
-        timestamp_scheduled_start: moment(
-          formData.timestamp_scheduled_start
-        ).toDate(),
-        timestamp_scheduled_finish: moment(
-          formData.timestamp_scheduled_finish
-        ).toDate(),
-        timestamp_created: createTimestamp(),
-        timestamp_updated: createTimestamp(),
+          notes: '',
+          timestamp_completed: null,
+          total_weight: 0,
+          categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+        })),
       },
       user.accessToken
     )
-    navigate(`/rescues/${id}`)
+
+    sessionStorage.removeItem('se_create_rescue_transfers_cache')
+    sessionStorage.removeItem('se_create_rescue_form_data_cache')
+
+    navigate(`/rescues/${rescue.id}`)
   }
 
   const isValidRescue =
-    formData.timestamp_scheduled_start &&
-    formData.timestamp_scheduled_finish &&
-    formData.timestamp_scheduled_start < formData.timestamp_scheduled_finish &&
-    stops.length >= 2 &&
-    stops[0].type == 'pickup' &&
-    stops[stops.length - 1].type === 'delivery'
+    formData.timestamp_scheduled &&
+    transfers.length >= 2 &&
+    transfers[0].type == 'collection' &&
+    transfers[transfers.length - 1].type === 'distribution'
 
   return (
     <>
@@ -122,36 +130,44 @@ export function ScheduleRescue() {
         setFormData={setFormData}
         handlers={handlers}
       />
-      <Stops stops={stops} setStops={setStops} removeStop={removeStop} />
+      <Transfers
+        transfers={transfers}
+        setTransfers={setTransfers}
+        removeTransfer={removeTransfer}
+      />
       {view ? (
-        <AddStop
+        <AddTransfer
           type={view}
-          handleAddStop={handleAddStop}
+          handleAddTransfer={handleAddTransfer}
           handleCancel={() => setView(null)}
           organizations={
-            view === 'pickup' ? donors : view === 'delivery' ? recipients : null
+            view === 'collection'
+              ? donors
+              : view === 'distribution'
+              ? recipients
+              : null
           }
         />
       ) : (
         <Flex w="100%" gap="4" mt="8" mb="4" justify="center" wrap="wrap">
           <Button
             variant="secondary"
-            onClick={() => setView('pickup')}
+            onClick={() => setView('collection')}
             flexGrow={isMobile ? '1' : '0'}
             background="blue.secondary"
             color="blue.primary"
             isLoading={!donors}
           >
-            {stops.length === 0 ? 'Add Stops' : 'Add Pickup'}
+            {transfers.length === 0 ? 'Add Transfers' : 'Add Collection'}
           </Button>
-          {stops.length > 0 && (
+          {transfers.length > 0 && (
             <Button
               variant="secondary"
-              onClick={() => setView('delivery')}
+              onClick={() => setView('distribution')}
               flexGrow={isMobile ? '1' : '0'}
               isLoading={!recipients}
             >
-              Add Delivery
+              Add Distribution
             </Button>
           )}
 

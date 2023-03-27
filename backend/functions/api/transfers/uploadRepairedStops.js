@@ -52,7 +52,7 @@ exports.uploadRepairedStops = async (_request, response) => {
           { merge: true }
         )
         // update other transfers in rescue
-        for (const transfer_id of rescue.stop_ids) {
+        for (const transfer_id of rescue.transfer_ids) {
           const t = await getTransfer(transfer_id, { shallow: true })
           if (t && t.id !== transfer.id) {
             batch.set(

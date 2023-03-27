@@ -52,7 +52,7 @@ async function updateRescueEndpoint(request, response, next) {
 
         const resource = await createEventResource(
           { ...rescue, ...payload },
-          rescue.timestamp_scheduled_start,
+          rescue.timestamp_scheduled,
           rescue.timestamp_scheduled_finish
         )
         console.log('[resource]:', resource)
@@ -84,7 +84,7 @@ async function updateRescue(id, payload) {
   const cleaned_payload = removeEmptyValues({
     handler_id: payload.handler_id,
     google_calendar_id: payload.google_calendar_id,
-    stop_ids: payload.stop_ids,
+    transfer_ids: payload.transfer_ids,
     status: payload.status,
     notes: payload.notes,
     timestamp_logged_start: payload.timestamp_logged_start
@@ -93,8 +93,8 @@ async function updateRescue(id, payload) {
     timestamp_logged_finish: payload.timestamp_logged_finish
       ? new Date(payload.timestamp_logged_finish)
       : null,
-    timestamp_scheduled_start: payload.timestamp_scheduled_start
-      ? new Date(payload.timestamp_scheduled_start)
+    timestamp_scheduled: payload.timestamp_scheduled
+      ? new Date(payload.timestamp_scheduled)
       : null,
     timestamp_scheduled_finish: payload.timestamp_scheduled_finish
       ? new Date(payload.timestamp_scheduled_finish)
@@ -123,7 +123,7 @@ function isPayloadValid(payload) {
     typeof payload.google_calendar_id !== 'string'
   )
     return false
-  if (payload.stop_ids && payload.stop_ids.length < 2) return false
+  if (payload.transfer_ids && payload.transfer_ids.length < 2) return false
   if (payload.status && typeof payload.status !== 'string') return false
   if (payload.notes && typeof payload.notes !== 'string') return false
   if (!payload.timestamp_updated) return false
@@ -137,10 +137,10 @@ function removeEmptyValues(obj) {
 
 function payloadRequiresNewCalendarEvent(payload) {
   return (
-    payload.timestamp_scheduled_start ||
+    payload.timestamp_scheduled ||
     payload.timestamp_scheduled_finish ||
     payload.handler_id ||
-    payload.stop_ids
+    payload.transfer_ids
   )
 }
 

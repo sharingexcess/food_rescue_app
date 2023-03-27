@@ -30,10 +30,12 @@ export function RescueHeader() {
           </Heading>
           <Text color="element.secondary" fontSize="xs">
             {formatTimestamp(
-              rescue.timestamp_scheduled_start,
+              rescue.timestamp_scheduled,
               'dddd, MMMM DD | h:mma'
             )}
-            {formatTimestamp(rescue.timestamp_scheduled_finish, ' - h:mma')}
+            {rescue.timestamp_completed
+              ? formatTimestamp(rescue.timestamp_completed, ' - h:mma')
+              : ''}
           </Text>
           {rescue.notes && (
             <Text color="element.secondary" fontSize="xs">

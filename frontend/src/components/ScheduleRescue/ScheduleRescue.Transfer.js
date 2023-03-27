@@ -1,7 +1,7 @@
 import { CloseIcon, DragHandleIcon } from '@chakra-ui/icons'
 import { Box, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
 
-export function Stop({ stop, removeStop }) {
+export function Transfer({ transfer, removeTransfer }) {
   return (
     <Flex
       my="3"
@@ -27,21 +27,21 @@ export function Stop({ stop, removeStop }) {
             color="element.tertiary"
             textTransform="uppercase"
           >
-            {stop.type}
+            {transfer.type}
           </Heading>
           <IconButton
             variant="ghosted"
             icon={<CloseIcon w="3" color="element.tertiary" />}
-            onClick={removeStop}
+            onClick={removeTransfer}
             height="unset"
             px="2"
           />
         </Flex>
         <Heading as="h3" size="md" fontWeight="600" color="element.primary">
-          {stop.organization.name}
+          {transfer.organization.name}
         </Heading>
         <Text as="p" fontWeight="300" color="element.secondary">
-          {stop.location.nickname || stop.location.address1}
+          {transfer.location.nickname || transfer.location.address1}
         </Text>
       </Box>
     </Flex>

@@ -36,7 +36,7 @@ export function EditLocation({ setBreadcrumbs }) {
     data: organization,
     loading,
     error,
-  } = useApi(`/organization/${organization_id}`)
+  } = useApi(`/organizations/get/${organization_id}`)
 
   const locations = organization?.locations
   const location = locations?.filter(i => i.id === location_id)[0]
@@ -155,14 +155,8 @@ export function EditLocation({ setBreadcrumbs }) {
         window.confirm(`You're SURE??? Deleting a location can't be undone.`)
       ) {
         await SE_API.post(
-          `/location/${location_id}/update`,
-          {
-            address1: formData.address1,
-            contact_name: formData.contact_name,
-            contact_phone: formData.contact_phone,
-            contact_email: formData.contact_email,
-            is_deleted: true,
-          },
+          `/locations/update/${location_id}`,
+          { ...location, is_deleted: true },
           user.accessToken
         )
         navigate(`/organizations/${organization_id}`)
@@ -206,11 +200,12 @@ export function EditLocation({ setBreadcrumbs }) {
     if (isFormDataValid()) {
       try {
         await SE_API.post(
-          `/location/${location_id}/update`,
+          `/locations/update/${location_id}`,
           {
             id: location_id,
             organization_id,
             ...formData,
+            is_deleted: false,
             contact_phone: removeSpecialCharacters(
               formData.contact_phone || ''
             ),

@@ -40,15 +40,13 @@ async function createRescueEndpoint(request, response, next) {
       console.log(
         '\n\n\nTIMESTAMPS:\n\n\n',
         'start_payload: ',
-        payload.timestamp_scheduled_start
+        payload.timestamp_scheduled
       )
 
       const formData = payload.formData
       const status_scheduled = payload.status_scheduled
       const timestamp_created = new Date(payload.timestamp_created)
-      const timestamp_scheduled_start = new Date(
-        payload.timestamp_scheduled_start
-      )
+      const timestamp_scheduled = new Date(payload.timestamp_scheduled)
       const timestamp_scheduled_finish = new Date(
         payload.timestamp_scheduled_finish
       )
@@ -60,7 +58,7 @@ async function createRescueEndpoint(request, response, next) {
       console.log(
         '\n\n\nTIMESTAMPS:\n\n\n',
         '\nstart_parsed: ',
-        timestamp_scheduled_start,
+        timestamp_scheduled,
         '\n\n\n\n'
       )
 
@@ -79,7 +77,7 @@ async function createRescueEndpoint(request, response, next) {
           formData,
           status_scheduled,
           timestamp_created,
-          timestamp_scheduled_start,
+          timestamp_scheduled,
           timestamp_scheduled_finish,
           timestamp_updated
         )
@@ -98,7 +96,7 @@ async function createRescueEndpoint(request, response, next) {
         formData,
         status_scheduled,
         timestamp_created,
-        timestamp_scheduled_start,
+        timestamp_scheduled,
         timestamp_scheduled_finish,
         timestamp_updated,
         timestamp_logged_start
@@ -124,14 +122,14 @@ async function createRescuePayload(
   formData,
   status_scheduled,
   timestamp_created,
-  timestamp_scheduled_start,
+  timestamp_scheduled,
   timestamp_scheduled_finish,
   timestamp_updated,
   timestamp_logged_start
 ) {
   const resource = await createEventResource(
     formData,
-    timestamp_scheduled_start,
+    timestamp_scheduled,
     timestamp_scheduled_finish
   )
   const event = await addCalendarEvent(resource).catch(err => {
@@ -160,12 +158,12 @@ async function createRescuePayload(
     type: formData.type || 'retail',
     handler_id: formData.handler_id,
     google_calendar_event_id: event.id,
-    stop_ids: formData.stops.map(s => s.id),
+    transfer_ids: formData.stops.map(s => s.id),
     status: status_scheduled,
     notes: '',
     timestamp_created: timestamp_created,
     timestamp_updated: timestamp_updated,
-    timestamp_scheduled_start: timestamp_scheduled_start,
+    timestamp_scheduled: timestamp_scheduled,
     timestamp_scheduled_finish: timestamp_scheduled_finish,
     timestamp_logged_start: timestamp_logged_start || null,
     timestamp_logged_finish: null,
@@ -181,7 +179,7 @@ async function createStopsPayload(
   formData,
   status_scheduled,
   timestamp_created,
-  timestamp_scheduled_start,
+  timestamp_scheduled,
   timestamp_scheduled_finish,
   timestamp_updated
 ) {
@@ -205,7 +203,7 @@ async function createStopsPayload(
       stop.timestamp_logged_finish != null
         ? new Date(stop.timestamp_logged_finish)
         : null,
-    timestamp_scheduled_start: timestamp_scheduled_start,
+    timestamp_scheduled: timestamp_scheduled,
     timestamp_scheduled_finish: timestamp_scheduled_finish,
     impact_data_dairy: stop.impact_data_dairy || 0,
     impact_data_bakery: stop.impact_data_bakery || 0,
@@ -228,7 +226,7 @@ async function createStopsPayload(
 
 async function createEventResource(
   resource,
-  timestamp_scheduled_start,
+  timestamp_scheduled,
   timestamp_scheduled_finish
 ) {
   let handler
@@ -263,7 +261,7 @@ async function createEventResource(
       )
       .join(', ')}`,
     start: {
-      dateTime: new Date(timestamp_scheduled_start).toISOString(),
+      dateTime: new Date(timestamp_scheduled).toISOString(),
       timeZone: 'America/New_York',
     },
     end: {

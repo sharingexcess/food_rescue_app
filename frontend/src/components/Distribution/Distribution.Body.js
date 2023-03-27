@@ -9,20 +9,20 @@ import {
   SliderTrack,
   Text,
 } from '@chakra-ui/react'
-import { useRescueContext, useDeliveryContext } from 'components'
+import { useRescueContext, useDistributionContext } from 'components'
 import { STATUSES } from 'helpers'
 import { useEffect, useState } from 'react'
 
 export function Body() {
-  const { setOpenStop, rescue } = useRescueContext()
+  const { setOpenTransfer, rescue, activeTransfer } = useRescueContext()
   const {
-    delivery,
+    distribution,
     currentLoad,
     poundsDropped,
     setPoundsDropped,
     percentTotalDropped,
     setPercentTotalDropped,
-  } = useDeliveryContext()
+  } = useDistributionContext()
 
   // create an internal copy of poundsDropped
   // so that we don't unfocus the input on change
@@ -49,33 +49,24 @@ export function Body() {
     setPoundsDropped(Math.round((value / 100) * currentLoad))
   }
 
-  // prevent editing the last delivery of completed rescues
+  // prevent editing the last distribution of completed rescues
   // this could leave a rescue in an invalid state
   const disabled =
     rescue &&
     rescue.status === STATUSES.COMPLETED &&
-    rescue.stop_ids.findIndex(i => i === delivery.id) ===
-      rescue.stop_ids.length - 1
+    rescue.transfer_ids.findIndex(i => i === distribution.id) ===
+      rescue.transfer_ids.length - 1
 
-  if (!delivery) return null
-  return delivery.status === STATUSES.SCHEDULED ? (
+  if (!distribution) return null
+
+  return distribution?.status === STATUSES.CANCELLED ? (
     <Flex direction="column" align="center" w="100%" py="8">
       <Heading as="h4" size="md" color="element.primary" mb="2">
-        This delivery isn't active yet.
-      </Heading>
-      <Text align="center" fontSize="sm" color="element.secondary">
-        {rescue.status === STATUSES.ACTIVE
-          ? 'You can enter data here once you complete all previous stops along your rescue.'
-          : 'Ready to go? Start this rescue to begin entering data.'}
-      </Text>
-    </Flex>
-  ) : delivery.status === STATUSES.CANCELLED ? (
-    <Flex direction="column" align="center" w="100%" py="8">
-      <Heading as="h4" size="md" color="element.primary" mb="2">
-        This delivery has been cancelled.
+        This distribution has been cancelled.
       </Heading>
     </Flex>
-  ) : (
+  ) : distribution?.id === activeTransfer?.id ||
+    distribution?.status === STATUSES.COMPLETED ? (
     <Flex direction="column" align="center">
       <Text textAlign="center" fontWeight={400} mb={4}>
         How much of your current load
@@ -141,16 +132,27 @@ export function Body() {
               variant="tertiary"
               fontSize="xs"
               size="xs"
-              onClick={() => setOpenStop(null)}
+              onClick={() => setOpenTransfer(null)}
               display="inline"
               px="2px"
             >
-              update your previous deliveries
+              update your previous distributions
             </Button>
             .
           </Text>
         </Flex>
       )}
+    </Flex>
+  ) : (
+    <Flex direction="column" align="center" w="100%" py="8">
+      <Heading as="h4" size="md" color="element.primary" mb="2">
+        This distribution isn't active yet.
+      </Heading>
+      <Text align="center" fontSize="sm" color="element.secondary">
+        {rescue.status === STATUSES.ACTIVE
+          ? 'You can enter data here once you complete all previous stops along your rescue.'
+          : 'Ready to go? Start this rescue to begin entering data.'}
+      </Text>
     </Flex>
   )
 }

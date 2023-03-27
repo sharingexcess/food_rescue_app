@@ -43,7 +43,8 @@ exports.listRescues = async (
 
   if (date_range_start && date_range_end) {
     const start = moment(date_range_start).startOf('day').toISOString()
-    const end = moment(date_range_end).endOf('day').toDate()
+    const end = moment(date_range_end).endOf('day').toISOString()
+    console.log(`Applying date range filter, start: ${start}, end: ${end}`)
     rescues_query = rescues_query
       .where('timestamp_scheduled', '>=', start)
       .where('timestamp_scheduled', '<=', end)
@@ -81,8 +82,8 @@ exports.listRescues = async (
     snapshot.forEach(doc => {
       const data = doc.data()
       rescues.push({
-        ...formatDocumentTimestamps(data),
-        stops: data.stop_ids.map(i => null), // populate stops array with correct length
+        ...data,
+        transfers: data.transfer_ids.map(i => null), // populate stops array with correct length
       })
     })
   })
@@ -101,7 +102,7 @@ exports.listRescues = async (
     ...rescues.map(rescue =>
       rescue.handler_id
         ? db
-            .collection('public_profiles')
+            .collection(COLLECTIONS.PUBLIC_PROFILES)
             .doc(rescue.handler_id)
             .get()
             .then(
@@ -111,43 +112,44 @@ exports.listRescues = async (
     ),
     ...rescues.map(rescue =>
       db
-        .collection('stops')
+        .collection(COLLECTIONS.TRANSFERS)
         .where('rescue_id', '==', rescue.id)
         .get()
         .then(snapshot =>
           snapshot.forEach(doc => {
             const data = doc.data()
-            rescue.stops[rescue.stop_ids.findIndex(i => i === data.id)] =
-              formatDocumentTimestamps(data)
+            rescue.transfers[
+              rescue.transfer_ids.findIndex(i => i === data.id)
+            ] = formatDocumentTimestamps(data)
           })
         )
     ),
   ])
 
-  // execute query for organization and location for each stop
+  // execute query for organization and location for each transfer
   await Promise.all(
     rescues
       .map(rescue => [
-        ...rescue.stops.map(stop =>
+        ...rescue.transfers.map(transfer =>
           db
             .collection('organizations')
-            .doc(stop.organization_id)
+            .doc(transfer.organization_id)
             .get()
             .then(doc => {
               const org = formatDocumentTimestamps(doc.data())
               // console.log('got org', org)
-              stop.organization = org
+              transfer.organization = org
             })
         ),
-        ...rescue.stops.map(stop =>
+        ...rescue.transfers.map(transfer =>
           db
             .collection('locations')
-            .doc(stop.location_id)
+            .doc(transfer.location_id)
             .get()
             .then(doc => {
               const loc = formatDocumentTimestamps(doc.data())
               // console.log('got loc', loc)
-              stop.location = loc
+              transfer.location = loc
             })
         ),
       ])

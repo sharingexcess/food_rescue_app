@@ -70,35 +70,35 @@ export function Analytics() {
     ? [
         {
           name: 'Dairy',
-          value: apiData.view_data.impact_data_dairy,
+          value: apiData.view_data.dairy,
         },
         {
           name: 'Bakery',
-          value: apiData.view_data.impact_data_bakery,
+          value: apiData.view_data.bakery,
         },
         {
           name: 'Produce',
-          value: apiData.view_data.impact_data_produce,
+          value: apiData.view_data.produce,
         },
         {
           name: 'Meat',
-          value: apiData.view_data.impact_data_meat_fish,
+          value: apiData.view_data.meat_fish,
         },
         {
           name: 'Mixed',
-          value: apiData.view_data.impact_data_mixed,
+          value: apiData.view_data.mixed,
         },
         {
           name: 'Prepared',
-          value: apiData.view_data.impact_data_prepared_frozen,
+          value: apiData.view_data.prepared_frozen,
         },
         {
           name: 'NP',
-          value: apiData.view_data.impact_data_non_perishable,
+          value: apiData.view_data.non_perishable,
         },
         {
           name: 'Other',
-          value: apiData.view_data.impact_data_other,
+          value: apiData.view_data.other,
         },
       ].sort((a, b) => b.value - a.value)
     : breakdown === 'Donor Type'

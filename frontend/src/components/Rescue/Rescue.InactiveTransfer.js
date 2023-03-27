@@ -9,15 +9,16 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { STATUSES } from 'helpers'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
-import { StopButtons } from './Rescue.StopButtons'
+import { TransferButtons } from './Rescue.TransferButtons'
 import { statusIcon } from './Rescue.utils'
 
-export function InactiveStop({ stop }) {
+export function InactiveTransfer({ transfer }) {
   const [isExpanded, setIsExpanded] = useState()
 
-  // close the stop whenever it's updated from inside the card overlay
-  useEffect(() => setIsExpanded(false), [stop])
+  // close the transfer whenever it's updated from inside the card overlay
+  useEffect(() => setIsExpanded(false), [transfer])
 
   function toggleIsExpanded() {
     setIsExpanded(!isExpanded)
@@ -35,13 +36,13 @@ export function InactiveStop({ stop }) {
           textTransform="uppercase"
           py="2"
         >
-          {statusIcon(stop.status)}&nbsp;&nbsp;{stop.type}
-          {stop.status === STATUSES.COMPLETED
-            ? ` (${stop.impact_data_total_weight} lbs.)`
+          {statusIcon(transfer.status)}&nbsp;&nbsp;{transfer.type}
+          {transfer.status === STATUSES.COMPLETED
+            ? ` | ${transfer.total_weight} lbs.`
             : ''}
         </Heading>
         <IconButton
-          aria-label="Rescue stop"
+          aria-label="Rescue transfer"
           variant="tertiary"
           color="element.tertiary"
           icon={
@@ -55,16 +56,15 @@ export function InactiveStop({ stop }) {
           onClick={toggleIsExpanded}
         />
       </Flex>
-
       <Heading as="h3" size="md" fontWeight="600" color="element.primary">
-        {stop.organization.name}
+        {transfer.organization.name}
       </Heading>
       <Text as="p" fontWeight="300" color="element.secondary">
-        {stop.location.nickname || stop.location.address1}
+        {transfer.location.nickname || transfer.location.address1}
       </Text>
       <Box h={4} />
       <Collapse in={isExpanded} startingHeight={0} endingHeight={120}>
-        <StopButtons stop={stop} />
+        <TransferButtons transfer={transfer} />
       </Collapse>
       <Divider orientation="horizontal" />
     </Box>

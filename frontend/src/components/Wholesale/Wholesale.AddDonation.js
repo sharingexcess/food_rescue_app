@@ -1,8 +1,15 @@
 import { Button, Select, Text, Input, Flex, Heading } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { formatTimestamp, SE_API } from 'helpers'
+import {
+  EMPTY_CATEGORIZED_WEIGHT,
+  formatTimestamp,
+  SE_API,
+  STATUSES,
+  TRANSFER_TYPES,
+} from 'helpers'
 import { useApi, useAuth } from 'hooks'
+import moment from 'moment'
 import { useState, useMemo } from 'react'
 
 export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
@@ -12,13 +19,13 @@ export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
     organization: null,
     location: null,
     weight: '',
-    food_category: 'impact_data_produce',
+    food_category: 'produce',
     notes: '',
     pallet: null,
   })
   const [isLoading, setIsLoading] = useState()
   const { data: donors } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'donor' }), [])
   )
 
@@ -26,16 +33,44 @@ export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
 
   async function handleCreateRescue() {
     setIsLoading(true)
+
+    // const payload = {
+    //   handler_id: user.id,
+    //   notes: formData.notes,
+    //   food_category: formData.food_category,
+    //   weight: totalWeight,
+    //   organization_id: formData.organization.id,
+    //   location_id: formData.location.id,
+    //   date: formData.date,
+    // }
+
     const payload = {
+      type: 'wholesale',
+      status: STATUSES.ACTIVE,
       handler_id: user.id,
-      notes: formData.notes,
-      food_category: formData.food_category,
-      weight: totalWeight,
-      organization_id: formData.organization.id,
-      location_id: formData.location.id,
-      date: formData.date,
+      notes: formData.notes || '',
+      timestamp_scheduled: moment(formData.date).toISOString(),
+      timestamp_completed: null,
+      transfers: [
+        {
+          type: TRANSFER_TYPES.COLLECTION,
+          status: STATUSES.COMPLETED,
+          handler_id: user.id,
+          organization_id: formData.organization.id,
+          location_id: formData.location.id,
+          notes: formData.notes || '',
+          timestamp_completed: moment(formData.date).toISOString(),
+          total_weight: formData.weight - palletWeight(formData.pallet),
+          categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+        },
+      ],
     }
-    await SE_API.post('/wholesale/rescue/create', payload, user.accessToken)
+
+    // add categorized weight
+    payload.transfers[0].categorized_weight[formData.food_category] =
+      payload.transfers[0].total_weight
+
+    await SE_API.post('/rescues/create', payload, user.accessToken)
     refresh()
     setIsLoading(false)
     handleClose()
@@ -162,14 +197,14 @@ function AddDonationBody({ formData, setFormData, donors }) {
           setFormData({ ...formData, food_category: e.target.value })
         }
       >
-        <option value="impact_data_produce">Produce</option>
-        <option value="impact_data_dairy">Dairy</option>
-        <option value="impact_data_bakery">Bakery</option>
-        <option value="impact_data_meat_fish">Meat/Fish</option>
-        <option value="impact_data_non_perishable">Non-perishable</option>
-        <option value="impact_data_prepared_frozen">Prepared/Frozen</option>
-        <option value="impact_data_mixed">Mixed</option>
-        <option value="impact_data_other">Other</option>
+        <option value="produce">Produce</option>
+        <option value="dairy">Dairy</option>
+        <option value="bakery">Bakery</option>
+        <option value="meat_fish">Meat/Fish</option>
+        <option value="non_perishable">Non-perishable</option>
+        <option value="prepared_frozen">Prepared/Frozen</option>
+        <option value="mixed">Mixed</option>
+        <option value="other">Other</option>
       </Select>
       <Text mt="6">Notes</Text>
       <Input

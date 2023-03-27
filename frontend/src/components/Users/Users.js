@@ -17,7 +17,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Users() {
-  const { data: users } = useApi('/publicProfiles')
+  const { data: users } = useApi('/public_profiles/list')
   const [searchValue, setSearchValue] = useState('')
 
   function handleChange(e) {

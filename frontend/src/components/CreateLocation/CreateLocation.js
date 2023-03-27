@@ -22,7 +22,6 @@ import {
   SE_API,
   removeSpecialCharacters,
   createTimestamp,
-  generateUniqueId,
   TIMES,
 } from 'helpers'
 import { useEffect, useState } from 'react'
@@ -33,7 +32,7 @@ export function CreateLocation({ setBreadcrumbs }) {
   const navigate = useNavigate()
   const { organization_id } = useParams()
   const [isLoading, setIsLoading] = useState(false)
-  const { data: organization } = useApi(`/organization/${organization_id}`)
+  const { data: organization } = useApi(`/organizations/get/${organization_id}`)
   const [formData, setFormData] = useState({
     address1: '',
     address2: '',
@@ -90,13 +89,12 @@ export function CreateLocation({ setBreadcrumbs }) {
     })
 
     try {
-      const location_id = await generateUniqueId('locations')
       await SE_API.post(
-        `/location/${location_id}/update`,
+        `/locations/create`,
         {
-          id: location_id,
           organization_id,
           ...formData,
+          is_deleted: false,
           contact_phone: removeSpecialCharacters(formData.contact_phone || ''),
           hours: checkMonToFriday(),
           timestamp_created: createTimestamp(),
@@ -137,8 +135,6 @@ export function CreateLocation({ setBreadcrumbs }) {
   }
 
   function handleChangeTimeSlot(day, open, close, e) {
-    console.log('hours', formData.hours)
-
     const alter = formData.hours
       ? formData.hours.findIndex(
           hour =>

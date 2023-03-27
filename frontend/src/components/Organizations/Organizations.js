@@ -26,7 +26,7 @@ export function Organizations() {
   const [tag, setTag] = useState('')
   const { hasAdminPermission } = useAuth()
   const params = useMemo(() => (tag ? { tag } : null), [tag])
-  const { data: organizations } = useApi('/organizations', params)
+  const { data: organizations } = useApi('/organizations/list', params)
 
   function handleChange(e) {
     setSearchValue(e.target.value)

@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom'
 export function AvailableRescues() {
   const isMobile = useIsMobile()
   const { data: availableRescues } = useApi(
-    '/rescues',
+    '/rescues/list',
     useMemo(() => ({ status: 'scheduled', handler_id: 'null' }), [])
   )
 
@@ -124,21 +124,17 @@ function CardHeader({ rescue }) {
         bg="green.secondary"
         color="green.primary"
         name={`${formatTimestamp(
-          rescue.timestamp_scheduled_start,
+          rescue.timestamp_scheduled,
           'dddd'
-        )} ${formatTimestamp(
-          rescue.timestamp_scheduled_start,
-          'dddd'
-        ).substring(1)}`}
+        )} ${formatTimestamp(rescue.timestamp_scheduled, 'dddd').substring(1)}`}
       />
       <Box w={4} />
       <Flex direction="column">
         <Heading as="h2" size="md" color="element.primary">
-          {formatTimestamp(rescue.timestamp_scheduled_start, 'MMMM DD')}
+          {formatTimestamp(rescue.timestamp_scheduled, 'MMMM DD')}
         </Heading>
         <Text color="element.secondary" fontSize="xs">
-          {rescue.stops.length} stops&nbsp;&nbsp;|&nbsp;&nbsp;
-          {rescue.driving_distance.toFixed(1)} miles
+          {rescue.transfers.length} stops
         </Text>
       </Flex>
     </Flex>
@@ -150,19 +146,19 @@ function CardTags({ rescue }) {
 
   return (
     <Flex wrap="wrap" noOfLines={2}>
-      {rescue.stops.map(stop => (
+      {rescue.transfers.map(transfer => (
         <Tag
-          key={stop.id}
+          key={transfer.id}
           size="sm"
-          bg={stop.type === 'pickup' ? 'blue.secondary' : 'green.secondary'}
-          color={stop.type === 'pickup' ? 'blue.primary' : 'green.primary'}
+          bg={transfer.type === 'pickup' ? 'blue.secondary' : 'green.secondary'}
+          color={transfer.type === 'pickup' ? 'blue.primary' : 'green.primary'}
           borderRadius="xl"
           flexShrink={0}
           mr="1"
         >
-          {stop.organization.name.length > 13 && isMobile
-            ? stop.organization.name.substr(0, 13) + '...'
-            : stop.organization.name}
+          {transfer.organization.name.length > 13 && isMobile
+            ? transfer.organization.name.substr(0, 13) + '...'
+            : transfer.organization.name}
         </Tag>
       ))}
     </Flex>

@@ -13,7 +13,7 @@ Example Valid Payload:
 }
 */
 
-exports.isValidOrganizationPayload = async ({ name, type, subtype }) => {
+exports.isValidOrganizationPayload = async ({ name, type, subtype, tags }) => {
   // check that notes are either a string, or falsey.
   if (!name || typeof name !== 'string') {
     console.log(
@@ -22,9 +22,17 @@ exports.isValidOrganizationPayload = async ({ name, type, subtype }) => {
     return false
   }
 
+  // check that tags are an array if they are populated
+  if (tags && typeof tags !== 'object') {
+    console.log(
+      `Invalid tags, value is: "${tags}", type is ${typeof tags}. Rejecting.`
+    )
+    return false
+  }
+
   // check that the type is a valid organization type
-  if (Object.values(ORGANIZATION_TYPES).includes(type)) {
-    console.log(`Invalid type, value is: "${name}". Rejecting.`)
+  if (!Object.values(ORGANIZATION_TYPES).includes(type)) {
+    console.log(`Invalid type, value is: "${type}". Rejecting.`)
     return false
   }
 

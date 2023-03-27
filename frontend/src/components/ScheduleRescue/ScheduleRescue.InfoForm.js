@@ -11,33 +11,17 @@ export function InfoForm({ formData, setFormData, handlers }) {
   return (
     <Flex direction="column" mb="8">
       <Text color="element.secondary" size="sm" fontWeight="500">
-        Start Time
+        Scheduled Time
       </Text>
       <Input
-        value={formData.timestamp_scheduled_start}
+        value={formData.timestamp_scheduled}
         type="datetime-local"
         textAlign="left"
         mb="6"
         onChange={e =>
           setFormData({
             ...formData,
-            timestamp_scheduled_start: e.target.value,
-          })
-        }
-      />
-
-      <Text color="element.secondary" size="sm" fontWeight="500">
-        End Time
-      </Text>
-      <Input
-        value={formData.timestamp_scheduled_finish}
-        type="datetime-local"
-        textAlign="left"
-        mb="6"
-        onChange={e =>
-          setFormData({
-            ...formData,
-            timestamp_scheduled_finish: e.target.value,
+            timestamp_scheduled: e.target.value,
           })
         }
       />

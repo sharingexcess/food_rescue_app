@@ -22,16 +22,18 @@ import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
 
 export function EditRecipient({ isOpen, handleClose }) {
-  const { rescue, refresh, editRecipient: stop } = useWholesaleRescueContext()
+  const {
+    rescue,
+    refresh,
+    editRecipient: transfer,
+  } = useWholesaleRescueContext()
   const currentLoad = useMemo(
     () =>
-      stop
-        ? calculateCurrentLoad(rescue) + stop.impact_data_total_weight
-        : null,
-    [rescue, stop]
+      transfer ? calculateCurrentLoad(rescue) + transfer.total_weight : null,
+    [rescue, transfer]
   )
   const donationTotal = useMemo(
-    () => rescue.stops[0].impact_data_total_weight,
+    () => rescue.transfers[0].total_weight,
     [rescue]
   )
   const remainingPercent = useMemo(
@@ -40,30 +42,30 @@ export function EditRecipient({ isOpen, handleClose }) {
   )
   const { user } = useAuth()
   const [formData, setFormData] = useState({
-    organization: stop?.organization,
-    location: stop?.location,
+    organization: transfer?.organization,
+    location: transfer?.location,
     weight: currentLoad,
     notes: '',
     percent_of_total_dropped: remainingPercent,
   })
   const [isLoading, setIsLoading] = useState()
   const { data: recipients } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'recipient' }), [])
   )
 
   useEffect(() => {
-    if (stop && recipients) {
+    if (transfer && recipients) {
       setFormData({
-        organization: recipients.find(i => i.id === stop.organization.id),
-        location: stop.location,
-        weight: stop.impact_data_total_weight || currentLoad,
+        organization: recipients.find(i => i.id === transfer.organization.id),
+        location: transfer.location,
+        weight: transfer.total_weight || currentLoad,
         notes: '',
         percent_of_total_dropped:
-          stop.percent_of_total_dropped || remainingPercent,
+          transfer.percent_of_total_dropped || remainingPercent,
       })
     }
-  }, [stop, currentLoad, remainingPercent, recipients])
+  }, [transfer, currentLoad, remainingPercent, recipients])
 
   async function handleEditRecipient() {
     setIsLoading(true)
@@ -74,7 +76,7 @@ export function EditRecipient({ isOpen, handleClose }) {
       notes: formData.notes,
     }
     await SE_API.post(
-      `/wholesale/rescue/${rescue.id}/updateRecipient/${stop.id}`,
+      `/wholesale/rescue/${rescue.id}/updateRecipient/${transfer.id}`,
       payload,
       user.accessToken
     )

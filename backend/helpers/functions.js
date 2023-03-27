@@ -3,9 +3,11 @@ const moment = require('moment-timezone')
 const fetch = require('node-fetch')
 const { customAlphabet } = require('nanoid')
 const {
-  WEIGHT_CATEGORIES,
+  FOOD_CATEGORIES,
   COLLECTIONS,
   TRANSFER_TYPES,
+  STATUSES,
+  EMPTY_CATEGORIZED_WEIGHT,
 } = require('./constants')
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 
@@ -14,54 +16,52 @@ exports.db = admin.firestore()
 
 exports.recalculateRescue = async id => {
   let rescue
-  const stops = []
+  const transfers = []
 
   // run these two queries in parallel
   await Promise.all([
     this.db
-      .collection('rescues')
+      .collection(COLLECTIONS.RESCUES)
       .doc(id)
       .get()
       .then(doc => (rescue = doc.data())),
     this.db
-      .collection('stops')
+      .collection(COLLECTIONS.TRANSFERS)
       .where('rescue_id', '==', id)
       .get()
-      .then(snapshot => snapshot.forEach(doc => stops.push(doc.data()))),
+      .then(snapshot => snapshot.forEach(doc => transfers.push(doc.data()))),
   ])
-  // do this mapping to get stops in correct order
-  rescue.stops = rescue.stop_ids.map(id => stops.find(s => s.id === id))
+  // do this mapping to get transfers in correct order
+  rescue.transfers = rescue.transfer_ids.map(id =>
+    transfers.find(s => s.id === id)
+  )
 
-  const current_load = {
-    impact_data_dairy: 0,
-    impact_data_bakery: 0,
-    impact_data_produce: 0,
-    impact_data_meat_fish: 0,
-    impact_data_non_perishable: 0,
-    impact_data_prepared_frozen: 0,
-    impact_data_mixed: 0,
-    impact_data_other: 0,
-  }
+  const current_load = EMPTY_CATEGORIZED_WEIGHT()
 
   // we'll queue up queries, and add them into this array
   // so they can run in parallel, and we can await the whole
   // list at the end, instead of running them all serially
   const promises = []
 
-  for (const stop of rescue.stops) {
+  for (const transfer of rescue.transfers) {
     console.log('\n\nCURRENT LOAD:', current_load)
-    if (stop.type === 'pickup') {
+
+    if (
+      transfer.type === TRANSFER_TYPES.COLLECTION &&
+      transfer.status !== STATUSES.CANCELLED
+    ) {
       for (const category in current_load) {
-        current_load[category] += stop[category]
+        current_load[category] += transfer.categorized_weight[category]
       }
     } else {
-      if (stop.status === 'completed') {
-        const impact_data = {}
-        const percent_dropped = stop.percent_of_total_dropped / 100
+      if (transfer.status === STATUSES.COMPLETED) {
+        const categorized_weight = {}
+        const percent_dropped = transfer.percent_of_total_dropped / 100
         const load_weight = Object.values(current_load).reduce(
           (a, b) => a + b,
           0
         )
+        const total_weight = Math.round(load_weight * percent_dropped)
         for (const category in current_load) {
           console.log(
             'adding',
@@ -69,40 +69,42 @@ exports.recalculateRescue = async id => {
             'to',
             category
           )
-          impact_data[category] = Math.round(
+          categorized_weight[category] = Math.round(
             current_load[category] * percent_dropped
           )
-          current_load[category] -= impact_data[category]
+          current_load[category] -= categorized_weight[category]
         }
-        impact_data.impact_data_total_weight = Math.round(
-          load_weight * percent_dropped
-        )
         const payload = {
-          ...impact_data,
-          timestamp_updated: new Date(),
+          categorized_weight,
+          total_weight,
+          timestamp_updated: moment().toISOString(),
         }
         promises.push(
-          this.db.collection('stops').doc(stop.id).set(payload, { merge: true })
+          this.db
+            .collection(COLLECTIONS.TRANSFERS)
+            .doc(transfer.id)
+            .set(payload, { merge: true })
         )
-      } else if (stop.status === 'cancelled') {
+      } else if (transfer.status === STATUSES.CANCELLED) {
         const payload = {
-          impact_data_total_weight: 0,
-          timestamp_updated: new Date(),
+          total_weight: 0,
+          categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+          timestamp_updated: moment().toISOString(),
         }
-        for (const key in current_load) {
-          payload[key] = 0
-        }
-        if (stop.type === 'delivery') {
+        if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
           payload.percent_of_total_dropped = 0
         }
         promises.push(
-          this.db.collection('stops').doc(stop.id).set(payload, { merge: true })
+          this.db
+            .collection(COLLECTIONS.TRANSFERS)
+            .doc(transfer.id)
+            .set(payload, { merge: true })
         )
       }
     }
   }
   await Promise.all(promises)
-  console.log('updated all stops in rescue')
+  console.log('updated all transfers in rescue')
 }
 
 exports.fetchCollection = async name => {
@@ -280,9 +282,15 @@ exports.isExistingDbRecord = async (id, collection) => {
 }
 
 exports.isValidCategorizedWeightObject = (categorized_weight, total_weight) => {
+  console.log(
+    'Validating categorized weight:',
+    categorized_weight,
+    total_weight,
+    'expected total'
+  )
   let is_valid = true
   let sum = 0
-  for (const key of WEIGHT_CATEGORIES) {
+  for (const key of FOOD_CATEGORIES) {
     const value = categorized_weight[key]
     if (!Number.isInteger(value) || value < 0) {
       console.log(

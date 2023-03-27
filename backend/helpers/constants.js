@@ -1,17 +1,4 @@
 exports.FOOD_CATEGORIES = [
-  'impact_data_dairy',
-  'impact_data_bakery',
-  'impact_data_produce',
-  'impact_data_meat_fish',
-  'impact_data_non_perishable',
-  'impact_data_prepared_frozen',
-  'impact_data_mixed',
-  'impact_data_other',
-]
-
-// this is an update to the original FOOD_CATEGORIES above
-// to phase out the "impact_data_" prefix
-exports.WEIGHT_CATEGORIES = [
   'dairy',
   'bakery',
   'produce',
@@ -87,3 +74,20 @@ exports.COLLECTIONS = {
   ORGANIZATIONS: 'organizations',
   LOCATIONS: 'locations',
 }
+
+exports.PERMISSION_LEVELS = {
+  NONE: null,
+  STANDARD: 'standard',
+  ADMIN: 'admin',
+}
+
+exports.EMPTY_CATEGORIZED_WEIGHT = () => ({
+  dairy: 0,
+  bakery: 0,
+  produce: 0,
+  meat_fish: 0,
+  non_perishable: 0,
+  prepared_frozen: 0,
+  mixed: 0,
+  other: 0,
+})

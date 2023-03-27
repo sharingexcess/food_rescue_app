@@ -30,7 +30,7 @@ export function Recipient({ recipient, setEditRecipient }) {
         >
           RECIPIENT&nbsp;&nbsp;|&nbsp;&nbsp;
           <Text as="span" color="se.brand.primary">
-            {formatLargeNumber(recipient.impact_data_total_weight)} lbs.
+            {formatLargeNumber(recipient.total_weight)} lbs.
           </Text>
         </Heading>
         <Heading as="h4" size="md" fontWeight="600" color="element.primary">

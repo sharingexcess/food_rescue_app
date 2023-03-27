@@ -33,10 +33,7 @@ function CardHeader({ rescue }) {
           {rescue.handler?.name || 'Available Rescue'}
         </Heading>
         <Text color="element.secondary" fontSize="xs">
-          {formatTimestamp(
-            rescue.timestamp_scheduled_start,
-            'dddd, MMMM DD - h:mma'
-          )}
+          {formatTimestamp(rescue.timestamp_scheduled, 'dddd, MMMM DD - h:mma')}
         </Text>
       </Flex>
     </Flex>
@@ -48,19 +45,25 @@ function CardTags({ rescue }) {
 
   return (
     <Flex wrap="wrap" noOfLines={2}>
-      {rescue.stops.map(stop => (
+      {rescue.transfers.map(transfer => (
         <Tag
-          key={stop.id}
+          key={transfer.id}
           size="sm"
-          bg={stop.type === 'pickup' ? 'blue.secondary' : 'green.secondary'}
-          color={stop.type === 'pickup' ? 'blue.primary' : 'green.primary'}
+          bg={
+            transfer.type === 'collection'
+              ? 'blue.secondary'
+              : 'green.secondary'
+          }
+          color={
+            transfer.type === 'collection' ? 'blue.primary' : 'green.primary'
+          }
           borderRadius="xl"
           flexShrink={0}
           mr="1"
         >
-          {stop.organization.name.length > 13 && isMobile
-            ? stop.organization.name.substr(0, 13) + '...'
-            : stop.organization.name}
+          {transfer.organization.name.length > 13 && isMobile
+            ? transfer.organization.name.substr(0, 13) + '...'
+            : transfer.organization.name}
         </Tag>
       ))}
     </Flex>

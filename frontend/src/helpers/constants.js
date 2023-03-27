@@ -38,17 +38,6 @@ export const DB_COLLECTIONS = {
 }
 
 export const FOOD_CATEGORIES = [
-  'impact_data_dairy',
-  'impact_data_bakery',
-  'impact_data_produce',
-  'impact_data_meat_fish',
-  'impact_data_non_perishable',
-  'impact_data_prepared_frozen',
-  'impact_data_mixed',
-  'impact_data_other',
-]
-
-export const WEIGHT_CATEGORIES = [
   'dairy',
   'bakery',
   'produce',
@@ -58,6 +47,17 @@ export const WEIGHT_CATEGORIES = [
   'mixed',
   'other',
 ]
+
+export const EMPTY_CATEGORIZED_WEIGHT = () => ({
+  dairy: 0,
+  bakery: 0,
+  produce: 0,
+  meat_fish: 0,
+  non_perishable: 0,
+  prepared_frozen: 0,
+  mixed: 0,
+  other: 0,
+})
 
 // Current values are from 2019 REFED values, to be updated whenever new literature is available
 // https://refed.org/downloads/ReFED-U.S.-Grocery-Retail-Value-to-Weight-Conversion-Factors.pdf
@@ -180,3 +180,8 @@ export const TIMES = [
   '19:30',
   '20:00',
 ]
+
+export const TRANSFER_TYPES = {
+  COLLECTION: 'collection',
+  DISTRIBUTION: 'distribution',
+}

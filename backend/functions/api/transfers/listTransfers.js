@@ -14,6 +14,7 @@ exports.listTransfers = async (
     rescue_id,
     handler_id,
     organization_id,
+    organization_subtype,
     start_after,
     limit,
     organization_tag,
@@ -154,6 +155,12 @@ exports.listTransfers = async (
   if (organization_tag) {
     transfers = transfers.filter(transfer => {
       return transfer.organization.tags?.includes(organization_tag)
+    })
+  }
+
+  if (organization_subtype) {
+    transfers = transfers.filter(transfer => {
+      return transfer.organization.subtype === organization_subtype
     })
   }
 

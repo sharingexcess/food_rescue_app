@@ -72,10 +72,10 @@ async function updateWholesaleRescue(id, payload) {
 
   if (payload.date) {
     const timestamp = moment.tz(payload.date, 'America/New_York').toDate()
-    updated_rescue.timestamp_scheduled_start = timestamp
+    updated_rescue.timestamp_scheduled = timestamp
     updated_rescue.timestamp_scheduled_finish = timestamp
     updated_rescue.timestamp_logged_start = timestamp
-    updated_donation.timestamp_scheduled_start = timestamp
+    updated_donation.timestamp_scheduled = timestamp
     updated_donation.timestamp_scheduled_finish = timestamp
     updated_donation.timestamp_logged_start = timestamp
   }
@@ -115,7 +115,7 @@ async function updateWholesaleRescue(id, payload) {
   console.log('updating donation:', updated_donation)
   await db
     .collection('stops')
-    .doc(rescue.stop_ids[0])
+    .doc(rescue.transfer_ids[0])
     .set(updated_donation, { merge: true })
 
   return

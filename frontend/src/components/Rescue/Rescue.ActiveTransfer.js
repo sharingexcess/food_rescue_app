@@ -1,7 +1,7 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
-import { StopButtons } from './Rescue.StopButtons'
+import { TransferButtons } from './Rescue.TransferButtons'
 
-export function ActiveStop({ stop }) {
+export function ActiveTransfer({ transfer }) {
   return (
     <Box
       px="4"
@@ -20,16 +20,16 @@ export function ActiveStop({ stop }) {
         textTransform="uppercase"
         py="2"
       >
-        ⏩&nbsp;&nbsp;{stop.type}
+        ⏩&nbsp;&nbsp;{transfer.type}
       </Heading>
       <Heading as="h3" size="md" fontWeight="600" color="element.primary">
-        {stop.organization.name}
+        {transfer.organization.name}
       </Heading>
       <Text as="p" fontWeight="300" color="element.secondary">
-        {stop.location.nickname || stop.location.address1}
+        {transfer.location.nickname || transfer.location.address1}
       </Text>
       <Box h="4" />
-      <StopButtons stop={stop} />
+      <TransferButtons transfer={transfer} />
     </Box>
   )
 }

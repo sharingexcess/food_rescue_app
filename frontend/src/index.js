@@ -4,26 +4,26 @@ import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { ChakraProvider } from '@chakra-ui/react'
 import {
-  // CreateOrganization,
-  // ScheduleRescue,
-  // EditRescue,
-  // Organization,
-  // CreateLocation,
-  // EditLocation,
-  // Organizations,
-  // Profile,
-  // Rescue,
-  // Rescues,
-  // User,
-  // Users,
-  // Home,
-  // Wholesale,
-  // WholesaleRescue,
-  // FoodSafety,
-  //LogRescue,
-  // Privacy,
-  // Legal,
-  // Help,
+  CreateOrganization,
+  ScheduleRescue,
+  EditRescue,
+  Organization,
+  CreateLocation,
+  EditLocation,
+  Organizations,
+  Profile,
+  Rescue,
+  Rescues,
+  User,
+  Users,
+  Home,
+  Wholesale,
+  WholesaleRescue,
+  FoodSafety,
+  LogRescue,
+  Privacy,
+  Legal,
+  Help,
   Page,
   Error,
 } from './components'
@@ -61,7 +61,7 @@ function RescueAppRoutes() {
         <BrowserRouter>
           <Auth>
             <Routes>
-              {/* <Route
+              <Route
                 path="/"
                 element={
                   <Page
@@ -257,7 +257,7 @@ function RescueAppRoutes() {
                   />
                 }
               />
-              <Route
+              {/* <Route
                 path="/wholesale"
                 element={
                   <Page
@@ -283,7 +283,7 @@ function RescueAppRoutes() {
                     Content={WholesaleRescue}
                   />
                 }
-              />
+              /> */}
               <Route
                 path="/food-safety"
                 element={
@@ -331,20 +331,11 @@ function RescueAppRoutes() {
                     Content={Help}
                   />
                 }
-              /> */}
+              />
               <Route
                 path="*"
                 element={
-                  <Page
-                    id="Error"
-                    defaultTitle="Uh oh..."
-                    Content={() =>
-                      Error({
-                        message:
-                          'The Food Rescue App is currently down for database maintenance. Contact ryan@sharingexcess.com with emergencies!',
-                      })
-                    }
-                  />
+                  <Page id="Error" defaultTitle="Uh oh..." Content={Error} />
                 }
               />
             </Routes>

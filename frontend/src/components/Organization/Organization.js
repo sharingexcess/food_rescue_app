@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { PageTitle, Error } from 'components'
 import { Locations } from './Organization.Locations'
-import { Tags } from './Organization.tags'
+import { Tags } from './Organization.Tags'
 import { OrganizationHeader } from './Organization.Header'
 import { EditOrganization } from './Organization.Edit'
 
@@ -15,7 +15,7 @@ export function Organization({ setBreadcrumbs }) {
     loading,
     error,
     refresh,
-  } = useApi(`/organization/${organization_id}`)
+  } = useApi(`/organizations/get/${organization_id}`)
   const [edit, setEdit] = useState(false)
   const [formData, setFormData] = useState({})
   const { hasAdminPermission } = useAuth()

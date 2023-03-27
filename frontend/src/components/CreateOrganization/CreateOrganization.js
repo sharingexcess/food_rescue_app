@@ -1,12 +1,6 @@
 import { Button, Flex, Input, Select, Text } from '@chakra-ui/react'
 import { PageTitle } from 'components/PageTitle/PageTitle'
-import {
-  createTimestamp,
-  DONOR_TYPES,
-  generateUniqueId,
-  RECIPIENT_TYPES,
-  SE_API,
-} from 'helpers'
+import { DONOR_TYPES, RECIPIENT_TYPES, SE_API } from 'helpers'
 import { useAuth } from 'hooks'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -30,21 +24,18 @@ export function CreateOrganization() {
 
   async function handleSubmit() {
     setIsLoading(true)
-    const organization_id = await generateUniqueId('organizations')
-    await SE_API.post(
-      `/organization/${organization_id}/update`,
+    const organization = await SE_API.post(
+      `/organizations/create`,
       {
-        id: organization_id,
         name: formData.name,
-        subtype: formData.subtype,
         type: formData.type,
-        timestamp_created: createTimestamp(),
-        timestamp_updated: createTimestamp(),
+        subtype: formData.subtype,
+        is_deleted: false,
       },
       user.accessToken
     )
     setIsLoading(false)
-    navigate(`/organizations/${organization_id}`)
+    navigate(`/organizations/${organization.id}`)
   }
 
   return (

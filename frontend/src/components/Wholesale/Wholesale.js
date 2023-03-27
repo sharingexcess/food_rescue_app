@@ -30,17 +30,17 @@ export function Wholesale() {
   const [addDonation, setAddDonation] = useState(false)
   const { hasAdminPermission } = useAuth()
   const { data: rescues, refresh } = useApi(
-    '/rescues',
+    '/rescues/list',
     useMemo(() => ({ type: 'wholesale', date: date }), [date])
   )
 
   const totalPounds = useMemo(() => {
     let total = 0
     for (const rescue of rescues || []) {
-      for (const stop of rescue.stops.filter(
+      for (const transfer of rescue.transfers.filter(
         s => s.type === 'delivery' && s.status !== STATUSES.CANCELLED
       )) {
-        total += stop.impact_data_total_weight
+        total += transfer.total_weight
       }
     }
     return total
@@ -49,13 +49,13 @@ export function Wholesale() {
   const totalDonated = useMemo(() => {
     let total = 0
     for (const rescue of rescues || []) {
-      for (const stop of rescue.stops.filter(
+      for (const transfer of rescue.transfers.filter(
         s =>
           s.type === 'delivery' &&
           s.organization.subtype !== ORG_SUBTYPES.COMPOST &&
           s.organization.subtype !== ORG_SUBTYPES.HOLDING
       )) {
-        total += stop.impact_data_total_weight
+        total += transfer.total_weight
       }
     }
     return total

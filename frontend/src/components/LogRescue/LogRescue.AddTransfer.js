@@ -3,7 +3,12 @@ import { Flex, Heading, IconButton, Select } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { useEffect, useState } from 'react'
 
-export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
+export function AddTransfer({
+  type,
+  handleAddTransfer,
+  handleCancel,
+  organizations,
+}) {
   const [organization, setOrganization] = useState()
   const [location, setLocation] = useState()
 
@@ -15,7 +20,7 @@ export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
 
   useEffect(() => {
     if (organization && location) {
-      handleAddStop({ type, organization, location })
+      handleAddTransfer({ type, organization, location })
     }
   }, [organization, location])
 

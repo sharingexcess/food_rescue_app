@@ -84,6 +84,9 @@ exports.updateTransferEndpoint = async (request, response, next) => {
     try {
       console.log('API ENDPOINT CALLED: updateTransfer')
 
+      const { id } = request.params
+      console.log('Received id:', id)
+
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
         user => user.permission
@@ -105,7 +108,7 @@ exports.updateTransferEndpoint = async (request, response, next) => {
         return
       }
 
-      const transfer = await updateTransfer(payload)
+      const transfer = await updateTransfer({ ...payload, id })
 
       response.status(200).send(JSON.stringify(transfer))
 

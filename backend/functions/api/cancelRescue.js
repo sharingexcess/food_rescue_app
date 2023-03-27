@@ -45,7 +45,7 @@ async function cancelRescueEndpoint(request, response, next) {
 
       Promise.all([
         // cancel all stops
-        ...rescue.stop_ids.map(stop_id =>
+        ...rescue.transfer_ids.map(stop_id =>
           db
             .collection('stops')
             .doc(stop_id)

@@ -1,19 +1,19 @@
 import { STATUSES } from 'helpers'
 
-export function getActiveStop(rescue) {
+export function getActiveTransfer(rescue) {
   if (!rescue) return null
-  let activeStop = null
-  for (const stop of rescue.stops) {
+  let activeTransfer = null
+  for (const transfer of rescue.transfers) {
     if (
-      stop.status !== STATUSES.CANCELLED &&
-      stop.status !== STATUSES.COMPLETED
+      transfer.status !== STATUSES.CANCELLED &&
+      transfer.status !== STATUSES.COMPLETED
     ) {
-      activeStop = stop
+      activeTransfer = transfer
       break
     }
   }
 
-  return activeStop
+  return activeTransfer
 }
 
 export function statusIcon(status) {

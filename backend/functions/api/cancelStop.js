@@ -50,14 +50,14 @@ async function cancelStopEndpoint(request, response, next) {
       // update the rescue to move the cancelled stop to the front
       const updatedStopIds = [
         stop.id,
-        ...rescue.stop_ids.filter(id => id !== stop.id),
+        ...rescue.transfer_ids.filter(id => id !== stop.id),
       ]
 
       await db
         .collection('rescues')
         .doc(rescue.id)
         .set(
-          { stop_ids: updatedStopIds, timestamp_updated: new Date() },
+          { transfer_ids: updatedStopIds, timestamp_updated: new Date() },
           { merge: true }
         )
 

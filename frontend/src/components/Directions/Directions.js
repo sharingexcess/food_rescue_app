@@ -48,22 +48,22 @@ export const Directions = compose(
   withGoogleMap,
   lifecycle({
     componentDidMount() {
-      const { stops } = this.props
+      const { transfers } = this.props
       const DirectionsService = new window.google.maps.DirectionsService()
 
       DirectionsService.route(
         {
           origin: new window.google.maps.LatLng(
-            stops[0].location.lat,
-            stops[0].location.lng
+            transfers[0].location.lat,
+            transfers[0].location.lng
           ),
           destination: new window.google.maps.LatLng(
-            stops[stops.length - 1].location.lat,
-            stops[stops.length - 1].location.lng
+            transfers[transfers.length - 1].location.lat,
+            transfers[transfers.length - 1].location.lng
           ),
           waypoints:
-            stops.length > 2
-              ? stops.slice(1, -1).map(i => ({
+            transfers.length > 2
+              ? transfers.slice(1, -1).map(i => ({
                   location: new window.google.maps.LatLng(
                     i.location.lat,
                     i.location.lng
@@ -93,8 +93,8 @@ export const Directions = compose(
       defaultZoom={6}
       defaultCenter={
         new window.google.maps.LatLng(
-          props.stops[0].location.lat,
-          props.stops[0].location.lng
+          props.transfers[0].location.lat,
+          props.transfers[0].location.lng
         )
       }
       zIndex="0"

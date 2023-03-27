@@ -82,8 +82,8 @@ async function getRescues(
     const start = moment(date_range_start).startOf('day').toDate()
     const end = moment(date_range_end).endOf('day').toDate()
     rescues_query = rescues_query
-      .where('timestamp_scheduled_start', '>=', start)
-      .where('timestamp_scheduled_start', '<=', end)
+      .where('timestamp_scheduled', '>=', start)
+      .where('timestamp_scheduled', '<=', end)
   }
 
   if (date && !(date_range_start & date_range_end)) {
@@ -91,8 +91,8 @@ async function getRescues(
     const end = moment(date).endOf('day').toDate()
     console.log(start, end)
     rescues_query = rescues_query
-      .where('timestamp_scheduled_start', '>=', start)
-      .where('timestamp_scheduled_start', '<=', end)
+      .where('timestamp_scheduled', '>=', start)
+      .where('timestamp_scheduled', '<=', end)
   }
 
   // Note: Ryan hates that we have to do this.
@@ -111,10 +111,10 @@ async function getRescues(
 
   if (start_after) {
     rescues_query = rescues_query
-      .orderBy('timestamp_scheduled_start', 'desc')
+      .orderBy('timestamp_scheduled', 'desc')
       .startAfter(start_after_ref)
   } else {
-    rescues_query = rescues_query.orderBy('timestamp_scheduled_start', 'desc')
+    rescues_query = rescues_query.orderBy('timestamp_scheduled', 'desc')
   }
 
   // execute rescues query
@@ -124,7 +124,7 @@ async function getRescues(
       const data = doc.data()
       rescues.push({
         ...formatDocumentTimestamps(data),
-        stops: data.stop_ids.map(i => null), // populate stops array with correct length
+        stops: data.transfer_ids.map(i => null), // populate stops array with correct length
       })
     })
   })
@@ -157,7 +157,7 @@ async function getRescues(
         .then(snapshot =>
           snapshot.forEach(doc => {
             const data = doc.data()
-            rescue.stops[rescue.stop_ids.findIndex(i => i === data.id)] =
+            rescue.stops[rescue.transfer_ids.findIndex(i => i === data.id)] =
               formatDocumentTimestamps(data)
           })
         )

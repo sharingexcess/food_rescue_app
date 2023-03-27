@@ -13,14 +13,14 @@ export function EditDonation({ isOpen, handleClose }) {
     organization: null,
     location: null,
     weight: '',
-    food_category: 'impact_data_produce',
+    food_category: 'produce',
     notes: '',
     pallet: null,
     date: null,
   })
   const [isLoading, setIsLoading] = useState()
   const { data: donors } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'donor' }), [])
   )
 
@@ -29,8 +29,7 @@ export function EditDonation({ isOpen, handleClose }) {
       // find which food category was used
       let food_category = null
       for (const key in donation) {
-        if (!key.includes('impact_data') || key === 'impact_data_total_weight')
-          continue
+        if (!key.includes('impact_data') || key === 'total_weight') continue
         if (donation[key] > 0) {
           food_category = key
           break
@@ -39,13 +38,10 @@ export function EditDonation({ isOpen, handleClose }) {
       setFormData({
         organization: donors.find(i => i.id === donation.organization_id),
         location: donation.location,
-        weight: donation.impact_data_total_weight,
+        weight: donation.total_weight,
         food_category,
         notes: donation.notes,
-        date: formatTimestamp(
-          donation.timestamp_scheduled_start,
-          'YYYY-MM-DDTHH:mm'
-        ),
+        date: formatTimestamp(rescue.timestamp_scheduled, 'YYYY-MM-DDTHH:mm'),
       })
     }
   }, [rescue, donation, donors])
@@ -207,14 +203,14 @@ function EditDonationBody({ formData, setFormData, donors }) {
           setFormData({ ...formData, food_category: e.target.value })
         }
       >
-        <option value="impact_data_produce">Produce</option>
-        <option value="impact_data_dairy">Dairy</option>
-        <option value="impact_data_bakery">Bakery</option>
-        <option value="impact_data_meat_fish">Meat/Fish</option>
-        <option value="impact_data_non_perishable">Non-perishable</option>
-        <option value="impact_data_prepared_frozen">Prepared/Frozen</option>
-        <option value="impact_data_mixed">Mixed</option>
-        <option value="impact_data_other">Other</option>
+        <option value="produce">Produce</option>
+        <option value="dairy">Dairy</option>
+        <option value="bakery">Bakery</option>
+        <option value="meat_fish">Meat/Fish</option>
+        <option value="non_perishable">Non-perishable</option>
+        <option value="prepared_frozen">Prepared/Frozen</option>
+        <option value="mixed">Mixed</option>
+        <option value="other">Other</option>
       </Select>
       <Text mt="6">Notes</Text>
       <Input

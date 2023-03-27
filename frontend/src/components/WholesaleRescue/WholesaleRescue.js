@@ -24,7 +24,7 @@ export const useWholesaleRescueContext = () =>
 
 export function WholesaleRescue({ setBreadcrumbs }) {
   const { id } = useParams()
-  const { data: rescue, refresh } = useApi(`/rescues/${id}`)
+  const { data: rescue, refresh } = useApi(`/rescues/get/${id}`)
   const { hasAdminPermission } = useAuth()
   const [editDonation, setEditDonation] = useState(false)
   const [addRecipient, setAddRecipient] = useState(false)
@@ -32,16 +32,13 @@ export function WholesaleRescue({ setBreadcrumbs }) {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  const donation = useMemo(() => rescue?.stops[0], [rescue])
-  const recipients = useMemo(() => rescue?.stops.slice(1), [rescue])
+  const donation = useMemo(() => rescue?.transfers[0], [rescue])
+  const recipients = useMemo(() => rescue?.transfers.slice(1), [rescue])
   const remainingWeight = useMemo(
     () =>
       donation && recipients
-        ? donation.impact_data_total_weight -
-          recipients.reduce(
-            (total, curr) => total + curr.impact_data_total_weight,
-            0
-          )
+        ? donation.total_weight -
+          recipients.reduce((total, curr) => total + curr.total_weight, 0)
         : null,
     [recipients, donation]
   )
@@ -55,10 +52,9 @@ export function WholesaleRescue({ setBreadcrumbs }) {
 
   useEffect(() => {
     if (
-      remainingWeight < rescue?.stops.length &&
+      remainingWeight < rescue?.transfers.length &&
       rescue?.status === STATUSES.ACTIVE
     ) {
-      console.log('completing...')
       // complete rescue
       SE_API.post(
         `/wholesale/rescue/${rescue.id}/update`,
@@ -69,7 +65,6 @@ export function WholesaleRescue({ setBreadcrumbs }) {
   }, [remainingWeight, rescue])
 
   async function cancelDonation() {
-    console.log('test cancel')
     const notes = window.prompt('Why are you cancelling this donation?')
     if (notes) {
       await SE_API.post(`/rescues/${id}/cancel`, { notes }, user.accessToken)
@@ -83,7 +78,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
     <WholesaleRescueContext.Provider
       value={{
         rescue,
-        donation: rescue.stops[0],
+        donation: rescue.transfers[0],
         refresh,
         editRecipient,
         cancelDonation,
@@ -103,7 +98,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
               {donation.organization.name}
             </Heading>
             <Text size="sm" fontWeight="300" color="element.secondary">
-              {formatLargeNumber(donation.impact_data_total_weight)}{' '}
+              {formatLargeNumber(donation.total_weight)}{' '}
               lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
               {donation.notes}
             </Text>

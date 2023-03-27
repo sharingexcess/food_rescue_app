@@ -21,10 +21,10 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
 
   async function handleUpdateOrganization() {
     setIsWorking(true)
-    const payload = { ...formData }
+    const payload = { ...formData, is_deleted: false }
     delete payload.locations
     await SE_API.post(
-      `/organization/${formData.id}/update`,
+      `/organizations/update/${formData.id}`,
       formData,
       user.accessToken
     )
@@ -49,7 +49,7 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
         )
       ) {
         await SE_API.post(
-          `/organization/${formData.id}/update`,
+          `/organizations/update/${formData.id}`,
           { ...formData, is_deleted: true },
           user.accessToken
         )

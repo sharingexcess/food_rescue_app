@@ -87,8 +87,8 @@ async function getStops(
     const start = moment(date_range_start).startOf('day').toDate()
     const end = moment(date_range_end).endOf('day').toDate()
     stops_query = stops_query
-      .where('timestamp_scheduled_start', '>=', start)
-      .where('timestamp_scheduled_start', '<=', end)
+      .where('timestamp_scheduled', '>=', start)
+      .where('timestamp_scheduled', '<=', end)
   }
 
   if (date && !(date_range_start & date_range_end)) {
@@ -96,8 +96,8 @@ async function getStops(
     const end = moment(start).add(24, 'hours').toDate()
     console.log(start, end)
     stops_query = stops_query
-      .where('timestamp_scheduled_start', '>=', start)
-      .where('timestamp_scheduled_start', '<=', end)
+      .where('timestamp_scheduled', '>=', start)
+      .where('timestamp_scheduled', '<=', end)
   }
 
   if (type) {
@@ -126,10 +126,10 @@ async function getStops(
 
   if (start_after) {
     stops_query = stops_query
-      .orderBy('timestamp_scheduled_start', 'desc')
+      .orderBy('timestamp_scheduled', 'desc')
       .startAfter(start_after_ref)
   } else {
-    stops_query = stops_query.orderBy('timestamp_scheduled_start', 'desc')
+    stops_query = stops_query.orderBy('timestamp_scheduled', 'desc')
   }
 
   // execute stops query

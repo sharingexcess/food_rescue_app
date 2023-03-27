@@ -4,7 +4,7 @@ const {
   EMISSIONS_COEFFICIENT,
   FAIR_MARKET_VALUES,
   fetchCollection,
-  WEIGHT_CATEGORIES,
+  FOOD_CATEGORIES,
   RECIPIENT_SUB_TYPES,
   RETAIL_VALUES,
   rejectUnauthorizedRequest,
@@ -210,7 +210,7 @@ function calculateMetrics(distributions, organizations) {
     (total, curr) => total + (curr.total_weight || 0),
     0
   )
-  for (const category of WEIGHT_CATEGORIES) {
+  for (const category of FOOD_CATEGORIES) {
     const category_weight = distributions.reduce(
       (total, curr) => total + (curr.categorized_weight[category] || 0),
       0
@@ -232,9 +232,9 @@ function calculateMetrics(distributions, organizations) {
 
 function breakdownByFoodCategory(distributions) {
   const categories = {
-    ...WEIGHT_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+    ...FOOD_CATEGORIES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
   }
-  for (const category of WEIGHT_CATEGORIES) {
+  for (const category of FOOD_CATEGORIES) {
     categories[category] = distributions.reduce(
       (total, curr) => total + (curr[category] || 0),
       0
