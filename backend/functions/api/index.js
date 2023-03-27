@@ -133,9 +133,9 @@ api.get('/', (_request, response) =>
 //   loadEndpoint('updateUserPermission', req, res, next)
 // )
 
-// api.get('/getCachedDataReports', (req, res, next) =>
-//   loadEndpoint('getCachedDataReports', req, res, next)
-// )
+api.get('/getCachedDataReports', (req, res, next) =>
+  loadEndpoint('getCachedDataReports', req, res, next)
+)
 
 // api.post('/wholesale/rescue/create', (req, res, next) =>
 //   loadEndpoint('createWholesaleRescue', req, res, next)

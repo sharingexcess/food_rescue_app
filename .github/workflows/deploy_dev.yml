@@ -37,7 +37,7 @@ jobs:
       - name: Initialize Firebase Project
         uses: docker://w9jds/firebase-action:master
         with:
-          args: use default
+          args: use sharing-excess-7e887
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
       - name: Deploy React App
