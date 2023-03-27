@@ -9,7 +9,6 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { STATUSES } from 'helpers'
-import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { TransferButtons } from './Rescue.TransferButtons'
 import { statusIcon } from './Rescue.utils'

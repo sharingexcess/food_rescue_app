@@ -2,7 +2,7 @@ import { Button, Flex } from '@chakra-ui/react'
 import { PageTitle, Collection, Distribution } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
-import { getDefaultEndTime, getDefaultStartTime } from './LogRescue.utils'
+import { getDefaultStartTime } from './LogRescue.utils'
 import {
   createTimestamp,
   EMPTY_CATEGORIZED_WEIGHT,

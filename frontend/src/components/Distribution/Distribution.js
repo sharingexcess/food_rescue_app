@@ -5,7 +5,6 @@ import {
   calculateCurrentCategorizedLoad,
   SE_API,
   TRANSFER_TYPES,
-  EMPTY_CATEGORIZED_WEIGHT,
 } from 'helpers'
 import { useAuth } from 'hooks'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
