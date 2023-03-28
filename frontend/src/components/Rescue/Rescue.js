@@ -1,6 +1,6 @@
 import { Box, Flex, Skeleton, SkeletonCircle } from '@chakra-ui/react'
 import { useApi, useAuth, useIsMobile } from 'hooks'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   PageTitle,
@@ -35,6 +35,7 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
   const [showCompletedPopup, setShowCompletedPopup] = useState(false)
   const activeTransfer = useMemo(() => getActiveTransfer(rescue), [rescue])
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
 
   useEffect(() => {
     setTitle(rescue ? `Rescue` : 'Loading rescue...')
@@ -45,6 +46,13 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
         link: `/rescues/${rescue_id}`,
       },
     ])
+  }, [rescue])
+
+  // handle redirecting wholesale rescues to wholesale UI
+  useEffect(() => {
+    if (rescue?.type === 'wholesale') {
+      navigate(`/wholesale/${rescue.id}`)
+    }
   }, [rescue])
 
   // handle auto complete rescue

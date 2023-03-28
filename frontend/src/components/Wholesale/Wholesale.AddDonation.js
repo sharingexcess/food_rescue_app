@@ -101,7 +101,7 @@ export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
 }
 
 function AddDonationHeader() {
-  return <Heading>New Donation</Heading>
+  return <Heading>New Rescue</Heading>
 }
 
 function AddDonationBody({ formData, setFormData, donors }) {
@@ -306,9 +306,9 @@ function AddDonationFooter({
       disabled={!formData.organization || totalWeight < 0}
       onClick={handleCreateRescue}
       isLoading={isLoading}
-      loadingText={'Saving donation...'}
+      loadingText={'Submitting Rescue...'}
     >
-      Add Donation {formData.weight ? `(${totalWeight} lbs.)` : ''}
+      Submit Rescue {formData.weight ? `(${totalWeight} lbs.)` : ''}
     </Button>
   )
 }

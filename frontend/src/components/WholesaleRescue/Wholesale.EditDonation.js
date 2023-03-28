@@ -123,7 +123,7 @@ function EditDonationHeader() {
 
   return (
     <>
-      <Heading>Edit Donation</Heading>
+      <Heading>Edit Collection</Heading>
       {donation.status !== STATUSES.CANCELLED && (
         <Button
           onClick={cancelDonation}
@@ -299,9 +299,9 @@ function EditDonationFooter({ formData, handleEditDonation, isLoading }) {
       }
       onClick={handleEditDonation}
       isLoading={isLoading}
-      loadingText="Updating donation..."
+      loadingText="Updating Collection..."
     >
-      Update Donation {formData.weight ? `(${formData.weight} lbs.)` : ''}
+      Update Collection {formData.weight ? `(${formData.weight} lbs.)` : ''}
     </Button>
   )
 }

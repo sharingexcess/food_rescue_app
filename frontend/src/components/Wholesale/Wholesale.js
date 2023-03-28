@@ -144,7 +144,7 @@ export function Wholesale() {
       {hasAdminPermission && (
         <>
           <FooterButton onClick={() => setAddDonation(true)}>
-            Add Donation
+            New Rescue
           </FooterButton>
           <AddDonation
             isOpen={addDonation}

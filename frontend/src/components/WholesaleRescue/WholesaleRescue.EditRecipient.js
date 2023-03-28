@@ -148,7 +148,7 @@ export function EditRecipient({ isOpen, handleClose }) {
 function EditRecipientHeader() {
   return (
     <>
-      <Heading>Edit Recipient</Heading>
+      <Heading>Edit Distribution</Heading>
       {/* <Button
         variant="secondary"
         bg="yellow.secondary"
@@ -364,7 +364,7 @@ function EditRecipientFooter({
           size="sm"
           color="element.secondary"
           value={notes}
-          placeholder="Add notes to this delivery..."
+          placeholder="Add notes to this distribution..."
           onChange={e => setNotes(e.target.value)}
           onBlur={() => setFormData({ ...formData, notes })}
           mb="4"
@@ -376,9 +376,9 @@ function EditRecipientFooter({
         disabled={!formData.location || !formData.weight}
         onClick={handleEditRecipient}
         isLoading={isLoading}
-        loadingText="Updating Recipient..."
+        loadingText="Updating Distribution..."
       >
-        Update Recipient
+        Update Distribution
       </Button>
     </Box>
   )

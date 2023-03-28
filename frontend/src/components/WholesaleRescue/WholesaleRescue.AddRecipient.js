@@ -146,7 +146,7 @@ export function AddRecipient({ isOpen, handleClose }) {
 }
 
 function AddRecipientHeader() {
-  return <Heading>New Recipient</Heading>
+  return <Heading>New Distribution</Heading>
 }
 
 function AddRecipientBody({
@@ -361,7 +361,7 @@ function AddRecipientFooter({
         isLoading={isLoading}
         loadingText={'Adding Recipient...'}
       >
-        Add Recipient
+        Complete Distribution
       </Button>
     </Box>
   )

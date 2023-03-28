@@ -23,7 +23,7 @@ WholesaleRescueContext.displayName = 'WholesaleRescueContext'
 export const useWholesaleRescueContext = () =>
   useContext(WholesaleRescueContext)
 
-export function WholesaleRescue({ setBreadcrumbs }) {
+export function WholesaleRescue({ setBreadcrumbs, setTitle }) {
   const { id } = useParams()
   const { data: rescue, refresh } = useApi(`/rescues/get/${id}`)
   const { hasAdminPermission } = useAuth()
@@ -45,6 +45,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
   )
 
   useEffect(() => {
+    setTitle('Wholesale Rescue')
     setBreadcrumbs([
       { label: 'Wholesale', link: '/wholesale' },
       { label: 'Donation', link: `/wholesale/${id}` },
@@ -94,7 +95,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
         cancelDonation,
       }}
     >
-      <PageTitle>{rescue.status} Donation</PageTitle>
+      <PageTitle>{rescue.status} Rescue</PageTitle>
       <Box pb="16">
         <Flex my="8" justify="space-between">
           <Box>
@@ -148,7 +149,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
               Let's distribute food!
             </Heading>
             <Text color="element.secondary" align="center">
-              Add a recipient below to allocate food from this donation.
+              Add a distribution below to log where this food is going.
             </Text>
           </Flex>
         )}
@@ -174,9 +175,9 @@ export function WholesaleRescue({ setBreadcrumbs }) {
               onClick={() => setAddRecipient(true)}
               disabled={rescue.status === STATUSES.COMPLETED}
             >
-              Add Recipient{' '}
+              New Distribution{' '}
               {rescue.status === STATUSES.ACTIVE
-                ? `(${formatLargeNumber(remainingWeight)} lbs. remaining)`
+                ? `(${formatLargeNumber(remainingWeight)} lbs. left)`
                 : ''}
             </FooterButton>
           </Flex>
