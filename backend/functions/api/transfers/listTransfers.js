@@ -172,7 +172,7 @@ exports.listTransfers = async (
     const filtered = []
     for (const transfer of transfers) {
       const rescue = await getRescue(transfer.rescue_id, { shallow: true })
-      if (rescue.type === rescue_type) filtered.push(transfer)
+      if (rescue?.type === rescue_type) filtered.push(transfer)
     }
     transfers = filtered
   }

@@ -46,7 +46,7 @@ export function AddRecipient({ isOpen, handleClose }) {
     weight: currentLoad,
     notes: '',
     percent_of_total_dropped: remainingPercent,
-    timestamp_completed: moment().format('YYYY-MM-DDThh:mm'),
+    timestamp_completed: moment().format('YYYY-MM-DDTHH:mm'),
   })
   const [isLoading, setIsLoading] = useState(false)
   const { data: recipients } = useApi(

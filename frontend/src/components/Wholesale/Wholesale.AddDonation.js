@@ -15,7 +15,7 @@ import { useState, useMemo } from 'react'
 export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
   const { user } = useAuth()
   const [formData, setFormData] = useState({
-    date: formatTimestamp(defaultDate || new Date(), 'YYYY-MM-DDThh:mm'),
+    date: formatTimestamp(defaultDate || new Date(), 'YYYY-MM-DDTHH:mm'),
     organization: null,
     location: null,
     weight: '',
