@@ -132,7 +132,7 @@ exports.isValidTransferPayload = async (
   // check that percent_of_total_dropped is populated for distributions and 0 <= num <= 100
   if (
     payload.type === TRANSFER_TYPES.DISTRIBUTION &&
-    (!Number.isInteger(payload.percent_of_total_dropped) ||
+    (typeof payload.percent_of_total_dropped !== 'number' ||
       payload.percent_of_total_dropped < 0 ||
       payload.percent_of_total_dropped > 100)
   ) {
