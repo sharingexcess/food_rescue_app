@@ -67,7 +67,7 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
           status: STATUSES.COMPLETED,
           handler_id: rescue.handler_id,
           notes: rescue.notes,
-          timestamp_scheduled: rescue.timestamp_scheduled,
+          timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
           timestamp_completed: moment().toISOString(),
           transfer_ids: rescue.transfer_ids,
         },

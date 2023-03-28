@@ -19,6 +19,7 @@ Example Valid Payload:
   notes: 'hello world',
   timestamp_completed: new Date().toISOString(),
   total_weight: 8,
+  percent_of_total_dropped: 100, // only for type === 'distribution'
   categorized_weight: {
     dairy: 1,
     bakery: 1,
@@ -125,6 +126,21 @@ exports.isValidTransferPayload = async (
       payload.total_weight
     )
   ) {
+    return false
+  }
+
+  // check that percent_of_total_dropped is populated for distributions and 0 <= num <= 100
+  if (
+    payload.type === TRANSFER_TYPES.DISTRIBUTION &&
+    (!Number.isInteger(payload.percent_of_total_dropped) ||
+      payload.percent_of_total_dropped < 0 ||
+      payload.percent_of_total_dropped > 100)
+  ) {
+    console.log(
+      `Invalid percent_of_total_dropped, value is: ${
+        payload.percent_of_total_dropped
+      }, type is ${typeof payload.percent_of_total_dropped}. Rejecting.`
+    )
     return false
   }
 

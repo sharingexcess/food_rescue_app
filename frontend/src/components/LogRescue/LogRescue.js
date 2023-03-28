@@ -2,13 +2,11 @@ import { Button, Flex } from '@chakra-ui/react'
 import { PageTitle, Collection, Distribution } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
-import { getDefaultStartTime } from './LogRescue.utils'
 import {
-  createTimestamp,
   EMPTY_CATEGORIZED_WEIGHT,
-  generateUniqueId,
   SE_API,
   STATUSES,
+  TRANSFER_TYPES,
 } from 'helpers'
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
@@ -36,8 +34,10 @@ export function LogRescue() {
       ? JSON.parse(form_data_cache)
       : {
           type: 'retail',
-          timestamp_scheduled: getDefaultStartTime(),
+          timestamp_scheduled: null,
+          timestamp_completed: null,
           handler: null,
+          notes: '',
         }
   )
   const [view, setView] = useState(null)
@@ -74,10 +74,15 @@ export function LogRescue() {
     setTransfers(currentTransfers => [
       ...currentTransfers,
       {
-        ...transfer,
-        status: STATUSES.SCHEDULED,
+        type: transfer.type,
+        status: STATUSES.COMPLETED,
         organization_id: transfer.organization.id,
         location_id: transfer.location.id,
+        // include full organization and location objects
+        // to enable rendering out full transfer cards
+        organization: transfer.organization,
+        location: transfer.location,
+        notes: transfer.notes,
         total_weight: 0,
         categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
       },
@@ -96,106 +101,69 @@ export function LogRescue() {
 
   async function handleLogRescue() {
     setWorking(true)
-    const id = await generateUniqueId('rescues')
     sessionStorage.removeItem('se_log_rescue_transfers_cache')
     sessionStorage.removeItem('se_log_rescue_form_data_cache')
 
-    await SE_API.post(
-      `/rescues/${id}/create`,
+    const rescue = await SE_API.post(
+      `/rescues/create`,
       {
-        formData: {
-          handler_id: formData.handler?.id || null,
-          transfers,
-          type: formData.type,
-        },
-        status_scheduled: STATUSES.COMPLETED,
-        timestamp_scheduled: moment(formData.timestamp_scheduled).toDate(),
-        timestamp_scheduled_finish: moment(
-          formData.timestamp_scheduled_finish
-        ).toDate(),
-        timestamp_created: createTimestamp(),
-        timestamp_updated: createTimestamp(),
-        timestamp_logged_start: moment(formData.timestamp_scheduled).toDate(),
-        timestamp_logged_finish: moment(
-          formData.timestamp_scheduled_finish
-        ).toDate(),
+        type: formData.type,
+        status: STATUSES.COMPLETED,
+        handler_id: formData.handler.id,
+        notes: formData.notes,
+        timestamp_scheduled: moment(formData.timestamp_scheduled).toISOString(),
+        timestamp_completed: moment(formData.timestamp_completed).toISOString(),
+        transfers: transfers.map(transfer => ({
+          ...transfer,
+          handler_id: formData.handler.id,
+          timestamp_completed: moment(
+            formData.timestamp_completed
+          ).toISOString(),
+        })),
       },
       user.accessToken
     )
-    navigate(`/rescues/${id}`)
+    navigate(`/rescues/${rescue.id}`)
   }
 
-  function handleUpdateCollection({ entryRows, notes, total, id }) {
-    const updatedTransfer = {
-      ...activeTransfer,
-      id,
-      handler_id: formData.handler.id,
-      status: STATUSES.COMPLETED,
-      timestamp_completed: moment(formData.timestamp_scheduled).toISOString(),
-      notes: notes,
-      total_weight: total,
-      categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
-    }
-
-    for (const row of entryRows) {
-      updatedTransfer.categorized_weight[row.category] =
-        updatedTransfer.categorized_weight[row.category] + row.weight
-    }
-
-    const transfer_index = transfers.findIndex(i => i.id === id)
+  function handleUpdateCollection(collection) {
+    // we receive the full updated collection as an arg, but need to
+    // insert it back into the transfers array.
+    // that's tough because our transfers don't have an id yet.
+    // however, the fact that we were editing this transfer means that
+    // it's current version is still saved as activeTransfer.
+    // so we'll look for the item in the array that matches activeTransfer,
+    // and replace that one.
+    const transfer_index = transfers.findIndex(
+      i => JSON.stringify(i) === JSON.stringify(activeTransfer)
+    )
     const updatedTransfers = [...transfers]
-    updatedTransfers[transfer_index] = updatedTransfer
+    // merge the previous active transfer and the new collection
+    // so that we keep the full organization and location objects
+    // from activeTransfer
+    updatedTransfers[transfer_index] = { ...activeTransfer, ...collection }
 
     setTransfers(updatedTransfers)
     setActiveTransfer(null)
   }
 
-  function handleUpdateDistribution(payload) {
-    const updatedDistribution = {
-      ...activeTransfer,
-      percent_of_total_dropped: payload.percentTotalDropped,
-      notes: payload.notes,
-      timestamp_logged_finish: createTimestamp(),
-      timestamp_updated: createTimestamp(),
-      status: STATUSES.COMPLETED,
-    }
-
-    const transfer_index = transfers
-      .map(i => i.id)
-      .findIndex(i => i === payload.id)
-
-    const current_load = {
-      dairy: 0,
-      bakery: 0,
-      produce: 0,
-      meat_fish: 0,
-      non_perishable: 0,
-      prepared_frozen: 0,
-      mixed: 0,
-      other: 0,
-      total_weight: 0,
-    }
-
-    for (const transfer of transfers.slice(0, transfer_index)) {
-      if (transfer.type === 'collection') {
-        for (const category in current_load) {
-          current_load[category] += transfer[category]
-        }
-      } else {
-        for (const category in current_load) {
-          current_load[category] -= transfer[category]
-        }
-      }
-    }
-
-    for (const key in current_load) {
-      updatedDistribution[key] = Math.round(
-        current_load[key] * (payload.percentTotalDropped / 100)
-      )
-    }
-
+  function handleUpdateDistribution(distribution) {
+    // we receive the full updated distribution as an arg, but need to
+    // insert it back into the transfers array.
+    // that's tough because our transfers don't have an id yet.
+    // however, the fact that we were editing this transfer means that
+    // it's current version is still saved as activeTransfer.
+    // so we'll look for the item in the array that matches activeTransfer,
+    // and replace that one.
+    const transfer_index = transfers.findIndex(
+      i => JSON.stringify(i) === JSON.stringify(activeTransfer)
+    )
     const updatedTransfers = [...transfers]
-    updatedTransfers[transfer_index] = updatedDistribution
+    // merge the previous active transfer and the new collection
+    // so that we keep the full organization and location objects
+    // from activeTransfer
+    updatedTransfers[transfer_index] = { ...activeTransfer, ...distribution }
+
     setTransfers(updatedTransfers)
     setActiveTransfer(null)
   }
@@ -203,11 +171,11 @@ export function LogRescue() {
   const isValidRescue =
     formData.handler &&
     formData.timestamp_scheduled &&
-    formData.timestamp_scheduled_finish &&
-    formData.timestamp_scheduled < formData.timestamp_scheduled_finish &&
+    formData.timestamp_completed &&
+    formData.timestamp_scheduled < formData.timestamp_completed &&
     transfers.length >= 2 &&
-    transfers[0].type == 'collection' &&
-    transfers[transfers.length - 1].type === 'distribution' &&
+    transfers[0].type == TRANSFER_TYPES.COLLECTION &&
+    transfers[transfers.length - 1].type === TRANSFER_TYPES.DISTRIBUTION &&
     transfers[transfers.length - 1].percent_of_total_dropped === 100 && // confirm that all remaining weight is handled in final distribution
     transfers.reduce(
       (total, curr) => total && curr.status === STATUSES.COMPLETED
@@ -227,13 +195,13 @@ export function LogRescue() {
         removeTransfer={removeTransfer}
         setActiveTransfer={setActiveTransfer}
       />
-      {activeTransfer?.type === 'collection' ? (
+      {activeTransfer?.type === TRANSFER_TYPES.COLLECTION ? (
         <Collection
           collection={activeTransfer}
           handleSubmitOverride={handleUpdateCollection}
           handleCloseCollectionOverride={() => setActiveTransfer(null)}
         />
-      ) : activeTransfer?.type === 'distribution' ? (
+      ) : activeTransfer?.type === TRANSFER_TYPES.DISTRIBUTION ? (
         <Distribution
           distribution={activeTransfer}
           rescueOverride={{ transfers }}
@@ -247,9 +215,9 @@ export function LogRescue() {
           handleAddTransfer={handleAddTransfer}
           handleCancel={() => setView(null)}
           organizations={
-            view === 'collection'
+            view === TRANSFER_TYPES.COLLECTION
               ? donors
-              : view === 'distribution'
+              : view === TRANSFER_TYPES.DISTRIBUTION
               ? recipients
               : null
           }
@@ -258,7 +226,7 @@ export function LogRescue() {
         <Flex w="100%" gap="4" mt="8" mb="4" justify="center" wrap="wrap">
           <Button
             variant="secondary"
-            onClick={() => setView('collection')}
+            onClick={() => setView(TRANSFER_TYPES.COLLECTION)}
             flexGrow={isMobile ? '1' : '0'}
             background="blue.secondary"
             color="blue.primary"
@@ -269,7 +237,7 @@ export function LogRescue() {
           {transfers.length > 0 && (
             <Button
               variant="secondary"
-              onClick={() => setView('distribution')}
+              onClick={() => setView(TRANSFER_TYPES.DISTRIBUTION)}
               flexGrow={isMobile ? '1' : '0'}
               isLoading={!recipients}
               disabled={

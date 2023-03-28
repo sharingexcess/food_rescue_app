@@ -27,22 +27,6 @@ export function InfoForm({ formData, setFormData, handlers }) {
       />
 
       <Text color="element.primary" fontWeight="600">
-        End Time
-      </Text>
-      <Input
-        value={formData.timestamp_scheduled_finish}
-        type="datetime-local"
-        textAlign="left"
-        mb="6"
-        onChange={e =>
-          setFormData({
-            ...formData,
-            timestamp_scheduled_finish: e.target.value,
-          })
-        }
-      />
-
-      <Text color="element.primary" fontWeight="600">
         Handler
         <Text
           as="span"

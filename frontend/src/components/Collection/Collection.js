@@ -62,35 +62,44 @@ export function Collection({
   const total = entryRows.reduce((total, current) => total + current.weight, 0)
 
   async function handleSubmit() {
+    const payload = {
+      type: TRANSFER_TYPES.COLLECTION,
+      status: STATUSES.COMPLETED,
+      organization_id: collection.organization_id,
+      location_id: collection.location_id,
+      notes,
+      timestamp_completed:
+        // automatically set timestamp completed if this is being submitted for the first time
+        collection.status === STATUSES.SCHEDULED
+          ? moment().toISOString()
+          : moment(completedAt).toISOString(),
+      total_weight: 0,
+      categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+    }
+
+    // add the id and rescue data to the payload
+    // note: we do this separately to account for "LogRescue"
+    // which uses this component to build a collection
+    // before it's created in the db (hence there's no id)
+    if (collection.id) {
+      payload.id = collection.id
+    }
+    if (rescue) {
+      payload.rescue_id = rescue.id
+      payload.handler_id = rescue.handler_id
+    }
+
+    // add up all individual entry rows to form categorized weight
+    for (const row of entryRows) {
+      payload.total_weight += row.weight
+      payload.categorized_weight[row.category] =
+        payload.categorized_weight[row.category] + row.weight
+    }
+
     if (handleSubmitOverride) {
-      handleSubmitOverride({ entryRows, notes, total, id: collection.id })
+      handleSubmitOverride(payload)
     } else {
       setIsSubmitting(true)
-
-      const payload = {
-        id: collection.id,
-        type: TRANSFER_TYPES.COLLECTION,
-        status: STATUSES.COMPLETED,
-        rescue_id: rescue.id,
-        handler_id: rescue.handler_id,
-        organization_id: collection.organization_id,
-        location_id: collection.location_id,
-        notes,
-        timestamp_completed:
-          // automatically set timestamp completed if this is being submitted for the first time
-          collection.status === STATUSES.SCHEDULED
-            ? moment().toISOString()
-            : moment(completedAt).toISOString(),
-        total_weight: 0,
-        categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
-      }
-
-      // add up all individual entry rows to form categorized weight
-      for (const row of entryRows) {
-        payload.total_weight += row.weight
-        payload.categorized_weight[row.category] =
-          payload.categorized_weight[row.category] + row.weight
-      }
 
       await SE_API.post(
         `/transfers/update/${collection.id}`,

@@ -10,6 +10,8 @@ const {
   EMPTY_CATEGORIZED_WEIGHT,
 } = require('./constants')
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
+const { google } = require('googleapis')
+const calendar = google.calendar('v3')
 
 exports.app = admin.initializeApp()
 exports.db = admin.firestore()
@@ -316,6 +318,8 @@ exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
       throw new Error('isValidTransferIdList: Invalid arguments provided.')
     }
 
+    let expected_first_collection_index = 0
+
     for (const transfer_id of transfer_ids) {
       const transfer = await exports.db
         .collection(COLLECTIONS.TRANSFERS)
@@ -341,15 +345,29 @@ exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
         return false
       }
 
-      // first transfer must be a collection
+      // first transfer must be a collection,
+      //unless it's cancelled, in which case look for the next one
+      // to make sure ITS a collection
       if (
-        transfer_id === transfer_ids[0] &&
+        transfer_id === transfer_ids[expected_first_collection_index] &&
         transfer.type !== TRANSFER_TYPES.COLLECTION
       ) {
-        console.log(
-          `isValidTransferIdList: first transfer must be of type collection. Rejecting.`
-        )
-        return false
+        if (transfer.status === STATUSES.CANCELLED) {
+          // this transfer is cancelled, so we can ignore it.
+          // increment expected_first_collection_index to check that the NEXT
+          // transfer is indeed a collection
+          console.log(`
+            isValidTransferIdList: detected transfer ${expected_first_collection_index}
+            is cancelled while validating that this rescue begins with a collection.
+            Ignoring, but will validate that the next transfer is a collection.
+          `)
+          expected_first_collection_index++
+        } else {
+          console.log(
+            `isValidTransferIdList: first transfer must be of type collection. Rejecting.`
+          )
+          return false
+        }
       }
 
       // last transfer must be a distribution
@@ -368,4 +386,88 @@ exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
     console.error('Error in isExistingDbRecord:', e)
     return false
   }
+}
+
+exports.createGoogleCalendarEvent = ({
+  summary,
+  location,
+  description,
+  start,
+  end,
+  attendees,
+}) => {
+  return new Promise(async (resolve, reject) => {
+    const event = {
+      summary: summary,
+      location: location,
+      description: description,
+      start: start,
+      end: end,
+      attendees: attendees,
+    }
+
+    // loading this key from an ENV var messes up line break formatting
+    // need the replace() to format properly
+    const key = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(
+      /\\n/gm,
+      '\n'
+    )
+    const auth = new google.auth.JWT(
+      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      null,
+      key,
+      ['https://www.googleapis.com/auth/calendar.events'],
+      process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
+    )
+
+    calendar.events.insert(
+      {
+        auth: auth,
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
+        resource: event,
+      },
+      (err, res) => {
+        if (err) {
+          console.log('Rejecting because of error', err)
+          reject(err)
+        } else {
+          console.log('Request successful', res)
+          resolve(res.data)
+        }
+      }
+    )
+  })
+}
+
+exports.deleteGoogleCalendarEvent = async eventId => {
+  // loading this key from an ENV var messes up line break formatting
+  // need the replace() to format properly
+  const key = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(
+    /\\n/gm,
+    '\n'
+  )
+
+  const auth = new google.auth.JWT(
+    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    null,
+    key,
+    ['https://www.googleapis.com/auth/calendar.events'],
+    process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT
+  )
+
+  const res = await new Promise(resolve => {
+    calendar.events.delete(
+      { auth, calendarId: process.env.GOOGLE_CALENDAR_ID, eventId },
+      (err, res) => {
+        if (err) {
+          console.log('Caught error:', err)
+          resolve(err)
+        } else {
+          console.log('Request successful', res)
+          resolve(res.data)
+        }
+      }
+    )
+  })
+  return res
 }

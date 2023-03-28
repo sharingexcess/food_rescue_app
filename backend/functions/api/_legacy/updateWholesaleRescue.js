@@ -2,7 +2,6 @@ const {
   db,
   authenticateRequest,
   rejectUnauthorizedRequest,
-  generateUniqueId,
   STATUSES,
 } = require('../../helpers')
 const { getRescue } = require('./rescue')

@@ -23,9 +23,9 @@ export function RescueTransfers() {
     remainingWeight > rescue.transfers.length &&
     rescue.transfers[rescue.transfers.length - 1].status === STATUSES.COMPLETED
   // split transfers to cancelled, completed, remaining
-  const [showCompletedTransfers, setShowCompletedTransfers] = useState(
-    rescue.status === STATUSES.COMPLETED
-  )
+  // const [showCompletedTransfers, setShowCompletedTransfers] = useState(
+  //   rescue.status === STATUSES.COMPLETED
+  // )
   const [showCancelledTransfers, setShowCancelledTransfers] = useState(false)
 
   const cancelledTransfers =
@@ -36,7 +36,8 @@ export function RescueTransfers() {
     rescue.transfers?.filter(i => i.status === STATUSES.SCHEDULED) || []
   return (
     <>
-      {completedTransfers.length ? (
+      {/* TESTING OUT TURNING OFF COLLAPSING COMPLETED TRANSFERS */}
+      {/* {completedTransfers.length ? (
         <Flex justify="space-between" align="center" h={8} px="4" my="4">
           <Heading
             as="h4"
@@ -58,18 +59,18 @@ export function RescueTransfers() {
             {showCompletedTransfers ? 'Hide' : 'Show'}
           </Button>
         </Flex>
-      ) : null}
-      {completedTransfers.length && showCompletedTransfers ? (
-        <Accordion allowMultiple>
-          {completedTransfers.map((transfer, i) => (
-            <AccordionItem key={i} border="none">
-              <InactiveTransfer transfer={transfer} key={i} />
-            </AccordionItem>
-          ))}
-        </Accordion>
-      ) : null}
+      ) : null} */}
+      {/* {completedTransfers.length && showCompletedTransfers ? (
+        <Accordion allowMultiple> */}
+      {completedTransfers.map((transfer, i) => (
+        // <AccordionItem key={i} border="none">
+        <InactiveTransfer transfer={transfer} key={i} />
+        // </AccordionItem>
+      ))}
+      {/* </Accordion>
+      ) : null} */}
       {remainingTransfers.map((transfer, i) =>
-        transfer.id === activeTransfer.id ? (
+        transfer.id === activeTransfer?.id ? (
           <ActiveTransfer key={i} transfer={transfer} />
         ) : transfer.is_deleted === undefined ? (
           <InactiveTransfer transfer={transfer} key={i} />

@@ -8,6 +8,7 @@ import {
   InputGroup,
   InputRightElement,
   ListItem,
+  Text,
   UnorderedList,
 } from '@chakra-ui/react'
 import { useEffect, useState, Fragment } from 'react'
@@ -21,6 +22,7 @@ export function Autocomplete({
   optionLabel,
   displayField,
   listBackground,
+  disabled,
   ...props
 }) {
   const [inputValue, setInputValue] = useState('')
@@ -41,12 +43,21 @@ export function Autocomplete({
 
   return (
     <Flex id="Autocomplete" position="relative" direction="column" {...props}>
-      {label && <label>{label}</label>}
+      {label && (
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          textTransform="uppercase"
+        >
+          {label}
+        </Text>
+      )}
       <InputGroup>
         <Input
           placeholder={placeholder}
           value={value ? value[displayField] : inputValue}
-          disabled={!!value}
+          disabled={!!value || disabled}
           onChange={e => setInputValue(e.target.value)}
           fontSize="sm"
           color="element.primary"

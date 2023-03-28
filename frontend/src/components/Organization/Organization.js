@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { PageTitle, Error } from 'components'
 import { Locations } from './Organization.Locations'
-// import { Tags } from './Organization.Tags'
+import { Tags } from './Organization.Tags'
 import { OrganizationHeader } from './Organization.Header'
 import { EditOrganization } from './Organization.Edit'
 
@@ -53,7 +53,7 @@ export function Organization({ setBreadcrumbs }) {
         </Flex>
         {!organization.is_deleted && (
           <>
-            {/* <Tags formData={formData} setFormData={setFormData} /> */}
+            <Tags formData={formData} setFormData={setFormData} />
             <Locations organization={organization} />
             {hasAdminPermission && (
               <Flex w="100%" justify="center" mt="8" gap="4">

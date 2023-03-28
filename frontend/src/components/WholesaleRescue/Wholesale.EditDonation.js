@@ -1,8 +1,14 @@
 import { Button, Select, Text, Input, Flex, Heading } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { formatTimestamp, SE_API, STATUSES } from 'helpers'
+import {
+  EMPTY_CATEGORIZED_WEIGHT,
+  formatTimestamp,
+  SE_API,
+  STATUSES,
+} from 'helpers'
 import { useApi, useAuth } from 'hooks'
+import moment from 'moment'
 import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
 
@@ -15,7 +21,6 @@ export function EditDonation({ isOpen, handleClose }) {
     weight: '',
     food_category: 'produce',
     notes: '',
-    pallet: null,
     date: null,
   })
   const [isLoading, setIsLoading] = useState()
@@ -28,9 +33,8 @@ export function EditDonation({ isOpen, handleClose }) {
     if (rescue && donation && donors) {
       // find which food category was used
       let food_category = null
-      for (const key in donation) {
-        if (!key.includes('impact_data') || key === 'total_weight') continue
-        if (donation[key] > 0) {
+      for (const key in donation.categorized_weight) {
+        if (donation.categorized_weight[key] > 0) {
           food_category = key
           break
         }
@@ -46,21 +50,43 @@ export function EditDonation({ isOpen, handleClose }) {
     }
   }, [rescue, donation, donors])
 
-  const totalWeight = formData.weight - palletWeight(formData.pallet)
-
   async function handleEditDonation() {
     setIsLoading(true)
-    const payload = {
+    const rescue_payload = {
+      id: rescue.id,
+      type: rescue.type,
+      status: rescue.status,
+      handler_id: rescue.handler_id,
       notes: formData.notes,
-      weight: totalWeight,
-      food_category: formData.food_category,
-      organization_id: formData.organization.id,
-      location_id: formData.location.id,
-      date: formData.date,
+      timestamp_scheduled: moment(formData.date).toISOString(),
+      timestamp_completed: rescue.timestamp_completed
+        ? moment(rescue.timestamp_completed).toISOString()
+        : null,
+      transfer_ids: rescue.transfer_ids,
     }
     await SE_API.post(
-      `/wholesale/rescue/${rescue.id}/update`,
-      payload,
+      `/rescues/update/${rescue.id}`,
+      rescue_payload,
+      user.accessToken
+    )
+    const transfer_payload = {
+      id: donation.id,
+      type: donation.type,
+      status: donation.status,
+      rescue_id: donation.rescue_id,
+      handler_id: donation.handler_id,
+      organization_id: donation.organization_id,
+      location_id: donation.location_id,
+      notes: formData.notes,
+      timestamp_completed: moment(formData.date).toISOString(),
+      total_weight: formData.weight,
+      categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+    }
+    transfer_payload.categorized_weight[formData.food_category] =
+      formData.weight
+    await SE_API.post(
+      `/transfers/update/${donation.id}`,
+      transfer_payload,
       user.accessToken
     )
     refresh()
@@ -78,12 +104,12 @@ export function EditDonation({ isOpen, handleClose }) {
           formData={formData}
           setFormData={setFormData}
           donors={donors}
+          rescue={rescue}
         />
       )}
       CardFooter={() => (
         <EditDonationFooter
           formData={formData}
-          totalWeight={totalWeight}
           handleEditDonation={handleEditDonation}
           isLoading={isLoading}
         />
@@ -93,7 +119,7 @@ export function EditDonation({ isOpen, handleClose }) {
 }
 
 function EditDonationHeader() {
-  const { cancelDonation, donation } = useWholesaleRescueContext()
+  const { cancelDonation, donation, rescue } = useWholesaleRescueContext()
 
   return (
     <>
@@ -105,6 +131,7 @@ function EditDonationHeader() {
           bg="yellow.secondary"
           color="yellow.primary"
           mt="2"
+          disabled={rescue.status === STATUSES.COMPLETED}
         >
           Cancel Donation
         </Button>
@@ -113,7 +140,7 @@ function EditDonationHeader() {
   )
 }
 
-function EditDonationBody({ formData, setFormData, donors }) {
+function EditDonationBody({ formData, setFormData, donors, rescue }) {
   const [weight, setWeight] = useState(formData.weight)
   const [notes, setNotes] = useState(formData.notes)
   const [date, setDate] = useState(formData.date)
@@ -147,7 +174,14 @@ function EditDonationBody({ formData, setFormData, donors }) {
 
   return (
     <Flex direction="column" minH="128">
-      <Text mt="6">Date</Text>
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
+        Date
+      </Text>
       <Input
         type="datetime-local"
         fontSize="sm"
@@ -186,7 +220,15 @@ function EditDonationBody({ formData, setFormData, donors }) {
           ))}
         </Select>
       )}
-      <Text mt="6">Weight</Text>
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+        mt="6"
+      >
+        Weight
+      </Text>
       <Input
         type="number"
         min="0"
@@ -195,13 +237,38 @@ function EditDonationBody({ formData, setFormData, donors }) {
         onChange={updateWeight}
         onBlur={updateParentWeight}
         placeholder="0 lbs."
+        disabled={rescue.status === STATUSES.COMPLETED}
       />
-      <Text mt="6">Food Category</Text>
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+        mt="6"
+      >
+        Notes
+      </Text>
+      <Input
+        type="text"
+        fontSize="sm"
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+        onBlur={updateParentNotes}
+        placeholder="Add notes..."
+      />
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+        mt="6"
+      >
+        Food Category *
+      </Text>
       <Select
-        value={formData.food_category}
-        onChange={e =>
-          setFormData({ ...formData, food_category: e.target.value })
-        }
+        defaultValue={formData.food_category}
+        disabled={true}
+        // we currently don't allow changing the food category
       >
         <option value="produce">Produce</option>
         <option value="dairy">Dairy</option>
@@ -212,25 +279,14 @@ function EditDonationBody({ formData, setFormData, donors }) {
         <option value="mixed">Mixed</option>
         <option value="other">Other</option>
       </Select>
-      <Text mt="6">Notes</Text>
-      <Input
-        type="text"
-        fontSize="sm"
-        value={notes}
-        onChange={e => setNotes(e.target.value)}
-        onBlur={updateParentNotes}
-        placeholder="Add notes..."
-      />
+      <Text fontSize="xs" color="element.secondary" mt="2">
+        * Food category cannot be edited at this time.
+      </Text>
     </Flex>
   )
 }
 
-function EditDonationFooter({
-  formData,
-  totalWeight,
-  handleEditDonation,
-  isLoading,
-}) {
+function EditDonationFooter({ formData, handleEditDonation, isLoading }) {
   const { donation } = useWholesaleRescueContext()
   return (
     <Button
@@ -238,28 +294,14 @@ function EditDonationFooter({
       w="100%"
       disabled={
         !formData.organization ||
-        totalWeight < 0 ||
+        formData.weight < 0 ||
         donation.status === STATUSES.CANCELLED
       }
       onClick={handleEditDonation}
       isLoading={isLoading}
       loadingText="Updating donation..."
     >
-      Update Donation {formData.weight ? `(${totalWeight} lbs.)` : ''}
+      Update Donation {formData.weight ? `(${formData.weight} lbs.)` : ''}
     </Button>
   )
-}
-
-function palletWeight(type) {
-  if (!type) return 0
-  switch (type) {
-    case 'wood':
-      return 345
-    case 'black':
-      return 350
-    case 'blue':
-      return 373
-    default:
-      return 0
-  }
 }

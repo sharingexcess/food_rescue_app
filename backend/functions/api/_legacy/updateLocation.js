@@ -2,7 +2,7 @@ const {
   authenticateRequest,
   rejectUnauthorizedRequest,
   db,
-} = require('../../helpers')
+} = require('../../../helpers')
 
 async function updateLocationEndpoint(request, response, next) {
   return new Promise(async resolve => {

@@ -1,5 +1,5 @@
-const { db, STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
-const { getRescue } = require('../rescue')
+const { STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
+const { getRescue } = require('../rescues/getRescue')
 const { listTransfers } = require('../transfers/listTransfers')
 const { updateRescue } = require('./updateRescue')
 const { updateTransfer } = require('../transfers/updateTransfer')

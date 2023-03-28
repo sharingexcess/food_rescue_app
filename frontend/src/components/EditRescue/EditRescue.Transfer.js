@@ -4,9 +4,9 @@ import { STATUSES } from 'helpers'
 import { useApi } from 'hooks'
 import { useParams } from 'react-router-dom'
 
-export function Stop({ stop, removeStop }) {
+export function Transfer({ transfer, removeTransfer }) {
   const { rescue_id } = useParams()
-  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
+  const { data: rescue } = useApi(`/rescues/get/${rescue_id}`)
 
   return (
     <Flex
@@ -19,7 +19,7 @@ export function Stop({ stop, removeStop }) {
       cursor="grab"
       _active={{ cursor: 'grabbing' }}
     >
-      {[STATUSES.SCHEDULED, STATUSES.ACTIVE].includes(stop.status) ? (
+      {[STATUSES.SCHEDULED, STATUSES.ACTIVE].includes(transfer.status) ? (
         <IconButton
           variant="ghosted"
           icon={<DragHandleIcon color="element.tertiary" w="3" />}
@@ -37,22 +37,22 @@ export function Stop({ stop, removeStop }) {
             color="element.tertiary"
             textTransform="uppercase"
           >
-            {stop.type}
+            {transfer.type}
           </Heading>
           {rescue?.status === STATUSES.SCHEDULED && (
             <IconButton
               variant="ghosted"
               h="auto"
               icon={<CloseIcon w="3" h="auto" color="element.tertiary" />}
-              onClick={() => removeStop(stop.id)}
+              onClick={() => removeTransfer(transfer)}
             />
           )}
         </Flex>
         <Heading as="h3" size="md" fontWeight="600" color="element.primary">
-          {stop.organization.name}
+          {transfer.organization.name}
         </Heading>
         <Text fontWeight="300" color="element.secondary">
-          {stop.location.nickname || stop.location.address1}
+          {transfer.location.nickname || transfer.location.address1}
         </Text>
       </Box>
     </Flex>

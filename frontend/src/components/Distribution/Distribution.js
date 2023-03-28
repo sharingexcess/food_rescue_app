@@ -24,7 +24,7 @@ export function Distribution({
   handleSubmitOverride,
 }) {
   const { hasAdminPermission, user } = useAuth()
-  const { setOpenTransfer, refresh } = useRescueContext()
+  const { setOpenTransfer, refresh, activeTransfer } = useRescueContext()
   let { rescue } = useRescueContext()
   // allow for override here to support log rescue functionality
   rescue = rescueOverride || rescue
@@ -53,55 +53,71 @@ export function Distribution({
           ? distribution.total_weight
           : currentLoad
       )
+      setCompletedAt(
+        distribution.timestamp_completed
+          ? moment(distribution.timestamp_completed).format('YYYY-MM-DDTHH:mm')
+          : null
+      )
     }
   }, [distribution, currentLoad])
 
   const canEdit = useMemo(() => {
     return (
-      ![STATUSES.CANCELLED].includes(distribution?.status) &&
+      (activeTransfer?.id === distribution?.id ||
+        distribution?.status === STATUSES.COMPLETED) &&
       (rescue?.handler_id === user.id || hasAdminPermission)
     )
   }, [distribution])
 
   async function handleSubmit() {
+    let total_weight = 0
+    const categorized_weight = calculateCurrentCategorizedLoad(
+      rescue,
+      distribution
+    )
+
+    console.log(categorized_weight)
+
+    for (const category in categorized_weight) {
+      const category_weight = Math.round(
+        (categorized_weight[category] * percentTotalDropped) / 100
+      )
+      categorized_weight[category] = category_weight
+      total_weight += category_weight
+    }
+
+    const payload = {
+      type: TRANSFER_TYPES.DISTRIBUTION,
+      status: STATUSES.COMPLETED,
+      organization_id: distribution.organization_id,
+      location_id: distribution.location_id,
+      notes,
+      timestamp_completed:
+        // automatically set timestamp completed if this is being submitted for the first time
+        distribution.status === STATUSES.SCHEDULED
+          ? moment().toISOString()
+          : moment(completedAt).toISOString(),
+      total_weight,
+      categorized_weight,
+      percent_of_total_dropped: percentTotalDropped,
+    }
+
+    // add the id to the payload
+    // note: we do this separately to account for "LogRescue"
+    // which uses this component to build a distribution
+    // before it's created in the db (hence there's no id)
+    if (distribution.id) {
+      payload.id = distribution.id
+    }
+    if (rescue) {
+      payload.rescue_id = rescue.id
+      payload.handler_id = rescue.handler_id
+    }
+
     if (handleSubmitOverride) {
-      handleSubmitOverride({ id: distribution.id, percentTotalDropped, notes })
+      handleSubmitOverride(payload)
     } else {
       setIsSubmitting(true)
-
-      let total_weight = 0
-      const categorized_weight = calculateCurrentCategorizedLoad(
-        rescue,
-        distribution
-      )
-
-      console.log(categorized_weight)
-
-      for (const category in categorized_weight) {
-        const category_weight = Math.round(
-          (categorized_weight[category] * percentTotalDropped) / 100
-        )
-        categorized_weight[category] = category_weight
-        total_weight += category_weight
-      }
-
-      const payload = {
-        id: distribution.id,
-        type: TRANSFER_TYPES.DISTRIBUTION,
-        status: STATUSES.COMPLETED,
-        rescue_id: rescue.id,
-        handler_id: rescue.handler_id,
-        organization_id: distribution.organization_id,
-        location_id: distribution.location_id,
-        notes,
-        timestamp_completed:
-          // automatically set timestamp completed if this is being submitted for the first time
-          distribution.status === STATUSES.SCHEDULED
-            ? moment().toISOString()
-            : moment(completedAt).toISOString(),
-        total_weight,
-        categorized_weight,
-      }
 
       await SE_API.post(
         `/transfers/update/${distribution.id}`,

@@ -10,6 +10,7 @@ import {
 import { PageTitle, FooterButton } from 'components'
 import { formatLargeNumber, SE_API, STATUSES } from 'helpers'
 import { useApi, useAuth } from 'hooks'
+import moment from 'moment'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { EditDonation } from './Wholesale.EditDonation'
@@ -57,8 +58,17 @@ export function WholesaleRescue({ setBreadcrumbs }) {
     ) {
       // complete rescue
       SE_API.post(
-        `/wholesale/rescue/${rescue.id}/update`,
-        { status: STATUSES.COMPLETED },
+        `/rescues/update/${rescue.id}`,
+        {
+          id: rescue.id,
+          type: rescue.type,
+          status: STATUSES.COMPLETED,
+          handler_id: rescue.handler_id,
+          notes: rescue.notes,
+          timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
+          timestamp_completed: moment().toISOString(),
+          transfer_ids: rescue.transfer_ids,
+        },
         user.accessToken
       ).then(refresh)
     }
@@ -67,7 +77,7 @@ export function WholesaleRescue({ setBreadcrumbs }) {
   async function cancelDonation() {
     const notes = window.prompt('Why are you cancelling this donation?')
     if (notes) {
-      await SE_API.post(`/rescues/${id}/cancel`, { notes }, user.accessToken)
+      await SE_API.post(`/rescues/cancel/${id}`, { notes }, user.accessToken)
       navigate('/wholesale')
     } else window.alert('This donation was not cancelled.')
   }
@@ -97,10 +107,21 @@ export function WholesaleRescue({ setBreadcrumbs }) {
             >
               {donation.organization.name}
             </Heading>
-            <Text size="sm" fontWeight="300" color="element.secondary">
-              {formatLargeNumber(donation.total_weight)}{' '}
-              lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
-              {donation.notes}
+            <Text fontSize="sm" fontWeight="300" color="element.secondary">
+              <Text as="span" color="se.brand.primary" fontWeight={700}>
+                {' '}
+                {formatLargeNumber(donation.total_weight)} lbs.
+              </Text>
+              &nbsp;&nbsp;
+              {moment(donation.timestamp_completed).format(
+                'dddd M/DD - hh:mma'
+              )}
+            </Text>
+            <Text fontSize="sm" fontWeight="300" color="element.secondary">
+              <Text as="span" fontWeight={700}>
+                Notes:{' '}
+              </Text>
+              "{donation.notes}"
             </Text>
           </Box>
           {hasAdminPermission && (

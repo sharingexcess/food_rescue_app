@@ -1,6 +1,4 @@
-const { COLLECTIONS, STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
-const { db } = require('../../../helpers')
-const { getRescue } = require('../rescue')
+const { STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
 const { getTransfer } = require('./getTransfer')
 const { updateTransfer } = require('./updateTransfer')
 

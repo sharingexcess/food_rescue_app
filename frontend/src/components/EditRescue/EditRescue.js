@@ -3,34 +3,33 @@ import { PageTitle } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { memo, useEffect, useMemo, useState } from 'react'
 import {
-  createTimestamp,
+  EMPTY_CATEGORIZED_WEIGHT,
   formatTimestamp,
-  generateUniqueId,
   SE_API,
   STATUSES,
+  TRANSFER_TYPES,
 } from 'helpers'
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
 import { InfoForm } from './EditRescue.InfoForm'
-import { AddStop } from './EditRescue.AddStop'
-import { Stops } from './EditRescue.Stops'
+import { AddTransfer } from './EditRescue.AddTransfer'
+import { Transfers } from './EditRescue.Transfers'
 
-export function EditRescue({ setBreadcrumbs }) {
+export function EditRescue({ setBreadcrumbs, setTitle }) {
   const { user } = useAuth()
   const { rescue_id } = useParams()
-  const { data: rescue } = useApi(`/rescues/${rescue_id}`)
-  const { data: handlers } = useApi('/publicProfiles')
+  const { data: rescue } = useApi(`/rescues/get/${rescue_id}`)
+  const { data: handlers } = useApi('/public_profiles/list')
   const { data: donors } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'donor' }), [])
   )
   const { data: recipients } = useApi(
-    '/organizations',
+    '/organizations/list',
     useMemo(() => ({ type: 'recipient' }), [])
   )
   const [formData, setFormData] = useState({
     timestamp_scheduled: '',
-    timestamp_scheduled_finish: '',
     handler: null,
   })
   const [view, setView] = useState(null)
@@ -38,10 +37,11 @@ export function EditRescue({ setBreadcrumbs }) {
   const isMobile = useIsMobile()
   const navigate = useNavigate()
 
-  const [stops, setStops] = useState()
-  const [stopsToDelete, setStopsToDelete] = useState([])
+  const [transfers, setTransfers] = useState()
+  const [transfersToCancel, setTransfersToCancel] = useState([])
 
   useEffect(() => {
+    setTitle('Edit Rescue')
     setBreadcrumbs([
       { label: 'Rescues', link: '/rescues' },
       {
@@ -53,56 +53,53 @@ export function EditRescue({ setBreadcrumbs }) {
   }, [rescue_id])
 
   useEffect(() => {
-    if (rescue && !stops) {
+    if (rescue && !transfers) {
       setFormData({
         timestamp_scheduled: formatTimestamp(
           rescue.timestamp_scheduled,
           'YYYY-MM-DDTHH:mm'
         ),
-        timestamp_scheduled_finish: formatTimestamp(
-          rescue.timestamp_scheduled_finish,
-          'YYYY-MM-DDTHH:mm'
-        ),
         handler: rescue.handler,
       })
-      setStops(rescue.stops)
+      setTransfers(rescue.transfers)
     }
   }, [rescue])
 
-  async function handleAddStop(stop) {
-    const id = await generateUniqueId('stops')
-    setStops(currentStops => [
-      ...currentStops,
+  async function handleAddTransfer(transfer) {
+    setTransfers(currentTransfers => [
+      ...currentTransfers,
       {
-        ...stop,
-        id,
-        organization_id: stop.organization.id,
-        location_id: stop.location.id,
+        ...transfer,
+        organization_id: transfer.organization.id,
+        location_id: transfer.location.id,
         status: STATUSES.SCHEDULED,
       },
     ])
     setView(null)
   }
 
-  function removeStop(id) {
+  function removeTransfer(transfer) {
     if (
       window.confirm(
-        'Are you sure you want to delete this stop? This cannot be undone.'
+        'Are you sure you want to delete this transfer? This cannot be undone.'
       )
     ) {
-      const stop = stops.find(s => s.id === id)
-      setStops(stops.filter(s => s.id !== id))
-      setStopsToDelete(stops => [...stops, stop])
+      setTransfers(
+        transfers.filter(i => JSON.stringify(i) !== JSON.stringify(transfer))
+      )
+      if (transfer.id) {
+        // we only need to track transfers that are already in the DB (those that have an id)
+        // those without an id only exist locally (they were just created), so we can just
+        // simply ignore them
+        setTransfersToCancel(transfers => [...transfers, transfer])
+      }
     }
   }
 
-  async function handleDeleteStop(stop) {
+  async function handleCancelTransfer(transfer) {
     await SE_API.post(
-      `/rescues/${rescue_id}/${stop.type}/${stop.id}/cancel`,
-      {
-        status: STATUSES.SCHEDULED,
-        is_deleted: true,
-      },
+      `/transfers/cancel/${transfer.id}`,
+      { notes: `Cancelled by ${user.name} from Edit Rescue screen.` },
       user.accessToken
     )
   }
@@ -110,126 +107,114 @@ export function EditRescue({ setBreadcrumbs }) {
   async function handleUpdateRescue() {
     setWorking(true)
 
-    if (stopsToDelete.length) {
-      for (const stop of stopsToDelete) {
-        await handleDeleteStop(stop)
+    if (transfersToCancel.length) {
+      for (const transfer of transfersToCancel) {
+        await handleCancelTransfer(transfer)
       }
     }
 
-    const promises = []
-    const defaultPayload = {
-      timestamp_scheduled: moment(formData.timestamp_scheduled).toDate(),
-      timestamp_scheduled_finish: moment(
-        formData.timestamp_scheduled_finish
-      ).toDate(),
-      timestamp_updated: createTimestamp(),
-      handler_id: formData.handler?.id || null,
-    }
-
-    const newStops = stops.filter(i => !rescue.transfer_ids.includes(i.id))
-
-    for (const stop of newStops) {
-      const payload = {
-        id: stop.id,
-        type: stop.type,
-        rescue_id: rescue.id,
-        organization_id: stop.organization.id,
-        location_id: stop.location.id,
-        status: STATUSES.SCHEDULED,
-        notes: '',
-        dairy: 0,
-        bakery: 0,
-        produce: 0,
-        meat_fish: 0,
-        non_perishable: 0,
-        prepared_frozen: 0,
-        mixed: 0,
-        other: 0,
-        total_weight: 0,
-        timestamp_created: createTimestamp(),
-        timestamp_logged_start: null,
-        timestamp_logged_finish: null,
-        ...defaultPayload,
-      }
-      if (stop.type === 'delivery') {
-        stop.percent_of_total_dropped = 100
-      }
-      await SE_API.post(`/stops/${stop.id}/create`, payload, user.accessToken)
-    }
-
-    if (rescue.status === STATUSES.ACTIVE) {
-      let activeStop = null
-      for (const stop of stops) {
-        if ([STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(stop.status)) {
-          if (activeStop) {
-            promises.push(
-              SE_API.post(
-                `/stops/${stop.id}/update`,
-                { ...defaultPayload, status: STATUSES.SCHEDULED },
-                user.accessToken
-              )
-            )
-          } else {
-            activeStop = stop
-            promises.push(
-              SE_API.post(
-                `/stops/${stop.id}/update`,
-                {
-                  ...defaultPayload,
-                  status: STATUSES.ACTIVE,
-                  timestamp_logged_start: createTimestamp(),
-                },
-                user.accessToken
-              )
-            )
-          }
-        } else {
-          promises.push(
-            SE_API.post(
-              `/stops/${stop.id}/update`,
-              defaultPayload,
-              user.accessToken
-            )
-          )
+    // iterate through transfers list to create db objects for any new transfers
+    // then replace the temp transfers with the fully created records
+    let index = 0
+    for (const transfer of transfers) {
+      // if the transfer has no id, it needs to be created by the server
+      if (!transfer.id) {
+        const new_transfer_payload = {
+          type: transfer.type,
+          status: STATUSES.SCHEDULED,
+          rescue_id: rescue.id,
+          handler_id: formData.handler?.id || null,
+          organization_id: transfer.organization.id,
+          location_id: transfer.location.id,
+          notes: '',
+          timestamp_completed: null,
+          total_weight: 0,
+          categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
         }
-      }
-    } else {
-      for (const stop of stops) {
-        promises.push(
-          SE_API.post(
-            `/stops/${stop.id}/update`,
-            defaultPayload,
-            user.accessToken
-          )
+
+        if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
+          new_transfer_payload.percent_of_total_dropped = 100
+        }
+
+        // create the new transfer, which will return a new id
+        const new_transfer = await SE_API.post(
+          `/transfers/create`,
+          new_transfer_payload,
+          user.accessToken
         )
+
+        // replace the original with the complete transfer
+        transfers[index] = new_transfer
+      } else if (transfer.handler_id !== formData.handler?.id) {
+        // if the transfer is not new, but the handler_id has changed,
+        // update it with the latest handler_id
+
+        const update_transfer_payload = {
+          id: transfer.id,
+          timestamp_scheduled: moment(
+            formData.timestamp_scheduled
+          ).toISOString(),
+          handler_id: formData.handler?.id || null,
+          type: transfer.type,
+          status: transfer.status,
+          rescue_id: rescue.id,
+          organization_id: transfer.organization.id,
+          location_id: transfer.location.id,
+          notes: transfer.notes,
+          timestamp_completed: transfer.timestamp_completed,
+          total_weight: transfer.total_weight,
+          categorized_weight: transfer.categorized_weight,
+        }
+
+        if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
+          update_transfer_payload.percent_of_total_dropped =
+            transfer.percent_of_total_dropped
+        }
+
+        const existing_transfer = await SE_API.post(
+          `/transfers/update/${transfer.id}`,
+          update_transfer_payload,
+          user.accessToken
+        )
+
+        // replace the original with the updated transfer
+        transfers[index] = existing_transfer
       }
+      index++
     }
 
-    await Promise.all(promises)
-
-    // make the rescue update call last, after all stops are updated
+    // make the rescue update call last, after all transfers are updated
     // this is to ensure that the final recalculation happens
     // without risking race conditions
+    const rescue_payload = {
+      id: rescue_id,
+      type: rescue.type,
+      status: rescue.status,
+      notes: rescue.notes,
+      timestamp_completed: rescue.timestamp_completed,
+      timestamp_scheduled: moment(formData.timestamp_scheduled).toISOString(),
+      handler_id: formData.handler?.id || null,
+      transfer_ids: transfers.map(i => i.id),
+    }
+
     await SE_API.post(
-      `/rescues/${rescue_id}/update`,
-      { ...defaultPayload, transfer_ids: stops.map(i => i.id) },
+      `/rescues/update/${rescue_id}`,
+      rescue_payload,
       user.accessToken
     )
     navigate(`/rescues/${rescue_id}`)
   }
 
-  // should be for remaining stops only for active routes
+  // should be for remaining transfers only for active routes
   // keep the same for inactive routes
-  // for scheduled routes, don't have cancel stops (don't show canceled stops for scheduled routes)
-  // be able to remove (not mark as cancelled) stops with an x in top right when editing rescue (for scheduled rescues that have not been started) (FOR ALL RESCUES)
+  // for scheduled routes, don't have cancel transfers (don't show canceled transfers for scheduled routes)
+  // be able to remove (not mark as cancelled) transfers with an x in top right when editing rescue (for scheduled rescues that have not been started) (FOR ALL RESCUES)
   const isValidRescue =
     formData.timestamp_scheduled &&
-    formData.timestamp_scheduled_finish &&
-    formData.timestamp_scheduled < formData.timestamp_scheduled_finish &&
-    stops.length >= 2 &&
-    stops.filter(s => s.status !== STATUSES.CANCELLED && !s.is_deleted)[0]
-      ?.type == 'pickup' &&
-    stops[stops.length - 1].type === 'delivery'
+    transfers.length >= 2 &&
+    transfers.filter(s => s.status !== STATUSES.CANCELLED && !s.is_deleted)[0]
+      ?.type == TRANSFER_TYPES.COLLECTION &&
+    transfers[transfers.length - 1].type === TRANSFER_TYPES.DISTRIBUTION
 
   if (!rescue) return <LoadingEditRescue />
 
@@ -241,36 +226,44 @@ export function EditRescue({ setBreadcrumbs }) {
         setFormData={setFormData}
         handlers={handlers}
       />
-      <Stops stops={stops} setStops={setStops} removeStop={removeStop} />
+      <Transfers
+        transfers={transfers}
+        setTransfers={setTransfers}
+        removeTransfer={removeTransfer}
+      />
       {view ? (
-        <AddStop
+        <AddTransfer
           type={view}
-          handleAddStop={handleAddStop}
+          handleAddTransfer={handleAddTransfer}
           handleCancel={() => setView(null)}
           organizations={
-            view === 'pickup' ? donors : view === 'delivery' ? recipients : null
+            view === TRANSFER_TYPES.COLLECTION
+              ? donors
+              : view === TRANSFER_TYPES.DISTRIBUTION
+              ? recipients
+              : null
           }
         />
       ) : (
         <Flex w="100%" gap="4" mt="8" mb="4" justify="center" wrap="wrap">
           <Button
             variant="secondary"
-            onClick={() => setView('pickup')}
+            onClick={() => setView(TRANSFER_TYPES.COLLECTION)}
             flexGrow={isMobile ? '1' : '0'}
             background="blue.secondary"
             color="blue.primary"
             isLoading={!donors}
           >
-            {stops?.length === 0 ? 'Add Stops' : 'Add Pickup'}
+            {transfers?.length === 0 ? 'Add Transfers' : 'Add Collection'}
           </Button>
-          {stops?.length > 0 && (
+          {transfers?.length > 0 && (
             <Button
               variant="secondary"
-              onClick={() => setView('delivery')}
+              onClick={() => setView(TRANSFER_TYPES.DISTRIBUTION)}
               flexGrow={isMobile ? '1' : '0'}
               isLoading={!recipients}
             >
-              Add Delivery
+              Add Distribution
             </Button>
           )}
 

@@ -171,7 +171,7 @@ function formatAllTimestamps(payload) {
   for (const key in payload) {
     if (key.includes(`timestamp_`)) {
       // convert all string timestamps into Date objects
-      payload[key] = new Date(payload[key])
+      payload[key] = payload[key] ? new Date(payload[key]) : null
     } else if (typeof payload[key] === 'object') {
       // recurse through nested payloads
       payload[key] = formatAllTimestamps(payload[key])

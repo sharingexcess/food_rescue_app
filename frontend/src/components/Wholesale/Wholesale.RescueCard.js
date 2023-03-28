@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Flex, Box, Heading, Text, IconButton } from '@chakra-ui/react'
 import { STATUSES } from 'helpers'
+import moment from 'moment'
 import { Link } from 'react-router-dom'
 
 export function WholesaleRescueCard({ rescue }) {
@@ -38,13 +39,16 @@ export function WholesaleRescueCard({ rescue }) {
           >
             {donation.organization.name}
           </Heading>
+          <Text fontSize="sm" color="element.tertiary" fontWeight="300" mt="1">
+            {donation.total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
+            {moment(donation.timestamp_completed).format('h:mma')}
+          </Text>
           <Text
             fontSize="sm"
-            color="element.tertiary"
+            color="element.primary"
             fontWeight="300"
             noOfLines={1}
           >
-            {donation.total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
             {donation.notes}
           </Text>
         </Box>

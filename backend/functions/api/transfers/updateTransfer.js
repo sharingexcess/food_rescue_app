@@ -1,4 +1,4 @@
-const { db, COLLECTIONS } = require('../../../helpers')
+const { db, COLLECTIONS, TRANSFER_TYPES } = require('../../../helpers')
 const { isValidTransferPayload } = require('./isValidTransferPayload')
 
 exports.updateTransfer = async ({
@@ -13,6 +13,7 @@ exports.updateTransfer = async ({
   timestamp_completed,
   total_weight,
   categorized_weight,
+  percent_of_total_dropped,
 }) => {
   // spell it out above so VSCode can suggest the right args on function calls
   // and combine it into "payload" here so we don't forget one line by accident
@@ -28,6 +29,7 @@ exports.updateTransfer = async ({
     timestamp_completed,
     total_weight,
     categorized_weight,
+    percent_of_total_dropped,
   }
 
   const existing_transfer = await db
@@ -51,6 +53,10 @@ exports.updateTransfer = async ({
       id: existing_transfer.id, // use existing data
       timestamp_created: existing_transfer.timestamp_created, // use existing data
       timestamp_updated: now, // always updated server side
+    }
+
+    if (transfer.type === TRANSFER_TYPES.COLLECTION) {
+      delete transfer.percent_of_total_dropped
     }
 
     console.log('Updating transfer:', transfer)

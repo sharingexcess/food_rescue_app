@@ -68,7 +68,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           Rescues
         </Button>
       </Link>
-      {/* <Link to="/wholesale">
+      <Link to="/wholesale">
         <Button
           variant="ghosted"
           px={isMobile ? '0' : '2'}
@@ -94,7 +94,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           />
           Wholesale
         </Button>
-      </Link> */}
+      </Link>
       <Link to="/people">
         <Button
           variant="ghosted"

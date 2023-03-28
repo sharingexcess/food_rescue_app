@@ -43,7 +43,12 @@ export function CreateOrganization() {
       <Flex direction="column" h="100%">
         <PageTitle>Create Organization</PageTitle>
 
-        <Text fontSize="sm" fontWeight="500" color="element.secondary">
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          textTransform="uppercase"
+        >
           Organization Name
         </Text>
         <Input
@@ -55,7 +60,12 @@ export function CreateOrganization() {
             e => handleChange(e) // same problem for onchange as in people search box
           }
         />
-        <Text fontSize="sm" fontWeight="500" color="element.secondary">
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          textTransform="uppercase"
+        >
           Organization Type
         </Text>
         <Select
@@ -69,7 +79,12 @@ export function CreateOrganization() {
           <option value="donor">Donor</option>
         </Select>
 
-        <Text fontSize="sm" fontWeight="500" color="element.secondary">
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          textTransform="uppercase"
+        >
           {formData.type === 'donor' ? 'Donor Type' : 'Recipient Type'}
         </Text>
         <Select

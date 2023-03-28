@@ -21,11 +21,16 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
 
   async function handleUpdateOrganization() {
     setIsWorking(true)
-    const payload = { ...formData, is_deleted: false }
-    delete payload.locations
+    const payload = {
+      id: formData.id,
+      name: formData.name,
+      type: formData.type,
+      subtype: formData.subtype,
+      is_deleted: false,
+    }
     await SE_API.post(
       `/organizations/update/${formData.id}`,
-      formData,
+      payload,
       user.accessToken
     )
     refresh()
@@ -48,9 +53,16 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
           'Like seriously, this is a big deal. You definitely want to delete this organization?'
         )
       ) {
+        const payload = {
+          id: formData.id,
+          name: formData.name,
+          type: formData.type,
+          subtype: formData.subtype,
+          is_deleted: true,
+        }
         await SE_API.post(
           `/organizations/update/${formData.id}`,
-          { ...formData, is_deleted: true },
+          payload,
           user.accessToken
         )
         navigate('/organizations')

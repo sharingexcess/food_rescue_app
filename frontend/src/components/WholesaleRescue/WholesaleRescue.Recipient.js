@@ -2,6 +2,7 @@ import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Box, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
 import { formatLargeNumber } from 'helpers'
 import { useAuth } from 'hooks'
+import moment from 'moment'
 
 export function Recipient({ recipient, setEditRecipient }) {
   const { hasAdminPermission } = useAuth()
@@ -19,20 +20,18 @@ export function Recipient({ recipient, setEditRecipient }) {
       cursor="pointer"
     >
       <Box>
-        <Heading
-          as="h6"
-          fontWeight="600"
-          letterSpacing={1}
-          fontSize="sm"
-          color="element.tertiary"
-          textTransform="uppercase"
-          mb="ed"
-        >
-          RECIPIENT&nbsp;&nbsp;|&nbsp;&nbsp;
-          <Text as="span" color="se.brand.primary">
+        <Text fontSize="xs" color="element.tertiary" mb="1">
+          <Text
+            as="span"
+            color="se.brand.primary"
+            fontWeight="700"
+            textTransform="uppercase"
+          >
             {formatLargeNumber(recipient.total_weight)} lbs.
           </Text>
-        </Heading>
+          &nbsp;&nbsp;
+          {moment(recipient.timestamp_completed).format('dddd M/DD - h:mma')}
+        </Text>
         <Heading as="h4" size="md" fontWeight="600" color="element.primary">
           {recipient.organization.name}
         </Heading>

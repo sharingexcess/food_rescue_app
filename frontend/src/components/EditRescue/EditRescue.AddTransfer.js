@@ -1,9 +1,15 @@
 import { CloseIcon } from '@chakra-ui/icons'
 import { Select, IconButton, Heading, Flex } from '@chakra-ui/react'
 import { Autocomplete } from 'components'
+import { TRANSFER_TYPES } from 'helpers'
 import { useEffect, useState } from 'react'
 
-export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
+export function AddTransfer({
+  type,
+  handleAddTransfer,
+  handleCancel,
+  organizations,
+}) {
   const [organization, setOrganization] = useState()
   const [location, setLocation] = useState()
 
@@ -15,14 +21,16 @@ export function AddStop({ type, handleAddStop, handleCancel, organizations }) {
 
   useEffect(() => {
     if (organization && location) {
-      handleAddStop({ type, organization, location })
+      handleAddTransfer({ type, organization, location })
     }
   }, [organization, location])
 
   function handleSearchForOrganization(value) {
     return organizations
       .filter(i => i.locations?.length)
-      .filter(i => (i.type === 'pickup' ? 'donor' : 'recipient'))
+      .filter(i =>
+        i.type === TRANSFER_TYPES.COLLECTION ? 'donor' : 'recipient'
+      )
       .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
   }
 

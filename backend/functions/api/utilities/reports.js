@@ -7,7 +7,7 @@ const {
   TRANSFER_TYPES,
   STATUSES,
   RECIPIENT_SUB_TYPES,
-} = require('../../helpers')
+} = require('../../../helpers')
 
 const moment = require('moment')
 

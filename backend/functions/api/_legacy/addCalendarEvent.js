@@ -3,7 +3,7 @@ const calendar = google.calendar('v3')
 const {
   authenticateRequest,
   rejectUnauthorizedRequest,
-} = require('../../helpers')
+} = require('../../../helpers')
 
 async function addCalendarEventEndpoint(request, response) {
   console.log(

@@ -1,6 +1,11 @@
 import { Select, Heading, Flex, Text, Link, Button } from '@chakra-ui/react'
 import { Autocomplete, useRescueContext } from 'components'
-import { createTimestamp, generateUniqueId, SE_API, STATUSES } from 'helpers'
+import {
+  EMPTY_CATEGORIZED_WEIGHT,
+  SE_API,
+  STATUSES,
+  TRANSFER_TYPES,
+} from 'helpers'
 import { useEffect, useMemo, useState } from 'react'
 import { useApi, useAuth } from 'hooks'
 
@@ -30,42 +35,33 @@ export function AddBackupDelivery() {
 
   async function handleAddBackupDelivery() {
     setIsWorking(true)
-    const id = await generateUniqueId('transfers')
-    await SE_API.post(
-      `/transfers/${id}/create`,
+    const new_transfer = await SE_API.post(
+      `/transfers/create`,
       {
-        id,
-        type: 'delivery',
-        handler_id: rescue.handler_id,
+        type: TRANSFER_TYPES.DISTRIBUTION,
+        status: STATUSES.SCHEDULED,
         rescue_id: rescue.id,
+        handler_id: rescue.handler_id,
         organization_id: organization.id,
         location_id: location.id,
-        status: STATUSES.ACTIVE,
-        notes: null,
-        percent_of_total_dropped: 100,
-        dairy: 0,
-        bakery: 0,
-        produce: 0,
-        meat_fish: 0,
-        non_perishable: 0,
-        prepared_frozen: 0,
-        mixed: 0,
-        other: 0,
+        notes: '',
+        timestamp_completed: null,
         total_weight: 0,
-        timestamp_created: createTimestamp(),
-        timestamp_updated: createTimestamp(),
-        timestamp_logged_start: createTimestamp(),
-        timestamp_logged_finish: null,
-        timestamp_scheduled: rescue.timestamp_scheduled,
-        timestamp_scheduled_finish: rescue.timestamp_scheduled_finish,
+        categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
       },
       user.accessToken
     )
     await SE_API.post(
-      `/rescues/${rescue.id}/update`,
+      `/rescues/update/${rescue.id}`,
       {
-        transfer_ids: [...rescue.transfers.map(i => i.id), id],
-        timestamp_updated: createTimestamp(),
+        id: rescue.id,
+        type: rescue.type,
+        status: STATUSES.ACTIVE,
+        handler_id: rescue.handler_id,
+        notes: rescue.notes,
+        timestamp_scheduled: rescue.timestamp_scheduled,
+        timestamp_completed: null,
+        transfer_ids: [...rescue.transfers.map(i => i.id), new_transfer.id],
       },
       user.accessToken
     )

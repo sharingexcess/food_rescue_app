@@ -8,7 +8,8 @@ import {
   IconButton,
   Text,
 } from '@chakra-ui/react'
-import { STATUSES } from 'helpers'
+import { STATUSES, TRANSFER_TYPES } from 'helpers'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { TransferButtons } from './Rescue.TransferButtons'
 import { statusIcon } from './Rescue.utils'
@@ -35,7 +36,17 @@ export function InactiveTransfer({ transfer }) {
           textTransform="uppercase"
           py="2"
         >
-          {statusIcon(transfer.status)}&nbsp;&nbsp;{transfer.type}
+          {statusIcon(transfer.status)}&nbsp;&nbsp;
+          <Text
+            as="span"
+            color={
+              transfer.type === TRANSFER_TYPES.COLLECTION
+                ? 'blue.primary'
+                : 'green.primary'
+            }
+          >
+            {transfer.type}
+          </Text>
           {transfer.status === STATUSES.COMPLETED
             ? ` | ${transfer.total_weight} lbs.`
             : ''}
@@ -61,6 +72,17 @@ export function InactiveTransfer({ transfer }) {
       <Text as="p" fontWeight="300" color="element.secondary">
         {transfer.location.nickname || transfer.location.address1}
       </Text>
+      {transfer.timestamp_completed && (
+        <Text
+          as="aside"
+          fontSize="xs"
+          fontWeight="400"
+          color="element.tertiary"
+        >
+          Completed:{' '}
+          {moment(transfer.timestamp_completed).format('dddd M/DD - h:mma')}
+        </Text>
+      )}
       <Box h={4} />
       <Collapse in={isExpanded} startingHeight={0} endingHeight={120}>
         <TransferButtons transfer={transfer} />

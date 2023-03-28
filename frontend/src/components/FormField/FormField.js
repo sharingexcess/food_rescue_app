@@ -17,14 +17,18 @@ export function FormField({
 }) {
   return (
     <Box w="100%" className="FormField" id={id}>
-      <Text fontSize="sm" fontWeight="500" color="element.secondary">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
         {title}
         {isOptional && (
           <Text
             as="span"
-            verticalAlign="5%"
             fontWeight="300"
-            fontSize="xs"
+            fontSize="10px"
             pb="1"
             ml="2"
             color="element.tertiary"

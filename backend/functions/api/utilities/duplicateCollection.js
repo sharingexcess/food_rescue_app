@@ -1,6 +1,5 @@
-const { firestore } = require('firebase-admin')
 const firebaseAdmin = require('firebase-admin')
-const { db } = require('../../helpers')
+const { db } = require('../../../helpers')
 
 exports.duplicateCollectionEndpoint = async (_request, response) => {
   const srcCollectionName = 'legacy_rescues_2'

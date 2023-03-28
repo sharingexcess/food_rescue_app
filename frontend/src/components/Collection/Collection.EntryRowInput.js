@@ -1,12 +1,13 @@
 import { CheckIcon } from '@chakra-ui/icons'
 import { Flex, IconButton, Input, Select, Text } from '@chakra-ui/react'
-import { useCollectionContext } from 'components'
-import { FOOD_CATEGORIES } from 'helpers'
+import { useCollectionContext, useRescueContext } from 'components'
+import { FOOD_CATEGORIES, STATUSES } from 'helpers'
 import { useState } from 'react'
 
 export function EntryRowInput() {
   const { entryRows, setEntryRows, session_storage_key, notes } =
     useCollectionContext()
+  const { rescue } = useRescueContext()
   const [category, setCategory] = useState('')
   const [weight, setWeight] = useState('')
 
@@ -27,7 +28,7 @@ export function EntryRowInput() {
   }
 
   return (
-    <Flex my="4">
+    <Flex my="4" hidden={rescue.status === STATUSES.COMPLETED}>
       <Select
         size="sm"
         color="element.secondary"
@@ -35,6 +36,7 @@ export function EntryRowInput() {
         onChange={e => setCategory(e.target.value)}
         textTransform="capitalize"
         mr="4"
+        disabled={rescue.status === STATUSES.COMPLETED}
       >
         <option>Select a category...</option>
         {FOOD_CATEGORIES.map(i => (

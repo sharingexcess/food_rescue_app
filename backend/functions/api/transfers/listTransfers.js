@@ -4,7 +4,7 @@ const {
   db,
   formatDocumentTimestamps,
 } = require('../../../helpers')
-const { getRescue } = require('../rescue')
+const { getRescue } = require('../rescues/getRescue')
 
 exports.listTransfers = async (
   {

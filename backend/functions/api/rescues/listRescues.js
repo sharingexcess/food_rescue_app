@@ -1,9 +1,5 @@
 const moment = require('moment')
-const {
-  db,
-  formatDocumentTimestamps,
-  COLLECTIONS,
-} = require('../../../helpers')
+const { db, COLLECTIONS } = require('../../../helpers')
 
 exports.listRescues = async (
   {
@@ -105,9 +101,7 @@ exports.listRescues = async (
             .collection(COLLECTIONS.PUBLIC_PROFILES)
             .doc(rescue.handler_id)
             .get()
-            .then(
-              doc => (rescue.handler = formatDocumentTimestamps(doc.data()))
-            )
+            .then(doc => (rescue.handler = doc.data()))
         : null
     ),
     ...rescues.map(rescue =>
@@ -120,7 +114,7 @@ exports.listRescues = async (
             const data = doc.data()
             rescue.transfers[
               rescue.transfer_ids.findIndex(i => i === data.id)
-            ] = formatDocumentTimestamps(data)
+            ] = data
           })
         )
     ),
@@ -136,7 +130,7 @@ exports.listRescues = async (
             .doc(transfer.organization_id)
             .get()
             .then(doc => {
-              const org = formatDocumentTimestamps(doc.data())
+              const org = doc.data()
               // console.log('got org', org)
               transfer.organization = org
             })
@@ -147,7 +141,7 @@ exports.listRescues = async (
             .doc(transfer.location_id)
             .get()
             .then(doc => {
-              const loc = formatDocumentTimestamps(doc.data())
+              const loc = doc.data()
               // console.log('got loc', loc)
               transfer.location = loc
             })

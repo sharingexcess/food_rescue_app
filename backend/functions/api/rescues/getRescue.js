@@ -1,8 +1,4 @@
-const {
-  COLLECTIONS,
-  db,
-  formatDocumentTimestamps,
-} = require('../../../helpers')
+const { COLLECTIONS, db } = require('../../../helpers')
 
 exports.getRescue = async (id, options = { shallow: false }) => {
   // load base rescue object from DB
@@ -10,7 +6,7 @@ exports.getRescue = async (id, options = { shallow: false }) => {
     .collection(COLLECTIONS.RESCUES)
     .doc(id)
     .get()
-    .then(doc => formatDocumentTimestamps(doc.data()))
+    .then(doc => doc.data())
 
   if (!rescue) {
     console.log(`No existing rescue found matching id: ${id}. Returning null.`)
@@ -33,11 +29,7 @@ exports.getRescue = async (id, options = { shallow: false }) => {
     .collection(COLLECTIONS.TRANSFERS)
     .where('rescue_id', '==', rescue.id)
     .get()
-    .then(snapshot =>
-      snapshot.forEach(doc =>
-        transfers.push(formatDocumentTimestamps(doc.data()))
-      )
-    )
+    .then(snapshot => snapshot.forEach(doc => transfers.push(doc.data())))
 
   // we have to do this map/find operation to ensure that the order of transfers is correct
   rescue.transfers = rescue.transfer_ids.map(id =>
@@ -56,8 +48,7 @@ exports.getRescue = async (id, options = { shallow: false }) => {
         .get()
         .then(doc => {
           const payload = doc.data()
-          rescue.transfers[index].organization =
-            formatDocumentTimestamps(payload)
+          rescue.transfers[index].organization = payload
         })
     ),
     // create a db request for each location_id
@@ -68,7 +59,7 @@ exports.getRescue = async (id, options = { shallow: false }) => {
         .get()
         .then(doc => {
           const payload = doc.data()
-          rescue.transfers[index].location = formatDocumentTimestamps(payload)
+          rescue.transfers[index].location = payload
         })
     ),
   ]
@@ -82,7 +73,7 @@ exports.getRescue = async (id, options = { shallow: false }) => {
         .get()
         .then(doc => {
           const payload = doc.data()
-          rescue.handler = formatDocumentTimestamps(payload)
+          rescue.handler = payload
         })
     )
   }

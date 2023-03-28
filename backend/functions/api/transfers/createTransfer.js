@@ -1,4 +1,9 @@
-const { db, generateUniqueId, COLLECTIONS } = require('../../../helpers')
+const {
+  db,
+  generateUniqueId,
+  COLLECTIONS,
+  TRANSFER_TYPES,
+} = require('../../../helpers')
 const { isValidTransferPayload } = require('./isValidTransferPayload')
 
 exports.createTransfer = async ({
@@ -12,6 +17,7 @@ exports.createTransfer = async ({
   timestamp_completed,
   total_weight,
   categorized_weight,
+  percent_of_total_dropped,
 }) => {
   // spell it out above so VSCode can suggest the right args on function calls
   // and combine it into "payload" here so we don't forget one line by accident
@@ -26,6 +32,7 @@ exports.createTransfer = async ({
     timestamp_completed,
     total_weight,
     categorized_weight,
+    percent_of_total_dropped,
   }
 
   const is_valid = await isValidTransferPayload(payload)
@@ -42,6 +49,10 @@ exports.createTransfer = async ({
       timestamp_updated: now, // always created server side
       notes: payload.notes || '', // force to be empty string if null,
       ...payload,
+    }
+
+    if (transfer.type === TRANSFER_TYPES.COLLECTION) {
+      delete transfer.percent_of_total_dropped
     }
 
     console.log('Creating transfer:', transfer)

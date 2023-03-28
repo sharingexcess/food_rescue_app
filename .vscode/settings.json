@@ -49,5 +49,14 @@
   "redhat.telemetry.enabled": false,
   "editor.minimap.enabled": false,
   "docker.languageserver.formatter.ignoreMultilineInstructions": true,
-  "eslint.workingDirectories": [{ "mode": "auto" }]
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "_legacy/**": true
+  }
 }

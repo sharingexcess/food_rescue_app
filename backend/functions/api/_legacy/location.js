@@ -1,4 +1,4 @@
-const { db, formatDocumentTimestamps } = require('../../helpers')
+const { db, formatDocumentTimestamps } = require('../../../helpers')
 
 // NOTE: this is not an actual endpoint as of now. Just a helper function.
 

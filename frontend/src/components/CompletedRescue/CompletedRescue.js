@@ -82,7 +82,9 @@ export function CompletedRescue({ isOpen, handleClose }) {
             type: rescue.type,
             status: STATUSES.COMPLETED,
             handler_id: rescue.handler_id,
-            timestamp_scheduled: rescue.timestamp_scheduled,
+            timestamp_scheduled: moment(
+              rescue.timestamp_scheduled
+            ).toISOString(),
             timestamp_completed: moment().toISOString(),
             transfer_ids: rescue.transfer_ids,
             notes,

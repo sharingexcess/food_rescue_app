@@ -17,8 +17,8 @@ import {
   User,
   Users,
   Home,
-  // Wholesale,
-  // WholesaleRescue,
+  Wholesale,
+  WholesaleRescue,
   FoodSafety,
   LogRescue,
   Privacy,
@@ -257,7 +257,7 @@ function RescueAppRoutes() {
                   />
                 }
               />
-              {/* <Route
+              <Route
                 path="/wholesale"
                 element={
                   <Page
@@ -283,7 +283,7 @@ function RescueAppRoutes() {
                     Content={WholesaleRescue}
                   />
                 }
-              /> */}
+              />
               <Route
                 path="/food-safety"
                 element={

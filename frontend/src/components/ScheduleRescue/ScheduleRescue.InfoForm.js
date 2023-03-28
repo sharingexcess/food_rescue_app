@@ -10,7 +10,12 @@ export function InfoForm({ formData, setFormData, handlers }) {
 
   return (
     <Flex direction="column" mb="8">
-      <Text color="element.secondary" size="sm" fontWeight="500">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
         Scheduled Time
       </Text>
       <Input
@@ -26,13 +31,17 @@ export function InfoForm({ formData, setFormData, handlers }) {
         }
       />
 
-      <Text color="element.secondary" size="sm" fontWeight="500">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
         Handler
         <Text
           as="span"
-          verticalAlign="5%"
           fontWeight="300"
-          fontSize="xs"
+          fontSize="10px"
           pb="1"
           ml="2"
           color="element.secondary"

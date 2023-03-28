@@ -2,6 +2,7 @@ import { STATUSES } from 'helpers'
 
 export function getActiveTransfer(rescue) {
   if (!rescue) return null
+  if (rescue.status !== STATUSES.ACTIVE) return null
   let activeTransfer = null
   for (const transfer of rescue.transfers) {
     if (

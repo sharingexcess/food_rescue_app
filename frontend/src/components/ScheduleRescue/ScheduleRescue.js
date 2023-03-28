@@ -105,6 +105,7 @@ export function ScheduleRescue() {
           timestamp_completed: null,
           total_weight: 0,
           categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+          percent_of_total_dropped: 100,
         })),
       },
       user.accessToken

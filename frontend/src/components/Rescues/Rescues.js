@@ -97,7 +97,7 @@ export function Rescues() {
                 <PopoverArrow />
                 <Flex direction="column" px="4" py="3" gap="2" align="flex-end">
                   <Link to="/schedule-rescue">Schedule Rescue</Link>
-                  {/* <Link to="/log-rescue">Log Past Rescue</Link> */}
+                  <Link to="/log-rescue">Log Past Rescue</Link>
                 </Flex>
               </PopoverContent>
             </Portal>

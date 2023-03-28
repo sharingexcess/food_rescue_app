@@ -1,9 +1,7 @@
 const functions = require('firebase-functions')
-const {
-  api,
-  backup_data_to_storage,
-  cache_retool_data,
-} = require('./functions')
+const { api } = require('./functions/api')
+const { backup_data_to_storage } = require('./functions/backup_data_to_storage')
+const { cache_retool_data } = require('./functions/cache_retool_data')
 
 exports.api = functions
   .runWith({

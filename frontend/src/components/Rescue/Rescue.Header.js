@@ -29,17 +29,25 @@ export function RescueHeader() {
             {rescue?.handler?.name || 'Available'}
           </Heading>
           <Text color="element.secondary" fontSize="xs">
-            {formatTimestamp(
-              rescue.timestamp_scheduled,
-              'dddd, MMMM DD | h:mma'
-            )}
-            {rescue.timestamp_completed
-              ? formatTimestamp(rescue.timestamp_completed, ' - h:mma')
-              : ''}
+            <Text as="span" fontWeight={700}>
+              Scheduled:
+            </Text>{' '}
+            {formatTimestamp(rescue.timestamp_scheduled, 'dddd M/DD - h:mma')}
           </Text>
+          {rescue.timestamp_completed && (
+            <Text color="element.secondary" fontSize="xs">
+              <Text as="span" fontWeight={700}>
+                Completed:
+              </Text>{' '}
+              {formatTimestamp(rescue.timestamp_completed, 'dddd M/DD - h:mma')}
+            </Text>
+          )}
           {rescue.notes && (
             <Text color="element.secondary" fontSize="xs">
-              Notes: {rescue.notes}
+              <Text as="span" fontWeight={700}>
+                Notes:
+              </Text>{' '}
+              "{rescue.notes}"
             </Text>
           )}
         </Flex>

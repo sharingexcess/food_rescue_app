@@ -12,7 +12,7 @@ const {
   COLLECTIONS,
   TRANSFER_TYPES,
   STATUSES,
-} = require('../../helpers')
+} = require('../../../helpers')
 
 async function analyticsEndpoint(request, response) {
   return new Promise(async resolve => {

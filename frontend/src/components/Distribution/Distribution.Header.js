@@ -19,7 +19,7 @@ import { useAuth } from 'hooks'
 import moment from 'moment'
 
 export function Header() {
-  const { rescue, refresh, setOpenTransfer } = useRescueContext()
+  const { refresh, setOpenTransfer } = useRescueContext()
   const { distribution, completedAt, setCompletedAt } = useDistributionContext()
   const { user } = useAuth()
 
@@ -29,9 +29,8 @@ export function Header() {
     )
     if (reason) {
       await SE_API.post(
-        `/rescues/${rescue.id}/distribution/${distribution.id}/cancel`,
+        `/transfers/cancel/${distribution.id}`,
         {
-          status: STATUSES.CANCELLED,
           notes: 'Cancelled - ' + reason,
         },
         user.accessToken
@@ -97,7 +96,12 @@ export function Header() {
         distribution.status
       ) && (
         <>
-          <Text fontSize="sm" fontWeight={300} color="element.secondary">
+          <Text
+            color="element.tertiary"
+            fontSize="xs"
+            fontWeight="700"
+            textTransform="uppercase"
+          >
             Completed at:
           </Text>
           <Input

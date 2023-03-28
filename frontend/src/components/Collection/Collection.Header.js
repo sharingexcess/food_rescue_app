@@ -19,7 +19,7 @@ import { useAuth } from 'hooks'
 import moment from 'moment'
 
 export function CollectionHeader() {
-  const { rescue, refresh, setOpenTransfer } = useRescueContext()
+  const { refresh, setOpenTransfer } = useRescueContext()
   const { collection, completedAt, setCompletedAt } = useCollectionContext()
   const { user } = useAuth()
 
@@ -29,9 +29,8 @@ export function CollectionHeader() {
     )
     if (reason) {
       await SE_API.post(
-        `/rescues/${rescue.id}/collection/${collection.id}/cancel`,
+        `/transfers/cancel/${collection.id}`,
         {
-          status: STATUSES.CANCELLED,
           notes: 'Cancelled - ' + reason,
         },
         user.accessToken
@@ -95,7 +94,12 @@ export function CollectionHeader() {
         )}
       {[STATUSES.CANCELLED, STATUSES.COMPLETED].includes(collection.status) && (
         <>
-          <Text fontSize="sm" fontWeight={300} color="element.secondary">
+          <Text
+            color="element.tertiary"
+            fontSize="xs"
+            fontWeight="700"
+            textTransform="uppercase"
+          >
             Completed at:
           </Text>
           <Input

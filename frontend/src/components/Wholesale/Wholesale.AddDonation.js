@@ -140,7 +140,15 @@ function AddDonationBody({ formData, setFormData, donors }) {
 
   return (
     <Flex direction="column" minH="128">
-      <Text mt="6">Date</Text>
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        mt="6"
+        textTransform="uppercase"
+      >
+        Date
+      </Text>
       <Input
         type="datetime-local"
         fontSize="sm"
@@ -180,7 +188,16 @@ function AddDonationBody({ formData, setFormData, donors }) {
           ))}
         </Select>
       )}
-      <Text mt="6">Weight</Text>
+
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        mt="6"
+        textTransform="uppercase"
+      >
+        Weight
+      </Text>
       <Input
         type="number"
         min="0"
@@ -190,7 +207,16 @@ function AddDonationBody({ formData, setFormData, donors }) {
         onBlur={updateParentWeight}
         placeholder="0 lbs."
       />
-      <Text mt="6">Food Category</Text>
+
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        mt="6"
+        textTransform="uppercase"
+      >
+        Food Category
+      </Text>
       <Select
         value={formData.food_category}
         onChange={e =>
@@ -206,7 +232,16 @@ function AddDonationBody({ formData, setFormData, donors }) {
         <option value="mixed">Mixed</option>
         <option value="other">Other</option>
       </Select>
-      <Text mt="6">Notes</Text>
+
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        mt="6"
+        textTransform="uppercase"
+      >
+        Notes
+      </Text>
       <Input
         type="text"
         fontSize="sm"
@@ -215,7 +250,15 @@ function AddDonationBody({ formData, setFormData, donors }) {
         onBlur={updateParentNotes}
         placeholder="Add notes..."
       />
-      <Text mt="6">Subtract Pallet Weight</Text>
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        mt="6"
+        textTransform="uppercase"
+      >
+        Subtract Pallet Weight
+      </Text>
       <Flex justify="space-between" gap="2" mt="4" mb="4">
         <Button
           flexGrow={1}

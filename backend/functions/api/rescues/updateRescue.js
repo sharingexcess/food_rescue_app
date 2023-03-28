@@ -1,5 +1,14 @@
-const { db, COLLECTIONS } = require('../../../helpers')
+const {
+  db,
+  COLLECTIONS,
+  createGoogleCalendarEvent,
+  deleteGoogleCalendarEvent,
+} = require('../../../helpers')
+const { getPublicProfile } = require('../public_profiles/getPublicProfile')
+const { getLocation } = require('../utilities/location')
 const { isValidRescuePayload } = require('./isValidRescuePayload')
+const { getTransfer } = require('../transfers/getTransfer')
+const moment = require('moment')
 
 exports.updateRescue = async ({
   id,
@@ -36,10 +45,6 @@ exports.updateRescue = async ({
   )
 
   if (is_valid) {
-    // =========================================================
-    // TODO: add google calendar event deletion + creation logic
-    // =========================================================
-
     const now = new Date().toISOString()
 
     const rescue = {
@@ -54,6 +59,42 @@ exports.updateRescue = async ({
       timestamp_completed,
       transfer_ids,
     }
+
+    // google calendar event creation logic
+
+    const first_transfer = await getTransfer(transfer_ids[0])
+    const location = await getLocation(first_transfer.location_id)
+    const handler = await getPublicProfile(handler_id)
+
+    const google_calendar_payload = {
+      summary: `Food Rescue: ${handler.name} - ${moment(
+        timestamp_scheduled
+      ).format('M/DD')}`,
+      location: `${location.address1}, ${location.city}, ${location.state} ${location.zip}`,
+      description: `Here's a link to open your rescue in the SE Food Rescue App: https://app.sharingexcess.com/rescues/${id}`,
+      start: {
+        dateTime: timestamp_scheduled,
+      },
+      end: {
+        dateTime: moment(timestamp_scheduled)
+          .add(Math.ceil(transfer_ids.length / 2), 'hours') // average 30min per transfer, round up
+          .toISOString(),
+      },
+      attendees: [{ email: handler.email }],
+    }
+
+    // delete any existing event to replace it with a new one
+    try {
+      await deleteGoogleCalendarEvent(existing_rescue.google_calendar_event_id)
+    } catch (_e) {
+      // ignore
+    }
+
+    const google_calendar_event = await createGoogleCalendarEvent(
+      google_calendar_payload
+    )
+
+    rescue.google_calendar_event_id = google_calendar_event.id
 
     console.log('Updating rescue:', rescue)
 

@@ -9,7 +9,7 @@ exports.updateOrganization = async ({
   name,
   type,
   subtype,
-  tags,
+  tags = null,
   is_deleted,
 }) => {
   // spell it out above so VSCode can suggest the right args on function calls

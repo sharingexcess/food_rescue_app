@@ -14,8 +14,8 @@ import { PageTitle, FooterButton } from 'components'
 import {
   formatLargeNumber,
   formatTimestamp,
-  ORG_SUBTYPES,
   STATUSES,
+  TRANSFER_TYPES,
 } from 'helpers'
 import { useApi, useAuth } from 'hooks'
 import { Fragment, useEffect, useMemo, useState } from 'react'
@@ -31,14 +31,23 @@ export function Wholesale() {
   const { hasAdminPermission } = useAuth()
   const { data: rescues, refresh } = useApi(
     '/rescues/list',
-    useMemo(() => ({ type: 'wholesale', date: date }), [date])
+    useMemo(
+      () => ({
+        type: 'wholesale',
+        date_range_start: date,
+        date_range_end: date,
+      }),
+      [date]
+    )
   )
 
   const totalPounds = useMemo(() => {
     let total = 0
     for (const rescue of rescues || []) {
       for (const transfer of rescue.transfers.filter(
-        s => s.type === 'delivery' && s.status !== STATUSES.CANCELLED
+        s =>
+          s.type === TRANSFER_TYPES.COLLECTION &&
+          s.status !== STATUSES.CANCELLED
       )) {
         total += transfer.total_weight
       }
@@ -50,10 +59,7 @@ export function Wholesale() {
     let total = 0
     for (const rescue of rescues || []) {
       for (const transfer of rescue.transfers.filter(
-        s =>
-          s.type === 'delivery' &&
-          s.organization.subtype !== ORG_SUBTYPES.COMPOST &&
-          s.organization.subtype !== ORG_SUBTYPES.HOLDING
+        s => s.type === TRANSFER_TYPES.DISTRIBUTION
       )) {
         total += transfer.total_weight
       }
@@ -75,25 +81,24 @@ export function Wholesale() {
   return (
     <>
       <PageTitle>Wholesale</PageTitle>
-      <Flex w="100%" justify="space-between" align="center" mb="4">
-        <Box>
+      <Flex w="100%" justify="space-between" align="top" mb="4">
+        <Box pt="2">
           <Heading size="md" flexBasis="50%">
             {formatTimestamp(date, 'dddd, MMM. DD')}
           </Heading>
-          {totalPounds && totalDonated ? (
-            <Text color="element.secondary" fontWeight="300">
-              {formatLargeNumber(totalPounds)} lbs. received,{' '}
-              {formatLargeNumber(totalDonated)} lbs. donated
-            </Text>
-          ) : null}
+          <Text fontSize="xs" color="element.secondary" fontWeight="300" mt="1">
+            {formatLargeNumber(totalPounds)} lbs. collected{' | '}
+            {formatLargeNumber(totalDonated)} lbs. distributed
+          </Text>
         </Box>
-        <InputGroup flexShrink="1" flexBasis="128px">
+        <InputGroup flexShrink="1" flexGrow="0" flexBasis="96px">
           <Input
             type="date"
             value={date}
             onChange={e => handleChangeDate(e)}
             fontSize="sm"
             color="element.secondary"
+            w="128px"
           />
           <InputRightElement pointerEvents="none">
             <CalendarIcon mr="2" color="element.tertiary" />

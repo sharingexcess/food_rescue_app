@@ -16,8 +16,15 @@ import {
 } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { calculateCurrentLoad, SE_API } from 'helpers'
+import {
+  calculateCurrentLoad,
+  EMPTY_CATEGORIZED_WEIGHT,
+  SE_API,
+  STATUSES,
+  TRANSFER_TYPES,
+} from 'helpers'
 import { useApi, useAuth } from 'hooks'
+import moment from 'moment'
 import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
 
@@ -47,6 +54,7 @@ export function EditRecipient({ isOpen, handleClose }) {
     weight: currentLoad,
     notes: '',
     percent_of_total_dropped: remainingPercent,
+    timestamp_completed: null,
   })
   const [isLoading, setIsLoading] = useState()
   const { data: recipients } = useApi(
@@ -56,11 +64,15 @@ export function EditRecipient({ isOpen, handleClose }) {
 
   useEffect(() => {
     if (transfer && recipients) {
+      console.log(transfer)
       setFormData({
         organization: recipients.find(i => i.id === transfer.organization.id),
         location: transfer.location,
         weight: transfer.total_weight || currentLoad,
         notes: '',
+        timestamp_completed: moment(transfer.timestamp_completed).format(
+          'YYYY-MM-DDTHH:mm'
+        ),
         percent_of_total_dropped:
           transfer.percent_of_total_dropped || remainingPercent,
       })
@@ -70,13 +82,33 @@ export function EditRecipient({ isOpen, handleClose }) {
   async function handleEditRecipient() {
     setIsLoading(true)
     const payload = {
-      percent_of_total_dropped: formData.percent_of_total_dropped,
+      type: TRANSFER_TYPES.DISTRIBUTION,
+      status: STATUSES.COMPLETED,
+      rescue_id: rescue.id,
+      handler_id: rescue.handler_id,
       organization_id: formData.organization.id,
       location_id: formData.location.id,
       notes: formData.notes,
+      timestamp_completed: moment(formData.timestamp_completed).toISOString(),
+      total_weight: formData.weight,
+      categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+      percent_of_total_dropped: formData.percent_of_total_dropped,
+    }
+
+    // this is hacky.
+    // because wholesale rescues only have weight in a single food category,
+    // we just need to figure out which one was used in the original collection.
+    // so we iterate through the collection to find a category with a value,
+    // then populate that category in this distribution with the weight
+    // we already calculated above (this ensures categorized sum === total_weight)
+    for (const category in rescue.transfers[0].categorized_weight) {
+      if (rescue.transfers[0].categorized_weight[category]) {
+        payload.categorized_weight[category] = payload.total_weight
+        break
+      }
     }
     await SE_API.post(
-      `/wholesale/rescue/${rescue.id}/updateRecipient/${transfer.id}`,
+      `/transfers/update/${transfer.id}`,
       payload,
       user.accessToken
     )
@@ -98,6 +130,7 @@ export function EditRecipient({ isOpen, handleClose }) {
           remainingPercent={remainingPercent}
           setFormData={setFormData}
           recipients={recipients}
+          rescue={rescue}
         />
       )}
       CardFooter={() => (
@@ -137,10 +170,13 @@ function EditRecipientBody({
   currentLoad,
   donationTotal,
   remainingPercent,
+  rescue,
 }) {
   const [weight, setWeight] = useState(
     formData.weight == null ? currentLoad : formData.weight
   )
+  const [date, setDate] = useState(formData.timestamp_completed)
+
   const [percent, setPercent] = useState(
     formData.percent_of_total_dropped == null
       ? remainingPercent
@@ -151,6 +187,10 @@ function EditRecipientBody({
     return recipients.filter(i =>
       i.name.toLowerCase().includes(value.toLowerCase())
     )
+  }
+
+  function updateParentDate() {
+    setFormData({ ...formData, timestamp_completed: date })
   }
 
   function updateWeight(e) {
@@ -186,6 +226,17 @@ function EditRecipientBody({
 
   return (
     <Flex direction="column" minH="128">
+      <Text color="element.secondary" size="sm" fontWeight="500">
+        Completed at:
+      </Text>
+      <Input
+        type="datetime-local"
+        fontSize="sm"
+        value={date}
+        onChange={e => setDate(e.target.value)}
+        onBlur={updateParentDate}
+        mb="6"
+      />
       <Autocomplete
         label="Recipient Organization"
         placeholder="Name..."
@@ -193,6 +244,7 @@ function EditRecipientBody({
         setValue={handleSelectRecipient}
         displayField="name"
         handleChange={handleRecipientSearch}
+        disabled={rescue.status === STATUSES.COMPLETED}
       />
       {formData.organization && (
         <Select
@@ -208,6 +260,7 @@ function EditRecipientBody({
               ),
             })
           }
+          disabled={rescue.status === STATUSES.COMPLETED}
         >
           {formData.organization.locations.map(i => (
             <option value={i.id} key={i.id}>
@@ -232,6 +285,7 @@ function EditRecipientBody({
           onBlur={updateFormDataWeight}
           textAlign="right"
           py="2"
+          disabled={rescue.status === STATUSES.COMPLETED}
         />
         <Text fontSize="3xl" fontWeight="bold" ml="3" mt="2">
           lbs.
@@ -248,15 +302,17 @@ function EditRecipientBody({
         mx="auto"
       >
         <Text w="48px" fontWeight="bold">
-          {percent}%
+          {percent.toFixed(0)}%
         </Text>
         <RangeSlider
           colorScheme="green"
           value={[percent, remainingPercent]}
           onChange={values => handleChangeSlider(values[0])}
           flexGrow={1}
+          step={0.1}
           onChangeEnd={updateFormDataWeight}
           position="relative"
+          disabled={rescue.status === STATUSES.COMPLETED}
         >
           <RangeSliderTrack h="2" borderRadius="4px" bg="se.brand.primary">
             <RangeSliderFilledTrack h="2" bg="element.secondary" />

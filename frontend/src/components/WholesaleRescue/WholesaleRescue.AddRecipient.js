@@ -16,8 +16,15 @@ import {
 } from '@chakra-ui/react'
 import { Autocomplete } from 'components/Autocomplete/Autocomplete'
 import { CardOverlay } from 'components/CardOverlay/CardOverlay'
-import { calculateCurrentLoad, SE_API } from 'helpers'
+import {
+  calculateCurrentLoad,
+  EMPTY_CATEGORIZED_WEIGHT,
+  SE_API,
+  STATUSES,
+  TRANSFER_TYPES,
+} from 'helpers'
 import { useApi, useAuth } from 'hooks'
+import moment from 'moment'
 import { useState, useMemo, useEffect } from 'react'
 import { useWholesaleRescueContext } from './WholesaleRescue'
 
@@ -39,6 +46,7 @@ export function AddRecipient({ isOpen, handleClose }) {
     weight: currentLoad,
     notes: '',
     percent_of_total_dropped: remainingPercent,
+    timestamp_completed: moment().format('YYYY-MM-DDThh:mm'),
   })
   const [isLoading, setIsLoading] = useState(false)
   const { data: recipients } = useApi(
@@ -49,14 +57,51 @@ export function AddRecipient({ isOpen, handleClose }) {
   async function handleAddRecipient() {
     setIsLoading(true)
     const payload = {
-      percent_of_total_dropped: formData.percent_of_total_dropped,
+      type: TRANSFER_TYPES.DISTRIBUTION,
+      status: STATUSES.COMPLETED,
+      rescue_id: rescue.id,
+      handler_id: rescue.handler_id,
       organization_id: formData.organization.id,
       location_id: formData.location.id,
       notes: formData.notes,
+      timestamp_completed: moment(
+        formData.timestamp_completed || null
+      ).toISOString(),
+      total_weight: formData.weight,
+      categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
+      percent_of_total_dropped: formData.percent_of_total_dropped,
     }
-    await SE_API.post(
-      `/wholesale/rescue/${rescue.id}/addRecipient`,
+
+    // this is hacky.
+    // because wholesale rescues only have weight in a single food category,
+    // we just need to figure out which one was used in the original collection.
+    // so we iterate through the collection to find a category with a value,
+    // then populate that category in this distribution with the weight
+    // we already calculated above (this ensures categorized sum === total_weight)
+    for (const category in rescue.transfers[0].categorized_weight) {
+      if (rescue.transfers[0].categorized_weight[category]) {
+        payload.categorized_weight[category] = payload.total_weight
+        break
+      }
+    }
+    const distribution = await SE_API.post(
+      '/transfers/create',
       payload,
+      user.accessToken
+    )
+    // then add the new distribution id to the rescue's transfer_id list
+    await SE_API.post(
+      `/rescues/update/${rescue.id}`,
+      {
+        id: rescue.id,
+        type: rescue.type,
+        status: rescue.status,
+        handler_id: rescue.handler_id,
+        notes: rescue.notes,
+        timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
+        timestamp_completed: null,
+        transfer_ids: [...rescue.transfer_ids, distribution.id],
+      },
       user.accessToken
     )
     refresh()
@@ -115,6 +160,8 @@ function AddRecipientBody({
   const [weight, setWeight] = useState(
     formData.weight == null ? currentLoad : formData.weight
   )
+  const [date, setDate] = useState(formData.timestamp_completed)
+
   const [percent, setPercent] = useState(
     formData.percent_of_total_dropped == null
       ? remainingPercent
@@ -127,6 +174,10 @@ function AddRecipientBody({
           .filter(i => i.locations?.length)
           .filter(i => i.name.toLowerCase().includes(value.toLowerCase()))
       : []
+  }
+
+  function updateParentDate() {
+    setFormData({ ...formData, timestamp_completed: date })
   }
 
   function updateWeight(e) {
@@ -162,6 +213,22 @@ function AddRecipientBody({
 
   return (
     <Flex direction="column" minH="128">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
+        Completed at:
+      </Text>
+      <Input
+        type="datetime-local"
+        fontSize="sm"
+        value={date}
+        onChange={e => setDate(e.target.value)}
+        onBlur={updateParentDate}
+        mb="6"
+      />
       <Autocomplete
         label="Recipient Organization"
         placeholder="Name..."
@@ -224,13 +291,14 @@ function AddRecipientBody({
         mx="auto"
       >
         <Text w="48px" fontWeight="bold">
-          {percent}%
+          {percent.toFixed(0)}%
         </Text>
         <RangeSlider
           colorScheme="green"
           value={[percent, remainingPercent]}
           onChange={values => handleChangeSlider(values[0])}
           flexGrow={1}
+          step={0.1}
           onChangeEnd={updateFormDataWeight}
           position="relative"
         >

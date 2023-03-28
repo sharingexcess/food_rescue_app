@@ -6,8 +6,9 @@ import {
 } from '@chakra-ui/icons'
 import { Button, Flex } from '@chakra-ui/react'
 import { useRescueContext } from 'components'
-import { createTimestamp, formatTimestamp, SE_API, STATUSES } from 'helpers'
+import { formatTimestamp, SE_API, STATUSES } from 'helpers'
 import { useAuth } from 'hooks'
+import moment from 'moment'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -45,7 +46,9 @@ export function RescueActionButtons() {
             status: STATUSES.ACTIVE,
             handler_id: rescue.handler_id,
             notes: rescue.notes,
-            timestamp_scheduled: rescue.timestamp_scheduled,
+            timestamp_scheduled: moment(
+              rescue.timestamp_scheduled
+            ).toISOString(),
             timestamp_completed: null,
             transfer_ids: rescue.transfer_ids,
           },
@@ -76,14 +79,48 @@ export function RescueActionButtons() {
       )
     ) {
       setIsClaiming(true)
-      await SE_API.post(
-        `/rescues/${rescue.id}/update`,
-        {
-          handler_id: user.id,
-          timestamp_updated: createTimestamp(),
-        },
-        user.accessToken
+      const promises = []
+      promises.push(
+        SE_API.post(
+          `/rescues/update/${rescue.id}`,
+          {
+            id: rescue.id,
+            type: rescue.type,
+            status: rescue.status,
+            handler_id: user.id,
+            notes: rescue.notes,
+            timestamp_scheduled: moment(
+              rescue.timestamp_scheduled
+            ).toISOString(),
+            timestamp_completed: null,
+            transfer_ids: rescue.transfer_ids,
+          },
+          user.accessToken
+        )
       )
+      for (const transfer of rescue.transfers) {
+        promises.push(
+          SE_API.post(
+            `/transfers/update/${transfer.id}`,
+            {
+              type: transfer.type,
+              status: transfer.status,
+              rescue_id: transfer.rescue_id,
+              handler_id: user.id,
+              organization_id: transfer.organization_id,
+              location_id: transfer.location_id,
+              notes: transfer.notes,
+              timestamp_completed: null,
+              total_weight: transfer.total_weight,
+              categorized_weight: transfer.categorized_weight,
+            },
+            user.accessToken
+          )
+        )
+      }
+      // wait for all api calls to complete
+      await Promise.all(promises)
+
       refresh()
     }
   }
@@ -95,9 +132,8 @@ export function RescueActionButtons() {
     if (reason) {
       setIsCancelling(true)
       await SE_API.post(
-        `/rescues/${rescue.id}/cancel`,
+        `/rescues/cancel/${rescue.id}`,
         {
-          status: STATUSES.CANCELLED,
           notes: 'Cancelled - ' + reason,
         },
         user.accessToken
@@ -135,7 +171,6 @@ export function RescueActionButtons() {
           color="blue.primary"
           onClick={handleClaimRescue}
           isLoading={isClaiming}
-          disabled={true} // TEMP HOTFIX
         >
           Claim
         </Button>
@@ -151,7 +186,6 @@ export function RescueActionButtons() {
               leftIcon={<EditIcon />}
               bg="green.secondary"
               color="green.primary"
-              disabled={true} // TEMP HOTFIX
             >
               Edit
             </Button>
@@ -169,7 +203,6 @@ export function RescueActionButtons() {
             color="yellow.primary"
             onClick={handleCancelRescue}
             isLoading={isCancelling}
-            disabled={true} // TEMP HOTFIX
           >
             Cancel
           </Button>

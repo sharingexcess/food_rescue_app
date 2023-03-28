@@ -1,9 +1,11 @@
 import { DeleteIcon } from '@chakra-ui/icons'
 import { Flex, IconButton, Text } from '@chakra-ui/react'
-import { useCollectionContext } from 'components'
+import { useCollectionContext, useRescueContext } from 'components'
+import { STATUSES } from 'helpers'
 
 export function EntryRows({ entryRows }) {
   const { setEntryRows, session_storage_key, notes } = useCollectionContext()
+  const { rescue } = useRescueContext()
 
   function removeEntryRow(index) {
     if (window.confirm('Are you sure you want to remove this row?')) {
@@ -37,6 +39,7 @@ export function EntryRows({ entryRows }) {
             icon={<DeleteIcon />}
             color="element.secondary"
             onClick={() => removeEntryRow(i)}
+            hidden={rescue.status === STATUSES.COMPLETED}
             ml="2"
           />
         </Flex>

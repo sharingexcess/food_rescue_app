@@ -1,7 +1,7 @@
 {
   "root": true,
   "parser": "@babel/eslint-parser",
-  // "plugins": ["eslint:recommended"],
+  "ignorePatterns": ["_legacy/*.js"],
   "rules": {
     "no-var": "warn",
     "prefer-const": "warn",

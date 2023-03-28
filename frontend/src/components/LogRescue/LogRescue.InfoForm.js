@@ -10,7 +10,13 @@ export function InfoForm({ formData, setFormData, handlers }) {
 
   return (
     <Flex direction="column" mb="8">
-      <Text color="element.secondary" size="sm" fontWeight="500">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+        mt="6"
+      >
         Scheduled Time
       </Text>
       <Input
@@ -25,8 +31,33 @@ export function InfoForm({ formData, setFormData, handlers }) {
           })
         }
       />
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
+        Completed Time
+      </Text>
+      <Input
+        value={formData.timestamp_completed}
+        type="datetime-local"
+        textAlign="left"
+        mb="6"
+        onChange={e =>
+          setFormData({
+            ...formData,
+            timestamp_completed: e.target.value,
+          })
+        }
+      />
 
-      <Text color="element.secondary" size="sm" fontWeight="500">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
         Handler
       </Text>
       <Autocomplete
@@ -38,7 +69,13 @@ export function InfoForm({ formData, setFormData, handlers }) {
         displayField="name"
       />
 
-      <Text color="element.secondary" size="sm" fontWeight="500" mt="6">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+        mt="6"
+      >
         Rescue Type
       </Text>
       <Select
@@ -49,6 +86,29 @@ export function InfoForm({ formData, setFormData, handlers }) {
         <option value="wholesale">Wholesale</option>
         <option value="direct-link">Direct Link</option>
       </Select>
+
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+        mt="6"
+      >
+        Notes
+      </Text>
+      <Input
+        value={formData.notes}
+        type="text"
+        textAlign="left"
+        mb="6"
+        placeholder="Add notes to this rescue..."
+        onChange={e =>
+          setFormData({
+            ...formData,
+            notes: e.target.value,
+          })
+        }
+      />
     </Flex>
   )
 }

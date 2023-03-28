@@ -51,11 +51,7 @@ export function Body() {
 
   // prevent editing the last distribution of completed rescues
   // this could leave a rescue in an invalid state
-  const disabled =
-    rescue &&
-    rescue.status === STATUSES.COMPLETED &&
-    rescue.transfer_ids.findIndex(i => i === distribution.id) ===
-      rescue.transfer_ids.length - 1
+  const disabled = rescue.status === STATUSES.COMPLETED
 
   if (!distribution) return null
 
@@ -99,7 +95,7 @@ export function Body() {
       </Flex>
       <Flex justify="start" w="100%" gap={4} align="center" mt={8} maxW="500px">
         <Text w="48px" fontWeight="bold">
-          {percentTotalDropped}%
+          {percentTotalDropped.toFixed(0)}%
         </Text>
         <Slider
           aria-label="slider-ex-1"
@@ -109,6 +105,7 @@ export function Body() {
           onChange={handleChangeSlider}
           flexGrow={1}
           disabled={disabled}
+          step={0.1}
         >
           <SliderTrack h="2" borderRadius="4px">
             <SliderFilledTrack h="2" borderRadius="4px" />
@@ -118,8 +115,8 @@ export function Body() {
       </Flex>
       {disabled && (
         <Text fontSize="sm" my="8" align="center" color="element.secondary">
-          Heads up: you can't update the percentage for the last stop of a
-          completed rescue.
+          <b>Heads up:</b> you can't update the dropoff percentage once a rescue
+          is completed.
         </Text>
       )}
       {currentLoad === 0 && (

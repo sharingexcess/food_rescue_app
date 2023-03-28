@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
 const { uploadFile } = require('../../helpers/functions')
-const { analytics } = require('../api/analytics')
-const { generateReport } = require('../api/reports')
+const { analytics } = require('../api/utilities/analytics')
+const { generateReport } = require('../api/utilities/reports')
 
 exports.cache_retool_data = async () => {
   const date = moment(new Date()).format('yyyy-MM-DD')
