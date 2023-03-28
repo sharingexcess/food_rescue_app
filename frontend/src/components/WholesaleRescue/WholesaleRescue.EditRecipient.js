@@ -226,7 +226,12 @@ function EditRecipientBody({
 
   return (
     <Flex direction="column" minH="128">
-      <Text color="element.secondary" size="sm" fontWeight="500">
+      <Text
+        color="element.tertiary"
+        fontSize="xs"
+        fontWeight="700"
+        textTransform="uppercase"
+      >
         Completed at:
       </Text>
       <Input
