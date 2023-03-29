@@ -39,7 +39,7 @@ export function EntryRows({ entryRows }) {
             icon={<DeleteIcon />}
             color="element.secondary"
             onClick={() => removeEntryRow(i)}
-            hidden={rescue.status === STATUSES.COMPLETED}
+            hidden={rescue?.status === STATUSES.COMPLETED}
             ml="2"
           />
         </Flex>

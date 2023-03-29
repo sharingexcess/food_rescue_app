@@ -51,7 +51,7 @@ export function Body() {
 
   // prevent editing the last distribution of completed rescues
   // this could leave a rescue in an invalid state
-  const disabled = rescue.status === STATUSES.COMPLETED
+  const disabled = rescue?.status === STATUSES.COMPLETED
 
   if (!distribution) return null
 
@@ -146,7 +146,7 @@ export function Body() {
         This distribution isn't active yet.
       </Heading>
       <Text align="center" fontSize="sm" color="element.secondary">
-        {rescue.status === STATUSES.ACTIVE
+        {rescue?.status === STATUSES.ACTIVE
           ? 'You can enter data here once you complete all previous stops along your rescue.'
           : 'Ready to go? Start this rescue to begin entering data.'}
       </Text>

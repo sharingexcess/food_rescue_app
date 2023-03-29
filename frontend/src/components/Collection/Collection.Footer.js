@@ -30,7 +30,7 @@ export function CollectionFooter() {
         loadingText="Updating collection..."
       >
         {collection.status === 'completed' ? 'Update' : 'Complete'} Collection
-        {rescue.status === STATUSES.COMPLETED
+        {rescue?.status === STATUSES.COMPLETED
           ? ''
           : total
           ? ` (${total} lbs.)`

@@ -28,7 +28,7 @@ export function EntryRowInput() {
   }
 
   return (
-    <Flex my="4" hidden={rescue.status === STATUSES.COMPLETED}>
+    <Flex my="4" hidden={rescue?.status === STATUSES.COMPLETED}>
       <Select
         size="sm"
         color="element.secondary"
@@ -36,7 +36,7 @@ export function EntryRowInput() {
         onChange={e => setCategory(e.target.value)}
         textTransform="capitalize"
         mr="4"
-        disabled={rescue.status === STATUSES.COMPLETED}
+        disabled={rescue?.status === STATUSES.COMPLETED}
       >
         <option>Select a category...</option>
         {FOOD_CATEGORIES.map(i => (
