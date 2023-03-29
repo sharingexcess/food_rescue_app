@@ -1,7 +1,7 @@
 {
   "name": "rescue-backend",
   "license": "MIT",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "scripts": {
     "start": "firebase emulators:start --only functions",
     "lint": "eslint .",
