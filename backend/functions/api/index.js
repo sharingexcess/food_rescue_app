@@ -45,6 +45,7 @@ const {
 const {
   getCachedDataReportsEndpoint,
 } = require('./utilities/getCachedDataReports')
+const { analyticsEndpoint } = require('./utilities/analytics')
 
 // initialize express server
 const api = express()
@@ -161,6 +162,7 @@ api.post('/private_profile/update', (req, res, next) =>
 
 // UTILITIES
 
+api.get('/analytics', (req, res, next) => analyticsEndpoint(req, res, next))
 api.get('/getCachedDataReports', (req, res, next) =>
   getCachedDataReportsEndpoint(req, res, next)
 )
