@@ -5,7 +5,7 @@ import { FOOD_CATEGORIES, STATUSES } from 'helpers'
 import { useState } from 'react'
 
 export function EntryRowInput() {
-  const { entryRows, setEntryRows, session_storage_key, notes, collection } =
+  const { entryRows, setEntryRows, session_storage_key, notes } =
     useCollectionContext()
   const { rescue } = useRescueContext()
   const [category, setCategory] = useState('')
