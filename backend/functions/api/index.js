@@ -9,9 +9,6 @@ const {
   cancelTransferEndpoint,
 } = require('./transfers/transferEndpoints')
 const {
-  duplicateCollectionEndpoint,
-} = require('./utilities/duplicateCollection')
-const {
   updateLocationEndpoint,
   createLocationEndpoint,
 } = require('./locations/locationEndpoints')
@@ -25,9 +22,6 @@ const {
   getPrivateProfileEndpoint,
   updatePrivateProfileEndpoint,
 } = require('./private_profiles/privateProfileEndpoints')
-const { repairStops } = require('./transfers/repairStops')
-const { selectStopsForRepair } = require('./transfers/selectStopsForRepair')
-const { uploadRepairedStops } = require('./transfers/uploadRepairedStops')
 const {
   listRescuesEndpoint,
   getRescueEndpoint,
@@ -35,8 +29,6 @@ const {
   updateRescueEndpoint,
   cancelRescueEndpoint,
 } = require('./rescues/rescueEndpoints')
-const { testBackup } = require('./utilities/testBackup')
-const { migrateCollection } = require('./utilities/migrateCollection')
 const {
   getPublicProfileEndpoint,
   updatePublicProfileEndpoint,
@@ -46,7 +38,6 @@ const {
   getCachedDataReportsEndpoint,
 } = require('./utilities/getCachedDataReports')
 const { analyticsEndpoint } = require('./utilities/analytics')
-const { migrateRescues } = require('./rescues/migrateRescues')
 
 // initialize express server
 const api = express()
@@ -167,27 +158,6 @@ api.get('/analytics', (req, res, next) => analyticsEndpoint(req, res, next))
 api.get('/getCachedDataReports', (req, res, next) =>
   getCachedDataReportsEndpoint(req, res, next)
 )
-// api.get('/selectStopsForRepair', (req, res, next) =>
-//   selectStopsForRepair(req, res, next)
-// )
-// api.get('/repairStops', (req, res, next) => repairStops(req, res, next))
-// api.get('/uploadRepairedStops', (req, res, next) =>
-//   uploadRepairedStops(req, res, next)
-// )
-// api.get('/testBackup', (req, res, next) => testBackup(req, res, next))
-// api.get('/migrateCollection', (req, res, next) =>
-//   migrateCollection(req, res, next)
-// )
-// api.get('/duplicate_collection', (req, res, next) =>
-//   duplicateCollectionEndpoint(req, res, next)
-// )
-// api.get('/migrateRescues', (req, res, next) => migrateRescues(req, res, next))
-
-// THIS IS A PROD RESCUE UPDATE SCRIPT, LEAVING IN PLACE FOR NOW
-// BUT READ THE DOCUMENTATION INSIDE THE FILE BEFORE RUNNING THIS
-// api.get('/dangerous_manual_db_update_script', (req, res, next) =>
-//   loadEndpoint('_dangerousManualDbUpdateScript', req, res, next)
-// )
 
 api.use(Sentry.Handlers.errorHandler())
 api.use(function onError(err, _req, res, _next) {

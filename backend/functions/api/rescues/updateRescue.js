@@ -3,6 +3,7 @@ const {
   COLLECTIONS,
   createGoogleCalendarEvent,
   deleteGoogleCalendarEvent,
+  STATUSES,
 } = require('../../../helpers')
 const { getPublicProfile } = require('../public_profiles/getPublicProfile')
 const { getLocation } = require('../utilities/location')
@@ -64,10 +65,10 @@ exports.updateRescue = async ({
 
     const first_transfer = await getTransfer(transfer_ids[0])
     const location = await getLocation(first_transfer.location_id)
-    const handler = await getPublicProfile(handler_id)
+    const handler = handler_id ? await getPublicProfile(handler_id) : null
 
     const google_calendar_payload = {
-      summary: `Food Rescue: ${handler.name} - ${moment(
+      summary: `Food Rescue: ${handler ? handler.name : 'Available'} - ${moment(
         timestamp_scheduled
       ).format('M/DD')}`,
       location: `${location.address1}, ${location.city}, ${location.state} ${location.zip}`,
@@ -80,7 +81,7 @@ exports.updateRescue = async ({
           .add(Math.ceil(transfer_ids.length / 2), 'hours') // average 30min per transfer, round up
           .toISOString(),
       },
-      attendees: [{ email: handler.email }],
+      attendees: handler ? [{ email: handler.email }] : null,
     }
 
     // delete any existing event to replace it with a new one
@@ -90,11 +91,15 @@ exports.updateRescue = async ({
       // ignore
     }
 
-    const google_calendar_event = await createGoogleCalendarEvent(
-      google_calendar_payload
-    )
+    if (rescue.status !== STATUSES.CANCELLED) {
+      const google_calendar_event = await createGoogleCalendarEvent(
+        google_calendar_payload
+      )
 
-    rescue.google_calendar_event_id = google_calendar_event.id
+      rescue.google_calendar_event_id = google_calendar_event.id
+    } else {
+      rescue.google_calendar_event_id = null
+    }
 
     console.log('Updating rescue:', rescue)
 
