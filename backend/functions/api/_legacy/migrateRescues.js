@@ -6,7 +6,7 @@ const {
   STATUSES,
 } = require('../../../helpers')
 const moment = require('moment')
-const { isValidRescuePayload } = require('./isValidRescuePayload')
+const { isValidRescuePayload } = require('../rescues/isValidRescuePayload')
 const fs = require('fs')
 
 exports.migrateRescues = async (_request, response) => {
