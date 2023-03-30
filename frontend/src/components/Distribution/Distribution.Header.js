@@ -70,7 +70,7 @@ export function Header() {
           textDecoration="underline"
           mb="4"
         >
-          {distribution.location.address1},
+          {distribution.location.address1},{' '}
           {distribution.location.address2
             ? `${distribution.location.address2}, `
             : ''}

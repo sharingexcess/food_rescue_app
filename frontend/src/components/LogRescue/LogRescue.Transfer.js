@@ -1,8 +1,9 @@
 import { CloseIcon, DragHandleIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Heading, IconButton, Text } from '@chakra-ui/react'
+import { STATUSES } from 'helpers'
 
 export function Transfer({ transfer, removeTransfer, setActiveTransfer }) {
-  const isCompleted = transfer.total_weight > 0
+  const isCompleted = transfer.status === STATUSES.COMPLETED
 
   return (
     <Flex

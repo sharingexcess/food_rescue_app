@@ -29,7 +29,7 @@ export function Collection({
   const [completedAt, setCompletedAt] = useState()
 
   const session_storage_key = useMemo(
-    () => (collection ? `collection_cache_${collection.id}` : undefined),
+    () => (collection?.id ? `collection_cache_${collection.id}` : undefined),
     [collection]
   )
   const isChanged = window.sessionStorage.getItem(session_storage_key)

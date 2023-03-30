@@ -3,6 +3,7 @@ import { PageTitle, Collection, Distribution } from 'components'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
 import {
+  calculateCurrentLoad,
   EMPTY_CATEGORIZED_WEIGHT,
   SE_API,
   STATUSES,
@@ -34,8 +35,8 @@ export function LogRescue() {
       ? JSON.parse(form_data_cache)
       : {
           type: 'retail',
-          timestamp_scheduled: null,
-          timestamp_completed: null,
+          timestamp_scheduled: '',
+          timestamp_completed: '',
           handler: null,
           notes: '',
         }
@@ -75,7 +76,7 @@ export function LogRescue() {
       ...currentTransfers,
       {
         type: transfer.type,
-        status: STATUSES.COMPLETED,
+        status: STATUSES.SCHEDULED,
         organization_id: transfer.organization.id,
         location_id: transfer.location.id,
         // include full organization and location objects
@@ -155,6 +156,7 @@ export function LogRescue() {
     // it's current version is still saved as activeTransfer.
     // so we'll look for the item in the array that matches activeTransfer,
     // and replace that one.
+    console.log(distribution)
     const transfer_index = transfers.findIndex(
       i => JSON.stringify(i) === JSON.stringify(activeTransfer)
     )
@@ -168,6 +170,7 @@ export function LogRescue() {
     setActiveTransfer(null)
   }
 
+  console.log()
   const isValidRescue =
     formData.handler &&
     formData.timestamp_scheduled &&
@@ -179,7 +182,8 @@ export function LogRescue() {
     transfers[transfers.length - 1].percent_of_total_dropped === 100 && // confirm that all remaining weight is handled in final distribution
     transfers.reduce(
       (total, curr) => total && curr.status === STATUSES.COMPLETED
-    ) // ensure all transfers are completed
+    ) && // ensure all transfers are completed
+    calculateCurrentLoad({ transfers }) <= transfers.length // allow margin of error of 1 lb. per stop (worst case rounding error)
 
   return (
     <>

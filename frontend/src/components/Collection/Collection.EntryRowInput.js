@@ -5,7 +5,7 @@ import { FOOD_CATEGORIES, STATUSES } from 'helpers'
 import { useState } from 'react'
 
 export function EntryRowInput() {
-  const { entryRows, setEntryRows, session_storage_key, notes } =
+  const { entryRows, setEntryRows, session_storage_key, notes, collection } =
     useCollectionContext()
   const { rescue } = useRescueContext()
   const [category, setCategory] = useState('')
@@ -15,13 +15,15 @@ export function EntryRowInput() {
     const updatedEntryRows = [...entryRows, { category, weight }]
     setEntryRows(updatedEntryRows)
 
-    sessionStorage.setItem(
-      session_storage_key,
-      JSON.stringify({
-        sessionEntryRows: updatedEntryRows,
-        sessionNotes: notes,
-      })
-    )
+    if (session_storage_key) {
+      sessionStorage.setItem(
+        session_storage_key,
+        JSON.stringify({
+          sessionEntryRows: updatedEntryRows,
+          sessionNotes: notes,
+        })
+      )
+    }
 
     setCategory('')
     setWeight('')

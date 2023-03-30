@@ -72,7 +72,14 @@ export function calculateCurrentLoad(rescue, distribution) {
     for (const transfer of rescue.transfers) {
       if (transfer.type === 'collection') {
         weight += transfer.total_weight || 0
-      } else if (transfer.id === distribution?.id) {
+      } else if (
+        transfer.id
+          ? // base case: check if this is the curent distribution using its id
+            transfer.id === distribution?.id
+          : // support this option for LogRescue, where ids don't yet exist
+            // instead, stringify the entire transfer to compare and see if its the same
+            JSON.stringify(transfer) === JSON.stringify(distribution)
+      ) {
         break
       } else {
         weight -= transfer.total_weight || 0
@@ -90,7 +97,14 @@ export function calculateCurrentCategorizedLoad(rescue, distribution) {
         for (const key of FOOD_CATEGORIES) {
           categorized_weight[key] += transfer.categorized_weight[key] || 0
         }
-      } else if (transfer.id === distribution?.id) {
+      } else if (
+        transfer.id
+          ? // base case: check if this is the curent distribution using its id
+            transfer.id === distribution?.id
+          : // support this option for LogRescue, where ids don't yet exist
+            // instead, stringify the entire transfer to compare and see if its the same
+            JSON.stringify(transfer) === JSON.stringify(distribution)
+      ) {
         break
       } else {
         for (const key of FOOD_CATEGORIES) {

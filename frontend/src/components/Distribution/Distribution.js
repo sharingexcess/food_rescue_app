@@ -28,6 +28,7 @@ export function Distribution({
   let { rescue } = useRescueContext()
   // allow for override here to support log rescue functionality
   rescue = rescueOverride || rescue
+
   const [notes, setNotes] = useState('')
   const [percentTotalDropped, setPercentTotalDropped] = useState(100)
   const currentLoad = useMemo(
@@ -75,8 +76,6 @@ export function Distribution({
       rescue,
       distribution
     )
-
-    console.log(categorized_weight)
 
     for (const category in categorized_weight) {
       const category_weight = Math.round(
