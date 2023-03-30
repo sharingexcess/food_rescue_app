@@ -64,7 +64,7 @@ export function Filters({
         flexGrow={1}
       >
         <option value="retail">Retail</option>
-        <option value="direct-link">Direct Link</option>
+        <option value="direct_link">Direct Link</option>
         {/* <option value="wholesale">Wholesale</option> */}
       </Select>
       <Autocomplete

@@ -315,7 +315,9 @@ exports.isValidCategorizedWeightObject = (categorized_weight, total_weight) => {
 exports.isValidTransferIdList = async (transfer_ids, rescue_id) => {
   try {
     if (!rescue_id || !transfer_ids) {
-      throw new Error('isValidTransferIdList: Invalid arguments provided.')
+      throw new Error(
+        `isValidTransferIdList: Invalid arguments provided. transfer_ids: ${transfer_ids}, rescue_id: ${rescue_id}`
+      )
     }
 
     let expected_first_collection_index = 0

@@ -11,8 +11,8 @@ const fs = require('fs')
 
 exports.migrateRescues = async (_request, response) => {
   const collectionsRef = db.collection('legacy_rescues')
-  const batch_size = 252
-  const max_batches = 8
+  const batch_size = 300
+  const max_batches = 50
   let batch_index = 0
   let last_doc_ref = null
   const first_doc_id = 'u015fvh6hiy9'
@@ -29,22 +29,29 @@ exports.migrateRescues = async (_request, response) => {
   const query = collectionsRef.orderBy('id').limit(batch_size)
 
   async function getPage() {
-    const rescues = []
+    // const rescues = []
 
-    // get rescues
-    const currQuery = last_doc_ref ? query.startAfter(last_doc_ref) : query
-    await currQuery.get().then(snapshot => {
-      console.log('QUERY RESULT SIZE', snapshot.docs.length)
+    // // get rescues
+    // const currQuery = last_doc_ref ? query.startAfter(last_doc_ref) : query
+    // await currQuery.get().then(snapshot => {
+    //   console.log('QUERY RESULT SIZE', snapshot.docs.length)
 
-      last_doc_ref = snapshot.docs[snapshot.docs.length - 1]
-      last_doc_ref && console.log('LAST DOC ID:', last_doc_ref.data().id)
+    //   last_doc_ref = snapshot.docs[snapshot.docs.length - 1]
+    //   last_doc_ref && console.log('LAST DOC ID:', last_doc_ref.data().id)
 
-      if (snapshot.docs.length < batch_size) shouldBreak = true
-      snapshot.forEach(doc => {
-        const rescue = doc.data()
-        rescues.push(formatDocumentTimestamps(rescue))
-      })
-    })
+    //   if (snapshot.docs.length < batch_size) shouldBreak = true
+    //   snapshot.forEach(doc => {
+    //     const rescue = doc.data()
+    //     rescues.push(formatDocumentTimestamps(rescue))
+    //   })
+    // })
+    const rescues = JSON.parse(
+      fs.readFileSync('./functions/api/rescues/_SKIPPED.json')
+    )
+      .filter(
+        (value, index, self) => index === self.findIndex(t => t.id === value.id)
+      )
+      .slice(batch_size * batch_index, batch_size * (batch_index + 1))
 
     return rescues
   }
@@ -54,40 +61,49 @@ exports.migrateRescues = async (_request, response) => {
     const batch = db.batch()
     let batchPopulated = false
 
-    for (const legacy_rescue of current_page) {
+    for (let rescue of current_page) {
       batchPopulated = true
-      const rescue = {
-        id: legacy_rescue.id,
-        type: legacy_rescue.type || RESCUE_TYPES.RETAIL,
-        status: legacy_rescue.status,
-        handler_id: legacy_rescue.handler_id,
-        google_calendar_event_id:
-          legacy_rescue.google_calendar_event_id || null,
-        notes: legacy_rescue.notes || '',
-        transfer_ids: legacy_rescue.transfer_ids,
-        timestamp_created: moment(
-          legacy_rescue.timestamp_created
-        ).toISOString(),
+      rescue = {
+        id: rescue.id,
+        timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
         timestamp_updated: moment().toISOString(),
-        timestamp_scheduled: moment(
-          legacy_rescue.timestamp_scheduled
-        ).toISOString(),
-        timestamp_completed: [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(
-          legacy_rescue.status
-        )
-          ? null
-          : moment(legacy_rescue.timestamp_updated).toISOString(),
+        // type:
+        //   legacy_rescue.type === 'direct-link'
+        //     ? RESCUE_TYPES.DIRECT_LINK
+        //     : legacy_rescue.type || RESCUE_TYPES.RETAIL,
+        // status: legacy_rescue.status,
+        // handler_id: legacy_rescue.handler_id,
+        // google_calendar_event_id:
+        //   legacy_rescue.google_calendar_event_id || null,
+        // notes: legacy_rescue.notes || '',
+        // transfer_ids: legacy_rescue.stop_ids,
+        // timestamp_created: moment(
+        //   legacy_rescue.timestamp_created
+        // ).toISOString(),
+        // timestamp_updated: moment().toISOString(),
+        // timestamp_scheduled: moment(
+        //   legacy_rescue.timestamp_scheduled
+        // ).toISOString(),
+        // timestamp_completed: [STATUSES.ACTIVE, STATUSES.SCHEDULED].includes(
+        //   legacy_rescue.status
+        // )
+        //   ? null
+        //   : moment(legacy_rescue.timestamp_updated).toISOString(),
       }
+
+      console.log(rescue)
 
       // console.log('legacy_rescue:', legacy_rescue)
 
-      if (!(await isValidRescuePayload(rescue))) {
-        console.log('\n\n\n\n\n\nSKIPPING Invalid Rescue...')
-        skipped.push(rescue)
-      } else {
-        console.log('Adding valid rescue to batch...')
-        batch.set(db.collection(COLLECTIONS.RESCUES).doc(rescue.id), rescue)
-      }
+      // if (!(await isValidRescuePayload(rescue))) {
+      //   console.log('\n\n\n\n\n\nSKIPPING Invalid Rescue...')
+      //   skipped.push(rescue)
+      // } else {
+      //   console.log('Adding valid rescue to batch...')
+      batch.set(db.collection(COLLECTIONS.RESCUES).doc(rescue.id), rescue, {
+        merge: true,
+      })
+      // }
     }
     if (batchPopulated) {
       await batch.commit().then(() => console.log('completed batch update.'))
@@ -102,7 +118,7 @@ exports.migrateRescues = async (_request, response) => {
     if (shouldBreak) break
   }
 
-  addSkippedStopsToJSONFile(skipped)
+  // addSkippedStopsToJSONFile(skipped)
 
   const all_legacy_rescues_count = await db
     .collection('legacy_rescues')

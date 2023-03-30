@@ -84,7 +84,7 @@ export function InfoForm({ formData, setFormData, handlers }) {
       >
         <option value="retail">Retail</option>
         <option value="wholesale">Wholesale</option>
-        <option value="direct-link">Direct Link</option>
+        <option value="direct_link">Direct Link</option>
       </Select>
 
       <Text
