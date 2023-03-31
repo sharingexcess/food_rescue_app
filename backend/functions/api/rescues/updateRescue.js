@@ -42,7 +42,7 @@ exports.updateRescue = async ({
       timestamp_completed,
       transfer_ids,
     },
-    { validate_transfer_ids: true }
+    { validate_transfer_ids: status === STATUSES.CANCELLED ? false : true } // ignore validating transfer list if cancelling
   )
 
   if (is_valid) {
