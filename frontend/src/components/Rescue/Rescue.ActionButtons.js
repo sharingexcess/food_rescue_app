@@ -128,7 +128,7 @@ export function RescueActionButtons() {
   async function handleCancelRescue() {
     // validate that the user knows what they're doing if this rescue is already completed
     if (rescue.status === STATUSES.COMPLETED) {
-      if (!user.hasAdminPermission) {
+      if (!hasAdminPermission) {
         window.alert(
           'Only admins can cancel a completed rescue. If you need to cancel this rescue, contact an SE admin.'
         )
