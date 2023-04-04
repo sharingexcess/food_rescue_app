@@ -126,6 +126,19 @@ export function RescueActionButtons() {
   }
 
   async function handleCancelRescue() {
+    // validate that the user knows what they're doing if this rescue is already completed
+    if (rescue.status === STATUSES.COMPLETED) {
+      if (!user.hasAdminPermission) {
+        window.alert(
+          'Only admins can cancel a completed rescue. If you need to cancel this rescue, contact an SE admin.'
+        )
+        return
+      }
+      const confirmation = window.confirm(
+        'Are you sure you want to cancel this completed rescue? This will delete all impact data from the rescue.'
+      )
+      if (!confirmation) return
+    }
     const reason = window.prompt(
       'Let us know why you need to cancel this rescue.\n\nNote: cancelling a rescue cannot be undone.\n'
     )
@@ -191,7 +204,7 @@ export function RescueActionButtons() {
             </Button>
           </Link>
         )}
-      {![STATUSES.CANCELLED, STATUSES.COMPLETED].includes(rescue.status) &&
+      {![STATUSES.CANCELLED].includes(rescue.status) &&
         (hasAdminPermission || rescue.handler_id === user.id) && (
           <Button
             variant="secondary"

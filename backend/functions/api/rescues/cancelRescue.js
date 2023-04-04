@@ -1,4 +1,4 @@
-const { STATUSES, FOOD_CATEGORIES } = require('../../../helpers')
+const { STATUSES, EMPTY_CATEGORIZED_WEIGHT } = require('../../../helpers')
 const { getRescue } = require('../rescues/getRescue')
 const { listTransfers } = require('../transfers/listTransfers')
 const { updateRescue } = require('./updateRescue')
@@ -29,10 +29,7 @@ exports.cancelRescue = async (id, notes) => {
       total_weight: 0,
       timestamp_completed: now,
       timestamp_updated: now,
-      // create an empty categorized weight object
-      categorized_weight: Object.fromEntries(
-        FOOD_CATEGORIES.map(key => [key, 0])
-      ),
+      categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
     })
   }
 
