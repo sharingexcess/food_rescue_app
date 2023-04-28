@@ -77,6 +77,25 @@ exports.updatePublicProfileEndpoint = async (request, response, next) => {
       const payload = JSON.parse(request.body)
       console.log('Received payload:', payload)
 
+      // Check if this is the first time the profile is being created
+      const profile = await getPublicProfile(id)
+      console.log('got existing profile:', profile)
+
+      if (!profile || !profile.email) {
+        // this is a new profile, continue without authenticating
+        // because authenticating requires an existing profile
+        const public_profile = await updatePublicProfile({
+          ...payload,
+          // enforce id from URL is used, and cannot be spoofed in payload
+          id,
+          // auto-assign standard permission to new accounts
+          permission: PERMISSION_LEVELS.STANDARD,
+        })
+        response.status(200).send(JSON.stringify(public_profile))
+        // return early if this was a new profile, else continue into auth sequence
+        return
+      }
+
       const requestIsAuthenticated = await authenticateRequest(
         request.get('accessToken'),
         user => user.id === id || user.permission === PERMISSION_LEVELS.ADMIN
