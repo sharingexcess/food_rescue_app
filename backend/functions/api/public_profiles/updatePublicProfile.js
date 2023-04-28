@@ -6,15 +6,16 @@ const { isValidPublicProfilePayload } = require('./isValidPublicProfilePayload')
 exports.updatePublicProfile = async ({
   id,
   name,
+  email,
   pronouns,
-  about_me,
-  icon,
-  permission,
+  about_me = '',
+  icon = null,
+  permission = null,
 }) => {
   // spell it out above so VSCode can suggest the right args on function calls
   // and combine it into "payload" here so we don't forget one line by accident
   // this also ensures we don't add any stray unexpected properties to the DB record
-  const payload = { name, pronouns, about_me, icon, permission }
+  const payload = { name, email, pronouns, about_me, icon, permission }
 
   const is_valid = await isValidPublicProfilePayload(payload)
 
@@ -37,7 +38,7 @@ exports.updatePublicProfile = async ({
       timestamp_updated: now, // always updated server side
     }
 
-    console.log('Updating private_profile:', public_profile)
+    console.log('Updating public_profile:', public_profile)
 
     await db.collection(COLLECTIONS.PUBLIC_PROFILES).doc(id).set(public_profile)
 
