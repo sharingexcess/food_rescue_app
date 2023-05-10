@@ -9,6 +9,7 @@ const { getPublicProfile } = require('../public_profiles/getPublicProfile')
 const { getLocation } = require('../utilities/location')
 const { isValidRescuePayload } = require('./isValidRescuePayload')
 const { getTransfer } = require('../transfers/getTransfer')
+const { callWithExponentialBackoff } = require('../api_helpers/callWithExponentialBackoff')
 const moment = require('moment')
 
 exports.updateRescue = async ({
@@ -86,15 +87,13 @@ exports.updateRescue = async ({
 
     // delete any existing event to replace it with a new one
     try {
-      await deleteGoogleCalendarEvent(existing_rescue.google_calendar_event_id)
+      await callWithExponentialBackoff(deleteGoogleCalendarEvent, [existing_rescue.google_calendar_event_id]);
     } catch (_e) {
       // ignore
     }
 
     if (rescue.status !== STATUSES.CANCELLED) {
-      const google_calendar_event = await createGoogleCalendarEvent(
-        google_calendar_payload
-      )
+      const google_calendar_event = await callWithExponentialBackoff(createGoogleCalendarEvent, [google_calendar_payload]);
 
       rescue.google_calendar_event_id = google_calendar_event.id
     } else {

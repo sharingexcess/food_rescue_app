@@ -12,6 +12,9 @@ const {
 } = require('../transfers/isValidTransferPayload')
 const { getLocation } = require('../utilities/location')
 const { getPublicProfile } = require('../public_profiles/getPublicProfile')
+const {
+  callWithExponentialBackoff,
+} = require('../api_helpers/callWithExponentialBackoff')
 const moment = require('moment')
 
 exports.createRescue = async ({
@@ -74,11 +77,15 @@ exports.createRescue = async ({
     attendees: [{ email: handler.email }],
   }
 
-  const google_calendar_event = await createGoogleCalendarEvent(
-    google_calendar_payload
-  )
-
-  rescue.google_calendar_event_id = google_calendar_event.id
+  try {
+    const google_calendar_event = await callWithExponentialBackoff(
+      createGoogleCalendarEvent,
+      [google_calendar_payload]
+    )
+    rescue.google_calendar_event_id = google_calendar_event.id
+  } catch (e) {
+    console.log('Error creating google calendar event:', e)
+  }
 
   // validate the rescue record itself, but not yet the transfer_ids list
   // because the records are not yet in the db
