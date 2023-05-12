@@ -1,15 +1,15 @@
 const {
   db,
   COLLECTIONS,
-  createGoogleCalendarEvent,
-  deleteGoogleCalendarEvent,
+  // createGoogleCalendarEvent,
+  // deleteGoogleCalendarEvent,
   STATUSES,
 } = require('../../../helpers')
-const { getPublicProfile } = require('../public_profiles/getPublicProfile')
-const { getLocation } = require('../utilities/location')
+// const { getPublicProfile } = require('../public_profiles/getPublicProfile')
+// const { getLocation } = require('../utilities/location')
 const { isValidRescuePayload } = require('./isValidRescuePayload')
-const { getTransfer } = require('../transfers/getTransfer')
-const moment = require('moment')
+// const { getTransfer } = require('../transfers/getTransfer')
+// const moment = require('moment')
 
 exports.updateRescue = async ({
   id,
@@ -63,43 +63,43 @@ exports.updateRescue = async ({
 
     // google calendar event creation logic
 
-    const first_transfer = await getTransfer(transfer_ids[0])
-    const location = await getLocation(first_transfer.location_id)
-    const handler = handler_id ? await getPublicProfile(handler_id) : null
+    // const first_transfer = await getTransfer(transfer_ids[0])
+    // const location = await getLocation(first_transfer.location_id)
+    // const handler = handler_id ? await getPublicProfile(handler_id) : null
 
-    const google_calendar_payload = {
-      summary: `Food Rescue: ${handler ? handler.name : 'Available'} - ${moment(
-        timestamp_scheduled
-      ).format('M/DD')}`,
-      location: `${location.address1}, ${location.city}, ${location.state} ${location.zip}`,
-      description: `Here's a link to open your rescue in the SE Food Rescue App: https://app.sharingexcess.com/rescues/${id}`,
-      start: {
-        dateTime: timestamp_scheduled,
-      },
-      end: {
-        dateTime: moment(timestamp_scheduled)
-          .add(Math.ceil(transfer_ids.length / 2), 'hours') // average 30min per transfer, round up
-          .toISOString(),
-      },
-      attendees: handler ? [{ email: handler.email }] : null,
-    }
+    // const google_calendar_payload = {
+    //   summary: `Food Rescue: ${handler ? handler.name : 'Available'} - ${moment(
+    //     timestamp_scheduled
+    //   ).format('M/DD')}`,
+    //   location: `${location.address1}, ${location.city}, ${location.state} ${location.zip}`,
+    //   description: `Here's a link to open your rescue in the SE Food Rescue App: https://app.sharingexcess.com/rescues/${id}`,
+    //   start: {
+    //     dateTime: timestamp_scheduled,
+    //   },
+    //   end: {
+    //     dateTime: moment(timestamp_scheduled)
+    //       .add(Math.ceil(transfer_ids.length / 2), 'hours') // average 30min per transfer, round up
+    //       .toISOString(),
+    //   },
+    //   attendees: handler ? [{ email: handler.email }] : null,
+    // }
 
-    // delete any existing event to replace it with a new one
-    try {
-      await deleteGoogleCalendarEvent(existing_rescue.google_calendar_event_id)
-    } catch (_e) {
-      // ignore
-    }
+    // // delete any existing event to replace it with a new one
+    // try {
+    //   await deleteGoogleCalendarEvent(existing_rescue.google_calendar_event_id)
+    // } catch (_e) {
+    //   // ignore
+    // }
 
-    if (rescue.status !== STATUSES.CANCELLED) {
-      const google_calendar_event = await createGoogleCalendarEvent(
-        google_calendar_payload
-      )
+    // if (rescue.status !== STATUSES.CANCELLED) {
+    //   const google_calendar_event = await createGoogleCalendarEvent(
+    //     google_calendar_payload
+    //   )
 
-      rescue.google_calendar_event_id = google_calendar_event.id
-    } else {
-      rescue.google_calendar_event_id = null
-    }
+    //   rescue.google_calendar_event_id = google_calendar_event.id
+    // } else {
+    //   rescue.google_calendar_event_id = null
+    // }
 
     console.log('Updating rescue:', rescue)
 
