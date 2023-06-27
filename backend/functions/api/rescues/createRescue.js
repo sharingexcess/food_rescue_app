@@ -4,15 +4,15 @@ const {
   COLLECTIONS,
   TRANSFER_TYPES,
   RESCUE_TYPES,
-  createGoogleCalendarEvent,
+  // createGoogleCalendarEvent,
 } = require('../../../helpers')
 const { isValidRescuePayload } = require('./isValidRescuePayload')
 const {
   isValidTransferPayload,
 } = require('../transfers/isValidTransferPayload')
-const { getLocation } = require('../utilities/location')
+// const { getLocation } = require('../utilities/location')
 const { getPublicProfile } = require('../public_profiles/getPublicProfile')
-const moment = require('moment')
+// const moment = require('moment')
 
 exports.createRescue = async ({
   type,
@@ -54,31 +54,31 @@ exports.createRescue = async ({
 
   // google calendar event creation logic
 
-  const location = await getLocation(transfers[0].location_id)
-  const handler = await getPublicProfile(rescue.handler_id)
+  // const location = await getLocation(transfers[0].location_id)
+  // const handler = await getPublicProfile(rescue.handler_id)
 
-  const google_calendar_payload = {
-    summary: `Food Rescue: ${handler.name} - ${moment(
-      rescue.timestamp_scheduled
-    ).format('M/DD')}`,
-    location: `${location.address1}, ${location.city}, ${location.state} ${location.zip}`,
-    description: `Here's a link to open your rescue in the SE Food Rescue App: https://app.sharingexcess.com/rescues/${rescue.id}`,
-    start: {
-      dateTime: rescue.timestamp_scheduled,
-    },
-    end: {
-      dateTime: moment(rescue.timestamp_scheduled)
-        .add(Math.ceil(transfers.length / 2), 'hours') // average 30min per transfer, round up
-        .toISOString(),
-    },
-    attendees: [{ email: handler.email }],
-  }
+  // const google_calendar_payload = {
+  //   summary: `Food Rescue: ${handler.name} - ${moment(
+  //     rescue.timestamp_scheduled
+  //   ).format('M/DD')}`,
+  //   location: `${location.address1}, ${location.city}, ${location.state} ${location.zip}`,
+  //   description: `Here's a link to open your rescue in the SE Food Rescue App: https://app.sharingexcess.com/rescues/${rescue.id}`,
+  //   start: {
+  //     dateTime: rescue.timestamp_scheduled,
+  //   },
+  //   end: {
+  //     dateTime: moment(rescue.timestamp_scheduled)
+  //       .add(Math.ceil(transfers.length / 2), 'hours') // average 30min per transfer, round up
+  //       .toISOString(),
+  //   },
+  //   attendees: [{ email: handler.email }],
+  // }
 
-  const google_calendar_event = await createGoogleCalendarEvent(
-    google_calendar_payload
-  )
+  // const google_calendar_event = await createGoogleCalendarEvent(
+  //   google_calendar_payload
+  // )
 
-  rescue.google_calendar_event_id = google_calendar_event.id
+  // rescue.google_calendar_event_id = google_calendar_event.id
 
   // validate the rescue record itself, but not yet the transfer_ids list
   // because the records are not yet in the db
