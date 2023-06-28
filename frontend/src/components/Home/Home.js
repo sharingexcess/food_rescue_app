@@ -4,6 +4,7 @@ import moment from 'moment'
 import { useMemo } from 'react'
 import { AvailableRescues } from './Home.AvailableRescues'
 import { Stats } from './Home.Stats'
+import { STATUSES, TRANSFER_TYPES } from 'helpers'
 
 export function Home() {
   const isMobile = useIsMobile()
@@ -12,8 +13,22 @@ export function Home() {
     '/transfers/list',
     useMemo(
       () => ({
-        status: 'completed',
-        type: 'delivery',
+        status: STATUSES.COMPLETED,
+        type: TRANSFER_TYPES.DISTRIBUTION,
+        handler_id: user.id,
+        date_range_start: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+        date_range_finish: moment().format('YYYY-MM-DD'),
+      }),
+      []
+    )
+  )
+
+  const { data: collections } = useApi(
+    '/transfers/list',
+    useMemo(
+      () => ({
+        status: STATUSES.COMPLETED,
+        type: TRANSFER_TYPES.COLLECTION,
         handler_id: user.id,
         date_range_start: moment().subtract(1, 'year').format('YYYY-MM-DD'),
         date_range_finish: moment().format('YYYY-MM-DD'),
@@ -24,12 +39,12 @@ export function Home() {
 
   const totalWeight = useMemo(
     () =>
-      distributions &&
-      distributions.reduce(
+      collections &&
+      collections.reduce(
         (total, current) => (total += current.total_weight),
         0
       ),
-    [distributions]
+    [collections]
   )
 
   const totalOrgs = useMemo(() => {
