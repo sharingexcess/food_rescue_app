@@ -9,16 +9,23 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { FooterButton } from 'components'
-import { formatTimestamp } from 'helpers'
-import { useApi, useIsMobile } from 'hooks'
-import { useMemo } from 'react'
+import { formatTimestamp, STATUSES } from 'helpers'
+import { useApi, useIsMobile, useAuth } from 'hooks'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 export function AvailableRescues() {
   const isMobile = useIsMobile()
+  const { user } = useAuth()
+
   const { data: availableRescues } = useApi(
     '/rescues/list',
-    useMemo(() => ({ status: 'scheduled', handler_id: 'null' }), [])
+    useMemo(() => ({ status: STATUSES.SCHEDULED, handler_id: user.id }), [])
+  )
+
+  const { data: activeRescues } = useApi(
+    '/rescues/list',
+    useMemo(() => ({ status: STATUSES.ACTIVE, handler_id: user.id }), [])
   )
 
   function ShowAvailableRescues() {
@@ -31,12 +38,19 @@ export function AvailableRescues() {
     )
   }
 
+  function ShowActiveRescues() {
+    return (
+      <Box pb="24">
+        {activeRescues.map(rescue => (
+          <RescueCard key={rescue.id} rescue={rescue} />
+        ))}
+      </Box>
+    )
+  }
+
   function NoAvailableRescues() {
     return (
       <Flex direction="column" align="center" w="100%" py="8">
-        <Heading size="xl" color="element.secondary" mb="4">
-          😐
-        </Heading>
         <Heading
           as="h4"
           size="sm"
@@ -55,6 +69,25 @@ export function AvailableRescues() {
     )
   }
 
+  function NoActiveRescues() {
+    return (
+      <Flex direction="column" align="center" w="100%" py="8">
+        <Heading size="xl" color="element.secondary" mb="4">
+          😊
+        </Heading>
+        <Heading
+          as="h4"
+          size="sm"
+          color="element.secondary"
+          align="center"
+          mb="2"
+        >
+          You currently have no active rescues.
+        </Heading>
+      </Flex>
+    )
+  }
+
   function LoadingAvailableRescues() {
     return (
       <Box mt="6">
@@ -69,7 +102,7 @@ export function AvailableRescues() {
     <Box px={isMobile ? '4' : '8'} pt="8">
       <Flex w="100%" justify="space-between" align="center">
         <Heading as="h4" color="element.primary" fontSize="lg" my="0">
-          Available Rescues
+          Active Rescues
         </Heading>
         {!isMobile && (
           <Link to="/rescues">
@@ -78,6 +111,21 @@ export function AvailableRescues() {
             </Button>
           </Link>
         )}
+      </Flex>
+      {activeRescues ? (
+        activeRescues.length ? (
+          <ShowActiveRescues />
+        ) : (
+          <NoActiveRescues />
+        )
+      ) : (
+        <LoadingAvailableRescues />
+      )}
+
+      <Flex w="100%" justify="space-between" align="center">
+        <Heading as="h4" color="element.primary" fontSize="lg" my="0">
+          Available Rescues
+        </Heading>
       </Flex>
       {availableRescues ? (
         availableRescues.length ? (
@@ -88,6 +136,7 @@ export function AvailableRescues() {
       ) : (
         <LoadingAvailableRescues />
       )}
+
       {isMobile && (
         <Link to="/rescues">
           <FooterButton>View All Rescues</FooterButton>
