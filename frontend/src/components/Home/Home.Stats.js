@@ -100,7 +100,11 @@ export function Stats({ totalWeight, totalOrgs, distributions }) {
               <Spinner />
             )}
           </Heading>
-          <Text color="element.tertiary">distributions this year</Text>
+          <Text color="element.tertiary">
+            {stats.totalDistributions == 1
+              ? 'distribution this year'
+              : 'distributions this year'}
+          </Text>
         </Flex>
         <Flex
           p="4"
@@ -125,7 +129,9 @@ export function Stats({ totalWeight, totalOrgs, distributions }) {
               <Spinner />
             )}
           </Heading>
-          <Text color="element.tertiary">individual recipients</Text>
+          <Text color="element.tertiary">
+            {stats.totalOrgs == 1 ? 'recipient' : 'recipients'}
+          </Text>
         </Flex>
       </Flex>
     </Fade>
