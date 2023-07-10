@@ -11,7 +11,7 @@ import {
 import { FooterButton } from 'components'
 import { formatTimestamp, STATUSES } from 'helpers'
 import { useApi, useIsMobile, useAuth } from 'hooks'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 export function AvailableRescues() {
