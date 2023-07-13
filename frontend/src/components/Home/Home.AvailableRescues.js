@@ -31,9 +31,11 @@ export function AvailableRescues() {
   function ShowAvailableRescues() {
     return (
       <Box pb="24">
-        {availableRescues.map(rescue => (
-          <RescueCard key={rescue.id} rescue={rescue} />
-        ))}
+        {availableRescues
+          .sort((a, b) => a.timestamp_scheduled - b.timestamp_scheduled)
+          .map(rescue => (
+            <RescueCard key={rescue.id} rescue={rescue} />
+          ))}
       </Box>
     )
   }
