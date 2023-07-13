@@ -3,6 +3,7 @@ import {
   ArrowRightIcon,
   EditIcon,
   WarningIcon,
+  CopyIcon,
 } from '@chakra-ui/icons'
 import { Button, Flex } from '@chakra-ui/react'
 import { useRescueContext } from 'components'
@@ -155,6 +156,11 @@ export function RescueActionButtons() {
     }
   }
 
+  async function clearRescueData() {
+    await sessionStorage.removeItem('se_create_rescue_form_data_cache')
+    await sessionStorage.removeItem('se_create_rescue_transfers_cache')
+  }
+
   return (
     <Flex justify="space-between" mb="4" gap="2">
       {rescue.status === STATUSES.SCHEDULED &&
@@ -220,6 +226,25 @@ export function RescueActionButtons() {
             Cancel
           </Button>
         )}
+      {hasAdminPermission && (
+        <Link
+          to={`/schedule-rescue?duplicate=${rescue.id}`}
+          style={{ flexGrow: 1 }}
+        >
+          <Button
+            variant="secondary"
+            size="sm"
+            fontSize="xs"
+            flexGrow="1"
+            leftIcon={<CopyIcon />}
+            bg="blue.secondary"
+            color="green.primary"
+            onClick={clearRescueData}
+          >
+            Duplicate
+          </Button>
+        </Link>
+      )}
     </Flex>
   )
 }

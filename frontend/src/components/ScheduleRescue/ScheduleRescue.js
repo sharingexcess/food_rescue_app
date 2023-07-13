@@ -11,6 +11,9 @@ import { Transfers } from 'components/ScheduleRescue/ScheduleRescue.Transfers'
 import { InfoForm } from './ScheduleRescue.InfoForm'
 
 export function ScheduleRescue() {
+  const params = new URLSearchParams(window.location.search)
+  const duplicate_rescue_id = params.get('duplicate')
+
   const { user } = useAuth()
   const { data: handlers } = useApi('/public_profiles/list')
   const { data: donors } = useApi(
@@ -20,6 +23,10 @@ export function ScheduleRescue() {
   const { data: recipients } = useApi(
     '/organizations/list',
     useMemo(() => ({ type: 'recipient' }), [])
+  )
+
+  const { data: duplicate_rescue } = useApi(
+    duplicate_rescue_id ? `/rescues/get/${duplicate_rescue_id}` : null
   )
 
   const form_data_cache = sessionStorage.getItem(
@@ -34,6 +41,7 @@ export function ScheduleRescue() {
           handler: null,
         }
   )
+
   const [view, setView] = useState(null)
   const [working, setWorking] = useState(false)
   const isMobile = useIsMobile()
@@ -45,6 +53,23 @@ export function ScheduleRescue() {
   const [transfers, setTransfers] = useState(
     transfers_cache ? JSON.parse(transfers_cache) : []
   )
+
+  useEffect(() => {
+    if (duplicate_rescue) {
+      duplicate_rescue.transfers.map(transfer => {
+        setTransfers(currentTransfers => [
+          ...currentTransfers,
+          {
+            type: transfer.type,
+            organization: transfer.organization,
+            location: transfer.location,
+            organization_id: transfer.organization.id,
+            location_id: transfer.location.id,
+          },
+        ])
+      })
+    }
+  }, [duplicate_rescue])
 
   useEffect(() => {
     sessionStorage.setItem(
@@ -117,6 +142,12 @@ export function ScheduleRescue() {
     navigate(`/rescues/${rescue.id}`)
   }
 
+  async function handleResetRescue() {
+    await sessionStorage.removeItem('se_create_rescue_transfers_cache')
+    await sessionStorage.removeItem('se_create_rescue_form_data_cache')
+    setTransfers([])
+  }
+
   const isValidRescue =
     formData.timestamp_scheduled &&
     transfers.length >= 2 &&
@@ -171,7 +202,15 @@ export function ScheduleRescue() {
               Add Distribution
             </Button>
           )}
-
+          <Button
+            variant="secondary"
+            onClick={handleResetRescue}
+            flexGrow="1"
+            flexBasis={isMobile ? '100%' : null}
+            background="green.secondary"
+          >
+            Reset
+          </Button>
           <Button
             variant="primary"
             onClick={handleScheduleRescue}
