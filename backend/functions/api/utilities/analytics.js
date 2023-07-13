@@ -236,7 +236,7 @@ function breakdownByFoodCategory(distributions) {
   }
   for (const category of FOOD_CATEGORIES) {
     categories[category] = distributions.reduce(
-      (total, curr) => total + (curr[category] || 0),
+      (total, curr) => total + (curr.categorized_weight[category] || 0),
       0
     )
   }

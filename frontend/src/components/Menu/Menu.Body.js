@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { MoonIcon } from '@chakra-ui/icons'
 
 export function MenuBody({ colorMode, toggleColorMode }) {
-  const { hasPermission } = useAuth()
+  const { hasPermission, hasAdminPermission } = useAuth()
   const isMobile = useIsMobile()
   const [darkMode, setDarkMode] = useState(colorMode === 'dark')
 
@@ -118,6 +118,35 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           People
         </Button>
       </Link>
+      {hasAdminPermission && (
+        <Link to="/analytics">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname === '/analytics'
+                ? 'element.active'
+                : 'element.primary'
+            }
+            fontWeight={location.pathname === '/analytics' ? '600' : '300'}
+            fontSize="md"
+            mr="auto"
+            disabled={!hasPermission}
+            height={isMobile ? '12' : '9'}
+          >
+            <Image
+              src={
+                darkMode
+                  ? '/Menu/dark/analytics.png'
+                  : '/Menu/light/analytics.png'
+              }
+              boxSize="20px"
+              mr="4"
+            />
+            Analytics
+          </Button>
+        </Link>
+      )}
       <Link to="/organizations">
         <Button
           variant="ghosted"

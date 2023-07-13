@@ -1,4 +1,4 @@
-import { Flex, Box, Text, Input, Select, Heading } from '@chakra-ui/react'
+import { Flex, Box, Text, Select, Heading } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { getDefaultRangeStart, getDefaultRangeEnd } from './Analytics.utils'
 import {
@@ -18,6 +18,7 @@ import {
 import { formatLargeNumber, shortenLargeNumber } from 'helpers'
 import { Loading } from 'components'
 import { useApi } from 'hooks'
+import DatePicker from 'react-datepicker'
 
 const COLORS = [
   '#205a08',
@@ -30,8 +31,8 @@ const COLORS = [
 
 export function Analytics() {
   const search = new URLSearchParams(window.location.search)
-  const [rangeStart, setRangeStart] = useState(getDefaultRangeStart())
-  const [rangeEnd, setRangeEnd] = useState(getDefaultRangeEnd())
+  const [startDate, setStartDate] = useState(new Date(getDefaultRangeStart()))
+  const [endDate, setEndDate] = useState(new Date(getDefaultRangeEnd()))
   const [breakdown, setBreakdown] = useState(
     search.get('breakdown')
       ? decodeURIComponent(search.get('breakdown'))
@@ -41,11 +42,11 @@ export function Analytics() {
 
   const params = useMemo(
     () => ({
-      date_range_start: rangeStart,
-      date_range_end: rangeEnd,
+      date_range_start: startDate,
+      date_range_end: endDate,
       breakdown,
     }),
-    [rangeStart, rangeEnd, breakdown]
+    [startDate, endDate, breakdown]
   )
 
   const { data: apiData, loading } = useApi('/analytics', params)
@@ -54,15 +55,15 @@ export function Analytics() {
   // to preserve the current query over refresh/back
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    params.set('date_range_start', rangeStart)
-    params.set('date_range_end', rangeEnd)
+    params.set('date_range_start', startDate)
+    params.set('date_range_end', endDate)
     params.set('breakdown', breakdown)
     window.history.replaceState(
       null,
       '',
       `${window.location.pathname}?${params.toString()}`
     )
-  }, [rangeStart, rangeEnd, breakdown])
+  }, [startDate, endDate, breakdown])
 
   const graphData = !apiData
     ? null
@@ -194,22 +195,29 @@ export function Analytics() {
           <Text fontWeight="600" color="element.tertiary">
             From
           </Text>
-          <Input
-            type="date"
-            value={rangeStart}
-            onChange={e => setRangeStart(e.target.value)}
-            label="From..."
+          <DatePicker
+            selected={startDate}
+            onChange={date => {
+              setStartDate(date)
+            }}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
           />
         </Box>
         <Box w="100%">
           <Text fontWeight="600" color="element.tertiary">
             To
           </Text>
-          <Input
-            type="date"
-            value={rangeEnd}
-            onChange={e => setRangeEnd(e.target.value)}
-            label="To..."
+          <DatePicker
+            selected={endDate}
+            onChange={date => {
+              setEndDate(date)
+            }}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
           />
         </Box>
       </Flex>

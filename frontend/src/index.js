@@ -26,6 +26,7 @@ import {
   Help,
   Page,
   Error,
+  Analytics,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -159,6 +160,19 @@ function RescueAppRoutes() {
                     defaultTitle="People"
                     defaultBreadcrumbs={[{ label: 'People', link: '/people' }]}
                     Content={Users}
+                  />
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <Page
+                    id="Analytics"
+                    defaultTitle="Analytics"
+                    defaultBreadcrumbs={[
+                      { label: 'Analytics', link: '/analytics' },
+                    ]}
+                    Content={Analytics}
                   />
                 }
               />
