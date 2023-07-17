@@ -2,7 +2,7 @@
   "name": "rescue",
   "productName": "Sharing Excess | Food Rescue",
   "license": "MIT",
-  "version": "6.1.8",
+  "version": "6.1.9",
   "private": true,
   "scripts": {
     "install:all": "yarn && cd frontend && yarn && cd ../backend && yarn",

@@ -19,6 +19,7 @@ import { formatLargeNumber, shortenLargeNumber } from 'helpers'
 import { Loading } from 'components'
 import { useApi } from 'hooks'
 import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const COLORS = [
   '#205a08',
