@@ -58,6 +58,7 @@ export function EditDonation({ isOpen, handleClose }) {
       status: rescue.status,
       handler_id: rescue.handler_id,
       notes: formData.notes,
+      weight: formData.weight,
       timestamp_scheduled: moment(formData.date).toISOString(),
       timestamp_completed: rescue.timestamp_completed
         ? moment(rescue.timestamp_completed).toISOString()

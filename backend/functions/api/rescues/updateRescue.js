@@ -17,6 +17,7 @@ exports.updateRescue = async ({
   status,
   handler_id,
   notes,
+  weight,
   timestamp_scheduled,
   timestamp_completed,
   transfer_ids,
@@ -31,6 +32,12 @@ exports.updateRescue = async ({
     throw new Error(`No existing rescue found matching id: ${id}`)
   }
 
+  const allow_notes_update = existing_rescue.notes !== notes // true if notes field is different from the existing one
+  const validate_transfer_ids = !(
+    status === STATUSES.CANCELLED || allow_notes_update
+  )
+  const allow_weight_update = existing_rescue.weight !== weight
+
   const is_valid = await isValidRescuePayload(
     {
       id,
@@ -38,11 +45,12 @@ exports.updateRescue = async ({
       status,
       handler_id,
       notes,
+      weight,
       timestamp_scheduled,
       timestamp_completed,
       transfer_ids,
     },
-    { validate_transfer_ids: status === STATUSES.CANCELLED ? false : true } // ignore validating transfer list if cancelling
+    { validate_transfer_ids, allow_notes_update, allow_weight_update } // ignore validating transfer list if cancelling
   )
 
   if (is_valid) {
