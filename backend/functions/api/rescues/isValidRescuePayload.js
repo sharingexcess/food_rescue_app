@@ -27,12 +27,37 @@ exports.isValidRescuePayload = async (
     status,
     handler_id,
     notes,
+    weight,
     timestamp_scheduled,
     timestamp_completed,
     transfer_ids,
   },
-  options = { validate_transfer_ids: true }
+  options = {
+    validate_transfer_ids: true,
+    allow_notes_update: false,
+    allow_weight_update: false,
+  }
 ) => {
+  if (options.allow_notes_update) {
+    if (notes && typeof notes !== 'string') {
+      console.log(
+        `Invalid notes, value is: "${notes}", type is ${typeof notes}. Rejecting.`
+      )
+      return false
+    }
+    return true // Return true directly if it's just a notes update.
+  }
+
+  if (options.allow_weight_update) {
+    if (weight && typeof weight !== 'number') {
+      console.log(
+        `Invalid weight, value is: "${weight}", type is ${typeof weight}. Rejecting.`
+      )
+      return false
+    }
+    return true // Return true directly if it's just a weight update.
+  }
+
   // check that payload has a valid transfer type
   if (!Object.values(RESCUE_TYPES).includes(type)) {
     console.log(`Detected invalid type, value is: ${type}. Rejecting.`)
