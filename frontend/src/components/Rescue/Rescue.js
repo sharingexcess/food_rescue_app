@@ -58,30 +58,46 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
   // handle auto complete rescue
   useEffect(() => {
     const remainingWeight = calculateCurrentLoad(rescue)
-    // we declare rescue complete if the final transfer is complete,
-    // and the remaining weight is less than the number of transfers,
-    // which leaves room for a rounding off by 1 error on each transfer
-    if (
-      rescue?.status === STATUSES.ACTIVE &&
-      remainingWeight < rescue.transfers.length &&
-      rescue.transfers[rescue.transfers.length - 1].status ===
-        STATUSES.COMPLETED
-    ) {
-      SE_API.post(
-        `/rescues/update/${rescue.id}`,
-        {
-          id: rescue.id,
-          type: rescue.type,
-          status: STATUSES.COMPLETED,
-          handler_id: rescue.handler_id,
-          notes: rescue.notes,
-          timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
-          timestamp_completed: moment().toISOString(),
-          transfer_ids: rescue.transfer_ids,
-        },
-        user.accessToken
-      )
-      setShowCompletedPopup(true)
+
+    try {
+      if (rescue) {
+        const activeTransfers = rescue.transfers.filter(
+          transfer => transfer.status !== STATUSES.CANCELLED
+        )
+        const allTransfersComplete = activeTransfers.every(
+          transfer => transfer.status === STATUSES.COMPLETED
+        )
+
+        // We declare the rescue operation as complete if all the active transfers are complete,
+        // and the remaining weight is less than the number of active transfers.
+        // This leaves room for a rounding off by 1 error on each transfer.
+        // If any transfer is cancelled, it does not affect the completion status of the rescue.
+        if (
+          rescue?.status === STATUSES.ACTIVE &&
+          remainingWeight < activeTransfers.length &&
+          allTransfersComplete
+        ) {
+          SE_API.post(
+            `/rescues/update/${rescue.id}`,
+            {
+              id: rescue.id,
+              type: rescue.type,
+              status: STATUSES.COMPLETED,
+              handler_id: rescue.handler_id,
+              notes: rescue.notes,
+              timestamp_scheduled: moment(
+                rescue.timestamp_scheduled
+              ).toISOString(),
+              timestamp_completed: moment().toISOString(),
+              transfer_ids: rescue.transfer_ids,
+            },
+            user.accessToken
+          )
+          setShowCompletedPopup(true)
+        }
+      }
+    } catch (e) {
+      console.log(e)
     }
   }, [rescue, user])
 
