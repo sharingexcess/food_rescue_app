@@ -139,13 +139,13 @@ export function Wholesale() {
           <Skeleton w="100%" h="32" my="4" />
         </>
       )}
-      <Box h="16" />
-
       {hasAdminPermission && (
         <>
-          <FooterButton onClick={() => setAddDonation(true)}>
-            New Rescue
-          </FooterButton>
+          <Flex position="fixed" bottom="10" right="10">
+            <FooterButton onClick={() => setAddDonation(true)}>
+              New Rescue
+            </FooterButton>
+          </Flex>
           <AddDonation
             isOpen={addDonation}
             handleClose={() => setAddDonation(false)}
