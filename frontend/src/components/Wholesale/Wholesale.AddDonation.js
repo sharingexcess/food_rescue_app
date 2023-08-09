@@ -73,7 +73,20 @@ export function AddDonation({ isOpen, handleClose, refresh, defaultDate }) {
     await SE_API.post('/rescues/create', payload, user.accessToken)
     refresh()
     setIsLoading(false)
+    resetFormData()
     handleClose()
+  }
+
+  function resetFormData() {
+    setFormData({
+      date: formatTimestamp(defaultDate || new Date(), 'YYYY-MM-DDTHH:mm'),
+      organization: null,
+      location: null,
+      weight: '',
+      food_category: 'produce',
+      notes: '',
+      pallet: null,
+    })
   }
 
   return (

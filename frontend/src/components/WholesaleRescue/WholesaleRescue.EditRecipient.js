@@ -52,7 +52,7 @@ export function EditRecipient({ isOpen, handleClose }) {
     organization: transfer?.organization,
     location: transfer?.location,
     weight: currentLoad,
-    notes: '',
+    notes: transfer?.notes,
     percent_of_total_dropped: remainingPercent,
     timestamp_completed: null,
   })
@@ -69,7 +69,7 @@ export function EditRecipient({ isOpen, handleClose }) {
         organization: recipients.find(i => i.id === transfer.organization.id),
         location: transfer.location,
         weight: transfer.total_weight || currentLoad,
-        notes: '',
+        notes: transfer.notes,
         timestamp_completed: moment(transfer.timestamp_completed).format(
           'YYYY-MM-DDTHH:mm'
         ),

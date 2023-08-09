@@ -38,6 +38,12 @@ export function Recipient({ recipient, setEditRecipient }) {
         <Text size="sm" fontWeight="300" color="element.secondary">
           {recipient.location.nickname || recipient.location.address1}
         </Text>
+        <Text fontSize="sm" fontWeight="300" color="element.secondary">
+          <Text as="span" fontWeight="500">
+            Notes:{' '}
+          </Text>
+          "{recipient.notes}"
+        </Text>
       </Box>
 
       {hasAdminPermission && (
