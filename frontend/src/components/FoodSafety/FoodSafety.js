@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Flex,
   Heading,
@@ -12,11 +12,11 @@ import {
   AccordionIcon,
 } from '@chakra-ui/react'
 import { CheckCircleIcon } from '@chakra-ui/icons'
-import { useAuth } from 'hooks'
+import { useApi, useAuth } from 'hooks'
 import { FooterButton, PageTitle } from 'components'
 
 export function FoodSafety({ handleNext }) {
-  const { hasPermission } = useAuth()
+  const { hasPermission, user } = useAuth()
   const [openedSections, setOpenedSections] = useState([
     false,
     false,
@@ -26,6 +26,11 @@ export function FoodSafety({ handleNext }) {
     false,
     false,
   ])
+
+  const { data: organizations } = useApi(
+    '/organizations/list',
+    useMemo(() => ({ type: 'donor' }), [])
+  )
 
   const allSectionsOpened = () => {
     let result = true
@@ -43,6 +48,24 @@ export function FoodSafety({ handleNext }) {
     updatedOpenedSections[index] = true
     setOpenedSections(updatedOpenedSections)
   }
+
+  function getDashboardAccess() {
+    if (organizations) {
+      for (const org of organizations) {
+        const dashboard_access = org.dashboard_access
+        if (dashboard_access) {
+          if (dashboard_access.includes(user.email)) {
+            localStorage.setItem('se_dashboard_access', true)
+            return true
+          }
+        }
+      }
+    }
+    localStorage.setItem('se_dashboard_access', false)
+    return false
+  }
+
+  getDashboardAccess()
 
   return (
     <>

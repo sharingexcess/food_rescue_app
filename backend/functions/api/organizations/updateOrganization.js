@@ -11,11 +11,12 @@ exports.updateOrganization = async ({
   subtype,
   tags = null,
   is_deleted,
+  dashboard_access,
 }) => {
   // spell it out above so VSCode can suggest the right args on function calls
   // and combine it into "payload" here so we don't forget one line by accident
   // this also ensures we don't add any stray unexpected properties to the DB record
-  const payload = { name, type, subtype, tags, is_deleted }
+  const payload = { name, type, subtype, tags, is_deleted, dashboard_access }
 
   const existing_organization = await db
     .collection(COLLECTIONS.ORGANIZATIONS)
