@@ -185,7 +185,7 @@ function RescueAppRoutes() {
                     id="User"
                     defaultTitle="Dashboard"
                     defaultBreadcrumbs={[
-                      { label: 'Dashboards', link: '/Dashboards' },
+                      { label: 'Dashboards', link: '/dashboards' },
                       { label: 'Loading', link: '' },
                     ]}
                     Content={Dashboard}

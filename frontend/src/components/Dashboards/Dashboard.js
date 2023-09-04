@@ -17,18 +17,12 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts'
 export function Dashboard() {
   const [totalDistributionWeight, setTotalDistributionWeight] = useState(0)
   const [totalCollectionWeight, setTotalCollectionWeight] = useState(0)
-
   const [org, setOrg] = useState()
-
   const [startDate, setStartDate] = useState(new Date(getDefaultRangeStart()))
   const [endDate, setEndDate] = useState(new Date(getDefaultRangeEnd()))
-
   const [dateRangeOption, setDateRangeOption] = useState('1 month')
-
   const [isLoading, setIsLoading] = useState(true)
-
   const { donor_id } = useParams()
-
   const { user } = useAuth()
 
   const { data: organization } = useApi(
@@ -194,7 +188,6 @@ export function Dashboard() {
               setEndDate(new Date())
               break
             case 'custom':
-              // You can set custom initial values or leave them as they are
               break
             default:
               break
