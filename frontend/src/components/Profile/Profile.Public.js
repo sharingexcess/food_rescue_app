@@ -47,6 +47,7 @@ export function PublicProfile({ onSubmitCallback }) {
       isClosable: true,
       position: 'top',
     })
+    window.location.reload()
     setIsLoading(false)
     onSubmitCallback && onSubmitCallback()
   }

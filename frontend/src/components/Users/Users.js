@@ -12,17 +12,42 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { PageTitle } from 'components/PageTitle/PageTitle'
-import { useApi } from 'hooks'
-import { useState } from 'react'
+import { useApi, useAuth } from 'hooks'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 export function Users() {
   const { data: users } = useApi('/public_profiles/list')
   const [searchValue, setSearchValue] = useState('')
 
+  const { user } = useAuth()
+
   function handleChange(e) {
     setSearchValue(e.target.value)
   }
+
+  const { data: organizations } = useApi(
+    '/organizations/list',
+    useMemo(() => ({ type: 'donor' }), [])
+  )
+
+  function getDashboardAccess() {
+    if (organizations) {
+      for (const org of organizations) {
+        const dashboard_access = org.dashboard_access
+        if (dashboard_access) {
+          if (dashboard_access.includes(user.email)) {
+            localStorage.setItem('se_dashboard_access', true)
+            return true
+          }
+        }
+      }
+    }
+    localStorage.setItem('se_dashboard_access', false)
+    return false
+  }
+
+  getDashboardAccess()
 
   return (
     <>

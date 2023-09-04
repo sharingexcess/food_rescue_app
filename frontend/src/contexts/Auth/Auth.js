@@ -100,6 +100,8 @@ function Auth({ children }) {
           hasAdminPermission: publicProfile?.permission === 'admin',
           hasStandardPermissions: publicProfile?.permission === 'standard',
           hasPermission: publicProfile?.permission,
+          hasDashboardAccess:
+            localStorage.getItem('se_dashboard_access') === 'true',
           hasCompletedPrivateProfile:
             hasCompletedPrivateProfile(privateProfile),
           handleLogout,

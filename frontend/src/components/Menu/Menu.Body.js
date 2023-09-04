@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { MoonIcon } from '@chakra-ui/icons'
 
 export function MenuBody({ colorMode, toggleColorMode }) {
-  const { hasPermission, hasAdminPermission } = useAuth()
+  const { hasPermission, hasAdminPermission, hasDashboardAccess } = useAuth()
   const isMobile = useIsMobile()
   const [darkMode, setDarkMode] = useState(colorMode === 'dark')
 
@@ -45,56 +45,60 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           colorScheme="se_green"
         />
       </Flex>
-      <Link to="/rescues">
-        <Button
-          variant="ghosted"
-          px={isMobile ? '0' : '2'}
-          color={
-            location.pathname === '/rescues'
-              ? 'element.active'
-              : 'element.primary'
-          }
-          fontWeight={location.pathname === '/rescues' ? '600' : '300'}
-          disabled={!hasPermission}
-          py="0"
-        >
-          <Image
-            src={
-              darkMode ? '/Menu/dark/rescues.png' : '/Menu/light/rescues.png'
+      {(hasAdminPermission || !hasDashboardAccess) && (
+        <Link to="/rescues">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname === '/rescues'
+                ? 'element.active'
+                : 'element.primary'
             }
-            boxSize="20px"
-            mr="4"
-          />
-          Rescues
-        </Button>
-      </Link>
-      <Link to="/wholesale">
-        <Button
-          variant="ghosted"
-          px={isMobile ? '0' : '2'}
-          color={
-            location.pathname === '/wholesale'
-              ? 'element.active'
-              : 'element.primary'
-          }
-          fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
-          fontSize="md"
-          mr="auto"
-          disabled={!hasPermission}
-          height={isMobile ? '12' : '9'}
-        >
-          <Image
-            src={
-              darkMode
-                ? '/Menu/dark/wholesale.png'
-                : '/Menu/light/wholesale.png'
+            fontWeight={location.pathname === '/rescues' ? '600' : '300'}
+            disabled={!hasPermission}
+            py="0"
+          >
+            <Image
+              src={
+                darkMode ? '/Menu/dark/rescues.png' : '/Menu/light/rescues.png'
+              }
+              boxSize="20px"
+              mr="4"
+            />
+            Rescues
+          </Button>
+        </Link>
+      )}
+      {(hasAdminPermission || !hasDashboardAccess) && (
+        <Link to="/wholesale">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname === '/wholesale'
+                ? 'element.active'
+                : 'element.primary'
             }
-            boxSize="20px"
-            mr="4"
-          />
-          Wholesale
-        </Button>
-      </Link>
+            fontWeight={location.pathname === '/wholesale' ? '600' : '300'}
+            fontSize="md"
+            mr="auto"
+            disabled={!hasPermission}
+            height={isMobile ? '12' : '9'}
+          >
+            <Image
+              src={
+                darkMode
+                  ? '/Menu/dark/wholesale.png'
+                  : '/Menu/light/wholesale.png'
+              }
+              boxSize="20px"
+              mr="4"
+            />
+            Wholesale
+          </Button>
+        </Link>
+      )}
       <Link to="/people">
         <Button
           variant="ghosted"
@@ -118,6 +122,31 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           People
         </Button>
       </Link>
+      {(hasAdminPermission || hasDashboardAccess) && (
+        <Link to="/dashboards">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname.includes('/dashboards')
+                ? 'element.active'
+                : 'element.primary'
+            }
+            fontWeight={location.pathname === '/dashboards' ? '600' : '300'}
+            fontSize="md"
+            mr="auto"
+            disabled={!hasPermission}
+            height={isMobile ? '12' : '9'}
+          >
+            <Image
+              src={darkMode ? '/Menu/dark/orgs.png' : '/Menu/light/orgs.png'}
+              boxSize="20px"
+              mr="4"
+            />
+            Dashboards
+          </Button>
+        </Link>
+      )}
       {hasAdminPermission && (
         <Link to="/analytics">
           <Button
@@ -147,29 +176,31 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           </Button>
         </Link>
       )}
-      <Link to="/organizations">
-        <Button
-          variant="ghosted"
-          px={isMobile ? '0' : '2'}
-          color={
-            location.pathname === '/organizations'
-              ? 'element.active'
-              : 'element.primary'
-          }
-          fontWeight={location.pathname === '/organizations' ? '600' : '300'}
-          fontSize="md"
-          mr="auto"
-          disabled={!hasPermission}
-          height={isMobile ? '12' : '9'}
-        >
-          <Image
-            src={darkMode ? '/Menu/dark/orgs.png' : '/Menu/light/orgs.png'}
-            boxSize="20px"
-            mr="4"
-          />
-          Organizations
-        </Button>
-      </Link>
+      {(hasAdminPermission || !hasDashboardAccess) && (
+        <Link to="/organizations">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname === '/organizations'
+                ? 'element.active'
+                : 'element.primary'
+            }
+            fontWeight={location.pathname === '/organizations' ? '600' : '300'}
+            fontSize="md"
+            mr="auto"
+            disabled={!hasPermission}
+            height={isMobile ? '12' : '9'}
+          >
+            <Image
+              src={darkMode ? '/Menu/dark/orgs.png' : '/Menu/light/orgs.png'}
+              boxSize="20px"
+              mr="4"
+            />
+            Organizations
+          </Button>
+        </Link>
+      )}
       <Link to="/food-safety">
         <Button
           variant="ghosted"

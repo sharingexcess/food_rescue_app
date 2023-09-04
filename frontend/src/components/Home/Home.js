@@ -9,6 +9,12 @@ import { STATUSES, TRANSFER_TYPES } from 'helpers'
 export function Home() {
   const isMobile = useIsMobile()
   const { user } = useAuth()
+
+  const { data: organizations } = useApi(
+    '/organizations/list',
+    useMemo(() => ({ type: 'donor' }), [])
+  )
+
   const { data: distributions } = useApi(
     '/transfers/list',
     useMemo(
@@ -61,6 +67,22 @@ export function Home() {
     } else return null
   }, [distributions])
 
+  const getDashboardAccess = useMemo(() => {
+    if (organizations) {
+      for (const org of organizations) {
+        const dashboard_access = org.dashboard_access
+        if (dashboard_access) {
+          if (dashboard_access.includes(user.email)) {
+            localStorage.setItem('se_dashboard_access', true)
+            return true
+          }
+        }
+      }
+    }
+    localStorage.setItem('se_dashboard_access', false)
+    return false
+  }, [organizations])
+
   return (
     <>
       <Flex
@@ -108,6 +130,7 @@ export function Home() {
         totalWeight={totalWeight}
         totalOrgs={totalOrgs}
         distributions={distributions}
+        dashboard_access={getDashboardAccess}
       />
       <AvailableRescues />
     </>

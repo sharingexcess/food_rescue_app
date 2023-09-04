@@ -3,7 +3,7 @@ import { API_URL, generateId } from 'helpers'
 import { useAuth } from './useAuth'
 import { useToast } from '@chakra-ui/react'
 
-export function useApi(endpoint, params = null) {
+export function useApi(endpoint, params = null, showToast = true) {
   const { user } = useAuth()
   const toast = useToast()
   const [state, setState] = useState({
@@ -62,14 +62,16 @@ export function useApi(endpoint, params = null) {
               } catch (e) {
                 // do nothing
               }
-              toast({
-                title: 'Uhoh...',
-                description: `Looks like there was an error getting data for this page. Go to the "help" page if this problem persists.`,
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-                position: 'top',
-              })
+              if (showToast) {
+                toast({
+                  title: 'Uhoh...',
+                  description: `Looks like there was an error getting data for this page. Go to the "help" page if this problem persists.`,
+                  status: 'error',
+                  duration: 5000,
+                  isClosable: true,
+                  position: 'top',
+                })
+              }
               throw new Error(
                 `${res.status} ${res.statusText}${
                   message ? ' - ' + message : ''

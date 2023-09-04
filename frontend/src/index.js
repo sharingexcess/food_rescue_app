@@ -27,6 +27,8 @@ import {
   Page,
   Error,
   Analytics,
+  Dashboard,
+  Dashboards,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -160,6 +162,32 @@ function RescueAppRoutes() {
                     defaultTitle="People"
                     defaultBreadcrumbs={[{ label: 'People', link: '/people' }]}
                     Content={Users}
+                  />
+                }
+              />
+              <Route
+                path="/dashboards"
+                element={
+                  <Page
+                    id="Users"
+                    defaultTitle="Dashboards"
+                    defaultBreadcrumbs={[
+                      { label: 'Dashboards', link: '/dashboards' },
+                    ]}
+                    Content={Dashboards}
+                  />
+                }
+              />
+              <Route
+                path="/dashboards/:donor_id"
+                element={
+                  <Page
+                    id="User"
+                    defaultTitle="Dashboard"
+                    defaultBreadcrumbs={[
+                      { label: 'Dashboards', link: '/dashboards' },
+                    ]}
+                    Content={Dashboard}
                   />
                 }
               />

@@ -33,7 +33,12 @@ export function Tags({ formData, setFormData }) {
   function handleAddTag() {
     const updatedTags = formData.tags ? [...formData.tags, addTag] : [addTag]
     setFormData({ ...formData, tags: updatedTags })
-    const payload = { ...formData, tags: updatedTags, is_deleted: false }
+    const payload = {
+      ...formData,
+      tags: updatedTags,
+      is_deleted: false,
+      dashboard_access: formData.dashboard_access || [],
+    }
     delete payload.locations
 
     SE_API.post(

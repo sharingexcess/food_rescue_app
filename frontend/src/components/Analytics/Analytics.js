@@ -192,7 +192,7 @@ export function Analytics() {
   return (
     <main id="Analytics">
       <Flex gap="4" justify="space-between" mb="4">
-        <Box w="100%">
+        <Box>
           <Text fontWeight="600" color="element.tertiary">
             From
           </Text>
@@ -206,7 +206,7 @@ export function Analytics() {
             endDate={endDate}
           />
         </Box>
-        <Box w="100%">
+        <Box>
           <Text fontWeight="600" color="element.tertiary">
             To
           </Text>

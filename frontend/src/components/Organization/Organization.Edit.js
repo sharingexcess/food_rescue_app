@@ -27,6 +27,7 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
       type: formData.type,
       subtype: formData.subtype,
       is_deleted: false,
+      dashboard_access: formData.dashboard_access || [],
     }
     await SE_API.post(
       `/organizations/update/${formData.id}`,
@@ -59,6 +60,7 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
           type: formData.type,
           subtype: formData.subtype,
           is_deleted: true,
+          dashboard_access: [],
         }
         await SE_API.post(
           `/organizations/update/${formData.id}`,
