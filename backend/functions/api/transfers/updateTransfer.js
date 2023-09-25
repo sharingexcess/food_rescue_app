@@ -14,6 +14,7 @@ exports.updateTransfer = async ({
   total_weight,
   categorized_weight,
   percent_of_total_dropped,
+  sorted,
 }) => {
   // spell it out above so VSCode can suggest the right args on function calls
   // and combine it into "payload" here so we don't forget one line by accident
@@ -30,6 +31,7 @@ exports.updateTransfer = async ({
     total_weight,
     categorized_weight,
     percent_of_total_dropped,
+    sorted,
   }
 
   const existing_transfer = await db
