@@ -122,7 +122,7 @@ export function WholesaleAllocationCard({
       </Flex>
 
       <Text mt={4}>
-        Total Weight: {calculatedWeight.toFixed(2)}
+        Total Weight: {Math.round(calculatedWeight)}
         {' lbs.'}
       </Text>
     </Box>

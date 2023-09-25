@@ -159,12 +159,12 @@ export function WholesaleNewAllocation() {
             organization_id: formData.organization.id,
             location_id: formData.location.id,
             notes: formData.notes,
-            timestamp_completed: moment(
-              formData.timestamp_completed || null
-            ).toISOString(),
-            total_weight: allocations[i].calculatedWeight,
+            timestamp_completed: moment().toISOString(),
+            total_weight: Math.round(allocations[i].calculatedWeight),
             categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
-            percent_of_total_dropped: allocations[i].remaining_percent,
+            percent_of_total_dropped: Math.round(
+              allocations[i].remaining_percent
+            ),
           }
 
           for (const category in allocations[i].rescue.transfers[0]
