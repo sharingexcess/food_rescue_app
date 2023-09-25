@@ -99,6 +99,35 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           </Button>
         </Link>
       )}
+      {hasAdminPermission && (
+        <Link to="/wholesale-new">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname === '/wholesale-new'
+                ? 'element.active'
+                : 'element.primary'
+            }
+            fontWeight={location.pathname === '/wholesale-new' ? '600' : '300'}
+            fontSize="md"
+            mr="auto"
+            disabled={!hasPermission}
+            height={isMobile ? '12' : '9'}
+          >
+            <Image
+              src={
+                darkMode
+                  ? '/Menu/dark/wholesale.png'
+                  : '/Menu/light/wholesale.png'
+              }
+              boxSize="20px"
+              mr="4"
+            />
+            New Wholesale
+          </Button>
+        </Link>
+      )}
       <Link to="/people">
         <Button
           variant="ghosted"
