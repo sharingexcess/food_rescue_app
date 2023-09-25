@@ -17,6 +17,7 @@ export function PublicProfile({ onSubmitCallback }) {
     about_me: user.about_me || '',
     icon: user.icon,
     permission: user.permission,
+    jacks: user.jacks,
   })
 
   async function handleSubmit() {
@@ -86,7 +87,6 @@ export function PublicProfile({ onSubmitCallback }) {
           isOptional={i.isOptional}
         />
       ))}
-
       <Box h="8" />
 
       <FooterButton

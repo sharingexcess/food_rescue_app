@@ -29,6 +29,12 @@ import {
   Analytics,
   Dashboard,
   Dashboards,
+  WholesaleEntry,
+  WholesaleEntryCreate,
+  WholesaleAllocation,
+  WholesaleRemaining,
+  WholesaleNewAllocation,
+  WholesaleAllocationCompleted,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -323,6 +329,132 @@ function RescueAppRoutes() {
                       { label: 'Loading...', link: '' },
                     ]}
                     Content={WholesaleRescue}
+                  />
+                }
+              />
+              {/* <Route
+                path="/wholesale-new"
+                element={
+                  <Page
+                    id="Wholesale-new"
+                    defaultTitle="Wholesale-new"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale-new' },
+                    ]}
+                    Content={WholesaleNew}
+                  />
+                }
+              /> */}
+              <Route
+                path="/wholesale-new/entry"
+                element={
+                  <Page
+                    id="Wholesale-new"
+                    defaultTitle="Wholesale-new"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                      {
+                        label: 'Entry',
+                        link: '/wholesale-new/entry',
+                      },
+                    ]}
+                    Content={WholesaleEntry}
+                  />
+                }
+              />
+              <Route
+                path="/wholesale-new/entry/create"
+                element={
+                  <Page
+                    id="Wholesale-new"
+                    defaultTitle="Wholesale-new"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                      {
+                        label: 'Entry',
+                        link: '/wholesale-new/entry/create',
+                      },
+                      {
+                        label: 'Create',
+                        link: '/wholesale-new/entry/create',
+                      },
+                    ]}
+                    Content={WholesaleEntryCreate}
+                  />
+                }
+              />
+              <Route
+                path="/wholesale-new/allocation"
+                element={
+                  <Page
+                    id="allocation"
+                    defaultTitle="Wholesale Allocation"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                      {
+                        label: 'Allocation',
+                        link: '/wholesale-new/allocation',
+                      },
+                    ]}
+                    Content={WholesaleAllocation}
+                  />
+                }
+              />
+              <Route
+                path="/wholesale-new/allocation/create"
+                element={
+                  <Page
+                    id="allocation"
+                    defaultTitle="Wholesale Allocation"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                      {
+                        label: 'Allocation',
+                        link: '/wholesale-new/allocation',
+                      },
+                      {
+                        label: 'Create',
+                        link: '/wholesale-new/allocation/create',
+                      },
+                    ]}
+                    Content={WholesaleNewAllocation}
+                  />
+                }
+              />
+              <Route
+                path="/wholesale-new/allocation/completed"
+                element={
+                  <Page
+                    id="allocation"
+                    defaultTitle="Completed Wholesale Allocation"
+                    defaultBreadcrumbs={[
+                      {
+                        label: 'allocation',
+                        link: '/wholesale-new/allocation/completed',
+                      },
+                    ]}
+                    Content={WholesaleAllocationCompleted}
+                  />
+                }
+              />
+              <Route
+                path="/wholesale-new/remaining"
+                element={
+                  <Page
+                    id="allocation"
+                    defaultTitle="Wholesale Remaining"
+                    defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
+                      {
+                        label: 'Allocation',
+                        link: '/wholesale-new/allocation',
+                      },
+                      {
+                        label: 'Remaining',
+                        link: '/wholesale-new/remaining',
+                      },
+                    ]}
+                    Content={WholesaleRemaining}
                   />
                 }
               />

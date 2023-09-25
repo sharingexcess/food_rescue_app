@@ -17,7 +17,7 @@ import {
 } from 'recharts'
 import { formatLargeNumber, shortenLargeNumber } from 'helpers'
 import { Loading } from 'components'
-import { useApi } from 'hooks'
+import { useApi, useIsMobile } from 'hooks'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -29,6 +29,14 @@ const COLORS = [
   '#8af55c',
   '#b8ff9a',
 ]
+
+// Hack to bring retool data in line with the rest of the app
+function startOfDay(date) {
+  const newDate = new Date(date)
+  newDate.setDate(newDate.getDate() - 1)
+  newDate.setHours(20, 0, 0, 0)
+  return newDate
+}
 
 export function Analytics() {
   const search = new URLSearchParams(window.location.search)
@@ -43,7 +51,7 @@ export function Analytics() {
 
   const params = useMemo(
     () => ({
-      date_range_start: startDate,
+      date_range_start: startOfDay(startDate),
       date_range_end: endDate,
       breakdown,
     }),
@@ -56,7 +64,7 @@ export function Analytics() {
   // to preserve the current query over refresh/back
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    params.set('date_range_start', startDate)
+    params.set('date_range_start', startOfDay(startDate))
     params.set('date_range_end', endDate)
     params.set('breakdown', breakdown)
     window.history.replaceState(
@@ -65,6 +73,8 @@ export function Analytics() {
       `${window.location.pathname}?${params.toString()}`
     )
   }, [startDate, endDate, breakdown])
+
+  const isMobile = useIsMobile()
 
   const graphData = !apiData
     ? null
@@ -191,7 +201,12 @@ export function Analytics() {
 
   return (
     <main id="Analytics">
-      <Flex gap="4" justify="space-between" mb="4">
+      <Flex
+        gap="4"
+        justify="space-between"
+        mb="4"
+        flexDirection={isMobile ? 'column' : 'row'}
+      >
         <Box>
           <Text fontWeight="600" color="element.tertiary">
             From

@@ -119,6 +119,23 @@ exports.isValidTransferPayload = async (
     return false
   }
 
+  // If the update is to change the sorted total_weight, we need to update the categorized_weight object
+  const is_sorted = payload.sorted || false
+  if (
+    is_sorted &&
+    payload.categorized_weight &&
+    Object.keys(payload.categorized_weight).length > 0
+  ) {
+    const total_weight = payload.total_weight
+    const categorized_weight = payload.categorized_weight
+
+    categorized_weight[payload.food_category] = total_weight
+
+    payload.categorized_weight = categorized_weight
+
+    console.log('Successfully updated weight!')
+  }
+
   // check that categorized_weight contains all non-negative integers, and sums to total_weight
   if (
     !isValidCategorizedWeightObject(
