@@ -52,7 +52,8 @@ export function WholesaleRemaining() {
                   {rescue.transfers[0].organization.name || 'N/A'}
                 </Text>
                 <Text>
-                  <strong>Product Type:</strong> {rescue.product_type}
+                  <strong>Product Type:</strong>{' '}
+                  {rescue.transfers[0].product_type}
                 </Text>
                 <Text>
                   <strong>Remaining Weight:</strong> {remainingWeight} lbs.
