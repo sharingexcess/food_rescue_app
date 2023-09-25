@@ -1,16 +1,18 @@
 import { PageTitle } from 'components/PageTitle/PageTitle'
 import { useNavigate } from 'react-router-dom'
 import { SmallAddIcon, CheckIcon, TimeIcon } from '@chakra-ui/icons'
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, useBreakpointValue } from '@chakra-ui/react'
 
 export function WholesaleAllocation() {
   const navigate = useNavigate()
 
   function HomeView() {
-    const homePageCards = ['New-Distribution', 'Completed', 'Remaining']
+    const homePageCards = ['Distribution', 'Completed', 'Remaining']
+
+    const cardSize = useBreakpointValue({ base: '140px', md: '200px' })
 
     const handleCardClick = tab => {
-      if (tab === 'New-Distribution') {
+      if (tab === 'Distribution') {
         navigate(`/wholesale-new/allocation/create`)
       }
       if (tab === 'Completed') {
@@ -23,7 +25,7 @@ export function WholesaleAllocation() {
 
     const getIconForTab = tab => {
       switch (tab) {
-        case 'New-Distribution':
+        case 'Distribution':
           return <SmallAddIcon />
         case 'Completed':
           return <CheckIcon />
@@ -37,7 +39,13 @@ export function WholesaleAllocation() {
     return (
       <>
         <PageTitle>Wholesale Allocation</PageTitle>
-        <Flex justify="space-between" flexDirection="row">
+        <Flex
+          pt="2"
+          justify="space-between"
+          wrap="wrap"
+          maxW="100%"
+          flexDirection="row"
+        >
           {homePageCards.map(tab => (
             <Box
               key={tab}
@@ -45,21 +53,20 @@ export function WholesaleAllocation() {
               cursor={'pointer'}
             >
               <Box
-                m={4}
-                width="200px"
-                height="200px"
+                m={2}
+                width={cardSize}
+                height={cardSize}
                 boxShadow="md"
                 borderRadius="md"
-                bg="gray.700"
                 animation="fadeIn 1s"
                 display="flex"
                 alignItems="center"
                 flexDirection="column"
                 justifyContent="center"
-                backgroundColor={'#4ea528'}
-                color={'white'}
-                fontWeight={'bold'}
-                fontSize={'lg'}
+                backgroundColor="#4ea528"
+                color="white"
+                fontWeight="bold"
+                fontSize="lg"
               >
                 {getIconForTab(tab)}
                 {tab.toUpperCase()}
@@ -71,9 +78,5 @@ export function WholesaleAllocation() {
     )
   }
 
-  return (
-    <>
-      <HomeView />
-    </>
-  )
+  return <HomeView />
 }

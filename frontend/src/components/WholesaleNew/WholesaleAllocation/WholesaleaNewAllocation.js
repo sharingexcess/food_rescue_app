@@ -289,49 +289,6 @@ export function WholesaleNewAllocation() {
         )
       }
     }
-
-    // async function updateRescueStatus(rescue) {
-    //   const remainingWeight = await calculateCurrentLoad(rescue)
-
-    //   try {
-    //     if (rescue) {
-    //       const activeTransfers = rescue.transfers.filter(
-    //         transfer => transfer.status !== STATUSES.CANCELLED
-    //       )
-    //       const allTransfersComplete = activeTransfers.every(
-    //         transfer => transfer.status === STATUSES.COMPLETED
-    //       )
-
-    //       // We declare the rescue operation as complete if all the active transfers are complete,
-    //       // and the remaining weight is less than the number of active transfers.
-    //       // This leaves room for a rounding off by 1 error on each transfer.
-    //       // If any transfer is cancelled, it does not affect the completion status of the rescue.
-    //       if (
-    //         rescue?.status === STATUSES.ACTIVE &&
-    //         remainingWeight < activeTransfers.length &&
-    //         allTransfersComplete
-    //       ) {
-    //         SE_API.post(
-    //           `/rescues/update/${rescue.id}`,
-    //           {
-    //             id: rescue.id,
-    //             type: rescue.type,
-    //             status: STATUSES.COMPLETED,
-    //             handler_id: rescue.handler_id,
-    //             notes: rescue.notes,
-    //             timestamp_scheduled: moment(
-    //               rescue.timestamp_scheduled
-    //             ).toISOString(),
-    //             timestamp_completed: moment().toISOString(),
-    //             transfer_ids: rescue.transfer_ids,
-    //           },
-    //           user.accessToken
-    //         )
-    //       }
-    //     }
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
   }
 
   function handleOnRemove(transfer) {
