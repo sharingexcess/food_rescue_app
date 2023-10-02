@@ -10,7 +10,6 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { STATUSES } from 'helpers'
-import moment from 'moment'
 import { Link } from 'react-router-dom'
 
 export function EntryCard({ rescue }) {
@@ -60,8 +59,9 @@ export function EntryCard({ rescue }) {
             )}
           </Flex>
           <Text fontSize="sm" color="element.tertiary" fontWeight="300" mt="1">
-            {donation.total_weight} lbs.&nbsp;&nbsp;|&nbsp;&nbsp;
-            {moment(donation.timestamp_completed).format('h:mma')}
+            {donation.product_type ? donation.product_type : 'N/A'}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            {donation.total_weight} lbs.
           </Text>
           <Text
             fontSize="sm"
@@ -70,13 +70,14 @@ export function EntryCard({ rescue }) {
             noOfLines={1}
             mt="1"
           >
-            {rescue.notes}
+            {/* TODO */}
+            {/* {rescue.notes} */}
           </Text>
         </Box>
 
         <Box textAlign="center">
-          <Text fontSize={12} mt="2">
-            Sorted
+          <Text fontSize={12} mt="0">
+            {donation.sorted ? 'Sorted' : ''}
           </Text>
           {donation.sorted ? (
             <CheckCircleIcon color="green.500" w="5" h="5" />
@@ -85,11 +86,11 @@ export function EntryCard({ rescue }) {
           )}
         </Box>
 
-        {/* Delete Icon Button */}
         <IconButton
           variant="ghosted"
           icon={<DeleteIcon w="6" h="6" color="#8000000" />}
           mr="4"
+          mt={2}
           onClick={() => {
             toast({
               title: 'Coming soon!',

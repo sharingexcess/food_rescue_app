@@ -1,12 +1,31 @@
-import { Box, VStack, Text } from '@chakra-ui/react'
-import { PageTitle } from 'components/PageTitle/PageTitle'
-import { useApi } from 'hooks'
-import { useMemo, useState } from 'react'
-import moment from 'moment'
+import { useApi, useAuth } from 'hooks'
+import { useState, useMemo, useEffect } from 'react'
+import { formatTimestamp, STATUSES } from 'helpers'
+import {
+  Box,
+  Flex,
+  Spinner,
+  InputGroup,
+  Input,
+  InputRightElement,
+} from '@chakra-ui/react'
+import { PageTitle, FooterButton } from 'components'
+import { EntryCard } from '../WholesaleEntry/WholesaleEntryCard'
+import { useNavigate } from 'react-router-dom'
+import { CalendarIcon } from '@chakra-ui/icons'
 
 export function WholesaleRemaining() {
-  const [date] = useState(moment().format('YYYY-MM-DDTHH:mm'))
+  const url_params = new URLSearchParams(window.location.search)
+  const { hasAdminPermission } = useAuth()
+  const [statusFilter] = useState(STATUSES.SCHEDULED)
 
+  const navigate = useNavigate()
+
+  const [date, setDate] = useState(
+    formatTimestamp(url_params.get('date') || new Date(), 'YYYY-MM-DD')
+  )
+
+  const [isLoading, setIsLoading] = useState(true)
   const { data: rescues } = useApi(
     '/rescues/list',
     useMemo(
@@ -15,53 +34,72 @@ export function WholesaleRemaining() {
         date_range_start: date,
         date_range_end: date,
       }),
-      [date]
+      [date, statusFilter]
     )
   )
 
-  const calculateRemainingWeight = transfers => {
-    const collectionWeight = transfers
-      .filter(transfer => transfer.type === 'collection')
-      .reduce((acc, curr) => acc + curr.total_weight, 0)
+  useEffect(() => {
+    if (rescues) {
+      setIsLoading(false)
+    }
+  }, [rescues])
 
-    const distributionWeight = transfers
-      .filter(transfer => transfer.type === 'distribution')
-      .reduce((acc, curr) => acc + curr.total_weight, 0)
+  function handleCreateNewRescue() {
+    navigate(`/wholesale-new/entry/create`)
+  }
 
-    return collectionWeight - distributionWeight
+  function handleChangeDate(event) {
+    const dateValue = event.target.value
+      ? formatTimestamp(event.target.value, 'YYYY-MM-DD')
+      : formatTimestamp(new Date(), 'YYYY-MM-DD')
+    setDate(dateValue)
   }
 
   return (
-    <Box p={4}>
-      <PageTitle>Wholesale Remaining</PageTitle>
-      {rescues &&
-        rescues.map(rescue => {
-          const remainingWeight = calculateRemainingWeight(rescue.transfers)
-          return (
-            <VStack spacing={4} align="start" key={rescue.id}>
-              <Box
-                padding={4}
-                border="1px"
-                borderColor="gray.200"
-                borderRadius="md"
-                w={'100%'}
-                mb={4}
-              >
-                <Text>
-                  <strong>Organization:</strong>{' '}
-                  {rescue.transfers[0].organization.name || 'N/A'}
-                </Text>
-                <Text>
-                  <strong>Product Type:</strong>{' '}
-                  {rescue.transfers[0].product_type}
-                </Text>
-                <Text>
-                  <strong>Remaining Weight:</strong> {remainingWeight} lbs.
-                </Text>
-              </Box>
-            </VStack>
-          )
-        })}
-    </Box>
+    <>
+      <PageTitle>Remaining / Scheduled</PageTitle>
+      <Flex flexDirection={'column'}>
+        <Flex justifyContent={'space-between'}>
+          <InputGroup flexShrink="1" flexGrow="0" flexBasis="96px">
+            <Input
+              type="date"
+              value={date}
+              onChange={e => handleChangeDate(e)}
+              fontSize="sm"
+              color="element.secondary"
+              w="128px"
+            />
+            <InputRightElement pointerEvents="none">
+              <CalendarIcon mr="2" color="element.tertiary" />
+            </InputRightElement>
+          </InputGroup>
+        </Flex>
+
+        <Box>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            rescues &&
+            rescues
+              .filter(rescue => rescue.status === statusFilter)
+              .map(rescue => <EntryCard key={rescue.id} rescue={rescue} />)
+          )}
+        </Box>
+      </Flex>
+
+      {hasAdminPermission && (
+        <>
+          <>
+            <FooterButton
+              position="fixed"
+              bottom="8"
+              onClick={() => handleCreateNewRescue()}
+            >
+              New Rescue
+            </FooterButton>
+          </>
+        </>
+      )}
+    </>
   )
 }

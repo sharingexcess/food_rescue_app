@@ -46,6 +46,8 @@ export function WholesaleNewAllocation() {
 
   const [showEntryCard] = useState(true)
   const [date, setDate] = useState(moment().format('YYYY-MM-DDTHH:mm'))
+  const startDate = moment(date).subtract(7, 'days').format('YYYY-MM-DDTHH:mm')
+
   const [notes, setNotes] = useState(formData.notes)
 
   const [filterValue, setFilterValue] = useState('')
@@ -55,8 +57,6 @@ export function WholesaleNewAllocation() {
   const [allocations, setAllocations] = useState([])
 
   const { user } = useAuth()
-
-  const [setIsSearching] = useState(false)
 
   const toast = useToast()
   const [isSaving, setIsSaving] = useState(false)
@@ -69,7 +69,8 @@ export function WholesaleNewAllocation() {
     location_id,
     sliderVal,
     calcWeight,
-    remainingPercent
+    remainingPercent,
+    notes
   ) {
     setAllocations(prev => {
       const updated = [...prev]
@@ -84,6 +85,7 @@ export function WholesaleNewAllocation() {
           sliderValue: sliderVal,
           calculatedWeight: calcWeight,
           remaining_percent: remainingPercent,
+          notes,
         }
       } else {
         updated.push({
@@ -95,6 +97,7 @@ export function WholesaleNewAllocation() {
           sliderValue: sliderVal,
           calculatedWeight: calcWeight,
           remaining_percent: remainingPercent,
+          notes,
         })
       }
       return updated
@@ -106,12 +109,12 @@ export function WholesaleNewAllocation() {
     useMemo(() => ({ type: 'recipient' }), [])
   )
 
-  const { data: rescues, refresh } = useApi(
+  const { data: all_rescues, refresh } = useApi(
     '/rescues/list',
     useMemo(
       () => ({
         type: 'wholesale',
-        date_range_start: date,
+        date_range_start: startDate,
         date_range_end: date,
       }),
       [date]
@@ -158,13 +161,11 @@ export function WholesaleNewAllocation() {
             handler_id: allocations[i].handler_id,
             organization_id: formData.organization.id,
             location_id: formData.location.id,
-            notes: formData.notes,
+            notes: allocations[i].notes,
             timestamp_completed: moment().toISOString(),
-            total_weight: Math.round(allocations[i].calculatedWeight),
+            total_weight: Math.ceil(allocations[i].calculatedWeight),
             categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
-            percent_of_total_dropped: Math.round(
-              allocations[i].remaining_percent
-            ),
+            percent_of_total_dropped: allocations[i].remaining_percent,
           }
 
           for (const category in allocations[i].rescue.transfers[0]
@@ -202,11 +203,17 @@ export function WholesaleNewAllocation() {
               transfer_ids: [...rescue.transfer_ids, distribution.id],
             },
             user.accessToken
-          )
+          ).then(refresh)
 
           console.log('Updated rescue:', updated_rescue)
 
-          await updateRescueStatus(rescue, allocations[i].calculatedWeight)
+          // add last distribution to rescue
+          rescue.transfer_ids.push(distribution.id)
+
+          await updateRescueStatus(
+            rescue,
+            Math.ceil(allocations[i].calculatedWeight)
+          )
 
           await toast({
             title: 'All set!',
@@ -286,15 +293,36 @@ export function WholesaleNewAllocation() {
             transfer_ids: rescue.transfer_ids,
           },
           user.accessToken
-        )
+        ).then(refresh)
       }
     }
+
+    return
   }
 
   function handleOnRemove(transfer) {
     setSelectedTransfers(prevTransfers => {
       return prevTransfers.filter(t => t.transfer.id !== transfer.id)
     })
+  }
+
+  const formatDate = dateStr => {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
+    const date = new Date(dateStr)
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
   }
 
   return (
@@ -378,11 +406,11 @@ export function WholesaleNewAllocation() {
               value={filterValue}
               onChange={e => {
                 setFilterValue(e.target.value)
-                setIsSearching(e.target.value.trim().length > 0)
               }}
             />
-            {rescues &&
-              rescues
+            {filterValue &&
+              all_rescues &&
+              all_rescues
                 .filter(
                   rescue =>
                     !selectedTransfers.some(
@@ -404,8 +432,7 @@ export function WholesaleNewAllocation() {
                     .filter(transfer => transfer.type === 'collection')
                     .map(transfer => {
                       const currentLoad = calculateCurrentLoad(rescue)
-                      if (currentLoad === 0) return null // Do not display if the weight is 0
-
+                      if (currentLoad === 0 || currentLoad < 0) return null // Do not display if the weight is 0
                       return (
                         <Box key={`${rescue.id}-${transfer.id}`}>
                           <Flex
@@ -424,6 +451,9 @@ export function WholesaleNewAllocation() {
                               | {transfer.organization.name} |
                             </Text>
                             {currentLoad} lbs.
+                            <Text ml={2} fontWeight={'200'}>
+                              | {formatDate(rescue.timestamp_created) || ''}
+                            </Text>
                           </Flex>
                           <Divider />
                         </Box>

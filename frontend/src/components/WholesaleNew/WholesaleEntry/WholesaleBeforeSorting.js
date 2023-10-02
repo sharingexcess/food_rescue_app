@@ -1,133 +1,122 @@
-import { Button, Text, Input, Flex, Checkbox } from '@chakra-ui/react'
+import { Button, Text, Input, Flex } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 
-function calculateExpression(expression) {
-  // Use regex to split and calculate addition
-  const numbers = expression.split('+').map(num => parseFloat(num.trim()))
-  if (numbers.every(num => !isNaN(num))) {
-    return numbers.reduce((acc, curr) => acc + curr, 0).toString()
+export function calculateExpression(expression) {
+  try {
+    // Splitting by '+' first
+    const additionParts = expression.split('+')
+
+    const result = additionParts.reduce((acc, part) => {
+      const subtractionParts = part
+        .split('-')
+        .map(num => parseFloat(num.trim()))
+
+      if (subtractionParts.some(num => isNaN(num))) {
+        throw new Error('Invalid number')
+      }
+
+      const subtractionResult = subtractionParts
+        .slice(1)
+        .reduce((acc, curr) => acc - curr, subtractionParts[0])
+
+      return acc + subtractionResult
+    }, 0)
+
+    return result.toString()
+  } catch (err) {
+    return expression
   }
-  return expression
 }
 
-export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
+export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
   const [caseCount, setCaseCount] = useState('')
-  const [totalCaseCount, setTotalCaseCount] = useState('')
   const [caseWeight, setCaseWeight] = useState('')
-  const [firstPalletTotalWeight, setFirstPalletTotalWeight] = useState('')
   const [totalWeight, setTotalWeight] = useState('')
   const [palletType, setPalletType] = useState('')
-  const [multiplePallets, setMultiplePallets] = useState('no')
-  const [palletCount, setPalletCount] = useState('')
 
-  useEffect(() => {
-    let calculatedTotalCaseCount, calculatedTotalWeight, calculatedPalletCount
-    let calculatedAverageCaseWeight = 0
-
-    if (multiplePallets === 'no') {
-      calculatedTotalCaseCount = Number(caseCount)
-      calculatedTotalWeight = Number(firstPalletTotalWeight)
-      calculatedPalletCount = 0 // Only one pallet is used
-    } else {
-      calculatedTotalCaseCount = Number(totalCaseCount)
-      calculatedTotalWeight = Number(totalWeight)
-      calculatedPalletCount = Number(palletCount) // Get the pallet count for multiple pallets
-    }
-
-    calculatedAverageCaseWeight = calculatedTotalCaseCount
-      ? (calculatedTotalWeight / calculatedTotalCaseCount).toFixed(2)
-      : 0
-
-    setSummary({
-      totalCaseCount: calculatedTotalCaseCount,
-      averageCaseWeight: calculatedAverageCaseWeight,
-      totalWeight: calculatedTotalWeight,
-      palletCount: calculatedPalletCount, // Update the pallet count in summary
-    })
-  }, [
-    caseCount,
-    totalCaseCount,
-    firstPalletTotalWeight,
-    totalWeight,
-    multiplePallets,
-    palletCount,
-  ]) // Include palletCount in the dependency list
+  const [originalTotalWeight, setOriginalTotalWeight] = useState('')
 
   useEffect(() => {
     if (triggerReset) {
       setCaseCount('')
-      setTotalCaseCount('')
       setCaseWeight('')
-      setFirstPalletTotalWeight('')
       setTotalWeight('')
       setPalletType('')
-      setMultiplePallets('no')
-      setPalletCount('')
     }
   }, [triggerReset])
 
-  // Calculate total weight of the 1st pallet
   useEffect(() => {
-    if (caseCount && caseWeight) {
-      const calculatedWeight =
-        Number(caseCount) * Number(caseWeight) - palletWeight(palletType)
-      setFirstPalletTotalWeight(calculatedWeight.toString())
-    } else {
-      setFirstPalletTotalWeight('')
+    if (formData) {
+      setCaseCount(formData.totalCaseCount)
+      setCaseWeight(formData.averageCaseWeight)
+      setTotalWeight(formData.totalWeight)
+      setPalletType(formData.palletType)
     }
-  }, [caseCount, caseWeight, palletType]) // Add palletType dependency
+  }, [formData])
 
-  // Calculate overall total weight for multiple pallets
   useEffect(() => {
-    if (totalCaseCount && caseWeight && multiplePallets === 'yes') {
-      const calculatedTotalWeight = Number(totalCaseCount) * Number(caseWeight)
-      setTotalWeight(calculatedTotalWeight.toString())
-    } else {
+    const calculatedCaseCount = parseFloat(calculateExpression(caseCount))
+    const weight = parseFloat(caseWeight)
+
+    if (!isNaN(calculatedCaseCount) && !isNaN(weight)) {
+      const newTotalWeight = Math.max(parseInt(calculatedCaseCount * weight))
+      setTotalWeight(newTotalWeight)
+      setOriginalTotalWeight(newTotalWeight)
+    }
+  }, [caseCount, caseWeight])
+
+  function handlePalletTypeChange(type) {
+    setPalletType(type)
+
+    const baseWeight = originalTotalWeight || totalWeight
+
+    const palletWt = palletWeight(type)
+    const newTotalWeight = baseWeight - palletWt
+    setTotalWeight(newTotalWeight)
+
+    // TODO -- Update average case weight. Safely please
+  }
+
+  function handleTotalWeightChange(e) {
+    if (isNaN(e.target.value) || e.target.value === '') {
       setTotalWeight('')
+      setCaseWeight('')
+      setOriginalTotalWeight('')
+      return
     }
-  }, [totalCaseCount, caseWeight, multiplePallets])
 
-  const handleTotalCaseCountChange = e => {
-    const inputValue = e.target.value
-    setTotalCaseCount(inputValue)
-  }
-
-  const handleTotalCaseCountBlur = e => {
-    const inputValue = e.target.value
-    const calculatedValue = calculateExpression(inputValue)
-    setTotalCaseCount(calculatedValue)
-  }
-
-  const handleCaseCountChange = e => {
-    const inputValue = e.target.value
-    setCaseCount(inputValue)
-  }
-
-  async function handleCaseCountBlur(e) {
-    const inputValue = e.target.value
-    const calculatedValue = calculateExpression(inputValue)
-    setCaseCount(calculatedValue)
-  }
-
-  const handlePalletCountChange = e => {
-    const inputValue = e.target.value
-    setPalletCount(inputValue)
-  }
-
-  const handlePalletCountBlur = e => {
-    const inputValue = e.target.value
-    const calculatedValue = calculateExpression(inputValue)
-    setPalletCount(calculatedValue)
+    const newTotalWeight = parseFloat(e.target.value)
+    setTotalWeight(newTotalWeight)
+    setOriginalTotalWeight(newTotalWeight)
+    if (!isNaN(newTotalWeight) && caseCount) {
+      const calculatedCaseCount = parseFloat(calculateExpression(caseCount))
+      if (calculatedCaseCount !== 0) {
+        const newAverageCaseWeight = newTotalWeight / calculatedCaseCount
+        setCaseWeight(newAverageCaseWeight)
+      }
+    } else {
+      setCaseWeight('')
+    }
+    setTotalWeight(newTotalWeight)
   }
 
   useEffect(() => {
-    if (firstPalletTotalWeight && caseCount) {
-      const calculatedCaseWeight =
-        (Number(firstPalletTotalWeight) + palletWeight(palletType)) /
-        Number(caseCount)
-      setCaseWeight(calculatedCaseWeight.toString())
+    // Check if all three values are present and valid
+    if (caseCount && caseWeight && totalWeight) {
+      setSummary({
+        totalCaseCount: parseInt(calculateExpression(caseCount)),
+        averageCaseWeight: parseFloat(caseWeight),
+        totalWeight: parseFloat(totalWeight),
+      })
     }
-  }, [firstPalletTotalWeight, caseCount, palletType])
+  }, [caseCount, caseWeight, totalWeight])
+
+  function handleKeyPress(event, callback) {
+    if (event.key === 'Enter' || event.keyCode === 13) {
+      callback(event)
+      event.target.blur()
+    }
+  }
 
   return (
     <Flex direction="column" spacing={4}>
@@ -139,7 +128,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
           mt="6"
           textTransform="uppercase"
         >
-          Case Count of 1st Pallet
+          Total case count
         </Text>
         <Input
           name="caseCount1stPallet"
@@ -147,9 +136,18 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
           type="text"
           fontSize="sm"
           value={caseCount}
-          onChange={handleCaseCountChange}
-          onBlur={handleCaseCountBlur}
-          placeholder="Enter case count"
+          onChange={e => setCaseCount(e.target.value)}
+          onBlur={e => {
+            const calculatedValue = calculateExpression(e.target.value)
+            setCaseCount(calculatedValue)
+          }}
+          placeholder="30 or 20+10"
+          onKeyDown={e =>
+            handleKeyPress(e, ev => {
+              const calculatedValue = calculateExpression(ev.target.value)
+              setCaseCount(calculatedValue)
+            })
+          }
         />
       </Flex>
 
@@ -161,13 +159,12 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
           mt="6"
           textTransform="uppercase"
         >
-          Case Weight (in lbs.)
+          Average Case Weight
         </Text>
         <Input
           name="caseWeight"
           id="caseWeight"
           type="number"
-          min="0"
           fontSize="sm"
           value={caseWeight}
           onChange={e => setCaseWeight(e.target.value)}
@@ -183,24 +180,24 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
           mt="6"
           textTransform="uppercase"
         >
-          Total weight of 1st pallet (in lbs.)
+          Total weight
         </Text>
         <Input
-          name="firstPalletTotalWeight"
-          id="firstPalletTotalWeight"
+          name="totalWeight"
+          id="totalWeight"
           type="number"
           min="0"
           fontSize="sm"
-          value={firstPalletTotalWeight}
-          onChange={e => setFirstPalletTotalWeight(e.target.value)}
-          placeholder="Enter total weight or it will be automatically calculated"
+          value={totalWeight}
+          onChange={handleTotalWeightChange}
+          placeholder="Calculated automatically or enter total weight (in lbs.)"
         />
       </Flex>
       <Flex direction="row" justifyContent="space-around" mb="4">
         <Button
           variant="outline"
           colorScheme="red"
-          onClick={() => setPalletType('wood')}
+          onClick={() => handlePalletTypeChange('wood')}
           isActive={palletType === 'wood'}
         >
           Wood
@@ -208,7 +205,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
         <Button
           variant="outline"
           colorScheme="green"
-          onClick={() => setPalletType('black')}
+          onClick={() => handlePalletTypeChange('black')}
           isActive={palletType === 'black'}
         >
           Black
@@ -216,7 +213,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
         <Button
           variant="outline"
           colorScheme="blue"
-          onClick={() => setPalletType('blue')}
+          onClick={() => handlePalletTypeChange('blue')}
           isActive={palletType === 'blue'}
         >
           Blue
@@ -224,101 +221,12 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset }) {
         <Button
           variant="outline"
           colorScheme="black"
-          onClick={() => setPalletType('other')}
+          onClick={() => handlePalletTypeChange('other')}
           isActive={palletType === 'other'}
         >
           Other
         </Button>
       </Flex>
-      <Flex direction="row" alignItems="center" mt="4">
-        <Text color="element.tertiary" fontSize="sm" fontWeight="600" mr="4">
-          Multiple pallets?
-        </Text>
-        <Checkbox
-          isChecked={multiplePallets === 'yes'}
-          onChange={() =>
-            setMultiplePallets(multiplePallets === 'yes' ? null : 'yes')
-          }
-          mr="4"
-        >
-          Yes
-        </Checkbox>
-        <Checkbox
-          isChecked={multiplePallets === 'no'}
-          onChange={() =>
-            setMultiplePallets(multiplePallets === 'no' ? null : 'no')
-          }
-        >
-          No
-        </Checkbox>
-      </Flex>
-      {multiplePallets === 'yes' && (
-        <Flex direction="column">
-          <Flex direction="column" mb="4">
-            <Text
-              color="element.tertiary"
-              fontSize="xs"
-              fontWeight="700"
-              mt="6"
-              textTransform="uppercase"
-            >
-              Total case count
-            </Text>
-            <Input
-              name="totalCaseCount"
-              id="totalCaseCount"
-              type="text"
-              fontSize="sm"
-              value={totalCaseCount}
-              onChange={handleTotalCaseCountChange}
-              onBlur={handleTotalCaseCountBlur}
-              placeholder="e.g., 200 + 10 + 30"
-            />
-          </Flex>
-          <Flex direction="column" mb="4">
-            <Text
-              color="element.tertiary"
-              fontSize="xs"
-              fontWeight="700"
-              mt="6"
-              textTransform="uppercase"
-            >
-              Total weight
-            </Text>
-            <Input
-              name="totalWeight"
-              id="totalWeight"
-              type="number"
-              min="0"
-              fontSize="sm"
-              value={totalWeight}
-              onChange={e => setTotalWeight(e.target.value)}
-              placeholder="Enter weight (in lbs.)"
-            />
-          </Flex>
-          <Flex direction="column" mb="4">
-            <Text
-              color="element.tertiary"
-              fontSize="xs"
-              fontWeight="700"
-              mt="6"
-              textTransform="uppercase"
-            >
-              Number of pallets
-            </Text>
-            <Input
-              name="palletCount"
-              id="palletCount"
-              type="text"
-              fontSize="sm"
-              value={palletCount}
-              onChange={handlePalletCountChange}
-              onBlur={handlePalletCountBlur}
-              placeholder=""
-            />
-          </Flex>
-        </Flex>
-      )}
     </Flex>
   )
 }
@@ -327,11 +235,11 @@ function palletWeight(type) {
   if (!type) return 0
   switch (type) {
     case 'wood':
-      return 345
+      return 407
     case 'black':
-      return 350
+      return 412
     case 'blue':
-      return 373
+      return 435
     case 'other':
       return 0 // Change this if "other" type pallet has a specific weight
     default:

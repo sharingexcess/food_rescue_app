@@ -27,6 +27,8 @@ export function WholesaleAllocationCard({
     sliderValue * transfer.average_case_weight
   )
 
+  const [notes, setNotes] = useState('')
+
   useEffect(() => {
     if (rescue) {
       setRemainingWeight(calculateCurrentLoad(rescue))
@@ -34,7 +36,15 @@ export function WholesaleAllocationCard({
   }, [rescue])
 
   useEffect(() => {
-    const weight = sliderValue * transfer.average_case_weight
+    let weight
+    if (
+      sliderValue ===
+      parseInt((remainingWeight / transfer.average_case_weight).toFixed(0))
+    ) {
+      weight = remainingWeight
+    } else {
+      weight = (sliderValue * transfer.average_case_weight).toFixed(0)
+    }
     setCalculatedWeight(weight)
     onAllocationUpdate(
       rescue,
@@ -44,9 +54,10 @@ export function WholesaleAllocationCard({
       transfer.location_id,
       sliderValue,
       weight,
-      (weight / transfer.total_weight) * 100
+      (weight / transfer.total_weight) * 100,
+      notes
     )
-  }, [sliderValue, transfer])
+  }, [sliderValue, transfer, notes])
 
   const SliderLabel = ({ children }) => (
     <Text w="48px" fontWeight="bold" textAlign="center">
@@ -91,9 +102,6 @@ export function WholesaleAllocationCard({
           {' lbs.'}
         </Text>
       </Flex>
-      <Text fontWeight="500" mb={2}>
-        CASE COUNT
-      </Text>
 
       <Text textAlign="center" fontWeight="bold" mb={2}>
         {sliderValue} CASES
@@ -122,9 +130,26 @@ export function WholesaleAllocationCard({
       </Flex>
 
       <Text mt={4}>
-        Total Weight: {Math.round(calculatedWeight)}
+        Total Weight: {Math.ceil(calculatedWeight)}
         {' lbs.'}
       </Text>
+
+      <Box mt={4}>
+        <Text fontWeight="500" mb={2}>
+          Notes
+        </Text>
+        <textarea
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+          placeholder="Add your notes here..."
+          style={{
+            width: '100%',
+            padding: '8px',
+            borderRadius: '4px',
+            borderColor: '#E2E8F0',
+          }}
+        ></textarea>
+      </Box>
     </Box>
   )
 }

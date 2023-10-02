@@ -132,6 +132,18 @@ export function WholesaleEntryCreate({ defaultDate }) {
       })
       return
     }
+
+    if (!formData.totalWeight < 0) {
+      toast({
+        title: 'Error!',
+        description: `Please enter a valid weight.`,
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+        position: 'top',
+      })
+      return
+    }
   }
 
   // create wholesale rescue
@@ -372,7 +384,7 @@ export function WholesaleEntryCreate({ defaultDate }) {
       >
         {activeTab === 'before-sorting' ? (
           <WholesaleBeforeSorting
-            formData={formData}
+            formData={formData ? formData : null}
             setFormData={setFormData}
             setSummary={setSummary}
             triggerReset={triggerWholesaleReset}
@@ -603,17 +615,20 @@ function AddDonationFooter({
           placeholder="Enter description"
         />
       </Flex>
-      <Button
-        size="lg"
-        w="100%"
-        disabled={!formData.organization || totalWeight < 0}
-        onClick={rescue ? handleUpdateRescue : handleCreateRescue}
-        isLoading={isLoading}
-        loadingText={'Submitting Rescue...'}
-      >
-        {rescue ? 'Update Rescue' : 'Save Rescue'}{' '}
-        {formData.weight ? `(${totalWeight} lbs.)` : ''}
-      </Button>
+      <Flex justifyContent={'space-between'}>
+        <Button
+          size="lg"
+          w="100%"
+          disabled={!formData.organization || totalWeight < 0}
+          onClick={rescue ? handleUpdateRescue : handleCreateRescue}
+          isLoading={isLoading}
+          loadingText={'Submitting Rescue...'}
+          mr={6}
+        >
+          {rescue ? 'Update Rescue' : 'Save Rescue'}{' '}
+          {formData.weight ? `(${totalWeight} lbs.)` : ''}
+        </Button>
+      </Flex>
       <Modal isOpen={isLoading} closeOnOverlayClick={false} closeOnEsc={false}>
         <ModalOverlay />
         <ModalContent

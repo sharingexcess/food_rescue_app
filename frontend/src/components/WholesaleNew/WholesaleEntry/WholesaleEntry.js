@@ -1,14 +1,14 @@
 import { useApi, useAuth } from 'hooks'
 import { useState, useMemo, useEffect } from 'react'
-import { formatTimestamp } from 'helpers'
+import { formatTimestamp, STATUSES } from 'helpers'
 import {
   Box,
   Flex,
   Spinner,
-  Select,
   InputGroup,
   Input,
   InputRightElement,
+  Text,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
 import { EntryCard } from './WholesaleEntryCard'
@@ -16,17 +16,13 @@ import { useNavigate } from 'react-router-dom'
 import { CalendarIcon } from '@chakra-ui/icons'
 
 export function WholesaleEntry() {
-  const url_params = new URLSearchParams(window.location.search)
   const { hasAdminPermission } = useAuth()
-  const [statusFilter, setStatusFilter] = useState('active')
+  const [statusFilter] = useState(STATUSES.ACTIVE)
 
   const navigate = useNavigate()
 
-  const [date, setDate] = useState(
-    formatTimestamp(url_params.get('date') || new Date(), 'YYYY-MM-DD')
-  )
-
-  const [isLoading, setIsLoading] = useState(true) // Add a loading state
+  const [date, setDate] = useState(formatTimestamp(new Date(), 'YYYY-MM-DD'))
+  const [isLoading, setIsLoading] = useState(true)
   const { data: rescues } = useApi(
     '/rescues/list',
     useMemo(
@@ -41,7 +37,7 @@ export function WholesaleEntry() {
 
   useEffect(() => {
     if (rescues) {
-      setIsLoading(false) // Set loading state to false once data is fetched
+      setIsLoading(false)
     }
   }, [rescues])
 
@@ -56,22 +52,66 @@ export function WholesaleEntry() {
     setDate(dateValue)
   }
 
+  function formatDate(input) {
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ]
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
+
+    const [year, month, day] = input.split('-').map(Number)
+
+    // Create a new Date using the correct format to avoid the zero-based month issue
+    const date = new Date(year, month - 1, day)
+
+    const dayOfWeek = days[date.getDay()]
+    const monthName = months[date.getMonth()]
+    const dayOfMonth = date.getDate()
+
+    let suffix = 'th'
+    switch (dayOfMonth) {
+      case 1:
+      case 21:
+      case 31:
+        suffix = 'st'
+        break
+      case 2:
+      case 22:
+        suffix = 'nd'
+        break
+      case 3:
+      case 23:
+        suffix = 'rd'
+        break
+    }
+
+    return `${dayOfWeek} ${monthName} ${dayOfMonth}${suffix}, ${year}`
+  }
+
   return (
     <>
-      <PageTitle>Wholesale Entries</PageTitle>
+      <PageTitle>Entry</PageTitle>
       <Flex flexDirection={'column'}>
-        <Flex justifyContent={'space-between'}>
-          <Select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            marginBottom="1rem"
-            w={200}
-          >
-            <option value="completed">Completed</option>
-            <option value="active">Active</option>
-          </Select>
-
-          {/* Adding the date input group */}
+        <Flex justifyContent={'space-between'} alignItems={'center'}>
+          <Text fontWeight={'bold'}>{formatDate(date)}</Text>
           <InputGroup flexShrink="1" flexGrow="0" flexBasis="96px">
             <Input
               type="date"

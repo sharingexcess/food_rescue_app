@@ -353,7 +353,11 @@ function RescueAppRoutes() {
                     id="Wholesale-new"
                     defaultTitle="Wholesale-new"
                     defaultBreadcrumbs={[
-                      { label: 'Wholesale', link: '/wholesale-new' },
+                      { label: 'Wholesale', link: '/wholesale' },
+                      {
+                        label: 'Entry',
+                        link: '/wholesale-new/entry',
+                      },
                     ]}
                     Content={WholesaleEntry}
                   />
@@ -366,8 +370,13 @@ function RescueAppRoutes() {
                     id="Wholesale-new"
                     defaultTitle="Wholesale-new"
                     defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
                       {
-                        label: 'Wholesale',
+                        label: 'Entry',
+                        link: '/wholesale-new/entry/create',
+                      },
+                      {
+                        label: 'Create',
                         link: '/wholesale-new/entry/create',
                       },
                     ]}
@@ -382,8 +391,9 @@ function RescueAppRoutes() {
                     id="allocation"
                     defaultTitle="Wholesale Allocation"
                     defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
                       {
-                        label: 'allocation',
+                        label: 'Allocation',
                         link: '/wholesale-new/allocation',
                       },
                     ]}
@@ -398,8 +408,13 @@ function RescueAppRoutes() {
                     id="allocation"
                     defaultTitle="Wholesale Allocation"
                     defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
                       {
-                        label: 'allocation',
+                        label: 'Allocation',
+                        link: '/wholesale-new/allocation',
+                      },
+                      {
+                        label: 'Create',
                         link: '/wholesale-new/allocation/create',
                       },
                     ]}
@@ -430,8 +445,13 @@ function RescueAppRoutes() {
                     id="allocation"
                     defaultTitle="Wholesale Remaining"
                     defaultBreadcrumbs={[
+                      { label: 'Wholesale', link: '/wholesale' },
                       {
-                        label: 'allocation',
+                        label: 'Allocation',
+                        link: '/wholesale-new/allocation',
+                      },
+                      {
+                        label: 'Remaining',
                         link: '/wholesale-new/remaining',
                       },
                     ]}

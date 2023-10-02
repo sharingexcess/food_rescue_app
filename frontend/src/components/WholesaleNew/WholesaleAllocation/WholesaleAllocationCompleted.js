@@ -2,33 +2,28 @@ import { CalendarIcon } from '@chakra-ui/icons'
 import {
   Box,
   Flex,
-  Heading,
   Input,
   InputGroup,
   InputRightElement,
-  Text,
-  List,
-  ListItem,
-  Badge,
-  VStack,
-  HStack,
+  Select,
+  Spinner,
 } from '@chakra-ui/react'
 
 import { PageTitle } from 'components'
-import {
-  formatLargeNumber,
-  formatTimestamp,
-  STATUSES,
-  TRANSFER_TYPES,
-} from 'helpers'
+import { formatTimestamp } from 'helpers'
 import { useApi } from 'hooks'
 import { useEffect, useMemo, useState } from 'react'
+import { EntryCard } from '../WholesaleEntry/WholesaleEntryCard'
 
 export function WholesaleAllocationCompleted() {
   const url_params = new URLSearchParams(window.location.search)
   const [date, setDate] = useState(
     formatTimestamp(url_params.get('date') || new Date(), 'YYYY-MM-DD')
   )
+
+  const [statusFilter, setStatusFilter] = useState('completed')
+  const [isLoading, setIsLoading] = useState(true) // Add a loading state
+
   const { data: rescues } = useApi(
     '/rescues/list',
     useMemo(
@@ -38,73 +33,37 @@ export function WholesaleAllocationCompleted() {
         date_range_end: date,
         status: 'completed',
       }),
-      [date]
+      [date, 'completed']
     )
   )
 
-  const distributionTransfers = useMemo(() => {
-    if (!rescues) return []
-    return rescues
-      .flatMap(rescue => rescue.transfers || [])
-      .filter(transfer => transfer.type === 'distribution')
+  useEffect(() => {
+    if (rescues) {
+      setIsLoading(false)
+    }
   }, [rescues])
 
-  useEffect(() => {
-    if (distributionTransfers) {
-      console.log(distributionTransfers)
-    }
-  }, [distributionTransfers])
+  function handleChangeDate(e) {
+    e.preventDefault()
 
-  const totalPounds = useMemo(() => {
-    let total = 0
-    for (const rescue of rescues || []) {
-      for (const transfer of rescue.transfers.filter(
-        s =>
-          s.type === TRANSFER_TYPES.COLLECTION &&
-          s.status !== STATUSES.CANCELLED
-      )) {
-        total += transfer.total_weight
-      }
-    }
-    return total
-  })
-
-  const totalDonated = useMemo(() => {
-    let total = 0
-    for (const rescue of rescues || []) {
-      for (const transfer of rescue.transfers.filter(
-        s => s.type === TRANSFER_TYPES.DISTRIBUTION
-      )) {
-        total += transfer.total_weight
-      }
-    }
-    return total
-  })
-
-  useEffect(() => {
-    date && window.history.replaceState(null, '', `/wholesale?date=${date}`)
-  }, [date])
-
-  function handleChangeDate(event) {
-    const dateValue = event.target.value
-      ? formatTimestamp(event.target.value, 'YYYY-MM-DD')
-      : formatTimestamp(new Date(), 'YYYY-MM-DD')
-    setDate(dateValue)
+    setDate(e.target.value)
   }
 
   return (
     <>
       <PageTitle>Completed Distributions</PageTitle>
-      <Flex w="100%" justify="space-between" align="top" mb="4">
-        <Box pt="2">
-          <Heading size="md" flexBasis="50%">
-            {formatTimestamp(date, 'dddd, MMM. DD')}
-          </Heading>
-          <Text fontSize="xs" color="element.secondary" fontWeight="300" mt="1">
-            {formatLargeNumber(totalPounds)} lbs. collected{' | '}
-            {formatLargeNumber(totalDonated)} lbs. distributed
-          </Text>
-        </Box>
+      <Flex justifyContent={'space-between'}>
+        <Select
+          w="128px"
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          fontSize="sm"
+          color="element.secondary"
+          mr="2"
+        >
+          <option value="completed">Organizations</option>
+          <option value="cancelled">Vendors</option>
+        </Select>
         <InputGroup flexShrink="1" flexGrow="0" flexBasis="96px">
           <Input
             type="date"
@@ -119,51 +78,16 @@ export function WholesaleAllocationCompleted() {
           </InputRightElement>
         </InputGroup>
       </Flex>
-      {distributionTransfers.length > 0 ? (
-        <>
-          <List spacing={3} colorScheme="teal">
-            {distributionTransfers.map((distributionTransfer, index) => (
-              <Box
-                mt={4}
-                p={6}
-                borderWidth="1px"
-                borderRadius="lg"
-                boxShadow="md"
-                overflow="hidden"
-                key={index}
-              >
-                <VStack align="start" spacing={5}>
-                  <HStack spacing={4}>
-                    <Badge colorScheme="teal" fontSize="0.8em">
-                      {distributionTransfer.status.toUpperCase()}
-                    </Badge>
-                    <Text fontSize="xs">
-                      {new Date(
-                        distributionTransfer.timestamp_created
-                      ).toLocaleString()}
-                    </Text>
-                  </HStack>
-
-                  <Heading size="md">
-                    {distributionTransfer.organization.name}
-                  </Heading>
-
-                  <List spacing={2}>
-                    <ListItem>
-                      <strong>Distributon Percentage: </strong>
-                      {distributionTransfer.percent_of_total_dropped}%
-                    </ListItem>
-                  </List>
-                </VStack>
-              </Box>
-            ))}
-          </List>
-        </>
-      ) : (
-        <Box mt={4} p={4} borderWidth="1px" borderRadius="lg" boxShadow="lg">
-          <Text color="white.500">Loading distributions...</Text>
-        </Box>
-      )}
+      <Box>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          rescues &&
+          rescues
+            .filter(rescue => rescue.status === statusFilter)
+            .map(rescue => <EntryCard key={rescue.id} rescue={rescue} />)
+        )}
+      </Box>
     </>
   )
 }

@@ -38,7 +38,7 @@ export function WholesaleAllocation() {
 
     return (
       <>
-        <PageTitle>Wholesale Allocation</PageTitle>
+        <PageTitle>Allocation</PageTitle>
         <Flex
           pt="2"
           justify="space-between"
