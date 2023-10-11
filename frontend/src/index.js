@@ -41,6 +41,7 @@ import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.css'
+import { AdvancedAnalytics } from 'components/Analytics/AdvancedAnalytics'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -208,6 +209,22 @@ function RescueAppRoutes() {
                       { label: 'Analytics', link: '/analytics' },
                     ]}
                     Content={Analytics}
+                  />
+                }
+              />
+              <Route
+                path="/advanced-analytics"
+                element={
+                  <Page
+                    id="Advanced Analytics"
+                    defaultTitle="Analytics"
+                    defaultBreadcrumbs={[
+                      {
+                        label: 'Advanced Analytics',
+                        link: '/advanced-analytics',
+                      },
+                    ]}
+                    Content={AdvancedAnalytics}
                   />
                 }
               />
