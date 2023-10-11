@@ -14,6 +14,7 @@ const {
   STATUSES,
 } = require('../../../helpers')
 
+// analytics endpoint
 async function analyticsEndpoint(request, response) {
   return new Promise(async resolve => {
     console.log('INVOKING ENDPOINT: analytics()\n', 'params:', request.query)
