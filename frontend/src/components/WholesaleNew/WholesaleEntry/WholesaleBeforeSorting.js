@@ -1,32 +1,6 @@
 import { Button, Text, Input, Flex } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-
-export function calculateExpression(expression) {
-  try {
-    // Splitting by '+' first
-    const additionParts = expression.split('+')
-
-    const result = additionParts.reduce((acc, part) => {
-      const subtractionParts = part
-        .split('-')
-        .map(num => parseFloat(num.trim()))
-
-      if (subtractionParts.some(num => isNaN(num))) {
-        throw new Error('Invalid number')
-      }
-
-      const subtractionResult = subtractionParts
-        .slice(1)
-        .reduce((acc, curr) => acc - curr, subtractionParts[0])
-
-      return acc + subtractionResult
-    }, 0)
-
-    return result.toString()
-  } catch (err) {
-    return expression
-  }
-}
+import { calculateExpression } from './helper'
 
 export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
   const [caseCount, setCaseCount] = useState('')
@@ -50,7 +24,6 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
       setCaseCount(formData.totalCaseCount)
       setCaseWeight(formData.averageCaseWeight)
       setTotalWeight(formData.totalWeight)
-      setPalletType(formData.palletType)
     }
   }, [formData])
 
@@ -74,9 +47,10 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
     const newTotalWeight = baseWeight - palletWt
     setTotalWeight(newTotalWeight)
 
-    // TODO -- Update average case weight. Safely please
+    // TODO -- Update average case weight safely.
   }
 
+  // handles total weight change
   function handleTotalWeightChange(e) {
     if (isNaN(e.target.value) || e.target.value === '') {
       setTotalWeight('')
@@ -241,7 +215,7 @@ function palletWeight(type) {
     case 'blue':
       return 435
     case 'other':
-      return 0 // Change this if "other" type pallet has a specific weight
+      return 0
     default:
       return 0
   }
