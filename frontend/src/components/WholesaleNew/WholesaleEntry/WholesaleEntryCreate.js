@@ -38,7 +38,7 @@ export function WholesaleEntryCreate({ defaultDate }) {
     organization: null,
     location: null,
     weight: '',
-    food_category: null,
+    food_category: 'produce',
     notes: '',
     pallet: null,
     totalCaseCount: '',
@@ -220,6 +220,9 @@ export function WholesaleEntryCreate({ defaultDate }) {
       pallet: null,
       totalCaseCount: '',
       averageCaseWeight: '',
+      vegetables: false,
+      fruits: false,
+      product_type: '',
     })
 
     setSummary({
@@ -633,7 +636,6 @@ function AddDonationFooter({
           mr={6}
         >
           {rescue ? 'Update Rescue' : 'Save Rescue'}{' '}
-          {formData.weight ? `(${totalWeight} lbs.)` : ''}
         </Button>
       </Flex>
       <Modal isOpen={isLoading} closeOnOverlayClick={false} closeOnEsc={false}>
