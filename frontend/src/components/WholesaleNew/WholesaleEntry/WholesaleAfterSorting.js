@@ -7,14 +7,11 @@ import {
   IconButton,
   Checkbox,
 } from '@chakra-ui/react'
-
 import { useState, useEffect } from 'react'
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from '@chakra-ui/icons'
-
 import { AfterSortingPallet } from './AfterSortingPallet'
 
-// after sorting view
-export function WholesaleAfterSorting({ setSummary, isSorted }) {
+export function WholesaleAfterSorting({ setSummary, isSorted, summary }) {
   const [sorted, setSorted] = useState(false)
   const [pallets, setPallets] = useState([
     {
@@ -49,13 +46,22 @@ export function WholesaleAfterSorting({ setSummary, isSorted }) {
       ? totalCaseWeight / totalCaseCount
       : 0
 
-    // Update the summary state
-    setSummary({
-      totalCaseCount,
-      averageCaseWeight,
-      totalWeight,
-      sorted,
-    })
+    // Initialize the summary
+    if (totalWeight === 0 && totalCaseCount === 0 && averageCaseWeight === 0) {
+      setSummary({
+        totalCaseCount: summary.totalCaseCount,
+        averageCaseWeight: summary.averageCaseWeight,
+        totalWeight: summary.totalWeight,
+        sorted: summary.sorted,
+      })
+    } else {
+      setSummary({
+        totalCaseCount,
+        averageCaseWeight,
+        totalWeight,
+        sorted,
+      })
+    }
   }, [pallets])
 
   const togglePalletOpen = id => {
@@ -78,8 +84,6 @@ export function WholesaleAfterSorting({ setSummary, isSorted }) {
       return pallet
     })
     setPallets(updatedPallets)
-
-    // Compute the new summary here if needed.
   }
 
   return (

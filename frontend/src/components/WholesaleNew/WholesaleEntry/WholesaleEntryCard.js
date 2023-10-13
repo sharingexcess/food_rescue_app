@@ -9,8 +9,9 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react'
-import { STATUSES } from 'helpers'
+import { STATUSES, SE_API } from 'helpers'
 import { Link } from 'react-router-dom'
+import { useAuth } from 'hooks'
 
 export function EntryCard({ rescue }) {
   const donation = rescue.transfers[0]
@@ -21,6 +22,37 @@ export function EntryCard({ rescue }) {
   )
 
   const toast = useToast()
+  const { user } = useAuth()
+
+  const handleDelete = async () => {
+    const rescue_id = rescue.id
+    const transfer_id = donation.id
+
+    const cancel_transfer_payload = {
+      notes: 'Cancelled by admin',
+    }
+
+    await SE_API.post(
+      `/transfers/cancel/${transfer_id}`,
+      cancel_transfer_payload,
+      user.accessToken
+    )
+
+    await SE_API.post(
+      `/rescues/cancel/${rescue_id}`,
+      cancel_transfer_payload,
+      user.accessToken
+    )
+
+    toast({
+      title: 'Rescue cancelled.',
+      description: 'The rescue has been cancelled.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+      position: 'top',
+    })
+  }
 
   return (
     <Link to={`/wholesale-new/entry/create?edit=${rescue.id}`}>
@@ -82,7 +114,7 @@ export function EntryCard({ rescue }) {
           {donation.sorted ? (
             <CheckCircleIcon color="green.500" w="5" h="5" />
           ) : (
-            <Box w="5" h="5" /> // Empty space for non-sorted
+            <Box w="5" h="5" />
           )}
         </Box>
 
@@ -92,15 +124,7 @@ export function EntryCard({ rescue }) {
           mr="4"
           mt={2}
           onClick={() => {
-            toast({
-              title: 'Coming soon!',
-              description: `Delete not supported yet.`,
-              status: 'info',
-              duration: 2000,
-              isClosable: true,
-              position: 'top',
-            })
-            // handleDelete(rescue.id)
+            handleDelete()
           }}
         />
       </Flex>

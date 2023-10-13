@@ -38,7 +38,7 @@ export function WholesaleEntryCreate({ defaultDate }) {
     organization: null,
     location: null,
     weight: '',
-    food_category: 'produce',
+    food_category: null,
     notes: '',
     pallet: null,
     totalCaseCount: '',
@@ -81,7 +81,12 @@ export function WholesaleEntryCreate({ defaultDate }) {
         organization: rescue.transfers[0].organization,
         location: rescue.transfers[0].location,
         weight: rescue.transfers[0].total_weight,
-        food_category: rescue.transfers[0].food_category,
+        food_category:
+          rescue.transfers[0].food_category === undefined || null || ''
+            ? Object.keys(rescue.transfers[0].categorized_weight).filter(
+                key => rescue.transfers[0].categorized_weight[key] > 0
+              )[0]
+            : rescue.transfers[0].food_category,
         product_type: rescue.transfers[0].product_type,
         notes: rescue.notes,
         pallet: rescue.transfers[0].pallet,
@@ -97,6 +102,7 @@ export function WholesaleEntryCreate({ defaultDate }) {
         averageCaseWeight: rescue.transfers[0].average_case_weight || 0,
         totalWeight: rescue.transfers[0].total_weight || 0,
         palletCount: rescue.transfers[0].pallet || 0,
+        sorted: rescue.transfers[0].sorted || false,
       })
     }
   }, [rescue, activeTab])
@@ -181,20 +187,12 @@ export function WholesaleEntryCreate({ defaultDate }) {
       ],
     }
 
-    // add categorized weight
     payload.transfers[0].categorized_weight[formData.food_category] =
       payload.transfers[0].total_weight
 
     setIsLoading(true)
 
-    const rescue = await SE_API.post(
-      '/rescues/create',
-      payload,
-      user.accessToken
-    )
-
-    console.log('DONE!')
-    console.log(rescue)
+    await SE_API.post('/rescues/create', payload, user.accessToken)
 
     setIsLoading(false)
 
@@ -235,20 +233,6 @@ export function WholesaleEntryCreate({ defaultDate }) {
   async function handleUpdateRescue() {
     setIsLoading(true)
 
-    const payload = {
-      id: rescue.id,
-      type: rescue.type,
-      status: rescue.status,
-      handler_id: rescue.handler_id,
-      notes: formData.notes || '',
-      weight: formData.weight,
-      timestamp_scheduled: moment(formData.date).toISOString(),
-      timestamp_completed: rescue.timestamp_completed,
-      transfer_ids: rescue.transfer_ids,
-    }
-
-    await SE_API.post(`/rescues/update/${rescue_id}`, payload, user.accessToken)
-
     const transfer = rescue.transfers[0]
 
     const transfer_payload = {
@@ -276,11 +260,27 @@ export function WholesaleEntryCreate({ defaultDate }) {
     transfer_payload.categorized_weight[formData.food_category] =
       formData.weight
 
+    console.log('Update payload', transfer_payload)
+
     await SE_API.post(
       `/transfers/update/${transfer.id}`,
       transfer_payload,
       user.accessToken
     )
+
+    const payload = {
+      id: rescue.id,
+      type: rescue.type,
+      status: rescue.status,
+      handler_id: rescue.handler_id,
+      notes: formData.notes || '',
+      weight: formData.weight,
+      timestamp_scheduled: moment(formData.date).toISOString(),
+      timestamp_completed: rescue.timestamp_completed,
+      transfer_ids: rescue.transfer_ids,
+    }
+
+    await SE_API.post(`/rescues/update/${rescue_id}`, payload, user.accessToken)
 
     setIsLoading(false)
 
@@ -441,6 +441,8 @@ function AddEntryHeader({ formData, setFormData, donors, rescue }) {
     setFormData({ ...formData, organization: value, location })
   }
 
+  console.log('formData', formData)
+
   return (
     <>
       <Flex direction="row" wrap={true} justifyContent="space-between">
@@ -486,14 +488,6 @@ function AddEntryHeader({ formData, setFormData, donors, rescue }) {
                 })
               }
             >
-              {/* {formData.organization &&
-                formData.organization.locations &&
-                formData.organization.locations.map(i => (
-                  <option value={i.id} key={i.id}>
-                    {i.nickname ? `${i.nickname} (${i.address1})` : i.address1}
-                  </option>
-                ))} */}
-
               {rescue ? (
                 <option
                   value={rescue.transfers[0].location.id}
@@ -611,7 +605,20 @@ function AddDonationFooter({
           type="text"
           fontSize="sm"
           value={formData.notes}
-          onChange={e => setFormData({ ...formData, notes: e.target.value })}
+          onChange={e =>
+            setFormData({
+              notes: e.target.value,
+              organization: formData.organization,
+              location: formData.location,
+              weight: formData.weight,
+              food_category: formData.food_category,
+              product_type: formData.product_type,
+              pallet: formData.pallet,
+              vegetables: formData.vegetables,
+              fruits: formData.fruits,
+              sorted: formData.sorted,
+            })
+          }
           placeholder="Enter description"
         />
       </Flex>
