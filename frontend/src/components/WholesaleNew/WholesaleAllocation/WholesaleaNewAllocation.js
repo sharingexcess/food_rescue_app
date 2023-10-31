@@ -25,6 +25,7 @@ import {
   SE_API,
   STATUSES,
   TRANSFER_TYPES,
+  formatDate,
 } from 'helpers'
 import moment from 'moment'
 
@@ -304,25 +305,6 @@ export function WholesaleNewAllocation() {
     setSelectedTransfers(prevTransfers => {
       return prevTransfers.filter(t => t.transfer.id !== transfer.id)
     })
-  }
-
-  const formatDate = dateStr => {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ]
-    const date = new Date(dateStr)
-    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
   }
 
   return (

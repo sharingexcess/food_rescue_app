@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Button, Text, Input, Flex } from '@chakra-ui/react'
+import { useAuth } from 'hooks'
+import { Button, Text, Input, Flex, Select } from '@chakra-ui/react'
 
 export function AfterSortingPallet({
   onCaseCountChange,
@@ -11,6 +12,10 @@ export function AfterSortingPallet({
   const [caseWeight, setCaseWeight] = useState('')
   const [totalWeight, setTotalWeight] = useState('')
   const [palletType, setPalletType] = useState('')
+
+  const { user } = useAuth()
+  const [jackType, setJackType] = useState('')
+  const [setLastJackWeight] = useState(0)
 
   function palletWeight(type) {
     switch (type) {
@@ -91,6 +96,31 @@ export function AfterSortingPallet({
     const inputValue = e.target.value
     if (inputValue.includes('+')) {
       setTotalWeight(inputValue)
+    }
+  }
+
+  function handleJackSelectChange(e) {
+    const selectedJack = e.target.value
+    setJackType(selectedJack)
+
+    let jackWeight = 0
+    if (selectedJack !== 'none') {
+      const jack = user.jacks.find(jack => jack.name === selectedJack)
+      if (jack) {
+        jackWeight = parseFloat(jack.weight)
+      }
+    }
+
+    // Calculate the new total weight
+    const baseWeight = Number(caseCount) * Number(caseWeight)
+    const newTotalWeight = baseWeight - palletWeight(palletType) - jackWeight
+
+    setTotalWeight(newTotalWeight.toString())
+    setLastJackWeight(jackWeight) // Update the last jack weight
+
+    // Propagate the change to the parent component
+    if (onTotalWeightChange) {
+      onTotalWeightChange(newTotalWeight)
     }
   }
 
@@ -190,6 +220,31 @@ export function AfterSortingPallet({
         >
           Other
         </Button>
+      </Flex>
+      <Flex direction="column" mb="4">
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          mt="6"
+          textTransform="uppercase"
+        >
+          Jack Type
+        </Text>
+        <Select
+          name="jackType"
+          id="jackType"
+          value={jackType}
+          onChange={handleJackSelectChange}
+          placeholder="Select jack type"
+        >
+          <option value="none">None</option> {/* Add None option */}
+          {user.jacks.map((jack, index) => (
+            <option key={index} value={jack.name}>
+              {jack.name} - {jack.weight} lbs
+            </option>
+          ))}
+        </Select>
       </Flex>
     </Flex>
   )

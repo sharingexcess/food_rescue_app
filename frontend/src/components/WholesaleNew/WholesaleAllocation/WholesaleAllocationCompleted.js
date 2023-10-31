@@ -21,8 +21,8 @@ export function WholesaleAllocationCompleted() {
     formatTimestamp(url_params.get('date') || new Date(), 'YYYY-MM-DD')
   )
 
-  const [statusFilter, setStatusFilter] = useState('completed')
-  const [isLoading, setIsLoading] = useState(true) // Add a loading state
+  const [selectedOption, setSelectedOption] = useState('vendors')
+  const [isLoading, setIsLoading] = useState(true)
 
   const { data: rescues } = useApi(
     '/rescues/list',
@@ -31,9 +31,9 @@ export function WholesaleAllocationCompleted() {
         type: 'wholesale',
         date_range_start: date,
         date_range_end: date,
-        status: 'completed',
+        status: selectedOption === 'vendors' ? 'completed' : 'active',
       }),
-      [date, 'completed']
+      [date, selectedOption]
     )
   )
 
@@ -45,30 +45,37 @@ export function WholesaleAllocationCompleted() {
 
   function handleChangeDate(e) {
     e.preventDefault()
-
     setDate(e.target.value)
+  }
+
+  function handleSelectChange(e) {
+    setSelectedOption(e.target.value)
   }
 
   return (
     <>
-      <PageTitle>Completed Distributions</PageTitle>
+      <PageTitle>
+        {selectedOption === 'vendors'
+          ? 'Completed Allocations'
+          : 'Active Allocations'}
+      </PageTitle>
       <Flex justifyContent={'space-between'}>
         <Select
           w="128px"
-          value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
+          value={selectedOption}
+          onChange={handleSelectChange}
           fontSize="sm"
           color="element.secondary"
           mr="2"
         >
-          <option value="completed">Organizations</option>
-          <option value="cancelled">Vendors</option>
+          <option value="vendors">Vendors</option>
+          <option value="organizations">Organizations</option>
         </Select>
         <InputGroup flexShrink="1" flexGrow="0" flexBasis="96px">
           <Input
             type="date"
             value={date}
-            onChange={e => handleChangeDate(e)}
+            onChange={handleChangeDate}
             fontSize="sm"
             color="element.secondary"
             w="128px"
@@ -83,9 +90,7 @@ export function WholesaleAllocationCompleted() {
           <Spinner />
         ) : (
           rescues &&
-          rescues
-            .filter(rescue => rescue.status === statusFilter)
-            .map(rescue => <EntryCard key={rescue.id} rescue={rescue} />)
+          rescues.map(rescue => <EntryCard key={rescue.id} rescue={rescue} />)
         )}
       </Box>
     </>

@@ -66,6 +66,25 @@ export function formatLargeNumber(x) {
   return parts.join('.')
 }
 
+export const formatDate = dateStr => {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const date = new Date(dateStr)
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
+}
+
 export function calculateCurrentLoad(rescue, distribution) {
   let weight = 0
   if (rescue) {

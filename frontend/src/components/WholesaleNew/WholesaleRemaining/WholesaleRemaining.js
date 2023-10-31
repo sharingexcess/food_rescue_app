@@ -1,6 +1,11 @@
 import { useApi, useAuth } from 'hooks'
 import { useState, useMemo, useEffect } from 'react'
-import { formatTimestamp, STATUSES } from 'helpers'
+import {
+  formatTimestamp,
+  STATUSES,
+  calculateCurrentLoad,
+  formatDate,
+} from 'helpers'
 import {
   Box,
   Flex,
@@ -8,6 +13,8 @@ import {
   InputGroup,
   Input,
   InputRightElement,
+  Text,
+  Divider,
 } from '@chakra-ui/react'
 import { PageTitle, FooterButton } from 'components'
 import { EntryCard } from '../WholesaleEntry/WholesaleEntryCard'
@@ -86,6 +93,42 @@ export function WholesaleRemaining() {
           )}
         </Box>
       </Flex>
+
+      {rescues &&
+        rescues &&
+        rescues
+          .filter(rescue =>
+            rescue.transfers.some(transfer => transfer.organization.name)
+          )
+          .map(rescue =>
+            rescue.transfers
+              .filter(transfer => transfer.type === 'collection')
+              .map(transfer => {
+                const currentLoad = calculateCurrentLoad(rescue)
+                if (currentLoad === 0 || currentLoad < 0) return null // Do not display if the weight is 0
+                return (
+                  <Box key={`${rescue.id}-${transfer.id}`}>
+                    <Flex
+                      key={`${rescue.id}-${transfer.id}`}
+                      mb={6}
+                      mt={6}
+                      cursor="pointer"
+                      align={'center'}
+                    >
+                      <Text fontWeight={'bold'} fontSize={28} mr={2}>
+                        {transfer.organization.name}
+                      </Text>
+                      <Text mr={2}>| {transfer.product_type}</Text>|{' '}
+                      {currentLoad} lbs.
+                      <Text ml={2} fontWeight={'200'}>
+                        | {formatDate(rescue.timestamp_created) || ''}
+                      </Text>
+                    </Flex>
+                    <Divider />
+                  </Box>
+                )
+              })
+          )}
 
       {hasAdminPermission && (
         <>
