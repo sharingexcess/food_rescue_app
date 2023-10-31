@@ -7,6 +7,7 @@ import {
   SliderThumb,
   Flex,
   CloseButton,
+  Input,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 
@@ -22,8 +23,9 @@ export function WholesaleAllocationCard({
   const initialSliderValue = 0
   const [sliderValue, setSliderValue] = useState(initialSliderValue)
   const [remainingWeight, setRemainingWeight] = useState('')
+  const [inputWeight, setInputWeight] = useState('')
 
-  const [calculatedWeight, setCalculatedWeight] = useState(
+  const [setCalculatedWeight] = useState(
     sliderValue * transfer.average_case_weight
   )
 
@@ -46,6 +48,7 @@ export function WholesaleAllocationCard({
       weight = (sliderValue * transfer.average_case_weight).toFixed(0)
     }
     setCalculatedWeight(weight)
+    setInputWeight(weight)
     onAllocationUpdate(
       rescue,
       transfer.rescue_id,
@@ -58,6 +61,28 @@ export function WholesaleAllocationCard({
       notes
     )
   }, [sliderValue, transfer, notes])
+
+  const updateSliderValue = () => {
+    const value = parseInt(inputWeight, 10)
+    if (!isNaN(value) && value >= 0) {
+      const newSliderValue = Math.floor(value / transfer.average_case_weight)
+      setSliderValue(newSliderValue)
+    }
+  }
+
+  const handleWeightInputBlur = () => {
+    updateSliderValue()
+  }
+
+  const handleWeightInputChange = e => {
+    setInputWeight(e.target.value)
+  }
+
+  const handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      updateSliderValue()
+    }
+  }
 
   const SliderLabel = ({ children }) => (
     <Text w="48px" fontWeight="bold" textAlign="center">
@@ -117,6 +142,7 @@ export function WholesaleAllocationCard({
           step={1}
           onChange={setSliderValue}
           flexGrow={1}
+          value={sliderValue}
           colorScheme="green"
         >
           <SliderTrack h="2" borderRadius="4px">
@@ -129,10 +155,29 @@ export function WholesaleAllocationCard({
         </SliderLabel>
       </Flex>
 
-      <Text mt={4}>
-        Total Weight: {Math.ceil(calculatedWeight)}
-        {' lbs.'}
-      </Text>
+      <Flex align="center" mt={4} gap={2}>
+        <Text fontWeight="bold">Total Weight:</Text>
+        <Input
+          type="text"
+          value={inputWeight}
+          placeholder="0"
+          onChange={handleWeightInputChange}
+          onBlur={handleWeightInputBlur}
+          onKeyDown={handleKeyDown}
+          w="100px"
+          min={0}
+          border="none"
+          borderBottom="1px solid"
+          borderColor="gray.300"
+          borderRadius="0"
+          _focus={{
+            outline: 'none',
+            borderBottom: '1px solid',
+            borderColor: 'green.500',
+          }}
+        />
+        <Text fontWeight="bold">lbs.</Text>
+      </Flex>
 
       <Box mt={4}>
         <Text fontWeight="500" mb={2}>
