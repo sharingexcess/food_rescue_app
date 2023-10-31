@@ -47,7 +47,7 @@ export function WholesaleAllocationCard({
     } else {
       weight = (sliderValue * transfer.average_case_weight).toFixed(0)
     }
-    setCalculatedWeight(weight)
+    // setCalculatedWeight(weight)
     setInputWeight(weight)
     onAllocationUpdate(
       rescue,

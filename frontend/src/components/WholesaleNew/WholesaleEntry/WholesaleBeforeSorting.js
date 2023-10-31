@@ -65,7 +65,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
     const palletWt = palletWeight(type, jackWeight)
 
     // Recalculate the new total weight
-    const newTotalWeight = baseWeight - palletWt
+    const newTotalWeight = baseWeight + palletWt
     setTotalWeight(newTotalWeight)
   }
 
@@ -285,9 +285,9 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
 
 function palletWeight(type, additionalWeight) {
   const baseWeights = {
-    wood: 407,
-    black: 412,
-    blue: 435,
+    wood: 55,
+    black: 20,
+    blue: 55,
     other: 0,
   }
 
