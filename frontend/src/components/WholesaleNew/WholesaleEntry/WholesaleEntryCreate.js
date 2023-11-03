@@ -317,7 +317,9 @@ export function WholesaleEntryCreate({ defaultDate }) {
           <Box mr={4}>
             <Text mb={2}>Average case weight (lbs)</Text>
             {summary.averageCaseWeight ? (
-              <Text fontWeight="bold">{summary.averageCaseWeight}</Text>
+              <Text fontWeight="bold">
+                {summary.averageCaseWeight.toFixed(2)}
+              </Text>
             ) : (
               <Text>0 lbs.</Text>
             )}
@@ -326,7 +328,7 @@ export function WholesaleEntryCreate({ defaultDate }) {
           <Box>
             <Text mb={2}>Total weight (lbs)</Text>
             {summary.totalWeight ? (
-              <Text fontWeight="bold">{summary.totalWeight}</Text>
+              <Text fontWeight="bold">{summary.totalWeight.toFixed(2)}</Text>
             ) : (
               <Text>0 lbs.</Text>
             )}
