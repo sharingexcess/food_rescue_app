@@ -2,20 +2,13 @@ import { ViewIcon } from '@chakra-ui/icons'
 import { Box, useToast } from '@chakra-ui/react'
 import { FooterButton, FormField } from 'components'
 import { SE_API } from 'helpers'
-import WarehouseConfig from 'components/WarehouseConfig/WarehouseConfig'
 import { useAuth } from 'hooks'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export function PublicProfile({ onSubmitCallback }) {
-  const { user, hasAdminPermission } = useAuth()
+  const { user } = useAuth()
   const [isLoading, setIsLoading] = useState()
   const toast = useToast()
-
-  const [jackData, setJackData] = useState(user.jacks || [])
-
-  const handleJacksChange = jacks => {
-    setJackData(jacks)
-  }
 
   const [formData, setFormData] = useState({
     email: user.email,
@@ -26,13 +19,6 @@ export function PublicProfile({ onSubmitCallback }) {
     permission: user.permission,
     jacks: user.jacks,
   })
-
-  useEffect(() => {
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      jacks: jackData,
-    }))
-  }, [jackData])
 
   async function handleSubmit() {
     setIsLoading(true)
@@ -101,17 +87,6 @@ export function PublicProfile({ onSubmitCallback }) {
           isOptional={i.isOptional}
         />
       ))}
-
-      {hasAdminPermission && (
-        <>
-          <Box h="8" />
-          <WarehouseConfig
-            onJacksChange={handleJacksChange}
-            formData={formData}
-          />
-        </>
-      )}
-
       <Box h="8" />
 
       <FooterButton

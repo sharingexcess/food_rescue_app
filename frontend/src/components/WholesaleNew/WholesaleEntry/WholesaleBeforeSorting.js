@@ -139,9 +139,28 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
     }
   }, [caseCount, caseWeight, totalWeight])
 
-  function handleKeyPress(event, callback) {
+  function handleKeyPress(event, inputType) {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      callback(event)
+      let value = event.target.value
+      switch (inputType) {
+        case 'caseCount': {
+          let calculatedValue = calculateExpression(value)
+          setCaseCount(calculatedValue)
+          recalculateTotalWeight(jackWeight)
+          break
+        }
+        case 'caseWeight': {
+          setCaseWeight(value)
+          recalculateTotalWeight(jackWeight)
+          break
+        }
+        case 'totalWeight': {
+          setTotalWeight(value)
+          break
+        }
+        default:
+          break
+      }
       event.target.blur()
     }
   }
@@ -170,12 +189,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
             setCaseCount(calculatedValue)
           }}
           placeholder="30 or 20+10"
-          onKeyDown={e =>
-            handleKeyPress(e, ev => {
-              const calculatedValue = calculateExpression(ev.target.value)
-              setCaseCount(calculatedValue)
-            })
-          }
+          onKeyDown={e => handleKeyPress(e, 'caseCount')}
         />
       </Flex>
 
@@ -197,6 +211,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
           value={caseWeight}
           onChange={e => setCaseWeight(e.target.value)}
           placeholder="Enter case weight (in lbs.)"
+          onKeyDown={e => handleKeyPress(e, 'caseWeight')}
         />
       </Flex>
 
@@ -219,6 +234,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
           value={totalWeight}
           onChange={handleTotalWeightChange}
           placeholder="Calculated automatically or enter total weight (in lbs.)"
+          onKeyDown={e => handleKeyPress(e, 'totalWeight')}
         />
       </Flex>
       <Flex direction="row" justifyContent="space-around" mb="4" mt="2">
