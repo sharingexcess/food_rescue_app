@@ -25,9 +25,9 @@ export function WholesaleAllocationCard({
   const [remainingWeight, setRemainingWeight] = useState('')
   const [inputWeight, setInputWeight] = useState('')
 
-  const [setCalculatedWeight] = useState(
-    sliderValue * transfer.average_case_weight
-  )
+  // const [setCalculatedWeight] = useState(
+  //   sliderValue * transfer.average_case_weight
+  // )
 
   const [notes, setNotes] = useState('')
 
