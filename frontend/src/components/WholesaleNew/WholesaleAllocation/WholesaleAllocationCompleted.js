@@ -13,7 +13,6 @@ import {
   Badge,
   Divider,
   useColorModeValue,
-  Link,
 } from '@chakra-ui/react'
 
 import { PageTitle } from 'components'
@@ -36,7 +35,7 @@ export function WholesaleAllocationCompleted() {
     const cardBg = useColorModeValue('gray.100', 'gray.700')
 
     const handleCardClick = () => {
-      window.location.href = `/wholesale-new/allocation/create?edit=${data.id}`
+      window.location.href = `/wholesale-new/allocation/create?edit=${data.rescue_id}`
     }
 
     return (

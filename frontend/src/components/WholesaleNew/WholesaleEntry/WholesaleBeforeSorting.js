@@ -141,10 +141,10 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
 
   function handleKeyPress(event, inputType) {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      let value = event.target.value
+      const value = event.target.value
       switch (inputType) {
         case 'caseCount': {
-          let calculatedValue = calculateExpression(value)
+          const calculatedValue = calculateExpression(value)
           setCaseCount(calculatedValue)
           recalculateTotalWeight(jackWeight)
           break

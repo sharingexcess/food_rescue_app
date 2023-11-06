@@ -31,17 +31,17 @@ import moment from 'moment'
 
 import { useApi, useAuth } from 'hooks'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 
 import { WholesaleAllocationCard } from './WholesaleAllocationCard'
 
 export function WholesaleNewAllocation() {
-  const params = new URLSearchParams(window.location.search)
-  const transfer_id = params.get('edit')
+  // const params = new URLSearchParams(window.location.search)
+  // const rescue_id = params.get('edit')
 
-  const { data: transfer } = useApi(
-    transfer_id ? `/transfers/get/${transfer_id}` : null
-  )
+  // const { data: rescue } = useApi(
+  //   rescue_id ? `/rescues/get/${rescue_id}` : null
+  // )
 
   const [formData, setFormData] = useState({
     organization: null,
@@ -51,13 +51,6 @@ export function WholesaleNewAllocation() {
     percent_of_total_dropped: 0,
     timestamp_completed: moment().format('YYYY-MM-DDTHH:mm'),
   })
-
-  useEffect(() => {
-    if (transfer) {
-      const id = transfer.id
-      console.log('transfer', transfer)
-    }
-  }, [transfer])
 
   const [showEntryCard] = useState(true)
   const [date, setDate] = useState(moment().format('YYYY-MM-DDTHH:mm'))
