@@ -29,7 +29,6 @@ import {
   Analytics,
   Dashboard,
   Dashboards,
-  WholesaleNew,
   WholesaleEntry,
   WholesaleEntryCreate,
   WholesaleAllocation,
@@ -333,7 +332,7 @@ function RescueAppRoutes() {
                   />
                 }
               />
-              <Route
+              {/* <Route
                 path="/wholesale-new"
                 element={
                   <Page
@@ -345,7 +344,7 @@ function RescueAppRoutes() {
                     Content={WholesaleNew}
                   />
                 }
-              />
+              /> */}
               <Route
                 path="/wholesale-new/entry"
                 element={

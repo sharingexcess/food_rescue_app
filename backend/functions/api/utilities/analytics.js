@@ -1,5 +1,6 @@
 const {
   db,
+  DONOR_RESCUE_TYPES,
   DONOR_SUB_TYPES,
   EMISSIONS_COEFFICIENT,
   FAIR_MARKET_VALUES,
@@ -131,7 +132,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: breakdownByDonorType(collections, organizations),
+        view_data: await breakdownByDonorRescueType(rescues),
       }
       console.log('returning payload:', payload)
       return payload
@@ -259,6 +260,32 @@ function breakdownByDonorType(collections, organizations) {
       )
     }
   }
+  return sortObjectByValues(categories)
+}
+
+async function breakdownByDonorRescueType(rescues) {
+  const categories = {
+    ...DONOR_RESCUE_TYPES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
+  }
+
+  for (const r of rescues) {
+    try {
+      const first_transfer = r.transfer_ids[0]
+      const transfer = await db
+        .collection(COLLECTIONS.TRANSFERS)
+        .doc(first_transfer)
+        .get()
+        .then(doc => doc.data())
+      const transfer_total_weight = transfer.total_weight
+      categories[r.type] += transfer_total_weight || 0
+    } catch (e) {
+      console.error(
+        'Unable to add pickup to rescue type totals:',
+        JSON.stringify(r)
+      )
+    }
+  }
+
   return sortObjectByValues(categories)
 }
 
