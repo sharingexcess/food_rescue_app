@@ -30,6 +30,14 @@ const COLORS = [
   '#b8ff9a',
 ]
 
+// Hack to bring retool data in line with the rest of the app
+function startOfDay(date) {
+  const newDate = new Date(date)
+  newDate.setDate(newDate.getDate() - 1)
+  newDate.setHours(20, 0, 0, 0)
+  return newDate
+}
+
 export function Analytics() {
   const search = new URLSearchParams(window.location.search)
   const [startDate, setStartDate] = useState(new Date(getDefaultRangeStart()))
@@ -40,14 +48,6 @@ export function Analytics() {
       : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
-
-  // Hack to bring retool & analytics in parity.
-  function startOfDay(date) {
-    const newDate = new Date(date)
-    newDate.setDate(newDate.getDate() - 1)
-    newDate.setHours(20, 0, 0, 0)
-    return newDate
-  }
 
   const params = useMemo(
     () => ({
