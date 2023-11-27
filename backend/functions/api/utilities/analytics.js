@@ -132,7 +132,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         retail_value,
         fair_market_value,
         emissions_reduced,
-        view_data: await breakdownByDonorRescueType(rescues),
+        view_data: await breakdownByDonorRescueType(rescues, organizations),
       }
       console.log('returning payload:', payload)
       return payload
@@ -263,27 +263,34 @@ function breakdownByDonorType(collections, organizations) {
   return sortObjectByValues(categories)
 }
 
-async function breakdownByDonorRescueType(rescues) {
+async function breakdownByDonorRescueType(rescues, organizations) {
   const categories = DONOR_RESCUE_TYPES.reduce(
     (acc, type) => ({ ...acc, [type]: 0 }),
     {}
   )
 
+  const isEligibleOrg = orgSubtype =>
+    ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
+      orgSubtype
+    )
+
   for (const rescue of rescues) {
     try {
-      if (rescue.type === 'wholesale' || rescue.type === 'direct_link') {
-        if (rescue.transfer_ids.length > 0) {
-          const transfer = await getTransferData(rescue.transfer_ids[0])
-          categories[rescue.type] += transfer.total_weight || 0
-        }
-      } else if (rescue.type === 'retail') {
-        const weights = await Promise.all(
+      if (['wholesale', 'direct_link', 'retail'].includes(rescue.type)) {
+        const transfers = await Promise.all(
           rescue.transfer_ids.map(getTransferData)
         )
-        const total_weight = weights.reduce((acc, transfer) => {
-          return transfer.type === 'distribution'
-            ? acc + (transfer.total_weight || 0)
-            : acc
+
+        const total_weight = transfers.reduce((acc, transfer) => {
+          if (transfer.type === 'distribution') {
+            const org = organizations.find(
+              o => o.id === transfer.organization_id
+            )
+            if (org && isEligibleOrg(org.subtype)) {
+              return acc + (transfer.total_weight || 0)
+            }
+          }
+          return acc
         }, 0)
 
         categories[rescue.type] += total_weight
