@@ -1,4 +1,4 @@
-import { Flex, Box, Text, Select, Heading } from '@chakra-ui/react'
+import { Flex, Box, Text, Select, Heading, Button } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { getDefaultRangeStart, getDefaultRangeEnd } from './Analytics.utils'
 import {
@@ -20,6 +20,7 @@ import { Loading } from 'components'
 import { useApi, useIsMobile } from 'hooks'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { AdvancedAnalytics } from './AdvancedAnalytics'
 
 const COLORS = [
   '#205a08',
@@ -48,6 +49,7 @@ export function Analytics() {
       : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   const params = useMemo(
     () => ({
@@ -267,7 +269,6 @@ export function Analytics() {
         </Box>
       </Flex>
       <Box height={16} />
-
       {apiData && !loading ? (
         <>
           <Flex justify="space-between">
@@ -390,6 +391,19 @@ export function Analytics() {
         <>
           <Loading relative text="Calculating" />
         </>
+      )}
+      <Button
+        onClick={() => setShowAdvanced(!showAdvanced)}
+        variant="outline"
+        right={0}
+        mt={4}
+        mb={4}
+        colorScheme={showAdvanced ? 'blue' : 'gray'}
+      >
+        {showAdvanced ? 'Show Less' : 'Show More'}
+      </Button>
+      {showAdvanced && (
+        <AdvancedAnalytics startDate={startDate} endDate={endDate} />
       )}
     </main>
   )
