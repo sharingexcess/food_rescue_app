@@ -28,11 +28,17 @@ async function analyticsEndpoint(request, response) {
       rejectUnauthorizedRequest(response)
       return
     }
-    const { date_range_start, date_range_end } = request.query
+    const { date_range_start, date_range_end, analyticsType } = request.query
     let { breakdown } = request.query
     breakdown = decodeURIComponent(breakdown)
 
-    const payload = await analytics(date_range_start, date_range_end, breakdown)
+    let payload
+
+    if (analyticsType === 'advanced') {
+      payload = await advancedAnalytics(date_range_start, date_range_end)
+    } else {
+      payload = await analytics(date_range_start, date_range_end, breakdown)
+    }
     console.log('Payload returned from analytics:', payload)
 
     if (payload != null) {
@@ -45,6 +51,55 @@ async function analyticsEndpoint(request, response) {
       return
     }
   })
+}
+
+// TODO: this is a duplicate, but going forward this would evolve into
+// a more advanced analytics endpoint
+async function advancedAnalytics(date_range_start, date_range_end) {
+  let rescues = []
+  await db
+    .collection(COLLECTIONS.RESCUES)
+    .where(
+      'timestamp_completed',
+      '>=',
+      new Date(date_range_start).toISOString()
+    )
+    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
+    .get()
+    .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
+  rescues = rescues.filter(i => i.status === STATUSES.COMPLETED)
+
+  let transfers = []
+  await db
+    .collection(COLLECTIONS.TRANSFERS)
+    .where(
+      'timestamp_completed',
+      '>=',
+      new Date(date_range_start).toISOString()
+    )
+    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
+    .get()
+    .then(snapshot => snapshot.forEach(doc => transfers.push(doc.data())))
+  transfers = transfers.filter(i => i.status === STATUSES.COMPLETED)
+
+  const organizations = await fetchCollection(COLLECTIONS.ORGANIZATIONS)
+  const locations = await fetchCollection(COLLECTIONS.LOCATIONS)
+
+  const collections = transfers.filter(
+    s => s.type === TRANSFER_TYPES.COLLECTION
+  )
+  const distributions = transfers.filter(
+    s => s.type === TRANSFER_TYPES.DISTRIBUTION
+  )
+
+  return {
+    rescues,
+    transfers,
+    organizations,
+    locations,
+    collections,
+    distributions,
+  }
 }
 
 async function analytics(date_range_start, date_range_end, breakdown) {
