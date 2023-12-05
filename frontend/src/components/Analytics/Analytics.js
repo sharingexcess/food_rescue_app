@@ -108,6 +108,22 @@ export function Analytics() {
           value: apiData.view_data.other,
         },
       ].sort((a, b) => b.value - a.value)
+    : breakdown === 'Location Type'
+    ? [
+        {
+          name: 'Hunts Point',
+          value: apiData.view_data.hunts_point,
+        },
+        {
+          name: 'PWPM',
+          value: apiData.view_data.pwpm,
+        },
+
+        {
+          name: 'Other',
+          value: apiData.view_data.other,
+        },
+      ].sort((a, b) => b.value - a.value)
     : breakdown === 'Donor Type'
     ? [
         {
@@ -242,6 +258,7 @@ export function Analytics() {
             onChange={e => setBreakdown(e.target.value)}
           >
             <option>Food Category</option>
+            <option>Location Type</option>
             <option>Donor Type</option>
             <option>Recipient Type</option>
             <option>Donor</option>

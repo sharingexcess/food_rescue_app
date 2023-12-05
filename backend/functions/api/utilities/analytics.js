@@ -1,7 +1,5 @@
 const {
   db,
-  DONOR_RESCUE_TYPES,
-  DONOR_SUB_TYPES,
   EMISSIONS_COEFFICIENT,
   FAIR_MARKET_VALUES,
   fetchCollection,
@@ -55,36 +53,43 @@ async function analyticsEndpoint(request, response) {
 
 // TODO: this is a duplicate, but going forward this would evolve into
 // a more advanced analytics endpoint
+async function fetchFilteredData(
+  collection,
+  dateRangeStart,
+  dateRangeEnd,
+  status
+) {
+  const snapshot = await db
+    .collection(collection)
+    .where('timestamp_completed', '>=', new Date(dateRangeStart).toISOString())
+    .where('timestamp_completed', '<=', new Date(dateRangeEnd).toISOString())
+    .get()
+
+  return snapshot.docs
+    .map(doc => doc.data())
+    .filter(item => item.status === status)
+}
+
 async function advancedAnalytics(date_range_start, date_range_end) {
-  let rescues = []
-  await db
-    .collection(COLLECTIONS.RESCUES)
-    .where(
-      'timestamp_completed',
-      '>=',
-      new Date(date_range_start).toISOString()
-    )
-    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
-    .get()
-    .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
-  rescues = rescues.filter(i => i.status === STATUSES.COMPLETED)
+  // Parallelize database calls
+  const [rescues, transfers, organizations, locations] = await Promise.all([
+    fetchFilteredData(
+      COLLECTIONS.RESCUES,
+      date_range_start,
+      date_range_end,
+      STATUSES.COMPLETED
+    ),
+    fetchFilteredData(
+      COLLECTIONS.TRANSFERS,
+      date_range_start,
+      date_range_end,
+      STATUSES.COMPLETED
+    ),
+    fetchCollection(COLLECTIONS.ORGANIZATIONS),
+    fetchCollection(COLLECTIONS.LOCATIONS),
+  ])
 
-  let transfers = []
-  await db
-    .collection(COLLECTIONS.TRANSFERS)
-    .where(
-      'timestamp_completed',
-      '>=',
-      new Date(date_range_start).toISOString()
-    )
-    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
-    .get()
-    .then(snapshot => snapshot.forEach(doc => transfers.push(doc.data())))
-  transfers = transfers.filter(i => i.status === STATUSES.COMPLETED)
-
-  const organizations = await fetchCollection(COLLECTIONS.ORGANIZATIONS)
-  const locations = await fetchCollection(COLLECTIONS.LOCATIONS)
-
+  // Process transfers data
   const collections = transfers.filter(
     s => s.type === TRANSFER_TYPES.COLLECTION
   )
@@ -110,34 +115,27 @@ async function analytics(date_range_start, date_range_end, breakdown) {
     breakdown
   )
 
-  let rescues = []
-  await db
-    .collection(COLLECTIONS.RESCUES)
-    .where(
-      'timestamp_completed',
-      '>=',
-      new Date(date_range_start).toISOString()
-    )
-    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
-    .get()
-    .then(snapshot => snapshot.forEach(doc => rescues.push(doc.data())))
-  rescues = rescues.filter(i => i.status === STATUSES.COMPLETED)
+  const startDateIso = new Date(date_range_start).toISOString()
+  const endDateIso = new Date(date_range_end).toISOString()
 
-  let transfers = []
-  await db
-    .collection(COLLECTIONS.TRANSFERS)
-    .where(
-      'timestamp_completed',
-      '>=',
-      new Date(date_range_start).toISOString()
-    )
-    .where('timestamp_completed', '<=', new Date(date_range_end).toISOString())
-    .get()
-    .then(snapshot => snapshot.forEach(doc => transfers.push(doc.data())))
-  transfers = transfers.filter(i => i.status === STATUSES.COMPLETED)
+  async function fetchData(collection, status) {
+    const snapshot = await db
+      .collection(collection)
+      .where('timestamp_completed', '>=', startDateIso)
+      .where('timestamp_completed', '<=', endDateIso)
+      .get()
+    return snapshot.docs
+      .map(doc => doc.data())
+      .filter(item => item.status === status)
+  }
 
-  const organizations = await fetchCollection(COLLECTIONS.ORGANIZATIONS)
-  const handlers = await fetchCollection(COLLECTIONS.PUBLIC_PROFILES)
+  // Parallelize Firestore queries
+  const [rescues, transfers, organizations, handlers] = await Promise.all([
+    fetchData(COLLECTIONS.RESCUES, STATUSES.COMPLETED),
+    fetchData(COLLECTIONS.TRANSFERS, STATUSES.COMPLETED),
+    fetchCollection(COLLECTIONS.ORGANIZATIONS),
+    fetchCollection(COLLECTIONS.PUBLIC_PROFILES),
+  ])
 
   const collections = transfers.filter(
     s => s.type === TRANSFER_TYPES.COLLECTION
@@ -165,116 +163,66 @@ async function analytics(date_range_start, date_range_end, breakdown) {
     emissions_reduced
   )
 
-  switch (breakdown) {
-    case 'Food Category': {
-      console.log('Handling breakdown by food category')
-      const payload = {
-        total_weight,
-        total_categorized_weight,
-        retail_value,
-        fair_market_value,
-        emissions_reduced,
-        view_data: breakdownByFoodCategory(distributions),
-      }
-      console.log('returning payload:', payload)
-      return payload
-    }
-    case 'Donor Type': {
-      console.log('Handling breakdown by donor type')
-      const payload = {
-        total_weight,
-        total_categorized_weight,
-        retail_value,
-        fair_market_value,
-        emissions_reduced,
-        view_data: await breakdownByDonorRescueType(rescues, organizations),
-      }
-      console.log('returning payload:', payload)
-      return payload
-    }
-    case 'Recipient Type': {
-      console.log('Handling breakdown by recipient type')
-      const payload = {
-        total_weight,
-        total_categorized_weight,
-        retail_value,
-        fair_market_value,
-        emissions_reduced,
-        view_data: breakdownByRecipientType(distributions, organizations),
-      }
-      console.log('returning payload:', payload)
-      return payload
-    }
-    case 'Donor': {
-      console.log('Handling breakdown by donor')
-      const payload = {
-        total_weight,
-        total_categorized_weight,
-        retail_value,
-        fair_market_value,
-        emissions_reduced,
-        view_data: breakdownByDonor(collections, organizations),
-      }
-      console.log('returning payload:', payload)
-      return payload
-    }
-    case 'Recipient': {
-      console.log('Handling breakdown by recipient')
-      const payload = {
-        total_weight,
-        total_categorized_weight,
-        retail_value,
-        fair_market_value,
-        emissions_reduced,
-        view_data: breakdownByRecipient(distributions, organizations),
-      }
-      console.log('returning payload:', payload)
-      return payload
-    }
-    case 'Driver': {
-      console.log('Handling breakdown by driver')
-      const payload = {
-        total_weight,
-        total_categorized_weight,
-        retail_value,
-        fair_market_value,
-        emissions_reduced,
-        view_data: breakdownByDriver(distributions, handlers),
-      }
-      console.log('returning payload:', payload)
-      return payload
-    }
-    default: {
-      return null
+  async function getBreakdownPayload(type) {
+    switch (type) {
+      case 'Food Category':
+        return await breakdownByFoodCategory(distributions)
+      case 'Location Type':
+        return await breakdownByLocationType(distributions, organizations)
+      case 'Donor Type':
+        return await breakdownByDonorRescueType(rescues, organizations)
+      case 'Recipient Type':
+        return breakdownByRecipientType(distributions, organizations)
+      case 'Donor':
+        return breakdownByDonor(collections, organizations)
+      case 'Recipient':
+        return breakdownByRecipient(distributions, organizations)
+      case 'Driver':
+        return breakdownByDriver(distributions, handlers)
+      default:
+        return null
     }
   }
+
+  const view_data = await getBreakdownPayload(breakdown)
+  const payload = {
+    total_weight,
+    total_categorized_weight,
+    retail_value,
+    fair_market_value,
+    emissions_reduced,
+    view_data,
+  }
+
+  console.log('returning payload:', payload)
+  return payload
 }
 
+const isEligibleOrg = orgSubtype => !['holding', 'compost'].includes(orgSubtype)
+
 function calculateMetrics(distributions, organizations) {
-  // IGNORE ANY DISTRIBUTIONS TO HOLDING/COMPOST ORGANIZATIONS - this means they have not reached a final end org
-  distributions = distributions.filter(d => {
-    const org = organizations.find(o => o.id === d.organization_id)
-    return ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
-      org.subtype
-    )
-  })
-  let total_categorized_weight = 0,
+  let total_weight = 0,
+    total_categorized_weight = 0,
     retail_value = 0,
     fair_market_value = 0,
     emissions_reduced = 0
-  const total_weight = distributions.reduce(
-    (total, curr) => total + (curr.total_weight || 0),
-    0
-  )
-  for (const category of FOOD_CATEGORIES) {
-    const category_weight = distributions.reduce(
-      (total, curr) => total + (curr.categorized_weight[category] || 0),
-      0
-    )
-    total_categorized_weight += category_weight
-    emissions_reduced += category_weight * EMISSIONS_COEFFICIENT
-    retail_value += category_weight * RETAIL_VALUES[category]
-    fair_market_value += category_weight * FAIR_MARKET_VALUES[category]
+
+  const orgSubtypes = new Map(organizations.map(o => [o.id, o.subtype]))
+
+  for (const distribution of distributions) {
+    // Check if the organization is valid (not holding or compost)
+    if (isEligibleOrg(orgSubtypes.get(distribution.organization_id))) {
+      const distributionWeight = distribution.total_weight || 0
+      total_weight += distributionWeight
+
+      for (const category of FOOD_CATEGORIES) {
+        const categoryWeight = distribution.categorized_weight[category] || 0
+        total_categorized_weight += categoryWeight
+        emissions_reduced += categoryWeight * EMISSIONS_COEFFICIENT
+        retail_value += categoryWeight * RETAIL_VALUES[category]
+        fair_market_value += categoryWeight * FAIR_MARKET_VALUES[category]
+      }
+    }
   }
 
   return {
@@ -299,123 +247,165 @@ function breakdownByFoodCategory(distributions) {
   return sortObjectByValues(categories)
 }
 
-function breakdownByDonorType(collections, organizations) {
-  const categories = {
-    ...DONOR_SUB_TYPES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
-  }
-  for (const p of collections) {
-    try {
-      const organization = organizations.find(o => o.id === p.organization_id)
-      const { subtype } = organization
-      categories[subtype] += p.total_weight || 0
-    } catch (e) {
-      console.error(
-        'Unable to add pickup to donor type totals:',
-        JSON.stringify(p)
-      )
-    }
-  }
-  return sortObjectByValues(categories)
-}
-
 async function breakdownByDonorRescueType(rescues, organizations) {
-  const categories = DONOR_RESCUE_TYPES.reduce(
-    (acc, type) => ({ ...acc, [type]: 0 }),
-    {}
-  )
-
-  const isEligibleOrg = orgSubtype =>
-    ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
-      orgSubtype
-    )
-
-  for (const rescue of rescues) {
-    try {
-      if (['wholesale', 'direct_link', 'retail'].includes(rescue.type)) {
-        const transfers = await Promise.all(
-          rescue.transfer_ids.map(getTransferData)
-        )
-
-        const total_weight = transfers.reduce((acc, transfer) => {
-          if (transfer.type === 'distribution') {
-            const org = organizations.find(
-              o => o.id === transfer.organization_id
-            )
-            if (org && isEligibleOrg(org.subtype)) {
-              return acc + (transfer.total_weight || 0)
-            }
-          }
-          return acc
-        }, 0)
-
-        categories[rescue.type] += total_weight
-      }
-    } catch (e) {
-      console.error('Error processing rescue:', JSON.stringify(rescue), e)
-    }
+  const totalWeights = {
+    retail: 0,
+    wholesale: 0,
+    direct_link: 0,
   }
 
-  return sortObjectByValues(categories)
+  const allTransferIds = new Set(rescues.flatMap(r => r.transfer_ids))
+
+  // Fetch all transfer data in parallel
+  const transfers = await getAllTransferData([...allTransferIds])
+
+  const orgsMap = new Map(organizations.map(org => [org.id, org]))
+
+  rescues.forEach(parentRescue => {
+    parentRescue.transfer_ids.forEach(transferId => {
+      const transfer = transfers.get(transferId)
+      if (transfer && transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
+        const org = orgsMap.get(transfer.organization_id)
+        if (org && isEligibleOrg(org.subtype)) {
+          const weightToAdd = transfer.total_weight || 0
+          totalWeights[parentRescue.type] += weightToAdd
+        }
+      }
+    })
+  })
+
+  return totalWeights
 }
 
-async function getTransferData(transferId) {
-  try {
-    const doc = await db.collection(COLLECTIONS.TRANSFERS).doc(transferId).get()
-    return doc.data() || {}
-  } catch (e) {
-    console.error('Error fetching transfer data:', transferId, e)
-    return {}
+async function breakdownByLocationType(transfers, organizations) {
+  const totalWeightsByLocation = {
+    hunts_point: 0,
+    pwpm: 0,
+    other: 0,
+  }
+
+  const orgsMap = new Map(organizations.map(org => [org.id, org]))
+
+  transfers.forEach(transfer => {
+    if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
+      const org = orgsMap.get(transfer.organization_id)
+      if (org) {
+        const tags = org.tags || []
+        const weightToAdd = transfer.total_weight || 0
+
+        if (tags.includes('Hunts Point')) {
+          totalWeightsByLocation.hunts_point += weightToAdd
+        } else if (tags.includes('PWPM')) {
+          totalWeightsByLocation.pwpm += weightToAdd
+        } else {
+          totalWeightsByLocation.other += weightToAdd
+        }
+      }
+    }
+  })
+
+  return totalWeightsByLocation
+}
+
+async function getAllTransferData(transferIds) {
+  const MAX_BATCH_SIZE = 30
+  let transferData = new Map()
+
+  // parallel fetching
+  const batches = []
+  for (let i = 0; i < transferIds.length; i += MAX_BATCH_SIZE) {
+    const batch = transferIds.slice(i, i + MAX_BATCH_SIZE)
+    batches.push(fetchBatch(batch))
+  }
+
+  await Promise.all(batches)
+
+  return transferData
+
+  async function fetchBatch(batch) {
+    try {
+      const docs = await db
+        .collection(COLLECTIONS.TRANSFERS)
+        .where('id', 'in', batch)
+        .get()
+      docs.docs.forEach(doc => transferData.set(doc.id, doc.data()))
+    } catch (e) {
+      console.error('Error fetching transfer data for batch:', e)
+    }
   }
 }
 
 function breakdownByRecipientType(distributions, organizations) {
-  const categories = {
-    ...RECIPIENT_SUB_TYPES.reduce((acc, curr) => ((acc[curr] = 0), acc), {}), // eslint-disable-line
-  }
-  for (const d of distributions) {
-    try {
-      const organization = organizations.find(o => o.id === d.organization_id)
-      const { subtype } = organization
-      console.log('found org:', organization.name, organization.subtype)
-      categories[subtype] += d.total_weight || 0
-    } catch (e) {
-      console.error(
-        'Unable to add delivery to recipient type totals:',
-        JSON.stringify(d)
-      )
+  // Map organizations by ID for quick access
+  const orgMap = organizations.reduce((acc, org) => {
+    acc[org.id] = org
+    return acc
+  }, {})
+
+  // Initialize categories
+  const categories = RECIPIENT_SUB_TYPES.reduce((acc, subtype) => {
+    acc[subtype] = 0
+    return acc
+  }, {})
+
+  for (const distribution of distributions) {
+    const org = orgMap[distribution.organization_id]
+    if (org && org.subtype) {
+      try {
+        categories[org.subtype] += distribution.total_weight || 0
+      } catch (e) {
+        console.error('Error processing distribution:', distribution, e)
+      }
     }
   }
+
   return sortObjectByValues(categories)
 }
 
 function breakdownByDonor(collections, organizations) {
+  // Create a map for quick organization lookup
+  const orgMap = organizations.reduce((map, org) => {
+    map[org.id] = org
+    return map
+  }, {})
+
   const donors = {}
-  for (const p of collections) {
-    try {
-      const organization = organizations.find(o => o.id === p.organization_id)
-      const { name } = organization
-      donors[name] = (donors[name] || 0) + (p.total_weight || 0)
-    } catch (e) {
-      console.error('Unable to add pickup to donor totals:', JSON.stringify(p))
+
+  for (const collection of collections) {
+    const org = orgMap[collection.organization_id]
+    if (org && org.name) {
+      donors[org.name] =
+        (donors[org.name] || 0) + (collection.total_weight || 0)
+    } else {
+      console.error('Unable to find organization or name missing:', collection)
     }
   }
+
   return sortObjectByValues(donors)
 }
 
 function breakdownByRecipient(distributions, organizations) {
+  // Create a map for quick organization lookup
+  const orgMap = organizations.reduce((map, org) => {
+    map[org.id] = org
+    return map
+  }, {})
+
   const recipients = {}
-  for (const d of distributions) {
-    try {
-      const organization = organizations.find(o => o.id === d.organization_id)
-      const { name } = organization
-      recipients[name] = (recipients[name] || 0) + (d.total_weight || 0)
-    } catch (e) {
+
+  for (const distribution of distributions) {
+    const org = orgMap[distribution.organization_id]
+    if (org && org.name) {
+      recipients[org.name] =
+        (recipients[org.name] || 0) + (distribution.total_weight || 0)
+    } else {
       console.error(
-        'Unable to add pickup to recipient totals:',
-        JSON.stringify(d)
+        'Unable to find organization or name missing:',
+        distribution
       )
     }
   }
+
   return sortObjectByValues(recipients)
 }
 
