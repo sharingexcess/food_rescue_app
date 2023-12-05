@@ -173,6 +173,12 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         return await breakdownByDonorRescueType(rescues, organizations)
       case 'Recipient Type':
         return breakdownByRecipientType(distributions, organizations)
+      case 'Location and Rescue Type':
+        return await breakdownByLocationAndRescueType(
+          rescues,
+          distributions,
+          organizations
+        )
       case 'Donor':
         return breakdownByDonor(collections, organizations)
       case 'Recipient':
@@ -305,6 +311,55 @@ async function breakdownByLocationType(transfers, organizations) {
   })
 
   return totalWeightsByLocation
+}
+
+async function breakdownByLocationAndRescueType(
+  rescues,
+  transfers,
+  organizations
+) {
+  const categorizedWeights = {
+    wholesale_pwpm: 0,
+    wholesale_hunts_point: 0,
+    direct_link_pwpm: 0,
+    direct_link_hunts_point: 0,
+    retail_pwpm: 0,
+    retail_hunts_point: 0,
+  }
+
+  const orgsMap = new Map(organizations.map(org => [org.id, org]))
+
+  const rescuesMap = new Map(rescues.map(rescue => [rescue.id, rescue]))
+
+  transfers.forEach(transfer => {
+    if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
+      const org = orgsMap.get(transfer.organization_id)
+      if (org) {
+        const tags = org.tags || []
+        const weightToAdd = transfer.total_weight || 0
+        const rescue = rescuesMap.get(transfer.rescue_id)
+
+        // Check rescue type and increment corresponding category
+        if (rescue && tags.length > 0) {
+          const rescueType = rescue.type
+          const locationKey = tags.includes('Hunts Point')
+            ? 'hunts_point'
+            : tags.includes('PWPM')
+            ? 'pwpm'
+            : ''
+
+          if (locationKey) {
+            const key = `${rescueType}_${locationKey}`
+            if (key in categorizedWeights) {
+              categorizedWeights[key] += weightToAdd
+            }
+          }
+        }
+      }
+    }
+  })
+
+  return categorizedWeights
 }
 
 async function getAllTransferData(transferIds) {

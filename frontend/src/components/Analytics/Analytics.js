@@ -123,7 +123,7 @@ export function Analytics() {
           name: 'Other',
           value: apiData.view_data.other,
         },
-      ].sort((a, b) => b.value - a.value)
+      ]
     : breakdown === 'Donor Type'
     ? [
         {
@@ -140,6 +140,33 @@ export function Analytics() {
           value: apiData.view_data.direct_link,
         },
       ].sort((a, b) => b.value - a.value)
+    : breakdown === 'Location and Rescue Type'
+    ? [
+        {
+          name: 'Wholesale -- PWPM',
+          value: apiData.view_data.wholesale_pwpm,
+        },
+        {
+          name: 'Direct Link -- PWPM',
+          value: apiData.view_data.direct_link_pwpm,
+        },
+        {
+          name: 'Retail -- PWPM',
+          value: apiData.view_data.retail_pwpm,
+        },
+        {
+          name: 'Wholesale (Hunts Point)',
+          value: apiData.view_data.wholesale_hunts_point,
+        },
+        {
+          name: 'Direct Link (Hunts Point)',
+          value: apiData.view_data.direct_link_hunts_point,
+        },
+        {
+          name: 'Retail (Hunts Point)',
+          value: apiData.view_data.retail_hunts_point,
+        },
+      ]
     : breakdown === 'Recipient Type'
     ? [
         {
@@ -261,6 +288,7 @@ export function Analytics() {
             <option>Location Type</option>
             <option>Donor Type</option>
             <option>Recipient Type</option>
+            <option>Location and Rescue Type</option>
             <option>Donor</option>
             <option>Recipient</option>
             <option>Driver</option>
