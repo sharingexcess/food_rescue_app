@@ -169,7 +169,7 @@ async function analytics(date_range_start, date_range_end, breakdown) {
         return await breakdownByFoodCategory(distributions)
       case 'Location Type':
         return await breakdownByLocationType(distributions, organizations)
-      case 'Donor Type':
+      case 'Rescue Type':
         return await breakdownByDonorRescueType(rescues, organizations)
       case 'Recipient Type':
         return breakdownByRecipientType(distributions, organizations)
@@ -284,27 +284,31 @@ async function breakdownByDonorRescueType(rescues, organizations) {
 }
 
 async function breakdownByLocationType(transfers, organizations) {
-  const totalWeightsByLocation = {
-    hunts_point: 0,
-    pwpm: 0,
-    other: 0,
-  }
+  const totalWeightsByLocation = {}
 
   const orgsMap = new Map(organizations.map(org => [org.id, org]))
 
   transfers.forEach(transfer => {
     if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
       const org = orgsMap.get(transfer.organization_id)
-      if (org) {
+      if (org && isEligibleOrg(org.subtype)) {
         const tags = org.tags || []
         const weightToAdd = transfer.total_weight || 0
 
-        if (tags.includes('Hunts Point')) {
-          totalWeightsByLocation.hunts_point += weightToAdd
-        } else if (tags.includes('PWPM')) {
-          totalWeightsByLocation.pwpm += weightToAdd
-        } else {
-          totalWeightsByLocation.other += weightToAdd
+        tags.forEach(tag => {
+          const key = tag.toLowerCase().replace(/\s+/g, '_')
+          // Initialize the key in the totalWeightsByLocation if it doesn't exist
+          if (!totalWeightsByLocation[key]) {
+            totalWeightsByLocation[key] = 0
+          }
+          // Add the weight to the appropriate tag
+          totalWeightsByLocation[key] += weightToAdd
+        })
+
+        // If there are no tags, add the weight to 'other'
+        if (tags.length === 0) {
+          totalWeightsByLocation['other'] =
+            (totalWeightsByLocation['other'] || 0) + weightToAdd
         }
       }
     }
@@ -334,7 +338,7 @@ async function breakdownByLocationAndRescueType(
   transfers.forEach(transfer => {
     if (transfer.type === TRANSFER_TYPES.DISTRIBUTION) {
       const org = orgsMap.get(transfer.organization_id)
-      if (org) {
+      if (org && isEligibleOrg(org.subtype)) {
         const tags = org.tags || []
         const weightToAdd = transfer.total_weight || 0
         const rescue = rescuesMap.get(transfer.rescue_id)

@@ -109,22 +109,13 @@ export function Analytics() {
         },
       ].sort((a, b) => b.value - a.value)
     : breakdown === 'Location Type'
-    ? [
-        {
-          name: 'Hunts Point',
-          value: apiData.view_data.hunts_point,
-        },
-        {
-          name: 'PWPM',
-          value: apiData.view_data.pwpm,
-        },
-
-        {
-          name: 'Other',
-          value: apiData.view_data.other,
-        },
-      ]
-    : breakdown === 'Donor Type'
+    ? Object.keys(apiData.view_data)
+        .map(key => ({
+          name: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()), // Adjusts key formatting
+          value: apiData.view_data[key],
+        }))
+        .sort((a, b) => b.value - a.value)
+    : breakdown === 'Rescue Type'
     ? [
         {
           name: 'Retail',
@@ -285,8 +276,8 @@ export function Analytics() {
             onChange={e => setBreakdown(e.target.value)}
           >
             <option>Food Category</option>
+            <option>Rescue Type</option>
             <option>Location Type</option>
-            <option>Donor Type</option>
             <option>Recipient Type</option>
             <option>Location and Rescue Type</option>
             <option>Donor</option>
