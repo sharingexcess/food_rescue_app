@@ -1,4 +1,4 @@
-import { Box, Flex, Skeleton, SkeletonCircle } from '@chakra-ui/react'
+import { Box, Flex, Skeleton, SkeletonCircle, Button } from '@chakra-ui/react'
 import { useApi, useAuth, useIsMobile } from 'hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
@@ -7,7 +7,7 @@ import {
   Collection,
   Directions,
   Error,
-  CompletedRescue,
+  // CompletedRescue,
   Distribution,
 } from 'components'
 import { getActiveTransfer } from './Rescue.utils'
@@ -31,8 +31,9 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
   } = useApi(`/rescues/get/${rescue_id}`)
   const { user } = useAuth()
   const [expandedTransfer, setExpandedTransfer] = useState(null)
+  const [isLoading, setIsLoading] = useState()
   const [openTransfer, setOpenTransfer] = useState(null)
-  const [showCompletedPopup, setShowCompletedPopup] = useState(false)
+  // const [showCompletedPopup, setShowCompletedPopup] = useState(false)
   const activeTransfer = useMemo(() => getActiveTransfer(rescue), [rescue])
   const isMobile = useIsMobile()
   const navigate = useNavigate()
@@ -56,50 +57,116 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
   }, [rescue])
 
   // handle auto complete rescue
-  useEffect(() => {
+  // useEffect(() => {
+  // const remainingWeight = calculateCurrentLoad(rescue)
+
+  //   try {
+  //     if (rescue) {
+  // const activeTransfers = rescue.transfers.filter(
+  //   transfer => transfer.status !== STATUSES.CANCELLED
+  // )
+  // const allTransfersComplete = activeTransfers.every(
+  //   transfer => transfer.status === STATUSES.COMPLETED
+  // )
+
+  //       // We declare the rescue operation as complete if all the active transfers are complete,
+  //       // and the remaining weight is less than the number of active transfers.
+  //       // This leaves room for a rounding off by 1 error on each transfer.
+  //       // If any transfer is cancelled, it does not affect the completion status of the rescue.
+  // if (
+  //   rescue?.status === STATUSES.ACTIVE &&
+  //   remainingWeight < activeTransfers.length &&
+  //   allTransfersComplete
+  // ) {
+  //         SE_API.post(
+  //           `/rescues/update/${rescue.id}`,
+  //           {
+  //             id: rescue.id,
+  //             type: rescue.type,
+  //             status: STATUSES.COMPLETED,
+  //             handler_id: rescue.handler_id,
+  //             notes: rescue.notes,
+  //             timestamp_scheduled: moment(
+  //               rescue.timestamp_scheduled
+  //             ).toISOString(),
+  //             timestamp_completed: moment().toISOString(),
+  //             transfer_ids: rescue.transfer_ids,
+  //           },
+  //           user.accessToken
+  //         )
+  //         setShowCompletedPopup(true)
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }, [rescue, user])
+
+  // todo -- remove hacky solution
+  async function handleMakeRescueActive() {
+    setIsLoading(true)
+
+    await SE_API.post(
+      `/rescues/update/${rescue.id}`,
+      {
+        id: rescue.id,
+        type: rescue.type,
+        status: STATUSES.ACTIVE,
+        handler_id: rescue.handler_id,
+        notes: rescue.notes,
+        timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
+        timestamp_completed:
+          moment(rescue.timestamp_completed).toISOString() || null,
+        transfer_ids: rescue.transfer_ids,
+      },
+      user.accessToken
+    ).then(refresh)
+
+    setIsLoading(false)
+  }
+
+  function validateRescue() {
+    const activeTransfers = rescue.transfers.filter(
+      transfer => transfer.status !== STATUSES.CANCELLED
+    )
+
+    const allTransfersComplete = activeTransfers.every(
+      transfer => transfer.status === STATUSES.COMPLETED
+    )
+
     const remainingWeight = calculateCurrentLoad(rescue)
 
-    try {
-      if (rescue) {
-        const activeTransfers = rescue.transfers.filter(
-          transfer => transfer.status !== STATUSES.CANCELLED
-        )
-        const allTransfersComplete = activeTransfers.every(
-          transfer => transfer.status === STATUSES.COMPLETED
-        )
+    return (
+      rescue?.status === STATUSES.ACTIVE &&
+      remainingWeight < activeTransfers.length &&
+      allTransfersComplete
+    )
+  }
 
-        // We declare the rescue operation as complete if all the active transfers are complete,
-        // and the remaining weight is less than the number of active transfers.
-        // This leaves room for a rounding off by 1 error on each transfer.
-        // If any transfer is cancelled, it does not affect the completion status of the rescue.
-        if (
-          rescue?.status === STATUSES.ACTIVE &&
-          remainingWeight < activeTransfers.length &&
-          allTransfersComplete
-        ) {
-          SE_API.post(
-            `/rescues/update/${rescue.id}`,
-            {
-              id: rescue.id,
-              type: rescue.type,
-              status: STATUSES.COMPLETED,
-              handler_id: rescue.handler_id,
-              notes: rescue.notes,
-              timestamp_scheduled: moment(
-                rescue.timestamp_scheduled
-              ).toISOString(),
-              timestamp_completed: moment().toISOString(),
-              transfer_ids: rescue.transfer_ids,
-            },
-            user.accessToken
-          )
-          setShowCompletedPopup(true)
-        }
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }, [rescue, user])
+  async function handleCompleteRescue() {
+    if (!validateRescue()) return
+    setIsLoading(true)
+
+    await SE_API.post(
+      `/rescues/update/${rescue.id}`,
+      {
+        id: rescue.id,
+        type: rescue.type,
+        status: STATUSES.COMPLETED,
+        handler_id: rescue.handler_id,
+        notes: rescue.notes,
+        timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
+        timestamp_completed: rescue.timestamp_completed
+          ? moment(rescue.timestamp_completed).toISOString()
+          : moment(rescue.timestamp_scheduled).toISOString(),
+        transfer_ids: rescue.transfer_ids,
+      },
+      user.accessToken
+    )
+
+    refresh()
+    setIsLoading(false)
+  }
 
   const contextValue = {
     rescue,
@@ -148,10 +215,36 @@ export function Rescue({ setBreadcrumbs, setTitle }) {
             openTransfer?.type === 'distribution' ? openTransfer : null
           }
         />
-        <CompletedRescue
+        {/* <CompletedRescue
           isOpen={showCompletedPopup}
           handleClose={() => setShowCompletedPopup(false)}
-        />
+        /> */}
+
+        {/* // make rescue active button */}
+        {rescue.status === STATUSES.COMPLETED && (
+          <Flex justify="center" w="100%">
+            <Button
+              isLoading={isLoading}
+              loadingText="Please wait..."
+              onClick={handleMakeRescueActive}
+            >
+              Edit Rescue
+            </Button>
+          </Flex>
+        )}
+
+        {/* // complete rescue button */}
+        {rescue.status === STATUSES.ACTIVE && validateRescue() && (
+          <Flex justify="center" w="100%">
+            <Button
+              isLoading={isLoading}
+              loadingText="Completing rescue..."
+              onClick={handleCompleteRescue}
+            >
+              Complete Rescue
+            </Button>
+          </Flex>
+        )}
       </RescueContext.Provider>
     )
 }

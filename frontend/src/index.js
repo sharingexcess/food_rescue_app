@@ -40,6 +40,7 @@ import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.css'
+import Snowfall from 'react-snowfall'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -68,6 +69,7 @@ function RescueAppRoutes() {
     <ChakraProvider theme={theme}>
       <Sentry.ErrorBoundary fallback={<Error crash />}>
         <BrowserRouter>
+          <Snowfall snowflakeCount={20} radius={[0.8, 1.5]} />
           <Auth>
             <Routes>
               <Route

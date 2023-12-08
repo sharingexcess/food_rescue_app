@@ -30,6 +30,7 @@ export function WholesaleRescue({ setBreadcrumbs, setTitle }) {
   const [editDonation, setEditDonation] = useState(false)
   const [addRecipient, setAddRecipient] = useState(false)
   const [editRecipient, setEditRecipient] = useState()
+  const [isLoading, setIsLoading] = useState()
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -52,13 +53,39 @@ export function WholesaleRescue({ setBreadcrumbs, setTitle }) {
     ])
   }, [id])
 
-  useEffect(() => {
+  // useEffect(() => {
+  // if (
+  //   remainingWeight < rescue?.transfers.length &&
+  //   rescue?.status === STATUSES.ACTIVE
+  // ) {
+  //   // complete rescue
+  //   SE_API.post(
+  //     `/rescues/update/${rescue.id}`,
+  //     {
+  //       id: rescue.id,
+  //       type: rescue.type,
+  //       status: STATUSES.COMPLETED,
+  //       handler_id: rescue.handler_id,
+  //       notes: rescue.notes,
+  //       timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
+  //       timestamp_completed: moment().toISOString(),
+  //       transfer_ids: rescue.transfer_ids,
+  //     },
+  //     user.accessToken
+  //   ).then(refresh)
+  //   }
+  // }, [remainingWeight, rescue])
+
+  // [todo] - Remove this and revert to auto complete
+  async function handleCompleteRescue() {
+    setIsLoading(true)
+
     if (
       remainingWeight < rescue?.transfers.length &&
       rescue?.status === STATUSES.ACTIVE
     ) {
       // complete rescue
-      SE_API.post(
+      await SE_API.post(
         `/rescues/update/${rescue.id}`,
         {
           id: rescue.id,
@@ -67,13 +94,40 @@ export function WholesaleRescue({ setBreadcrumbs, setTitle }) {
           handler_id: rescue.handler_id,
           notes: rescue.notes,
           timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
-          timestamp_completed: moment().toISOString(),
+          timestamp_completed: rescue.timestamp_completed
+            ? moment(rescue.timestamp_completed).toISOString()
+            : moment(rescue.timestamp_scheduled).toISOString(),
           transfer_ids: rescue.transfer_ids,
         },
         user.accessToken
       ).then(refresh)
     }
-  }, [remainingWeight, rescue])
+
+    setIsLoading(false)
+  }
+
+  // [todo] - Remove this and revert to auto complete
+  async function makeRescueActive() {
+    setIsLoading(true)
+
+    await SE_API.post(
+      `/rescues/update/${rescue.id}`,
+      {
+        id: rescue.id,
+        type: rescue.type,
+        status: STATUSES.ACTIVE,
+        handler_id: rescue.handler_id,
+        notes: rescue.notes,
+        timestamp_scheduled: moment(rescue.timestamp_scheduled).toISOString(),
+        timestamp_completed:
+          moment(rescue.timestamp_completed).toISOString() || null,
+        transfer_ids: rescue.transfer_ids,
+      },
+      user.accessToken
+    ).then(refresh)
+
+    setIsLoading(false)
+  }
 
   async function cancelDonation() {
     const notes = window.prompt('Why are you cancelling this donation?')
@@ -171,14 +225,35 @@ export function WholesaleRescue({ setBreadcrumbs, setTitle }) {
 
         {hasAdminPermission && (
           <Flex justify="center" w="100%">
+            {remainingWeight < rescue?.transfers.length &&
+            rescue?.status === STATUSES.ACTIVE ? (
+              <FooterButton
+                isLoading={isLoading}
+                loadingText="Completing rescue..."
+                onClick={handleCompleteRescue}
+                disabled={rescue.status === STATUSES.COMPLETED}
+              >
+                Complete Rescue
+              </FooterButton>
+            ) : (
+              <FooterButton
+                onClick={() => setAddRecipient(true)}
+                disabled={rescue.status === STATUSES.COMPLETED}
+              >
+                New Distribution {formatLargeNumber(remainingWeight)} lbs. left
+              </FooterButton>
+            )}
+          </Flex>
+        )}
+
+        {rescue.status === STATUSES.COMPLETED && (
+          <Flex justify="center" w="100%">
             <FooterButton
-              onClick={() => setAddRecipient(true)}
-              disabled={rescue.status === STATUSES.COMPLETED}
+              isLoading={isLoading}
+              loadingText="Please wait..."
+              onClick={makeRescueActive}
             >
-              New Distribution{' '}
-              {rescue.status === STATUSES.ACTIVE
-                ? `(${formatLargeNumber(remainingWeight)} lbs. left)`
-                : ''}
+              Edit Rescue
             </FooterButton>
           </Flex>
         )}
