@@ -48,6 +48,8 @@ exports.DONOR_SUB_TYPES = ['retail', 'wholesale', 'holding', 'other']
 
 exports.DONOR_RESCUE_TYPES = ['retail', 'wholesale', 'direct_link']
 
+exports.RESCUE_TYPES = ['retail', 'wholesale', 'direct_link']
+
 exports.RECIPIENT_SUB_TYPES = [
   'food_bank',
   'agency',
