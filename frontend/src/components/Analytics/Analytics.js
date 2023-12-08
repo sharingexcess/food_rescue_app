@@ -1,4 +1,17 @@
-import { Flex, Box, Text, Select, Heading, Button } from '@chakra-ui/react'
+import {
+  Flex,
+  Box,
+  Text,
+  Select,
+  Heading,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+} from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { getDefaultRangeStart, getDefaultRangeEnd } from './Analytics.utils'
 import {
@@ -298,6 +311,18 @@ export function Analytics() {
             <option>Table</option>
           </Select>
         </Box>
+        <Box w="100%">
+          <Text fontWeight="600" color="element.tertiary">
+            Type
+          </Text>
+          <Select
+            value={transferType}
+            onChange={e => setTransferType(e.target.value)}
+          >
+            <option>Distributions</option>
+            <option>Collections</option>
+          </Select>
+        </Box>
       </Flex>
       <Box height={16} />
       {apiData && !loading ? (
@@ -396,44 +421,37 @@ export function Analytics() {
                   <Tooltip content={<CustomTooltip />} />
                 </Treemap>
               ) : (
-                <div id="Analytics-table">
-                  <div className="Analytics-table-header">Name</div>
-                  <div className="Analytics-table-header">Total Weight</div>
-                  <div className="Analytics-table-header">% of Total</div>
-                  {graphData.map((row, i) => (
-                    <>
-                      <div key={`${i}-name`} className="Analytics-table-name">
-                        {row.name}
-                      </div>
-                      <div key={`${i}-total`} className="Analytics-table-total">
-                        {formatLargeNumber(row.value)} lbs.
-                      </div>
-                      <div
-                        key={`${i}-percent`}
-                        className="Analytics-table-percent"
-                      >
-                        {((100 * row.value) / apiData.total_weight).toFixed(2)}%
-                      </div>
-                    </>
-                  ))}
-                </div>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>Name</Th>
+                      <Th>Total Weight</Th>
+                      <Th>% of Total</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {graphData.map((row, i) => (
+                      <Tr key={i}>
+                        <Td>
+                          <Text>{row.name}</Text>
+                        </Td>
+                        <Td>
+                          <Text>{formatLargeNumber(row.value)} lbs.</Text>
+                        </Td>
+                        <Td>
+                          <Text>
+                            {((100 * row.value) / apiData.total_weight).toFixed(
+                              2
+                            )}
+                            %
+                          </Text>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
               )}
             </ResponsiveContainer>
-            <Flex
-              mt={4}
-              direction="row"
-              align={'center'}
-              justifyContent={'center'}
-            >
-              <Select
-                value={transferType}
-                onChange={e => setTransferType(e.target.value)}
-                width={200}
-              >
-                <option>Distributions</option>
-                <option>Collections</option>
-              </Select>
-            </Flex>
           </section>
         </>
       ) : (
