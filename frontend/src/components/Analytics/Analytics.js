@@ -282,7 +282,7 @@ export function Analytics() {
         </Box>
       </Flex>
       <Flex gap="4" justify="space-between" mb="4">
-        <Box w="100%">
+        <Box w={'100%'}>
           <Text fontWeight="600" color="element.tertiary">
             Breakdown
           </Text>
@@ -300,7 +300,7 @@ export function Analytics() {
             <option>Driver</option>
           </Select>
         </Box>
-        <Box w="100%">
+        <Box w={isMobile ? '75%' : '100%'}>
           <Text fontWeight="600" color="element.tertiary">
             View
           </Text>
@@ -311,7 +311,7 @@ export function Analytics() {
             <option>Table</option>
           </Select>
         </Box>
-        <Box w="100%">
+        <Box w={isMobile ? '40%' : '70%'}>
           <Text fontWeight="600" color="element.tertiary">
             Type
           </Text>
