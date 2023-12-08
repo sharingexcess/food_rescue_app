@@ -43,14 +43,16 @@ export function Analytics() {
   )
   const [chart, setChart] = useState('Bar Chart')
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [transferType, setTransferType] = useState('Distributions')
 
   const params = useMemo(
     () => ({
       date_range_start: startOfDay(startDate),
       date_range_end: endDate,
       breakdown,
+      transferType,
     }),
-    [startDate, endDate, breakdown]
+    [startDate, endDate, breakdown, transferType]
   )
 
   const { data: apiData, loading } = useApi('/analytics', params)
@@ -278,8 +280,8 @@ export function Analytics() {
             <option>Food Category</option>
             <option>Rescue Type</option>
             <option>Location Type</option>
-            <option>Recipient Type</option>
             <option>Location and Rescue Type</option>
+            <option>Recipient Type</option>
             <option>Donor</option>
             <option>Recipient</option>
             <option>Driver</option>
@@ -307,7 +309,10 @@ export function Analytics() {
               id="PoundsInDateRange-pounds"
             >
               <Heading>{formatLargeNumber(apiData.total_weight)} lbs.</Heading>
-              <Text color="element.tertiary">Total Food Rescued</Text>
+              <Text color="element.tertiary">
+                Total Food Rescued{' '}
+                {transferType === 'Collections' ? '(Collected)' : '(Donated)'}
+              </Text>
             </Flex>
             <Flex direction="column" align="end">
               <Text fontSize="sm" color="element.tertiary">
@@ -414,6 +419,21 @@ export function Analytics() {
                 </div>
               )}
             </ResponsiveContainer>
+            <Flex
+              mt={4}
+              direction="row"
+              align={'center'}
+              justifyContent={'center'}
+            >
+              <Select
+                value={transferType}
+                onChange={e => setTransferType(e.target.value)}
+                width={200}
+              >
+                <option>Distributions</option>
+                <option>Collections</option>
+              </Select>
+            </Flex>
           </section>
         </>
       ) : (
