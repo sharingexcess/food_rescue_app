@@ -86,9 +86,7 @@ async function generateReport(date_range_start, date_range_end, breakdown) {
 
   distributions = distributions.filter(d => {
     const org = organizations.find(o => o.id === d.organization_id)
-    return ![RECIPIENT_SUB_TYPES.HOLDING, RECIPIENT_SUB_TYPES.COMPOST].includes(
-      org.subtype
-    )
+    return !['holding', 'compost'].includes(org.subtype)
   })
 
   console.log(
