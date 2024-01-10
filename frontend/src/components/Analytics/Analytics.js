@@ -29,7 +29,7 @@ import {
   Treemap,
 } from 'recharts'
 import { formatLargeNumber, shortenLargeNumber } from 'helpers'
-import { startOfDay } from './helper'
+import { endOfDay, startOfDay } from './helper'
 import { Loading } from 'components'
 import { useApi, useIsMobile } from 'hooks'
 import DatePicker from 'react-datepicker'
@@ -61,7 +61,7 @@ export function Analytics() {
   const params = useMemo(
     () => ({
       date_range_start: startOfDay(startDate),
-      date_range_end: endDate,
+      date_range_end: endOfDay(endDate),
       breakdown,
       transferType,
     }),
@@ -75,7 +75,7 @@ export function Analytics() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     params.set('date_range_start', startOfDay(startDate))
-    params.set('date_range_end', endDate)
+    params.set('date_range_end', endOfDay(endDate))
     params.set('breakdown', breakdown)
     window.history.replaceState(
       null,

@@ -60,7 +60,22 @@ export const aggregateWeightsByLocation = (
 
 export const startOfDay = date => {
   const newDate = new Date(date)
-  newDate.setDate(newDate.getDate() - 1)
-  newDate.setHours(20, 0, 0, 0)
-  return newDate
+  newDate.setHours(0, 0, 0, 0)
+
+  // Adjust for timezone offset to get to UTC
+  const timezoneOffset = newDate.getTimezoneOffset() * 60000
+  const adjustedDate = new Date(newDate.getTime() - timezoneOffset)
+
+  return adjustedDate
+}
+
+export const endOfDay = date => {
+  const newDate = new Date(date)
+  newDate.setHours(23, 59, 59, 999)
+
+  // Adjust for timezone offset to get to UTC
+  const timezoneOffset = newDate.getTimezoneOffset() * 60000
+  const adjustedDate = new Date(newDate.getTime() - timezoneOffset)
+
+  return adjustedDate
 }
