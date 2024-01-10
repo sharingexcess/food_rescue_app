@@ -17,6 +17,7 @@ import {
   sortedOrganizationsByWeight,
   getOrganizationsBySortedWeights,
   startOfDay,
+  endOfDay,
 } from './helper'
 
 export function AdvancedAnalytics({ startDate, endDate }) {
@@ -46,7 +47,7 @@ export function AdvancedAnalytics({ startDate, endDate }) {
   const params = useMemo(
     () => ({
       date_range_start: startOfDay(startDate),
-      date_range_end: endDate,
+      date_range_end: endOfDay(endDate),
       breakdown,
       analyticsType: 'advanced',
     }),
