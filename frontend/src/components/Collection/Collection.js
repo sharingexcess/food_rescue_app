@@ -87,6 +87,7 @@ export function Collection({
     if (rescue) {
       payload.rescue_id = rescue.id
       payload.handler_id = rescue.handler_id
+      payload.rescue_scheduled_time = rescue.timestamp_scheduled || null
     }
 
     // add up all individual entry rows to form categorized weight

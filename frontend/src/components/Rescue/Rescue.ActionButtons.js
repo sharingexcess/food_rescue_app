@@ -107,6 +107,7 @@ export function RescueActionButtons() {
               type: transfer.type,
               status: transfer.status,
               rescue_id: transfer.rescue_id,
+              rescue_scheduled_time: transfer.rescue_scheduled_time || null,
               handler_id: user.id,
               organization_id: transfer.organization_id,
               location_id: transfer.location_id,

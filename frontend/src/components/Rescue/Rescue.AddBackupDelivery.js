@@ -41,6 +41,7 @@ export function AddBackupDelivery() {
         type: TRANSFER_TYPES.DISTRIBUTION,
         status: STATUSES.SCHEDULED,
         rescue_id: rescue.id,
+        rescue_scheduled_time: rescue.timestamp_scheduled || null,
         handler_id: rescue.handler_id,
         organization_id: organization.id,
         location_id: location.id,

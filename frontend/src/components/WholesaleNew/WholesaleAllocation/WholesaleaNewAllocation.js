@@ -166,6 +166,10 @@ export function WholesaleNewAllocation() {
             type: TRANSFER_TYPES.DISTRIBUTION,
             status: STATUSES.COMPLETED,
             rescue_id: allocations[i].rescue_id,
+            rescue_scheduled_time:
+              moment(
+                allocations[i].rescue.transfers[0].timestamp_scheduled
+              ).toISOString() || null,
             handler_id: allocations[i].handler_id,
             organization_id: formData.organization.id,
             location_id: formData.location.id,

@@ -85,6 +85,7 @@ export function EditRecipient({ isOpen, handleClose }) {
       type: TRANSFER_TYPES.DISTRIBUTION,
       status: STATUSES.COMPLETED,
       rescue_id: rescue.id,
+      rescue_scheduled_time: rescue.timestamp_scheduled || null,
       handler_id: rescue.handler_id,
       organization_id: formData.organization.id,
       location_id: formData.location.id,

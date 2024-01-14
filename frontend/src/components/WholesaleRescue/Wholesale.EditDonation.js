@@ -75,6 +75,7 @@ export function EditDonation({ isOpen, handleClose }) {
       type: donation.type,
       status: donation.status,
       rescue_id: donation.rescue_id,
+      rescue_scheduled_time: donation.rescue_scheduled_time || null,
       handler_id: donation.handler_id,
       organization_id: donation.organization_id,
       location_id: donation.location_id,
