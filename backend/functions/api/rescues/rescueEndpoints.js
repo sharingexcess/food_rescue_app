@@ -7,6 +7,9 @@ const { createRescue } = require('./createRescue')
 const { getRescue } = require('./getRescue')
 const { listRescues } = require('./listRescues')
 const { updateRescue } = require('./updateRescue')
+const {
+  updateRescueTransferTimeStamps,
+} = require('./updateRescueTransferTimeStamps')
 
 exports.getRescueEndpoint = async (request, response, next) => {
   return new Promise(async resolve => {
@@ -177,6 +180,35 @@ exports.listRescuesEndpoint = async (request, response, next) => {
 
     const rescues = await listRescues(request.query)
     response.status(200).send(JSON.stringify(rescues))
+  } catch (e) {
+    next(e)
+  }
+}
+
+exports.updateRescueTransferTimeStamps = async (request, response, next) => {
+  try {
+    console.log(
+      'API ENDPOINT CALLED: updateRescueTransferTimeStamps\n',
+      'params:',
+      request.query
+    )
+
+    const requestIsAuthenticated = await authenticateRequest(
+      request.get('accessToken'),
+      user => user.permission
+    )
+
+    if (!requestIsAuthenticated) {
+      rejectUnauthorizedRequest(response)
+      return
+    }
+
+    const timestampresponse = await updateRescueTransferTimeStamps(
+      request,
+      response
+    )
+
+    response.status(200).send(JSON.stringify('Timestamps updated.'))
   } catch (e) {
     next(e)
   }

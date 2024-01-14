@@ -28,6 +28,7 @@ const {
   createRescueEndpoint,
   updateRescueEndpoint,
   cancelRescueEndpoint,
+  updateRescueTransferTimeStamps,
 } = require('./rescues/rescueEndpoints')
 const {
   getPublicProfileEndpoint,
@@ -77,6 +78,9 @@ api.post('/rescues/update/:id', (req, res, next) =>
 )
 api.post('/rescues/cancel/:id', (req, res, next) =>
   cancelRescueEndpoint(req, res, next)
+)
+api.get('/rescues/updatetimestamp', (req, res, next) =>
+  updateRescueTransferTimeStamps(req, res, next)
 )
 
 // TRANSFERS
