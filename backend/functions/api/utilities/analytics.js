@@ -350,6 +350,31 @@ async function breakdownByLocationType(transfers, organizations) {
   return sortObjectByValues(locationCategories)
 }
 
+// async function breakdownByAllLocationType(transfers, organizations) {
+//   let locationCategories = {}
+
+//   const orgTags = new Map(organizations.map(o => [o.id, o.tags]))
+//   const orgSubtypes = new Map(organizations.map(o => [o.id, o.subtype]))
+
+//   for (const transfer of transfers) {
+//     const org = organizations.find(o => o.id === transfer.organization_id)
+//     if (org && isEligibleOrg(orgSubtypes.get(org.id))) {
+//       const tags = orgTags.get(org.id) || []
+//       const weightToAdd = transfer.total_weight || 0
+
+//       for (const tag of tags) {
+//         if (tag in locationCategories) {
+//           locationCategories[tag] += weightToAdd
+//         } else {
+//           locationCategories[tag] = weightToAdd
+//         }
+//       }
+//     }
+//   }
+
+//   return sortObjectByValues(locationCategories)
+// }
+
 // This function is used to calculate the total weight of each location type
 async function breakdownByLocationAndRescueType(distributions, organizations) {
   const categorizedWeights = {

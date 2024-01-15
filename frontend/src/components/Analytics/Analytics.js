@@ -126,7 +126,7 @@ export function Analytics() {
     : breakdown === 'Location Type'
     ? Object.keys(apiData.view_data)
         .map(key => ({
-          name: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()), // Adjusts key formatting
+          name: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
           value: apiData.view_data[key],
         }))
         .sort((a, b) => b.value - a.value)
@@ -236,7 +236,7 @@ export function Analytics() {
           width={5}
           textAnchor="end"
         >
-          {payload.value.slice(0, 13)}
+          {payload.value ? payload.value.slice(0, 13) : ''}
           {payload.value.length >= 13 ? '...' : ''}
         </text>
       </g>
