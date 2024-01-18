@@ -1,289 +1,357 @@
-import {
-  Box,
-  Flex,
-  VStack,
-  Image,
-  Text,
-  Badge,
-  Heading,
-  Divider,
-  Input,
-} from '@chakra-ui/react'
+import { Box, Flex, Text } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
-import { useApi } from 'hooks'
+import { getDefaultRangeStart, getDefaultRangeEnd } from './Analytics.utils'
+import { endOfDay, startOfDay } from './helper'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import { useApi, useIsMobile } from 'hooks'
+import Select from 'react-select'
 
-import {
-  aggregateWeightsByOrganization,
-  sortedOrganizationsByWeight,
-  getOrganizationsBySortedWeights,
-  startOfDay,
-  endOfDay,
-} from './helper'
+import { AdvancedAnalyticsTable } from './AdvanvedAnalyticsTable'
 
-export function AdvancedAnalytics({ startDate, endDate }) {
-  const search = new URLSearchParams(window.location.search)
+export function AdvancedAnalytics() {
+  const [startDate, setStartDate] = useState(new Date(getDefaultRangeStart()))
+  const [endDate, setEndDate] = useState(new Date(getDefaultRangeEnd()))
+  const isMobile = useIsMobile()
 
-  const [collectionTransfers, setcollectionTransfers] = useState([])
-  const [organizations, setOrganizations] = useState([])
-  const [distributionTransfers, setdistributionTransfers] = useState([])
+  const rescueTypeOptions = [
+    { value: 'retail', label: 'Retail' },
+    { value: 'wholesale', label: 'Wholesale' },
+    { value: 'direct_link', label: 'Direct Link' },
+  ]
 
-  const [breakdown] = useState(
-    search.get('breakdown')
-      ? decodeURIComponent(search.get('breakdown'))
-      : 'Food Category'
+  const transferTypeOptions = [
+    { value: 'collection', label: 'Collection' },
+    { value: 'distribution', label: 'Distribution' },
+  ]
+
+  const tags = []
+
+  const [selectedHandler, setSelectedHandler] = useState(null)
+  const [selectedOrganization, setSelectedOrganization] = useState(null)
+  const [setSelectedRescueType] = useState(null)
+  const [selectedTags, setSelectedTags] = useState(null)
+  const [selectedType, setSelectedType] = useState('distribution')
+
+  const [all_transfers, setAllTransfers] = useState(null)
+  const [real_impact_transfers, setRealImpactTransfers] = useState(null)
+
+  const handleRescueTypeChange = option => setSelectedRescueType(option)
+
+  const handleTypeChange = option => {
+    setSelectedType(option.value)
+  }
+
+  const customStyles = {
+    control: provided => ({
+      ...provided,
+      width: 200, // Set fixed width here
+    }),
+    option: provided => ({
+      ...provided,
+      color: 'black',
+    }),
+    singleValue: provided => ({
+      ...provided,
+      color: 'black',
+    }),
+  }
+
+  const { data: handlers } = useApi(
+    '/public_profiles/list',
+    useMemo(() => ({}), [])
   )
 
-  const [
-    collectionOrganizationsBySortedWeights,
-    setCollectionOrganizationsBySortedWeights,
-  ] = useState([])
-  const [
-    distributionOrganizationsBySortedWeights,
-    setDistributionOrganizationsBySortedWeights,
-  ] = useState([])
+  const { data: organizations } = useApi(
+    '/organizations/list',
+    useMemo(
+      () => ({ type: selectedType === 'distribution' ? 'recipient' : 'donor' }),
+      [selectedType]
+    )
+  )
 
-  const [apiData, setApiData] = useState(null)
+  const handlerOptions = useMemo(() => {
+    if (handlers) {
+      return handlers.map(handler => ({
+        value: handler.id,
+        label: handler.name,
+        email: handler.email,
+      }))
+    }
+    return []
+  }, [handlers])
+
+  const organizationOptions = useMemo(() => {
+    if (organizations) {
+      return organizations.map(organization => ({
+        value: organization.id,
+        label: organization.name,
+      }))
+    }
+    return []
+  }, [organizations])
+
+  useEffect(() => {
+    if (organizations) {
+      for (const org of organizations) {
+        const orgTags = org.tags
+        if (orgTags) {
+          for (const tag of orgTags) {
+            tags.push({ value: tag, label: tag })
+          }
+        }
+      }
+    }
+  }, [organizations, tags])
 
   const params = useMemo(
     () => ({
       date_range_start: startOfDay(startDate),
       date_range_end: endOfDay(endDate),
-      breakdown,
-      analyticsType: 'advanced',
+      breakdown: 'Food Category',
+      analyticsType: 'advancedAnalytics',
+      transferType: selectedType,
     }),
-    [startDate, endDate, breakdown]
+    [startDate, endDate, selectedType]
   )
 
-  const { data: advanedApiData, loading } = useApi('/analytics', params)
+  const { data: transfers } = useApi('/analytics', params)
 
   useEffect(() => {
-    if (advanedApiData) {
-      setApiData(advanedApiData)
+    if (transfers) {
+      setAllTransfers(transfers.total_transfers)
+      setRealImpactTransfers(transfers.filtered_transfers)
     }
-  }, [advanedApiData])
+  }, [transfers])
+
+  // when tags change filter all transfers by tags
+
+  const handleTagsChange = option => {
+    setSelectedTags(option)
+  }
 
   useEffect(() => {
-    if (apiData) {
-      setcollectionTransfers(apiData.collections)
-      setdistributionTransfers(apiData.distributions)
-      setOrganizations(apiData.organizations)
+    if (selectedTags) {
+      const filtered = []
+
+      if (real_impact_transfers && selectedTags.length > 0) {
+        for (const transfer of real_impact_transfers) {
+          const org = organizations.find(
+            org => org.id === transfer.organization_id
+          )
+          if (org) {
+            const orgTags = org.tags
+            if (orgTags) {
+              for (const tag of orgTags) {
+                if (selectedTags.map(tag => tag.value).includes(tag)) {
+                  filtered.push(transfer)
+                  break // Breaks the loop once a matching tag is found
+                }
+              }
+            }
+          }
+        }
+        setRealImpactTransfers(filtered)
+      } else {
+        if (transfers) {
+          setRealImpactTransfers(transfers.filtered_transfers)
+        }
+      }
     }
-  }, [apiData])
+  }, [selectedTags])
+
+  const handleHandlerChange = option => {
+    setSelectedHandler(option)
+  }
 
   useEffect(() => {
-    const aggregateCollectionWeights =
-      aggregateWeightsByOrganization(collectionTransfers)
+    if (selectedHandler) {
+      const filtered = []
+      const selected_handler_id = selectedHandler.value
 
-    const aggregateDistributionWeights = aggregateWeightsByOrganization(
-      distributionTransfers
-    )
-    const sortedCollectionOrgsByWeight = sortedOrganizationsByWeight(
-      aggregateCollectionWeights
-    )
-    const sortedDistributionOrgsByWeight = sortedOrganizationsByWeight(
-      aggregateDistributionWeights
-    )
+      if (real_impact_transfers) {
+        for (const transfer of real_impact_transfers) {
+          if (transfer.handler_id == selected_handler_id) {
+            filtered.push(transfer)
+          }
+        }
+        setRealImpactTransfers(filtered)
+      }
+    } else {
+      if (transfers) {
+        setRealImpactTransfers(transfers.filtered_transfers)
+      }
+    }
+  }, [selectedHandler])
 
-    const getCollectionOrgsBySortedWeights = getOrganizationsBySortedWeights(
-      sortedCollectionOrgsByWeight,
-      organizations
-    )
-    setCollectionOrganizationsBySortedWeights(getCollectionOrgsBySortedWeights)
+  // organization
+  const handleOrganizationChange = option => {
+    setSelectedOrganization(option)
+  }
 
-    const getDistributionOriganizationsBySortedWeights =
-      getOrganizationsBySortedWeights(
-        sortedDistributionOrgsByWeight,
-        organizations
-      )
-    setDistributionOrganizationsBySortedWeights(
-      getDistributionOriganizationsBySortedWeights
-    )
-  }, [collectionTransfers, distributionTransfers])
+  useEffect(() => {
+    if (selectedOrganization) {
+      const filtered = []
+      const selected_organization_id = selectedOrganization.value
 
-  const [donorSearchQuery, setDonorSearchQuery] = useState('')
-  const [recipientSearchQuery, setRecipientSearchQuery] = useState('')
-
-  // Filter donors based on the search query
-  const filteredDonors = collectionOrganizationsBySortedWeights.filter(donor =>
-    donor.name.toLowerCase().includes(donorSearchQuery.toLowerCase())
-  )
-
-  // Filter recipients based on the search query
-  const filteredRecipients = distributionOrganizationsBySortedWeights.filter(
-    recipient =>
-      recipient.name.toLowerCase().includes(recipientSearchQuery.toLowerCase())
-  )
-
-  const donorsToDisplay = donorSearchQuery
-    ? filteredDonors
-    : collectionOrganizationsBySortedWeights.slice(0, 4)
-
-  const recipientsToDisplay = recipientSearchQuery
-    ? filteredRecipients
-    : distributionOrganizationsBySortedWeights.slice(0, 4)
+      if (real_impact_transfers) {
+        for (const transfer of real_impact_transfers) {
+          if (transfer.organization_id == selected_organization_id) {
+            filtered.push(transfer)
+          }
+        }
+        setRealImpactTransfers(filtered)
+      }
+    } else {
+      if (transfers) {
+        setRealImpactTransfers(transfers.filtered_transfers)
+      }
+    }
+  }, [selectedOrganization])
 
   return (
-    <Box>
+    <>
       <Flex
         gap="4"
         justify="space-between"
         mb="4"
-        flexDirection={'column'}
-      ></Flex>
-
-      <Flex
-        gap="4"
-        justify="space-between"
-        mb="4"
-        flexDirection={'column'}
-        mt={8}
+        flexDirection={isMobile ? 'column' : 'row'}
       >
-        <Heading>Top Donors</Heading>
-        <div style={{ width: '100%', height: '300px' }}>
-          <VStack align="start" spacing={5} mt={2}>
-            {apiData && !loading ? (
-              <>
-                <Input
-                  placeholder="Search donors..."
-                  value={donorSearchQuery}
-                  onChange={e => setDonorSearchQuery(e.target.value)}
-                />
-                {donorsToDisplay.map(donor => (
-                  <Box
-                    key={donor.id}
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    padding={5}
-                    width="100%"
-                    boxShadow="lg"
-                    cursor={'pointer'}
-                    onClick={() =>
-                      (window.location.href = `/dashboards/${donor.id}`)
-                    }
-                  >
-                    <Box display="flex" alignItems="center">
-                      <Image
-                        width="64px"
-                        borderRadius="12"
-                        src={
-                          donor.dashboard_logo ||
-                          'https://uploads-ssl.webflow.com/64515383645eb646d576e1fd/64515383645eb6607b76e285_logo.png'
-                        }
-                        alt={donor.name}
-                        marginRight={3}
-                      />
-                      <Box>
-                        <Text fontSize="xl" fontWeight="bold">
-                          {donor.name}
-                        </Text>
-                        <Text color="gray.500">{donor.subtype}</Text>
-                      </Box>
-                    </Box>
-
-                    <Box mt={3}>
-                      <Text>
-                        Donated:{' '}
-                        {donor.total_weight_donated
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{' '}
-                        <b>lbs.</b>
-                      </Text>
-                      {donor.tags && donor.tags.length > 0 && (
-                        <Box mt={2}>
-                          {donor.tags.map(tag => (
-                            <Badge key={tag} marginRight={2} height={5}>
-                              {tag}
-                            </Badge>
-                          ))}
-                        </Box>
-                      )}
-                    </Box>
-                  </Box>
-                ))}{' '}
-              </>
-            ) : (
-              <Text> Loading... </Text>
-            )}
-          </VStack>
-
-          <Flex
-            gap="4"
-            justify="space-between"
-            mb="4"
-            flexDirection={'column'}
-            mt={8}
-          >
-            <Divider />
-
-            <Heading>Top Recipients</Heading>
-            <VStack align="start" spacing={5} mt={2}>
-              {apiData && !loading ? (
-                <>
-                  <Input
-                    placeholder="Search recipients..."
-                    value={recipientSearchQuery}
-                    onChange={e => setRecipientSearchQuery(e.target.value)}
-                  />
-                  {recipientsToDisplay.map(donor => (
-                    <Box
-                      key={donor.id}
-                      borderWidth="1px"
-                      borderRadius="lg"
-                      padding={5}
-                      width="100%"
-                      boxShadow="lg"
-                      cursor={'pointer'}
-                      onClick={() =>
-                        (window.location.href = `/dashboards/${donor.id}`)
-                      }
-                    >
-                      <Box display="flex" alignItems="center">
-                        <Image
-                          width="64px"
-                          borderRadius="12"
-                          src={
-                            donor.dashboard_logo ||
-                            'https://uploads-ssl.webflow.com/64515383645eb646d576e1fd/64515383645eb6607b76e285_logo.png'
-                          }
-                          alt={donor.name}
-                          marginRight={3}
-                        />
-                        <Box>
-                          <Text fontSize="xl" fontWeight="bold">
-                            {donor.name}
-                          </Text>
-                          <Text color="gray.500">{donor.subtype}</Text>
-                        </Box>
-                      </Box>
-
-                      <Box mt={3}>
-                        <Text>
-                          Received:{' '}
-                          {donor.total_weight_donated
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}{' '}
-                          <b>lbs.</b>
-                        </Text>
-                        {donor.tags && donor.tags.length > 0 && (
-                          <Box mt={2}>
-                            {donor.tags.map(tag => (
-                              <Badge key={tag} marginRight={2}>
-                                {tag}
-                              </Badge>
-                            ))}
-                          </Box>
-                        )}
-                      </Box>
-                    </Box>
-                  ))}{' '}
-                </>
-              ) : (
-                <Text> Loading... </Text>
-              )}
-            </VStack>
-          </Flex>
-        </div>
+        <Box>
+          <Text fontWeight="600" color="element.tertiary">
+            From
+          </Text>
+          <DatePicker
+            selected={startDate}
+            onChange={date => {
+              setStartDate(date)
+            }}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+          />
+        </Box>
+        <Box>
+          <Text fontWeight="600" color="element.tertiary">
+            To
+          </Text>
+          <DatePicker
+            selected={endDate}
+            onChange={date => {
+              setEndDate(date)
+            }}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+          />
+        </Box>
       </Flex>
-    </Box>
+      <Flex
+        gap="4"
+        justify="space-between"
+        mb="4"
+        flexDirection={isMobile ? 'column' : 'row'}
+      >
+        <Box>
+          <Select
+            options={handlerOptions}
+            placeholder="Handler"
+            isSearchable
+            isClearable
+            styles={customStyles}
+            onChange={handleHandlerChange}
+          />
+        </Box>
+        <Box>
+          <Select
+            options={organizationOptions}
+            placeholder="Organization"
+            isSearchable
+            isClearable
+            styles={customStyles}
+            onChange={handleOrganizationChange}
+          />
+        </Box>
+        <Box>
+          <Select
+            options={rescueTypeOptions}
+            placeholder="Rescue Type"
+            isSearchable
+            isClearable
+            styles={customStyles}
+            onChange={handleRescueTypeChange}
+          />
+        </Box>
+      </Flex>
+      <Flex flexDirection={'row'} justifyContent={'space-between'}>
+        <Box>
+          <Text fontWeight="600" color="element.tertiary">
+            Tags
+          </Text>
+          <Select
+            options={tags}
+            placeholder="Tags"
+            isSearchable
+            isClearable
+            isMulti
+            styles={{
+              control: provided => ({ ...provided, width: 400 }),
+            }}
+            onChange={handleTagsChange}
+          />
+        </Box>
+        <Box>
+          <Text fontWeight="600" color="element.tertiary">
+            Type
+          </Text>
+          <Select
+            options={transferTypeOptions}
+            onChange={handleTypeChange}
+            defaultValue={transferTypeOptions[1]}
+            placeholder="Transfer Type"
+            styles={customStyles}
+          />
+        </Box>
+      </Flex>
+      <Flex mt={8}>
+        {transfers ? (
+          <Text>
+            <b>
+              {all_transfers ? all_transfers.length : null}{' '}
+              {selectedType === 'distribution'
+                ? 'distributions'
+                : 'collections'}{' '}
+            </b>
+            |{' '}
+            {all_transfers
+              ? all_transfers
+                  .reduce((total, current) => total + current.total_weight, 0)
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : null}{' '}
+            lbs. total weight |{' '}
+            {real_impact_transfers
+              ? real_impact_transfers
+                  .reduce((total, current) => total + current.total_weight, 0)
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : null}{' '}
+            lbs. real impact
+          </Text>
+        ) : (
+          <Text>Loading impact data...</Text>
+        )}
+      </Flex>
+      {transfers ? (
+        <AdvancedAnalyticsTable
+          real_impact_transfers={
+            real_impact_transfers ? real_impact_transfers : null
+          }
+        />
+      ) : (
+        <Text>Loading data table...</Text>
+      )}
+    </>
   )
 }

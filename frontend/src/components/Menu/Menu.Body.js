@@ -205,6 +205,37 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           </Button>
         </Link>
       )}
+      {hasAdminPermission && (
+        <Link to="/advanced-analytics">
+          <Button
+            variant="ghosted"
+            px={isMobile ? '0' : '2'}
+            color={
+              location.pathname === '/advanced-analytics'
+                ? 'element.active'
+                : 'element.primary'
+            }
+            fontWeight={
+              location.pathname === '/advanced-analytics' ? '600' : '300'
+            }
+            fontSize="md"
+            mr="auto"
+            disabled={!hasPermission}
+            height={isMobile ? '12' : '9'}
+          >
+            <Image
+              src={
+                darkMode
+                  ? '/Menu/dark/analytics.png'
+                  : '/Menu/light/analytics.png'
+              }
+              boxSize="20px"
+              mr="4"
+            />
+            Advanced Analytics
+          </Button>
+        </Link>
+      )}
       {(hasAdminPermission || !hasDashboardAccess) && (
         <Link to="/organizations">
           <Button

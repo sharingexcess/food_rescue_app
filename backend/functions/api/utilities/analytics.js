@@ -37,8 +37,14 @@ async function analyticsEndpoint(request, response) {
 
     let payload
 
-    if (analyticsType === 'advanced') {
-      payload = await advancedAnalytics(date_range_start, date_range_end)
+    if (analyticsType === 'advancedAnalytics') {
+      payload = await advancedAnalytics(
+        date_range_start,
+        date_range_end,
+        transferType
+      )
+    } else if (analyticsType === 'donorRecipients') {
+      payload = await donorRecipients(date_range_start, date_range_end)
     } else {
       payload = await analytics(
         date_range_start,
@@ -47,7 +53,6 @@ async function analyticsEndpoint(request, response) {
         transferType
       )
     }
-    console.log('Payload returned from analytics:', payload)
 
     if (payload != null) {
       response.status(200).send(JSON.stringify(payload))
@@ -80,7 +85,41 @@ async function fetchFilteredData(
     .filter(item => item.status === status)
 }
 
-async function advancedAnalytics(date_range_start, date_range_end) {
+const isEligibleOrg = orgSubtype => !['holding', 'compost'].includes(orgSubtype)
+
+async function advancedAnalytics(
+  date_range_start,
+  date_range_end,
+  transferType
+) {
+  const [transfers, organizations] = await Promise.all([
+    fetchFilteredData(
+      COLLECTIONS.TRANSFERS,
+      date_range_start,
+      date_range_end,
+      STATUSES.COMPLETED
+    ),
+    fetchCollection(COLLECTIONS.ORGANIZATIONS),
+  ])
+
+  const total_transfers =
+    transferType === 'collection'
+      ? await transfers.filter(s => s.type === TRANSFER_TYPES.COLLECTION)
+      : await transfers.filter(s => s.type === TRANSFER_TYPES.DISTRIBUTION)
+
+  const orgSubtypes = new Map(organizations.map(o => [o.id, o.subtype]))
+
+  const filtered_transfers = await total_transfers.filter(
+    transfer => isEligibleOrg(orgSubtypes.get(transfer.organization_id)) // eslint-disable-line
+  )
+
+  return {
+    total_transfers,
+    filtered_transfers,
+  }
+}
+
+async function donorRecipients(date_range_start, date_range_end) {
   // Parallelize database calls
   const [rescues, transfers, organizations, locations] = await Promise.all([
     fetchFilteredData(
@@ -212,8 +251,6 @@ async function analytics(
   console.log('returning payload:', payload)
   return payload
 }
-
-const isEligibleOrg = orgSubtype => !['holding', 'compost'].includes(orgSubtype)
 
 function calculateMetrics(transfers, organizations) {
   let total_weight = 0,

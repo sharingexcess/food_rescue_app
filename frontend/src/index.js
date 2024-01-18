@@ -35,6 +35,7 @@ import {
   WholesaleRemaining,
   WholesaleNewAllocation,
   WholesaleAllocationCompleted,
+  AdvancedAnalytics,
 } from './components'
 import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
@@ -207,6 +208,22 @@ function RescueAppRoutes() {
                       { label: 'Analytics', link: '/analytics' },
                     ]}
                     Content={Analytics}
+                  />
+                }
+              />
+              <Route
+                path="/advanced-analytics"
+                element={
+                  <Page
+                    id="Advanced-Analytics"
+                    defaultTitle="Advanced Analytics"
+                    defaultBreadcrumbs={[
+                      {
+                        label: 'Advanced Analytics',
+                        link: '/advanced-analytics',
+                      },
+                    ]}
+                    Content={AdvancedAnalytics}
                   />
                 }
               />
