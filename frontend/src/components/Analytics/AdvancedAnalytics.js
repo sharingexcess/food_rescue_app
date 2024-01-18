@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useApi, useIsMobile } from 'hooks'
 import Select from 'react-select'
-
+import { Loading } from 'components'
 import { AdvancedAnalyticsTable } from './AdvanvedAnalyticsTable'
 
 export function AdvancedAnalytics() {
@@ -21,22 +21,22 @@ export function AdvancedAnalytics() {
   ]
 
   const transferTypeOptions = [
-    { value: 'collection', label: 'Collection' },
     { value: 'distribution', label: 'Distribution' },
+    { value: 'collection', label: 'Collection' },
   ]
 
   const tags = []
 
   const [selectedHandler, setSelectedHandler] = useState(null)
   const [selectedOrganization, setSelectedOrganization] = useState(null)
-  const [setSelectedRescueType] = useState(null)
+  const [selectedRescueType, setSelectedRescueType] = useState(null)
   const [selectedTags, setSelectedTags] = useState(null)
   const [selectedType, setSelectedType] = useState('distribution')
 
-  const [all_transfers, setAllTransfers] = useState(null)
   const [real_impact_transfers, setRealImpactTransfers] = useState(null)
-
-  const handleRescueTypeChange = option => setSelectedRescueType(option)
+  const [rescues, setRescues] = useState(null)
+  const [locations, setLocations] = useState(null)
+  const [orgSubtypes, setOrgSubtypes] = useState(null)
 
   const handleTypeChange = option => {
     setSelectedType(option.value)
@@ -50,10 +50,12 @@ export function AdvancedAnalytics() {
     option: provided => ({
       ...provided,
       color: 'black',
+      fontSize: '14px',
     }),
     singleValue: provided => ({
       ...provided,
       color: 'black',
+      fontSize: '14px',
     }),
   }
 
@@ -74,7 +76,7 @@ export function AdvancedAnalytics() {
     if (handlers) {
       return handlers.map(handler => ({
         value: handler.id,
-        label: handler.name,
+        label: handler.name + ' : ' + handler.email,
         email: handler.email,
       }))
     }
@@ -93,11 +95,12 @@ export function AdvancedAnalytics() {
 
   useEffect(() => {
     if (organizations) {
-      for (const org of organizations) {
-        const orgTags = org.tags
-        if (orgTags) {
-          for (const tag of orgTags) {
-            tags.push({ value: tag, label: tag })
+      for (const organization of organizations) {
+        if (organization.tags) {
+          for (const tag of organization.tags) {
+            if (!tags.map(tag => tag.value).includes(tag)) {
+              tags.push({ value: tag, label: tag })
+            }
           }
         }
       }
@@ -119,95 +122,97 @@ export function AdvancedAnalytics() {
 
   useEffect(() => {
     if (transfers) {
-      setAllTransfers(transfers.total_transfers)
-      setRealImpactTransfers(transfers.filtered_transfers)
+      setRealImpactTransfers(transfers.total_transfers.reverse())
+      setLocations(transfers.locations)
+      setRescues(transfers.rescues)
     }
   }, [transfers])
-
-  // when tags change filter all transfers by tags
 
   const handleTagsChange = option => {
     setSelectedTags(option)
   }
 
-  useEffect(() => {
-    if (selectedTags) {
-      const filtered = []
-
-      if (real_impact_transfers && selectedTags.length > 0) {
-        for (const transfer of real_impact_transfers) {
-          const org = organizations.find(
-            org => org.id === transfer.organization_id
-          )
-          if (org) {
-            const orgTags = org.tags
-            if (orgTags) {
-              for (const tag of orgTags) {
-                if (selectedTags.map(tag => tag.value).includes(tag)) {
-                  filtered.push(transfer)
-                  break // Breaks the loop once a matching tag is found
-                }
-              }
-            }
-          }
-        }
-        setRealImpactTransfers(filtered)
-      } else {
-        if (transfers) {
-          setRealImpactTransfers(transfers.filtered_transfers)
-        }
-      }
-    }
-  }, [selectedTags])
-
   const handleHandlerChange = option => {
     setSelectedHandler(option)
   }
 
-  useEffect(() => {
-    if (selectedHandler) {
-      const filtered = []
-      const selected_handler_id = selectedHandler.value
-
-      if (real_impact_transfers) {
-        for (const transfer of real_impact_transfers) {
-          if (transfer.handler_id == selected_handler_id) {
-            filtered.push(transfer)
-          }
-        }
-        setRealImpactTransfers(filtered)
-      }
-    } else {
-      if (transfers) {
-        setRealImpactTransfers(transfers.filtered_transfers)
-      }
-    }
-  }, [selectedHandler])
-
-  // organization
   const handleOrganizationChange = option => {
     setSelectedOrganization(option)
   }
 
-  useEffect(() => {
-    if (selectedOrganization) {
-      const filtered = []
-      const selected_organization_id = selectedOrganization.value
+  const handleRescueTypeChange = option => {
+    setSelectedRescueType(option)
+  }
 
-      if (real_impact_transfers) {
-        for (const transfer of real_impact_transfers) {
-          if (transfer.organization_id == selected_organization_id) {
-            filtered.push(transfer)
-          }
-        }
-        setRealImpactTransfers(filtered)
-      }
-    } else {
-      if (transfers) {
-        setRealImpactTransfers(transfers.filtered_transfers)
+  useEffect(() => {
+    let filteredTransfers = transfers ? [...transfers.total_transfers] : []
+
+    // Filter by handler
+    if (selectedHandler) {
+      const selected_handler_id = selectedHandler.value
+      filteredTransfers = filteredTransfers.filter(
+        transfer => transfer.handler_id === selected_handler_id
+      )
+    }
+
+    // Filter by organization
+    if (selectedOrganization) {
+      const selected_organization_id = selectedOrganization.value
+      filteredTransfers = filteredTransfers.filter(
+        transfer => transfer.organization_id === selected_organization_id
+      )
+    }
+
+    // Filter by tags
+    if (selectedTags) {
+      const selected_tag = selectedTags.value
+      if (organizations) {
+        filteredTransfers = filteredTransfers.filter(transfer => {
+          const org = organizations.find(
+            org => org.id === transfer.organization_id
+          )
+          return org && org.tags && org.tags.includes(selected_tag)
+        })
+      } else {
+        console.log('organizations is null')
       }
     }
-  }, [selectedOrganization])
+
+    // Filter by rescue type
+    if (selectedRescueType) {
+      const selected_rescue_type = selectedRescueType.value
+      if (rescues) {
+        filteredTransfers = filteredTransfers.filter(transfer => {
+          const rescue = rescues.find(
+            rescue => rescue.id === transfer.rescue_id
+          )
+          return rescue && rescue.type === selected_rescue_type
+        })
+      } else {
+        console.log('rescues is null')
+      }
+    }
+
+    setRealImpactTransfers(filteredTransfers)
+  }, [
+    selectedHandler,
+    selectedTags,
+    selectedOrganization,
+    selectedRescueType,
+    transfers,
+    organizations,
+    rescues,
+  ])
+
+  const isEligibleOrg = orgSubtype =>
+    !['holding', 'compost'].includes(orgSubtype)
+
+  useEffect(() => {
+    if (organizations) {
+      const orgSubtypes = new Map(organizations.map(o => [o.id, o.subtype]))
+      setOrgSubtypes(orgSubtypes)
+    }
+  }, [organizations])
 
   return (
     <>
@@ -266,21 +271,19 @@ export function AdvancedAnalytics() {
         <Box>
           <Select
             options={organizationOptions}
+            onChange={handleOrganizationChange}
             placeholder="Organization"
-            isSearchable
             isClearable
             styles={customStyles}
-            onChange={handleOrganizationChange}
           />
         </Box>
         <Box>
           <Select
             options={rescueTypeOptions}
+            onChange={handleRescueTypeChange}
             placeholder="Rescue Type"
-            isSearchable
             isClearable
             styles={customStyles}
-            onChange={handleRescueTypeChange}
           />
         </Box>
       </Flex>
@@ -294,21 +297,33 @@ export function AdvancedAnalytics() {
             placeholder="Tags"
             isSearchable
             isClearable
-            isMulti
             styles={{
-              control: provided => ({ ...provided, width: 400 }),
+              control: provided => ({
+                ...provided,
+                width: isMobile ? 190 : 400,
+              }),
+              option: provided => ({
+                ...provided,
+                color: 'black',
+                fontSize: '14px',
+              }),
+              singleValue: provided => ({
+                ...provided,
+                color: 'black',
+                fontSize: '14px',
+              }),
             }}
             onChange={handleTagsChange}
           />
         </Box>
-        <Box>
+        <Box w={isMobile ? 190 : 200}>
           <Text fontWeight="600" color="element.tertiary">
             Type
           </Text>
           <Select
             options={transferTypeOptions}
             onChange={handleTypeChange}
-            defaultValue={transferTypeOptions[1]}
+            defaultValue={transferTypeOptions[0]}
             placeholder="Transfer Type"
             styles={customStyles}
           />
@@ -316,31 +331,44 @@ export function AdvancedAnalytics() {
       </Flex>
       <Flex mt={8}>
         {transfers ? (
-          <Text>
-            <b>
-              {all_transfers ? all_transfers.length : null}{' '}
-              {selectedType === 'distribution'
-                ? 'distributions'
-                : 'collections'}{' '}
-            </b>
-            |{' '}
-            {all_transfers
-              ? all_transfers
-                  .reduce((total, current) => total + current.total_weight, 0)
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              : null}{' '}
-            lbs. total weight |{' '}
-            {real_impact_transfers
-              ? real_impact_transfers
-                  .reduce((total, current) => total + current.total_weight, 0)
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              : null}{' '}
-            lbs. real impact
-          </Text>
+          <Flex flexDirection={'column'}>
+            <Text fontSize={'lg'} mb={4}>
+              <b>
+                {real_impact_transfers ? real_impact_transfers.length : null}{' '}
+                {selectedType === 'distribution'
+                  ? 'distributions'
+                  : 'collections'}{' '}
+              </b>
+              |{' '}
+              {real_impact_transfers
+                ? real_impact_transfers
+                    .reduce((total, current) => total + current.total_weight, 0)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                : null}{' '}
+              lbs. total weight |{' '}
+              <b>
+                {real_impact_transfers
+                  ? real_impact_transfers
+                      .filter(
+                        i =>
+                          orgSubtypes &&
+                          isEligibleOrg(orgSubtypes.get(i.organization_id))
+                      )
+                      .reduce(
+                        (total, current) => total + current.total_weight,
+                        0
+                      )
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  : null}{' '}
+                lbs.
+              </b>{' '}
+              real impact
+            </Text>
+          </Flex>
         ) : (
-          <Text>Loading impact data...</Text>
+          <> </>
         )}
       </Flex>
       {transfers ? (
@@ -348,9 +376,12 @@ export function AdvancedAnalytics() {
           real_impact_transfers={
             real_impact_transfers ? real_impact_transfers : null
           }
+          organizations={organizations ? organizations : null}
+          locations={locations ? locations : null}
+          handlers={handlers ? handlers : null}
         />
       ) : (
-        <Text>Loading data table...</Text>
+        <Loading />
       )}
     </>
   )

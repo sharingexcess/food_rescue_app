@@ -43,8 +43,8 @@ async function analyticsEndpoint(request, response) {
         date_range_end,
         transferType
       )
-    } else if (analyticsType === 'donorRecipients') {
-      payload = await donorRecipients(date_range_start, date_range_end)
+    } else if (analyticsType === 'basicAnalytics') {
+      payload = await basicAnalytics(date_range_start, date_range_end)
     } else {
       payload = await analytics(
         date_range_start,
@@ -92,14 +92,14 @@ async function advancedAnalytics(
   date_range_end,
   transferType
 ) {
-  const [transfers, organizations] = await Promise.all([
+  const [transfers, locations] = await Promise.all([
     fetchFilteredData(
       COLLECTIONS.TRANSFERS,
       date_range_start,
       date_range_end,
       STATUSES.COMPLETED
     ),
-    fetchCollection(COLLECTIONS.ORGANIZATIONS),
+    fetchCollection(COLLECTIONS.LOCATIONS),
   ])
 
   const total_transfers =
@@ -107,19 +107,20 @@ async function advancedAnalytics(
       ? await transfers.filter(s => s.type === TRANSFER_TYPES.COLLECTION)
       : await transfers.filter(s => s.type === TRANSFER_TYPES.DISTRIBUTION)
 
-  const orgSubtypes = new Map(organizations.map(o => [o.id, o.subtype]))
+  const rescue_ids = [...new Set(total_transfers.map(d => d.rescue_id))]
 
-  const filtered_transfers = await total_transfers.filter(
-    transfer => isEligibleOrg(orgSubtypes.get(transfer.organization_id)) // eslint-disable-line
-  )
+  const rescueDataResults = await fetchRescueDataInBatches(rescue_ids)
+
+  const rescues = rescueDataResults.map(rescue => rescue.data())
 
   return {
     total_transfers,
-    filtered_transfers,
+    locations,
+    rescues,
   }
 }
 
-async function donorRecipients(date_range_start, date_range_end) {
+async function basicAnalytics(date_range_start, date_range_end) {
   // Parallelize database calls
   const [rescues, transfers, organizations, locations] = await Promise.all([
     fetchFilteredData(

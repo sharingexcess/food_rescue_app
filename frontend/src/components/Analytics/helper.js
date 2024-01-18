@@ -79,3 +79,9 @@ export const endOfDay = date => {
 
   return adjustedDate
 }
+
+// export function convertToEST(utcTimestamp) {
+//   // add 5 hours to get to EST
+//   const estTimestamp = new Date(utcTimestamp).getTime() + 18000000
+//   return new Date(estTimestamp)
+// }

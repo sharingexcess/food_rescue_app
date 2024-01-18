@@ -49,7 +49,7 @@ export function DonorRecipients({ startDate, endDate }) {
       date_range_start: startOfDay(startDate),
       date_range_end: endOfDay(endDate),
       breakdown,
-      analyticsType: 'donorRecipients',
+      analyticsType: 'basicAnalytics',
     }),
     [startDate, endDate, breakdown]
   )
