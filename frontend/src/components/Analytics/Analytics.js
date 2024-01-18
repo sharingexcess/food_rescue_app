@@ -34,7 +34,7 @@ import { Loading } from 'components'
 import { useApi, useIsMobile } from 'hooks'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { AdvancedAnalytics } from './AdvancedAnalytics'
+import { DonorRecipients } from './DonorRecipients'
 
 const COLORS = [
   '#205a08',
@@ -470,7 +470,7 @@ export function Analytics() {
         {showAdvanced ? 'Show Less' : 'Show More'}
       </Button>
       {showAdvanced && (
-        <AdvancedAnalytics startDate={startDate} endDate={endDate} />
+        <DonorRecipients startDate={startDate} endDate={endDate} />
       )}
     </main>
   )
