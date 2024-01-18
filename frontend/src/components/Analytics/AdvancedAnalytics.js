@@ -38,13 +38,8 @@ export function AdvancedAnalytics() {
 
   const handleRescueTypeChange = option => setSelectedRescueType(option)
 
-  // handleTypeChange reset all filters
   const handleTypeChange = option => {
     setSelectedType(option.value)
-    setSelectedHandler(null)
-    setSelectedOrganization(null)
-    setSelectedRescueType(null)
-    setSelectedTags(null)
   }
 
   const customStyles = {
