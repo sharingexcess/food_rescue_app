@@ -20,7 +20,8 @@ import moment from 'moment'
 
 export function Header() {
   const { refresh, setOpenTransfer } = useRescueContext()
-  const { distribution, completedAt, setCompletedAt } = useDistributionContext()
+  const { distribution, completedAt, setCompletedAt, logRescueType } =
+    useDistributionContext()
   const { user } = useAuth()
 
   async function handleCancel() {
@@ -92,8 +93,10 @@ export function Header() {
             {distribution.location.notes}
           </Text>
         )}
-      {[STATUSES.CANCELLED, STATUSES.COMPLETED].includes(
-        distribution.status
+      {!(
+        logRescueType === 'direct_link' ||
+        logRescueType === 'wholesale' ||
+        logRescueType === 'retail'
       ) && (
         <>
           <Text

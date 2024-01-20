@@ -20,7 +20,8 @@ import moment from 'moment'
 
 export function CollectionHeader() {
   const { refresh, setOpenTransfer } = useRescueContext()
-  const { collection, completedAt, setCompletedAt } = useCollectionContext()
+  const { collection, completedAt, setCompletedAt, logRescueType } =
+    useCollectionContext()
   const { user } = useAuth()
 
   async function handleCancel() {
@@ -92,7 +93,11 @@ export function CollectionHeader() {
             {collection.location.notes}
           </Text>
         )}
-      {[STATUSES.CANCELLED, STATUSES.COMPLETED].includes(collection.status) && (
+      {!(
+        logRescueType === 'direct_link' ||
+        logRescueType === 'wholesale' ||
+        logRescueType === 'retail'
+      ) && (
         <>
           <Text
             color="element.tertiary"
