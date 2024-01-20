@@ -21,6 +21,7 @@ export function Collection({
   collection,
   handleCloseCollectionOverride,
   handleSubmitOverride,
+  logRescueType,
 }) {
   const { user } = useAuth()
   const { setOpenTransfer, rescue, refresh } = useRescueContext()
@@ -53,7 +54,11 @@ export function Collection({
       }
       setEntryRows(initialEntryRows)
       setNotes(collection.notes)
-      setCompletedAt(collection.timestamp_completed)
+      setCompletedAt(
+        collection.timestamp_completed
+          ? moment(collection.timestamp_completed).format('YYYY-MM-DDTHH:mm')
+          : moment().format('YYYY-MM-DDTHH:mm')
+      )
     }
   }, [collection])
 
@@ -71,7 +76,7 @@ export function Collection({
       timestamp_completed:
         // automatically set timestamp completed if this is being submitted for the first time
         collection.status === STATUSES.SCHEDULED
-          ? moment().toISOString()
+          ? moment(completedAt).toISOString()
           : moment(completedAt).toISOString(),
       total_weight: 0,
       categorized_weight: EMPTY_CATEGORIZED_WEIGHT(),
@@ -145,6 +150,7 @@ export function Collection({
     total,
     completedAt,
     setCompletedAt,
+    logRescueType,
   }
 
   return (

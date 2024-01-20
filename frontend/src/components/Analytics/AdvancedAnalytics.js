@@ -217,10 +217,11 @@ export function AdvancedAnalytics() {
   return (
     <>
       <Flex
+        direction={isMobile ? 'column' : 'row'}
         gap="4"
         justify="space-between"
         mb="4"
-        flexDirection={isMobile ? 'column' : 'row'}
+        width={'100%'}
       >
         <Box>
           <Text fontWeight="600" color="element.tertiary">
@@ -253,73 +254,76 @@ export function AdvancedAnalytics() {
         </Box>
       </Flex>
       <Flex
-        gap="4"
+        flexDirection={isMobile ? 'row' : 'column'}
         justify="space-between"
         mb="4"
-        flexDirection={isMobile ? 'column' : 'row'}
       >
-        <Box>
-          <Select
-            options={handlerOptions}
-            placeholder="Handler"
-            isSearchable
-            isClearable
-            styles={customStyles}
-            onChange={handleHandlerChange}
-          />
-        </Box>
-        <Box>
-          <Select
-            options={organizationOptions}
-            onChange={handleOrganizationChange}
-            placeholder="Organization"
-            isClearable
-            styles={customStyles}
-          />
-        </Box>
-        <Box>
-          <Select
-            options={rescueTypeOptions}
-            onChange={handleRescueTypeChange}
-            placeholder="Rescue Type"
-            isClearable
-            styles={customStyles}
-          />
-        </Box>
-      </Flex>
-      <Flex flexDirection={'row'} justifyContent={'space-between'}>
-        <Box>
-          <Text fontWeight="600" color="element.tertiary">
-            Tags
-          </Text>
-          <Select
-            options={tags}
-            placeholder="Tags"
-            isSearchable
-            isClearable
-            styles={{
-              control: provided => ({
-                ...provided,
-                width: isMobile ? 190 : 400,
-              }),
-              option: provided => ({
-                ...provided,
-                color: 'black',
-                fontSize: '14px',
-              }),
-              singleValue: provided => ({
-                ...provided,
-                color: 'black',
-                fontSize: '14px',
-              }),
-            }}
-            onChange={handleTagsChange}
-          />
-        </Box>
-        <Box w={isMobile ? 190 : 200}>
-          <Text fontWeight="600" color="element.tertiary">
-            Type
-          </Text>
+        <Flex
+          gap="4"
+          justify="space-between"
+          mb="4"
+          flexDirection={isMobile ? 'column' : 'row'}
+        >
+          <Box>
+            <Select
+              options={handlerOptions}
+              placeholder="Handler"
+              isSearchable
+              isClearable
+              styles={customStyles}
+              onChange={handleHandlerChange}
+            />
+          </Box>
+          <Box>
+            <Select
+              options={organizationOptions}
+              onChange={handleOrganizationChange}
+              placeholder="Organization"
+              isClearable
+              styles={customStyles}
+            />
+          </Box>
+          <Box>
+            <Select
+              options={rescueTypeOptions}
+              onChange={handleRescueTypeChange}
+              placeholder="Rescue Type"
+              isClearable
+              styles={customStyles}
+            />
+          </Box>
+        </Flex>
+        <Flex
+          flexDirection={isMobile ? 'column' : 'row'}
+          justifyContent={isMobile ? '' : 'space-between'}
+          ml={isMobile ? 2 : 0}
+          gap={isMobile ? 4 : 6}
+        >
+          <Box>
+            <Select
+              options={tags}
+              placeholder="Tags"
+              isSearchable
+              isClearable
+              styles={{
+                control: provided => ({
+                  ...provided,
+                  width: isMobile ? 200 : 445,
+                }),
+                option: provided => ({
+                  ...provided,
+                  color: 'black',
+                  fontSize: '14px',
+                }),
+                singleValue: provided => ({
+                  ...provided,
+                  color: 'black',
+                  fontSize: '14px',
+                }),
+              }}
+              onChange={handleTagsChange}
+            />
+          </Box>
           <Select
             options={transferTypeOptions}
             onChange={handleTypeChange}
@@ -327,7 +331,7 @@ export function AdvancedAnalytics() {
             placeholder="Transfer Type"
             styles={customStyles}
           />
-        </Box>
+        </Flex>
       </Flex>
       <Flex mt={8}>
         {transfers ? (

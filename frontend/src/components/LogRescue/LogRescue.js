@@ -120,6 +120,9 @@ export function LogRescue() {
           timestamp_completed: moment(
             formData.timestamp_completed
           ).toISOString(),
+          rescue_scheduled_time: moment(
+            formData.timestamp_scheduled
+          ).toISOString(),
         })),
       },
       user.accessToken
@@ -204,6 +207,7 @@ export function LogRescue() {
           collection={activeTransfer}
           handleSubmitOverride={handleUpdateCollection}
           handleCloseCollectionOverride={() => setActiveTransfer(null)}
+          logRescueType={formData.type ? formData.type : null}
         />
       ) : activeTransfer?.type === TRANSFER_TYPES.DISTRIBUTION ? (
         <Distribution
@@ -211,6 +215,7 @@ export function LogRescue() {
           rescueOverride={{ transfers }}
           handleCloseDistributionOverride={() => setActiveTransfer(null)}
           handleSubmitOverride={handleUpdateDistribution}
+          logRescueType={formData.type ? formData.type : null}
         />
       ) : null}
       {view ? (
