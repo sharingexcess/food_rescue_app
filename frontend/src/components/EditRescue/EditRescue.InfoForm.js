@@ -26,6 +26,26 @@ export function InfoForm({ formData, setFormData, handlers }) {
         }
       />
 
+      {formData.timestamp_completed ? (
+        <>
+          <Text color="element.primary" fontWeight="600">
+            Completed Time
+          </Text>
+          <Input
+            value={formData.timestamp_completed}
+            type="datetime-local"
+            textAlign="left"
+            mb="6"
+            onChange={e =>
+              setFormData({
+                ...formData,
+                timestamp_completed: e.target.value,
+              })
+            }
+          />
+        </>
+      ) : null}
+
       <Text color="element.primary" fontWeight="600">
         Handler
         <Text

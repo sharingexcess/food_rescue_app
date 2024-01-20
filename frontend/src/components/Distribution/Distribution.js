@@ -57,7 +57,7 @@ export function Distribution({
       setCompletedAt(
         distribution.timestamp_completed
           ? moment(distribution.timestamp_completed).format('YYYY-MM-DDTHH:mm')
-          : null
+          : moment().format('YYYY-MM-DDTHH:mm')
       )
     }
   }, [distribution, currentLoad])
@@ -94,7 +94,7 @@ export function Distribution({
       timestamp_completed:
         // automatically set timestamp completed if this is being submitted for the first time
         distribution.status === STATUSES.SCHEDULED
-          ? moment().toISOString()
+          ? moment(completedAt).toISOString()
           : moment(completedAt).toISOString(),
       total_weight,
       categorized_weight,

@@ -118,7 +118,10 @@ export function LogRescue() {
           ...transfer,
           handler_id: formData.handler.id,
           timestamp_completed: moment(
-            formData.timestamp_completed
+            transfer.timestamp_completed
+          ).toISOString(),
+          rescue_scheduled_time: moment(
+            formData.timestamp_scheduled
           ).toISOString(),
         })),
       },

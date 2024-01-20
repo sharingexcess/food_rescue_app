@@ -92,25 +92,23 @@ export function CollectionHeader() {
             {collection.location.notes}
           </Text>
         )}
-      {[STATUSES.CANCELLED, STATUSES.COMPLETED].includes(collection.status) && (
-        <>
-          <Text
-            color="element.tertiary"
-            fontSize="xs"
-            fontWeight="700"
-            textTransform="uppercase"
-          >
-            Completed at:
-          </Text>
-          <Input
-            placeholder="Completed at"
-            mb={4}
-            type="datetime-local"
-            value={moment(completedAt).format('YYYY-MM-DDTHH:mm')}
-            onChange={e => setCompletedAt(new Date(e.target.value))}
-          />
-        </>
-      )}
+      <>
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          textTransform="uppercase"
+        >
+          Completed at:
+        </Text>
+        <Input
+          placeholder="Completed at"
+          mb={4}
+          type="datetime-local"
+          value={moment(completedAt).format('YYYY-MM-DDTHH:mm')}
+          onChange={e => setCompletedAt(new Date(e.target.value))}
+        />
+      </>
       <Flex justify="space-between" gap={2}>
         <Button
           size="sm"
