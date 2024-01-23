@@ -20,8 +20,7 @@ import moment from 'moment'
 
 export function Header() {
   const { refresh, setOpenTransfer } = useRescueContext()
-  const { distribution, completedAt, setCompletedAt, logRescueType } =
-    useDistributionContext()
+  const { distribution, completedAt, setCompletedAt } = useDistributionContext()
   const { user } = useAuth()
 
   async function handleCancel() {
@@ -93,29 +92,23 @@ export function Header() {
             {distribution.location.notes}
           </Text>
         )}
-      {!(
-        logRescueType === 'direct_link' ||
-        logRescueType === 'wholesale' ||
-        logRescueType === 'retail'
-      ) && (
-        <>
-          <Text
-            color="element.tertiary"
-            fontSize="xs"
-            fontWeight="700"
-            textTransform="uppercase"
-          >
-            Completed at:
-          </Text>
-          <Input
-            placeholder="Completed at"
-            mb={4}
-            type="datetime-local"
-            value={moment(completedAt).format('YYYY-MM-DDTHH:mm')}
-            onChange={e => setCompletedAt(new Date(e.target.value))}
-          />
-        </>
-      )}
+      <>
+        <Text
+          color="element.tertiary"
+          fontSize="xs"
+          fontWeight="700"
+          textTransform="uppercase"
+        >
+          Completed at:
+        </Text>
+        <Input
+          placeholder="Completed at"
+          mb={4}
+          type="datetime-local"
+          value={moment(completedAt).format('YYYY-MM-DDTHH:mm')}
+          onChange={e => setCompletedAt(new Date(e.target.value))}
+        />
+      </>
       <Flex justify="space-between" gap={2}>
         <Button
           size="sm"

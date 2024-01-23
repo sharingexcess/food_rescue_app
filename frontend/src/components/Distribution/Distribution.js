@@ -22,7 +22,6 @@ export function Distribution({
   rescueOverride,
   handleCloseDistributionOverride,
   handleSubmitOverride,
-  logRescueType,
 }) {
   const { hasAdminPermission, user } = useAuth()
   const { setOpenTransfer, refresh, activeTransfer } = useRescueContext()
@@ -154,7 +153,6 @@ export function Distribution({
     isSubmitting,
     completedAt,
     setCompletedAt,
-    logRescueType,
   }
 
   return (

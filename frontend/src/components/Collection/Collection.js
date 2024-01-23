@@ -21,7 +21,6 @@ export function Collection({
   collection,
   handleCloseCollectionOverride,
   handleSubmitOverride,
-  logRescueType,
 }) {
   const { user } = useAuth()
   const { setOpenTransfer, rescue, refresh } = useRescueContext()
@@ -150,7 +149,6 @@ export function Collection({
     total,
     completedAt,
     setCompletedAt,
-    logRescueType,
   }
 
   return (

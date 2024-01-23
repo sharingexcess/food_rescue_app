@@ -30,6 +30,7 @@ export function EditRescue({ setBreadcrumbs, setTitle }) {
   )
   const [formData, setFormData] = useState({
     timestamp_scheduled: '',
+    timestamp_completed: '',
     handler: null,
   })
   const [view, setView] = useState(null)
@@ -57,6 +58,10 @@ export function EditRescue({ setBreadcrumbs, setTitle }) {
       setFormData({
         timestamp_scheduled: formatTimestamp(
           rescue.timestamp_scheduled,
+          'YYYY-MM-DDTHH:mm'
+        ),
+        timestamp_completed: formatTimestamp(
+          rescue.timestamp_completed,
           'YYYY-MM-DDTHH:mm'
         ),
         handler: rescue.handler,
@@ -193,7 +198,7 @@ export function EditRescue({ setBreadcrumbs, setTitle }) {
       type: rescue.type,
       status: rescue.status,
       notes: rescue.notes,
-      timestamp_completed: rescue.timestamp_completed,
+      timestamp_completed: moment(formData.timestamp_completed).toISOString(),
       timestamp_scheduled: moment(formData.timestamp_scheduled).toISOString(),
       handler_id: formData.handler?.id || null,
       transfer_ids: transfers.map(i => i.id),
