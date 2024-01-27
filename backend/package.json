@@ -11,6 +11,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@google-cloud/bigquery": "^7.3.0",
     "@sentry/node": "^7.12.1",
     "@sentry/tracing": "^7.12.1",
     "dotenv": "^16.0.1",

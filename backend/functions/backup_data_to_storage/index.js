@@ -8,9 +8,10 @@ exports.backup_data_to_storage = async () => {
   for (const collection of Object.values(COLLECTIONS)) {
     const data = await fetchCollection(collection)
     console.log('Fetched', collection, data.length, 'rows')
-    const jsonData = JSON.stringify(data)
-    const path = `backup/${date}/${collection}.json`
-    uploadFile(path, jsonData)
+
+    const jsonlData = data.map(d => JSON.stringify(d)).join('\n')
+    const jsonlPath = `backup/${date}/${collection}.jsonl`
+    uploadFile(jsonlPath, jsonlData)
   }
   console.log('done!')
 }

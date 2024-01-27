@@ -12,6 +12,7 @@ const {
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwqyz', 12)
 const { google } = require('googleapis')
 const calendar = google.calendar('v3')
+const bigquery = require('@google-cloud/bigquery')
 
 exports.app = admin.initializeApp()
 exports.db = admin.firestore()
@@ -126,6 +127,45 @@ exports.uploadFile = async (path, data) => {
     console.log(`Successfully uploaded ${path} to Storage`)
   } catch (error) {
     console.error(`Error uploading file ${path} to storage:`, error)
+  }
+}
+
+exports.uploadFileToBigQuery = async (filenames, date) => {
+  const bigqueryClient = new bigquery.BigQuery()
+  const bucket = admin.storage().bucket()
+  const backupFolder = 'backup/'
+  const bigqueryDataset = 'testing_cloud_storage'
+  const folderPath = `${backupFolder}${date}/`
+
+  for (const filename of filenames) {
+    const blobPath = `${folderPath}${filename}`
+    const file = bucket.file(blobPath)
+
+    console.log(`Uploading ${blobPath} to BigQuery`)
+    console.log('filename: ', filename)
+
+    const [exists] = await file.exists()
+    if (!exists) {
+      console.log(`File ${blobPath} does not exist`)
+      continue
+    }
+
+    // Table and staging table names
+    const tableName = filename.split('.')[0]
+
+    // Load data into the staging table, schema self describing
+    const jobMetaData = {
+      sourceFormat: 'NEWLINE_DELIMITED_JSON',
+      writeDisposition: 'WRITE_TRUNCATE',
+      createDisposition: 'CREATE_IF_NEEDED',
+    }
+
+    await bigqueryClient
+      .dataset(bigqueryDataset)
+      .table(tableName)
+      .load(file, jobMetaData)
+
+    console.log(`Successfully uploaded data to BigQuery table`)
   }
 }
 
