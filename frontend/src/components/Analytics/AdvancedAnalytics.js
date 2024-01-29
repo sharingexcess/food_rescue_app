@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react'
+import { Box, Flex, Text, Button } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { getDefaultRangeStart, getDefaultRangeEnd } from './Analytics.utils'
 import { endOfDay, startOfDay } from './helper'
@@ -10,8 +10,14 @@ import { Loading } from 'components'
 import { AdvancedAnalyticsTable } from './AdvanvedAnalyticsTable'
 
 export function AdvancedAnalytics() {
-  const [startDate, setStartDate] = useState(new Date(getDefaultRangeStart()))
-  const [endDate, setEndDate] = useState(new Date(getDefaultRangeEnd()))
+  const [selectedStartDate, setSelectedStartDate] = useState(
+    new Date(getDefaultRangeStart())
+  )
+  const [selectedEndDate, setSelectedEndDate] = useState(
+    new Date(getDefaultRangeEnd())
+  )
+  const [startDate, setStartDate] = useState(selectedStartDate)
+  const [endDate, setEndDate] = useState(selectedEndDate)
   const isMobile = useIsMobile()
 
   const rescueTypeOptions = [
@@ -40,6 +46,11 @@ export function AdvancedAnalytics() {
 
   const handleTypeChange = option => {
     setSelectedType(option.value)
+  }
+
+  const handleApplyClick = () => {
+    setStartDate(selectedStartDate)
+    setEndDate(selectedEndDate)
   }
 
   const customStyles = {
@@ -218,6 +229,7 @@ export function AdvancedAnalytics() {
     <>
       <Flex
         direction={isMobile ? 'column' : 'row'}
+        alignItems={isMobile ? 'flex-start' : 'flex-end'}
         gap="4"
         justify="space-between"
         mb="4"
@@ -228,13 +240,11 @@ export function AdvancedAnalytics() {
             From
           </Text>
           <DatePicker
-            selected={startDate}
-            onChange={date => {
-              setStartDate(date)
-            }}
+            selected={selectedStartDate}
+            onChange={date => setSelectedStartDate(date)}
             selectsStart
-            startDate={startDate}
-            endDate={endDate}
+            startDate={selectedStartDate}
+            endDate={selectedEndDate}
           />
         </Box>
         <Box>
@@ -242,16 +252,17 @@ export function AdvancedAnalytics() {
             To
           </Text>
           <DatePicker
-            selected={endDate}
-            onChange={date => {
-              setEndDate(date)
-            }}
+            selected={selectedEndDate}
+            onChange={date => setSelectedEndDate(date)}
             selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
+            startDate={selectedStartDate}
+            endDate={selectedEndDate}
+            minDate={selectedStartDate}
           />
         </Box>
+        <Button onClick={handleApplyClick} size="sm">
+          Apply
+        </Button>
       </Flex>
       <Flex
         flexDirection={isMobile ? 'row' : 'column'}

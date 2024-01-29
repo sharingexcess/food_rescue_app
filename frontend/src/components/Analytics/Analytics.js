@@ -47,8 +47,15 @@ const COLORS = [
 
 export function Analytics() {
   const search = new URLSearchParams(window.location.search)
-  const [startDate, setStartDate] = useState(new Date(getDefaultRangeStart()))
-  const [endDate, setEndDate] = useState(new Date(getDefaultRangeEnd()))
+  const [selectedStartDate, setSelectedStartDate] = useState(
+    new Date(getDefaultRangeStart())
+  )
+  const [selectedEndDate, setSelectedEndDate] = useState(
+    new Date(getDefaultRangeEnd())
+  )
+  const [startDate, setStartDate] = useState(selectedStartDate)
+  const [endDate, setEndDate] = useState(selectedEndDate)
+
   const [breakdown, setBreakdown] = useState(
     search.get('breakdown')
       ? decodeURIComponent(search.get('breakdown'))
@@ -69,6 +76,11 @@ export function Analytics() {
   )
 
   const { data: apiData, loading } = useApi('/analytics', params)
+
+  const handleApplyClick = () => {
+    setStartDate(selectedStartDate)
+    setEndDate(selectedEndDate)
+  }
 
   // this useEfect updates the current URL on state changes
   // to preserve the current query over refresh/back
@@ -250,19 +262,18 @@ export function Analytics() {
         justify="space-between"
         mb="4"
         flexDirection={isMobile ? 'column' : 'row'}
+        alignItems={isMobile ? 'flex-start' : 'flex-end'}
       >
         <Box>
           <Text fontWeight="600" color="element.tertiary">
             From
           </Text>
           <DatePicker
-            selected={startDate}
-            onChange={date => {
-              setStartDate(date)
-            }}
+            selected={selectedStartDate}
+            onChange={date => setSelectedStartDate(date)}
             selectsStart
-            startDate={startDate}
-            endDate={endDate}
+            startDate={selectedStartDate}
+            endDate={selectedEndDate}
           />
         </Box>
         <Box>
@@ -270,16 +281,17 @@ export function Analytics() {
             To
           </Text>
           <DatePicker
-            selected={endDate}
-            onChange={date => {
-              setEndDate(date)
-            }}
+            selected={selectedEndDate}
+            onChange={date => setSelectedEndDate(date)}
             selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
+            startDate={selectedStartDate}
+            endDate={selectedEndDate}
+            minDate={selectedStartDate}
           />
         </Box>
+        <Button onClick={handleApplyClick} size="sm">
+          Apply
+        </Button>
       </Flex>
       <Flex gap="4" justify="space-between" mb="4">
         <Box w={'100%'}>
