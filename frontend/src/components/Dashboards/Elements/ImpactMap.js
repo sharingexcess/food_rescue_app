@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-const MyMap = ({ selectedRecipient, topRecipients }) => {
+const ImpactMap = ({ selectedEntity, sortedEntities, dashboardType }) => {
   const proximityThreshold = 0.1
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
@@ -12,9 +12,9 @@ const MyMap = ({ selectedRecipient, topRecipients }) => {
 
   const findClusters = () => {
     const clusters = []
-    topRecipients.forEach(recipient => {
+    sortedEntities.forEach(recipient => {
       const cluster = []
-      topRecipients.forEach((otherRecipient, otherIdx) => {
+      sortedEntities.forEach((otherRecipient, otherIdx) => {
         if (
           calculateDistance(
             recipient.lat,
@@ -38,14 +38,14 @@ const MyMap = ({ selectedRecipient, topRecipients }) => {
   )
 
   const randomIndex = Math.floor(Math.random() * largestCluster.length)
-  const chosenPoint = topRecipients[largestCluster[randomIndex]]
+  const chosenPoint = sortedEntities[largestCluster[randomIndex]]
 
-  const selectedRecipientLat = selectedRecipient ? selectedRecipient.lat : null
-  const selectedRecipientLng = selectedRecipient ? selectedRecipient.lng : null
+  const selectedEntityLat = selectedEntity ? selectedEntity.lat : null
+  const selectedEntityLng = selectedEntity ? selectedEntity.lng : null
 
   const position = [
-    selectedRecipientLat || (chosenPoint ? chosenPoint.lat : 39.9481769),
-    selectedRecipientLng || (chosenPoint ? chosenPoint.lng : -75.1926849),
+    selectedEntityLat || (chosenPoint ? chosenPoint.lat : 39.9481769),
+    selectedEntityLng || (chosenPoint ? chosenPoint.lng : -75.1926849),
   ]
 
   const customIcon = new L.DivIcon({
@@ -57,13 +57,13 @@ const MyMap = ({ selectedRecipient, topRecipients }) => {
   const markersRef = useRef({})
 
   useEffect(() => {
-    if (selectedRecipient && markersRef.current[selectedRecipient.name]) {
-      markersRef.current[selectedRecipient.name].openPopup()
+    if (selectedEntity && markersRef.current[selectedEntity.name]) {
+      markersRef.current[selectedEntity.name].openPopup()
     }
-  }, [selectedRecipient])
+  }, [selectedEntity])
 
   const renderMarkers = () => {
-    return Object.entries(topRecipients)
+    return Object.entries(sortedEntities)
       .map(([key, value]) => ({
         organizationName: value.name,
         weight: value.total_weight,
@@ -72,19 +72,21 @@ const MyMap = ({ selectedRecipient, topRecipients }) => {
         key,
       }))
       .sort((a, b) => b.weight - a.weight)
-      .map(({ organizationName, weight, lat, lng }) => {
+      .map(({ organizationName, weight, lat, lng, key }) => {
         if (lat && lng) {
           return (
             <Marker
               position={[lat, lng]}
               icon={customIcon}
-              key={organizationName}
+              key={key}
               ref={ref => {
                 markersRef.current[organizationName] = ref
               }}
             >
               <Popup>
-                Donated <b>{weight}</b> lbs. to {organizationName}
+                {dashboardType === 'donor' ? 'Donated' : 'Recieved'}{' '}
+                <b>{weight}</b> lbs. {dashboardType === 'donor' ? 'to' : 'from'}{' '}
+                {organizationName}
               </Popup>
             </Marker>
           )
@@ -95,7 +97,7 @@ const MyMap = ({ selectedRecipient, topRecipients }) => {
   }
 
   return (
-    topRecipients && (
+    sortedEntities && (
       <MapContainer
         center={position}
         zoom={12}
@@ -111,4 +113,4 @@ const MyMap = ({ selectedRecipient, topRecipients }) => {
   )
 }
 
-export default MyMap
+export default ImpactMap

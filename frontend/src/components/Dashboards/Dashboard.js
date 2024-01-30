@@ -4,8 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useState, useMemo } from 'react'
 import 'react-datepicker/dist/react-datepicker.css'
 import { startOfDay, endOfDay } from '../Analytics/helper'
-
-import { Header, Stats, TopRecipients } from './Elements'
+import { Header, Stats, TopRecipients, TopDonors } from './Elements'
 
 export function Dashboard() {
   const { donor_id } = useParams()
@@ -105,6 +104,19 @@ export function Dashboard() {
               locations={locations ? locations : []}
               isStatsLoading={!advanedApiData}
               isMobile={isMobile}
+              dashboardType={organization?.type}
+            />
+          )}
+          {rescues && organization?.type === 'recipient' && (
+            <TopDonors
+              rescues={rescues ? rescues : []}
+              transfers={transfers ? transfers : []}
+              donorOrgId={donor_id ? donor_id : null}
+              organizations={organizations ? organizations : []}
+              locations={locations ? locations : []}
+              isStatsLoading={!advanedApiData}
+              isMobile={isMobile}
+              dashboardType={organization?.type}
             />
           )}
         </Flex>

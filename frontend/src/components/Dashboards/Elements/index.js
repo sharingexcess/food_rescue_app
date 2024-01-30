@@ -1,4 +1,5 @@
 export * from './Stats'
 export * from './Header'
 export * from './TopRecipients'
-export * from './Map'
+export * from './TopDonors'
+export * from './ImpactMap'

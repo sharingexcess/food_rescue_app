@@ -1,7 +1,17 @@
 import { useMemo, useState } from 'react'
-import { Box, Table, Thead, Tr, Th, Td, Tbody, Flex } from '@chakra-ui/react'
+import {
+  Box,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Td,
+  Tbody,
+  Flex,
+  Text,
+} from '@chakra-ui/react'
 import { formatLargeNumber } from 'helpers'
-import MyMap from './Map'
+import ImpactMap from './ImpactMap'
 
 export function TopRecipients({
   transfers,
@@ -10,6 +20,7 @@ export function TopRecipients({
   organizations,
   locations,
   isStatsLoading,
+  dashboardType,
 }) {
   const transferMap = useMemo(
     () => new Map(transfers?.map(t => [t.id, t])),
@@ -38,11 +49,13 @@ export function TopRecipients({
           total_weight: 0,
           zipcode: null,
         }
+        const location = locationsMap.get(locationId)
         recipients.set(org.name, {
           name: org.name,
           total_weight: current.total_weight + weight,
-          lat: locationsMap.get(locationId).lat,
-          lng: locationsMap.get(locationId).lng,
+          lat: location?.lat,
+          lng: location?.lng,
+          city: location?.city,
         })
       }
     }
@@ -113,32 +126,40 @@ export function TopRecipients({
               </Tr>
             </Thead>
             <Tbody>
-              {sortedRecipients.map(({ name, total_weight, lat, lng }) => (
-                <Tr
-                  key={name}
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'gray.700',
-                      cursor: 'pointer',
-                    },
-                  }}
-                  onClick={() => setSelectedRecipient({ name, lat, lng })}
-                >
-                  <Td textAlign="left">{name}</Td>
-                  <Td textAlign="right">
-                    {formatLargeNumber(total_weight)} lbs.
-                  </Td>
-                </Tr>
-              ))}
+              {sortedRecipients.map(
+                ({ name, total_weight, lat, lng, city }) => (
+                  <Tr
+                    key={name}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'gray.600',
+                        cursor: 'pointer',
+                      },
+                    }}
+                    onClick={() => setSelectedRecipient({ name, lat, lng })}
+                  >
+                    <Td textAlign="left">
+                      {name}{' '}
+                      <Text fontSize={'xs'} color={'grey'}>
+                        {city}
+                      </Text>
+                    </Td>
+                    <Td textAlign="right">
+                      {formatLargeNumber(total_weight)} lbs.
+                    </Td>
+                  </Tr>
+                )
+              )}
             </Tbody>
           </Table>
         </Box>
       )}
 
       {isStatsLoading ? null : (
-        <MyMap
-          selectedRecipient={selectedRecipient ? selectedRecipient : null}
-          topRecipients={sortedRecipients}
+        <ImpactMap
+          selectedEntity={selectedRecipient ? selectedRecipient : null}
+          sortedEntities={sortedRecipients}
+          dashboardType={dashboardType}
         />
       )}
     </Flex>
