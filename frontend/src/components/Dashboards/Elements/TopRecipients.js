@@ -36,6 +36,8 @@ export function TopRecipients({
   )
 
   const [selectedRecipient, setSelectedRecipient] = useState(null)
+  const isEligibleOrg = orgSubtype =>
+    !['holding', 'compost'].includes(orgSubtype)
 
   const processRescues = useMemo(() => {
     if (!rescues || rescues.length === 0) return new Map()
@@ -71,7 +73,10 @@ export function TopRecipients({
         const [parentTransfer, ...childTransfers] = transferIds
         if (parentTransfer?.organization_id === donorOrgId) {
           childTransfers.forEach(t => {
-            if (t?.organization_id)
+            if (
+              t?.organization_id &&
+              isEligibleOrg(orgsMap.get(t.organization_id).subtype)
+            )
               updateRecipient(t.organization_id, t.total_weight, t.location_id)
           })
         }
@@ -81,7 +86,11 @@ export function TopRecipients({
           if (!t) return
           if (t.type === 'collection')
             isCollecting = t.organization_id === donorOrgId
-          else if (t.type === 'distribution' && isCollecting)
+          else if (
+            t.type === 'distribution' &&
+            isCollecting &&
+            isEligibleOrg(orgsMap.get(t.organization_id)?.subtype)
+          )
             updateRecipient(t.organization_id, t.total_weight, t.location_id)
         })
       }

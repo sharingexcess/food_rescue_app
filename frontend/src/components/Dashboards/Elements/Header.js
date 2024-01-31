@@ -24,7 +24,11 @@ export function Header({
         alignItems={'center'}
         mb={10}
       >
-        <Heading>{currOrg ? currOrg.name + ' Impact' : 'Loading..'}</Heading>
+        <Box display="flex" justifyContent="center">
+          <Heading textAlign="center">
+            {currOrg ? currOrg.name + ' Impact' : 'Loading..'}
+          </Heading>
+        </Box>
         <Select
           value={dateRangeOption}
           width={260}

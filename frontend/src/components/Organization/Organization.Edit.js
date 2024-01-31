@@ -28,6 +28,8 @@ export function EditOrganization({ formData, setFormData, setEdit, refresh }) {
       subtype: formData.subtype,
       is_deleted: false,
       dashboard_access: formData.dashboard_access || [],
+      dashboard_url: formData.dashboard_url || '',
+      dashboard_pass: formData.dashboard_pass || '',
     }
     await SE_API.post(
       `/organizations/update/${formData.id}`,
