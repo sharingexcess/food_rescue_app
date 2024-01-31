@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Image, Text, Spinner } from '@chakra-ui/react'
+import { Box, Flex, Heading, Image, Spinner } from '@chakra-ui/react'
 import { useAuth, useApi, useIsMobile } from 'hooks'
 import { PageTitle } from 'components/PageTitle/PageTitle'
 import { useEffect, useState, useMemo } from 'react'
@@ -47,7 +47,6 @@ export function Dashboards() {
           donorDashboards.map(donor => (
             <Link to={`/dashboards/${donor.id}`} key={donor.id}>
               <Box
-                key={donor.name}
                 m={4}
                 width="300px"
                 height="200px"
@@ -62,11 +61,16 @@ export function Dashboards() {
                 justifyContent="center"
                 backgroundColor={'#fff'}
               >
-                <Image src={donor.dashboard_logo} borderRadius={20} />
+                <Image
+                  src={donor.dashboard_logo ? donor.dashboard_logo : ''}
+                  borderRadius={20}
+                  maxWidth="100%"
+                  maxHeight="60%"
+                  objectFit="cover" // Ensures the image fits well
+                />
                 <Heading size="ms" mb={2} color="black">
                   {donor.name}
                 </Heading>
-                <Text color="white">{donor.description}</Text>
               </Box>
             </Link>
           ))
