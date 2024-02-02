@@ -44,6 +44,7 @@ export function AdvancedAnalytics() {
   const [real_impact_transfers, setRealImpactTransfers] = useState(null)
   const [rescues, setRescues] = useState(null)
   const [locations, setLocations] = useState(null)
+  const [locationMap, setLocationMap] = useState(null)
   const [orgSubtypes, setOrgSubtypes] = useState(null)
 
   const handleTypeChange = option => {
@@ -170,6 +171,17 @@ export function AdvancedAnalytics() {
   }
 
   useEffect(() => {
+    if (locations) {
+      const map = new Map()
+
+      locations.forEach(location => {
+        map.set(location.id, location)
+      })
+      setLocationMap(map)
+    }
+  }, [locations])
+
+  useEffect(() => {
     let filteredTransfers = transfers ? [...transfers.total_transfers] : []
 
     // Filter by handler
@@ -221,17 +233,14 @@ export function AdvancedAnalytics() {
 
     // Filter by zipcodes
     if (selectedZipcodes.length > 0) {
-      filteredTransfers = filteredTransfers.filter(transfer => {
-        const org = organizations.find(
-          org => org.id === transfer.organization_id
-        )
-        return (
-          org &&
-          org.locations.some(location =>
-            selectedZipcodes.includes(location.zip)
-          )
-        )
-      })
+      if (locationMap) {
+        filteredTransfers = filteredTransfers.filter(transfer => {
+          const location = locationMap.get(transfer.location_id)
+          return selectedZipcodes.includes(location.zip)
+        })
+      } else {
+        console.log('locationMap is null')
+      }
     }
 
     setRealImpactTransfers(filteredTransfers)
