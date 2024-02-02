@@ -18,6 +18,8 @@ export function AdvancedAnalytics() {
   )
   const [startDate, setStartDate] = useState(selectedStartDate)
   const [endDate, setEndDate] = useState(selectedEndDate)
+  const [selectedZipcodes, setSelectedZipcodes] = useState([])
+
   const isMobile = useIsMobile()
 
   const rescueTypeOptions = [
@@ -56,7 +58,7 @@ export function AdvancedAnalytics() {
   const customStyles = {
     control: provided => ({
       ...provided,
-      width: 200, // Set fixed width here
+      width: 200,
     }),
     option: provided => ({
       ...provided,
@@ -102,6 +104,18 @@ export function AdvancedAnalytics() {
       }))
     }
     return []
+  }, [organizations])
+
+  const zipcodeOptions = useMemo(() => {
+    const zipcodes = new Set()
+    if (organizations) {
+      organizations.forEach(org => {
+        org.locations.forEach(location => {
+          zipcodes.add(location.zip)
+        })
+      })
+      return Array.from(zipcodes).map(zip => ({ value: zip, label: zip }))
+    }
   }, [organizations])
 
   useEffect(() => {
@@ -182,6 +196,7 @@ export function AdvancedAnalytics() {
           const org = organizations.find(
             org => org.id === transfer.organization_id
           )
+          console.log(org)
           return org && org.tags && org.tags.includes(selected_tag)
         })
       } else {
@@ -204,12 +219,28 @@ export function AdvancedAnalytics() {
       }
     }
 
+    // Filter by zipcodes
+    if (selectedZipcodes.length > 0) {
+      filteredTransfers = filteredTransfers.filter(transfer => {
+        const org = organizations.find(
+          org => org.id === transfer.organization_id
+        )
+        return (
+          org &&
+          org.locations.some(location =>
+            selectedZipcodes.includes(location.zip)
+          )
+        )
+      })
+    }
+
     setRealImpactTransfers(filteredTransfers)
   }, [
     selectedHandler,
     selectedTags,
     selectedOrganization,
     selectedRescueType,
+    selectedZipcodes,
     transfers,
     organizations,
     rescues,
@@ -305,10 +336,10 @@ export function AdvancedAnalytics() {
           </Box>
         </Flex>
         <Flex
+          gap="4"
+          justify="space-between"
+          mb="4"
           flexDirection={isMobile ? 'column' : 'row'}
-          justifyContent={isMobile ? '' : 'space-between'}
-          ml={isMobile ? 2 : 0}
-          gap={isMobile ? 4 : 6}
         >
           <Box>
             <Select
@@ -319,7 +350,7 @@ export function AdvancedAnalytics() {
               styles={{
                 control: provided => ({
                   ...provided,
-                  width: isMobile ? 200 : 445,
+                  width: 200,
                 }),
                 option: provided => ({
                   ...provided,
@@ -335,6 +366,42 @@ export function AdvancedAnalytics() {
               onChange={handleTagsChange}
             />
           </Box>
+
+          <Box>
+            <Select
+              options={zipcodeOptions}
+              onChange={options =>
+                setSelectedZipcodes(
+                  options ? options.map(option => option.value) : []
+                )
+              }
+              placeholder="Zipcodes"
+              isMulti
+              isClearable
+              styles={{
+                valueContainer: provided => ({
+                  ...provided,
+                  height: `${selectedZipcodes.length > 1 ? '60px' : '36.5px'}`,
+                  overflowY: 'auto',
+                }),
+                control: provided => ({
+                  ...provided,
+                  width: 200,
+                }),
+                option: provided => ({
+                  ...provided,
+                  color: 'black',
+                  fontSize: '14px',
+                }),
+                singleValue: provided => ({
+                  ...provided,
+                  color: 'black',
+                  fontSize: '14px',
+                }),
+              }}
+            />
+          </Box>
+
           <Select
             options={transferTypeOptions}
             onChange={handleTypeChange}
