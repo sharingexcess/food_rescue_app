@@ -22,8 +22,14 @@ async function analyticsEndpoint(request, response) {
       user => user.permission == 'admin'
     )
 
-    const { date_range_start, date_range_end, analyticsType, transferType } =
-      request.query
+    const {
+      date_range_start,
+      date_range_end,
+      analyticsType,
+      transferType,
+      fetchRescues,
+      fetchOrganizations,
+    } = request.query
 
     if (!requestIsAuthenticated) {
       if (analyticsType !== 'advanced') {
@@ -41,10 +47,10 @@ async function analyticsEndpoint(request, response) {
       payload = await advancedAnalytics(
         date_range_start,
         date_range_end,
-        transferType
+        transferType,
+        fetchRescues,
+        fetchOrganizations
       )
-    } else if (analyticsType === 'basicAnalytics') {
-      payload = await basicAnalytics(date_range_start, date_range_end)
     } else {
       payload = await analytics(
         date_range_start,
@@ -90,7 +96,9 @@ const isEligibleOrg = orgSubtype => !['holding', 'compost'].includes(orgSubtype)
 async function advancedAnalytics(
   date_range_start,
   date_range_end,
-  transferType
+  transferType,
+  fetchRescues = 'false',
+  fetchOrganizations = 'false'
 ) {
   const [transfers, locations] = await Promise.all([
     fetchFilteredData(
@@ -102,58 +110,39 @@ async function advancedAnalytics(
     fetchCollection(COLLECTIONS.LOCATIONS),
   ])
 
-  const total_transfers =
-    transferType === 'collection'
-      ? await transfers.filter(s => s.type === TRANSFER_TYPES.COLLECTION)
-      : await transfers.filter(s => s.type === TRANSFER_TYPES.DISTRIBUTION)
+  let total_transfers = []
 
-  const rescue_ids = [...new Set(total_transfers.map(d => d.rescue_id))]
+  if (transferType === 'collection') {
+    total_transfers = await transfers.filter(
+      s => s.type === TRANSFER_TYPES.COLLECTION
+    )
+  } else if (transferType === 'distribution') {
+    total_transfers = await transfers.filter(
+      s => s.type === TRANSFER_TYPES.DISTRIBUTION
+    )
+  } else if (transferType === 'all') {
+    total_transfers = transfers
+  }
 
-  const rescueDataResults = await fetchRescueDataInBatches(rescue_ids)
+  let rescues = []
 
-  const rescues = rescueDataResults.map(rescue => rescue.data())
+  if (fetchRescues === 'true') {
+    const rescue_ids = [...new Set(total_transfers.map(d => d.rescue_id))]
+    const rescueDataResults = await fetchRescueDataInBatches(rescue_ids)
+    rescues = rescueDataResults.map(rescue => rescue.data())
+  }
+
+  let organizations = []
+
+  if (fetchOrganizations === 'true') {
+    organizations = await fetchCollection(COLLECTIONS.ORGANIZATIONS)
+  }
 
   return {
     total_transfers,
     locations,
     rescues,
-  }
-}
-
-async function basicAnalytics(date_range_start, date_range_end) {
-  // Parallelize database calls
-  const [rescues, transfers, organizations, locations] = await Promise.all([
-    fetchFilteredData(
-      COLLECTIONS.RESCUES,
-      date_range_start,
-      date_range_end,
-      STATUSES.COMPLETED
-    ),
-    fetchFilteredData(
-      COLLECTIONS.TRANSFERS,
-      date_range_start,
-      date_range_end,
-      STATUSES.COMPLETED
-    ),
-    fetchCollection(COLLECTIONS.ORGANIZATIONS),
-    fetchCollection(COLLECTIONS.LOCATIONS),
-  ])
-
-  // Process transfers data
-  const collections = transfers.filter(
-    s => s.type === TRANSFER_TYPES.COLLECTION
-  )
-  const distributions = transfers.filter(
-    s => s.type === TRANSFER_TYPES.DISTRIBUTION
-  )
-
-  return {
-    rescues,
-    transfers,
     organizations,
-    locations,
-    collections,
-    distributions,
   }
 }
 

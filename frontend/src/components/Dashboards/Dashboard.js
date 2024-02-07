@@ -17,43 +17,52 @@ export function Dashboard() {
   const [endDate, setEndDate] = useState(new Date())
 
   const [rescues, setRescues] = useState([])
+  const [allTransfers, setAllTransfers] = useState([])
   const [collections, setCollections] = useState([])
   const [distributions, setDistributions] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [locations, setLocations] = useState([])
-  const [transfers, setTransfers] = useState([])
 
   const params = useMemo(
     () => ({
       date_range_start: startOfDay(startDate),
       date_range_end: endOfDay(endDate),
-      analyticsType: 'basicAnalytics',
+      breakdown: 'Food Category',
+      analyticsType: 'advancedAnalytics',
+      transferType: 'all',
+      fetchRescues: 'true',
+      fetchOrganizations: 'true',
     }),
-    [startDate, endDate, 'food_category']
+    [startDate, endDate]
   )
 
-  const { data: advanedApiData } = useApi('/analytics', params)
-  const { data: organization } = useApi(
-    `/organizations/get/${donor_id}`,
-    useMemo(() => ({}), [donor_id])
-  )
+  const { data: advancedApiData, loading } = useApi('/analytics', params)
 
   useEffect(() => {
-    if (advanedApiData) {
-      setRescues(advanedApiData.rescues)
-      setCollections(advanedApiData.collections)
-      setDistributions(advanedApiData.distributions)
-      setOrganizations(advanedApiData.organizations)
-      setLocations(advanedApiData.locations)
-      setTransfers(advanedApiData.transfers)
+    if (advancedApiData) {
+      setAllTransfers(advancedApiData.total_transfers)
+      setOrganizations(advancedApiData.organizations)
+      setLocations(advancedApiData.locations)
+      setRescues(advancedApiData.rescues)
     }
-  }, [advanedApiData])
+  }, [advancedApiData])
 
   useEffect(() => {
-    if (startDate && endDate) {
-      // console.log(startDate, endDate);
+    if (allTransfers.length > 0) {
+      const collection = allTransfers.filter(
+        transfer => transfer.type === 'collection'
+      )
+
+      const distribution = allTransfers.filter(
+        transfer => transfer.type === 'distribution'
+      )
+
+      setCollections(collection)
+      setDistributions(distribution)
     }
-  }, [startDate, endDate])
+  }, [allTransfers])
+
+  const organization = organizations.find(org => org.id === donor_id)
 
   return (
     <>
@@ -84,7 +93,7 @@ export function Dashboard() {
             }
             organizations={organizations}
             orgId={donor_id}
-            isStatsLoading={!advanedApiData}
+            isStatsLoading={loading}
             orgType={organization?.type}
           />
         </Flex>
@@ -98,11 +107,11 @@ export function Dashboard() {
           {rescues && organization?.type === 'donor' && (
             <TopRecipients
               rescues={rescues ? rescues : []}
-              transfers={transfers ? transfers : []}
+              transfers={allTransfers ? allTransfers : []}
               donorOrgId={donor_id ? donor_id : null}
               organizations={organizations ? organizations : []}
               locations={locations ? locations : []}
-              isStatsLoading={!advanedApiData}
+              isStatsLoading={loading}
               isMobile={isMobile}
               dashboardType={organization?.type}
             />
@@ -110,11 +119,11 @@ export function Dashboard() {
           {rescues && organization?.type === 'recipient' && (
             <TopDonors
               rescues={rescues ? rescues : []}
-              transfers={transfers ? transfers : []}
+              transfers={allTransfers ? allTransfers : []}
               donorOrgId={donor_id ? donor_id : null}
               organizations={organizations ? organizations : []}
               locations={locations ? locations : []}
-              isStatsLoading={!advanedApiData}
+              isStatsLoading={loading}
               isMobile={isMobile}
               dashboardType={organization?.type}
             />

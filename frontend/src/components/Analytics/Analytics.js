@@ -62,7 +62,7 @@ export function Analytics() {
       : 'Food Category'
   )
   const [chart, setChart] = useState('Bar Chart')
-  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [showAdvanced] = useState(true)
   const [transferType, setTransferType] = useState('Distributions')
 
   const params = useMemo(
@@ -260,7 +260,7 @@ export function Analytics() {
       <Flex
         gap="4"
         justify="space-between"
-        mb="4"
+        mb="2"
         flexDirection={isMobile ? 'column' : 'row'}
         alignItems={isMobile ? 'flex-start' : 'flex-end'}
       >
@@ -471,16 +471,6 @@ export function Analytics() {
           <Loading relative text="Calculating" />
         </>
       )}
-      <Button
-        onClick={() => setShowAdvanced(!showAdvanced)}
-        variant="outline"
-        right={0}
-        mt={4}
-        mb={4}
-        colorScheme={showAdvanced ? 'blue' : 'gray'}
-      >
-        {showAdvanced ? 'Show Less' : 'Show More'}
-      </Button>
       {showAdvanced && (
         <DonorRecipients startDate={startDate} endDate={endDate} />
       )}

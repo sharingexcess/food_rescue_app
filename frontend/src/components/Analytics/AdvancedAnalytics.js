@@ -140,6 +140,7 @@ export function AdvancedAnalytics() {
       breakdown: 'Food Category',
       analyticsType: 'advancedAnalytics',
       transferType: selectedType,
+      fetchRescues: 'true',
     }),
     [startDate, endDate, selectedType]
   )

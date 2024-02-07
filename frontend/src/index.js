@@ -41,6 +41,8 @@ import { Auth } from 'contexts'
 import { SENTRY_DSN, SENTRY_ENV, VERSION } from 'helpers'
 import theme from 'styles/theme'
 import './styles/index.css'
+// testing city impact [todo - remove import]
+import { CityImpact } from 'components/Dashboards/Custom/CityImpact'
 
 // We use this window variable to turn on or off
 // api logs. By using this window variable,
@@ -195,6 +197,17 @@ function RescueAppRoutes() {
                       { label: 'Dashboards', link: '/dashboards' },
                     ]}
                     Content={Dashboard}
+                  />
+                }
+              />
+              <Route
+                path="/dashboards/cities"
+                element={
+                  <Page
+                    id="User"
+                    defaultTitle="Cities Impact"
+                    defaultBreadcrumbs={[{ label: 'City', link: '/cities' }]}
+                    Content={CityImpact}
                   />
                 }
               />

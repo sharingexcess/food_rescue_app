@@ -1,5 +1,5 @@
-const EMISSIONS_COEFFICIENT = 3.66
-const FAIR_MARKET_VALUES = {
+export const EMISSIONS_COEFFICIENT = 3.66
+export const FAIR_MARKET_VALUES = {
   dairy: 1.42,
   bakery: 2.14,
   produce: 1.13,
@@ -10,7 +10,7 @@ const FAIR_MARKET_VALUES = {
   other: 1.62,
 }
 
-const FOOD_CATEGORIES = [
+export const FOOD_CATEGORIES = [
   'dairy',
   'bakery',
   'produce',
@@ -21,7 +21,7 @@ const FOOD_CATEGORIES = [
   'other',
 ]
 
-const RETAIL_VALUES = {
+export const RETAIL_VALUES = {
   dairy: 1.28,
   bakery: 2.36,
   produce: 1.57,

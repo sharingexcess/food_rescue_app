@@ -21,43 +21,6 @@ export const getOrganizationsBySortedWeights = (sortedOrgs, organizations) => {
   })
 }
 
-export const aggregateWeightsByLocation = (
-  transfers,
-  locations,
-  organizations
-) => {
-  const locationWeights = {}
-
-  // Aggregating weights by location_id
-  transfers.forEach(transfer => {
-    const totalWeight = Object.values(transfer.categorized_weight).reduce(
-      (a, b) => a + b,
-      0
-    )
-    if (!locationWeights[transfer.location_id]) {
-      locationWeights[transfer.location_id] = totalWeight
-    } else {
-      locationWeights[transfer.location_id] += totalWeight
-    }
-  })
-
-  // Fetch the corresponding locations based on the location_id from the aggregated weights
-  const fetchedLocations = Object.keys(locationWeights).map(locationId => {
-    const correspondingLocation = locations.find(loc => loc.id === locationId)
-    const org = organizations.find(
-      org => org.id === correspondingLocation.organization_id
-    )
-
-    return {
-      ...correspondingLocation,
-      total_weight_received: locationWeights[locationId],
-      organization: org,
-    }
-  })
-
-  return fetchedLocations
-}
-
 export const startOfDay = date => {
   const newDate = new Date(date)
   newDate.setHours(0, 0, 0, 0)
@@ -79,9 +42,3 @@ export const endOfDay = date => {
 
   return adjustedDate
 }
-
-// export function convertToEST(utcTimestamp) {
-//   // add 5 hours to get to EST
-//   const estTimestamp = new Date(utcTimestamp).getTime() + 18000000
-//   return new Date(estTimestamp)
-// }

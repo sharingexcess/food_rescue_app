@@ -40,6 +40,34 @@ export function Dashboards() {
         alignItems="center"
         flexWrap="wrap"
       >
+        <Link to="/dashboards/cities">
+          <Box
+            m={4}
+            width="300px"
+            height="200px"
+            boxShadow="md"
+            borderRadius="md"
+            bg="gray.700"
+            color="black"
+            animation="fadeIn 1s"
+            display="flex"
+            alignItems="center"
+            flexDirection="column"
+            justifyContent="center"
+            backgroundColor={'#fff'}
+          >
+            <Image
+              src="/usa.png"
+              borderRadius={20}
+              maxWidth="100%"
+              maxHeight="70%"
+              objectFit="cover"
+            />
+            <Heading size="ms" mb={2} color="black">
+              Cities & States Impact
+            </Heading>
+          </Box>
+        </Link>
         {isLoading ? (
           <Spinner size="xl" />
         ) : (
@@ -66,7 +94,7 @@ export function Dashboards() {
                   borderRadius={20}
                   maxWidth="100%"
                   maxHeight="60%"
-                  objectFit="cover" // Ensures the image fits well
+                  objectFit="cover"
                 />
                 <Heading size="ms" mb={2} color="black">
                   {donor.name}
