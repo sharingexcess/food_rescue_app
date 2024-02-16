@@ -411,10 +411,11 @@ export function CityImpact() {
                   color={item.color}
                 >
                   {formatLargeNumber(item.value)}{' '}
-                  {item.label === 'Meals Recieved' ||
-                  item.label === 'Meals Provided'
+                  {item.label === 'Meals Provided' ||
+                  item.label === 'Retail Value' ||
+                  item.label === 'Fair Market Value'
                     ? ''
-                    : 'lbs'}
+                    : ' lbs.'}
                 </Text>
               </Box>
             ))}

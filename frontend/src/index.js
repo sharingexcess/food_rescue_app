@@ -34,6 +34,7 @@ import {
   WholesaleAllocation,
   WholesaleRemaining,
   WholesaleNewAllocation,
+  WholesaleNew,
   WholesaleAllocationCompleted,
   AdvancedAnalytics,
 } from './components'
@@ -362,7 +363,7 @@ function RescueAppRoutes() {
                   />
                 }
               />
-              {/* <Route
+              <Route
                 path="/wholesale-new"
                 element={
                   <Page
@@ -374,7 +375,7 @@ function RescueAppRoutes() {
                     Content={WholesaleNew}
                   />
                 }
-              /> */}
+              />
               <Route
                 path="/wholesale-new/entry"
                 element={
