@@ -25,6 +25,43 @@ export function WholesaleAfterSorting({ setSummary, isSorted, summary }) {
   ])
 
   useEffect(() => {
+    if (summary && summary.pallets) {
+      setPallets(summary.pallets)
+    } else {
+      setPallets([
+        {
+          id: 1,
+          isOpen: true,
+          caseCount: 0,
+          caseWeight: 0,
+          totalWeight: 0,
+          palletType: '',
+        },
+      ])
+    }
+
+    if (isSorted) {
+      setSorted(isSorted)
+    } else if ('isSorted' in summary) {
+      setSorted(summary.isSorted)
+    }
+  }, [])
+
+  useEffect(() => {
+    setSummary(prevValue => ({
+      ...prevValue,
+      pallets,
+    }))
+  }, [pallets])
+
+  useEffect(() => {
+    setSummary(prevValue => ({
+      ...prevValue,
+      isSorted: sorted,
+    }))
+  }, [sorted])
+
+  useEffect(() => {
     // Calculate the total case count
     const totalCaseCount = pallets.reduce(
       (sum, pallet) => sum + pallet.caseCount,
@@ -47,20 +84,23 @@ export function WholesaleAfterSorting({ setSummary, isSorted, summary }) {
       : 0
 
     // Initialize the summary
+    console.log('calling after sorting reset')
     if (totalWeight === 0 && totalCaseCount === 0 && averageCaseWeight === 0) {
-      setSummary({
+      setSummary(prevValue => ({
+        ...prevValue,
         totalCaseCount: summary.totalCaseCount,
         averageCaseWeight: summary.averageCaseWeight,
         totalWeight: summary.totalWeight,
         sorted: summary.sorted,
-      })
+      }))
     } else {
-      setSummary({
+      setSummary(prevValue => ({
+        ...prevValue,
         totalCaseCount,
         averageCaseWeight,
         totalWeight,
         sorted,
-      })
+      }))
     }
   }, [pallets])
 
@@ -134,6 +174,7 @@ export function WholesaleAfterSorting({ setSummary, isSorted, summary }) {
               </Flex>
               <Collapse in={pallet.isOpen}>
                 <AfterSortingPallet
+                  pallet={pallet}
                   onCaseCountChange={newCaseCount =>
                     handleUpdate(pallet.id, 'caseCount', newCaseCount)
                   }

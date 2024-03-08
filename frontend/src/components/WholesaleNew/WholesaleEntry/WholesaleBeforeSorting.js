@@ -3,14 +3,39 @@ import { useState, useEffect } from 'react'
 import { useAuth } from 'hooks'
 import { calculateExpression } from './helper'
 
-export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
-  console.log('formData', formData)
-  const [caseCount, setCaseCount] = useState('')
-  const [caseWeight, setCaseWeight] = useState('')
-  const [totalWeight, setTotalWeight] = useState(formData.weight || '')
+export function WholesaleBeforeSorting({
+  setSummary,
+  triggerReset,
+  formData,
+  summary,
+}) {
+  console.log('formData >>>', formData)
+  const [caseCount, setCaseCount] = useState(summary.totalCaseCount || '')
+  const [caseWeight, setCaseWeight] = useState(summary.averageCaseWeight || '')
+  const [totalWeight, setTotalWeight] = useState(
+    formData.weight || summary.totalWeight || ''
+  )
   const [palletType, setPalletType] = useState('')
   const [jackType, setJackType] = useState('')
   const [jackWeight, setJackWeight] = useState(0)
+
+  useEffect(() => {
+    setPalletType(summary.palletType || '')
+    setJackType(summary.jackType || '')
+    setJackWeight(summary.jackWeight || '')
+  }, [])
+
+  useEffect(() => {
+    setSummary(prevValue => ({ ...prevValue, palletType }))
+  }, [palletType])
+
+  useEffect(() => {
+    setSummary(prevValue => ({ ...prevValue, jackType }))
+  }, [jackType])
+
+  useEffect(() => {
+    setSummary(prevValue => ({ ...prevValue, jackWeight }))
+  }, [jackWeight])
 
   useEffect(() => {
     if (triggerReset) {
@@ -25,9 +50,11 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
 
   useEffect(() => {
     if (formData) {
-      setCaseCount(formData.totalCaseCount)
-      setCaseWeight(formData.averageCaseWeight)
-      setTotalWeight(formData.totalWeight)
+      setCaseCount(formData.totalCaseCount || summary.totalCaseCount || '')
+      setCaseWeight(
+        formData.averageCaseWeight || summary.averageCaseWeight || ''
+      )
+      setTotalWeight(formData.weight || summary.totalWeight || '')
     }
   }, [formData])
 
@@ -41,17 +68,20 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
       let newTotalWeight = calculatedCaseCount * weight
       newTotalWeight -= jackWeight
       if (formData.weight) {
-        console.log('formData.weight', formData.weight)
         setTotalWeight(formData.weight)
         setJackType(formData.jackType)
+      } else if (palletType) {
+        handlePalletTypeChange(palletType, false)
       } else {
         setTotalWeight(newTotalWeight)
       }
     }
-  }, [caseCount, caseWeight, jackWeight]) // Include jackWeight in the dependency array
+  }, [caseCount, caseWeight, jackWeight, palletType]) // Include jackWeight in the dependency array
 
-  function handlePalletTypeChange(type) {
-    setPalletType(type)
+  function handlePalletTypeChange(type, setType = true) {
+    if (setType) {
+      setPalletType(type)
+    }
 
     // Calculate the base weight from case count and case weight
     const calculatedCaseCount = parseFloat(calculateExpression(caseCount))
@@ -97,11 +127,12 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
 
       // Update the summary state
       if (caseCount && caseWeight) {
-        setSummary({
+        setSummary(prevValue => ({
+          ...prevValue,
           totalCaseCount: parseInt(calculateExpression(caseCount)),
           averageCaseWeight: parseFloat(caseWeight),
           totalWeight: newTotalWeight, // Updated total weight
-        })
+        }))
       }
     }
   }
@@ -131,11 +162,12 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
   useEffect(() => {
     // Check if all three values are present and valid
     if (caseCount && caseWeight && totalWeight) {
-      setSummary({
+      setSummary(prevValue => ({
+        ...prevValue,
         totalCaseCount: parseInt(calculateExpression(caseCount)),
         averageCaseWeight: parseFloat(caseWeight),
         totalWeight: parseFloat(totalWeight),
-      })
+      }))
     }
   }, [caseCount, caseWeight, totalWeight])
 

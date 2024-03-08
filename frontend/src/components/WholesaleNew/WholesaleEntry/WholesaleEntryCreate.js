@@ -28,6 +28,14 @@ import { useState, useMemo, useEffect } from 'react'
 import { WholesaleBeforeSorting } from './WholesaleBeforeSorting'
 import { WholesaleAfterSorting } from './WholesaleAfterSorting'
 
+const defaultSummary = {
+  totalCaseCount: 0,
+  averageCaseWeight: 0,
+  totalWeight: 0,
+  palletCount: 0,
+  sorted: false,
+}
+
 export function WholesaleEntryCreate({ defaultDate }) {
   const params = new URLSearchParams(window.location.search)
   const rescue_id = params.get('edit')
@@ -44,14 +52,20 @@ export function WholesaleEntryCreate({ defaultDate }) {
     totalCaseCount: '',
     averageCaseWeight: '',
   })
+  const [activeTab, setActiveTab] = useState('before-sorting')
+  const [isSorted, setIsSorted] = useState(false)
 
-  const [summary, setSummary] = useState({
-    totalCaseCount: 0,
-    averageCaseWeight: 0,
-    totalWeight: 0,
-    palletCount: 0,
-    sorted: false,
+  const [summaryBeforeSorting, setSummaryBeforeSorting] = useState({
+    ...defaultSummary,
+    name: 'before sorting',
   })
+  const [summaryAfterSorting, setSummaryAfterSorting] = useState({
+    ...defaultSummary,
+    name: 'after sorting',
+  })
+
+  const summary =
+    activeTab === 'before-sorting' ? summaryBeforeSorting : summaryAfterSorting
 
   const [isLoading, setIsLoading] = useState()
 
@@ -61,9 +75,6 @@ export function WholesaleEntryCreate({ defaultDate }) {
   const { data: rescue } = useApi(
     rescue_id ? `/rescues/get/${rescue_id}` : null
   )
-
-  const [activeTab, setActiveTab] = useState('before-sorting')
-  const [isSorted, setIsSorted] = useState(false)
 
   useEffect(() => {
     if (rescue) {
@@ -97,13 +108,19 @@ export function WholesaleEntryCreate({ defaultDate }) {
         sorted: rescue.transfers[0].sorted || false,
       })
 
-      setSummary({
+      const setSummary =
+        activeTab === 'before-sorting'
+          ? setSummaryBeforeSorting
+          : setSummaryAfterSorting
+
+      setSummary(prevValue => ({
+        ...prevValue,
         totalCaseCount: rescue.transfers[0].total_case_count || 0,
         averageCaseWeight: rescue.transfers[0].average_case_weight || 0,
         totalWeight: rescue.transfers[0].total_weight || 0,
         palletCount: rescue.transfers[0].pallet || 0,
         sorted: rescue.transfers[0].sorted || false,
-      })
+      }))
     }
   }, [rescue, activeTab])
 
@@ -225,12 +242,8 @@ export function WholesaleEntryCreate({ defaultDate }) {
       product_type: '',
     })
 
-    setSummary({
-      totalCaseCount: 0,
-      averageCaseWeight: 0,
-      totalWeight: 0,
-      palletCount: 0,
-    })
+    setSummaryBeforeSorting({ ...defaultSummary })
+    setSummaryAfterSorting({ ...defaultSummary })
   }
 
   async function handleUpdateRescue() {
@@ -392,14 +405,15 @@ export function WholesaleEntryCreate({ defaultDate }) {
           <WholesaleBeforeSorting
             formData={formData ? formData : null}
             setFormData={setFormData}
-            setSummary={setSummary}
+            setSummary={setSummaryBeforeSorting}
+            summary={summaryBeforeSorting}
             triggerReset={triggerWholesaleReset}
           />
         ) : (
           <WholesaleAfterSorting
             formData={formData}
-            summary={summary}
-            setSummary={setSummary}
+            summary={summaryAfterSorting}
+            setSummary={setSummaryAfterSorting}
             isSorted={isSorted}
           />
         )}
