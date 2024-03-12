@@ -80,7 +80,7 @@ export function InactiveTransfer({ transfer }) {
           color="element.tertiary"
         >
           Completed:{' '}
-          {moment(transfer.timestamp_completed).format('dddd M/DD - h:mma')}
+          {moment(transfer.timestamp_completed).format('dddd M/DD/YY - h:mma')}
         </Text>
       )}
       <Box h={4} />

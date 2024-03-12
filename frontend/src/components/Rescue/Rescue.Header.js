@@ -32,14 +32,20 @@ export function RescueHeader() {
             <Text as="span" fontWeight={700}>
               Scheduled:
             </Text>{' '}
-            {formatTimestamp(rescue.timestamp_scheduled, 'dddd M/DD - h:mma')}
+            {formatTimestamp(
+              rescue.timestamp_scheduled,
+              'dddd M/DD/YY - h:mma'
+            )}
           </Text>
           {rescue.timestamp_completed && (
             <Text color="element.secondary" fontSize="xs">
               <Text as="span" fontWeight={700}>
                 Completed:
               </Text>{' '}
-              {formatTimestamp(rescue.timestamp_completed, 'dddd M/DD - h:mma')}
+              {formatTimestamp(
+                rescue.timestamp_completed,
+                'dddd M/DD/YY - h:mma'
+              )}{' '}
             </Text>
           )}
           {rescue.notes && (

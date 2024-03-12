@@ -99,7 +99,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
           </Button>
         </Link>
       )}
-      {hasAdminPermission && (
+      {/* {hasAdminPermission && (
         <Link to="/wholesale-new">
           <Button
             variant="ghosted"
@@ -127,7 +127,7 @@ export function MenuBody({ colorMode, toggleColorMode }) {
             New Wholesale
           </Button>
         </Link>
-      )}
+      )} */}
       <Link to="/people">
         <Button
           variant="ghosted"

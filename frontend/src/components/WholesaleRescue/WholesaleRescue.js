@@ -169,7 +169,7 @@ export function WholesaleRescue({ setBreadcrumbs, setTitle }) {
               </Text>
               &nbsp;&nbsp;
               {moment(donation.timestamp_completed).format(
-                'dddd M/DD - hh:mma'
+                'dddd M/DD/YY - hh:mma'
               )}
             </Text>
             <Text fontSize="sm" fontWeight="300" color="element.secondary">

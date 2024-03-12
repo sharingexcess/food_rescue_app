@@ -30,7 +30,7 @@ export function Recipient({ recipient, setEditRecipient }) {
             {formatLargeNumber(recipient.total_weight)} lbs.
           </Text>
           &nbsp;&nbsp;
-          {moment(recipient.timestamp_completed).format('dddd M/DD - h:mma')}
+          {moment(recipient.timestamp_completed).format('dddd M/DD/YY - h:mma')}
         </Text>
         <Heading as="h4" size="md" fontWeight="600" color="element.primary">
           {recipient.organization.name}
