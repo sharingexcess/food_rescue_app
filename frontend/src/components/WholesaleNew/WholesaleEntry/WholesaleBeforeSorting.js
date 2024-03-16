@@ -2,12 +2,19 @@ import { Button, Text, Input, Flex, Select } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useAuth } from 'hooks'
 import { calculateExpression } from './helper'
+import { roundTwoPlaces, useDebouncedValue } from 'helpers'
 
 export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
   console.log('formData', formData)
   const [caseCount, setCaseCount] = useState('')
   const [caseWeight, setCaseWeight] = useState('')
   const [totalWeight, setTotalWeight] = useState(formData.weight || '')
+
+  // debouncers
+  const caseCountDebounced = useDebouncedValue(caseCount, 500)
+  const caseWeightDebounced = useDebouncedValue(caseWeight, 500)
+  const totalWeightDebounced = useDebouncedValue(totalWeight, 1000)
+
   const [palletType, setPalletType] = useState('')
   const [jackType, setJackType] = useState('')
   const [jackWeight, setJackWeight] = useState(0)
@@ -31,24 +38,37 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
     }
   }, [formData])
 
+  useEffect(() => {
+    let roundedCaseWeight = roundTwoPlaces(parseFloat(caseWeightDebounced))
+    if (caseWeightDebounced !== roundedCaseWeight) {
+      setCaseWeight(roundedCaseWeight)
+    }
+  }, [caseWeightDebounced])
+
+  useEffect(() => {
+    let roundedTotalWeight = roundTwoPlaces(parseFloat(totalWeightDebounced))
+    if (totalWeightDebounced !== roundedTotalWeight) {
+      setTotalWeight(roundedTotalWeight)
+    }
+  }, [totalWeightDebounced])
+
+  console.log('caseCount >>>', caseCount)
+  console.log('caseWeight >>>', caseWeight)
+  console.log('totalWeight >>>', totalWeight)
+
   const { user } = useAuth()
 
   useEffect(() => {
-    const calculatedCaseCount = parseFloat(calculateExpression(caseCount))
-    const weight = parseFloat(caseWeight)
-
-    if (!isNaN(calculatedCaseCount) && !isNaN(weight)) {
-      let newTotalWeight = calculatedCaseCount * weight
-      newTotalWeight -= jackWeight
+    if (!isNaN(caseCountDebounced) && !isNaN(caseWeightDebounced)) {
       if (formData.weight) {
         console.log('formData.weight', formData.weight)
         setTotalWeight(formData.weight)
         setJackType(formData.jackType)
       } else {
-        setTotalWeight(newTotalWeight)
+        recalculateTotalWeight(jackWeight)
       }
     }
-  }, [caseCount, caseWeight, jackWeight]) // Include jackWeight in the dependency array
+  }, [caseCountDebounced, caseWeightDebounced, jackWeight]) // Include jackWeight in the dependency array
 
   function handlePalletTypeChange(type) {
     setPalletType(type)
@@ -93,16 +113,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
     const weight = parseFloat(caseWeight)
     if (!isNaN(calculatedCaseCount) && !isNaN(weight)) {
       const newTotalWeight = calculatedCaseCount * weight - newJackWeight
-      setTotalWeight(newTotalWeight)
-
-      // Update the summary state
-      if (caseCount && caseWeight) {
-        setSummary({
-          totalCaseCount: parseInt(calculateExpression(caseCount)),
-          averageCaseWeight: parseFloat(caseWeight),
-          totalWeight: newTotalWeight, // Updated total weight
-        })
-      }
+      setTotalWeight(roundTwoPlaces(newTotalWeight))
     }
   }
 
@@ -120,12 +131,11 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
       const calculatedCaseCount = parseFloat(calculateExpression(caseCount))
       if (calculatedCaseCount !== 0) {
         const newAverageCaseWeight = newTotalWeight / calculatedCaseCount
-        setCaseWeight(newAverageCaseWeight)
+        setCaseWeight(roundTwoPlaces(newAverageCaseWeight))
       }
     } else {
       setCaseWeight('')
     }
-    setTotalWeight(newTotalWeight)
   }
 
   useEffect(() => {
@@ -146,12 +156,10 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
         case 'caseCount': {
           const calculatedValue = calculateExpression(value)
           setCaseCount(calculatedValue)
-          recalculateTotalWeight(jackWeight)
           break
         }
         case 'caseWeight': {
           setCaseWeight(value)
-          recalculateTotalWeight(jackWeight)
           break
         }
         case 'totalWeight': {

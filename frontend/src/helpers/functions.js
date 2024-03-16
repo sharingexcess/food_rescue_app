@@ -5,6 +5,7 @@ import {
   GOOGLE_MAPS_URL,
   TRANSFER_TYPES,
 } from './constants'
+import { useState, useEffect } from 'react'
 
 export function removeSpecialCharacters(str) {
   return str ? str.replace(/[^A-Z0-9]/gi, '') : ''
@@ -133,4 +134,25 @@ export function calculateCurrentCategorizedLoad(rescue, distribution) {
     }
   } else return undefined
   return categorized_weight
+}
+
+export const roundTwoPlaces = value => {
+  return Math.round((value + Number.EPSILON) * 100) / 100
+}
+
+export const useDebouncedValue = (inputValue, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(inputValue)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(inputValue)
+    }, delay)
+
+    return () => {
+      console.log('clearing handler')
+      clearTimeout(handler)
+    }
+  }, [inputValue, delay])
+
+  return debouncedValue
 }
