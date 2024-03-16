@@ -13,7 +13,7 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
   // debouncers
   const caseCountDebounced = useDebouncedValue(caseCount, 500)
   const caseWeightDebounced = useDebouncedValue(caseWeight, 500)
-  const totalWeightDebounced = useDebouncedValue(totalWeight, 1000)
+  const totalWeightDebounced = useDebouncedValue(totalWeight, 500)
 
   const [palletType, setPalletType] = useState('')
   const [jackType, setJackType] = useState('')
@@ -37,24 +37,6 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
       setTotalWeight(formData.totalWeight)
     }
   }, [formData])
-
-  useEffect(() => {
-    let roundedCaseWeight = roundTwoPlaces(parseFloat(caseWeightDebounced))
-    if (caseWeightDebounced !== roundedCaseWeight) {
-      setCaseWeight(roundedCaseWeight)
-    }
-  }, [caseWeightDebounced])
-
-  useEffect(() => {
-    let roundedTotalWeight = roundTwoPlaces(parseFloat(totalWeightDebounced))
-    if (totalWeightDebounced !== roundedTotalWeight) {
-      setTotalWeight(roundedTotalWeight)
-    }
-  }, [totalWeightDebounced])
-
-  console.log('caseCount >>>', caseCount)
-  console.log('caseWeight >>>', caseWeight)
-  console.log('totalWeight >>>', totalWeight)
 
   const { user } = useAuth()
 
@@ -140,14 +122,14 @@ export function WholesaleBeforeSorting({ setSummary, triggerReset, formData }) {
 
   useEffect(() => {
     // Check if all three values are present and valid
-    if (caseCount && caseWeight && totalWeight) {
+    if (caseCountDebounced && caseWeightDebounced && totalWeightDebounced) {
       setSummary({
-        totalCaseCount: parseInt(calculateExpression(caseCount)),
-        averageCaseWeight: parseFloat(caseWeight),
-        totalWeight: parseFloat(totalWeight),
+        totalCaseCount: parseInt(calculateExpression(caseCountDebounced)),
+        averageCaseWeight: roundTwoPlaces(parseFloat(caseWeightDebounced)),
+        totalWeight: roundTwoPlaces(parseFloat(totalWeightDebounced)),
       })
     }
-  }, [caseCount, caseWeight, totalWeight])
+  }, [caseCountDebounced, caseWeightDebounced, totalWeightDebounced])
 
   function handleKeyPress(event, inputType) {
     if (event.key === 'Enter' || event.keyCode === 13) {
