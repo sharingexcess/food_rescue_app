@@ -3,6 +3,7 @@ import { useAuth } from 'hooks'
 import { Button, Text, Input, Flex, Select } from '@chakra-ui/react'
 
 export function AfterSortingPallet({
+  pallet,
   onCaseCountChange,
   onCaseWeightChange,
   onTotalWeightChange,
@@ -16,6 +17,16 @@ export function AfterSortingPallet({
   const { user } = useAuth()
   const [jackType, setJackType] = useState('')
   const [setLastJackWeight] = useState(0)
+
+  useEffect(() => {
+    if (pallet) {
+      setCaseCount(pallet.caseCount || '')
+      setCaseWeight(pallet.caseWeight || '')
+      setTotalWeight(pallet.totalWeight || '')
+      setPalletType(pallet.palletType || '')
+      setJackType(pallet.jackType || '')
+    }
+  }, [])
 
   function palletWeight(type) {
     switch (type) {
