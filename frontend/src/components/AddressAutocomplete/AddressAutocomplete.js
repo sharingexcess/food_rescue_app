@@ -14,7 +14,7 @@ export function AddressAutocomplete({ handleSelect }) {
       const autoComplete = new window.google.maps.places.Autocomplete(
         document.getElementById('autocomplete'),
         {
-          componentRestrictions: { country: 'us' },
+          componentRestrictions: { country: ['ca', 'us'] },
         }
       )
       autoComplete.addListener('place_changed', () => {
