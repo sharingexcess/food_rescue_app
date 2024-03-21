@@ -2,6 +2,7 @@ import { Button, Text, Input, Flex, Select } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useAuth } from 'hooks'
 import { calculateExpression } from './helper'
+import { roundTwoPlaces, useDebouncedValue } from 'helpers'
 
 export function WholesaleBeforeSorting({
   setSummary,
@@ -18,6 +19,11 @@ export function WholesaleBeforeSorting({
   const [palletType, setPalletType] = useState('')
   const [jackType, setJackType] = useState('')
   const [jackWeight, setJackWeight] = useState(0)
+
+  // debouncers
+  const caseCountDebounced = useDebouncedValue(caseCount, 500)
+  const caseWeightDebounced = useDebouncedValue(caseWeight, 500)
+  const totalWeightDebounced = useDebouncedValue(totalWeight, 500)
 
   useEffect(() => {
     setPalletType(summary.palletType || '')
@@ -61,22 +67,17 @@ export function WholesaleBeforeSorting({
   const { user } = useAuth()
 
   useEffect(() => {
-    const calculatedCaseCount = parseFloat(calculateExpression(caseCount))
-    const weight = parseFloat(caseWeight)
-
-    if (!isNaN(calculatedCaseCount) && !isNaN(weight)) {
-      let newTotalWeight = calculatedCaseCount * weight
-      newTotalWeight -= jackWeight
+    if (!isNaN(caseCountDebounced) && !isNaN(caseWeightDebounced)) {
       if (formData.weight) {
         setTotalWeight(formData.weight)
         setJackType(formData.jackType)
       } else if (palletType) {
         handlePalletTypeChange(palletType, false)
       } else {
-        setTotalWeight(newTotalWeight)
+        recalculateTotalWeight(jackWeight)
       }
     }
-  }, [caseCount, caseWeight, jackWeight, palletType]) // Include jackWeight in the dependency array
+  }, [caseCountDebounced, caseWeightDebounced, jackWeight, palletType]) // Include jackWeight in the dependency array
 
   function handlePalletTypeChange(type, setType = true) {
     if (setType) {
@@ -124,16 +125,6 @@ export function WholesaleBeforeSorting({
     if (!isNaN(calculatedCaseCount) && !isNaN(weight)) {
       const newTotalWeight = calculatedCaseCount * weight - newJackWeight
       setTotalWeight(newTotalWeight)
-
-      // Update the summary state
-      if (caseCount && caseWeight) {
-        setSummary(prevValue => ({
-          ...prevValue,
-          totalCaseCount: parseInt(calculateExpression(caseCount)),
-          averageCaseWeight: parseFloat(caseWeight),
-          totalWeight: newTotalWeight, // Updated total weight
-        }))
-      }
     }
   }
 
@@ -161,15 +152,15 @@ export function WholesaleBeforeSorting({
 
   useEffect(() => {
     // Check if all three values are present and valid
-    if (caseCount && caseWeight && totalWeight) {
+    if (caseCountDebounced && caseWeightDebounced && totalWeightDebounced) {
       setSummary(prevValue => ({
         ...prevValue,
-        totalCaseCount: parseInt(calculateExpression(caseCount)),
-        averageCaseWeight: parseFloat(caseWeight),
-        totalWeight: parseFloat(totalWeight),
+        totalCaseCount: parseInt(calculateExpression(caseCountDebounced)),
+        averageCaseWeight: roundTwoPlaces(parseFloat(caseWeightDebounced)),
+        totalWeight: roundTwoPlaces(parseFloat(totalWeightDebounced)),
       }))
     }
-  }, [caseCount, caseWeight, totalWeight])
+  }, [caseCountDebounced, caseWeightDebounced, totalWeightDebounced])
 
   function handleKeyPress(event, inputType) {
     if (event.key === 'Enter' || event.keyCode === 13) {
