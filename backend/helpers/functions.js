@@ -165,6 +165,19 @@ exports.uploadFileToBigQuery = async (filenames, date) => {
       .table(tableName)
       .load(file, jobMetaData)
 
+    if (tableName === 'locations') {
+      const table = bigqueryClient.dataset(bigqueryDataset).table(tableName)
+      const [metadata] = await table.getMetadata()
+
+      const zipField = metadata.schema.fields.find(
+        field => field.name === 'zip'
+      )
+      if (zipField && zipField.type !== 'STRING') {
+        zipField.type = 'STRING'
+        await table.setMetadata(metadata)
+      }
+    }
+
     console.log(`Successfully uploaded data to BigQuery table`)
   }
 }
